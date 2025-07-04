@@ -86,6 +86,7 @@
     "continue" : "Continuar",
     "previous" : "Anterior",
     "learnMore" : "Saiba Mais",
+    "learnMoreWithEllipsis" : "Saiba mais…",
     "help" : "Ajuda",
     "needHelp" : "Precisa de ajuda?",
     "areYouSure" : "Tem certeza?",
@@ -106,6 +107,7 @@
     "reset" : "Redefinir",
     "retry" : "Tentar novamente",
     "range" : "Intervalo",
+    "start" : "Começar",
     "stop" : "Parar",
     "updateNow" : "Atualizar agora",
     "close" : "Fechar",
@@ -122,9 +124,15 @@
     "featureFlags" : "Marcador de Recurso",
     "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
+    "increase" : "Aumentar",
+    "max" : "Máx",
+    "min" : "Min",
+    "set" : "Configurar",
+    "follow" : "Seguir",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
     "manage" : "Gerenciar",
+    "none" : "Nenhum",
     "tryAgain" : "Tente novamente",
     "lockScreen" : {
       "title" : "Boas-vindas de volta",
@@ -202,7 +210,9 @@
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
       "SENDING" : "Enviando",
-      "BURN" : "Queimado"
+      "BURN" : "Queimado",
+      "STAKE_NEURON" : "Em staking",
+      "TOP_UP_NEURON" : "Recarregado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -259,11 +269,11 @@
   },
   "time" : {
     "minute" : "Minuto",
-    "minute_plural" : "Minutos",
+    "minute_other" : "Minutos",
     "minute_short" : "min",
     "second_short" : "sec",
     "hour" : "Hora",
-    "hour_plural" : "Horas",
+    "hour_other" : "Horas",
     "range" : {
       "day" : "1D",
       "week" : "1S",
@@ -575,7 +585,7 @@
       "date" : "Data",
       "from" : "De",
       "fromAddress" : "Endereço de origem",
-      "fromAddress_plural" : "Endereços de origem",
+      "fromAddress_other" : "Endereços de origem",
       "to" : "Para",
       "toProvider" : "Endereço do provedor",
       "initialAmount" : "Quantia Inicial",
@@ -1242,11 +1252,11 @@
       }
     },
     "manual" : {
-      "title" : "Configurar sua {{deviceName}}",
+      "title" : "Deixe sua {{deviceName}} pronta",
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
-        "title" : "Esta {{deviceName}} é autêntica",
-        "description" : "É seguro usar esta {{productName}}. Você pode seguir com a configuração.",
+        "title" : "A {{deviceName}} é autêntica",
+        "description" : "A sua {{productName}} é segura de usar. A configuração está pronta para ser iniciada.",
         "continueOnDevice" : "Toque em sua {{productName}} para iniciar a configuração"
       },
       "pinContent" : {
@@ -1256,26 +1266,37 @@
         "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
-        "title" : "Frase de Recuperação Secreta",
+        "title" : "Configuração e backup",
         "titleCompleted" : "Frase de Recuperação Secreta confirmada",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
+        "restoreSeed" : "Para restaurar, siga as instruções que aparecem na tela segura da sua Ledger.",
+        "restoreCharonTitle" : "Restaurar com Recovery Key",
+        "restoreCharonDescription" : "Para restaurar, siga as instruções que aparecem na tela segura da sua Ledger.",
+        "restoreCharonContinueOnDevice" : "Siga as instruções em sua {{productName}}",
         "selection" : "Escolha a opção de configuração que for melhor para você:",
-        "selectionNewLedger" : "<0>“Set up as a new Ledger”</0> (“Configurar como uma nova Ledger”) permite que você crie uma nova carteira. Isso gera uma nova Frase de Recuperação Secreta.",
-        "selectionRestore" : "<0>“Restore”</0> (“Restaurar”) permite restaurar o acesso aos seus ativos com a sua Frase de Recuperação Secreta ou com o Ledger Recover.",
+        "selectionNewLedgerTitle" : "Configurar uma nova Ledger",
+        "selectionNewLedgerDescription" : "Isso gera uma nova Frase de Recuperação Secreta.",
+        "selectionRestoreTitle" : "Recupere o acesso aos ativos",
+        "selectionRestoreDescription" : "Isso permite que você restaure usando seu backup — frase de recuperação secreta ou Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon" : "Estas opções permitem que você restaure usando seu backup — frase de recuperação secreta, o Ledger Recover ou o Ledger Recovery Key.",
         "selectionContinueOnDevice" : "Escolha a opção relevante em sua {{productName}}",
-        "newSeedDescription1" : "Sua {{productName}} gerará a Frase de Recuperação Secreta—uma lista única de 24 palavras. É a única maneira de recuperar seus ativos se a sua Ledger for roubada, perdida ou se você esquecer seu PIN.",
-        "newSeedDescription2" : "<0>Guarde-a em segredo:</0>\nsua Frase de Recuperação Secreta controla todos os seus ativos e é insubstituível. Qualquer pessoa que tenha sua Frase também pode controlar seus ativos e roubá-los. Se você perder sua Frase, a Ledger não poderá lhe ajudar.",
-        "newSeedDescription3" : "Cuidado com qualquer pessoa ou software que solicite sua Frase de Recuperação Secreta. Isso é um golpe. ",
-        "newSeedDescription4" : "O único lugar em que você deve inserir sua Frase de Recuperação Secreta é no seu dispositivo Ledger.",
-        "newSeedDescription5" : "Não a compartilhe. Não a perca.",
-        "newSeedContinueOnDevice" : "Veja e anote a Frase de Recuperação Secreta gerada em sua {{productName}}",
+        "selectionNewSeedTitle" : "Frase de Recuperação Secreta",
+        "selectionNewSeedSubtitle" : "Guarde-as em segredo e em segurança",
+        "selectionNewSeedDescription" : "Sua frase de recuperação secreta controla seus ativos e é insubstituível. Qualquer pessoa com sua frase pode roubar todos os seus ativos. Se você a perder, a Ledger não poderá recuperá-la para você.",
+        "selectionNewSeedContinueOnDevice" : "Siga as instruções em sua {{productName}}",
+        "restoreDescription" : "Escolha um backup a partir do qual você deseja restaurar:",
         "restoreChoiceContinueOnDevice" : "Escolha uma opção em sua {{productName}}",
-        "restoreChoiceSRPTitle" : "Restaurar usando a Frase de Recuperação Secreta",
+        "restoreChoiceSRPTitle" : "Frase de Recuperação Secreta",
         "restoreChoiceSRPDescription" : "Use uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para ter a segurança máxima.",
-        "restoreChoiceRecoverTitle" : "Restaurar usando o Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Se você se inscreveu no Ledger Recover, entre com os seus dados para restaurar a sua Frase de Recuperação Secreta.",
-        "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}."
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Use seu Recovery Key para restaurar o acesso a seus ativos.",
+        "restoreChoiceRecoverTitle" : "Inscrição no Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Use sua inscrição para restaurar o acesso aos seus ativos com sua identidade.",
+        "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Crie um novo backup em um cartão protegido por PIN com um chip Elemento Seguro — assim você consegue restaurar o acesso aos seus ativos com apenas alguns toques.",
+        "backupCharonCta" : "Saiba mais ou compre",
+        "backupCharonContinueOnDevice" : "Siga as instruções em sua {{productName}}"
       },
       "backup" : {
         "title" : "Backup para sua Frase de Recuperação Secreta",
@@ -1297,8 +1318,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Verificação de autenticidade e\nde atualização do sistema operacional",
-          "completed" : "A sua {{modelName}} é autêntica e está atualizada"
+          "active" : "Verificação de autenticidade Ledger",
+          "completed" : "Verificação de autenticidade Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "Cancelar a Verificação de Autenticidade e a verificação de atualização do sistema operacional?",
@@ -1321,11 +1342,11 @@
           }
         },
         "whyPerformChecksLink" : "Saiba mais sobre a Verificação de Autenticidade",
-        "startChecksCTA" : "Verificar minha {{modelName}}",
+        "startChecksCTA" : "Verificar {{modelName}}",
         "continueCTA" : "Seguir para configuração",
         "genuineCheck" : {
           "title" : {
-            "active" : "Verificação de Autenticidade",
+            "active" : "Verificação de autenticidade Ledger",
             "completed" : "A {{modelName}} é autêntica",
             "cancelled" : "Verificação de autenticidade recusada"
           },
@@ -1337,13 +1358,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Verificação de atualização do sistema operacional",
-            "completed" : "O sistema operacional da sua {{modelName}} está atualizado.",
+            "active" : "Verificação do Ledger OS",
+            "completed" : "O Ledger OS está atualizado",
             "updateAvailable" : "Atualização do OS da {{firmwareVersion}} disponível"
           },
           "subtitle" : {
-            "active" : "Isto verifica se o sistema operacional da sua {{modelName}} está atualizado ou não.",
-            "completed" : "Para iniciar a restauração de aplicativos em sua {{modelName}}, selecione o botão “Restaurar aplicativos” abaixo.",
+            "active" : "Esta verificação determina se o sistema operacional da sua {{modelName}} está atualizado.",
             "updateAvailable" : "Atualize para maior segurança e acesso aos recursos mais recentes."
           },
           "viewUpdateCTA" : "Atualizar OS da {{modelName}}",
@@ -1783,14 +1803,14 @@
     "fullNodeReadyInfo" : "As contas serão adicionadas usando seu node completo de Bitcoin.",
     "fullNodeConfigure" : "Configurar Node",
     "tokensTip" : "{{token}} ({{ticker}}) é um token {{tokenType}}. Você pode receber tokens diretamente em uma conta {{currency}}.",
-    "accountToImportSubtitle_plural" : "Adicionar contas existentes",
+    "accountToImportSubtitle_other" : "Adicionar contas existentes",
     "selectAll" : "Selecionar Tudo ({{count}})",
     "unselectAll" : "Desmarcar Tudo ({{count}})",
     "noAccountToImport" : "Nenhuma conta {{currencyName}} existente para adicionar",
     "success" : "Conta adicionada com sucesso",
-    "success_plural" : "Contas adicionadas com sucesso",
+    "success_other" : "Contas adicionadas com sucesso",
     "successDescription" : "Adicionar outras contas ou retornar ao Portfólio",
-    "successDescription_plural" : "Adicionar outras contas ou retornar ao Portfólio",
+    "successDescription_other" : "Adicionar outras contas ou retornar ao Portfólio",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "Não é possível adicionar uma nova conta antes de receber ativos na sua conta <1><0>{{accountName}}</0></1>",
       "noAccountToCreate" : "Nenhuma conta <1><0>{{currencyName}}</0></1> foi encontrada para ser criada",
@@ -1803,7 +1823,7 @@
     "cta" : {
       "addMore" : "Adicionar Mais",
       "add" : "Adicionar Conta",
-      "add_plural" : "Adicionar Contas",
+      "add_other" : "Adicionar Contas",
       "addAccountName" : "Adicionar conta {{currencyName}}",
       "receive" : "Receber"
     },
@@ -1901,9 +1921,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloqueie a {{productName}} com seu PIN para concluir a atualização.",
     "quitApp" : "Feche o aplicativo no seu dispositivo",
     "appNotInstalledTitle" : "Aplicativo necessário em falta",
-    "appNotInstalledTitle_plural" : "Aplicativos necessários em falta",
+    "appNotInstalledTitle_other" : "Aplicativos necessários em falta",
     "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá à Minha Ledger e o instale em seu dispositivo",
-    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá à Minha Ledger e os instale em seu dispositivo",
+    "appNotInstalled_other" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá à Minha Ledger e os instale em seu dispositivo",
     "openManager" : "Abra a Minha Ledger",
     "openOnboarding" : "Configurar Dispositivo",
     "outdated" : "Versão do aplicativo desatualizada",
@@ -1990,14 +2010,14 @@
       },
       "installSuccess" : {
         "title" : "Aplicativo instalado com sucesso. Agora você pode adicionar suas contas {{app}}",
-        "title_plural" : "Aplicativos instalados com sucesso. Agora você pode adicionar suas contas",
+        "title_other" : "Aplicativos instalados com sucesso. Agora você pode adicionar suas contas",
         "manageAccount" : "Gerenciar minhas contas"
       },
       "updatable" : {
         "title" : "Atualização Disponível",
-        "title_plural" : "Atualizações disponíveis",
+        "title_other" : "Atualizações disponíveis",
         "progressTitle" : "{{number}} atualização de aplicativo",
-        "progressTitle_plural" : "{{number}} atualizações de aplicativo",
+        "progressTitle_other" : "{{number}} atualizações de aplicativo",
         "progressWarning" : "Não feche a Minha Ledger durante a atualização.",
         "progress" : "Atualizando todos..."
       },
@@ -4087,7 +4107,7 @@
     "duration" : "Duração",
     "durationJustStarted" : "Acabou de começar",
     "durationDays" : "{{count}} dia",
-    "durationDays_plural" : "{{count}} dias",
+    "durationDays_other" : "{{count}} dias",
     "howItWorks" : "Como funciona a delegação",
     "delegationEarn" : "Agora você pode receber recompensas de staking em {{name}} delegando sua conta.",
     "earnRewards" : "Receba Recompensas",
@@ -4407,6 +4427,8 @@
       "mockAppUpdateDesc" : "Exibe a versão atual do aplicativo em Minha Ledger para reinstalar a mesma versão",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
       "catalogUrlDesc" : "Insira a URL do provedor de aplicativos da sua escolha",
+      "customCALRef" : "Referência CAL personalizada",
+      "customCALRefDesc" : "Especificar um branch, commit ou tag personalizado a ser usado para todas as solicitações CAL",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilite a janela de ferramentas para desenvolvedores de aplicativos da plataforma",
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
@@ -4711,7 +4733,7 @@
     "ctaSuccess" : "Concluído",
     "noAccounts" : "Nenhuma conta a exportar",
     "selectedAccounts" : "Contas a serem incluídas",
-    "selectedAccounts_plural" : "Contas a serem incluídas ({{count}})",
+    "selectedAccounts_other" : "Contas a serem incluídas ({{count}})",
     "disclaimer" : "Os contravalores na exportação são fornecidos apenas para fins informativos. Não confie nesses dados para fins contábeis, fiscais, regulatórios ou legais, pois eles representam apenas uma estimativa do preço dos ativos no momento das transações e da exportação, sob os métodos de avaliação fornecidos pelo nosso provedor de serviços, Kaiko"
   },
   "language" : {
@@ -4749,7 +4771,7 @@
   "informationCenter" : {
     "tooltip" : "Centro de informação",
     "ongoingIncidentsTooltip" : "Há {{count}} incidente em andamento",
-    "ongoingIncidentsTooltip_plural" : "Há {{count}} incidentes em andamento",
+    "ongoingIncidentsTooltip_other" : "Há {{count}} incidentes em andamento",
     "tabs" : {
       "announcements" : "Notícias",
       "announcementsUnseen" : "Notícias ({{unseenCount}})",
@@ -6600,6 +6622,36 @@
     },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "A quantia mínima para {{purpose}} é {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "O atraso de dissolução deve ser de pelo menos {{min}}."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "O atraso de dissolução deve ser menor que {{max}}."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "O novo atraso de dissolução deve ser maior do que o atraso de dissolução atual."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "O neuron não foi encontrado."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "O documento principal não é válido"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "A tecla de atalho já existe"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "O quantia da divisão é superior ao máximo permitido"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Esta operação transferirá a quantia para aumentar o staking de neurons existentes"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Esta operação transferirá a quantia para um novo neuron. Quando for confirmada, o neuron ficará disponível para operações."
     }
   },
   "cryptoOrg" : {
@@ -7062,12 +7114,58 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "Selecione as contas que deseja adicionar",
+      "controls" : {
+        "selectAll" : "Selecionar todas",
+        "deselectAll" : "Desmarcar todas"
+      },
+      "cta" : {
+        "confirm" : "Confirmar"
+      },
+      "newAccount" : "Nova conta"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "Interromper varredura"
+      },
+      "warning" : {
+        "title" : "Não foi possível adicionar a nova conta {{currency}}",
+        "description" : "Não é possível adicionar uma nova conta antes de receber ativos na sua conta {{account}}",
+        "cta" : "Adicionar fundos à minha conta",
+        "close" : "Fechar",
+        "noAssociatedAccounts" : {
+          "description" : "No ecossistema {{currency}}, apenas um pequeno número de serviços pode criar novas contas. Embora a Ledger não ofereça atualmente esse serviço de criação de contas, há alternativas disponíveis. Você poderá adicionar sua conta {{currency}} no Ledger Live depois que ela for criada.",
+          "cta" : "Como criar uma conta {{currency}}?",
+          "close" : "Fechar"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "Nenhuma conta foi encontrada",
+        "foundAccounts" : "Encontramos {{count}} conta",
+        "foundAccounts_other" : "Encontramos {{count}} contas",
+        "scanning" : "Escaneando contas..."
+      },
+      "title" : "Buscando contas existentes na blockchain…"
+    },
+    "connectYourDevice" : {
+      "title" : "Conecte e desbloqueie seu dispositivo"
+    },
     "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "Nenhum ativo encontrado",
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecione a rede",
     "selectAccount" : "Selecionar conta",
     "accountCount_one" : "{{count}} conta",
-    "accountCount_other" : "{{count}} contas"
+    "accountCount_other" : "{{count}} contas",
+    "accountsAdded" : {
+      "title" : "Conta adicionada ao seu portfólio",
+      "title_other" : "{{count}} contas adicionadas ao seu portfólio",
+      "cta" : {
+        "addFunds" : "Adicionar fundos à minha conta",
+        "close" : "Fechar"
+      }
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
@@ -7080,5 +7178,291 @@
     "title" : "Local indisponível",
     "description" : "A carteira Ledger não está disponível neste local.",
     "learnMore" : "Saiba mais"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Esta transação aumentará o staking de um neuron existente. Digite quanto quer aplicar em staking no campo de quantia acima.",
+      "createNeuron" : "Esta transação criará um neuron com ICP em staking. Digite quanto quer aplicar em staking no campo de quantia acima.",
+      "tooltip" : "A Internet Computer usa isso para identificar a transação a fim de pôr ICP no neuron em staking."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Confirme seu seguimento",
+        "description1" : "Seus requisitos neuron precisam ser confirmados em {{days}} dias e {{hours}} horas",
+        "description2" : "Você está perdendo recompensas, confirme o acompanhamento do neuron para continuar ganhando",
+        "cta" : "Confirme seu seguimento"
+      },
+      "syncNeurons" : {
+        "title" : "Sincronize seu ICP em staking",
+        "description1" : "Seu ICP em staking foi sincronizado pela última vez há {{days}} dias e {{hours}} horas. Se quiser ver os detalhes mais recentes, recomendamos que você sincronize com frequência.",
+        "description2" : "Recomendamos sincronizar seu neuron para ver os detalhes mais recentes",
+        "cta" : "Sincronizar Neuron"
+      },
+      "lockNeurons" : {
+        "title" : "Bloquear Neuron",
+        "description" : "Um ou mais dos seus neurons não estão bloqueados. Se você não bloqueá-los, não poderá receber recompensas. Isso ocorre porque os neurons recebem recompensas por participar da governança do ICP - e apenas neurons bloqueados por mais de seis meses estão elegíveis para votar.",
+        "cta" : "Gerenciar Neurons"
+      },
+      "addFollowees" : {
+        "title" : "Adicionar seguidos",
+        "description" : "Um ou mais dos seus neurons não segue outros. Sem seguir outros neurons, você pode não receber recompensas. Para receber recompensas, os neurons devem votar diretamente (por exemplo, via DApp NNS) ou seguir neurons que votam.",
+        "cta" : "Gerenciar Neurons"
+      },
+      "stakeICP" : {
+        "title" : "Fazer staking de ICP",
+        "description" : "Faça staking de ICP e ganhe recompensas participando da sua governança.",
+        "cta" : "Fazer staking de ICP"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "Fazer staking de ICP",
+        "tooltip" : "Crie neurons para fazer staking de ICP"
+      },
+      "manageNeurons" : {
+        "title" : "Gerenciar Neurons",
+        "tooltip" : "Gerenciar neurons ativos"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "A quantia total de tokens ICP atualmente aplicados em neurons. ICP em staking gera recompensas de voto e pode ser usado na governança.",
+      "totalMaturityTooltip" : "Recompensas totais acumuladas por staking, somando a maturidade aplicada e a líquida. Essas recompensas podem ser reaplicadas novamente ou resgatadas como ICP líquido.",
+      "totalMaturity" : "Maturidade total",
+      "stakedBalance" : "Saldo em staking",
+      "stakedMaturity" : "Maturidade em staking",
+      "stakedMaturityTooltip" : "A porção das recompensas de maturidade, que foi automaticamente reinvestida em neurons, continua a gerar recompensas adicionais.",
+      "liquidMaturity" : "Maturidade líquida",
+      "liquidMaturityTooltip" : "A porção das recompensas de maturidade que está disponível para ser resgatada como tokens ICP líquidos ou colocada em staking em neurons."
+    },
+    "confirmation" : {
+      "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+      "success" : "{{action}} bem-sucedido(a)",
+      "syncAccounts" : "Sincronize suas contas para visualizar as mudanças mais recentes"
+    },
+    "sync" : "Sincronizar",
+    "lastSynced" : "Última sincronização",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Tempo até perder recompensas",
+      "warnbox" : "Nenhum neuron encontrado. Tente sincronizar os neurons existentes criados pelo DApp NNS ou faça staking para criar novos neurons."
+    },
+    "common" : {
+      "neuronId" : "ID do neuron",
+      "neuronIds" : "IDs dos neurons",
+      "state" : "Estado",
+      "action" : "Ação",
+      "balance" : "Saldo",
+      "maturity" : "Maturidade",
+      "currentBalance" : "Saldo atual",
+      "amount" : "Quantia",
+      "stake" : "Aplicar",
+      "followees" : "Seguidos",
+      "votingPower" : "Poder de voto",
+      "hotkey" : "Tecla de atalho",
+      "neuron" : "Neurons",
+      "disburse" : "Desembolsar",
+      "startDissolving" : "Começar a dissolver",
+      "stopDissolving" : "Parar de dissolver",
+      "dissolveDelay" : "Atraso de dissolução",
+      "dissolveState" : "Estado da dissolução",
+      "dissolveStateUnlocked" : "Desbloqueado",
+      "dissolveStateLocked" : "Bloqueado",
+      "dissolveStateDissolving" : "Dissolvendo",
+      "dissolveStateDissolved" : "Dissolvido",
+      "inactiveNeuron" : "Neuron inativo",
+      "activeNeuron" : "Neuron ativo",
+      "confirmFollowing" : "Confirme seu seguimento"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Atualizar poder de voto"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Gerenciar Neurons",
+      "stakeMaturity" : {
+        "title" : "Maturidade do staking",
+        "description" : "Escolha quanto da maturidade disponível você deseja fazer staking neste neuron.",
+        "confirmStake" : "Confirmar staking",
+        "maturityAvailable" : "Maturidade disponível"
+      },
+      "splitNeuron" : {
+        "title" : "Neuron dividido",
+        "transactionFee" : "Taxa de transação",
+        "confirmSplit" : "Confirmar divisão"
+      },
+      "setDissolveDelay" : {
+        "title" : "Definir atraso de dissolução",
+        "balance" : "Saldo",
+        "dissolveDelay" : "Atraso de dissolução",
+        "dissolveDelayTooltip" : "O atraso de dissolução é o tempo mínimo que você precisa esperar para que o neuron seja desbloqueado e o ICP volte a ficar disponível. O novo atraso de dissolução deve ser maior do que o atraso de dissolução atual.",
+        "votingPowerDescription" : "O poder de voto é concedido aos neurons com um atraso de dissolução de pelo menos 6 meses.",
+        "dissolveDelayInput" : "Atraso de dissolução (em dias)",
+        "inputPlaceholder" : "Inserir atraso de dissolução",
+        "updateDelay" : "Atualizar atraso"
+      },
+      "selectFollowees" : {
+        "title" : "ID do neuron seguido",
+        "placeholder" : "Digite o ID do neuron",
+        "options" : "Opção de seguimento"
+      },
+      "selectTopics" : {
+        "title" : "Selecionar tópicos",
+        "warnbox" : "Siga neurons para automatizar sua votação e receber o máximo de recompensas por votação. Você pode acompanhar neurons sobre tópicos específicos ou todos os tópicos.",
+        "listOfTopics" : "Lista de tópicos disponíveis para acompanhar",
+        "addAction" : "Adicionar seguido"
+      },
+      "addHotKey" : {
+        "title" : "Adicionar tecla de atalho"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "Este neuron é controlado por uma tecla de atalho e tem controle limitado a partir da interface do Ledger Live.",
+          "hotkeyControl" : "Controle de teclas de atalho",
+          "votingPower" : "Poder de voto",
+          "noVotingPower" : "Sem poder de voto"
+        },
+        "votingPower" : {
+          "title" : "Poder de voto",
+          "titleTooltip" : "O prazo de dissolução deve ser de pelo menos 6 meses para que o neuron tenha direito a voto.",
+          "value" : "Valor",
+          "staked" : "ICP em staking",
+          "increaseStake" : "Aumentar aplicação",
+          "ageBonus" : "Bônus por idade",
+          "ageBonusTooltip" : "Seu neuron pode estar bloqueado, desbloqueado ou em dissolução. Em estado bloqueado, ele acumula bônus de idade, enquanto seu atraso de dissolução permanece constante. Se o neuron estiver em estado de dissolução, seu bônus de idade é definido como 0, enquanto o atraso de dissolução diminui com o tempo. Depois que o atraso de dissolução chega a 0, o neuron é desbloqueado e o ICP mantido nele pode ser enviado para qualquer conta ICP.",
+          "dissolveDelayBonus" : "Bônus de atraso de dissolução",
+          "dissolveDelayBonusTooltip" : "O bônus de atraso de dissolução é um bônus que é adicionado ao poder de voto do neuron com base no atraso de dissolução. Quanto maior o atraso de dissolução, maior o bônus.",
+          "confirmFollowing" : "Confirme seu seguimento",
+          "confirmFollowingTooltip" : "Os neurons ICP que ficam inativos por 6 meses começam a perder recompensas de votação. Para evitar perder recompensas, vote manualmente, edite ou confirme seus seguimentos."
+        },
+        "maturity" : {
+          "title" : "Maturidade",
+          "description" : "Ganhe recompensas votando em propostas e/ou seguindo neurons ativos.",
+          "staked" : "Em staking",
+          "stakedTooltip" : "A maturidade em staking contribui para o poder de voto do neuron, mas não pode ser passada para um novo neuron.",
+          "available" : "Disponível",
+          "availableTooltip" : "A maturidade disponível pode ser aplicada ou queimada para gerar um neuron contendo uma quantidade de ICP que está sujeita a um processo não determinístico, chamado modulação de maturidade.",
+          "stakeAction" : "Aplicar",
+          "spawnNeuronAction" : "Gerar Neuron"
+        },
+        "hotKeys" : {
+          "title" : "Teclas de atalho",
+          "description" : "As teclas de atalho são uma forma de controlar o seu neuron a partir da interface do Ledger Live.",
+          "addHotKey" : "Adicionar tecla de atalho",
+          "removeAction" : "Remover",
+          "noHotKeys" : "Não foram encontradas teclas de atalho"
+        },
+        "advancedDetails" : {
+          "title" : "Detalhes e configurações avançadas",
+          "dateCreated" : "Data de criação",
+          "dissolveDate" : "Data de dissolução",
+          "neuronAccount" : "Conta do neuron",
+          "splitNeuronAction" : "Neuron dividido",
+          "autoStakeMaturityAction" : "Maturidade automática de staking"
+        },
+        "following" : {
+          "title" : "Seguindo",
+          "description" : "Seguir permite que você delegue seus votos a outro detentor de neurons. Você ainda ganha recompensas se delegar seus direitos de voto. Você pode alterar seu seguimento a qualquer momento.",
+          "warnbox" : "Sem seguir outros neurons, você pode não receber recompensas. Para receber recompensas, os neurons devem votar diretamente (por exemplo, via DApp NNS) ou seguir neurons que votam.",
+          "followNeuronsAction" : "Siga neurons"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "Selecione um neuron da lista abaixo para gerenciar suas configurações de participação, maturidade e atraso de dissolução."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Staking aumentando",
+        "create_neuron" : "Criando neuron",
+        "start_dissolving" : "Iniciando dissolução",
+        "stop_dissolving" : "Interrompendo dissolução",
+        "list_neurons" : "Listando neurons",
+        "disburse" : "Desembolsando neuron",
+        "spawn_neuron" : "Gerando neuron",
+        "add_hot_key" : "Adicionando tecla de atalho",
+        "stake_maturity" : "Maturidade do staking",
+        "refresh_voting_power" : "Renovando poder de voto",
+        "increase_dissolve_delay" : "Aumentando o atraso de dissolução",
+        "auto_stake_maturity" : "Maturidade de staking automático",
+        "spawn_neuron_from_maturity" : "Gerando neuron a partir da maturidade",
+        "set_auto_stake_maturity" : "Definindo maturidade do staking automático",
+        "set_dissolve_delay" : "Definindo atraso de dissolução",
+        "remove_hot_key" : "Removendo a tecla de atalho",
+        "follow" : "Seguindo neurons",
+        "split_neuron" : "Dividindo neuron"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "Todos exceto Governança e Fundo SNS e Neurons",
+          "description" : "Siga neurons em todos os tópicos da proposta, exceto o tópico de governança e o fundo SNS e neurons."
+        },
+        "1" : {
+          "title" : "Gerenciamento de neurons",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Taxa de Câmbio",
+          "description" : "Todas as propostas que fornecem informações em “tempo real” sobre o valor do ICP, medido por um IMF SDR, que permite ao NNS converter o ICP em ciclos (que alimentam a computação) a uma taxa que mantém seu custo real constante."
+        },
+        "3" : {
+          "title" : "Economia da rede",
+          "description" : "Propostas que administram a economia da rede, por exemplo, determinando quais recompensas devem ser pagas aos operadores de nodes."
+        },
+        "4" : {
+          "title" : "Governança",
+          "description" : "Todas as propostas que administram a governança, por exemplo, para congelar canisters maliciosos que estão prejudicando a rede."
+        },
+        "5" : {
+          "title" : "Administrador do node",
+          "description" : "Todas as propostas que administram máquinas de nodes de alguma forma, incluindo, mas não se limitando a, atualização ou configuração do sistema operacional, atualização ou configuração da estrutura da máquina virtual e atualização ou configuração do software de réplica do node."
+        },
+        "6" : {
+          "title" : "Gerenciamento de participantes",
+          "description" : "Todas as propostas que administram participantes da rede, por exemplo, conceder e anular DCIDs (identidades de centro de dados) ou NOIDs (identidades de operador de node)."
+        },
+        "7" : {
+          "title" : "Gerenciamento de sub-rede",
+          "description" : "Todas as propostas que administram sub-redes, por exemplo, criando novas sub-redes, adicionando e removendo nodes de sub-redes e dividindo sub-redes."
+        },
+        "8" : {
+          "title" : "Gerenciamento de canister de protocolo",
+          "description" : "Todas as propostas para gerenciar os protocolos canisters, que são considerados parte do protocolo ICP e são essenciais para o seu bom funcionamento."
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "Propostas que atualizam as informações KYC para fins regulatórios, por exemplo, durante a distribuição inicial do Genesis do ICP na forma de neurons."
+        },
+        "10" : {
+          "title" : "Recompensas do provedor de node",
+          "description" : "Propostas que recompensam os provedores de nodes"
+        },
+        "12" : {
+          "title" : "Implantação da versão IC do sistema operacional",
+          "description" : "Propostas para atualizações da versão réplica de uma sub-rede"
+        },
+        "13" : {
+          "title" : "Eleição da versão IC do sistema operacional",
+          "description" : "Propostas relacionadas com a concessão e a retirada de versões réplicas"
+        },
+        "14" : {
+          "title" : "Fundo SNS e Neurons",
+          "description" : "Propostas relacionadas ao Fundo SNS e Neurons"
+        },
+        "15" : {
+          "title" : "Gestão do API Boundary Node",
+          "description" : "Propostas relacionadas à gestão do API de nodes de fronteira"
+        },
+        "16" : {
+          "title" : "Aluguel de sub-rede",
+          "description" : "Todas as propostas relacionadas ao aluguel de uma sub-rede, por exemplo, uma solicitação de aluguel de sub-rede."
+        },
+        "17" : {
+          "title" : "Gerenciamento de canister de protocolo",
+          "description" : "Todas as propostas para gerenciar os protocolos canisters, que são considerados parte do protocolo ICP e são essenciais para o seu bom funcionamento."
+        },
+        "18" : {
+          "title" : "Gestão do Sistema Nervoso de Serviço",
+          "description" : "Todas as propostas para gerenciar os canisters dos sistemas nervosos de serviço (SNS), incluindo a atualização dos canisters relevantes e o gerenciamento dos canisters da estrutura SNS WASMs pelo SNS-W."
+        }
+      }
+    }
   }
 }
