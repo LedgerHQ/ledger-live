@@ -1,7 +1,4 @@
 import React from "react";
-import { mockDomMeasurements } from "./shared";
-import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
@@ -12,17 +9,12 @@ import BigNumber from "bignumber.js";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
 import { Provider } from "react-redux";
 import createStore from "~/renderer/createStore";
-import { fireEvent, render, screen } from "tests/testSetup";
+import { userEvent, render, screen } from "tests/testSetup";
 import { Account } from "@ledgerhq/types-live";
 import { act } from "react-dom/test-utils";
 import { State } from "~/renderer/reducers";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
-
-beforeEach(async () => {
-  mockDomMeasurements();
-  LiveConfig.setConfig(liveConfig);
-});
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   __esModule: true,
@@ -61,11 +53,9 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   }),
 }));
 
-const mockScanAccountsSubscription = (accounts: Account[]) => {
-  accounts.forEach(account => {
-    act(() => triggerNext(account));
-  });
-  act(() => triggerComplete());
+const mockScanAccountsSubscription = async (accounts: Account[]) => {
+  await Promise.all(accounts.map(account => act(() => triggerNext(account))));
+  await act(() => triggerComplete());
 };
 
 const NEW_ARB_ACCOUNT: Account = {
@@ -151,6 +141,22 @@ jest.mock("~/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
 }));
 
+const setup = (currency = arbitrumCurrency, state?: State) =>
+  render(
+    <Provider store={createStore({ state })}>
+      <ModularDrawerAddAccountFlowManager currency={currency} source="MADSource" />
+    </Provider>,
+  );
+
+function expectTrackPage(
+  n: number,
+  page: string,
+  props: { flow?: string; reason?: string } = {},
+  source = "MADSource",
+) {
+  expect(trackPage).toHaveBeenNthCalledWith(n, page, undefined, { ...props, source }, true, true);
+}
+
 describe("ModularDrawerAddAccountFlowManager", () => {
   beforeEach(() => {
     (track as jest.Mock).mockReset();
@@ -158,36 +164,18 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   });
 
   it("should find and add an account", async () => {
-    render(
-      <Provider store={createStore({ state: undefined })}>
-        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup();
 
     expect(
       screen.getByText(/looking for any existing accounts on the blockchain/i),
     ).toBeInTheDocument();
-    expect(trackPage).toHaveBeenNthCalledWith(
-      1,
-      "device connection",
-      undefined,
-      { flow: "Add account", source: "MADSource" },
-      true,
-      true,
-    );
+    expectTrackPage(1, "device connection", { flow: "Add account" });
 
-    mockScanAccountsSubscription([ARB_ACCOUNT]);
-    expect(trackPage).toHaveBeenNthCalledWith(
-      2,
-      "looking for accounts",
-      undefined,
-      { flow: "Add account", source: "MADSource" },
-      true,
-      true,
-    );
+    await mockScanAccountsSubscription([ARB_ACCOUNT]);
+    expectTrackPage(2, "looking for accounts", { flow: "Add account" });
     expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expect(track).toHaveBeenNthCalledWith(1, "button_clicked", {
       button: "Confirm",
       flow: "Add account",
@@ -198,54 +186,38 @@ describe("ModularDrawerAddAccountFlowManager", () => {
       currency: "Arbitrum",
     });
 
-    mockScanAccountsSubscription([ARB_ACCOUNT]);
-    expect(trackPage).toHaveBeenNthCalledWith(
-      3,
-      "add account success",
-      undefined,
-      { source: "MADSource" },
-      true,
-      true,
-    );
+    expectTrackPage(3, "add account success");
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
   it("should create an account", async () => {
-    render(
-      <Provider store={createStore({ state: undefined })}>
-        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup();
 
-    mockScanAccountsSubscription([NEW_ARB_ACCOUNT]);
+    await mockScanAccountsSubscription([NEW_ARB_ACCOUNT]);
 
     expect(screen.getByText(/new account/i)).toBeInTheDocument();
     expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
 
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
   it("should navigate to fund an account for on-ramp currency", async () => {
-    render(
-      <Provider store={createStore({ state: undefined })}>
-        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup();
 
-    mockScanAccountsSubscription([NEW_ARB_ACCOUNT]);
+    await mockScanAccountsSubscription([NEW_ARB_ACCOUNT]);
 
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
 
     const buy = screen.getByText(/buy crypto securely with cash/i);
-    fireEvent.click(buy);
+    await userEvent.click(buy);
     expect(push).toHaveBeenCalledWith(
       expect.objectContaining({ state: expect.objectContaining({ mode: "buy" }) }),
     );
 
     const receive = screen.getByText(/receive crypto from another wallet/i);
-    fireEvent.click(receive);
+    await userEvent.click(receive);
     expect(openModal).toHaveBeenCalledWith("MODAL_RECEIVE", expect.objectContaining({}));
     expect(track).toHaveBeenNthCalledWith(3, "button_clicked", {
       button: "Fund my account",
@@ -255,29 +227,21 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   });
 
   it("should navigate to fund an account for non-on-ramp currency", async () => {
-    render(
-      <Provider store={createStore({ state: undefined })}>
-        <ModularDrawerAddAccountFlowManager currency={bitcoinCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup(bitcoinCurrency);
 
-    mockScanAccountsSubscription([BTC_ACCOUNT]);
+    await mockScanAccountsSubscription([BTC_ACCOUNT]);
 
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
-    fireEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
 
     expect(screen.getByText(/receive crypto from another wallet/i)).toBeInTheDocument();
     expect(screen.queryByText(/buy crypto securely with cash/i)).not.toBeInTheDocument();
   });
 
   it("should hide previously added accounts and show new account", async () => {
-    render(
-      <Provider store={createStore({ state: { accounts: [ARB_ACCOUNT] } as State })}>
-        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT] } as State);
 
-    mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
 
     expect(screen.getByText(/new account/i)).toBeInTheDocument();
     expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
@@ -285,56 +249,32 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     const confirm = screen.getByRole("button", { name: "Confirm" });
     expect(confirm).toBeDisabled();
 
-    fireEvent.click(screen.getByRole("checkbox"));
+    await userEvent.click(screen.getByRole("checkbox"));
     expect(confirm).not.toBeDisabled();
 
-    fireEvent.click(confirm);
+    await userEvent.click(confirm);
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
   it("should error on already imported empty account", async () => {
-    render(
-      <Provider
-        store={createStore({ state: { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State })}
-      >
-        <ModularDrawerAddAccountFlowManager currency={arbitrumCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
 
-    mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
 
     expect(
       screen.getByText(
         "A new account cannot be added before you receive assets on your Arbitrum 2 account",
       ),
     ).toBeInTheDocument();
-    expect(trackPage).toHaveBeenNthCalledWith(
-      3,
-      "cant add new account",
-      undefined,
-      { reason: "ALREADY_EMPTY_ACCOUNT", source: "MADSource" },
-      true,
-      true,
-    );
+    expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
   });
 
   it("should error on a Hedera account with no associated accounts", async () => {
-    render(
-      <Provider store={createStore({ state: undefined })}>
-        <ModularDrawerAddAccountFlowManager currency={hederaCurrency} source="MADSource" />
-      </Provider>,
-    );
+    setup(hederaCurrency);
 
-    mockScanAccountsSubscription([]);
+    await mockScanAccountsSubscription([]);
 
     expect(screen.getByText("We couldn't add a new Hedera account")).toBeInTheDocument();
-    expect(trackPage).toHaveBeenNthCalledWith(
-      3,
-      "cant add new account",
-      undefined,
-      { reason: "NO_ASSOCIATED_ACCOUNTS", source: "MADSource" },
-      true,
-      true,
-    );
+    expectTrackPage(3, "cant add new account", { reason: "NO_ASSOCIATED_ACCOUNTS" });
   });
 });
