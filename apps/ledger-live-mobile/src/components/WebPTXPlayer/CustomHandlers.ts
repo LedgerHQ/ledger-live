@@ -16,6 +16,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -100,6 +101,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                       screen: ScreenName.CustomErrorScreen,
                       params: {
                         error: result.error,
+                        displayError: result.error instanceof AddressesSanctionedError,
                       },
                     });
                   }
@@ -117,6 +119,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               screen: ScreenName.CustomErrorScreen,
               params: {
                 error,
+                displayError: error instanceof AddressesSanctionedError,
               },
             });
           },

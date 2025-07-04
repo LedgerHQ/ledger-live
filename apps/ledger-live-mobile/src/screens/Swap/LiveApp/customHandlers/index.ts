@@ -21,6 +21,7 @@ import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { Dispatch } from "redux";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -107,6 +108,7 @@ export function useSwapCustomHandlers(
                       screen: ScreenName.CustomErrorScreen,
                       params: {
                         error: result.error,
+                        displayError: result.error instanceof AddressesSanctionedError,
                       },
                     });
                   }
@@ -140,6 +142,7 @@ export function useSwapCustomHandlers(
               screen: ScreenName.CustomErrorScreen,
               params: {
                 error,
+                displayError: error instanceof AddressesSanctionedError,
               },
             });
           },
