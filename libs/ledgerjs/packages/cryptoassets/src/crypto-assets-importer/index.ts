@@ -7,6 +7,7 @@ import { importESDTTokens } from "./importers/esdt";
 import { importEVMTokens } from "./importers/evm";
 import { importFilecoinERC20Tokens } from "./importers/filecoin";
 import { importSPLTokens } from "./importers/spl";
+import { importSuiTokens } from "./importers/sui";
 import { importStellarTokens } from "./importers/stellar";
 import { importTonJettonTokens } from "./importers/ton";
 import { importTRC10Tokens } from "./importers/trc10";
@@ -31,6 +32,7 @@ const importTokens = async () => {
     importCardanoNativeTokens(outputFolder),
     importESDTTokens(outputFolder),
     importSPLTokens(outputFolder),
+    importSuiTokens(outputFolder),
     importStellarTokens(outputFolder),
     importTRC10Tokens(outputFolder),
     importTRC20Tokens(outputFolder),

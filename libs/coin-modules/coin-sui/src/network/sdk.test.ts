@@ -1,19 +1,91 @@
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiClient } from "@mysten/sui/client";
 import {
+  getAccountBalances,
   getOperationType,
   getOperationSenders,
   getOperationRecipients,
   getOperationAmount,
   getOperationFee,
   getOperationDate,
+  getOperationCoinType,
   transactionToOperation,
   loadOperations,
   queryTransactions,
   TRANSACTIONS_LIMIT_PER_QUERY,
   TRANSACTIONS_LIMIT,
+  getOperations,
+  paymentInfo,
+  createTransaction,
+  getCoinObjectId,
+  executeTransactionBlock,
+  DEFAULT_COIN_TYPE,
 } from "./sdk";
+import coinConfig from "../config";
 
 import { BigNumber } from "bignumber.js";
+
+// Mock SUI client for tests
+jest.mock("@mysten/sui/client", () => {
+  return {
+    ...jest.requireActual("@mysten/sui/client"),
+    SuiClient: jest.fn().mockImplementation(() => ({
+      getAllBalances: jest.fn().mockResolvedValue([
+        { coinType: "0x2::sui::SUI", totalBalance: "1000000000" },
+        { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
+      ]),
+      queryTransactionBlocks: jest.fn().mockResolvedValue({
+        data: [],
+        hasNextPage: false,
+      }),
+      dryRunTransactionBlock: jest.fn().mockResolvedValue({
+        effects: {
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        input: {
+          gasData: {
+            budget: "4000000",
+          },
+        },
+      }),
+      getCoins: jest.fn().mockResolvedValue({
+        data: [{ coinObjectId: "0xtest_coin_object_id" }],
+      }),
+      executeTransactionBlock: jest.fn().mockResolvedValue({
+        digest: "transaction_digest_123",
+        effects: {
+          status: { status: "success" },
+        },
+      }),
+      getReferenceGasPrice: jest.fn().mockResolvedValue("1000"),
+    })),
+    getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
+  };
+});
+
+// Mock the Transaction class
+jest.mock("@mysten/sui/transactions", () => {
+  const mockTxb = {
+    // This will be the built transaction block
+    transactionBlock: new Uint8Array(),
+  };
+
+  return {
+    ...jest.requireActual("@mysten/sui/transactions"),
+    Transaction: jest.fn().mockImplementation(() => {
+      return {
+        gas: "0xmock_gas_object_id",
+        setSender: jest.fn(),
+        splitCoins: jest.fn().mockReturnValue(["0xmock_coin"]),
+        transferObjects: jest.fn(),
+        build: jest.fn().mockResolvedValue(mockTxb),
+      };
+    }),
+  };
+});
 
 const mockTransaction = {
   digest: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
@@ -103,31 +175,65 @@ const mockTransaction = {
       coinType: "0x2::sui::SUI",
       amount: "9998990120",
     },
+    {
+      owner: { AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0" },
+      coinType: "0x123::test::TOKEN",
+      amount: "500000",
+    },
   ],
   timestampMs: "1742294454878",
   checkpoint: "313024",
 };
 
-jest.mock("@mysten/sui/client", () => {
-  return {
-    SuiClient: jest.fn().mockImplementation(() => ({
-      queryTransactionBlocks: jest.fn(),
-    })),
-  };
-});
-
 const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
+
+beforeAll(() => {
+  coinConfig.setCoinConfig(() => ({
+    status: {
+      type: "active",
+    },
+    node: {
+      url: "https://mockapi.sui.io",
+    },
+  }));
+});
 
 beforeEach(() => {
   mockApi.queryTransactionBlocks.mockReset();
 });
 
 describe("SDK Functions", () => {
+  test("getAccountBalances should return array of account balances", async () => {
+    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const balances = await getAccountBalances(address);
+
+    expect(Array.isArray(balances)).toBe(true);
+    expect(balances.length).toBeGreaterThan(0);
+
+    // Check structure of the first balance
+    const firstBalance = balances[0];
+    expect(firstBalance).toHaveProperty("coinType");
+    expect(firstBalance).toHaveProperty("blockHeight");
+    expect(firstBalance).toHaveProperty("balance");
+    expect(firstBalance.balance).toBeInstanceOf(BigNumber);
+
+    // Should include SUI and token balances
+    const coinTypes = balances.map(b => b.coinType);
+    expect(coinTypes).toContain(DEFAULT_COIN_TYPE);
+  });
+
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     expect(
       getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
     ).toBe("IN");
+  });
+
+  test("getOperationType should return OUT for outgoing tx", () => {
+    const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+    expect(
+      getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
+    ).toBe("OUT");
   });
 
   test("getOperationSenders should return sender address", () => {
@@ -142,11 +248,26 @@ describe("SDK Functions", () => {
     ).toEqual(["0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0"]);
   });
 
-  test("getOperationAmount should calculate amount correctly", () => {
-    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    expect(getOperationAmount(address, mockTransaction as SuiTransactionBlockResponse)).toEqual(
-      new BigNumber(0),
-    );
+  test("getOperationAmount should calculate amount correctly for SUI", () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    expect(
+      getOperationAmount(
+        address,
+        mockTransaction as SuiTransactionBlockResponse,
+        DEFAULT_COIN_TYPE,
+      ),
+    ).toEqual(new BigNumber("9998990120"));
+  });
+
+  test("getOperationAmount should calculate amount correctly for tokens", () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    expect(
+      getOperationAmount(
+        address,
+        mockTransaction as SuiTransactionBlockResponse,
+        "0x123::test::TOKEN",
+      ),
+    ).toEqual(new BigNumber("500000"));
   });
 
   test("getOperationFee should calculate fee correctly", () => {
@@ -161,16 +282,211 @@ describe("SDK Functions", () => {
     );
   });
 
+  test("getOperationCoinType should extract token coin type", () => {
+    // For a token transaction
+    const tokenTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: "0x123::test::TOKEN",
+          amount: "500000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: DEFAULT_COIN_TYPE,
+          amount: "-1009880",
+        },
+      ],
+    };
+
+    expect(getOperationCoinType(tokenTx as SuiTransactionBlockResponse)).toBe("0x123::test::TOKEN");
+
+    // For a SUI-only transaction
+    const suiTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: DEFAULT_COIN_TYPE,
+          amount: "9998990120",
+        },
+      ],
+    };
+
+    expect(getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe(DEFAULT_COIN_TYPE);
+  });
+
   test("transactionToOperation should map transaction to operation", () => {
     const accountId = "mockAccountId";
-    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+
+    // Create a SUI-only transaction for this test to avoid token detection
+    const suiTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+          },
+          coinType: DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: DEFAULT_COIN_TYPE,
+          amount: "9998990120",
+        },
+      ],
+    };
+
+    // Instead of mocking, just directly verify the amount
     const operation = transactionToOperation(
       accountId,
       address,
-      mockTransaction as SuiTransactionBlockResponse,
+      suiTx as SuiTransactionBlockResponse,
     );
     expect(operation).toHaveProperty("id");
     expect(operation).toHaveProperty("accountId", accountId);
+    expect(operation).toHaveProperty("extra");
+    expect((operation.extra as { coinType: string }).coinType).toBe(DEFAULT_COIN_TYPE);
+
+    // Directly calculate expected amount for SUI coin type
+    const expectedAmount = getOperationAmount(
+      address,
+      suiTx as SuiTransactionBlockResponse,
+      DEFAULT_COIN_TYPE,
+    );
+    expect(expectedAmount.toString()).toBe("9998990120");
+  });
+
+  test("transactionToOperation should map token transaction to operation", () => {
+    const accountId = "mockAccountId";
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+
+    // Create a token transaction
+    const tokenTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+          },
+          coinType: "0x123::test::TOKEN",
+          amount: "-500000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: "0x123::test::TOKEN",
+          amount: "500000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: DEFAULT_COIN_TYPE,
+          amount: "-1000000",
+        },
+      ],
+    };
+
+    const operation = transactionToOperation(
+      accountId,
+      address,
+      tokenTx as SuiTransactionBlockResponse,
+    );
+    expect(operation).toHaveProperty("id");
+    expect(operation).toHaveProperty("accountId", accountId);
+    expect(operation).toHaveProperty("extra");
+    expect((operation.extra as { coinType: string }).coinType).toBe("0x123::test::TOKEN");
+    expect(operation.value).toEqual(new BigNumber("500000"));
+  });
+
+  test("getOperations should fetch operations", async () => {
+    const accountId = "mockAccountId";
+    const addr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const operations = await getOperations(accountId, addr);
+    expect(Array.isArray(operations)).toBe(true);
+  });
+
+  test("paymentInfo should return gas budget and fees", async () => {
+    const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const fakeTransaction = {
+      mode: "send" as const,
+      coinType: DEFAULT_COIN_TYPE,
+      family: "sui" as const,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+      errors: {},
+    };
+    const info = await paymentInfo(sender, fakeTransaction);
+    expect(info).toHaveProperty("gasBudget");
+    expect(info).toHaveProperty("totalGasUsed");
+    expect(info).toHaveProperty("fees");
+  });
+
+  test("getCoinObjectId should return object ID for token transactions", async () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "token.send" as const,
+      coinType: "0x123::test::TOKEN",
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const coinObjectId = await getCoinObjectId(address, transaction);
+    expect(coinObjectId).toBe("0xtest_coin_object_id");
+  });
+
+  test("getCoinObjectId should return null for SUI transactions", async () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: DEFAULT_COIN_TYPE,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const coinObjectId = await getCoinObjectId(address, transaction);
+    expect(coinObjectId).toBeNull();
+  });
+
+  test("createTransaction should build a transaction", async () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+    const transaction = {
+      mode: "send" as const,
+      coinType: DEFAULT_COIN_TYPE,
+      amount: new BigNumber(100),
+      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+    };
+
+    const tx = await createTransaction(address, transaction);
+    expect(tx).toBeDefined();
+  });
+
+  test("executeTransactionBlock should execute a transaction", async () => {
+    const result = await executeTransactionBlock({
+      transactionBlock: new Uint8Array(),
+      signature: "mockSignature",
+      options: { showEffects: true },
+    });
+
+    expect(result).toHaveProperty("digest", "transaction_digest_123");
+    expect(result?.effects).toBeDefined();
+    if (result?.effects) {
+      expect(result.effects).toHaveProperty("status");
+      expect(result.effects.status).toHaveProperty("status", "success");
+    }
   });
 });
 

@@ -1260,7 +1260,7 @@
         "titleCompleted" : "Geheime Wiederherstellungsphrase bestätigt",
         "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
         "restoreSeed" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
-        "restoreCharonTitle" : "Wiederherstellen mit Ledger Charon",
+        "restoreCharonTitle" : "Wiederherstellen mit Recovery Key",
         "restoreCharonDescription" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
         "restoreCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
         "selection" : "Wähle die zu deinen Anforderungen passende Einrichtungsoption aus:",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
         "selectionRestoreTitle" : "Zugriff auf Assets wiederherstellen",
         "selectionRestoreDescription" : "Mit deinem Backup – geheime Wiederherstellungsphrase oder Ledger Recover – kannst du eine Wiederherstellung durchführen.",
-        "selectionRestoreDescriptionWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Charon – kannst du eine Wiederherstellung durchführen.",
+        "selectionRestoreDescriptionWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Recovery Key – kannst du eine Wiederherstellung durchführen.",
         "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
         "selectionNewSeedTitle" : "Geheime Wiederherstellungsphrase",
         "selectionNewSeedSubtitle" : "Bewahre sie sicher auf:",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
         "restoreChoiceSRPTitle" : "Geheime Wiederherstellungsphrase",
         "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Mit deinem Recovery Key kannst du den Zugriff auf deine Assets wiederherstellen.",
         "restoreChoiceRecoverTitle" : "Ledger Recover-Abonnement",
         "restoreChoiceRecoverDescription" : "Dank deines Abonnements kannst du mit deiner Identität wieder auf deine Assets zugreifen.",
         "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
         "backupCharonCta" : "Mehr erfahren oder kaufen",
         "backupCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
       },
@@ -7085,19 +7085,25 @@
       },
       "newAccount" : "Neues Konto"
     },
+    "fundAccount" : {
+      "receive" : "Empfangen",
+      "receiveDescription" : "Empfange Krypto von einer anderen Wallet",
+      "buy" : "Kaufen",
+      "buyDescription" : "Kaufe Krypto sicher mit Bargeld"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "Scannen stoppen"
       },
       "warning" : {
-        "title" : "We couldn't add a new {{currency}} account",
-        "description" : "A new account cannot be added before you receive assets on your {{account}} account",
-        "cta" : "Add funds to my account",
-        "close" : "Close",
+        "title" : "Wir können kein neues {{currency}}-Konto hinzufügen",
+        "description" : "Ein neues Konto kann erst hinzugefügt werden, nachdem du Guthaben auf deinem {{account}}-Konto erhalten hast",
+        "cta" : "Mein Konto mit Guthaben aufladen",
+        "close" : "Schließen",
         "noAssociatedAccounts" : {
-          "description" : "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Live once it's created.",
-          "cta" : "How to create a {{currency}} account?",
-          "close" : "Close"
+          "description" : "Im {{currency}}-Ökosystem können nur ausgewählte Services neue Konten erstellen. Ledger bietet diesen Onboarding-Service derzeit zwar nicht an, aber es gibt Alternativen. Du kannst dein {{currency}}-Konto in Ledger Live hinzufügen, nachdem es erstellt wurde.",
+          "cta" : "Wie erstellt man ein {{currency}}-Konto?",
+          "close" : "Schließen"
         }
       },
       "status" : {
@@ -7123,6 +7129,7 @@
       "title_other" : "{{count}} Konten wurden deinem Portfolio hinzugefügt",
       "cta" : {
         "addFunds" : "Mein Konto mit Guthaben aufladen",
+        "selectAccount" : "Weiter",
         "close" : "Schließen"
       }
     }
@@ -7138,5 +7145,14 @@
     "title" : "Nicht am Ort verfügbar",
     "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live-Update erforderlich",
+    "errorTitle" : "Update fehlgeschlagen",
+    "errorDescription" : "Das Update ist fehlgeschlagen. Bitte klicke auf den nachstehenden Link, um die neueste Ledger Live-Version herunterzuladen. ",
+    "description" : "Diese Ledger Live-Version ist nicht mit dem neuesten Betriebssystem deines Geräts kompatibel. Führe jetzt ein Update durch, um von verbesserter Konnektivität zu profitieren.",
+    "restart" : "Neustarten",
+    "downloadOnLedger" : "Von Ledger.com herunterladen",
+    "downloadProgress" : "Download in Bearbeitung … {{ progress }} %"
   }
 }

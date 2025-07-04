@@ -3,7 +3,7 @@ import Fuse from "fuse.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;

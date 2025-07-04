@@ -60,6 +60,8 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -80,7 +82,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
     const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
@@ -97,6 +99,12 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+
+    // Apply versioned redirects logic to the stakePrograms feature flag
+    const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
 
     const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length

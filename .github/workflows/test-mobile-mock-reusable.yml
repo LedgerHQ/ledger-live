@@ -17,6 +17,11 @@ on:
         description: Ref to checkout
         required: false
         type: string
+      skip-bundle-size-reporting:
+        description: Whether to skip the bundle size reporting
+        required: false
+        type: boolean
+        default: false
 
   workflow_dispatch:
     inputs:
@@ -169,36 +174,6 @@ jobs:
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
     secrets: inherit
-
-  report-bundle-sizes:
-      name: "Build Mobile > Report Bundle Sizes"
-      runs-on: ledger-live-medium
-      needs: [build-ios, build-android]
-      steps:
-        - name: generate token
-          id: generate-token
-          uses: tibdex/github-app-token@v1
-          with:
-            app_id: ${{ secrets.GH_BOT_APP_ID }}
-            private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-        - name: Create mobile metafile
-          run: |
-            echo "{
-                \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
-                \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
-            }" > mobile.metafile.json
-        - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
-          with:
-            token: ${{ steps.generate-token.outputs.token }}
-            baseBranch: ${{ inputs.base_ref || 'develop' }}
-            prNumber: ${{ github.event.number}}
-            mode: mobile
-        - name: Upload mobile metafile
-          uses: actions/upload-artifact@v4
-          with:
-            name: mobile.metafile.json
-            path: mobile.metafile.json
-            overwrite: true
 
   detox-tests-ios:
     name: "iOS Build / iOS Detox"
@@ -572,3 +547,34 @@ jobs:
         with:
           allure-results-path: android-test-artifacts
           platform: android
+
+  report-bundle-sizes:
+    name: "Build Mobile > Report Bundle Sizes"
+    runs-on: ledger-live-medium
+    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
+    needs: [ build-ios, build-android ]
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Create mobile metafile
+        run: |
+          echo "{
+              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
+              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
+          }" > mobile.metafile.json
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ github.event.number}}
+          mode: mobile
+      - name: Upload mobile metafile
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile.metafile.json
+          path: mobile.metafile.json
+          overwrite: true

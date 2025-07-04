@@ -16,5 +16,7 @@ export interface ActionButtonsProps {
 export interface AccountsWarningProps {
   warningReason: WarningReason;
   currency: CryptoCurrency;
+  navigateToFundAccount: (account: Account) => void;
   emptyAccount?: Account;
+  source: string;
 }

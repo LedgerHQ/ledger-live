@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { ModularDrawerEventName, ModularDrawerEventParams } from "./types";
+import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 

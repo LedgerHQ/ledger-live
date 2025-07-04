@@ -8,7 +8,7 @@ import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.sv
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,

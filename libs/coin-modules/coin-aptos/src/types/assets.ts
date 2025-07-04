@@ -9,11 +9,6 @@ export type AptosTokenInformation = {
 
 export type AptosExtra = Record<string, unknown>;
 
-export type AptosSender = {
-  xpub: string;
-  freshAddress: string;
-};
-
 export type AptosFeeParameters = {
   gasLimit: bigint;
   gasPrice: bigint;

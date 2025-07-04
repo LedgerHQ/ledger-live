@@ -11,6 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { CloseButton } from "../components/CloseButton";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { Account } from "@ledgerhq/types-live";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -61,14 +62,28 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
   }, [modularDrawerLocation, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
-    (currency: CryptoOrTokenCurrency, autoCloseDrawer: boolean = true) => {
+    (
+      currency: CryptoOrTokenCurrency,
+      autoCloseDrawer: boolean = true,
+      onAccountSelected?: (account: Account) => void,
+    ) => {
+      const onClose = () => {
+        setDrawer();
+        trackModularDrawerEvent("button_clicked", {
+          button: "Close",
+          flow: "add account",
+          page: currentRouteNameRef.current ?? "Unknown",
+        });
+      };
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
+            source,
+            onAccountSelected,
           },
-          { closeButtonComponent: CloseButton },
+          { closeButtonComponent: CloseButton, onRequestClose: onClose },
         );
       } else {
         const cryptoCurrency =
@@ -77,7 +92,7 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
         dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
       }
     },
-    [dispatch, featureNetworkBasedAddAccount?.enabled],
+    [dispatch, featureNetworkBasedAddAccount?.enabled, source, trackModularDrawerEvent],
   );
 
   const openAssetFlow = useCallback(

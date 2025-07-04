@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "กู้คืนการเข้าถึงสินทรัพย์ของคุณ",
         "desc" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase หรือ Ledger Recover",
-        "descWithCharon" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, Ledger Recover หรือ Ledger Charon"
+        "descWithCharon" : "สิ่งเหล่านี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, บริการ Ledger Recover หรือ Ledger Recovery Key"
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย",
+        "title" : "Ledger Recovery Key",
+        "desc" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว — เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
         "cta" : "ดูข้อมูลหรือซื้อเลย",
         "continueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
@@ -2357,8 +2357,8 @@
           "description" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด"
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย"
+          "title" : "Ledger Recovery Key",
+          "description" : "ใช้ Ledger Recovery Key เพื่อกู้คืนการเข้าถึงสินทรัพย์ของคุณ"
         },
         "ledgerRecover" : {
           "title" : "บริการ Ledger Recover",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "เลือกตัวเลือกที่แสดงบน {{productName}} ของคุณ"
       },
       "restoreLedgerCharon" : {
-        "title" : "กู้คืนโดยใช้ Ledger Charon",
+        "title" : "กู้คืนโดยใช้ Recovery Key",
         "description" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
         "continueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
