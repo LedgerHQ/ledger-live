@@ -1,8 +1,12 @@
 import { Left, Right } from "purify-ts";
-import { assign, setup, fromPromise } from "xstate";
+import { assign, setup, fromPromise, and, not } from "xstate";
+import { gte } from "semver";
 
 import type {
+  ApplicationDependency,
+  DeviceModelId,
   InternalApi,
+  GetDeviceStatusDAOutput,
   GetDeviceMetadataDAOutput,
   StateMachineTypes,
   DeviceActionStateMachine,
@@ -10,6 +14,7 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import {
   UserInteractionRequired,
+  GetDeviceStatusDeviceAction,
   GetDeviceMetadataDeviceAction,
   InstallOrUpdateAppsDeviceAction,
   OpenAppWithDependenciesDeviceAction,
@@ -26,9 +31,11 @@ import type {
 
 type ConnectAppMachineInternalState = {
   readonly error: ConnectAppDAError | null;
-  readonly deviceMetadata: GetDeviceMetadataDAOutput | null;
-  readonly installResult: InstallOrUpdateAppsDAOutput | null;
-  readonly derivation: ConnectAppDerivation | null;
+  readonly deviceStatus: GetDeviceStatusDAOutput | undefined;
+  readonly deviceModel: DeviceModelId | undefined;
+  readonly deviceMetadata: GetDeviceMetadataDAOutput | undefined;
+  readonly installResult: InstallOrUpdateAppsDAOutput | undefined;
+  readonly derivation: ConnectAppDerivation | undefined;
 };
 
 export class ConnectAppDeviceAction extends XStateDeviceAction<
@@ -56,6 +63,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     >;
 
     const unlockTimeout = this.input.unlockTimeout ?? 0;
+
+    const getStatusMachine = new GetDeviceStatusDeviceAction({
+      input: {
+        unlockTimeout,
+      },
+    }).makeStateMachine(internalApi);
 
     const getMetadataMachine = new GetDeviceMetadataDeviceAction({
       input: {
@@ -91,6 +104,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         output: {} as types["output"],
       },
       actors: {
+        getStatus: getStatusMachine,
         getMetadata: getMetadataMachine,
         openApp: openAppMachine,
         installApps: installAppsMachine,
@@ -104,6 +118,14 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
       },
       guards: {
         fromDashboard: ({ context }) => context.input.application.name === "BOLOS",
+        shouldCheckDependencies: ({ context }) =>
+          context.input.dependencies.length > 0 || !!context.input.requireLatestFirmware,
+        isAppOpened: ({
+          context: {
+            input: { application },
+            _internalState: { deviceStatus, deviceModel },
+          },
+        }) => ConnectAppDeviceAction.isAppOpened(application, deviceStatus!, deviceModel!),
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
         hasError: ({ context }) => context._internalState.error !== null,
       },
@@ -134,15 +156,80 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
           _internalState: {
             error: null,
-            deviceMetadata: null,
-            installResult: null,
-            derivation: null,
+            deviceStatus: undefined,
+            deviceModel: undefined,
+            deviceMetadata: undefined,
+            installResult: undefined,
+            derivation: undefined,
           },
         };
       },
       states: {
         DeviceReady: {
           always: [
+            {
+              guard: not("shouldCheckDependencies"),
+              target: "GetDeviceStatus",
+            },
+            {
+              target: "GetDeviceMetadata",
+            },
+          ],
+        },
+        GetDeviceStatus: {
+          invoke: {
+            src: "getStatus",
+            input: _ => ({
+              unlockTimeout: _.context.input.unlockTimeout,
+            }),
+            onSnapshot: {
+              actions: assign({
+                intermediateValue: _ => ({
+                  ..._.context.intermediateValue,
+                  requiredUserInteraction:
+                    _.event.snapshot.context.intermediateValue.requiredUserInteraction,
+                }),
+              }),
+            },
+            onDone: {
+              target: "GetDeviceStatusCheck",
+              actions: assign({
+                _internalState: _ => {
+                  const state = internalApi.getDeviceSessionState();
+                  return _.event.output.caseOf<ConnectAppMachineInternalState>({
+                    Right: data => ({
+                      ..._.context._internalState,
+                      deviceStatus: data,
+                      deviceModel: state.deviceModelId,
+                    }),
+                    Left: error => ({
+                      ..._.context._internalState,
+                      error,
+                    }),
+                  });
+                },
+              }),
+            },
+            onError: {
+              target: "Error",
+              actions: "assignErrorFromEvent",
+            },
+          },
+        },
+        GetDeviceStatusCheck: {
+          always: [
+            {
+              guard: "hasError",
+              target: "Error",
+            },
+            {
+              guard: and(["isAppOpened", "requiresDerivation"]),
+              target: "GetDerivation",
+            },
+            {
+              guard: "isAppOpened",
+              target: "Success",
+            },
             {
               target: "GetDeviceMetadata",
             },
@@ -360,11 +447,28 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           return Left(error);
         }
         return Right({
-          deviceMetadata: deviceMetadata!,
-          installResult: installResult!,
-          derivation: derivation === null ? undefined : derivation,
+          deviceMetadata: deviceMetadata,
+          installResult: installResult,
+          derivation: derivation,
         });
       },
     });
+  }
+
+  static isAppOpened(
+    application: ApplicationDependency,
+    deviceStatus: GetDeviceStatusDAOutput,
+    deviceModel: DeviceModelId,
+  ) {
+    return (
+      deviceStatus.currentApp === application.name &&
+      (!application.constraints ||
+        application.constraints.every(c =>
+          (!c.applicableModels || c.applicableModels.includes(deviceModel)) &&
+          (!c.exemptModels || !c.exemptModels.includes(deviceModel))
+            ? gte(deviceStatus.currentAppVersion, c.minVersion)
+            : true,
+        ))
+    );
   }
 }
