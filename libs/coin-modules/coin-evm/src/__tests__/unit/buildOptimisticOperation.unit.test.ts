@@ -6,7 +6,7 @@ import {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
-import buildOptimisticOperation from "../../buildOptimisticOperation";
+import buildOptimisticOperation from "../../bridge/buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import {

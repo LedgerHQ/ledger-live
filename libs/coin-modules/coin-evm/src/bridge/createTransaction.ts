@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import { Transaction as EvmTransaction } from "./types";
-import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "./utils";
+import { Transaction as EvmTransaction } from "../types";
+import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "../utils";
 
 const getChainId = (account: AccountLike): number => {
   if (account.type === "Account") {

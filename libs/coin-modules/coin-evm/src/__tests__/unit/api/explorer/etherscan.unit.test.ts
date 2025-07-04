@@ -4,7 +4,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
-import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
+import * as ETHERSCAN_API from "../../../../network/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
@@ -59,7 +59,7 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("api/explorer/etherscan.ts", () => {
+  describe("network/explorer/etherscan.ts", () => {
     afterAll(() => {
       jest.restoreAllMocks();
     });
