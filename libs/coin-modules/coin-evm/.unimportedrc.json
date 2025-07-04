@@ -13,7 +13,8 @@
     "src/bridge/js.ts",
     "src/editTransaction/index.ts",
     "src/operation.ts",
-    "src/config.ts"
+    "src/config.ts",
+    "src/api/index.ts"
   ],
   "ignoreUnimported": [
     "src/__tests__/*",
