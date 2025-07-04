@@ -56,9 +56,17 @@ for (const token of subAccounts) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        await app.addAccount.expectModalVisiblity();
 
-        await app.addAccount.selectToken(token.account);
+        const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularAssetDrawer.validateDrawerItems();
+          await app.modularAssetDrawer.selectAssetByTicker(token.account.currency);
+          await app.modularNetworkDrawer.selectNetwork(token.account.currency);
+          await app.addAccount.expectAccountModalToBeVisible();
+        } else {
+          await app.addAccount.expectModalVisibility();
+          await app.addAccount.selectToken(token.account);
+        }
         await app.addAccount.addAccounts();
 
         await app.addAccount.done();
