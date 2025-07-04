@@ -9,6 +9,7 @@ import {
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -26,7 +27,15 @@ async function beforeAllFunction(options: ApplicationOptions) {
       ptxSwapLiveAppMobile: {
         enabled: true,
         params: {
-          manifest_id: "swap-live-app-demo-3-stg",
+          manifest_id:
+            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+        },
+      },
+      llmAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+          entryPoints: [],
         },
       },
     },

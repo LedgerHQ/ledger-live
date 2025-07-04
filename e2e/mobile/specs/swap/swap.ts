@@ -2,6 +2,7 @@ import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -13,7 +14,15 @@ const beforeAllFunction = async (swap: SwapType) => {
       ptxSwapLiveAppMobile: {
         enabled: true,
         params: {
-          manifest_id: "swap-live-app-demo-3-stg",
+          manifest_id:
+            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+        },
+      },
+      llmAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+          entryPoints: [],
         },
       },
     },
