@@ -96,7 +96,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+      expect(result).toEqual([{ value: BigInt(0), locked: BigInt(0), asset: { type: "native" } }]);
     });
   });
 

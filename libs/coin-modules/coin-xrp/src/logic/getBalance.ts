@@ -5,6 +5,17 @@ import { parseAPIValue } from "./common";
 
 export async function getBalance(address: string): Promise<Balance<XrpAsset>[]> {
   const accountInfo = await getAccountInfo(address);
+
+  if (accountInfo.isNewAccount) {
+    return [
+      {
+        value: 0n,
+        locked: 0n,
+        asset: { type: "native" },
+      },
+    ];
+  }
+
   const serverInfo = await getServerInfos();
 
   const reserveMinXRP = parseAPIValue(serverInfo.info.validated_ledger.reserve_base_xrp.toString());
