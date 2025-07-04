@@ -3,11 +3,12 @@ import { CeloTx } from "@celo/connect";
 import { celoKit } from "../network/sdk";
 import { BigNumber } from "bignumber.js";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
 
-  const value = transactionValue(account, transaction);
+  let value = transactionValue(account, transaction);
 
   let celoTransaction: CeloTx;
 
@@ -107,12 +108,18 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     };
   } else {
     // Send
+    const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
+    const isTokenTransaction = tokenAccount?.type === "TokenAccount";
+    if (isTokenTransaction) {
+      value = transaction.useAllAmount ? tokenAccount.balance : value;
+    }
 
     celoTransaction = {
       from: account.freshAddress,
-      to: transaction.recipient,
+      to: isTokenTransaction ? tokenAccount.token.contractAddress : transaction.recipient,
       value: value.toFixed(),
     };
+
     const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
 
     celoTransaction = {
@@ -120,6 +127,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       gas,
     };
   }
+
   const tx: CeloTx = {
     ...celoTransaction,
     chainId: await kit.connection.chainId(),
