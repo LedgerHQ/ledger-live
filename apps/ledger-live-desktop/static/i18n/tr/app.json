@@ -86,6 +86,7 @@
     "continue" : "Devam",
     "previous" : "Geri",
     "learnMore" : "Daha fazla bilgi",
+    "learnMoreWithEllipsis" : "Daha fazla bilgi edinin...",
     "help" : "Yardım",
     "needHelp" : "Yardım mı gerekli?",
     "areYouSure" : "Emin misiniz?",
@@ -106,6 +107,7 @@
     "reset" : "Sıfırla",
     "retry" : "Tekrar dene",
     "range" : "Dönem",
+    "start" : "Başla",
     "stop" : "Durdur",
     "updateNow" : "Şimdi güncelle",
     "close" : "Kapat",
@@ -122,9 +124,15 @@
     "featureFlags" : "Özellik bayrağı",
     "ldmkEnabled" : "LDMK taşıma",
     "information" : "Bilgi",
+    "increase" : "Artır",
+    "max" : "Maks.",
+    "min" : "Min.",
+    "set" : "Belirle",
+    "follow" : "Takip Et",
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
     "manage" : "Yönet",
+    "none" : "Yok",
     "tryAgain" : "Tekrar dene",
     "lockScreen" : {
       "title" : "Tekrar hoş geldiniz",
@@ -202,7 +210,9 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
-      "BURN" : "Yakıldı"
+      "BURN" : "Yakıldı",
+      "STAKE_NEURON" : "Stake edildi",
+      "TOP_UP_NEURON" : "Bakiye yüklendi"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -259,11 +269,11 @@
   },
   "time" : {
     "minute" : "Dakika",
-    "minute_plural" : "Dakika",
+    "minute_other" : "Dakika",
     "minute_short" : "dk.",
     "second_short" : "sn.",
     "hour" : "Saat",
-    "hour_plural" : "Saat",
+    "hour_other" : "Saat",
     "range" : {
       "day" : "1G",
       "week" : "1H",
@@ -575,7 +585,7 @@
       "date" : "Tarih",
       "from" : "Gönderici",
       "fromAddress" : "Kaynak adresi",
-      "fromAddress_plural" : "Kaynak adresleri",
+      "fromAddress_other" : "Kaynak adresleri",
       "to" : "Alıcı",
       "toProvider" : "Sağlayıcı adresi",
       "initialAmount" : "Başlangıç tutarı",
@@ -1242,11 +1252,11 @@
       }
     },
     "manual" : {
-      "title" : "{{deviceName}} cihazınızı kurun",
+      "title" : "{{deviceName}} cihazınızı hazırlayın",
       "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
-        "title" : "Bu {{deviceName}} cihazı orijinal",
-        "description" : "Bu {{productName}} cihazını kullanmak güvenlidir. Cihazın kurulumuna geçebilirsiniz.",
+        "title" : "{{deviceName}} orijinal",
+        "description" : "{{productName}} cihazınızı güvenle kullanabilirsiniz. Kuruluma başlayabilirsiniz.",
         "continueOnDevice" : "Kurulumu başlatmak için {{productName}} cihazınıza dokunun"
       },
       "pinContent" : {
@@ -1256,26 +1266,37 @@
         "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
-        "title" : "Gizli Kurtarma İfadesi",
+        "title" : "Kurulum ve yedekleme",
         "titleCompleted" : "Gizli Kurtarma İfadesi onaylandı",
         "recoverSeed" : "Yer tutucu: Recover",
-        "restoreSeed" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
+        "restoreSeed" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "restoreCharonTitle" : "Recovery Key ile geri yükleyin",
+        "restoreCharonDescription" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "restoreCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
         "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
-        "selectionNewLedger" : "<0>“Set up as a new Ledger”</0> (Yeni bir Ledger olarak kur) seçeneği, yeni bir cüzdan oluşturmanızı sağlar. Bu işlem yeni bir Gizli Kurtarma İfadesi oluşturur.",
-        "selectionRestore" : "<0>“Restore”</0> (Geri Yükle), Gizli Kurtarma İfadenizle veya Ledger Recover'ı kullanarak mevcut varlıklarınıza yeniden erişmenizi sağlar.",
+        "selectionNewLedgerTitle" : "Yeni bir Ledger cihazı olarak kurun",
+        "selectionNewLedgerDescription" : "Bu işlem yeni bir Gizli Kurtarma İfadesi oluşturur.",
+        "selectionRestoreTitle" : "Varlıklarınıza yeniden erişin",
+        "selectionRestoreDescription" : "Bu işlem, Gizli Kurtarma İfadesi veya Ledger Recover yedeklemenizi kullanarak hesaplarınızı geri yüklemenize olanak tanır.",
+        "selectionRestoreDescriptionWithCharon" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key.",
         "selectionContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin",
-        "newSeedDescription1" : "{{productName}} cihazınız, 24 kelimeden oluşan benzersiz bir liste olan Gizli Kurtarma İfadesini oluşturacaktır. Ledger'ınızın çalınması, kaybolması veya PIN Kodunuzu unutmanız durumunda varlıklarınızı geri almanın tek yolu Gizli Kurtarma İfadesidir.",
-        "newSeedDescription2" : "<0>Gizli Kurtarma İfadenizi güvende ve gizli tutun:</0>\nGizli Kurtarma İfadeniz tüm varlıklarınızı kontrol eder ve değiştirilemez. İfadenize sahip olan herkes varlıklarınızı kontrol edebilir ve çalabilir. İfadenizi kaybederseniz Ledger size yardımcı olamaz.",
-        "newSeedDescription3" : "Gizli Kurtarma İfadenizi soran kişilere ve yazılımlara karşı dikkatli olun. Bu bir dolandırıcılıktır. ",
-        "newSeedDescription4" : "Gizli Kurtarma İfadenizi girmeniz gereken tek yer Ledger cihazınızdır.",
-        "newSeedDescription5" : "İfadenizi hiç kimseyle paylaşmayın. Onu asla kaybetmeyin.",
-        "newSeedContinueOnDevice" : "{{productName}} cihazınızda oluşturulan Gizli Kurtarma İfadesini görüntüleyin ve not edin",
+        "selectionNewSeedTitle" : "Gizli Kurtarma İfadesi",
+        "selectionNewSeedSubtitle" : "Onu güvende ve gizli tutun",
+        "selectionNewSeedDescription" : "Gizli Kurtarma İfadeniz, varlıklarınızı kontrol eder ve değiştirilemez. Gizli Kurtarma İfadenize sahip olan herkes varlıklarınızı çalabilir. Gizli Kurtarma İfadenizi kaybederseniz Ledger onu geri almanızı sağlayamaz.",
+        "selectionNewSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
+        "restoreDescription" : "Geri yükleme işleminde kullanılacak yedeklemeyi seçin:",
         "restoreChoiceContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin",
-        "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
+        "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesi",
         "restoreChoiceSRPDescription" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın.",
-        "restoreChoiceRecoverTitle" : "Ledger Recover ile geri yükleyin",
-        "restoreChoiceRecoverDescription" : "Ledger Recover'a aboneyseniz Gizli Kurtarma İfadenizin yedeklemesini geri yüklemek üzere aboneliğinize giriş yapın.",
-        "followInstructions" : "{{productName}} cihazınızdaki yönergeleri izleyin."
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Varlıklarınıza yeniden erişebilmek için Recovery Key'inizi kullanın.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover aboneliği",
+        "restoreChoiceRecoverDescription" : "Varlıklarınıza kimliğinizle yeniden erişebilmek için aboneliğinizi kullanın.",
+        "followInstructions" : "{{productName}} cihazınızdaki yönergeleri izleyin.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
+        "backupCharonCta" : "Daha fazla bilgi edinin veya satın alın",
+        "backupCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
       },
       "backup" : {
         "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -1297,8 +1318,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Orijinallik denetimi ve\nişletim sistemi güncellemesi denetimi",
-          "completed" : "{{modelName}} cihazınız orijinal ve güncel"
+          "active" : "Ledger Orijinallik Denetimi",
+          "completed" : "Ledger Orijinallik Denetimi"
         },
         "exitWarningDrawer" : {
           "title" : "Orijinallik Denetimi ve İşletim Sistemi güncellemesi denetimi iptal edilsin mi?",
@@ -1321,12 +1342,12 @@
           }
         },
         "whyPerformChecksLink" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
-        "startChecksCTA" : "{{modelName}} cihazımı kontrol et",
+        "startChecksCTA" : "{{modelName}} cihazını denetle",
         "continueCTA" : "Kuruluma devam et",
         "genuineCheck" : {
           "title" : {
-            "active" : "Orijinallik Denetimi",
-            "completed" : "{{modelName}} cihazınız orijinal",
+            "active" : "Ledger Orijinallik Denetimi",
+            "completed" : "{{modelName}} orijinal",
             "cancelled" : "Orijinallik Denetimi reddedildi"
           },
           "subtitle" : {
@@ -1337,13 +1358,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "İşletim sistemi güncellemesi denetimi",
-            "completed" : "{{modelName}} işletim sisteminiz güncel.",
+            "active" : "Ledger OS Denetimi",
+            "completed" : "Ledger OS güncel",
             "updateAvailable" : "{{firmwareVersion}} için işletim sistemi güncellemesi mevcut"
           },
           "subtitle" : {
-            "active" : "Bu işlem, {{modelName}} İşletim Sisteminizin güncel olup olmadığını denetler.",
-            "completed" : "{{modelName}} cihazınızda uygulamayı geri yüklemeyi başlatmak için aşağıdaki \"Uygulamaları geri yükle\" düğmesini seçin.",
+            "active" : "Bu, {{modelName}} cihazınızın işletim sisteminin güncel olup olmadığını denetler.",
             "updateAvailable" : "Azami güvenlik ve en son özelliklere erişebilmek için güncelleyin."
           },
           "viewUpdateCTA" : "{{modelName}} işletim sistemini güncelleyin",
@@ -1783,14 +1803,14 @@
     "fullNodeReadyInfo" : "Hesaplar Bitcoin tam düğümünüz ile eklenecektir.",
     "fullNodeConfigure" : "Düğümü yapılandır",
     "tokensTip" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır. Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
-    "accountToImportSubtitle_plural" : "Mevcut hesapları ekle",
+    "accountToImportSubtitle_other" : "Mevcut hesapları ekle",
     "selectAll" : "Tümünü seç ({{count}})",
     "unselectAll" : "Tüm seçimleri kaldır ({{count}})",
     "noAccountToImport" : "Eklenecek mevcut {{currencyName}} hesabı bulunmuyor",
     "success" : "Hesap başarıyla eklendi",
-    "success_plural" : "Hesaplar başarıyla eklendi",
+    "success_other" : "Hesaplar başarıyla eklendi",
     "successDescription" : "Başka hesap ekleyin veya Portföye geri dönün",
-    "successDescription_plural" : "Başka hesap ekleyin veya Portföye geri dönün",
+    "successDescription_other" : "Başka hesap ekleyin veya Portföye geri dönün",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "<1><0>{{accountName}}</0></1> hesabınıza varlık gelmeden önce yeni bir hesap ekleyemezsiniz",
       "noAccountToCreate" : "Oluşturulabilecek bir <1><0>{{currencyName}}</0></1> hesabı bulunamadı",
@@ -1803,7 +1823,7 @@
     "cta" : {
       "addMore" : "Daha fazla ekle",
       "add" : "Hesap ekle",
-      "add_plural" : "Hesap ekle",
+      "add_other" : "Hesap ekle",
       "addAccountName" : "{{currencyName}} hesabı ekle",
       "receive" : "Al"
     },
@@ -1901,9 +1921,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "Güncellemeyi tamamlamak için PIN Kodunuzla {{productName}} cihazınızın kilidini açın.",
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalledTitle" : "Gerekli uygulama eksik",
-    "appNotInstalledTitle_plural" : "Gerekli uygulamalar eksik",
+    "appNotInstalledTitle_other" : "Gerekli uygulamalar eksik",
     "appNotInstalled" : "Bu eylemi tamamlamak için {{appName}} uygulaması gerekli. Lütfen My Ledger'a gidin ve uygulamayı cihazınıza yükleyin",
-    "appNotInstalled_plural" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen My Ledger'a gidin ve uygulamaları cihazınıza yükleyin",
+    "appNotInstalled_other" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen My Ledger'a gidin ve uygulamaları cihazınıza yükleyin",
     "openManager" : "My Ledger'ı Aç",
     "openOnboarding" : "Cihaz kurulumu",
     "outdated" : "Uygulama sürümü eski",
@@ -1990,14 +2010,14 @@
       },
       "installSuccess" : {
         "title" : "Uygulama başarıyla yüklendi. {{app}} hesaplarınızı artık ekleyebilirsiniz",
-        "title_plural" : "Uygulamalar başarıyla yüklendi. Hesaplarınızı artık ekleyebilirsiniz",
+        "title_other" : "Uygulamalar başarıyla yüklendi. Hesaplarınızı artık ekleyebilirsiniz",
         "manageAccount" : "Hesaplarımı yönet"
       },
       "updatable" : {
         "title" : "Güncelleme mevcut",
-        "title_plural" : "Güncellemeler mevcut",
+        "title_other" : "Güncellemeler mevcut",
         "progressTitle" : "{{number}} uygulama güncellemesi",
-        "progressTitle_plural" : "{{number}} uygulama güncellemesi",
+        "progressTitle_other" : "{{number}} uygulama güncellemesi",
         "progressWarning" : "Güncelleme sırasında My Ledger'dan çıkmayın.",
         "progress" : "Hepsi güncelleniyor..."
       },
@@ -4087,7 +4107,7 @@
     "duration" : "Süre",
     "durationJustStarted" : "Yeni başladı",
     "durationDays" : "{{count}} gün",
-    "durationDays_plural" : "{{count}} gün",
+    "durationDays_other" : "{{count}} gün",
     "howItWorks" : "Yetki devri nasıl çalışır?",
     "delegationEarn" : "Artık hesabınızla yetki devrederek {{name}} staking ödülleri kazanabilirsiniz.",
     "earnRewards" : "Ödüller kazanın",
@@ -4407,6 +4427,8 @@
       "mockAppUpdateDesc" : "My Ledger'da mevcut uygulama güncellemelerini göster, aynı uygulama sürümü yeniden yüklenecektir",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
+      "customCALRef" : "Özel CAL referansı",
+      "customCALRefDesc" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
@@ -4711,7 +4733,7 @@
     "ctaSuccess" : "Tamam",
     "noAccounts" : "Dışa aktarılacak hesap yok",
     "selectedAccounts" : "Dahil edilecek hesaplar",
-    "selectedAccounts_plural" : "Dahil edilecek hesaplar ({{count}})",
+    "selectedAccounts_other" : "Dahil edilecek hesaplar ({{count}})",
     "disclaimer" : "Dışa aktarımdaki karşı değerler yalnızca bilgi amaçlıdır. Muhasebe, vergi, yönetmelik veya yasal amaçlar için bu tür verileri kullanmayınız; bu veriler, sadece, hizmet sağlayıcımız Kaiko tarafından sağlanan değerleme yöntemleri kullanılarak, varlıkların işlem ve dışa aktarım sırasındaki tahmini fiyatlarını temsil eder"
   },
   "language" : {
@@ -4749,7 +4771,7 @@
   "informationCenter" : {
     "tooltip" : "Bilgi Merkezi",
     "ongoingIncidentsTooltip" : "{{count}} devam eden olay var",
-    "ongoingIncidentsTooltip_plural" : "{{count}} devam eden olay var",
+    "ongoingIncidentsTooltip_other" : "{{count}} devam eden olay var",
     "tabs" : {
       "announcements" : "Haberler",
       "announcementsUnseen" : "Haberler ({{unseenCount}})",
@@ -6600,6 +6622,36 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "{{purpose}} için minimum tutar: {{amount}}."
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "Çözme süresi en az {{min}} olmalıdır."
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "Çözme süresi {{max}} değerinden az olmalıdır."
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "Yeni çözme süresi, mevcut çözme süresinden büyük olmalıdır."
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "Nöron bulunamadı."
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "Ana kimlik geçersiz"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "Kısayol tuşu zaten mevcut"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "Bölüm tutarı, izin verilen maksimum tutardan fazla"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "Bu işlem, mevcut bir nöronun stake’ini artıracak tutarı aktaracaktır"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "Bu işlem ilgili tutarı yeni bir nörona aktaracaktır. Nöron, başarıyla onaylandıktan sonra başka işlemler için kullanılabilecektir."
     }
   },
   "cryptoOrg" : {
@@ -7062,12 +7114,58 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "Eklemek istediğiniz hesapları seçin",
+      "controls" : {
+        "selectAll" : "Tümünü seç",
+        "deselectAll" : "Tüm seçimi kaldır"
+      },
+      "cta" : {
+        "confirm" : "Onayla"
+      },
+      "newAccount" : "Yeni hesap"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "Taramayı durdur"
+      },
+      "warning" : {
+        "title" : "Yeni bir {{currency}} hesabı ekleyemedik",
+        "description" : "{{account}} hesabınıza varlık almadan önce yeni bir hesap ekleyemezsiniz",
+        "cta" : "Hesabınıza fon ekleyin",
+        "close" : "Kapat",
+        "noAssociatedAccounts" : {
+          "description" : "{{currency}} ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. {{currency}} hesabınız oluşturulduktan sonra o hesabı Ledger Live'da ekleyebilirsiniz.",
+          "cta" : "Bir {{currency}} hesabı nasıl oluşturulur?",
+          "close" : "Kapat"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "Hiçbir hesap bulunamadı",
+        "foundAccounts" : "{{count}} hesap bulundu",
+        "foundAccounts_other" : "{{count}} hesap bulundu",
+        "scanning" : "Hesaplar taranıyor..."
+      },
+      "title" : "Blok zincirindeki mevcut tüm hesaplar aranıyor..."
+    },
+    "connectYourDevice" : {
+      "title" : "Cihazınızı bağlayın ve kilidini açın"
+    },
     "searchPlaceholder" : "Ara",
+    "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
     "accountCount_one" : "{{count}} hesap",
-    "accountCount_other" : "{{count}} hesap"
+    "accountCount_other" : "{{count}} hesap",
+    "accountsAdded" : {
+      "title" : "Hesap, portföyünüze eklendi",
+      "title_other" : "Portföyünüze {{count}} hesap eklendi",
+      "cta" : {
+        "addFunds" : "Hesabınıza fon ekleyin",
+        "close" : "Kapat"
+      }
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7080,5 +7178,291 @@
     "title" : "Konum kullanılamıyor",
     "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "Bu işlem mevcut bir nöronun stake’ini artıracaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "createNeuron" : "Bu işlem, stake edilen ICP ile bir nöron oluşturacaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "tooltip" : "Internet Computer bunu, ICP’yi nörona stake etme işlemini tanımlamak için kullanır."
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "Takibinizi Onaylayın",
+        "description1" : "Nöron'u takibiniz {{days}} gün {{hours}} saat içinde onaylanmalıdır",
+        "description2" : "Ödüller kaybediyorsunuz, kazanmaya devam etmek için nöron takibini onaylayın",
+        "cta" : "Takibi Onaylayın"
+      },
+      "syncNeurons" : {
+        "title" : "Stake Edilen ICP’lerinizi Senkronize Edin",
+        "description1" : "Stake edilen ICP’leriniz en son {{days}} gün {{hours}} saat önce senkronize edildi. En son bilgileri görmek istiyorsanız sık sık senkronize etmenizi öneririz.",
+        "description2" : "En son bilgileri görmek için nöronlarınızı senkronize etmenizi öneririz",
+        "cta" : "Nöronları Senkronize Et"
+      },
+      "lockNeurons" : {
+        "title" : "Nöronları Kilitle",
+        "description" : "Bir veya daha fazla nöronunuz kilitli değil. Nöronları kilitlemezseniz ödül alamazsınız. Bunun nedeni, nöronların ICP’lerin yönetişimine katılarak ödüller kazanması ve sadece altı aydan uzun süredir kilitli olan nöronların oy verebilmesidir.",
+        "cta" : "Nöronları Yönet"
+      },
+      "addFollowees" : {
+        "title" : "Takip Edileni Ekleyin",
+        "description" : "Bir veya daha fazla nöronunuzun hiçbir takip edileni yok. Takip edilenler olmadığında ödül kazanamayabilirsiniz. Ödül kazanabilmek için nöronların doğrudan oy vermesi (örneğin NNS dApp’i ile) veya oy veren nöronları takip etmesi gerekir.",
+        "cta" : "Nöronları Yönet"
+      },
+      "stakeICP" : {
+        "title" : "ICP Stake Edin",
+        "description" : "ICP stake edip yönetişimine katılarak ödüller kazanın.",
+        "cta" : "ICP Stake Et"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "ICP Stake Edin",
+        "tooltip" : "ICP stake etmek için nöronlar oluşturun"
+      },
+      "manageNeurons" : {
+        "title" : "Nöronları Yönetin",
+        "tooltip" : "Aktif nöronları yönetin"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
+      "totalMaturityTooltip" : "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir.",
+      "totalMaturity" : "Toplam Birikmiş Ödül Miktarı",
+      "stakedBalance" : "Stake Bakiyesi",
+      "stakedMaturity" : "Stake Edilmiş Ödül Miktarı",
+      "stakedMaturityTooltip" : "Vade ödüllerinin otomatik olarak nöronlara yeniden stake edilen kısmı ek ödüller kazandırmaya devam eder.",
+      "liquidMaturity" : "Likit Ödül",
+      "liquidMaturityTooltip" : "Vade ödüllerinin likit ICP token’ları olarak alınabilen veya nöronlara stake edilebilen kısmı."
+    },
+    "confirmation" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "success" : "{{action}} başarılı",
+      "syncAccounts" : "Güncellenen değişiklikleri görmek için lütfen hesaplarınızı senkronize edin"
+    },
+    "sync" : "Senkronizasyon",
+    "lastSynced" : "Son Senkronizasyon",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "Ödül Kaybına Kalan Süre",
+      "warnbox" : "Hiçbir nöron bulunamadı, NNS dApp’i aracılığıyla oluşturulan mevcut nöronları senkronize etmeyi deneyin veya yeni nöronlar oluşturmak için stake edin."
+    },
+    "common" : {
+      "neuronId" : "Nöron Kimliği",
+      "neuronIds" : "Nöron Kimlikleri",
+      "state" : "Durum",
+      "action" : "Eylem",
+      "balance" : "Bakiye",
+      "maturity" : "Vade Ödülü",
+      "currentBalance" : "Güncel Bakiye",
+      "amount" : "Miktar",
+      "stake" : "Stake edin",
+      "followees" : "Takip Edilenler",
+      "votingPower" : "Oylama Gücü",
+      "hotkey" : "Kısayol Tuşu",
+      "neuron" : "Nöron",
+      "disburse" : "Dağıt",
+      "startDissolving" : "Çözmeye Başla",
+      "stopDissolving" : "Çözmeyi Durdur",
+      "dissolveDelay" : "Çözme Süresi",
+      "dissolveState" : "Çözme Durumu",
+      "dissolveStateUnlocked" : "Kilidi Açık",
+      "dissolveStateLocked" : "Kilitli",
+      "dissolveStateDissolving" : "Çözülüyor",
+      "dissolveStateDissolved" : "Çözüldü",
+      "inactiveNeuron" : "Devre Dışı Nöron",
+      "activeNeuron" : "Aktif Nöron",
+      "confirmFollowing" : "Takibi Onaylayın"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "Oylama Gücünü Yenileyin"
+    },
+    "manageNeuronFlow" : {
+      "title" : "Nöronları Yönetin",
+      "stakeMaturity" : {
+        "title" : "Vade Ödüllerini Stake Edin",
+        "description" : "Bu nörona, kullanılabilir ödüllerin ne kadarının stake edileceğini seçin.",
+        "confirmStake" : "Staking’i Onaylayın",
+        "maturityAvailable" : "Kullanılabilir Ödüller"
+      },
+      "splitNeuron" : {
+        "title" : "Nöronu Bölün",
+        "transactionFee" : "İşlem Ücreti",
+        "confirmSplit" : "Bölmeyi Onaylayın"
+      },
+      "setDissolveDelay" : {
+        "title" : "Çözme Süresini Belirleyin",
+        "balance" : "Bakiye",
+        "dissolveDelay" : "Çözme Süresi",
+        "dissolveDelayTooltip" : "Çözme süresi, nöronun kilidinin açılması ve ICP’nin yeniden kullanılabilmesi için beklemeniz gereken minimum süredir. Çözme süresinin sadece nöron çözme durumundayken azaldığını unutmayın.",
+        "votingPowerDescription" : "Oylama gücü sadece nöron süresi en az 6 ay olan nöronlara verilir.",
+        "dissolveDelayInput" : "Çözme Süresi (gün olarak)",
+        "inputPlaceholder" : "Çözme süresini girin",
+        "updateDelay" : "Süreyi Güncelleyin"
+      },
+      "selectFollowees" : {
+        "title" : "Takip Edilenin Nöron Kimliği",
+        "placeholder" : "Nöron kimliğini girin",
+        "options" : "Takip Seçenekleri"
+      },
+      "selectTopics" : {
+        "title" : "Konu Seçin",
+        "warnbox" : "Oylamayı otomatik bir hâle getirmek için nöronları takip edin ve aldığınız oylama ödüllerini en üst düzeye çıkarın. Belirli konulardaki veya tüm konulardaki nöronları takip edebilirsiniz.",
+        "listOfTopics" : "Takip edilebilecek konular listesi",
+        "addAction" : "Takip Edilen Ekleyin"
+      },
+      "addHotKey" : {
+        "title" : "Kısayol Tuşu Ekleyin"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "Bu nöron bir kısayol tuşuyla kontrol edilir ve Ledger Live arayüzünden kontrolü sınırlıdır.",
+          "hotkeyControl" : "Kısayol Tuşu Kontrolü",
+          "votingPower" : "Oylama Gücü",
+          "noVotingPower" : "Oylama Gücü Yok"
+        },
+        "votingPower" : {
+          "title" : "Oylama Gücü",
+          "titleTooltip" : "Nöronun oylama gücüne sahip olabilmesi için çözme süresi en az 6 ay olmalıdır.",
+          "value" : "Değer",
+          "staked" : "Stake Edilen ICP",
+          "increaseStake" : "Stake'i Artır",
+          "ageBonus" : "Dönem Bonusu",
+          "ageBonusTooltip" : "Nöronunuz kilitli, kilidi açılmış veya çözülüyor durumunda olabilir. Kilitli durumdayken dönem bonusu biriktirir ve çözme süresi sabit kalır. Nöron çözülüyor durumundaysa dönem bonusu 0 olur ve çözme süresi zamanla azalır. Çözme süresi 0 olduğunda nöronun kilidi açılır ve içindeki ICP herhangi bir ICP hesabına gönderilebilir.",
+          "dissolveDelayBonus" : "Çözme Süresi Bonusu",
+          "dissolveDelayBonusTooltip" : "Çözme süresi bonusu, çözme süresine bağlı olarak nöronun oylama gücüne eklenebilen bonustur. Çözme süresi ne kadar uzun olursa bonus da o kadar fazla olur.",
+          "confirmFollowing" : "Takibi Onaylayın",
+          "confirmFollowingTooltip" : "6 ay boyunca devre dışı olan ICP nöronları, oylama ödüllerini kaybetmeye başlar. Ödülleri kaybetmemek için manuel olarak oylayın, takip edilenleri düzenleyin ve onaylayın."
+        },
+        "maturity" : {
+          "title" : "Vade Ödülü",
+          "description" : "Teklifleri oylayarak ve/veya aktif nöronları takip ederek ödüller kazanın.",
+          "staked" : "Stake edildi",
+          "stakedTooltip" : "Stake edilen ödüller nöronun oylama gücüne katkıda bulunur, ancak staking ödülleri ile yeni bir nöron oluşturulamaz.",
+          "available" : "Mevcut",
+          "availableTooltip" : "Kullanılabilir ödüller, stake edilebilir veya ödül modülasyonu olarak adlandırılan ve deterministik olmayan bir sürece tabi olan bir miktar ICP içeren bir nöron oluşturmak üzere yakılabilir.",
+          "stakeAction" : "Stake edin",
+          "spawnNeuronAction" : "Nöron Oluşturun"
+        },
+        "hotKeys" : {
+          "title" : "Kısayol Tuşları",
+          "description" : "Kısayol Tuşları, nöronunuzu Ledger Live arayüzünden kontrol edebilmenize olanak tanır.",
+          "addHotKey" : "Kısayol Tuşu Ekle",
+          "removeAction" : "Kaldır",
+          "noHotKeys" : "Hiçbir Kısayol Tuşu Bulunamadı"
+        },
+        "advancedDetails" : {
+          "title" : "Gelişmiş Bilgiler ve Ayarlar",
+          "dateCreated" : "Oluşturulma Tarihi",
+          "dissolveDate" : "Çözülme Tarihi",
+          "neuronAccount" : "Nöron Hesabı",
+          "splitNeuronAction" : "Nöronu Bölün",
+          "autoStakeMaturityAction" : "Ödüllerin Otomatik Stake'i"
+        },
+        "following" : {
+          "title" : "Takip",
+          "description" : "Takip, oylarınızın yetkisini başka bir nöron sahibine devretmenize olanak sağlar. Oylama haklarınızı devrettiğinizde ödüller kazanmaya devam edersiniz. Takip edilenleri istediğiniz zaman değiştirebilirsiniz.",
+          "warnbox" : "Takip edilenler olmadığında ödül kazanamayabilirsiniz. Ödül kazanabilmek için nöronların doğrudan oy vermesi (örneğin NNS dApp’i ile) veya oy veren nöronları takip etmesi gerekir.",
+          "followNeuronsAction" : "Nöronları Takip Edin"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "Staking, vade ödülü ve çözme süresi ayarlarını yönetmek için aşağıdaki listeden bir nöron seçin."
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "Stake'i Artırma",
+        "create_neuron" : "Nöron Oluşturma",
+        "start_dissolving" : "Çözmeyi Başlatma",
+        "stop_dissolving" : "Çözmeyi Durdurma",
+        "list_neurons" : "Nöronları Listeleme",
+        "disburse" : "Nöron Dağıtma",
+        "spawn_neuron" : "Nöron Oluşturma",
+        "add_hot_key" : "Kısayol Tuşu Ekleme",
+        "stake_maturity" : "Staking Vade Ödülü",
+        "refresh_voting_power" : "Oylama Gücünü Yenileme",
+        "increase_dissolve_delay" : "Çözme Süresini Artırma",
+        "auto_stake_maturity" : "Ödülleri Otomatik Stake Etme",
+        "spawn_neuron_from_maturity" : "Ödülden Nöron Oluşturma",
+        "set_auto_stake_maturity" : "Otomatik Ödül Stake'ini Belirleme",
+        "set_dissolve_delay" : "Çözme Süresini Belirleme",
+        "remove_hot_key" : "Kısayol Tuşunu Kaldırma",
+        "follow" : "Nöronları Takip Etme",
+        "split_neuron" : "Nöron Bölme"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "\"Yönetişim\" ve \"SNS ile Nöronlar Fonu\" Dışındaki Tüm Konular",
+          "description" : "\"Yönetişim\" ve \"SNS ile Nöronlar Fonu\" dışındaki tüm teklif konularıyla ilgili nöronları takip edin."
+        },
+        "1" : {
+          "title" : "Nöron Yönetimi",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "Takas kuru",
+          "description" : "IMF SDR tarafından sağlanan veriler ışığında ICP’nin değeri hakkında \"gerçek zamanlı\" bilgiler sağlayarak sistemin (NNS), gerçek hayattaki maliyetini sabit tutacak bir şekilde ICP’yi \"cycle\"lara (hesaplama birimine) dönüştürmesine olanak sağlayan tüm teklifler."
+        },
+        "3" : {
+          "title" : "Ağ Ekonomisi",
+          "description" : "Ağ ekonomisini yöneten teklifler, örneğin node operatörlerine hangi ödüllerin verileceğinin belirlenmesi."
+        },
+        "4" : {
+          "title" : "Yönetişim",
+          "description" : "Yönetişimi yöneten tüm teklifler. Örneğin, ağa zarar veren kötü amaçlı akıllı sözleşmelerin dondurulması."
+        },
+        "5" : {
+          "title" : "Node Yöneticisi",
+          "description" : "İşletim sisteminin yükseltilmesi veya yapılandırılması, sanal makine altyapısının yükseltilmesi veya yapılandırılması ve node çoğaltma yazılımının yükseltilmesi veya yapılandırılması da dâhil, ancak bunlarla sınırlı olmaksızın node makinelerini bir şekilde yöneten tüm teklifler."
+        },
+        "6" : {
+          "title" : "Katılımcı Yönetimi",
+          "description" : "Ağ katılımcılarını yöneten tüm teklifler. Örneğin DCID’lerin (veri merkezi kimlikleri) veya NOID’lerin (node operatörü kimlikleri) verilmesi ve iptal edilmesi."
+        },
+        "7" : {
+          "title" : "Alt Ağ Yönetimi",
+          "description" : "Ağ alt ağlarını yöneten tüm teklifler. Örneğin yeni alt ağların oluşturulması, alt ağ node'larını ekleme, kaldırma ve alt ağları bölme."
+        },
+        "8" : {
+          "title" : "Protokol Akıllı Sözleşmesi Yönetimi",
+          "description" : "ICP protokolünün bir parçası addedilen ve düzgün bir şekilde çalışması için çok önemli olan protokol akıllı sözleşmelerinin yönetimine yönelik tüm teklifler."
+        },
+        "9" : {
+          "title" : "KYC",
+          "description" : "Mevzuat uyarınca KYC bilgilerini güncelleyen teklifler. Örneğin, ICP’nin nöronlar şeklindeki ilk Genesis dağıtımı sırasında."
+        },
+        "10" : {
+          "title" : "Node Sağlayıcısı Ödülleri",
+          "description" : "Node sağlayıcılarını ödüllendiren teklifler"
+        },
+        "12" : {
+          "title" : "IC İşletim Sistemi Sürümünün Kullanıma Sunulması",
+          "description" : "Bir alt ağın çoğaltılmış sürümünün güncellemelerini ele alan teklifler"
+        },
+        "13" : {
+          "title" : "IC İşletim Sistemi Sürümü Seçimi",
+          "description" : "Çoğaltılmış sürümlerin onaylanmasına veya kullanımdan kaldırılmasına ilişkin teklifler"
+        },
+        "14" : {
+          "title" : "SNS ile Nöronlar Fonu",
+          "description" : "SNS ile Nöronlar Fonu ile ilgili teklifler"
+        },
+        "15" : {
+          "title" : "API Sınır Node'u Yönetimi",
+          "description" : "API sınır node'larının yönetimiyle ilgili teklifler"
+        },
+        "16" : {
+          "title" : "Alt Ağ Kiralama",
+          "description" : "Alt ağ kiralamayla ilgili tüm teklifler. Örneğin, bir alt ağ kiralama talebi."
+        },
+        "17" : {
+          "title" : "Protokol Akıllı Sözleşmesi Yönetimi",
+          "description" : "ICP protokolünün bir parçası addedilen ve düzgün bir şekilde çalışması için çok önemli olan protokol akıllı sözleşmelerinin yönetimine yönelik tüm teklifler."
+        },
+        "18" : {
+          "title" : "Hizmet Sinir Sistemi Yönetimi",
+          "description" : "Hizmet sinir sistemlerine (SNS) ait dosyaların yönetimiyle ilgili tüm öneriler: buna ilgili dosyaların güncellenmesi ve SNS-W aracılığıyla SNS çerçevesine ait WASM dosyalarının yönetimi de dahildir."
+        }
+      }
+    }
   }
 }
