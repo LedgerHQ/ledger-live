@@ -132,6 +132,16 @@ export type Account = {
   // "account" is the primary account that you use/select/view. It is a `AccountLike`.
   // "parentAccount", if available, is the contextual account. It is a `?Account`.
   subAccounts?: TokenAccount[];
+  staking?: {
+    amount: BigNumber;
+    rewards: BigNumber;
+    status: "active" | "inactive";
+    releaseDate?: Date;
+    validator?: {
+      name?: string;
+      address: string;
+    };
+  }[];
   // Cache of balance history that allows a performant portfolio calculation.
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
