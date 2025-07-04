@@ -7836,9 +7836,15 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
+      '@types/semver':
+        specifier: ^7
+        version: 7.7.0
       purify-ts:
         specifier: ^2.1.0
         version: 2.1.0
+      semver:
+        specifier: ^7
+        version: 7.7.1
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
