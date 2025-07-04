@@ -1,3 +1,9 @@
+# 2.120.0
+
+### 🌷 Improvements
+
+This update brings connectivity improvements.
+
 # 2.118.1
 
 ### 🐛 Fix
