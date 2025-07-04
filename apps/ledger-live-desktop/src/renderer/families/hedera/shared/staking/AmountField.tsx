@@ -1,12 +1,10 @@
 import noop from "lodash/noop";
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import type { HederaAccount, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
-import TranslatedError from "~/renderer/components/TranslatedError";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import useTheme from "~/renderer/hooks/useTheme";
 
 interface Props {
   account: HederaAccount;
@@ -14,19 +12,15 @@ interface Props {
   status: TransactionStatus;
 }
 
-const AmountField = ({ account, status }: Props) => {
+const AmountField = ({ account }: Props) => {
   const unit = useAccountUnit(account);
   const theme = useTheme();
-
-  const error = status.errors[Object.keys(status.errors)[0]];
-  const warning = status.warnings[Object.keys(status.warnings)[0]];
 
   return (
     <Container>
       <InputCurrency
         disabled
         autoFocus={false}
-        error={!!error}
         hideErrorMessage={true}
         containerProps={{
           grow: true,
@@ -40,30 +34,18 @@ const AmountField = ({ account, status }: Props) => {
         renderLeft={<InputLeft>{unit.code}</InputLeft>}
         renderRight={
           <InputRight>
-            <AmountButton error={!!error} disabled>
+            <AmountButton error={false} disabled>
               100%
             </AmountButton>
           </InputRight>
         }
       />
-      <ErrorContainer hasError={error || warning}>
-        {error ? (
-          <ErrorDisplay id="input-error">
-            <TranslatedError error={error} />
-          </ErrorDisplay>
-        ) : warning ? (
-          <WarningDisplay id="input-warning">
-            <TranslatedError error={warning} />
-          </WarningDisplay>
-        ) : null}
-      </ErrorContainer>
     </Container>
   );
 };
 
 const Container = styled(Box)`
-  margin-top: 4px;
-  margin-bottom: 0;
+  margin: 0;
 `;
 
 const InputLeft = styled(Box).attrs(() => ({
@@ -108,26 +90,6 @@ const AmountButton = styled.button.attrs(() => ({
   &:hover {
     filter: contrast(2);
   }
-`;
-
-const ErrorContainer = styled(Box)<{
-  hasError: Error | undefined;
-}>`
-  margin-top: 0px;
-  font-size: 12px;
-  width: 100%;
-  transition: all 0.4s ease-in-out;
-  will-change: max-height;
-  max-height: ${p => (p.hasError ? 60 : 0)}px;
-  min-height: ${p => (p.hasError ? 20 : 0)}px;
-`;
-
-const ErrorDisplay = styled(Box)`
-  color: ${p => p.theme.colors.pearl};
-`;
-
-const WarningDisplay = styled(Box)`
-  color: ${p => p.theme.colors.warning};
 `;
 
 export default AmountField;

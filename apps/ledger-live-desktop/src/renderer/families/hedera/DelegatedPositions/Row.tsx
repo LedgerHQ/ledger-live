@@ -112,7 +112,7 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
   const { delegated, pendingReward } = delegatedPosition;
   const formattedDelegatedAssets = formatCurrencyUnit(unit, delegated, formatConfig);
   const formattedClaimableRewards = formatCurrencyUnit(unit, pendingReward, formatConfig);
-  const validator = validators.find(v => (v.nodeId = delegatedPosition.nodeId));
+  const validator = validators.find(v => v.nodeId === delegatedPosition.nodeId);
 
   const dropDownItems = [
     {
@@ -128,7 +128,7 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
     {
       key: "MODAL_HEDERA_CLAIM_REWARDS",
       label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.claimRewards" />,
-      disabled: false,
+      disabled: pendingReward.eq(0),
     } as const,
   ];
 

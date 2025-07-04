@@ -27,11 +27,11 @@ function StepConfirmation({
 
   useEffect(() => {
     if (optimisticOperation && selectedValidatorAddress) {
-      track("unstaking_completed", {
+      track("restaking_completed", {
         currency: "HBAR",
         validator: selectedValidatorAddress,
         source,
-        delegation: "undelegation",
+        delegation: "redelegation",
         flow: "stake",
       });
     }
@@ -41,16 +41,16 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage
-          category="Hedera undelegation"
+          category="Hedera redelegation"
           name="Step Confirmed"
           flow="stake"
-          action="undelegation"
+          action="redelegation"
           currency="hedera"
         />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={<Trans i18nKey="hedera.undelegate.flow.steps.confirmation.success.title" />}
-          description={multiline(t("hedera.undelegate.flow.steps.confirmation.success.text"))}
+          title={<Trans i18nKey="hedera.redelegate.flow.steps.confirmation.success.title" />}
+          description={multiline(t("hedera.redelegate.flow.steps.confirmation.success.text"))}
         />
       </Container>
     );
@@ -60,15 +60,15 @@ function StepConfirmation({
     return (
       <Container shouldSpace={signed}>
         <TrackPage
-          category="Undelegation Hedera"
+          category="Redelegation Hedera"
           name="Step Confirmation Error"
           flow="stake"
-          action="undelegation"
+          action="redelegation"
           currency="hedera"
         />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="hedera.undelegate.flow.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="hedera.redelegate.flow.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -100,7 +100,7 @@ export function StepConfirmationFooter({
         <Button
           primary
           ml={2}
-          event="Hedera Undelegation View OpD Clicked"
+          event="Hedera Redelegation View OpD Clicked"
           onClick={() => {
             onClose();
             if (account && concernedOperation) {
@@ -111,7 +111,7 @@ export function StepConfirmationFooter({
             }
           }}
         >
-          <Trans i18nKey="hedera.undelegate.flow.steps.confirmation.success.cta" />
+          <Trans i18nKey="hedera.redelegate.flow.steps.confirmation.success.cta" />
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

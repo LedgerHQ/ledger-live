@@ -1,26 +1,26 @@
 import React from "react";
 import BigNumber from "bignumber.js";
+import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import {
   InfoContainer,
   SideInfo,
-  Row as DefaultRow,
   Title as DefaultTitle,
 } from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import ValidatorIcon from "./ValidatorIcon";
-import styled from "styled-components";
+import { Flex } from "@ledgerhq/react-ui/index";
 
 type Props = {
   validator: HederaValidator;
   unit: Unit;
 };
 
-function ReadonlyValidatorRow({ validator, unit }: Readonly<Props>) {
+function ValidatorOption({ validator, unit }: Props) {
   return (
-    <Row disabled active={false} data-testid="modal-provider-row">
+    <Flex alignItems="center">
       <ValidatorIcon validatorName={validator.name} />
       <InfoContainer>
         <Title>
@@ -34,18 +34,12 @@ function ReadonlyValidatorRow({ validator, unit }: Readonly<Props>) {
           })}
         </Text>
       </SideInfo>
-    </Row>
+    </Flex>
   );
 }
-
-const Row = styled(DefaultRow)`
-  flex: 0 0 46px;
-  margin-top: 4px;
-  margin-bottom: 0;
-`;
 
 const Title = styled(DefaultTitle)`
   pointer-events: none;
 `;
 
-export default ReadonlyValidatorRow;
+export default ValidatorOption;

@@ -8,7 +8,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import ValidatorField from "../fields/ValidatorField";
+import ValidatorsListField from "../../shared/staking/ValidatorsListField";
 import { StepProps } from "../types";
 
 export default function StepValidator({
@@ -27,6 +27,7 @@ export default function StepValidator({
         recipient: validator.address,
         properties: {
           name: "updateAccount",
+          mode: "delegate",
           stakedNodeId: validator.nodeId,
         },
       });
@@ -47,7 +48,7 @@ export default function StepValidator({
         type="modal"
       />
       {error && <ErrorBanner error={error} />}
-      <ValidatorField
+      <ValidatorsListField
         account={account}
         onChangeValidator={updateValidator}
         selectedValidatorAddress={selectedValidatorAddress}

@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -8,31 +9,50 @@ import {
 import { AccountId } from "@hashgraph/sdk";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { calculateAmount, getEstimatedFees } from "./utils";
-import type { Transaction } from "../types";
+import type { HederaAccount, Transaction } from "../types";
 import { isUpdateAccountTransaction } from "../logic";
-import BigNumber from "bignumber.js";
+import { getCurrentHederaPreloadData } from "../preload-data";
+import { HederaInvalidStakedNodeIdError, HederaRedundantStakedNodeIdError } from "../errors";
 
-export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
-  account,
-  transaction,
-) => {
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  HederaAccount
+>["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
-
+  const warnings: Record<string, Error> = {};
   const isUpdateAccountFlow = isUpdateAccountTransaction(transaction);
 
   if (isUpdateAccountFlow) {
+    const { validators } = getCurrentHederaPreloadData(account.currency);
     const estimatedFees = await getEstimatedFees(account, "CryptoUpdate");
     const amount = BigNumber(0);
     const totalSpent = amount.plus(estimatedFees);
 
-    // FIXME: validation of update account transaction
+    // FIXME: review
+    if (["delegate", "redelegate"].includes(transaction.properties.mode)) {
+      if (typeof transaction.properties.stakedNodeId !== "number") {
+        errors.missingStakedNodeId = new HederaInvalidStakedNodeIdError("Validator must be set");
+      } else {
+        const isValid = validators.some(validator => {
+          return validator.nodeId === transaction.properties.stakedNodeId;
+        });
+
+        if (!isValid) {
+          errors.stakedNodeId = new HederaInvalidStakedNodeIdError();
+        }
+      }
+
+      if (account.hederaResources?.delegation?.nodeId === transaction.properties.stakedNodeId) {
+        errors.stakedNodeId = new HederaRedundantStakedNodeIdError();
+      }
+    }
 
     return {
       amount: new BigNumber(0),
-      errors,
       estimatedFees,
       totalSpent,
-      warnings: {},
+      errors,
+      warnings,
     };
   }
 
@@ -67,9 +87,9 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   return {
     amount,
-    errors,
     estimatedFees,
     totalSpent,
-    warnings: {},
+    errors,
+    warnings,
   };
 };

@@ -953,6 +953,12 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
+    "HederaRedundantStakedNodeIdError": {
+      "title": "You are already delegating to this node"
+    },
+    "HederaInvalidStakedNodeIdError": {
+      "title": "Selected node is not a valid validator"
+    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },

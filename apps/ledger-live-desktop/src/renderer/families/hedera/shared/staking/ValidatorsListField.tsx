@@ -12,16 +12,15 @@ import ValidatorSearchInput, {
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import ValidatorRow from "../../shared/staking/ValidatorRow";
+import ValidatorListItem from "./ValidatorListItem";
 
 type Props = {
   account: Account;
   selectedValidatorAddress: string | null;
   onChangeValidator: (validator: HederaValidator) => void;
-  validators?: HederaValidator;
 };
 
-const ValidatorField = ({ account, selectedValidatorAddress, onChangeValidator }: Props) => {
+const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValidator }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const unit = useAccountUnit(account);
@@ -29,7 +28,7 @@ const ValidatorField = ({ account, selectedValidatorAddress, onChangeValidator }
 
   const renderItem = (validator: HederaValidator) => {
     return (
-      <ValidatorRow
+      <ValidatorListItem
         currency={account.currency}
         key={validator.address}
         validator={validator}
@@ -104,4 +103,4 @@ const SeeAllButton = styled.div<{
   }
 `;
 
-export default ValidatorField;
+export default ValidatorsListField;

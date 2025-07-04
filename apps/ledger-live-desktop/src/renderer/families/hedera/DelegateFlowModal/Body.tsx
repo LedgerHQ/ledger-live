@@ -101,10 +101,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
       const transaction = bridge.updateTransaction(t, {
         recipient: defaultValidator.address,
-        amount: account.spendableBalance,
         memo: "Stake",
         properties: {
           name: "updateAccount",
+          mode: "delegate",
           stakedNodeId: defaultValidator.nodeId,
         },
       });

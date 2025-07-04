@@ -21,7 +21,7 @@ import { closeModal, openModal } from "~/renderer/actions/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
-import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
+import StepValidators, { StepValidatorsFooter } from "./steps/StepValidators";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { StepProps, St, StepId } from "./types";
 
@@ -49,21 +49,21 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "summary",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.summary.title" />,
-    component: StepSummary,
+    id: "validators",
+    label: <Trans i18nKey="hedera.redelegate.flow.steps.validators.title" />,
+    component: StepValidators,
     noScroll: true,
-    footer: StepSummaryFooter,
+    footer: StepValidatorsFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="hedera.redelegate.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("summary"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="hedera.redelegate.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -90,14 +90,13 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const t = bridge.createTransaction(account);
 
       const validator = getValidatorFromAccount(account);
-      invariant(validator, "hedera: validator not found in undelegate flow");
+      invariant(validator, "hedera: validator not found in redelegate flow");
 
       const transaction = bridge.updateTransaction(t, {
-        recipient: validator.address,
-        memo: "Unstake",
+        memo: "Restake",
         properties: {
           name: "updateAccount",
-          mode: "undelegate",
+          mode: "redelegate",
           stakedNodeId: null,
         },
       });
@@ -118,7 +117,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
-    onChangeStepId("summary");
+    onChangeStepId("validators");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -151,7 +150,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   }
 
   const stepperProps = {
-    title: t("hedera.undelegate.flow.title"),
+    title: t("hedera.redelegate.flow.title"),
     device,
     account,
     transaction,
@@ -181,7 +180,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
-      <Track onUnmount event="CloseModalUndelegation" />
+      <Track onUnmount event="CloseModalRedelegation" />
     </Stepper>
   );
 };

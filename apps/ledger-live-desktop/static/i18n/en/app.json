@@ -6482,6 +6482,12 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
+    "HederaRedundantStakedNodeIdError": {
+      "title": "You are already delegating to this node"
+    },
+    "HederaInvalidStakedNodeIdError": {
+      "title": "Selected node is not a valid validator"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -6719,6 +6725,35 @@
             "validatorLabel": "Validator",
             "amountLabel": "Amount to undelegate",
             "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake."
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "redelegate": {
+      "flow": {
+        "title": "Redelegate assets",
+        "steps": {
+          "validators": {
+            "title": "Validators",
+            "currentValidatorLabel": "Current delegation",
+            "newValidatorLabel": "New delegation",
+            "newValidatorSelectPlaceholder": "Select validator",
+            "newValidatorSelectNoOption": "No validator matching \"{{validatorName}}\"",
+            "amountLabel": "Amount to redelegate",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
           },
           "connectDevice": {
             "title": "Device"

@@ -18,6 +18,7 @@ export type NetworkInfoRaw = {
 
 export type UpdateAccountProperties = {
   name: "updateAccount";
+  mode: "delegate" | "undelegate" | "redelegate";
   stakedNodeId?: number | null;
 };
 

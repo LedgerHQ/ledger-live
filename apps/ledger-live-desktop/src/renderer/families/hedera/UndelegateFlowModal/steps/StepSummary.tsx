@@ -8,16 +8,14 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/ValidatorsSelect";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
-import ReadonlyValidatorRow from "../../shared/staking/ReadonlyValidatorRow";
 
 function StepSummary({ t, account, parentAccount, transaction, status, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency);
   const validator = validators.find(v => v.address === transaction?.recipient);
 
@@ -30,13 +28,13 @@ function StepSummary({ t, account, parentAccount, transaction, status, error }: 
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error && <ErrorBanner error={error} />}
       <Box>
-        <Label>
+        <Label mb={4}>
           <Trans i18nKey="hedera.undelegate.flow.steps.summary.validatorLabel" />
         </Label>
+        <ValidatorsSelect disabled account={account} selectedValidatorAddress={validator.address} />
       </Box>
-      <ReadonlyValidatorRow validator={validator} unit={unit} />
       <Box>
-        <Label>
+        <Label mb={4}>
           <Trans i18nKey="hedera.undelegate.flow.steps.summary.amountLabel" />
         </Label>
         <AmountField status={status} account={account} transaction={transaction} />

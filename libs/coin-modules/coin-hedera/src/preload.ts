@@ -12,18 +12,18 @@ export const getPreloadStrategy = () => ({
 export async function preload(currency: CryptoCurrency): Promise<HederaPreloadData> {
   const nodes = await getNodes();
 
-  const validators: HederaValidator[] = nodes.map(n => {
-    const minStake = new BigNumber(n.min_stake);
-    const maxStake = new BigNumber(n.max_stake);
-    const activeStake = new BigNumber(n.stake);
+  const validators: HederaValidator[] = nodes.map(mirrorNode => {
+    const minStake = new BigNumber(mirrorNode.min_stake);
+    const maxStake = new BigNumber(mirrorNode.max_stake);
+    const activeStake = new BigNumber(mirrorNode.stake);
     const activeStakePercentage = maxStake.gt(0)
       ? activeStake.dividedBy(maxStake).multipliedBy(100).dp(0, BigNumber.ROUND_DOWN)
       : new BigNumber(0);
 
     return {
-      nodeId: n.node_id,
-      address: n.node_account_id,
-      name: extractCompanyFromNodeDescription(n.description),
+      nodeId: mirrorNode.node_id,
+      address: mirrorNode.node_account_id,
+      name: extractCompanyFromNodeDescription(mirrorNode.description),
       minStake,
       maxStake,
       activeStake,

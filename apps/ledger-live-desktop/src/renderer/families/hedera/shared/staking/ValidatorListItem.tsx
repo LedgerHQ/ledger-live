@@ -8,7 +8,7 @@ import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import DefaultValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
@@ -22,7 +22,7 @@ type Props = {
   onClick: (validator: HederaValidator) => void;
 };
 
-function ValidatorRow({ validator, active, unit, currency, onClick }: Readonly<Props>) {
+function ValidatorListItem({ validator, active, unit, currency, onClick }: Readonly<Props>) {
   const { t } = useTranslation();
   const explorerView = getDefaultExplorerView(currency);
 
@@ -87,7 +87,7 @@ function ValidatorRow({ validator, active, unit, currency, onClick }: Readonly<P
   );
 }
 
-const StyledValidatorRow = styled(DefaultValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
 `;
@@ -101,4 +101,4 @@ const ChosenMark = styled(Check).attrs<{
   active?: boolean;
 }>``;
 
-export default ValidatorRow;
+export default ValidatorListItem;
