@@ -640,7 +640,6 @@ describe("EVM Family", () => {
               },
             };
           });
-          console.log(etherscanAPI?.default.getLastOperations);
           const spy = jest.spyOn(etherscanAPI, "getLastERC1155Operations");
 
           await synchronization.getAccountShape(

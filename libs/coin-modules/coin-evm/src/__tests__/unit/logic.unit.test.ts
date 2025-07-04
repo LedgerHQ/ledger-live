@@ -11,14 +11,10 @@ import {
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
-  getEstimatedFees,
-  getGasLimit,
   getMessageProperties,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
-  padHexString,
-  safeEncodeEIP55,
   setCALHash,
 } from "../../logic";
 import {
@@ -33,6 +29,7 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
+import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
