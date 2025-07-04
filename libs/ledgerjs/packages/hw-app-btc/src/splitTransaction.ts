@@ -4,8 +4,10 @@ import type {
   TransactionInput,
   TransactionOutput,
   SaplingData,
-  SpendDescriptionV5,
-  OutputDescriptionV5,
+  SaplingSpendDescriptionV5,
+  SaplingOutputDescriptionV5,
+  OrchardAction,
+  OrchardData,
 } from "./types";
 import { getVarint } from "./varint";
 import { formatTransactionDebug } from "./debug";
@@ -109,6 +111,7 @@ export function splitTransaction(
   }
 
   let sapling: SaplingData | undefined;
+  let orchard: OrchardData | undefined;
   if (hasExtraData) {
     if (isZcashv5) {
       varint = getVarint(transaction, offset);
@@ -116,13 +119,11 @@ export function splitTransaction(
       console.log("RABL WE WERE HERE splitTransaction: nSpendsSapling", nSpendsSapling);
       offset += varint[1];
 
-      const vSpendsSapling: SpendDescriptionV5[] = [];
+      const vSpendsSapling: SaplingSpendDescriptionV5[] = [];
       for (let i = 0; i < nSpendsSapling; i++) {
         const cv = transaction.slice(offset, offset + 32);
-
         offset += 32;
         const nullifier = transaction.slice(offset, offset + 32);
-
         offset += 32;
         const rk = transaction.slice(offset, offset + 32);
         offset += 32;
@@ -131,14 +132,20 @@ export function splitTransaction(
           cv,
           nullifier,
           rk,
-        } as SpendDescriptionV5);
+        } as SaplingSpendDescriptionV5);
       }
+
+      vSpendsSapling.forEach((spend, idx) => {
+        console.log(
+          `RABL WE WERE HERE vSpendsSapling[${idx}]: cv=${spend.cv.toString("hex")}, nullifier=${spend.nullifier.toString("hex")}, rk=${spend.rk.toString("hex")}`,
+        );
+      });
 
       varint = getVarint(transaction, offset);
       const nOutputsSapling = varint[0];
       console.log("RABL WE WERE HERE splitTransaction: nOutputsSapling", nOutputsSapling);
       offset += varint[1];
-      const vOutputSapling: OutputDescriptionV5[] = [];
+      const vOutputSapling: SaplingOutputDescriptionV5[] = [];
 
       for (let i = 0; i < nOutputsSapling; i++) {
         const cv = transaction.slice(offset, offset + 32);
@@ -162,46 +169,160 @@ export function splitTransaction(
           ephemeralKey,
           encCiphertext,
           outCiphertext,
-        } as OutputDescriptionV5);
+        } as SaplingOutputDescriptionV5);
       }
 
-      const valueBalanceSapling = transaction.slice(offset, offset + 8);
-      offset += 8;
+      vOutputSapling.forEach((output, idx) => {
+        console.log(
+          `RABL WE WERE HERE  vOutputSapling[${idx}]: cv=${output.cv.toString("hex")}, cmu=${output.cmu.toString("hex")}, ephemeralKey=${output.ephemeralKey.toString("hex")}, encCiphertext=${output.encCiphertext.toString("hex")}, outCiphertext=${output.outCiphertext.toString("hex")}`,
+        );
+      });
 
-      console.log(
-        "RABL WE WERE HERE splitTransaction: valueBalanceSapling",
-        valueBalanceSapling.toString("hex"),
-      );
+      let valueBalanceSapling = Buffer.alloc(0);
+      if (nSpendsSapling + nOutputsSapling > 0) {
+        valueBalanceSapling = transaction.slice(offset, offset + 8);
+        offset += 8;
 
-      const anchorSapling = transaction.slice(offset, offset + 32);
-      offset += 32;
+        console.log(
+          "RABL WE WERE HERE splitTransaction: valueBalanceSapling",
+          valueBalanceSapling.toString("hex"),
+        );
+      }
 
-      const vSpendProofsSapling = transaction.slice(offset, offset + 192 * nSpendsSapling);
-      offset += 192 * nSpendsSapling;
+      let anchorSapling = Buffer.alloc(0);
+      if (nSpendsSapling > 0) {
+        anchorSapling = transaction.slice(offset, offset + 32);
+        offset += 32;
 
-      const vSpendAuthSigsSapling = transaction.slice(offset, offset + 64 * nSpendsSapling);
-      offset += 64 * nSpendsSapling;
+        console.log(
+          "RABL WE WERE HERE splitTransaction: anchorSapling",
+          anchorSapling.toString("hex"),
+        );
+      }
 
-      const vOutputProofsSapling = transaction.slice(offset, offset + 192 * nOutputsSapling);
-      offset += 192 * nSpendsSapling;
+      let vSpendProofsSapling = Buffer.alloc(0);
+      let vSpendAuthSigsSapling = Buffer.alloc(0);
+      if (nSpendsSapling > 0) {
+        vSpendProofsSapling = transaction.slice(offset, offset + 192 * nSpendsSapling);
+        offset += 192 * nSpendsSapling;
 
-      const bindingSigSapling = transaction.slice(offset, offset + 64);
-      offset += 64;
+        vSpendAuthSigsSapling = transaction.slice(offset, offset + 64 * nSpendsSapling);
+        offset += 64 * nSpendsSapling;
+      }
 
-      sapling = {
-        nSpendsSapling,
-        vSpendsSapling,
-        nOutputsSapling,
-        vOutputSapling,
-        valueBalanceSapling,
-        anchorSapling,
-        vSpendProofsSapling,
-        vSpendAuthSigsSapling,
-        vOutputProofsSapling,
-        bindingSigSapling,
-      } as SaplingData;
+      let vOutputProofsSapling = Buffer.alloc(0);
+      if (nOutputsSapling > 0) {
+        vOutputProofsSapling = transaction.slice(offset, offset + 192 * nOutputsSapling);
+        offset += 192 * nOutputsSapling;
+      }
 
-      extraData = transaction.slice(offset);
+      let bindingSigSapling = Buffer.alloc(0);
+      if (nSpendsSapling + nOutputsSapling > 0) {
+        bindingSigSapling = transaction.slice(offset, offset + 64);
+        offset += 64;
+
+        console.log(
+          "RABL WE WERE HERE splitTransaction: bindingSigSapling",
+          bindingSigSapling.toString("hex"),
+        );
+      }
+
+      if (nSpendsSapling + nOutputsSapling > 0) {
+        console.log(
+          "RABL WE WERE HERE splitTransaction: ADD SAPLING DATA"
+        );
+        sapling = {
+          nSpendsSapling,
+          vSpendsSapling,
+          nOutputsSapling,
+          vOutputSapling,
+          valueBalanceSapling,
+          anchorSapling,
+          vSpendProofsSapling,
+          vSpendAuthSigsSapling,
+          vOutputProofsSapling,
+          bindingSigSapling,
+        } as SaplingData;
+      }
+
+      // orchard
+      varint = getVarint(transaction, offset);
+      const nActionsOrchard = varint[0];
+      offset += varint[1];
+
+      if (nActionsOrchard > 0) {
+        const actionsOrchard: OrchardAction[] = [];
+
+        for (let i = 0; i < nActionsOrchard; i++) {
+          const cv = transaction.subarray(offset, offset + 32);
+          offset += 32;
+          const nullifier = transaction.subarray(offset, offset + 32);
+          offset += 32;
+          const rk = transaction.subarray(offset, offset + 32);
+          offset += 32;
+          const cmx = transaction.subarray(offset, offset + 32);
+          offset += 32;
+          const ephemeralKey = transaction.subarray(offset, offset + 32);
+          offset += 32;
+          const encCiphertext = transaction.subarray(offset, offset + 580);
+          offset += 580;
+          const outCiphertext = transaction.subarray(offset, offset + 80);
+          offset += 80;
+
+          const action: OrchardAction = {
+            cv,
+            nullifier,
+            rk,
+            cmx,
+            ephemeralKey,
+            encCiphertext,
+            outCiphertext,
+          };
+
+          actionsOrchard.push(action);
+        }
+
+        // flag field
+        const flagsOrchard = transaction.subarray(offset, offset + 1);
+        offset += 1;
+        // value balance orchard
+        const valueBalanceOrchard = transaction.subarray(offset, offset + 8);
+        offset += 8;
+
+        const anchorOrchard = transaction.subarray(offset, offset + 32);
+        offset += 32;
+
+        // read the size of proof
+        varint = getVarint(transaction, offset);
+        const sizeProofsOrchard = transaction.subarray(offset, offset + varint[1]);
+        offset += varint[1];
+
+        // proof field
+        const proofsOrchard = transaction.subarray(offset, offset + varint[0]);
+        offset += varint[0];
+
+        // vSpendAuthSigsOrchard field
+        const vSpendAuthSigsOrchard = transaction.subarray(offset, offset + nActionsOrchard * 64);
+        offset += nActionsOrchard * 64;
+
+        // bindingSigOrchard
+        const bindingSigOrchard = transaction.subarray(offset, offset + 64);
+        offset += 64;
+
+        orchard = {
+          //totalActions: totalActions,
+          vActions: actionsOrchard,
+          flags: flagsOrchard,
+          valueBalance: valueBalanceOrchard,
+          anchor: anchorOrchard,
+          sizeProofs: sizeProofsOrchard,
+          proofs: proofsOrchard,
+          vSpendsAuthSigs: vSpendAuthSigsOrchard,
+          bindingSig: bindingSigOrchard,
+        } as OrchardData;
+      }
+
+      extraData = transaction.subarray(offset);
     }
   }
 
@@ -250,6 +371,9 @@ export function splitTransaction(
     }
   }
 
+  console.log("RABL add zcash", sapling);
+  console.log("RABL add zcash", orchard);
+  
   const t: Transaction = {
     version,
     inputs,
@@ -261,6 +385,7 @@ export function splitTransaction(
     nExpiryHeight,
     extraData,
     sapling,
+    orchard,
   };
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
