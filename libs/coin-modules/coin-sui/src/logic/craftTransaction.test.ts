@@ -24,7 +24,7 @@ describe("craftTransaction", () => {
       amount,
       recipient,
       type,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
@@ -47,7 +47,7 @@ describe("craftTransaction", () => {
       amount,
       recipient,
       type,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
@@ -70,7 +70,7 @@ describe("craftTransaction", () => {
       amount,
       recipient,
       type,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
@@ -93,7 +93,7 @@ describe("craftTransaction", () => {
       amount,
       recipient,
       type,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
@@ -120,7 +120,7 @@ describe("craftTransaction", () => {
         amount,
         recipient,
         type,
-        asset: { type: "native" },
+        asset: { assetType: "native" },
       }),
     ).rejects.toThrow("Network error");
   });

@@ -37,7 +37,7 @@ export default async function getEstimatedFees({
     sender: account.freshAddress,
     amount: BigInt(t.amount.toString()),
     type: "send",
-    asset: { type: "native" },
+    asset: { assetType: "native" },
   });
   return new BigNumber(fees.toString());
 }

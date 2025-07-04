@@ -18,13 +18,13 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
 import { fetchSequence } from "../network";
 import { getEnv } from "@ledgerhq/live-env";
-export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo> {
+export function createApi(config: StellarConfig): Api<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -45,7 +45,13 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo>
         balance: balance.map(b => b.value).join(","),
         ownerCount: 0, // TODO: check
         sequence: sequence.plus(1).toNumber(),
-        assets: res.assets, // TODO: comment and retry?
+        assets: res.assets.map(asset => ({
+          assetType: asset.asset_type,
+          assetReference: asset.asset_code,
+          assetOwner: asset.asset_issuer,
+          balance: asset.balance.toString(),
+          selling_liabilities: asset.selling_liabilities.toString(),
+        })), //FIXME this need to be change we do not want balance nether selling_liabilities 
         spendableBalance: res.spendableBalance.toString(),
         // Add other account details as needed
       };
@@ -54,7 +60,7 @@ export function createApi(config: StellarConfig): Api<StellarAsset, StellarMemo>
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
+  transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees(transactionIntent.sender);
@@ -72,10 +78,10 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      ...(transactionIntent.asset.type === "token"
+      ...(transactionIntent.asset.assetType === "token"
         ? {
-            assetCode: transactionIntent.asset.assetCode,
-            assetIssuer: transactionIntent.asset.assetIssuer,
+            assetCode: transactionIntent.asset.assetReference,
+            assetIssuer: transactionIntent.asset.assetOwner,
           }
         : {}),
       memoType: memo?.type,
@@ -95,9 +101,7 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<StellarAsset>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const value = transactionIntent?.fees
     ? BigInt(transactionIntent?.fees.toString())
     : await estimateFees(transactionIntent.sender);
@@ -108,7 +112,7 @@ async function operations(
   address: string,
   pagination: Pagination | undefined,
   lastPagingToken?: string,
-): Promise<[Operation<StellarAsset>[], string]> {
+): Promise<[Operation[], string]> {
   if (pagination?.minHeight) {
     return operationsFromHeight(address, pagination?.minHeight);
   }
@@ -124,13 +128,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<StellarAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<StellarAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,

@@ -2,9 +2,8 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
 import {
   Operation as CoreOperation,
-  Asset,
   TransactionIntent,
-  TokenInfoCommon,
+  // TokenInfoCommon,
 } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
@@ -14,17 +13,14 @@ import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
   assetReference?: string; // TODO: recheck with jnicouleau
   assetOwner?: string; // TODO: do we need i ?
 */
-export function adaptCoreOperationToLiveOperation(
-  accountId: string,
-  op: CoreOperation<Asset<TokenInfoCommon>>,
-): Operation {
+export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const asset: {
     assetCode?: string;
     assetIssuer?: string;
     assetAmount?: string | undefined;
     ledgerOpType?: string | undefined;
   } = {};
-
+  // console.log("op: ", op);
   let ledgerOpType = "";
   // NOTE: recheck two op.details
   if (op.details?.ledgerOpType !== undefined) {
@@ -33,11 +29,11 @@ export function adaptCoreOperationToLiveOperation(
   }
 
   // TODO:
-  debugger;
+  // debugger;
   let value = new BigNumber(op.value.toString());
-  console.log({
-    valuePreviously: new BigNumber(op.value.toString()),
-  });
+  // console.log({
+  //   valuePreviously: new BigNumber(op.value.toString()),
+  // });
 
   // NOTE: op.details recheck
   if (op.details?.assetAmount && typeof op.details.assetAmount === "string") {
@@ -49,11 +45,11 @@ export function adaptCoreOperationToLiveOperation(
   // }
 
   // NOTE: we have op.asset.assetType
-  if (op.asset?.type === "token") {
+  if (op.asset?.assetType === "token") {
     // assetId
-    asset.assetReference = op.asset.assetCode as string;
+    asset.assetCode = op.asset.assetReference as string;
     // NOTE: check if used downstream
-    asset.assetOwner = op.asset.assetIssuer as string;
+    asset.assetIssuer = op.asset.assetOwner as string;
   }
 
   const res = {
@@ -62,7 +58,7 @@ export function adaptCoreOperationToLiveOperation(
       : encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
-    type: op.type as OperationType,
+    type: (ledgerOpType as OperationType) || (op.type as OperationType),
     value,
     fee: new BigNumber(op.tx.fees.toString()),
     blockHash: op.tx.block.hash,
@@ -71,8 +67,14 @@ export function adaptCoreOperationToLiveOperation(
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    asset,
+    asset: {
+      assetType: op.asset?.assetType || "native",
+      assetReference: asset.assetCode,
+      assetOwner: asset.assetIssuer,
+    },
+    extra: {},
   };
+  // console.log("adaptCoreOperationToLiveOperation: ", res);
 
   return res;
 }
@@ -101,18 +103,21 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-  const res = {
+  const res: TransactionIntent<any> = {
     fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
-    asset: {},
+    asset: {
+      assetType: "native",
+    },
   };
   if (transaction.assetCode && transaction.assetIssuer) {
     res.asset = {
-      assetCode: transaction.assetCode,
-      assetIssuer: transaction.assetIssuer,
+      assetType: "token",
+      assetReference: transaction.assetCode,
+      assetOwner: transaction.assetIssuer,
     };
   }
   return res;

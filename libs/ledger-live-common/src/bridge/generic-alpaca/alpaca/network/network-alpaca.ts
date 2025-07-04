@@ -11,11 +11,11 @@ import type {
   AccountInfo,
   Api,
   Asset,
-  TokenInfoCommon,
+  // TokenInfoCommon,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp<T extends Asset<TokenInfoCommon>>(backendOp: Operation<T>): Operation<T> {
+function adaptOp<T extends Asset>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 
@@ -109,13 +109,13 @@ const buildValidateIntent = networkFamily =>
   };
 
 // FIXME: shouldn't hardcode
-type AssetInfo = {
-  type: "native"; // or "token" if applicable
-};
+// type AssetInfo = {
+//   type: "native"; // or "token" if applicable
+// };
 
 const buildGetBalance = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<Balance<AssetInfo>[]> {
-    const { data } = await network<Balance<AssetInfo>, unknown>({
+  async function getBalance(address: string): Promise<Balance[]> {
+    const { data } = await network<Balance, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/balance`,
     });

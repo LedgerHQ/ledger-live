@@ -84,10 +84,7 @@ export const genericSignOperation =
           const transactionIntent = transactionToIntent(account, transaction);
           transactionIntent.senderPublicKey = publicKey;
           // NOTE: is setting the memo here instead of transactionToIntent sensible?
-          const txWithMemoTag = transactionIntent as TransactionIntent<
-            any,
-            MapMemo<string, string>
-          >;
+          const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
           if (transaction["tag"]) {
             const txMemo = String(transaction["tag"]);
             txWithMemoTag.memo = {
@@ -96,7 +93,7 @@ export const genericSignOperation =
             };
             txWithMemoTag.memo.memos.set("destinationTag", txMemo);
           }
-          const txWithMemo = transactionIntent as TransactionIntent<any, StellarMemo>;
+          const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
           // if (transaction["memoType"] && transaction["memoValue"]) {
           //   const txMemoType = String(transaction["memoType"]);
           //   const txMemoValue = String(transaction["memoValue"]);
@@ -117,13 +114,13 @@ export const genericSignOperation =
           const txWithAsset = transactionIntent as TransactionIntent<any>;
           if (transaction["assetCode"] && transaction["assetIssuer"]) {
             txWithAsset.asset = {
-              type: "token",
-              assetCode: transaction["assetCode"],
-              assetIssuer: transaction["assetIssuer"],
+              assetType: "token",
+              assetReference: transaction["assetCode"],
+              assetOwner: transaction["assetIssuer"],
             };
           } else {
             txWithAsset.asset = {
-              type: "native",
+              assetType: "native",
             };
           }
           /* Craft unsigned blob via Alpaca */

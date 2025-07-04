@@ -8,4 +8,4 @@ export type StellarToken = {
   // ledgerOpType?: string;
   // pagingToken?: string | undefined;
 };
-export type StellarAsset = Asset<StellarToken>;
+export type StellarAsset = Asset;

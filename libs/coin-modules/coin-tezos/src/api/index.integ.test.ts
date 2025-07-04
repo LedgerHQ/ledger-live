@@ -39,7 +39,7 @@ describe("Tezos Api", () => {
 
       // When
       const result = await module.estimateFees({
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         type: "send",
         sender: address,
         recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
@@ -98,7 +98,7 @@ describe("Tezos Api", () => {
       const result = await module.getBalance(address);
 
       // Then
-      expect(result[0].asset).toEqual({ type: "native" });
+      expect(result[0].asset).toEqual({ assetType: "native" });
       expect(result[0].value).toBeGreaterThan(0);
     });
   });
@@ -115,7 +115,7 @@ describe("Tezos Api", () => {
       const amount = BigInt(10);
       // When
       const encodedTransaction = await module.craftTransaction({
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         type,
         sender: address,
         recipient: recipient,
@@ -139,7 +139,7 @@ describe("Tezos Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const encodedTransaction = await module.craftTransaction({
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         type: "send",
         sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
@@ -156,7 +156,7 @@ describe("Tezos Api", () => {
       async (customFees: bigint) => {
         const encodedTransaction = await module.craftTransaction(
           {
-            asset: { type: "native" },
+            asset: { assetType: "native" },
             type: "send",
             sender: address,
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",

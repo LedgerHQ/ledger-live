@@ -95,7 +95,7 @@ describe("listOperations", () => {
     expect(results).toEqual([
       {
         id: `${operation.hash}-${operation.id}`,
-        asset: { type: "native" },
+        asset: { assetType: "native" },
         details: {
           counter: operation.counter,
           gasLimit: operation.gasLimit,

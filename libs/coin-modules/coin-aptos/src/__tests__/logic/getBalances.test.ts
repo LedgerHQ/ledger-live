@@ -12,7 +12,7 @@ describe("getBalance", () => {
 
     const balances = await getBalances(mockAptosClient, accountAddress);
 
-    expect(balances).toStrictEqual([{ value: 10n, asset: { type: "native" } }]);
+    expect(balances).toStrictEqual([{ value: 10n, asset: { assetType: "native" } }]);
   });
 
   it("should return empty array when no contract_address and no data", async () => {
@@ -35,7 +35,7 @@ describe("getBalance", () => {
 
     const balances = await getBalances(mockAptosClient, accountAddress);
 
-    expect(balances).toStrictEqual([{ value: 10n, asset: { type: "native" } }]);
+    expect(balances).toStrictEqual([{ value: 10n, asset: { assetType: "native" } }]);
   });
 
   it("should return token balance when contract_address is a coin token", async () => {
@@ -51,7 +51,7 @@ describe("getBalance", () => {
     expect(balances).toStrictEqual([
       {
         value: 25n,
-        asset: { type: "token", contractAddress: TOKEN_ASSET_ID, standard: TOKEN_TYPE.COIN },
+        asset: { assetType: "token", assetReference: TOKEN_ASSET_ID, assetOwner: TOKEN_TYPE.COIN },
       },
     ]);
   });
@@ -70,9 +70,9 @@ describe("getBalance", () => {
       {
         value: 25n,
         asset: {
-          type: "token",
-          contractAddress: TOKEN_ASSET_ID,
-          standard: TOKEN_TYPE.FUNGIBLE_ASSET,
+          assetType: "token",
+          assetReference: TOKEN_ASSET_ID,
+          assetOwner: TOKEN_TYPE.FUNGIBLE_ASSET,
         },
       },
     ]);

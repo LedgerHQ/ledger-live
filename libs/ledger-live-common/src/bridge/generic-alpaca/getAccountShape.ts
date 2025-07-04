@@ -50,11 +50,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const blockInfo = await getAlpacaApi(network, kind).lastBlock();
     const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-    const nativeAsset = balanceRes.find(b => b.asset.type === "native");
+    const nativeAsset = balanceRes.find(b => b.asset.assetType === "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
     let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
-
+    console.log("initialAccount", initialAccount);
     const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
     // const isInitSync = lastPagingToken === "";
@@ -65,7 +65,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const newOps = newCoreOps.map(op =>
       adaptCoreOperationToLiveOperation(accountId, op),
     ) as OperationCommon[];
+    console.log("newOps", newOps);
+    console.log("oldOps", oldOps);
     const mergedOps = mergeOps(oldOps, newOps) as OperationCommon[];
+    console.log("mergedOps", mergedOps);
 
     // NOTE: was it really what was done before, also, what's the use of this
     // const assetOps = mergedOps.filter(op => op.type === "NONE");
@@ -75,11 +78,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     // NOTE: why this old logic doesn't work
     mergedOps.forEach(operation => {
+      console.log("asset operation", operation);
       if (
-        operation?.extra?.assetCode &&
-        operation?.extra?.assetIssuer &&
+        operation?.asset?.assetReference &&
+        operation?.asset?.assetOwner &&
         !["OPT_IN", "OPT_OUT"].includes(operation.type)
       ) {
+        console.log("asset operation", operation);
         assetOperations.push(operation);
       }
     });
@@ -89,6 +94,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     if (accountInfo?.spendableBalance) {
       spendableBalance = BigInt(accountInfo.spendableBalance);
     }
+    console.log("assetOperations", assetOperations);
     const subAccounts =
       buildSubAccounts({
         currency,
@@ -100,12 +106,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const operationsWithSubs = mergedOps.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);
-
       return {
         ...op,
         subOperations,
       };
     });
+    console.log("operationsWithSubs", operationsWithSubs);
 
     const res = {
       id: accountId,

@@ -14,7 +14,7 @@ import { BoilerplateAsset } from "../../types";
 export async function listOperations(
   address: string,
   page?: Pagination,
-): Promise<[Operation<BoilerplateAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const minHeight = page?.minHeight ?? 0;
   const transactions = await getTransactions(address, { from: minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
@@ -22,7 +22,7 @@ export async function listOperations(
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: BoilerplateOperation): Operation<BoilerplateAsset> => {
+  (operation: BoilerplateOperation): Operation => {
     const {
       meta: { delivered_amount },
       tx: { Fee, hash, inLedger, date, Account, Destination },
@@ -47,7 +47,7 @@ const convertToCoreOperation =
        * value if the transaction hash is not enough to identify it
        */
       id: hash,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
       tx: {
         hash,
         fees: feeValue,

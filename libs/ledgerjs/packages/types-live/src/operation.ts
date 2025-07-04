@@ -150,6 +150,7 @@ export type OperationRaw<ExtraRaw = OperationExtraRaw> = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: OperationRaw[];
   transactionRaw?: TransactionCommonRaw;
+  asset?: AssetInfo;
   // would be a serializable version of the extra
   extra: ExtraRaw;
 };

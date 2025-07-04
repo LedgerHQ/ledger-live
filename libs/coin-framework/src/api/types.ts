@@ -11,10 +11,12 @@ export type BlockInfo = {
   time?: Date;
 };
 
-type AssetInfo = {
+export type AssetInfo = {
   assetType: string;
   assetReference?: string; // TODO: recheck with jnicouleau
   assetOwner?: string; // TODO: do we need i ?
+  selling_liabilities?: string; //FIXME: used for stellar need to be remove from here
+  balance?: string; //FIXME: used for stellar need to be remove from here
 };
 
 export type Asset<TokenInfo extends AssetInfo = never> =
