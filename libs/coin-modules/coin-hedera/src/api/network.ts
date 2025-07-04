@@ -14,7 +14,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { HederaAddAccountError } from "../errors";
 import { Transaction } from "../types";
-import { isUpdateAccountTransaction } from "../logic";
+import { isStakingTransaction } from "../logic";
 
 export function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
   return transaction.execute(getClient());
@@ -46,7 +46,7 @@ async function buildUnsignedUpdateAccountTransaction({
   account: Account;
   transaction: Transaction;
 }): Promise<AccountUpdateTransaction> {
-  invariant(isUpdateAccountTransaction(transaction), "invalid transaction properties");
+  invariant(isStakingTransaction(transaction), "invalid transaction properties");
 
   const accountId = account.freshAddress;
   const tx = new AccountUpdateTransaction()
@@ -75,8 +75,10 @@ export async function buildUnsignedTransaction({
   account: Account;
   transaction: Transaction;
 }): Promise<TransferTransaction | AccountUpdateTransaction> {
-  if (isUpdateAccountTransaction(transaction)) {
-    return buildUnsignedUpdateAccountTransaction({ account, transaction });
+  if (isStakingTransaction(transaction)) {
+    return transaction.properties.mode === "claimRewards"
+      ? buildUnsignedCoinTransaction({ account, transaction })
+      : buildUnsignedUpdateAccountTransaction({ account, transaction });
   } else {
     return buildUnsignedCoinTransaction({ account, transaction });
   }

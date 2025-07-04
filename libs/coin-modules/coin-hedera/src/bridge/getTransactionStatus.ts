@@ -8,11 +8,11 @@ import {
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { calculateAmount, getEstimatedFees } from "./utils";
-import type { HederaAccount, Transaction } from "../types";
-import { isUpdateAccountTransaction } from "../logic";
-import { getCurrentHederaPreloadData } from "../preload-data";
 import { HederaInvalidStakedNodeIdError, HederaRedundantStakedNodeIdError } from "../errors";
+import { isStakingTransaction } from "../logic";
+import { getCurrentHederaPreloadData } from "../preload-data";
+import type { HederaAccount, Transaction } from "../types";
+import { calculateAmount, getEstimatedFees } from "./utils";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -20,9 +20,9 @@ export const getTransactionStatus: AccountBridge<
 >["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const isUpdateAccountFlow = isUpdateAccountTransaction(transaction);
+  const isStakingFlow = isStakingTransaction(transaction);
 
-  if (isUpdateAccountFlow) {
+  if (isStakingFlow) {
     const { validators } = getCurrentHederaPreloadData(account.currency);
     const estimatedFees = await getEstimatedFees(account, "CryptoUpdate");
     const amount = BigNumber(0);

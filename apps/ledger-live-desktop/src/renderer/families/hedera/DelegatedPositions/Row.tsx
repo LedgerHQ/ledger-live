@@ -13,6 +13,7 @@ import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
+import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -89,6 +90,48 @@ const ManageDropDownItem = ({
   );
 };
 
+const DelegationStatus = ({ validator }: { validator: HederaValidator | undefined }) => {
+  if (!validator) {
+    return (
+      <Box color="alertRed" pl={2}>
+        <ToolTip
+          content={
+            <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.inactiveTooltip" />
+          }
+        >
+          <ExclamationCircleThin size={14} />
+        </ToolTip>
+      </Box>
+    );
+  }
+
+  if (validator.overstaked) {
+    return (
+      <Box color="warning" pl={2}>
+        <ToolTip
+          content={
+            <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.overstakedTooltip" />
+          }
+        >
+          <ExclamationCircleThin size={14} />
+        </ToolTip>
+      </Box>
+    );
+  }
+
+  return (
+    <Box color="positiveGreen" pl={2}>
+      <ToolTip
+        content={
+          <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.activeTooltip" />
+        }
+      >
+        <CheckCircle size={14} />
+      </ToolTip>
+    </Box>
+  );
+};
+
 type Props = {
   account: HederaAccount;
   delegatedPosition: HederaDelegation;
@@ -113,6 +156,7 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
   const formattedDelegatedAssets = formatCurrencyUnit(unit, delegated, formatConfig);
   const formattedClaimableRewards = formatCurrencyUnit(unit, pendingReward, formatConfig);
   const validator = validators.find(v => v.nodeId === delegatedPosition.nodeId);
+  const validatorName = validator?.name ?? "-";
 
   const dropDownItems = [
     {
@@ -139,34 +183,23 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
     [onManageAction],
   );
 
-  if (!validator) {
-    return null;
-  }
-
   return (
     <Wrapper>
       <Column
         strong
         clickable
         onClick={() => {
+          if (!validator) return;
           onExternalLink(validator);
         }}
       >
         <Box mr={2}>
-          <ValidatorIcon validatorName={validator.name} />
+          <ValidatorIcon validatorName={validatorName} />
         </Box>
-        <Ellipsis>{validator.name}</Ellipsis>
+        <Ellipsis>{validatorName}</Ellipsis>
       </Column>
       <Column>
-        <Box color="positiveGreen" pl={2}>
-          <ToolTip
-            content={
-              <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.columns.statusTooltip" />
-            }
-          >
-            <CheckCircle size={14} />
-          </ToolTip>
-        </Box>
+        <DelegationStatus validator={validator} />
       </Column>
       <Column>
         <Ellipsis>

@@ -1,6 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
+import { Flex, Icons } from "@ledgerhq/react-ui";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -11,7 +13,6 @@ import {
 } from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import ValidatorIcon from "./ValidatorIcon";
-import { Flex } from "@ledgerhq/react-ui/index";
 
 type Props = {
   validator: HederaValidator;
@@ -19,6 +20,8 @@ type Props = {
 };
 
 function ValidatorOption({ validator, unit }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Flex alignItems="center">
       <ValidatorIcon validatorName={validator.name} />
@@ -26,6 +29,14 @@ function ValidatorOption({ validator, unit }: Props) {
         <Title>
           <Text data-testid="modal-provider-title">{validator.name}</Text>
         </Title>
+        {validator.overstaked && (
+          <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
+            <Icons.Warning size="XS" style={{ width: "10px" }} />
+            <Text fontSize={2}>
+              {t("hedera.delegate.flow.steps.validator.rowSubtitleOverstaked")}
+            </Text>
+          </Flex>
+        )}
       </InfoContainer>
       <SideInfo>
         <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>

@@ -21,7 +21,7 @@ import { closeModal, openModal } from "~/renderer/actions/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
-import StepValidators, { StepValidatorsFooter } from "./steps/StepValidators";
+import StepRewards, { StepRewardsFooter } from "./steps/StepRewards";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { StepProps, St, StepId } from "./types";
 
@@ -49,21 +49,21 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "validators",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.validators.title" />,
-    component: StepValidators,
+    id: "rewards",
+    label: <Trans i18nKey="hedera.claimRewards.flow.steps.rewards.title" />,
+    component: StepRewards,
     noScroll: true,
-    footer: StepValidatorsFooter,
+    footer: StepRewardsFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="hedera.claimRewards.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("validators"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("rewards"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="hedera.claimRewards.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -93,11 +93,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       invariant(validator, "hedera: validator not found in redelegate flow");
 
       const transaction = bridge.updateTransaction(t, {
-        memo: "Restake",
         properties: {
           name: "staking",
-          mode: "redelegate",
-          stakedNodeId: null,
+          mode: "claimRewards",
         },
       });
 
@@ -117,7 +115,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
-    onChangeStepId("validators");
+    onChangeStepId("rewards");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -150,7 +148,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   }
 
   const stepperProps = {
-    title: t("hedera.redelegate.flow.title"),
+    title: t("hedera.claimRewards.flow.title"),
     device,
     account,
     transaction,
@@ -159,7 +157,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     steps,
     errorSteps,
     disabledSteps: [],
-    hideBreadcrumb: !!error && ["summary"].includes(stepId),
+    hideBreadcrumb: !!error && ["rewards"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
     onClose,

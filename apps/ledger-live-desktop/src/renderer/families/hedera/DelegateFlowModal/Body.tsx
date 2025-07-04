@@ -103,7 +103,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         recipient: defaultValidator.address,
         memo: "Stake",
         properties: {
-          name: "updateAccount",
+          name: "staking",
           mode: "delegate",
           stakedNodeId: defaultValidator.nodeId,
         },

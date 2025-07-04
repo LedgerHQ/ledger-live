@@ -96,7 +96,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         recipient: validator.address,
         memo: "Unstake",
         properties: {
-          name: "updateAccount",
+          name: "staking",
           mode: "undelegate",
           stakedNodeId: null,
         },

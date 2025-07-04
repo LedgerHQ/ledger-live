@@ -1,7 +1,7 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { isUpdateAccountTransaction } from "./logic";
+import { isStakingTransaction } from "./logic";
+import type { Transaction, TransactionStatus } from "./types";
 
 function getDeviceTransactionConfig({
   transaction,
@@ -14,11 +14,11 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
-  if (isUpdateAccountTransaction(transaction)) {
+  if (isStakingTransaction(transaction)) {
     fields.push({
       type: "text",
       label: "Method",
-      value: "Update Account",
+      value: transaction.properties.mode === "claimRewards" ? "Collect Rewards" : "Update Account",
     });
 
     if (typeof transaction.properties.stakedNodeId === "number") {

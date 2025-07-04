@@ -67,9 +67,9 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
             {validator.overstaked ? (
-              <Flex alignItems="center" columnGap={1}>
-                <Icons.Warning color="palette.warning.c70" size="XS" style={{ width: "10px" }} />
-                <Text fontSize={2} color="palette.warning.c70">
+              <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
+                <Icons.Warning size="XS" style={{ width: "10px" }} />
+                <Text fontSize={2}>
                   {t("hedera.delegate.flow.steps.validator.rowSubtitleOverstaked")}
                 </Text>
               </Flex>

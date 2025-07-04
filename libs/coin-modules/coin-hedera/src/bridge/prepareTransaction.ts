@@ -1,6 +1,8 @@
+import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount } from "./utils";
+import { isStakingTransaction } from "../logic";
 
 /**
  * Gather any more neccessary information for a transaction,
@@ -19,6 +21,13 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   // i.e. if `useAllAmount` has been toggled to true, this is where it will update the transaction to reflect that action
   const { amount } = await calculateAmount({ account, transaction });
   transaction.amount = amount;
+
+  // claiming staking rewards is triggered by sending 1 tinybar to 0.0.800 (staking reward account)
+  if (isStakingTransaction(transaction) && transaction.properties.mode === "claimRewards") {
+    transaction.recipient = "0.0.800";
+    transaction.amount = new BigNumber(1);
+    transaction.memo = "Collect Staking Rewards";
+  }
 
   return transaction;
 };

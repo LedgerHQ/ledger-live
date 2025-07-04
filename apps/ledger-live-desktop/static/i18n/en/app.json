@@ -6672,7 +6672,9 @@
           "header": "Delegation",
           "button": "Claim rewards",
           "columns": {
-            "statusTooltip": "Delegated amounts generate rewards",
+            "inactiveTooltip": "Validator not found",
+            "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
+            "activeTooltip": "Delegated amount generate rewards",
             "delegated": "Delegated",
             "rewards": "Rewards"
           },
@@ -6732,8 +6734,8 @@
           "confirmation": {
             "title": "Confirmation",
             "success": {
-              "title": "You have successfully unstaked your assets",
-              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -6761,7 +6763,31 @@
           "confirmation": {
             "title": "Confirmation",
             "success": {
-              "title": "You have successfully unstaked your assets",
+              "title": "You have successfully redelegated your assets",
+              "text": "The redelegation will update once the blockchain has confirmed the transaction",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Claim rewards",
+        "steps": {
+          "rewards": {
+            "title": "Rewards",
+            "description": "You earned <0>{{formattedClaimableRewards}}</0> from the validator below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
+            "currentValidatorLabel": "Delegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully claimed your rewards",
               "text": "Your account balance will be updated when the blockchain confirms the transaction.",
               "cta": "View details"
             },

@@ -43,7 +43,7 @@ function StepValidators({
       return bridge.updateTransaction(transaction, {
         recipient: validator.address,
         properties: {
-          name: "updateAccount",
+          name: "staking",
           mode: "redelegate",
           stakedNodeId: validator.nodeId ?? null,
         },

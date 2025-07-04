@@ -1,13 +1,13 @@
-import { ExplorerView } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
-import {
+import type { ExplorerView } from "@ledgerhq/types-cryptoassets";
+import type { Operation } from "@ledgerhq/types-live";
+import { getCurrentHederaPreloadData } from "./preload-data";
+import type {
   HederaAccount,
   HederaOperationExtra,
   HederaValidator,
   Transaction,
-  UpdateAccountProperties,
+  StakingTransactionProperties,
 } from "./types";
-import { getCurrentHederaPreloadData } from "./preload-data";
 
 const getTransactionExplorer = (
   explorerView: ExplorerView | null | undefined,
@@ -18,10 +18,10 @@ const getTransactionExplorer = (
   return explorerView?.tx?.replace("$hash", extra.consensusTimestamp ?? extra.transactionId ?? "0");
 };
 
-const isUpdateAccountTransaction = (
+const isStakingTransaction = (
   tx: Transaction,
-): tx is Extract<Required<Transaction>, { properties: UpdateAccountProperties }> => {
-  return tx.properties?.name === "updateAccount";
+): tx is Extract<Required<Transaction>, { properties: StakingTransactionProperties }> => {
+  return tx.properties?.name === "staking";
 };
 
 const extractCompanyFromNodeDescription = (description: string): string => {
@@ -47,7 +47,7 @@ const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null
 
 export {
   getTransactionExplorer,
-  isUpdateAccountTransaction,
+  isStakingTransaction,
   extractCompanyFromNodeDescription,
   getValidatorFromAccount,
 };

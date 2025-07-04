@@ -16,22 +16,22 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
-export type UpdateAccountProperties = {
-  name: "updateAccount";
-  mode: "delegate" | "undelegate" | "redelegate";
+export type StakingTransactionProperties = {
+  name: "staking";
+  mode: "delegate" | "undelegate" | "redelegate" | "claimRewards";
   stakedNodeId?: number | null;
 };
 
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
-  properties?: UpdateAccountProperties;
+  properties?: StakingTransactionProperties;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
-  properties?: UpdateAccountProperties;
+  properties?: StakingTransactionProperties;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

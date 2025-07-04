@@ -13,13 +13,11 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     return [];
   }
 
-  const onClick = () => {
-    const isAlreadyStaked = !!account.hederaResources?.delegation;
+  const isAlreadyStaked = !!account.hederaResources?.delegation;
 
+  const onClick = () => {
     if (isAccountEmpty(account)) {
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
-    } else if (isAlreadyStaked) {
-      console.log("FIXME: already staked logic");
     } else {
       dispatch(openModal("MODAL_HEDERA_DELEGATE", { account }));
     }
@@ -30,11 +28,10 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
+      disabled: isAlreadyStaked,
       label,
       event: "button_clicked2",
-      eventProperties: {
-        button: "stake",
-      },
+      eventProperties: { button: "stake" },
       accountActionsTestId: "stake-button",
     },
   ];

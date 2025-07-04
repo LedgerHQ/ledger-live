@@ -23,8 +23,8 @@ const Delegations = ({ account }: { account: HederaAccount }) => {
   const dispatch = useDispatch();
 
   const onClaimRewards = useCallback(() => {
-    console.log("FIXME: handle claim rewards");
-  }, []);
+    dispatch(openModal("MODAL_HEDERA_CLAIM_REWARDS", { account }));
+  }, [account, dispatch]);
 
   const onRedirect = useCallback(
     (modalName: DelegateModalName) => {
