@@ -117,7 +117,7 @@ describe("Xrp Api", () => {
         },
       });
       // Then
-      expect(result.length).toEqual(162);
+      expect(result.length).toEqual(178);
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
