@@ -22,6 +22,8 @@ export async function getTrustedInputRaw(
 
   const trustedInput = await transport.send(0xe0, 0x42, firstRound ? 0x00 : 0x80, 0x00, data);
   const res = trustedInput.slice(0, trustedInput.length - 2).toString("hex");
+
+  console.log("rabl: getTrustedInputRAW data", { data: data.toString("hex") });
   return res;
 }
 export async function getTrustedInput(
@@ -30,7 +32,12 @@ export async function getTrustedInput(
   transaction: Transaction,
   additionals: Array<string> = [],
 ): Promise<string> {
-  const { inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
+  let { inputs, outputs, locktime, nExpiryHeight, extraData, sapling, orchard } = transaction;
+
+  console.log("rabl: getTrustedInput HERE 17", transaction.sapling);
+  console.log("rabl: getTrustedInput HERE 17", transaction.orchard);
+  console.log("rabl: getTrustedInput HERE 17", sapling);
+  console.log("rabl: getTrustedInput HERE 17", orchard);
 
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");
@@ -122,76 +129,118 @@ export async function getTrustedInput(
     console.log("rabl: getTrustedInput HERE 6", { data });
     await getTrustedInputRaw(transport, data);
   }
+  console.log("rabl: getTrustedInput HERE 7", transaction.sapling);
+  console.log("rabl: getTrustedInput HERE 7", transaction.orchard);
 
-  if (isZcash && transaction.sapling) {
-    console.log("rabl: getTrustedInput 6.0 vSpendsSapling.length", {
-      vSpendsSaplingLength: transaction.sapling.vSpendsSapling.length,
-    });
-    console.log("rabl: getTrustedInput 6.0 vOutputSapling.length", {
-      vOutputSaplingLength: transaction.sapling.vOutputSapling.length,
-    });
-
+  if (isZcash) {
+    console.log("rabl: getTrustedInput HERE add zcash data");
     const data = Buffer.concat([
-      locktime,
-      Buffer.from([0x01, 0x00, 0x00, 0x00]),
-      transaction.sapling.valueBalanceSapling,
-      transaction.sapling.anchorSapling,
-      createVarint(transaction.sapling.vSpendsSapling.length),
-      createVarint(transaction.sapling.vOutputSapling.length),
+      createVarint(transaction.sapling?.vSpendsSapling.length || 0),
+      createVarint(transaction.sapling?.vOutputSapling.length || 0),
+      createVarint(transaction.orchard?.vActions.length || 0),
     ]);
 
-    console.log("rabl: start EXTRA DATA", { data });
+    console.log("rabl: start ZCASH DATA", { data });
     // send this is sapling data
     await getTrustedInputRaw(transport, data);
     console.log("rabl: header sent", { data });
-    // send spends
-    for (const spend of transaction.sapling.vSpendsSapling) {
-      const spendData = Buffer.concat([
-        spend.cv, //32
-        spend.nullifier, //32
-        spend.rk, //32
+    // Sapling
+    if (transaction.sapling) {
+      const saplingData = Buffer.concat([
+        transaction.sapling.valueBalanceSapling,
+        transaction.sapling.anchorSapling,
       ]);
-      console.log("rabl: getTrustedInput HERE 6.1 spend", { spendData });
-      await getTrustedInputRaw(transport, spendData);
-    }
-    for (const output of transaction.sapling.vOutputSapling) {
-      const outputData = Buffer.concat([
-        output.cmu,
-        output.ephemeralKey,
-        output.encCiphertext.slice(0, 52),
-      ]);
-      console.log("rabl: getTrustedInput HERE 6.2 compact", { outputData });
-      await getTrustedInputRaw(transport, outputData);
-    }
-    // send outputs memo
-    for (const output of transaction.sapling.vOutputSapling) {
-      // Send memo and noncompact ciphertext in 128-byte blocks
-      for (let i = 0; i < 4; i++) {
-        const start = 52 + i * 128;
-        const end = start + 128;
-        const outputData = Buffer.concat([output.encCiphertext.slice(start, end)]);
-        console.log("rabl: getTrustedInput HERE 6.4 noncompact", { outputData });
+      await getTrustedInputRaw(transport, saplingData);
+      // send spends
+      for (const spend of transaction.sapling.vSpendsSapling) {
+        const spendData = Buffer.concat([
+          spend.cv, //32
+          spend.nullifier, //32
+          spend.rk, //32
+        ]);
+        console.log("rabl: getTrustedInput HERE 6.1 spend", { spendData });
+        await getTrustedInputRaw(transport, spendData);
+      }
+      for (const output of transaction.sapling.vOutputSapling) {
+        const outputData = Buffer.concat([
+          output.cmu,
+          output.ephemeralKey,
+          output.encCiphertext.slice(0, 52),
+        ]);
+        console.log("rabl: getTrustedInput HERE 6.2 compact", { outputData });
         await getTrustedInputRaw(transport, outputData);
       }
+      // send outputs memo
+      for (const output of transaction.sapling.vOutputSapling) {
+        // Send memo and noncompact ciphertext in 128-byte blocks
+        for (let i = 0; i < 4; i++) {
+          const start = 52 + i * 128;
+          const end = start + 128;
+          const outputData = Buffer.concat([output.encCiphertext.slice(start, end)]);
+          console.log("rabl: getTrustedInput HERE 6.4 noncompact", { outputData });
+          await getTrustedInputRaw(transport, outputData);
+        }
+      }
+      // send outputs noncompact
+      let res;
+      for (const output of transaction.sapling.vOutputSapling) {
+        const outputData = Buffer.concat([
+          output.cv,
+          output.encCiphertext.slice(564, 580), // 32 bytes],
+          output.outCiphertext,
+        ]);
+        console.log("rabl: getTrustedInput HERE 6.4 noncompact", {
+          outputData: outputData.toString("hex"),
+        });
+        res = await getTrustedInputRaw(transport, outputData); // TODO
+      }
+      console.log("rabl: getTrustedInput HERE 6.5 bindingSigSapling", { res });
+      extraData = Buffer.alloc(0);
     }
-    // send outputs noncompact
-    let res;
-    for (const output of transaction.sapling.vOutputSapling) {
-      const outputData = Buffer.concat([
-        output.cv,
-        output.encCiphertext.slice(564, 580), // 32 bytes],
-        output.outCiphertext,
+
+    // Orchard
+    if (transaction.orchard) {
+      // compact digest data
+      for (const action of transaction.orchard.vActions) {
+        const actionData = Buffer.concat([
+          action.nullifier,
+          action.cmx,
+          action.ephemeralKey,
+          action.encCiphertext.slice(0, 52),
+        ]);
+        console.log("rabl: getTrustedInput HERE Orchard", { actionData });
+        await getTrustedInputRaw(transport, actionData);
+      }
+      // memo digest data
+      for (const action of transaction.orchard.vActions) {
+        for (let i = 0; i < 4; i++) {
+          const start = 52 + i * 128;
+          const end = start + 128;
+          const outputData = Buffer.concat([action.encCiphertext.slice(start, end)]);
+          console.log("rabl: getTrustedInput HERE Orchard noncompact", { outputData });
+          await getTrustedInputRaw(transport, outputData);
+        }
+      }
+      // noncompact
+      for (const action of transaction.orchard.vActions) {
+        const actionData = Buffer.concat([
+          action.cv,
+          action.rk,
+          action.encCiphertext.slice(564, 580), 
+          action.outCiphertext,
+        ]);
+        console.log("rabl: getTrustedInput HERE Orchard", { actionData });
+        await getTrustedInputRaw(transport, actionData);
+      }
+
+      const orchardData = Buffer.concat([
+        transaction.orchard.flags,
+        transaction.orchard.valueBalance,
+        transaction.orchard.anchor,
       ]);
-      console.log("rabl: getTrustedInput HERE 6.4 noncompact", {
-        outputData: outputData.toString("hex"),
-      });
-      res = await getTrustedInputRaw(transport, outputData);
+
+      await getTrustedInputRaw(transport, orchardData);
     }
-    console.log("rabl: getTrustedInput HERE 6.5 bindingSigSapling", { res });
-    invariant(res, "missing result in processScriptBlocks");
-    return res;
-    // send other
-    // await getTrustedInputRaw(transport, data);
   }
 
   const endData: Buffer[] = [];
