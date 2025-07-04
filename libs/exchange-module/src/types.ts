@@ -39,6 +39,7 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   customFeeConfig?: {
     [key: string]: BigNumber;
   };
+  swapAppVersion?: string;
 };
 
 export type ExchangeStartResult = {

@@ -378,8 +378,15 @@ export const handlers = ({
         throw new ServerError(createUnknownError({ message: "params is undefined" }));
       }
 
-      const { provider, fromAmount, fromAmountAtomic, quoteId, toNewTokenId, customFeeConfig } =
-        params;
+      const {
+        provider,
+        fromAmount,
+        fromAmountAtomic,
+        quoteId,
+        toNewTokenId,
+        customFeeConfig,
+        swapAppVersion,
+      } = params;
 
       const trackingParams = {
         provider: params.provider,
@@ -562,6 +569,7 @@ export const handlers = ({
               sourceCurrencyId: fromCurrency.id,
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
+              swapAppVersion,
             });
 
             resolve({ operationHash, swapId });
@@ -577,6 +585,7 @@ export const handlers = ({
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapType: quoteId ? "fixed" : "float",
+              swapAppVersion,
             });
 
             reject(error);

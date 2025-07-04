@@ -430,15 +430,6 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
-                  id={"catalog"}
-                  label={t("sidebar.catalog")}
-                  icon={Icons.Globe}
-                  iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
-                  onClick={handleClickCatalog}
-                  collapsed={secondAnim}
-                />
-                <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
                   icon={Icons.ArrowUp}
@@ -454,6 +445,16 @@ const MainSideBar = () => {
                   iconActiveColor="wallet"
                   onClick={handleOpenReceiveModal}
                   disabled={noAccounts || navigationLocked}
+                  collapsed={secondAnim}
+                />
+                <SideBarListItem
+                  id={"swap"}
+                  label={t("sidebar.swap")}
+                  icon={Icons.Exchange}
+                  iconActiveColor="wallet"
+                  onClick={handleClickSwap}
+                  isActive={location.pathname.startsWith("/swap")}
+                  disabled={noAccounts}
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
@@ -481,13 +482,12 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
-                  id={"swap"}
-                  label={t("sidebar.swap")}
-                  icon={Icons.Exchange}
+                  id={"catalog"}
+                  label={t("sidebar.catalog")}
+                  icon={Icons.Globe}
                   iconActiveColor="wallet"
-                  onClick={handleClickSwap}
-                  isActive={location.pathname.startsWith("/swap")}
-                  disabled={noAccounts}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
+                  onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
                 <FeatureToggle featureId="referralProgramDesktopSidebar">

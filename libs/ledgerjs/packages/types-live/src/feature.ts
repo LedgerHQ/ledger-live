@@ -436,6 +436,7 @@ export type Feature_ProtectServicesMobile = Feature<{
 }>;
 
 export type Feature_ProtectServicesDesktop = Feature<{
+  openWithDevTools: boolean;
   availableOnDesktop: boolean;
   isNew: boolean;
   openRecoverFromSidebar: boolean;

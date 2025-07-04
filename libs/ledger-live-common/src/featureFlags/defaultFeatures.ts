@@ -153,6 +153,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,

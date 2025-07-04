@@ -1,57 +1,16 @@
 # live-mobile
 
-## 3.85.0-nightly.2
-
-### Minor Changes
-
-- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+## 3.84.1
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/native-ui@0.38.0-nightly.1
+- [#10788](https://github.com/LedgerHQ/ledger-live/pull/10788) [`040e3b4`](https://github.com/LedgerHQ/ledger-live/commit/040e3b4451ed5a9b4c9185b8042eaf8c5ce66511) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump segment sdk to fix url issue
 
-## 3.85.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7)]:
-  - @ledgerhq/live-dmk-mobile@0.8.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.1
-  - @ledgerhq/coin-cosmos@0.16.1-nightly.1
-  - @ledgerhq/coin-evm@2.22.6-nightly.1
-  - @ledgerhq/coin-filecoin@1.9.12-nightly.1
-  - @ledgerhq/coin-multiversx@0.4.12-nightly.1
-  - @ledgerhq/coin-stacks@0.8.12-nightly.1
-  - @ledgerhq/live-countervalues@0.5.12-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.41-nightly.1
-  - @ledgerhq/live-nft@0.8.12-nightly.1
-  - @ledgerhq/live-nft-react@0.9.12-nightly.1
-  - @ledgerhq/live-wallet@0.11.3-nightly.1
-
-## 3.85.0-nightly.0
-
-### Minor Changes
-
-- [#10709](https://github.com/LedgerHQ/ledger-live/pull/10709) [`4bd0027`](https://github.com/LedgerHQ/ledger-live/commit/4bd002799fd6ff910a46791db1a720aae687e3de) Thanks [@themooneer](https://github.com/themooneer)! - Dismiss keyboard on swipe back (ios)
-
-- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+## 3.84.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd)]:
-  - @ledgerhq/coin-framework@5.5.0-nightly.0
-  - @ledgerhq/native-ui@0.38.0-nightly.0
-  - @ledgerhq/coin-cosmos@0.16.1-nightly.0
-  - @ledgerhq/coin-evm@2.22.6-nightly.0
-  - @ledgerhq/coin-filecoin@1.9.12-nightly.0
-  - @ledgerhq/coin-multiversx@0.4.12-nightly.0
-  - @ledgerhq/coin-stacks@0.8.12-nightly.0
-  - @ledgerhq/live-countervalues@0.5.12-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.41-nightly.0
-  - @ledgerhq/live-nft@0.8.12-nightly.0
-  - @ledgerhq/live-nft-react@0.9.12-nightly.0
-  - @ledgerhq/live-wallet@0.11.3-nightly.0
+- [#10788](https://github.com/LedgerHQ/ledger-live/pull/10788) [`040e3b4`](https://github.com/LedgerHQ/ledger-live/commit/040e3b4451ed5a9b4c9185b8042eaf8c5ce66511) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump segment sdk to fix url issue
 
 ## 3.84.0
 
