@@ -24,17 +24,17 @@ import {
   TokenAccount,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
-import { eip1559TransactionHasFees, legacyTransactionHasFees } from "./logic";
-import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
+import { getMinEip1559Fees, getMinLegacyFees } from "../editTransaction/getMinEditTransactionFees";
+import { eip1559TransactionHasFees, legacyTransactionHasFees } from "../logic";
+import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../errors";
 import {
   EditType,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   TransactionStatus,
-} from "./types";
-import { DEFAULT_GAS_LIMIT, getEstimatedFees } from "./utils";
+} from "../types";
+import { DEFAULT_GAS_LIMIT, getEstimatedFees } from "../utils";
 
 type ValidatedTransactionFields =
   | "recipient"

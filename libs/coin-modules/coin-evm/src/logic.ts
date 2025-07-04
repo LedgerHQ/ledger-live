@@ -14,7 +14,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { getNodeApi } from "./api/node/index";
+import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
 import {
   EvmNftTransaction,

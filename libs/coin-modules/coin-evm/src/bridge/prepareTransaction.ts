@@ -2,13 +2,13 @@ import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import isEqual from "lodash/isEqual";
-import { getNftCollectionMetadata } from "./api/nft";
-import { getNodeApi } from "./api/node/index";
+import { getNftCollectionMetadata } from "../network/nft";
+import { getNodeApi } from "../network/node/index";
+import { getAdditionalLayer2Fees, isNftTransaction } from "../logic";
+import { getTransactionData, getTypedTransaction } from "../transaction";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "../types";
+import { DEFAULT_NONCE, getEstimatedFees } from "../utils";
 import { validateRecipient } from "./getTransactionStatus";
-import { getAdditionalLayer2Fees, isNftTransaction } from "./logic";
-import { getTransactionData, getTypedTransaction } from "./transaction";
-import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
-import { DEFAULT_NONCE, getEstimatedFees } from "./utils";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)

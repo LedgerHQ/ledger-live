@@ -18,10 +18,10 @@ import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "./logic";
-import { ExplorerApi } from "./api/explorer/types";
-import { getExplorerApi } from "./api/explorer";
-import { getNodeApi } from "./api/node/index";
+import { ExplorerApi } from "../network/explorer/types";
+import { getExplorerApi } from "../network/explorer";
+import { getNodeApi } from "../network/node/index";
+import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.

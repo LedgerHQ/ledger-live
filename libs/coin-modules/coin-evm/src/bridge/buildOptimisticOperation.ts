@@ -8,10 +8,10 @@ import {
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
-import { isNftTransaction } from "./logic";
-import { toTransactionRaw } from "./transaction";
-import { getEstimatedFees } from "./utils";
+import { getEstimatedFees } from "../utils";
+import { toTransactionRaw } from "../transaction";
+import { EvmNftTransaction, Transaction as EvmTransaction } from "../types";
+import { isNftTransaction } from "../logic";
 
 /**
  * Build an optimistic operation for the coin of the integration (e.g. Ether for Ethereum)
