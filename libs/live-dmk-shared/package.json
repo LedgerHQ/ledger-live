@@ -35,7 +35,9 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
+    "@types/semver": "^7",
     "purify-ts": "^2.1.0",
+    "semver": "^7",
     "xstate": "^5.19.2"
   },
   "devDependencies": {
