@@ -10,9 +10,6 @@ describe("Sui Api", () => {
 
   beforeAll(() => {
     module = createApi({
-      status: {
-        type: "active",
-      },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
       },
