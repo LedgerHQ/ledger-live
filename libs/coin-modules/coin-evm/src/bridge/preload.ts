@@ -8,7 +8,7 @@ import {
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
-import { getCALHash, setCALHash } from "./logic";
+import { getCALHash, setCALHash } from "../logic";
 
 export const fetchERC20Tokens: (
   currency: CryptoCurrency,

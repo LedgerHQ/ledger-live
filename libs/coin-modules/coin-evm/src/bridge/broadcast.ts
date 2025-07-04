@@ -1,7 +1,7 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { Transaction as EvmTransaction } from "./types";
-import { getNodeApi } from "./api/node/index";
+import { Transaction as EvmTransaction } from "../types";
+import { getNodeApi } from "../network/node/index";
 
 /**
  * Broadcast a transaction and update the operation linked

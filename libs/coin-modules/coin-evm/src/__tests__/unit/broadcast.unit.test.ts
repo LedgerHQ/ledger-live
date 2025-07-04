@@ -10,10 +10,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import axios from "axios";
-import * as API from "../../api/node/rpc.common";
-import LEDGER_API from "../../api/node/ledger";
-import broadcast from "../../broadcast";
-import buildOptimisticOperation from "../../buildOptimisticOperation";
+import * as API from "../../network/node/rpc.common";
+import LEDGER_API from "../../network/node/ledger";
+import broadcast from "../../bridge/broadcast";
+import buildOptimisticOperation from "../../bridge/buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import {

@@ -1,8 +1,8 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { Transaction as EvmTransaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
-import { Transaction as EvmTransaction } from "./types";
 
 export const estimateMaxSpendable: AccountBridge<EvmTransaction>["estimateMaxSpendable"] = async ({
   account,

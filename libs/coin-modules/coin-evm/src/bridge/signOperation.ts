@@ -4,11 +4,11 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { EvmSigner } from "../types/signer";
+import { getSerializedTransaction } from "../transaction";
+import { Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import type { EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
-import { getSerializedTransaction } from "./transaction";
-import { Transaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware
