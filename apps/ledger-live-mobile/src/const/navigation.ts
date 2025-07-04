@@ -551,6 +551,7 @@ export enum ScreenName {
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
+  DebugDatadog = "DebugDatadog",
 }
 
 export enum NavigatorName {

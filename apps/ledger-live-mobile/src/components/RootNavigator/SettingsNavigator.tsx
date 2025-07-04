@@ -81,6 +81,7 @@ import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDeb
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
+import DatadogRum from "~/screens/Settings/Debug/Debugging/DatadogRum";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -320,6 +321,13 @@ export default function SettingsNavigator() {
         component={DebugStorageMigration}
         options={{
           title: "Storage migration",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDatadog}
+        component={DatadogRum}
+        options={{
+          title: "Datadog RUM",
         }}
       />
       <Stack.Screen

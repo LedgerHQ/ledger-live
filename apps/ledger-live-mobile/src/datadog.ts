@@ -9,13 +9,13 @@ export const PORTFOLIO_VIEW_ID = "Portfolio";
 import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 
-const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
-const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
+export const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
+export const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
 
-const clientToken = process.env[`${clientTokenVar}`] || Config[`${clientTokenVar}`] || "";
-const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicationIdVar}`] || "";
+export const clientToken = process.env[`${clientTokenVar}`] || Config[`${clientTokenVar}`] || "";
+export const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicationIdVar}`] || "";
 
-const isDatadogEnabled = !!clientToken && !!applicationId;
+export const isDatadogEnabled = !!clientToken && !!applicationId;
 
 const baseConfig: PartialInitializationConfiguration = {
   clientToken,

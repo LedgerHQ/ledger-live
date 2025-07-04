@@ -56,6 +56,12 @@ export default function Debugging() {
           iconLeft={<IconsLegacy.FullnodeMedium size={32} color="black" />}
           onPress={() => navigation.navigate(ScreenName.DebugStorageMigration)}
         />
+        <SettingsRow
+          title="Datadog RUM"
+          desc="View the current state of datadog."
+          iconLeft={<IconsLegacy.LogsMedium size={32} color="black" />}
+          onPress={() => navigation.navigate(ScreenName.DebugDatadog)}
+        />
       </FeatureToggle>
     </SettingsNavigationScrollView>
   );
