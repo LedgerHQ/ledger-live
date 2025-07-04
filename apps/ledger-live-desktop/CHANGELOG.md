@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.120.0-next.4
+
+### Minor Changes
+
+- [#10767](https://github.com/LedgerHQ/ledger-live/pull/10767) [`40235e2`](https://github.com/LedgerHQ/ledger-live/commit/40235e2cc424d0e86ac3b05a9bee347439e16c0b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Include translations
+
 ## 2.120.0-next.3
 
 ### Minor Changes
