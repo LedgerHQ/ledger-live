@@ -24,11 +24,13 @@ export async function performSwapUntilQuoteSelectionStep(
   continueToQuotes: boolean = true,
 ) {
   await app.swapLiveApp.waitForSwapLiveApp();
-
-  await app.swapLiveApp.tapFromCurrency();
-  await app.common.performSearch(accountToDebit.currency.name);
-  await app.stake.selectCurrency(accountToDebit.currency.id);
-  await app.common.selectFirstAccount();
+  const fromCurrencyTexts = await app.swapLiveApp.getFromCurrencyTexts();
+  if (!fromCurrencyTexts.includes(accountToDebit.accountName)) {
+    await app.swapLiveApp.tapFromCurrency();
+    await app.common.performSearch(accountToDebit.currency.name);
+    await app.stake.selectCurrency(accountToDebit.currency.id);
+    await app.common.selectFirstAccount();
+  }
   await app.swapLiveApp.tapToCurrency();
   await app.common.performSearch(accountToCredit.currency.name);
   await app.stake.selectCurrency(accountToCredit.currency.id);

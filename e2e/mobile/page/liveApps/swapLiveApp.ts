@@ -36,6 +36,11 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.getQuotesButton)).toExist();
   }
 
+  @Step("Check if the from currency is already selected")
+  async getFromCurrencyTexts() {
+    return await getWebElementText(this.fromSelector);
+  }
+
   @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);
@@ -212,7 +217,7 @@ export default class SwapLiveAppPage {
     const errorText: string = await getWebElementText(this.fromAccountErrorId);
     if (typeof expectedMessage === "string") {
       jestExpect(errorText).toContain(expectedMessage);
-    } else if (expectedMessage instanceof RegExp) {
+    } else {
       jestExpect(errorText).toMatch(expectedMessage);
     }
   }
@@ -221,7 +226,7 @@ export default class SwapLiveAppPage {
   async checkCtaBanner() {
     await waitWebElementByTestId(this.showDetailslink);
     const showDetailsLink = getWebElementByTestId(this.showDetailslink);
-    await showDetailsLink.runScript("(el) => el.click()");
+    await showDetailsLink.runScript(el => el.click());
     await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
