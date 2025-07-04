@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "../../bridge/buildOptimisticOperation";
-import { accountFixture, transactionFixture } from "./getFixtures";
+import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
 
 describe("buildOptimisticOperation", () => {
   it("should build a proper send operation", () => {

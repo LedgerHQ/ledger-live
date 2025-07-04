@@ -1,4 +1,4 @@
-import { CeloAccount, Transaction } from "../../types";
+import { CeloAccount, Transaction } from "../types";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
 import BigNumber from "bignumber.js";
