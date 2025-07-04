@@ -71,6 +71,7 @@ const StepAmount = ({
         currency="celo"
       />
       {error && <ErrorBanner error={error} />}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       <Alert
         type="primary"
         learnMoreUrl={urls.celo.learnMore}

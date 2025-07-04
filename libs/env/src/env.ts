@@ -913,6 +913,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable logs for drawers",
   },
+  SANCTIONED_ADDRESSES_URL: {
+    def: "https://infraprj-9150.ofac-compliance.pages.dev/all_sanctioned_addresses_without_ticker.json",
+    parser: stringParser,
+    desc: "List of sanctioned addresses",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {

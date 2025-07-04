@@ -18,6 +18,7 @@ export default function StepStake({
   onUpdateTransaction,
   transaction,
   error,
+  status,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const updateValidator = ({ address }: { address: string }) => {
@@ -41,6 +42,7 @@ export default function StepStake({
         type="modal"
       />
       {error && <ErrorBanner error={error} />}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       <ValidatorField
         account={account}
         onChangeValidator={updateValidator}
@@ -59,7 +61,8 @@ export function StepStakeFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const canNext = !bridgePending && !errors.validators && transaction && transaction.recipient;
+  const canNext =
+    !bridgePending && !errors.validators && transaction && transaction.recipient && !errors.sender;
   return (
     <>
       {transaction && <LedgerByFigmentTCLink transaction={transaction} />}

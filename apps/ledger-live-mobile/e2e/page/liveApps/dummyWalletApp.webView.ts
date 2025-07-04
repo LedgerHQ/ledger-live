@@ -14,13 +14,13 @@ export default class DummyWalletApp {
     await new DiscoverPage().openViaDeeplink("dummy-live-app");
   }
 
-  async expectApp() {
+  async expectApp(theme: string = "light") {
     const title = await getWebElementById("image-container").getTitle();
     jestExpect(title).toBe("Dummy Wallet API App");
 
     const url = await getWebElementById("param-container").getCurrentUrl();
     jestExpect(url).toBe(
-      `http://localhost:${port}/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App`,
+      `http://localhost:${port}/?theme=${theme}&lang=en&name=Dummy+Wallet+API+Live+App`,
     );
   }
 
@@ -36,6 +36,19 @@ export default class DummyWalletApp {
   async sendAccountReceive() {
     await typeTextByWebTestId("account-id-input", "2d23ca2a-069e-579f-b13d-05bc706c7583");
     await tapWebElementByTestId("account-receive");
+  }
+
+  async signTransaction(
+    accountId: string,
+    currencyIds: string[],
+    amount: string,
+    recipientAddress: string,
+  ) {
+    await typeTextByWebTestId("account-id-input", accountId);
+    await typeTextByWebTestId("currency-ids-input", currencyIds.join(","));
+    await typeTextByWebTestId("amount-input", amount);
+    await typeTextByWebTestId("recipient-input", recipientAddress);
+    await tapWebElementByTestId("transaction-sign");
   }
 
   async getResOutput() {

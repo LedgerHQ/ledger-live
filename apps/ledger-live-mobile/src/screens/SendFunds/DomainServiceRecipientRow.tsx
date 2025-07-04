@@ -13,6 +13,10 @@ import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "~/components/RecipientInput";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = {
   onChangeText: (value: string) => void;
@@ -115,15 +119,33 @@ const DomainServiceRecipientInput = ({
           placeholderTranslationKey="transfer.recipient.inputEns"
         />
       </View>
-
       <BasicErrorsView
         error={error}
         warning={warning}
         domainError={domainError}
         domainErrorHandled={domainErrorHandled}
         isForwardResolution={isForwardResolution}
+        noLink={error instanceof AddressesSanctionedError}
       />
-
+      {error instanceof AddressesSanctionedError ? (
+        <>
+          <LText
+            testID="send-recipient-error-description"
+            style={[styles.warningBox]}
+            color="alert"
+          >
+            <TranslatedError error={error} field="description" />
+          </LText>
+          <View
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+            }}
+          >
+            <SupportLinkError error={error} type="alert" />
+          </View>
+        </>
+      ) : null}
       {transaction.recipientDomain && (
         <View style={styles.inputWrapper}>
           {isForwardResolution ? (
@@ -144,7 +166,6 @@ const DomainServiceRecipientInput = ({
           )}
         </View>
       )}
-
       {domainError && domainErrorHandled ? (
         <View style={styles.inputWrapper}>
           <DomainErrorsView domainError={domainError} isForwardResolution={isForwardResolution} />

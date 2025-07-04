@@ -13,6 +13,7 @@ export class ReceiveModal extends Modal {
   private addressDisplayedValue = this.page.locator("#address-field");
   private selectAccount = this.page.getByText("Choose a crypto asset");
   private warningMessage = this.page.locator('div[type="warning"]');
+  private errorMessage = this.page.locator('div[type="error"]');
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
   private sendAssetWarningMessage = (
@@ -60,5 +61,11 @@ export class ReceiveModal extends Modal {
   async verifyTronAddressActivationWarningMessage() {
     await expect(this.warningMessage).toBeVisible();
     await expect(this.warningMessage).toContainText(this.sendTronAddressActivationWarningMessage);
+  }
+
+  @step("Verify error message")
+  async verifyErrorMessage(message: string) {
+    await expect(this.errorMessage).toBeVisible();
+    await expect(this.errorMessage).toContainText(message);
   }
 }

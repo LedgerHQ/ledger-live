@@ -23,6 +23,10 @@ export default class ReceivePage {
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
+  sanctionedAccountModalTitle = "sanctioned-account-modal-title";
+  sanctionedAccountModalDescription = "sanctioned-account-modal-description";
+  sanctionedAccountModalCloseButton = "sanctioned-account-modal-close-button";
+
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }
@@ -139,5 +143,22 @@ export default class ReceivePage {
   async doNotVerifyAddress() {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();
+  }
+
+  @Step("Verify sanctioned modal")
+  async verifySanctionedModal(): Promise<void> {
+    await expect(getElementById(this.sanctionedAccountModalTitle)).toBeVisible();
+    await expect(getElementById(this.sanctionedAccountModalTitle)).toHaveText("Keeping you safe");
+
+    await expect(getElementById(this.sanctionedAccountModalDescription)).toBeVisible();
+    await expect(getElementById(this.sanctionedAccountModalDescription)).toHaveText(
+      "This transaction involves a sanctioned wallet address and cannot be processed.\n--0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf\nLearn More",
+    );
+  }
+
+  @Step("Close sanctioned modal")
+  async closeSanctionedModal(): Promise<void> {
+    await expect(getElementById(this.sanctionedAccountModalCloseButton)).toBeVisible();
+    await tapById(this.sanctionedAccountModalCloseButton);
   }
 }

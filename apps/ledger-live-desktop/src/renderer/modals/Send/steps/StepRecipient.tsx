@@ -84,6 +84,11 @@ const StepRecipient = ({
         <>
           {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
           {error ? <ErrorBanner error={error} /> : null}
+          {status.errors && status.errors.sender ? (
+            <div data-testid="sender-error-container">
+              <ErrorBanner dataTestId="sender-error" error={status.errors.sender} />
+            </div>
+          ) : null}
           {isNFTSend ? (
             <Box flow={1}>
               <Label>{t("send.steps.recipient.nftRecipient")}</Label>
@@ -171,11 +176,17 @@ export const StepRecipientFooter = ({
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
   );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-  const canNext = !bridgePending && !hasFieldError && !isTerminated;
+  const canNext = !bridgePending && !hasFieldError && !isTerminated && !status.errors.sender;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
+    // This handle the case of a sanctioned UTXO address on Bitcoin
+    // In the case where the user put a valid recipient, UTXO addresses are checked once we click on Continue
+    if (status.errors.sender) {
+      return;
+    }
+
     const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
       lldMemoTag?.enabled &&

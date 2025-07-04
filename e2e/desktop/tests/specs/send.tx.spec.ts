@@ -523,3 +523,143 @@ test.describe("Send flows", () => {
     });
   });
 });
+
+test.describe("[Blacklist] Blocking transactions to sanctioned recipient addresses in send flow", () => {
+  const transaction = new Transaction(Account.ETH_1, Account.SANCTIONED_ETH, "0.00001", Fee.MEDIUM);
+
+  test.use({
+    userdata: "speculos-sanctioned-eth",
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToCredit.currency.id,
+          index: transaction.accountToCredit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    "Send from ETH_1 to SANCTIONED_ETH - receiver is sanctioned address",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3537",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+
+      await app.account.clickSend();
+      await app.send.fillRecipientInfo(transaction);
+      await app.send.checkErrorMessage(
+        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      );
+    },
+  );
+});
+
+test.describe("[Blacklist] Blocking transactions from sanctioned user addresses in send flow", () => {
+  const transaction = new Transaction(Account.SANCTIONED_ETH, Account.ETH_1, "0.00001", Fee.MEDIUM);
+
+  test.use({
+    userdata: "speculos-sanctioned-eth",
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToCredit.currency.id,
+          index: transaction.accountToCredit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    "Send from SANCTIONED_ETH - sender is sanctioned address",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3537",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+
+      await app.account.clickSend();
+      await app.send.checkSenderError(
+        "Keeping you safe",
+        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      );
+
+      await app.send.checkContinueButtonDisabled();
+    },
+  );
+});
+
+test.describe("[Blacklist] Blocking transactions to and from sanctioned user addresses in send flow", () => {
+  const transaction = new Transaction(
+    Account.SANCTIONED_ETH,
+    Account.SANCTIONED_ETH,
+    "0.00001",
+    Fee.MEDIUM,
+  );
+
+  test.use({
+    userdata: "speculos-sanctioned-eth",
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToCredit.currency.id,
+          index: transaction.accountToCredit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    "Send from SANCTIONED_ETH - both sender and recipient are sanctioned",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3537",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+
+      await app.account.clickSend();
+      await app.send.checkSenderError(
+        "Keeping you safe",
+        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      );
+      await app.send.checkContinueButtonDisabled();
+
+      await app.send.fillRecipientInfo(transaction);
+      await app.send.checkErrorMessage(
+        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      );
+      await app.send.checkContinueButtonDisabled();
+    },
+  );
+});
