@@ -51,6 +51,7 @@ const AddAccountButton: React.FC<Props> = ({ sourceScreenName, disabled, currenc
         ]}
         hitSlop={6}
         onPress={openAddModal}
+        testID="add-new-account-button"
       >
         <Text variant="large">{t("addAccounts.addNewOrExisting")}</Text>
         <Icons.Plus size="S" color="neutral.c100" />
