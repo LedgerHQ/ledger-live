@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
@@ -13,11 +12,7 @@ import { parseBoolean } from "LLM/utils/parseBoolean";
 import { TrackingEvent } from "../../../enums";
 import { AccountsListNavigator } from "../types";
 import { useNavigation } from "@react-navigation/core";
-import {
-  navigateToAssetSelection,
-  navigateToDeviceSelection,
-  navigateToNetworkSelection,
-} from "../utils/navigation";
+import { navigateToDeviceSelection, navigateToNetworkSelection } from "../utils/navigation";
 import { getTicker } from "../utils/getTicker";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 
@@ -32,9 +27,6 @@ export type SpecificAccountsType = ReturnType<typeof useSpecificAccountsListView
 export default function useSpecificAccountsListViewModel({ route, specificAccounts }: Props) {
   const navigation = useNavigation();
   const { params } = route;
-
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
-  const isLlmNetworkBasedAddAccountFlowEnabled = llmNetworkBasedAddAccountFlow?.enabled;
 
   const hasNoAccount = useSelector(hasNoAccountsSelector);
   const isUpToDate = useSelector(isUpToDateSelector);
@@ -75,7 +67,7 @@ export default function useSpecificAccountsListViewModel({ route, specificAccoun
   const hasNetworksProviders = provider && currenciesByProvider.length > 1;
 
   const onAddAccount = () => {
-    if (isLlmNetworkBasedAddAccountFlowEnabled && currency) {
+    if (currency) {
       if (hasNetworksProviders) {
         navigateToNetworkSelection({
           navigation,
@@ -87,11 +79,6 @@ export default function useSpecificAccountsListViewModel({ route, specificAccoun
           currency,
         });
       }
-    } else {
-      navigateToAssetSelection({
-        navigation,
-        currency,
-      });
     }
   };
 

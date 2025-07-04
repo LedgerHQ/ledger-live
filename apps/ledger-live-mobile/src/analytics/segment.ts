@@ -168,15 +168,6 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
-const getNewAddAccountsAttribues = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
-
-  return {
-    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
-  };
-};
-
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -281,7 +272,6 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
 
@@ -333,7 +323,6 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
-    ...addAccountsAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,

@@ -40,9 +40,9 @@ describe("AddAccount", () => {
     expect(await screen.findByText(/add another account/i));
     expect(await screen.findByText(/Use your Ledger device/i));
     expect(await screen.findByText(/Use Ledger Sync/i));
-    // On press add with another ledger live app
+    // On press add with ledger device
     await user.press(screen.getByText(/Use your Ledger device/i));
-    expect(await screen.findByText(/crypto asset/i)).toBeVisible();
+    expect(await screen.findByText(/Select Asset/i)).toBeVisible();
     // On click back
     await user.press(await screen.findByTestId(/navigation-header-back-button/i));
     expect(addAssetButton).toBeVisible();

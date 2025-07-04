@@ -16,7 +16,6 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
-      llmNetworkBasedAddAccountFlow: { enabled: true },
     },
     cliCommands: [
       (userdataPath?: string) => {
