@@ -86,6 +86,7 @@
     "continue" : "继续",
     "previous" : "上一步",
     "learnMore" : "了解更多",
+    "learnMoreWithEllipsis" : "了解更多...",
     "help" : "帮助",
     "needHelp" : "需要帮助？",
     "areYouSure" : "是否确定?",
@@ -106,6 +107,7 @@
     "reset" : "重置",
     "retry" : "重试",
     "range" : "范围",
+    "start" : "开始",
     "stop" : "停止",
     "updateNow" : "立即更新",
     "close" : "关闭",
@@ -122,9 +124,15 @@
     "featureFlags" : "功能标志",
     "ldmkEnabled" : "LDMK 传输",
     "information" : "信息",
+    "increase" : "增加",
+    "max" : "最大值",
+    "min" : "最小值",
+    "set" : "设置",
+    "follow" : "跟随",
     "search" : "搜索...",
     "searchWithoutEllipsis" : "搜索",
     "manage" : "管理",
+    "none" : "无",
     "tryAgain" : "请重试",
     "lockScreen" : {
       "title" : "欢迎回来",
@@ -202,7 +210,9 @@
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
       "SENDING" : "发送",
-      "BURN" : "已销毁"
+      "BURN" : "已销毁",
+      "STAKE_NEURON" : "已质押",
+      "TOP_UP_NEURON" : "已充值"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -259,11 +269,11 @@
   },
   "time" : {
     "minute" : "分钟",
-    "minute_plural" : "分钟",
+    "minute_other" : "分钟",
     "minute_short" : "分钟",
     "second_short" : "秒",
     "hour" : "小时",
-    "hour_plural" : "小时",
+    "hour_other" : "小时",
     "range" : {
       "day" : "1 天",
       "week" : "1 周",
@@ -575,7 +585,7 @@
       "date" : "日期",
       "from" : "从",
       "fromAddress" : "初始地址",
-      "fromAddress_plural" : "初始地址",
+      "fromAddress_other" : "初始地址",
       "to" : "到",
       "toProvider" : "提供方地址",
       "initialAmount" : "初始额",
@@ -1242,11 +1252,11 @@
       }
     },
     "manual" : {
-      "title" : "设置您的 {{deviceName}}",
+      "title" : "准备好您的 {{deviceName}}",
       "continueOnDevice" : "在您的 {{productName}} 上执行此操作",
       "pairedContent" : {
-        "title" : "此 {{deviceName}} 是正品",
-        "description" : "这台 {{productName}} 可以安全使用。您可以继续进行设置。",
+        "title" : "{{deviceName}} 为正品",
+        "description" : "您的 {{productName}} 可以安全使用。您现在可以开始设置。",
         "continueOnDevice" : "点按您的 {{productName}} 开始设置"
       },
       "pinContent" : {
@@ -1256,26 +1266,37 @@
         "continueOnDevice" : "在您的 {{productName}} 上设置识别码"
       },
       "seedContent" : {
-        "title" : "秘密恢复短语",
+        "title" : "设置与备份",
         "titleCompleted" : "秘密恢复短语已确认",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
+        "restoreSeed" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "restoreCharonTitle" : "使用 Recovery Key 进行恢复",
+        "restoreCharonDescription" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "restoreCharonContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
         "selection" : "选择最适合您的设置选项：",
-        "selectionNewLedger" : "<0>“Set up as a new Ledger”</0>（设置为新 Ledger 设备）可以创建一个新钱包。这会生成新的秘密恢复短语。",
-        "selectionRestore" : "<0>“Restore”</0>（恢复）可让您使用秘密恢复短语或使用 Ledger Recover 恢复对现有资产的访问权限。",
+        "selectionNewLedgerTitle" : "设置为新 Ledger 设备",
+        "selectionNewLedgerDescription" : "这会生成新的秘密恢复短语。",
+        "selectionRestoreTitle" : "恢复对资产的访问权限",
+        "selectionRestoreDescription" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "selectionRestoreDescriptionWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。",
         "selectionContinueOnDevice" : "在 {{productName}} 上选择相应选项",
-        "newSeedDescription1" : "{{productName}} 设备会生成秘密恢复短语，这是由 24 个助记词组成的唯一列表。如果您的 Ledger 设备被盗、丢失或您忘记了识别码，这是恢复资产的唯一方法。",
-        "newSeedDescription2" : "<0>保密并确保其安全：</0>\n您的秘密恢复短语无可替代，它掌控着您的所有资产。任何人只要获取您的短语，就可以控制并窃取您的资产。如果您丢失了秘密恢复短语，Ledger 也无能为力。",
-        "newSeedDescription3" : "谨防任何人或任何软件要求您提供秘密恢复短语。这是一种骗局。 ",
-        "newSeedDescription4" : "您的 Ledger 设备是唯一应该输入秘密恢复短语的地方。",
-        "newSeedDescription5" : "切勿告诉他人。谨防丢失。",
-        "newSeedContinueOnDevice" : "查看并写下 {{productName}} 上生成的秘密恢复短语",
+        "selectionNewSeedTitle" : "秘密恢复短语",
+        "selectionNewSeedSubtitle" : "请妥善保管并确保私密性",
+        "selectionNewSeedDescription" : "您的秘密恢复短语无可替代，它掌控着您的所有资产。任何人只要掌握您的短语，就可以窃取您的资产。如果您丢失了短语，Ledger 也无能为力。",
+        "selectionNewSeedContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
+        "restoreDescription" : "选择您要通过以下方式恢复的备份：",
         "restoreChoiceContinueOnDevice" : "在 {{productName}} 上选择相应选项",
-        "restoreChoiceSRPTitle" : "使用秘密恢复短语恢复",
+        "restoreChoiceSRPTitle" : "秘密恢复短语",
         "restoreChoiceSRPDescription" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。",
-        "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
-        "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，恢复秘密恢复短语备份。",
-        "followInstructions" : "按照 {{productName}} 上的说明进行操作。"
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key 恢复钥匙",
+        "restoreChoiceCharonDescription" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。",
+        "restoreChoiceRecoverTitle" : "Ledger Recover 订阅",
+        "restoreChoiceRecoverDescription" : "使用您的订阅服务，通过身份验证恢复对资产的访问权限。",
+        "followInstructions" : "按照 {{productName}} 上的说明进行操作。",
+        "backupCharonTitle" : "Ledger Recovery Key 恢复钥匙",
+        "backupCharonDescription" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
+        "backupCharonCta" : "了解详情或购买",
+        "backupCharonContinueOnDevice" : "按照 {{productName}} 上的说明进行操作"
       },
       "backup" : {
         "title" : "秘密恢复短语备份",
@@ -1297,8 +1318,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "正品检查和\n操作系统更新检查",
-          "completed" : "您的 {{modelName}} 是正品，并且是最新的"
+          "active" : "Ledger 正品检查",
+          "completed" : "Ledger 正品检查"
         },
         "exitWarningDrawer" : {
           "title" : "取消正品检查和操作系统更新检查？",
@@ -1321,12 +1342,12 @@
           }
         },
         "whyPerformChecksLink" : "详细了解正品检查",
-        "startChecksCTA" : "检查我的 {{modelName}}",
+        "startChecksCTA" : "检查 {{modelName}}",
         "continueCTA" : "继续设置",
         "genuineCheck" : {
           "title" : {
-            "active" : "检验真伪",
-            "completed" : "您的 {{modelName}} 是正品",
+            "active" : "Ledger 正品检查",
+            "completed" : "{{modelName}} 为正品",
             "cancelled" : "正品检验被拒绝"
           },
           "subtitle" : {
@@ -1337,13 +1358,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "操作系统更新检查",
-            "completed" : "您的 {{modelName}} 操作系统是最新的。",
+            "active" : "Ledger OS 操作系统检查",
+            "completed" : "Ledger OS 操作系统已是最新版本",
             "updateAvailable" : "操作系统更新 {{firmwareVersion}} 可用"
           },
           "subtitle" : {
-            "active" : "这将检查您的 {{modelName}} 操作系统系统是否为最新。",
-            "completed" : "要在您的 {{modelName}} 上开始恢复应用程序，请选择下方的“Restore apps”（恢复应用程序）按钮。",
+            "active" : "此操作可检查您的 {{modelName}} 操作系统是否为最新版本。",
             "updateAvailable" : "请更新以获得最佳安全性和最新功能。"
           },
           "viewUpdateCTA" : "更新 {{modelName}} 操作系统",
@@ -1783,14 +1803,14 @@
     "fullNodeReadyInfo" : "将使用您的比特币完整节点来添加账户。",
     "fullNodeConfigure" : "配置节点",
     "tokensTip" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。您可以直接在 {{currency}} 账户上接收代币。",
-    "accountToImportSubtitle_plural" : "添加现有账户",
+    "accountToImportSubtitle_other" : "添加现有账户",
     "selectAll" : "全选 ({{count}})",
     "unselectAll" : "取消全选 ({{count}})",
     "noAccountToImport" : "没有要添加的现有 {{currencyName}} 账户",
     "success" : "已成功添加账户",
-    "success_plural" : "已成功添加账户",
+    "success_other" : "已成功添加账户",
     "successDescription" : "添加其他账户或返回至资产组合",
-    "successDescription_plural" : "添加其他账户或返回至资产组合",
+    "successDescription_other" : "添加其他账户或返回至资产组合",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "在您在 <1><0>{{accountName}}</0></1> 账户上收到资产前，无法添加新账户",
       "noAccountToCreate" : "未找到待创建的 <1><0>{{currencyName}}</0></1> 账户",
@@ -1803,7 +1823,7 @@
     "cta" : {
       "addMore" : "添加更多",
       "add" : "添加账户",
-      "add_plural" : "添加账户",
+      "add_other" : "添加账户",
       "addAccountName" : "添加 {{currencyName}} 账户",
       "receive" : "接收"
     },
@@ -1901,9 +1921,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "使用您的识别码解锁 {{productName}} 以完成更新。",
     "quitApp" : "在您的设备上退出该应用程序",
     "appNotInstalledTitle" : "缺少所需的应用程序",
-    "appNotInstalledTitle_plural" : "缺少所需的应用程序",
+    "appNotInstalledTitle_other" : "缺少所需的应用程序",
     "appNotInstalled" : "完成此操作需要 {{appName}} 应用程序。请前往 My Ledger（我的 Ledger）并在您的设备上安装该应用程序",
-    "appNotInstalled_plural" : "完成此操作需要 {{appName}} 应用程序。请前往 My Ledger（我的 Ledger）并在您的设备上安装这些应用程序",
+    "appNotInstalled_other" : "完成此操作需要 {{appName}} 应用程序。请前往 My Ledger（我的 Ledger）并在您的设备上安装这些应用程序",
     "openManager" : "打开 My Ledger（我的 Ledger）",
     "openOnboarding" : "设置设备",
     "outdated" : "应用程序版本过期",
@@ -1990,14 +2010,14 @@
       },
       "installSuccess" : {
         "title" : "应用程序已成功安装，现在您可以添加您的 {{app}} 账户",
-        "title_plural" : "应用程序已成功安装，现在您可以添加您的账户",
+        "title_other" : "应用程序已成功安装，现在您可以添加您的账户",
         "manageAccount" : "管理我的账户"
       },
       "updatable" : {
         "title" : "可用更新",
-        "title_plural" : "可用更新",
+        "title_other" : "可用更新",
         "progressTitle" : "{{number}} 个应用程序更新",
-        "progressTitle_plural" : "{{number}} 个应用程序更新",
+        "progressTitle_other" : "{{number}} 个应用程序更新",
         "progressWarning" : "更新时不退出 My Ledger（我的 Ledger）。",
         "progress" : "正在更新全部……"
       },
@@ -4087,7 +4107,7 @@
     "duration" : "持续时间",
     "durationJustStarted" : "刚刚开始",
     "durationDays" : "{{count}} 天",
-    "durationDays_plural" : "{{count}} 天",
+    "durationDays_other" : "{{count}} 天",
     "howItWorks" : "委托机制如何运作",
     "delegationEarn" : "您现在可以将您的账户委托出去，以赚取 {{name}} 权益质押奖励。",
     "earnRewards" : "赚取奖励",
@@ -4407,6 +4427,8 @@
       "mockAppUpdateDesc" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序",
       "catalogUrl" : "设置目录应用程序提供商",
       "catalogUrlDesc" : "输入您的自定义目录提供方网址",
+      "customCALRef" : "自定义 CAL 引用",
+      "customCALRefDesc" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
       "customLockScreen" : "自定义锁屏素材资源",
@@ -4711,7 +4733,7 @@
     "ctaSuccess" : "完成",
     "noAccounts" : "没有可导出的账户",
     "selectedAccounts" : "要包括的账户",
-    "selectedAccounts_plural" : "要包括的账户 ({{count}})",
+    "selectedAccounts_other" : "要包括的账户 ({{count}})",
     "disclaimer" : "导出的对值仅供参考之用。请勿将其用于会计、税务、监管或法律目的，因为相关数据由 Ledger 的服务提供方 Kaiko 通过估算方法得出，只是对交易和导出时的资产价格进行的估算。"
   },
   "language" : {
@@ -4749,7 +4771,7 @@
   "informationCenter" : {
     "tooltip" : "信息中心",
     "ongoingIncidentsTooltip" : "有 {{count}} 个正在发生的事件",
-    "ongoingIncidentsTooltip_plural" : "有 {{count}} 个正在发生的事件",
+    "ongoingIncidentsTooltip_other" : "有 {{count}} 个正在发生的事件",
     "tabs" : {
       "announcements" : "新闻",
       "announcementsUnseen" : "新闻 ({{unseenCount}})",
@@ -6600,6 +6622,36 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "NotEnoughTransferAmount" : {
+      "title" : "{{purpose}} 的最低数额为 {{amount}}。"
+    },
+    "ICPDissolveDelayLTMin" : {
+      "title" : "溶解延迟必须至少为 {{min}}。"
+    },
+    "ICPDissolveDelayGTMax" : {
+      "title" : "溶解延迟必须小于 {{max}}。"
+    },
+    "ICPDissolveDelayLTCurrent" : {
+      "title" : "新设的溶解延迟必须大于当前的溶解延迟。"
+    },
+    "ICPNeuronNotFound" : {
+      "title" : "未找到该神经元。"
+    },
+    "ICPInvalidHotKey" : {
+      "title" : "主体 ID 无效"
+    },
+    "ICPHotKeyAlreadyExists" : {
+      "title" : "该热键已存在"
+    },
+    "ICPSplitNotAllowed" : {
+      "title" : "拆分数额超过允许的最大值"
+    },
+    "ICPIncreaseStakeWarning" : {
+      "title" : "此操作将转移该数额，增加一个现有神经元的质押量"
+    },
+    "ICPCreateNeuronWarning" : {
+      "title" : "此操作会将该数额转移至一个新的神经元。一经成功确认，即可对该神经元进行进一步操作。"
     }
   },
   "cryptoOrg" : {
@@ -7062,12 +7114,58 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "选择您要添加的账户",
+      "controls" : {
+        "selectAll" : "全选",
+        "deselectAll" : "取消全选"
+      },
+      "cta" : {
+        "confirm" : "确认"
+      },
+      "newAccount" : "新账户"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "停止扫描"
+      },
+      "warning" : {
+        "title" : "我们无法添加新的 {{currency}} 账户",
+        "description" : "首先需要用您的 {{account}} 账户接收资产，然后才能添加新账户",
+        "cta" : "向我的账户添加资金",
+        "close" : "关闭",
+        "noAssociatedAccounts" : {
+          "description" : "在 {{currency}} 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 {{currency}} 账户后，就可以将其添加到 Ledger Live 中。",
+          "cta" : "如何创建 {{currency}} 账户？",
+          "close" : "关闭"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "未找到账户",
+        "foundAccounts" : "我们找到了 {{count}} 个账户",
+        "foundAccounts_other" : "我们找到了 {{count}} 个账户",
+        "scanning" : "正在扫描账户..."
+      },
+      "title" : "正在查找区块链上的现有账户……"
+    },
+    "connectYourDevice" : {
+      "title" : "连接并解锁您的设备"
+    },
     "searchPlaceholder" : "搜索",
+    "emptyAssetList" : "未找到资产",
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
     "accountCount_one" : "{{count}} 个账户",
-    "accountCount_other" : "{{count}} 个账户"
+    "accountCount_other" : "{{count}} 个账户",
+    "accountsAdded" : {
+      "title" : "账户已添加到您的资产组合",
+      "title_other" : "{{count}} 个账户已添加到您的资产组合",
+      "cta" : {
+        "addFunds" : "向我的账户添加资金",
+        "close" : "关闭"
+      }
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
@@ -7080,5 +7178,291 @@
     "title" : "所在地区不可用",
     "description" : "此地区无法使用 Ledger 钱包。",
     "learnMore" : "了解更多"
+  },
+  "internetComputer" : {
+    "memoField" : {
+      "increaseStake" : "此交易将增加一个现有神经元的质押量，请在上面的数额字段中输入想要质押的数额。",
+      "createNeuron" : "此交易将创建一个质押了 ICP 的神经元，请在上面的数额字段中输入想要质押的数额。",
+      "tooltip" : "Internet Computer 用此来识别交易，将 ICP 质押到神经元。"
+    },
+    "stakeBanner" : {
+      "confirmFollowing" : {
+        "title" : "确认您的跟随设置",
+        "description1" : "您的神经元跟随需要在 {{days}} 天 {{hours}} 小时内确认",
+        "description2" : "您将损失奖励，请确认神经元跟随，继续赚取收益",
+        "cta" : "确认跟随"
+      },
+      "syncNeurons" : {
+        "title" : "同步您质押的 ICP",
+        "description1" : "您质押的 ICP 上次同步时间为 {{days}} 天 {{hours}} 小时前。如需查看最新详情，建议您经常同步。",
+        "description2" : "建议您同步神经元，查看最新详情",
+        "cta" : "同步神经元"
+      },
+      "lockNeurons" : {
+        "title" : "锁定神经元",
+        "description" : "您的一个或多个神经元未锁定。如果不锁定，您将无法获得奖励。因为神经元是通过参与 ICP 治理来赚取奖励，而只有锁定超过六个月的神经元才有资格投票。",
+        "cta" : "管理神经元"
+      },
+      "addFollowees" : {
+        "title" : "添加跟随对象",
+        "description" : "您的一个或多个神经元未设置跟随对象。若未设置跟随对象，您可能无法获得奖励。为了获得奖励，神经元必须直接投票（例如，通过 NNS 去中心化应用程序）或跟随直接投票的神经元。",
+        "cta" : "管理神经元"
+      },
+      "stakeICP" : {
+        "title" : "质押 ICP",
+        "description" : "质押 ICP 并通过参与其治理获得奖励。",
+        "cta" : "质押 ICP"
+      }
+    },
+    "headerManageActions" : {
+      "stakeICP" : {
+        "title" : "质押 ICP",
+        "tooltip" : "创建神经元以质押 ICP"
+      },
+      "manageNeurons" : {
+        "title" : "管理神经元",
+        "tooltip" : "管理活跃神经元"
+      }
+    },
+    "summaryFooter" : {
+      "stakedBalanceTooltip" : "当前在神经元中质押的 ICP 代币总额。质押的 ICP 可获得投票奖励，且可用于治理。",
+      "totalMaturityTooltip" : "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。",
+      "totalMaturity" : "总成熟度",
+      "stakedBalance" : "已质押余额",
+      "stakedMaturity" : "已质押成熟度",
+      "stakedMaturityTooltip" : "已自动再质押到神经元中的成熟度奖励部分，可持续赚取额外收益。",
+      "liquidMaturity" : "流动成熟度",
+      "liquidMaturityTooltip" : "可以流动 ICP 代币的形式领取或质押到神经元中的成熟度奖励部分。"
+    },
+    "confirmation" : {
+      "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。",
+      "success" : "{{action}} 成功",
+      "syncAccounts" : "请同步账户，查看更新的变更"
+    },
+    "sync" : "同步",
+    "lastSynced" : "上次同步时间",
+    "listNeurons" : {
+      "timeUntilRewardLoss" : "奖励损失剩余时间",
+      "warnbox" : "未找到神经元。请尝试同步通过 NNS 去中心化应用程序创建的现有神经元，或通过质押创建新神经元。"
+    },
+    "common" : {
+      "neuronId" : "神经元 ID",
+      "neuronIds" : "神经元 ID",
+      "state" : "州/省/直辖市/自治区",
+      "action" : "操作",
+      "balance" : "余额",
+      "maturity" : "成熟度",
+      "currentBalance" : "当前余额",
+      "amount" : "数额",
+      "stake" : "质押",
+      "followees" : "跟随对象",
+      "votingPower" : "投票权",
+      "hotkey" : "热键",
+      "neuron" : "神经元",
+      "disburse" : "解散",
+      "startDissolving" : "开始溶解",
+      "stopDissolving" : "停止溶解",
+      "dissolveDelay" : "溶解延迟",
+      "dissolveState" : "溶解状态",
+      "dissolveStateUnlocked" : "已解锁",
+      "dissolveStateLocked" : "已锁定",
+      "dissolveStateDissolving" : "正在溶解",
+      "dissolveStateDissolved" : "已溶解",
+      "inactiveNeuron" : "不活跃神经元",
+      "activeNeuron" : "活跃神经元",
+      "confirmFollowing" : "确认跟随"
+    },
+    "refreshVotingPowerFlow" : {
+      "title" : "刷新投票权"
+    },
+    "manageNeuronFlow" : {
+      "title" : "管理神经元",
+      "stakeMaturity" : {
+        "title" : "质押成熟度",
+        "description" : "选择可以质押到该神经元中的成熟度数。",
+        "confirmStake" : "确认质押",
+        "maturityAvailable" : "可用成熟度"
+      },
+      "splitNeuron" : {
+        "title" : "拆分神经元",
+        "transactionFee" : "交易费",
+        "confirmSplit" : "确认拆分"
+      },
+      "setDissolveDelay" : {
+        "title" : "设置溶解延迟",
+        "balance" : "余额",
+        "dissolveDelay" : "溶解延迟",
+        "dissolveDelayTooltip" : "溶解延迟是您等待神经元解锁并且 ICP 可再次提取需要的最短时长。请注意，仅当神经元处于溶解状态时，溶解延迟才会缩短。",
+        "votingPowerDescription" : "只有溶解延迟至少达到 6 个月的神经元有投票权。",
+        "dissolveDelayInput" : "溶解延迟（天）",
+        "inputPlaceholder" : "输入溶解延迟",
+        "updateDelay" : "更新延迟"
+      },
+      "selectFollowees" : {
+        "title" : "跟随对象的神经元 ID",
+        "placeholder" : "输入神经元 ID",
+        "options" : "跟随选项"
+      },
+      "selectTopics" : {
+        "title" : "选择主题",
+        "warnbox" : "跟随神经元实现自动投票，并获得最高投票奖励。您可以针对特定主题或所有主题跟随神经元。",
+        "listOfTopics" : "可跟随的主题列表",
+        "addAction" : "添加跟随对象"
+      },
+      "addHotKey" : {
+        "title" : "添加热键"
+      },
+      "manage" : {
+        "header" : {
+          "hotkeyControlDescription" : "该神经元由热键控制，通过 Ledger Live 界面进行控制的能力有限。",
+          "hotkeyControl" : "热键控制",
+          "votingPower" : "投票权",
+          "noVotingPower" : "无投票权"
+        },
+        "votingPower" : {
+          "title" : "投票权",
+          "titleTooltip" : "溶解延迟必须至少达到 6 个月，神经元才有投票权。",
+          "value" : "价值",
+          "staked" : "已质押 ICP",
+          "increaseStake" : "增加质押",
+          "ageBonus" : "年龄奖励",
+          "ageBonusTooltip" : "您的神经元可以处于“已锁定”、“已解锁”或“正在溶解”状态。在“已锁定”状态下，年龄奖励会增加，而溶解延迟保持不变。如果神经元处于“正在溶解”状态，其年龄奖励将被设置为 0，而溶解延迟会随时间缩短。溶解延迟达到 0 后，神经元将变成“已解锁”状态，其中持有的 ICP 可以发送到任何 ICP 账户。",
+          "dissolveDelayBonus" : "溶解延迟奖励",
+          "dissolveDelayBonusTooltip" : "溶解延迟奖励是根据溶解延迟给神经元增加的投票权奖励。溶解延迟越长，奖励越高。",
+          "confirmFollowing" : "确认跟随",
+          "confirmFollowingTooltip" : "连续 6 个月不活跃的 ICP 神经元将开始丢失投票奖励。为避免奖励丢失，请手动投票、编辑或确认您的跟随设置。"
+        },
+        "maturity" : {
+          "title" : "成熟度",
+          "description" : "通过对提案进行投票和/或跟随活跃神经元来赚取奖励。",
+          "staked" : "已质押",
+          "stakedTooltip" : "已质押成熟度可增加神经元的投票权，但不能生成新的神经元。",
+          "available" : "可用",
+          "availableTooltip" : "可用成熟度可以被质押，或被销毁然后生成包含一定数额的 ICP 的神经元（需经过一个称为“成熟度调整”的非确定性过程）。",
+          "stakeAction" : "质押",
+          "spawnNeuronAction" : "生成神经元"
+        },
+        "hotKeys" : {
+          "title" : "热键",
+          "description" : "热键是一种通过 Ledger Live 界面控制神经元的方式。",
+          "addHotKey" : "添加热键",
+          "removeAction" : "删除",
+          "noHotKeys" : "未找到热键"
+        },
+        "advancedDetails" : {
+          "title" : "高级详情与设置",
+          "dateCreated" : "日期已创建",
+          "dissolveDate" : "溶解日期",
+          "neuronAccount" : "神经元账户",
+          "splitNeuronAction" : "拆分神经元",
+          "autoStakeMaturityAction" : "自动质押成熟度"
+        },
+        "following" : {
+          "title" : "跟随",
+          "description" : "通过跟随，您可以将投票委托给其他神经元持有者。委托投票权后，您仍可赚取奖励。您可以随时更改您的跟随设置。",
+          "warnbox" : "若未设置跟随对象，您可能无法获得奖励。为了获得奖励，神经元必须直接投票（例如，使用 NNS 去中心化应用程序）或跟随直接投票的神经元。",
+          "followNeuronsAction" : "跟随神经元"
+        }
+      },
+      "listNeuron" : {
+        "warnbox" : "从下面的列表中选择一个神经元来管理其质押、成熟度和溶解延迟设置。"
+      }
+    },
+    "manageNeuron" : {
+      "actions" : {
+        "increase_stake" : "增加质押",
+        "create_neuron" : "创建神经元",
+        "start_dissolving" : "开始溶解",
+        "stop_dissolving" : "停止溶解",
+        "list_neurons" : "列出神经元",
+        "disburse" : "解散神经元",
+        "spawn_neuron" : "生成神经元",
+        "add_hot_key" : "添加热键",
+        "stake_maturity" : "质押成熟度",
+        "refresh_voting_power" : "刷新投票权",
+        "increase_dissolve_delay" : "增加溶解延迟",
+        "auto_stake_maturity" : "自动质押成熟度",
+        "spawn_neuron_from_maturity" : "从成熟度生成神经元",
+        "set_auto_stake_maturity" : "设置自动质押成熟度",
+        "set_dissolve_delay" : "设置溶解延迟",
+        "remove_hot_key" : "移除热键",
+        "follow" : "跟随神经元",
+        "split_neuron" : "拆分神经元"
+      },
+      "followTopic" : {
+        "0" : {
+          "title" : "全部（除治理以及 SNS 和神经元基金）",
+          "description" : "除治理主题以及 SNS 和神经元基金之外的所有提案都跟随神经元。"
+        },
+        "1" : {
+          "title" : "神经元管理",
+          "description" : ""
+        },
+        "2" : {
+          "title" : "互换费用",
+          "description" : "所有提供关于 ICP 价值（使用 IMF 特别提款权 (SDR) 来衡量）的“实时”信息的提案，这让 NNS 能够以保持实际成本恒定的比率将 ICP 转换为 cycle（为计算提供燃料）。"
+        },
+        "3" : {
+          "title" : "网络经济学",
+          "description" : "管理网络经济学的提案，例如确定应向节点运营商支付哪些奖励。"
+        },
+        "4" : {
+          "title" : "治理",
+          "description" : "所有管理治理的提案，例如冻结危害网络的恶意容器。"
+        },
+        "5" : {
+          "title" : "节点管理",
+          "description" : "所有以某种方式管理节点机器的提案，包括但不限于升级或配置操作系统、升级或配置虚拟机框架，以及升级或配置节点副本软件。"
+        },
+        "6" : {
+          "title" : "参与管理",
+          "description" : "所有管理网络参与者的提案，例如授予和撤销 DCID（数据中心身份）或 NOID（节点运营商身份）。"
+        },
+        "7" : {
+          "title" : "子网管理",
+          "description" : "所有管理网络子网的提案，例如创建新的子网、添加和删除子网节点以及拆分子网。"
+        },
+        "8" : {
+          "title" : "协议容器管理",
+          "description" : "所有管理协议容器的提案，它们被视为 ICP 协议的一部分，对协议的正常运行至关重要。"
+        },
+        "9" : {
+          "title" : "客户身份核实 (KYC)",
+          "description" : "为监管目的更新客户身份核实 (KYC) 信息的提案，例如在以神经元形式进行的 ICP 初始创世分发期间。"
+        },
+        "10" : {
+          "title" : "节点提供方奖励",
+          "description" : "提出奖励节点提供方的提案"
+        },
+        "12" : {
+          "title" : "IC OS 版本部署",
+          "description" : "处理子网副本版本更新的提案"
+        },
+        "13" : {
+          "title" : "IC OS 版本选举",
+          "description" : "处理副本版本启用与停用的提案"
+        },
+        "14" : {
+          "title" : "SNS 和神经元基金",
+          "description" : "与 SNS 和神经元基金相关的提案"
+        },
+        "15" : {
+          "title" : "API 边界节点管理",
+          "description" : "与 API 边界节点管理相关的提案"
+        },
+        "16" : {
+          "title" : "子网租赁",
+          "description" : "所有与租赁子网相关的提案，例如子网租赁请求。"
+        },
+        "17" : {
+          "title" : "协议容器管理",
+          "description" : "所有管理协议容器的提案，它们被视为 ICP 协议的一部分，对协议的正常运行至关重要。"
+        },
+        "18" : {
+          "title" : "服务神经系统管理",
+          "description" : "所有管理服务神经系统 (SNS) 容器的提案，包括升级相关容器和通过 SNS-W 管理 SNS 框架容器 WASM。"
+        }
+      }
+    }
   }
 }
