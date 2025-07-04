@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.85.0-nightly.0
+
+### Minor Changes
+
+- [#10798](https://github.com/LedgerHQ/ledger-live/pull/10798) [`64dd516`](https://github.com/LedgerHQ/ledger-live/commit/64dd51608f3edf0814bd65b13c1a41352383f16f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Downgrade expo-camera
+
+- [#10803](https://github.com/LedgerHQ/ledger-live/pull/10803) [`a1bb485`](https://github.com/LedgerHQ/ledger-live/commit/a1bb4855728d13d3da6d0c5e9e88a24cd4ee763e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - QRcode displayed correctly for LedgerSync
+
+### Patch Changes
+
+- Updated dependencies [[`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.76.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.1-nightly.2
+  - @ledgerhq/coin-evm@2.22.6-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.12-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.12-nightly.2
+  - @ledgerhq/coin-stacks@0.8.12-nightly.2
+  - @ledgerhq/domain-service@1.2.35-nightly.0
+  - @ledgerhq/live-countervalues@0.5.12-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.41-nightly.2
+  - @ledgerhq/live-nft@0.8.12-nightly.2
+  - @ledgerhq/live-nft-react@0.9.12-nightly.2
+  - @ledgerhq/live-wallet@0.11.3-nightly.2
+
 ## 3.84.1
 
 ### Patch Changes

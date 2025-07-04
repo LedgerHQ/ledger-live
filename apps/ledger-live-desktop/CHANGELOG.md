@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.120.0-nightly.3
+
+### Minor Changes
+
+- [#10781](https://github.com/LedgerHQ/ledger-live/pull/10781) [`e28c3ab`](https://github.com/LedgerHQ/ledger-live/commit/e28c3ab39d6920878105a3b5b5b9e1f7cd2f8828) Thanks [@Canestin](https://github.com/Canestin)! - fix: changing debit account no longer disables continue button
+
+- [#10808](https://github.com/LedgerHQ/ledger-live/pull/10808) [`335ba5e`](https://github.com/LedgerHQ/ledger-live/commit/335ba5e5461f500bbb0178e1e5c7f339532e607d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Reset button in settings wasn't reseting app state
+
+- [#10795](https://github.com/LedgerHQ/ledger-live/pull/10795) [`2313643`](https://github.com/LedgerHQ/ledger-live/commit/2313643a15e9cb1b337f1b082fdaad701d905ab6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - AA - MAD - Missing tracker
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+- [#10768](https://github.com/LedgerHQ/ledger-live/pull/10768) [`88f7f93`](https://github.com/LedgerHQ/ledger-live/commit/88f7f93c4e152a1799bfc09f475b27d925b856dd) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Account list selection refinements
+
+### Patch Changes
+
+- Updated dependencies [[`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/live-common@34.40.0-nightly.3
+  - @ledgerhq/types-live@6.76.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.7.0-nightly.3
+  - @ledgerhq/coin-framework@5.5.0-nightly.2
+  - @ledgerhq/coin-aptos@2.5.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.16.3-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.1-nightly.2
+  - @ledgerhq/coin-evm@2.22.6-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.12-nightly.2
+  - @ledgerhq/domain-service@1.2.35-nightly.0
+  - @ledgerhq/live-countervalues@0.5.12-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.41-nightly.2
+  - @ledgerhq/live-nft@0.8.12-nightly.2
+  - @ledgerhq/live-nft-react@0.9.12-nightly.2
+  - @ledgerhq/live-wallet@0.11.3-nightly.2
+
 ## 2.120.0-nightly.2
 
 ### Minor Changes
