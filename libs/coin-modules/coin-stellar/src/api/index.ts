@@ -20,9 +20,8 @@ import { StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-import { fetchSequence } from "../network";
-import { getEnv } from "@ledgerhq/live-env";
-export function createApi(config: StellarConfig): Api<StellarMemo> {
+
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -86,8 +85,10 @@ async function estimate(): Promise<FeeEstimation> {
 
 async function operations(
   address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation<StellarAsset>[], string]> {
+  pagination?: Pagination,
+  // { minHeight }: Pagination,
+): Promise<[Operation[], string]> {
+  const minHeight = pagination?.minHeight ?? 0;
   return operationsFromHeight(address, minHeight);
 }
 
