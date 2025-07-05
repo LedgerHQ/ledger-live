@@ -1,6 +1,5 @@
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-// import { PolkadotAsset } from "../types";
 
 describe("Polkadot Api", () => {
   let module: AlpacaApi;

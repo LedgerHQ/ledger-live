@@ -16,7 +16,6 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-// import { PolkadotAsset } from "../types";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
