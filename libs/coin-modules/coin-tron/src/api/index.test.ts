@@ -11,7 +11,6 @@ import coinConfig from "../config";
 import { TronConfig } from "../config";
 import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-// import { TronAsset } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),

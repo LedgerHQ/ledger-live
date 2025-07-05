@@ -1,11 +1,4 @@
-import {
-  AlpacaApi,
-  Asset,
-  FeeEstimation,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
-
-export type TezosAsset = Asset;
+import { AlpacaApi, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 export type TezosFeeParameters = { gasLimit: bigint; storageLimit: bigint };
 export type TezosFeeEstimation = FeeEstimation;

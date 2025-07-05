@@ -2,7 +2,6 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
-// import { TronAsset } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/format", () => ({

@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import TronWeb from "tronweb";
 import { createApi } from ".";
 import { createTronWeb } from "../logic/utils";
-// import { TronAsset } from "../types";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();

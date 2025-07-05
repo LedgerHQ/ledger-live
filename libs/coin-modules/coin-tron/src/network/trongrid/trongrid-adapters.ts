@@ -1,6 +1,6 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, Operation } from "@ledgerhq/coin-framework/api/types";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import type { TronAsset, TrongridTxInfo } from "../../types";
+import type { TrongridTxInfo } from "../../types";
 
 export function fromTrongridTxInfoToOperation(
   trongridTxInfo: TrongridTxInfo,
@@ -35,7 +35,7 @@ function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string)
   }
 }
 
-function inferAssetInfo(trongridTxInfo: TrongridTxInfo): TronAsset {
+function inferAssetInfo(trongridTxInfo: TrongridTxInfo): AssetInfo {
   switch (true) {
     case trongridTxInfo.tokenType === "trc10":
       return {

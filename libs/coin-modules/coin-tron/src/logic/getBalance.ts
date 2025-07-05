@@ -3,7 +3,6 @@ import type { AccountTronAPI } from "../network/types";
 import { getTronResources } from "./utils";
 import { Balance } from "@ledgerhq/coin-framework/api/index";
 import { fetchTronAccount } from "../network";
-// import { Trc10Token, Trc20Token, TronAsset } from "../types";
 
 const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);

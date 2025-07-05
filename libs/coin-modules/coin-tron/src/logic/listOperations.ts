@@ -6,7 +6,6 @@ import {
   getBlock,
 } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
-// import { TronAsset } from "../types";
 
 export type Options = {
   // the soft limit is an indicative number of transactions to fetch

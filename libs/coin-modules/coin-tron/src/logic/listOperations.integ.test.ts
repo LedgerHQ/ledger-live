@@ -1,7 +1,6 @@
 import { defaultOptions, listOperations, Options } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-// import { TronAsset } from "../types";
 
 describe("listOperations", () => {
   beforeAll(() => {
