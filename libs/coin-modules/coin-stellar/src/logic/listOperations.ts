@@ -1,7 +1,6 @@
 import type { StellarOperation } from "../types/bridge";
 import { fetchOperations } from "../network";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-// import { StellarAsset } from "../types";
 
 export type ListOperationsOptions = {
   limit?: number;
