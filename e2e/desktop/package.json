@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "test:playwright": "playwright test --config=playwright.config.ts",
+        "test:playwright:debug": "PWDEBUG=true DEV_TOOLS=1 playwright test --config=playwright.config.ts --workers=1 --debug",
         "test:playwright:setup": "playwright install chromium"
     },
     "dependencies": {

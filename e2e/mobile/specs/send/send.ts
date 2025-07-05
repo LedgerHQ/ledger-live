@@ -11,13 +11,12 @@ async function navigateToSendScreen(accountName: string) {
   await app.account.tapSend();
 }
 
-const beforeAllFunction = async (transaction: TransactionType, userdata?: string) => {
+const beforeAllFunction = async (transaction: TransactionType) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
     },
-    userdata: userdata,
     cliCommands: [
       (userdataPath?: string) => {
         return CLI.liveData({
@@ -51,7 +50,7 @@ export function runSendTest(
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
-      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
+      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(addressToCredit);
       await app.send.expectSummaryMemoTag(transaction.memoTag);

@@ -266,15 +266,16 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   useEffect(() => {
     const checkUserAddressSanctioned = async () => {
-      if (account && account.type === "Account") {
+      const mainAccount = account && getMainAccount(account, parentAccount);
+      if (mainAccount) {
         setIsUserAddressSanctioned(
-          await isAddressSanctioned(account.currency, account.freshAddress),
+          await isAddressSanctioned(mainAccount.currency, mainAccount.freshAddress),
         );
       }
     };
 
     checkUserAddressSanctioned();
-  }, [account]);
+  }, [account, parentAccount]);
 
   if (!account || !currency || !mainAccount) return null;
 

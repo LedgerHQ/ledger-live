@@ -9,7 +9,7 @@ import Track from "~/renderer/analytics/Track";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";
@@ -22,14 +22,6 @@ import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepRe
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
-
-async function checkAddressBlacklisted(account: AccountLike | null | undefined): Promise<boolean> {
-  if (!account || account.type !== "Account") {
-    return false;
-  }
-
-  return isAddressSanctioned(account.currency, account.freshAddress);
-}
 
 export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
 
@@ -148,16 +140,18 @@ const Body = ({
   const [accountError, setAccountError] = useState<Error | undefined>(undefined);
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
-  const handleChangeAccount = useCallback(
+  const computeAccountError = useCallback(
     async (account: Account | TokenAccount, parentAccount?: Account | null) => {
-      setAccount(account);
-      setParentAccount(parentAccount);
+      const mainAccount = getMainAccount(account, parentAccount);
+      const addressSanctioned = await isAddressSanctioned(
+        mainAccount.currency,
+        mainAccount.freshAddress,
+      );
 
-      const addressSanctioned = await checkAddressBlacklisted(account);
-      if (addressSanctioned && account.type === "Account") {
+      if (addressSanctioned) {
         setAccountError(
           new AddressesSanctionedError("AddressesSanctionedError", {
-            addresses: [account.freshAddress],
+            addresses: [mainAccount.freshAddress],
           }),
         );
       } else {
@@ -165,7 +159,15 @@ const Body = ({
         setAccountError(error);
       }
     },
-    [setParentAccount, setAccount],
+    [],
+  );
+  const handleChangeAccount = useCallback(
+    async (account: Account | TokenAccount, parentAccount?: Account | null) => {
+      setAccount(account);
+      setParentAccount(parentAccount);
+      computeAccountError(account, parentAccount);
+    },
+    [setParentAccount, setAccount, computeAccountError],
   );
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_RECEIVE");
@@ -223,22 +225,12 @@ const Body = ({
     }
   }, [steps, stepId, t, currency.name]);
   useEffect(() => {
-    async function computeAccountError() {
-      const addressSanctioned = await checkAddressBlacklisted(account);
-      if (addressSanctioned && account.type === "Account") {
-        setAccountError(
-          new AddressesSanctionedError("AddressesSanctionedError", {
-            addresses: [account.freshAddress],
-          }),
-        );
-      } else {
-        const error = account ? getReceiveFlowError(account, parentAccount) : undefined;
-        setAccountError(error);
-      }
+    if (account) {
+      computeAccountError(account, parentAccount);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    computeAccountError();
-  }, [account, parentAccount]);
   const errorSteps = verifyAddressError ? [2] : [];
   const stepperProps = {
     title,

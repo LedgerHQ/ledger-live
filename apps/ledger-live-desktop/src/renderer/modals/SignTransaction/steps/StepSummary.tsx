@@ -113,7 +113,7 @@ const StepSummary = (props: StepProps) => {
         >
           <TranslatedError
             error={status.errors.sender ?? Object.values<Error>(errors)[0]}
-            field={status.errors.sender ? "description" : "title"}
+            field={status.errors.sender ? "description" : undefined}
           />
         </Alert>
       ) : null}

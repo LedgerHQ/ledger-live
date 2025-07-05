@@ -82,7 +82,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
     if (type === "mock") {
       const mockBridge = mockBridges[family];
-      if (mockBridge) return mockBridge.accountBridge;
+      if (mockBridge) return wrapAccountBridge(mockBridge.accountBridge);
     }
   }
 

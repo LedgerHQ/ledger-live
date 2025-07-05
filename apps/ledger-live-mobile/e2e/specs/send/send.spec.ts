@@ -39,7 +39,6 @@ describe("Send flow", () => {
     await app.send.expectContinueButtonDisabled();
   });
 
-  // Missing case
   $TmsLink("B2CQA-3692");
   it("[Blacklist] Blocking transactions from sanctioned user address to sanctioned user address in send flow", async () => {
     await app.portfolio.openViaDeeplink();
