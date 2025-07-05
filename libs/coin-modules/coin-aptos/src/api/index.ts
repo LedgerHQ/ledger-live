@@ -2,7 +2,6 @@ import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
-// import type { AptosAsset } from "../types/assets";
 import { AptosAPI } from "../network";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";

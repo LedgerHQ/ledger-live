@@ -1,5 +1,4 @@
 import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-// import type { AptosAsset } from "../types/assets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAPI } from "../network";
 import buildTransaction, { isTokenType } from "./buildTransaction";

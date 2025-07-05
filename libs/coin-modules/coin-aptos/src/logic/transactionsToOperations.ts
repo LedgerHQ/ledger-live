@@ -1,6 +1,5 @@
 import { AptosTransaction } from "../types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-// import { AptosAsset } from "../types/assets";
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { APTOS_ASSET_ID, DIRECTION } from "../constants";

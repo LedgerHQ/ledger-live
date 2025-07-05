@@ -1,6 +1,5 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
-// import type { AptosAsset } from "../../types/assets";
 import type { AptosConfig } from "../../config";
 import { createApi } from "../../api";
 import coinConfig from "../../config";
