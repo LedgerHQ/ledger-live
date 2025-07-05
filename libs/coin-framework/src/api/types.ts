@@ -158,11 +158,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
-  listOperations: (
-    address: string,
-    pagination?: Pagination,
-    lastPagingToken?: string,
-  ) => Promise<[Operation[], string]>;
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
 export type BridgeApi = {

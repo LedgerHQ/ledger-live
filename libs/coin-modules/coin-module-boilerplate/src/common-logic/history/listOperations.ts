@@ -12,9 +12,9 @@ import { BoilerplateOperation } from "../../network/types";
  */
 export async function listOperations(
   address: string,
-  page?: Pagination,
+  page: Pagination,
 ): Promise<[Operation[], string]> {
-  const minHeight = page?.minHeight ?? 0;
+  const minHeight = page.minHeight ?? 0;
   const transactions = await getTransactions(address, { from: minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
 }

@@ -39,9 +39,9 @@ async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise
 
 async function listOperations(
   address: string,
-  pagination?: Pagination,
+  pagination: Pagination,
 ): Promise<[Operation[], string]> {
-  const minHeight = pagination?.minHeight ?? 0;
+  const minHeight = pagination.minHeight ?? 0;
   const options: Options = {
     softLimit: 200,
     minHeight: minHeight,

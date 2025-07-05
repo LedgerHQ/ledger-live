@@ -106,11 +106,6 @@ const buildValidateIntent = (networkFamily: string) =>
     return data;
   };
 
-// FIXME: shouldn't hardcode
-// type AssetInfo = {
-//   type: "native"; // or "token" if applicable
-// };
-
 const buildGetBalance = (networkFamily: string) =>
   async function getBalance(address: string): Promise<Balance[]> {
     const { data } = await network<Balance, unknown>({
@@ -139,9 +134,9 @@ const buildGetAccountInfo = (networkFamily: string) =>
 const buildListOperations = (networkFamily: string) =>
   async function listOperations(
     address: string,
-    pagination?: Pagination,
+    pagination: Pagination,
   ): Promise<[Operation<any>[], string]> {
-    const minHeight = pagination?.minHeight ?? 0;
+    const minHeight = pagination.minHeight ?? 0;
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,

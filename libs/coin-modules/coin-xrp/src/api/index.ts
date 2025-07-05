@@ -140,17 +140,7 @@ async function operationsFromHeight(
 
 async function operations(
   address: string,
-  pagination: Pagination | undefined,
-  lastPagingToken?: string,
+  { minHeight }: Pagination,
 ): Promise<[Operation[], string]> {
-  if (pagination?.minHeight) {
-    return await operationsFromHeight(address, pagination.minHeight);
-  }
-  const isInitSync = lastPagingToken === "";
-
-  const newPagination = {
-    minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
-  };
-  // TODO token must be implemented properly (waiting ack from the design document)
-  return await operationsFromHeight(address, newPagination.minHeight);
+  return await operationsFromHeight(address, minHeight);
 }

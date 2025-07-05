@@ -163,10 +163,7 @@ async function operationsFromHeight(
   return [state.accumulator, state.nextCursor || ""];
 }
 
-async function operations(
-  address: string,
-  pagination?: Pagination,
-): Promise<[Operation[], string]> {
-  const minHeight = pagination?.minHeight ?? 0;
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  const minHeight = pagination.minHeight ?? 0;
   return operationsFromHeight(address, minHeight);
 }

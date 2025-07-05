@@ -50,11 +50,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
   return { value };
 }
 
-async function operations(
-  address: string,
-  pagination?: Pagination,
-): Promise<[Operation[], string]> {
-  const minHeight = pagination?.minHeight ?? 0;
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  const minHeight = pagination.minHeight ?? 0;
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }
