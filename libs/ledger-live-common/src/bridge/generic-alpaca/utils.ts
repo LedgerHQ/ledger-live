@@ -21,9 +21,6 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    asset: {
-      assetType: "native",
-    },
     extra: {},
   };
 }
@@ -59,7 +56,6 @@ export const buildOptimisticOperation = (
     transactionSequenceNumber: sequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
-    asset: { assetType: "native" },
     extra: {},
   };
 };

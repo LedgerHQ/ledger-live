@@ -1,7 +1,6 @@
 import { Hex, RawTransaction, Deserializer } from "@aptos-labs/ts-sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../../api";
-// import type { AptosAsset } from "../../types/assets";
 import { AptosAPI } from "../../network";
 import { APTOS_ASSET_ID } from "../../constants";
 

@@ -147,7 +147,6 @@ export const fromOperationRaw = (
     standard,
     tokenId,
     transactionRaw,
-    asset,
   }: OperationRaw,
   accountId: string,
   subAccounts?: TokenAccount[] | null | undefined,
@@ -210,10 +209,6 @@ export const fromOperationRaw = (
 
   if (nftOperations && nftOperations.length > 0) {
     res.nftOperations = nftOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
-  }
-
-  if (asset) {
-    res.asset = asset;
   }
 
   if (extra && fromOperationExtraRaw) {
