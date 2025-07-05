@@ -8,10 +8,6 @@ import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoasse
 import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { StellarOperation } from "../types";
 
-// export interface OperationCommon extends Operation {
-//   extra: Record<string, any>;
-// }
-
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
 export const getAssetIdFromAsset = (asset: AssetInfo) =>
@@ -92,8 +88,8 @@ export function buildSubAccounts({
           token,
           operations: operations.filter(
             op =>
-              op.asset?.assetReference === asset.assetReference &&
-              op.asset?.assetOwner === asset.assetOwner,
+              op.extra.assetCode === asset.assetReference &&
+              op.extra.assetIssuer === asset.assetOwner,
           ),
         }),
       );
