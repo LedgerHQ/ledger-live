@@ -96,7 +96,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+      expect(result).toEqual([{ value: BigInt(0), locked: BigInt(0), asset: { type: "native" } }]);
     });
   });
 
@@ -113,11 +113,28 @@ describe("Xrp Api", () => {
         amount: BigInt(10),
         memo: {
           type: "map",
-          memos: new Map([["memos", ["testdata"]]]),
+          memos: new Map(),
         },
       });
       // Then
       expect(result.length).toEqual(162);
+    });
+
+    it("returns a raw transaction, (memo)", async () => {
+      // When
+      const result = await api.craftTransaction({
+        asset: { type: "native" },
+        type: "send",
+        sender: SENDER,
+        recipient: RECIPIENT,
+        amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map([["memos", ["testdata"]]]),
+        },
+      });
+      // Then
+      expect(result.length).toEqual(178);
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
