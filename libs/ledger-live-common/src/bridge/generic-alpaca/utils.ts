@@ -5,11 +5,14 @@ import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
+  let opType = op.type as OperationType;
+  let value = new BigNumber(op.value.toString());
+
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
-    type: (ledgerOpType as OperationType) || (op.type as OperationType),
+    type: opType,
     value,
     fee: new BigNumber(op.tx.fees.toString()),
     blockHash: op.tx.block.hash,
@@ -18,16 +21,11 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    // asset: {
-    //   assetType: op.asset?.assetType || "native",
-    //   assetReference: asset.assetCode,
-    //   assetOwner: asset.assetIssuer,
-    // },
+    asset: {
+      assetType: "native",
+    },
     extra: {},
   };
-  // console.log("adaptCoreOperationToLiveOperation: ", res);
-
-  return res;
 }
 
 export function transactionToIntent(
@@ -39,7 +37,7 @@ export function transactionToIntent(
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
-    asset: null,
+    asset: { assetType: "native" },
   };
 }
 
@@ -61,6 +59,7 @@ export const buildOptimisticOperation = (
     transactionSequenceNumber: sequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
+    asset: { assetType: "native" },
     extra: {},
   };
 };
