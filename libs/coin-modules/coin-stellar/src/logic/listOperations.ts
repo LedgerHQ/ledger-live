@@ -31,14 +31,7 @@ export async function listOperations(
 const convertToCoreOperation = (operation: StellarOperation): Operation => {
   return {
     id: `${operation.hash}-${operation.extra.index}`,
-    asset:
-      operation.extra?.assetCode && operation.extra?.assetIssuer
-        ? {
-            assetType: "token",
-            assetReference: operation.extra.assetCode,
-            assetOwner: operation.extra.assetIssuer,
-          }
-        : { assetType: "native" },
+    asset: { assetType: "native" },
     tx: {
       hash: operation.hash,
       block: {
