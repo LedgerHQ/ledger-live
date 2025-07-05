@@ -5,8 +5,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 
 const cache = getEnv("MOCK")
-  ? makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12))
-  : () => fetchSanctionedAddresses();
+  ? () => fetchSanctionedAddresses()
+  : makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12));
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   try {

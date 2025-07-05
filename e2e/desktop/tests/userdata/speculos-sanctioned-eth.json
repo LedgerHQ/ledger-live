@@ -46,17 +46,40 @@
     "user": {
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
     },
-    "accounts": [
-      {
-        "data": {
-          "id": "js:2:ethereum:0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf:",
-          "name": "Sanctioned Ethereum",
-          "derivationMode": "",
-          "freshAddress": "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
-          "currencyId": "ethereum"
-        },
-        "version": 1
-      }
+    "accounts": [{
+      "data": {
+        "id": "mock:1:ethereum:true_ethereum_0:",
+        "seedIdentifier": "mock",
+        "name": "Ethereum 1",
+        "starred": false,
+        "derivationMode": "",
+        "index": 0,
+        "freshAddress": "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+        "freshAddressPath": "44'/60'/0'/0/0",
+        "freshAddresses": [
+          {
+            "derivationPath": "44'/60'/0'/0/0",
+            "address": "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+          }
+        ],
+        "blockHeight": 20133303,
+        "syncHash": "0x19813580",
+        "creationDate": "2024-04-10T12:19:59.000Z",
+        "operationsCount": 10,
+        "operations": [],
+        "pendingOperations": [],
+        "currencyId": "ethereum",
+        "unitMagnitude": 18,
+        "lastSyncDate": "2024-06-20T13:41:52.259Z",
+        "balance": "23405814577004878",
+        "spendableBalance": "23405814577004878",
+        "nfts": [],
+        "balanceHistoryCache": {},
+        "subAccounts": [],
+        "swapHistory": []
+      },
+      "version": 1
+    }
     ],
     "countervalues": {}
   }

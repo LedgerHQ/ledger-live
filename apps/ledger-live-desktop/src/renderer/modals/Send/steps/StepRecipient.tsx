@@ -181,12 +181,6 @@ export const StepRecipientFooter = ({
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 
   const handleOnNext = async () => {
-    // This handle the case of a sanctioned UTXO address on Bitcoin
-    // In the case where the user put a valid recipient, UTXO addresses are checked once we click on Continue
-    if (status.errors.sender) {
-      return;
-    }
-
     const memoTagValue = getMemoTagValueByTransactionFamily(transaction as Transaction);
     if (
       lldMemoTag?.enabled &&

@@ -44,7 +44,7 @@ const StepAmount = ({
             >
               <TranslatedError
                 error={status.errors.sender || error || warning}
-                field={status.errors.sender ? "description" : "title"}
+                field={status.errors.sender ? "description" : undefined}
               />
             </Alert>
           )
