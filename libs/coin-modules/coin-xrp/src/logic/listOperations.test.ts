@@ -3,7 +3,6 @@ import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-// import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;

@@ -1,6 +1,5 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { getAccountInfo, getServerInfos } from "../network";
-// import { XrpAsset } from "../types";
 import { parseAPIValue } from "./common";
 
 export async function getBalance(address: string): Promise<Balance[]> {
