@@ -13,8 +13,6 @@ export type AssetInfo = {
   assetType: string;
   assetReference?: string; // TODO: recheck with jnicouleau
   assetOwner?: string; // TODO: do we need i ?
-  selling_liabilities?: string; //FIXME: used for stellar need to be remove from here
-  balance?: string; //FIXME: used for stellar need to be remove from here
 };
 
 export type Asset<TokenInfo extends AssetInfo = never> =
@@ -156,10 +154,7 @@ export type AccountInfo = {
   spendableBalance?: string; // Optional, depending on the API
 };
 
-export type AlpacaApi<
-  // AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
@@ -175,21 +170,6 @@ export type AlpacaApi<
     lastPagingToken?: string,
   ) => Promise<[Operation[], string]>;
 };
-
-// NOTE: taken from coin-stellar/bridge/types
-// export type BalanceAsset = {
-//   balance: string;
-//   limit: string;
-//   buying_liabilities: string;
-//   selling_liabilities: string;
-//   last_modified_ledger: number;
-//   is_authorized: boolean;
-//   is_authorized_to_maintain_liabilities: boolean;
-//   asset_type: string;
-//   asset_code: string;
-//   asset_issuer: string;
-//   liquidity_pool_id?: string;
-// };
 
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;

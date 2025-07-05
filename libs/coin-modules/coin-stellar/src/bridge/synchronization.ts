@@ -7,7 +7,6 @@ import { buildSubAccounts } from "./tokens";
 import { StellarBurnAddressError, StellarOperation } from "../types";
 import { STELLAR_BURN_ADDRESS } from "./logic";
 import { getEnv } from "@ledgerhq/live-env";
-import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 
 export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
@@ -58,20 +57,11 @@ export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig
     }
   });
 
-  const assetInfos: AssetInfo[] = assets.map(asset => ({
-    assetType: asset.asset_type,
-    assetCode: asset.asset_code,
-    assetIssuer: asset.asset_issuer,
-    assetReference: asset.asset_code,
-    assetOwner: asset.asset_issuer,
-  }));
-
   const subAccounts =
     buildSubAccounts({
       currency,
       accountId,
-      assets: assetInfos,
-      // assets: accountInfo.assets ?? [],
+      assets: assets,
       syncConfig,
       operations: assetOperations,
     }) || [];

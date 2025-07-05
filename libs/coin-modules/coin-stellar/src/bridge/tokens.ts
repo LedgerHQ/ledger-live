@@ -5,32 +5,31 @@ import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
-import { StellarOperation } from "../types";
+import { BalanceAsset, StellarOperation } from "../types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-export const getAssetIdFromAsset = (asset: AssetInfo) =>
-  `${asset.assetReference}:${asset.assetOwner}`;
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 function buildStellarTokenAccount({
   parentAccountId,
-  stellarAsset,
+  balance,
+  sellingLiabilities,
   token,
   operations,
 }: {
   parentAccountId: string;
-  stellarAsset: AssetInfo;
+  balance: string;
+  sellingLiabilities: string;
   token: TokenCurrency;
   operations: StellarOperation[];
 }): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
-  const balance = parseCurrencyUnit(token.units[0], stellarAsset?.balance || "0");
 
-  const reservedBalance = new BigNumber(stellarAsset?.balance || "0").minus(
-    stellarAsset.selling_liabilities || 0,
-  );
+  const parsedBalance = parseCurrencyUnit(token.units[0], balance);
+  const reservedBalance = new BigNumber(balance).minus(sellingLiabilities || 0);
   const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
   return {
@@ -47,7 +46,7 @@ function buildStellarTokenAccount({
       value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
     })),
     pendingOperations: [],
-    balance,
+    balance: parsedBalance,
     spendableBalance,
     swapHistory: [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
@@ -64,7 +63,7 @@ export function buildSubAccounts({
 }: {
   currency: CryptoCurrency;
   accountId: string;
-  assets: AssetInfo[];
+  assets: BalanceAsset[];
   syncConfig: SyncConfig;
   operations: StellarOperation[];
 }): TokenAccount[] | undefined {
@@ -84,12 +83,13 @@ export function buildSubAccounts({
       tokenAccounts.push(
         buildStellarTokenAccount({
           parentAccountId: accountId,
-          stellarAsset: asset,
+          balance: asset.balance || "0",
+          sellingLiabilities: asset.selling_liabilities || "0",
           token,
           operations: operations.filter(
             op =>
-              op.extra.assetCode === asset.assetReference &&
-              op.extra.assetIssuer === asset.assetOwner,
+              op.extra.assetCode === asset.asset_code &&
+              op.extra.assetIssuer === asset.asset_issuer,
           ),
         }),
       );
