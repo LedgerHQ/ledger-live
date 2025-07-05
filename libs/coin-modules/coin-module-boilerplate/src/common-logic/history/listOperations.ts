@@ -1,7 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
 import { BoilerplateOperation } from "../../network/types";
-import { BoilerplateAsset } from "../../types";
 
 /**
  * Returns list of operations associated to an account.
