@@ -1,4 +1,6 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export type BlockInfo = {
   height: number;
@@ -60,6 +62,11 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
+  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
+  networkInfo?: {
+    baseFee?: bigint;
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -68,6 +75,9 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
+  subAccount?: TokenAccount;
 };
 
 export type Balance = {
@@ -93,12 +103,12 @@ export interface StringMemo<Kind extends string = "text"> extends Memo {
 }
 
 export interface MapMemo<Kind extends string, Value> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<Kind, Value>;
 }
 
 export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
@@ -106,16 +116,14 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
-export type TransactionIntent<
-  // AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
   expiration?: number;
   recipient: string;
   amount: bigint;
+  fees?: BigNumber | null | undefined; // Optional, depending on the API
   asset: AssetInfo;
 } & MaybeMemo<MemoType>;
 
@@ -143,7 +151,8 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+export type Pagination = { minHeight: number } & { pagingToken?: string; limit?: number }; // For evm, XRP, etc. // NOTE: For Stellar
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AccountInfo = {
   isNewAccount: boolean;
