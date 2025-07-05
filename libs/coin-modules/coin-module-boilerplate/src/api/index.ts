@@ -43,6 +43,7 @@ async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Pr
   return tx.serializedTransaction;
 }
 
+// TODO: fix transaction intent type here and above
 async function estimate(
   transactionIntent: TransactionIntent<BoilerplateAsset>,
 ): Promise<FeeEstimation> {

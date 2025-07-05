@@ -95,9 +95,7 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<StellarAsset>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const value = transactionIntent?.fees
     ? BigInt(transactionIntent?.fees.toString())
     : await estimateFees(transactionIntent.sender);

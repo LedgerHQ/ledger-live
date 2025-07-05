@@ -116,10 +116,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
-export type TransactionIntent<
-  // AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
