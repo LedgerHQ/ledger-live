@@ -183,21 +183,6 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   ) => Promise<[Operation[], string]>;
 };
 
-// NOTE: taken from coin-stellar/bridge/types
-export type BalanceAsset = {
-  balance: string;
-  limit: string;
-  buying_liabilities: string;
-  selling_liabilities: string;
-  last_modified_ledger: number;
-  is_authorized: boolean;
-  is_authorized_to_maintain_liabilities: boolean;
-  asset_type: string;
-  asset_code: string;
-  asset_issuer: string;
-  liquidity_pool_id?: string;
-};
-
 export type BridgeApi = {
   validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
   // TODO: make it available on alpacaApi
