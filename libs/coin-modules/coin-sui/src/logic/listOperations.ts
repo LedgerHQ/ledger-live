@@ -1,6 +1,5 @@
 import { Operation, Pagination } from "@ledgerhq/coin-framework/lib/api/types";
 import { getListOperations } from "../network/sdk";
-// import { SuiAsset } from "../api/types";
 
 export const listOperations = async (
   address: string,

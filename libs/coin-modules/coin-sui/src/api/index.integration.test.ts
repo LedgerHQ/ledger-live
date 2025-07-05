@@ -1,6 +1,5 @@
 import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
-// import { SuiAsset } from "./types";
 import { createApi } from ".";
 
 describe("Sui Api", () => {

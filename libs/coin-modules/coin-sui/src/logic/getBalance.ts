@@ -1,4 +1,3 @@
-// import { SuiAsset } from "../api/types";
 import { getAccount } from "../network";
 import { Balance } from "@ledgerhq/coin-framework/api/types";
 

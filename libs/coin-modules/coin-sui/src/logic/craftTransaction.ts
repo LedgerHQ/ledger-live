@@ -3,7 +3,6 @@ import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import type { SuiTransactionMode, CoreTransaction } from "../types";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
-// import { SuiAsset } from "../api/types";
 
 export type CreateExtrinsicArg = {
   mode: SuiTransactionMode;

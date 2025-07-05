@@ -8,7 +8,6 @@ import {
   lastBlock,
   craftTransaction,
 } from "../logic";
-// import type { SuiAsset } from "./types";
 import type {
   AlpacaApi,
   FeeEstimation,

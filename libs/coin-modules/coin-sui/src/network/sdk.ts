@@ -18,7 +18,6 @@ import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
-// import { SuiAsset } from "../api/types";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
