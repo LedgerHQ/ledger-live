@@ -11,8 +11,8 @@ export type BlockInfo = {
 
 export type AssetInfo = {
   assetType: string;
-  assetReference?: string; // TODO: recheck with jnicouleau
-  assetOwner?: string; // TODO: do we need i ?
+  assetReference?: string; // TODO: recheck with jnicouleau, might iterate to CAIP-19 style reference
+  assetOwner?: string;
 };
 
 export type Asset<TokenInfo extends AssetInfo = never> =
@@ -20,10 +20,7 @@ export type Asset<TokenInfo extends AssetInfo = never> =
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
 // NOTE: CoreOperation
-export type Operation<
-  // AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type Operation<MemoType extends Memo = MemoNotSupported> = {
   id: string;
   type: string;
 
@@ -45,7 +42,7 @@ export type Operation<
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
-  assetInfo?: AssetInfo; // TODO: recheck with jnicouleau
+  assetInfo?: AssetInfo;
 
   tx: {
     hash: string; // transaction hash
@@ -106,10 +103,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
-export type TransactionIntent<
-  // AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
