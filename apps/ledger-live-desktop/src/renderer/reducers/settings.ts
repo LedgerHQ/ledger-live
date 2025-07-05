@@ -26,7 +26,6 @@ import {
   Locale,
   DEFAULT_LANGUAGE,
   OFAC_LOCALES,
-  Locales,
 } from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
@@ -150,7 +149,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   if (languageId) {
     // const localeId = Languages[languageId].locales.find(lang => systemLocal.startsWith(lang));
     // TODO Hack because the typing on the commented line above doesn't work
-    const languageLocales = Languages[languageId].locales as Locales;
+    const languageLocales = Languages[languageId].locales;
 
     const localeId = languageLocales.find(lang => systemLocal.startsWith(lang));
 
@@ -205,6 +204,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   latestFirmware: null,
   blacklistedTokenIds: [],
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
@@ -224,12 +224,14 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
 
@@ -337,6 +339,7 @@ const handlers: SettingsHandlers = {
   },
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const changed = (Object.keys(payload) as (keyof typeof payload)[]).some(
       key => payload[key] !== state[key],
     );
@@ -386,6 +389,7 @@ const handlers: SettingsHandlers = {
 
   [RESET_HIDDEN_NFT_COLLECTIONS]: state => ({
     ...state,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   }),
 
@@ -571,6 +575,7 @@ const handlers: SettingsHandlers = {
   }),
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => {
     const { anonymousUserNotifications: prev } = state;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const next = {
       ...(payload.purgeState ? { LNSUpsell: prev.LNSUpsell } : prev),
       ...payload.notifications,
@@ -580,6 +585,7 @@ const handlers: SettingsHandlers = {
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
 );
@@ -691,6 +697,7 @@ export const developerModeSelector = (state: State): boolean => state.settings.d
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
 export const userThemeSelector = (state: State): "dark" | "light" | undefined | null => {
   const savedVal = state.settings.theme;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return ["dark", "light"].includes(savedVal as string) ? (savedVal as "dark" | "light") : "dark";
 };
 

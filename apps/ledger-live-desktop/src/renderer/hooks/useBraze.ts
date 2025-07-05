@@ -59,6 +59,7 @@ export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => 
   location: LocationContentCard.Action,
   image: card.extras?.image,
   link: card.extras?.link,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   created: card.created as Date,
   mainCta: card.extras?.mainCta,
   secondaryCta: card.extras?.secondaryCta,
@@ -75,6 +76,7 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
   image: card.extras?.image,
   url: card.extras?.url,
   path: card.extras?.path,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   created: card.created as Date,
   order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
 });
@@ -87,6 +89,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   url: card.extras?.url,
   path: card.extras?.path,
   cta: card.extras?.cta,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   created: card.created as Date,
   viewed: card.viewed,
   order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
@@ -161,10 +164,12 @@ export async function useBraze() {
       );
 
       const portfolioCards = filterByPage(filteredDesktopCards, LocationContentCard.Portfolio)
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         .map(card => mapAsPortfolioContentCard(card as ClassicCard))
         .sort(compareCards);
 
       const actionCards = filterByPage(filteredDesktopCards, LocationContentCard.Action)
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         .map(card => mapAsActionContentCard(card as ClassicCard))
         .sort(compareCards);
 
@@ -172,6 +177,7 @@ export async function useBraze() {
         filteredDesktopCards,
         LocationContentCard.NotificationCenter,
       )
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 

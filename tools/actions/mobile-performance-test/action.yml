@@ -1,0 +1,29 @@
+name: "Performance test mobile"
+description: "Run a performance test on mobile"
+inputs:
+  public-id:
+    description: "The public ID of the test"
+    required: true
+  api-key:
+    description: "The API key to use for the test"
+    required: true
+  app-key:
+    description: "The app key to use for the test"
+    required: true
+  site:
+    description: "The Datadog site to use for the test"
+    required: true
+  subdomain:
+    description: "The Datadog subdomain to use. If your URL is `myorg.datadoghq.com`, the custom subdomain is `myorg`."
+    required: false
+  mobile-application-version:
+    description: "The mobile application version ID to use for the test. Datadog GUID pointing to the mobile application version."
+    required: false
+
+outputs:
+  performance-report:
+    description: "Performance test report in JSON format"
+
+runs:
+  using: node20
+  main: build/main.js

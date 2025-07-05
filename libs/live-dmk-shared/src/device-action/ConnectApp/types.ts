@@ -1,5 +1,6 @@
 import type {
-  OpenAppWithDependenciesDAOutput,
+  GetDeviceMetadataDAOutput,
+  InstallOrUpdateAppsDAOutput,
   OpenAppWithDependenciesDAError,
   OpenAppWithDependenciesDAInput,
   OpenAppDARequiredInteraction,
@@ -10,7 +11,9 @@ import { UserInteractionRequired } from "@ledgerhq/device-management-kit";
 
 export type ConnectAppDerivation = string;
 
-export type ConnectAppDAOutput = OpenAppWithDependenciesDAOutput & {
+export type ConnectAppDAOutput = {
+  readonly deviceMetadata?: GetDeviceMetadataDAOutput;
+  readonly installResult?: InstallOrUpdateAppsDAOutput;
   readonly derivation?: ConnectAppDerivation;
 };
 

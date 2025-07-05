@@ -89,15 +89,6 @@ jobs:
           git stash
           git pull
 
-      - name: Merge into main
-        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
-        with:
-          base-branch: "main"
-          head-branch: "${{ inputs.ref }}"
-          commit-message: "Merge ${{ inputs.ref }} into main"
-          github-token: ${{ steps.generate-token.outputs.token }}
-
       - name: create PR to develop
         if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
@@ -128,6 +119,15 @@ jobs:
           git checkout -b support/hotfix-release-merge-conflicts
           git push origin support/hotfix-release-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
+
+      - name: Merge into main
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        with:
+          base-branch: "main"
+          head-branch: "${{ inputs.ref }}"
+          commit-message: "Merge ${{ inputs.ref }} into main"
+          github-token: ${{ steps.generate-token.outputs.token }}
 
       - name: Capture unknown merge fails
         if: ${{ github.event.inputs.tag_version == 'latest' && steps.release-merge.outcome == 'failure' && steps.release-merge.outputs.status != '409' && steps.release-merge.outputs.status != '404' }}

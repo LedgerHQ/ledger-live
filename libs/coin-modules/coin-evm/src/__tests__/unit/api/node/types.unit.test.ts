@@ -1,7 +1,7 @@
-import { isExternalNodeConfig, isLedgerNodeConfig } from "../../../../api/node/types";
+import { isExternalNodeConfig, isLedgerNodeConfig } from "../../../../network/node/types";
 
 describe("EVM Family", () => {
-  describe("api/node/types.ts", () => {
+  describe("network/node/types.ts", () => {
     describe("type guards", () => {
       it("should narrow the param to a Ledger Gas Tracker type", () => {
         expect(isLedgerNodeConfig({ type: "ledger", explorerId: "eth" })).toBe(true);

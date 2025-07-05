@@ -113,6 +113,7 @@ const Stepper = <T, StepProps>({
     <ModalBody
       refocusWhenChange={stepId}
       onClose={hideCloseButton || deviceBlocked ? undefined : onClose}
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       onBack={onBack && !deviceBlocked ? () => onBack(stepProps as StepProps) : undefined}
       backButtonComponent={backButtonComponent}
       title={title}
@@ -128,18 +129,31 @@ const Stepper = <T, StepProps>({
               stepsErrors={errorSteps}
             />
           )}
-          <StepComponent {...(stepProps as React.PropsWithChildren<StepProps>)} />
+          <StepComponent
+            {
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ...(stepProps as React.PropsWithChildren<StepProps>)
+            }
+          />
           {children}
         </>
       )}
       renderFooter={
         StepFooter
-          ? () => <StepFooter {...(stepProps as React.PropsWithChildren<StepProps>)} />
+          ? () => (
+              <StepFooter
+                {
+                  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                  ...(stepProps as React.PropsWithChildren<StepProps>)
+                }
+              />
+            )
           : undefined
       }
     />
   );
 };
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default withTranslation()(Stepper) as <T, StepProps>(
   props: OwnProps<T, StepProps>,
 ) => JSX.Element; // to preserve the generic types

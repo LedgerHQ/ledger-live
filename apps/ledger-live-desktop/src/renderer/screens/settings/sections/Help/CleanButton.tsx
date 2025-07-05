@@ -7,11 +7,14 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import ResetFallbackModal from "~/renderer/modals/ResetFallbackModal";
 import { ActionModalReducer, ActionModalState, useActionModal } from "./logic";
 import { useSoftReset } from "~/renderer/reset";
+
 export default function CleanButton() {
   const { t } = useTranslation();
   const softReset = useSoftReset();
   const [state, actions] = useActionModal();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { opened, pending, fallbackOpened } = state as ActionModalState;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { open, close, closeFallback, handleConfirm, handleError } = actions as ActionModalReducer;
   const onConfirm = useCallback(async () => {
     if (pending) return;

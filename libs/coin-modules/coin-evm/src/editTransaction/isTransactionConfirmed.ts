@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNodeApi } from "../api/node/index";
+import { getNodeApi } from "../network/node/index";
 
 /**
  * Check if a transaction has been confirmed on the network

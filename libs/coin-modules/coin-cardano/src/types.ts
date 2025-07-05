@@ -132,6 +132,7 @@ export type ProtocolParamsRaw = {
 
 export type CardanoDelegation = {
   status: boolean;
+  deposit: string;
   poolId: string | undefined;
   ticker: string | undefined;
   name: string | undefined;
@@ -141,6 +142,7 @@ export type CardanoDelegation = {
 
 export type CardanoDelegationRaw = {
   status: boolean;
+  deposit: string;
   poolId: string | undefined;
   ticker: string | undefined;
   name: string | undefined;

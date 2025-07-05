@@ -28,8 +28,6 @@ import type {
   TransactionStatusRaw,
 } from "./types";
 
-export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
-
 /* istanbul ignore next: don't test CLI text helpers */
 /**
  * Format the transaction for the CLI

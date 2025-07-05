@@ -75,6 +75,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
         <FeatureFlagDetails
           key={flagName}
           focused={focusedName === flagName}
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           flagName={flagName as FeatureId}
           setFocusedName={setFocusedName}
         />
@@ -100,9 +101,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   const config = useFeature("firebaseEnvironmentReadOnly");
   const params = config?.params;
   const project =
-    params !== null && typeof params === "object" && "project" in params
-      ? (params as { project: string }).project
-      : "";
+    params !== null && typeof params === "object" && "project" in params ? params.project : "";
 
   const handleChangeTab = useCallback((index: number) => {
     setActiveTabIndex(index);

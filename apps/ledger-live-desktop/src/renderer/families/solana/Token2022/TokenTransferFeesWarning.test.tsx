@@ -8,6 +8,7 @@ describe("TokenTransferFeesWarning", () => {
     render(
       <TokenTransferFeesWarning
         tokenAccount={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             token: {
               units: [{ code: "FAKE", magnitude: 8 }],
@@ -15,6 +16,7 @@ describe("TokenTransferFeesWarning", () => {
           } as unknown as SolanaTokenAccount
         }
         transaction={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             model: {
               commandDescriptor: {
@@ -43,6 +45,7 @@ describe("TokenTransferFeesWarning", () => {
     render(
       <TokenTransferFeesWarning
         tokenAccount={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             token: {
               units: [{ code: "FAKE", magnitude: 8 }],
@@ -50,6 +53,7 @@ describe("TokenTransferFeesWarning", () => {
           } as unknown as SolanaTokenAccount
         }
         transaction={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             model: {
               commandDescriptor: {

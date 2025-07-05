@@ -19,7 +19,7 @@ import { ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import fc from "fast-check";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
-import * as getTransactionStatusModule from "../../getTransactionStatus";
+import * as getTransactionStatusModule from "../../bridge/getTransactionStatus";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -1165,7 +1165,7 @@ describe("EVM Family", () => {
     });
 
     describe("getEditTransactionStatus", () => {
-      jest.mock("../../getTransactionStatus");
+      jest.mock("../../bridge/getTransactionStatus");
       const mockedGetTransactionStatusModule = jest.mocked(getTransactionStatusModule);
 
       const updatedTx = { ...eip1559Tx, maxFeePerGas: eip1559Tx.maxFeePerGas.plus(100) };

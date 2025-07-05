@@ -44,6 +44,7 @@ function filepathReplace(path: string): string {
 
   if (!homeDir || !configDir) return ""; // empty everything because we don't know the paths yet
   if (!path || path.startsWith("app://")) return path;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const replaced = (Object.keys(basePaths) as (keyof typeof basePaths)[]).reduce((path, name) => {
     const p: string = basePaths[name];
     return path
@@ -77,10 +78,12 @@ function filepathRecursiveReplacer(obj: ReplacerArgument, seen: Set<ReplacerArgu
         // eslint-disable-next-line no-prototype-builtins
         if (typeof obj.hasOwnProperty === "function" && obj.hasOwnProperty(k)) {
           const value = obj[k];
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           if (seen.has(value as ReplacerArgument)) continue;
           if (typeof value === "string") {
             obj[k] = filepathReplace(value);
           } else {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             filepathRecursiveReplacer(value as ReplacerArgument, seen);
           }
         }

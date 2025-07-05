@@ -10,7 +10,7 @@ import {
 } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
-import * as RPC_API from "../../../../api/node/rpc.common";
+import * as RPC_API from "../../../../network/node/rpc.common";
 import { getCoinConfig } from "../../../../config";
 
 jest.useFakeTimers();
@@ -163,7 +163,7 @@ describe("EVM Family", () => {
       });
   });
 
-  describe("api/rpc/rpc.common.ts", () => {
+  describe("network/rpc/rpc.common.ts", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
         mockGetConfig.mockImplementationOnce((): any => {

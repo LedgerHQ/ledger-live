@@ -12,7 +12,8 @@ import {
 import { isValidClassicAddress } from "ripple-address-codec";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getServerInfos } from "../network";
-import { cachedRecipientIsNew, parseAPIValue } from ".";
+import { cachedRecipientIsNew } from "./utils";
+import { parseAPIValue } from "./common";
 import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
 
 export const getTransactionStatus = async (

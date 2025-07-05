@@ -34,7 +34,7 @@ function CurrencyRows({ currency }: Props) {
   const updateCurrencySettings = (key: Key, val?: number | Unit | null) => {
     const newCurrencySettings = {
       ...currencySettings,
-      [key as keyof CurrencySettings]: val,
+      [key]: val,
     };
 
     dispatch(

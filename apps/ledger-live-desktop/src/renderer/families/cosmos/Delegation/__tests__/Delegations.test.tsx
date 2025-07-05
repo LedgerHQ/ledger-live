@@ -13,10 +13,12 @@ jest.mock("@ledgerhq/live-common/config/index", () => ({
 }));
 
 describe("Cosmos Delegations Component", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockCosmosAccount = {
     type: "Account",
     currency: CURRENCIES_LIST.find(c => c.id === "cosmos")!,
     spendableBalance: BigNumber(0),
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     cosmosResources: {
       delegations: [],
       pendingRewardsBalance: BigNumber(0),
@@ -31,6 +33,7 @@ describe("Cosmos Delegations Component", () => {
   });
 
   it("should render Delegations component when we do not configure disable delegations", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (getCurrencyConfiguration as jest.Mock).mockReturnValue({});
 
     render(<Delegations account={mockCosmosAccount} />, {
@@ -44,6 +47,7 @@ describe("Cosmos Delegations Component", () => {
   });
 
   it("should render Delegations component when we do not disable delegations", () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (getCurrencyConfiguration as jest.Mock).mockReturnValue({ disableDelegation: false });
 
     render(<Delegations account={mockCosmosAccount} />, {
@@ -57,10 +61,12 @@ describe("Cosmos Delegations Component", () => {
   });
 
   it("should not render Delegations component when we disable delegations", async () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (getCurrencyConfiguration as jest.Mock).mockReturnValue({
       disableDelegation: true,
     });
 
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { container } = render(<Delegations account={mockCosmosAccount} />, {
       initialState: { ...INITIAL_STATE },
     }) as unknown as RenderResult;

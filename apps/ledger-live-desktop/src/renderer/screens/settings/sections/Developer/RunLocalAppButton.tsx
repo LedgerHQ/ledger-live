@@ -122,6 +122,7 @@ const RunLocalAppButton = () => {
         </Flex>
       </Row>
       {localLiveApps.map((manifest: LiveAppManifest) => (
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>

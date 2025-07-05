@@ -146,7 +146,7 @@ export default class SwapPage {
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice();
+    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
     await waitForElementNotVisible(this.deviceActionLoading);
   }
 
@@ -154,7 +154,7 @@ export default class SwapPage {
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice();
+    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
     await waitForElementNotVisible(this.deviceActionLoading);
   }
 

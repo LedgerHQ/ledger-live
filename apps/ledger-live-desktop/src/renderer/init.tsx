@@ -204,6 +204,7 @@ async function init() {
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.which === TAB_KEY) {
       if (!isGlobalTabEnabled()) enableGlobalTab();
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       logger.onTabKey(document.activeElement as HTMLElement);
     }
   });

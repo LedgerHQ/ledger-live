@@ -11,6 +11,7 @@ type Props = {
   autoFocus?: boolean;
   id?: string;
 };
+
 const SearchInput = styled.input`
   border: none;
   background: transparent;
@@ -26,6 +27,7 @@ const SearchInput = styled.input`
     font-weight: 500;
   }
 `;
+
 const SearchIconContainer = styled(Box).attrs<{
   focused?: boolean;
 }>(p => ({
@@ -62,4 +64,6 @@ const SearchBox = forwardRef<HTMLInputElement, Props>(function Search(
     </>
   );
 });
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default React.memo(SearchBox) as typeof SearchBox; // to preserve the ref forwarding prop

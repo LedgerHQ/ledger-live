@@ -258,6 +258,9 @@ const buildDelegateTransaction = async ({
   typhonTx: TyphonTransaction;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
+  const protocolParams = transaction.protocolParams;
+  if (!protocolParams) throw new Error("Missing protocol parameters"); // protocolParams will always be present
+
   const cardanoResources = account.cardanoResources as CardanoResources;
 
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
@@ -268,10 +271,11 @@ const buildDelegateTransaction = async ({
   };
 
   if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
-    const stakeRegistrationCert: TyphonTypes.StakeRegistrationCertificate = {
-      type: TyphonTypes.CertificateType.STAKE_REGISTRATION,
+    const stakeRegistrationCert: TyphonTypes.StakeKeyRegistrationCertificate = {
+      type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
       cert: {
         stakeCredential: stakeKeyHashCredential,
+        deposit: new BigNumber(protocolParams.stakeKeyDeposit),
       },
     };
     typhonTx.addCertificate(stakeRegistrationCert);
@@ -340,10 +344,11 @@ const buildUndelegateTransaction = async ({
   const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
-  const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeDeRegistrationCertificate = {
-    type: TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+  const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeKeyDeRegistrationCertificate = {
+    type: TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION,
     cert: {
       stakeCredential: stakeKeyHashCredential,
+      deposit: new BigNumber(cardanoResources.delegation.deposit),
     },
   };
   typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);

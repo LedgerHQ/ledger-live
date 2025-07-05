@@ -120,6 +120,7 @@ const baseMockStatus: TransactionStatus = {
   totalSpent: new BigNumber("0"),
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
 
 const setup = (
@@ -131,8 +132,9 @@ const setup = (
     <DomainServiceProvider>
       <RecipientField
         account={account}
-        transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
+        transaction={{ ...baseMockTransaction, ...mockTransaction }}
         // tslint:disable-next-line
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         t={mockTFunction as unknown as TFunction}
         onChangeTransaction={mockedOnChangeTransaction}
         status={{ ...baseMockStatus, ...mockStatus }}

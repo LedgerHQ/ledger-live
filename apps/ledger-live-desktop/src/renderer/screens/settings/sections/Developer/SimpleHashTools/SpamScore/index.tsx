@@ -69,6 +69,7 @@ export default function SpamScore(props: HookResult) {
       if (error instanceof LedgerAPI4xx) {
         return t("settings.developer.debugSimpleHash.debugCheckSpamScore.error");
       }
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       return (error as Error).message;
     };
 
