@@ -290,7 +290,7 @@ const Input = function Input(
               <ErrorDisplay id="input-error" data-testid="input-error">
                 <TranslatedError
                   error={error}
-                  field={error instanceof AddressesSanctionedError ? "description" : "title"}
+                  field={error instanceof AddressesSanctionedError ? "description" : undefined}
                 />
               </ErrorDisplay>
             )
