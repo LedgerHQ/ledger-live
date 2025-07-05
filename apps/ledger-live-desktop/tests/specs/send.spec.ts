@@ -16,7 +16,6 @@ test("Blacklisted addresses", async ({ app }) => {
       "0.00001",
       Fee.MEDIUM,
     );
-    //await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
@@ -25,7 +24,7 @@ test("Blacklisted addresses", async ({ app }) => {
     await app.send.fillRecipient(transaction.accountToCredit.address);
     const errorMessage = await app.send.getErrorMessage();
     expect(errorMessage).toBe(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
     );
 
     await app.send.closeModal();
@@ -39,8 +38,6 @@ test("Blacklisted addresses", async ({ app }) => {
       Fee.MEDIUM,
     );
 
-    //await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
@@ -51,7 +48,7 @@ test("Blacklisted addresses", async ({ app }) => {
     const remainingMessage = senderErrorMessage?.replace("Keeping you safe", "");
     expect(
       remainingMessage?.includes(
-        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
       ),
     ).toBe(true);
 
@@ -67,7 +64,6 @@ test("Blacklisted addresses", async ({ app }) => {
       "0.00001",
       Fee.MEDIUM,
     );
-    //await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
     await app.layout.goToAccounts();
     await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
@@ -80,7 +76,7 @@ test("Blacklisted addresses", async ({ app }) => {
     const remainingMessage = senderErrorMessage?.replace("Keeping you safe", "");
     expect(
       remainingMessage?.includes(
-        "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
       ),
     ).toBe(true);
 
@@ -89,7 +85,7 @@ test("Blacklisted addresses", async ({ app }) => {
     await app.send.fillRecipient(transaction.accountToCredit.address);
     const errorMessage = await app.send.getErrorMessage();
     expect(errorMessage).toBe(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf Learn more",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
     );
 
     await app.send.closeModal();

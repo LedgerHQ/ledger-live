@@ -97,12 +97,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
 
   const onClose = useCallback(() => {
-    if (account && account.type === "Account") {
+    const mainAccount = account && getMainAccount(account, parentAccount);
+
+    if (mainAccount) {
       navigation.navigate(ScreenName.ReceiveSelectAccount, {
-        currency: account.currency,
+        currency: mainAccount.currency,
       });
     }
-  }, [account, navigation]);
+  }, [account, navigation, parentAccount]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {

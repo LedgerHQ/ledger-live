@@ -16,7 +16,7 @@ describe("Send flow", () => {
     await app.send.setRecipient(Account.SANCTIONED_ETH.address);
     await app.send.expectSendRecipientTitleError("Keep you safe");
     await app.send.expectSendRecipientDescriptionError(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
@@ -30,7 +30,7 @@ describe("Send flow", () => {
     await app.send.selectAccount("Sanctioned Ethereum");
     await app.send.expectSendSenderTitleError("Keep you safe");
     await app.send.expectSendSenderDescriptionError(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
@@ -47,7 +47,7 @@ describe("Send flow", () => {
     await app.send.selectAccount("Sanctioned Ethereum");
     await app.send.expectSendSenderTitleError("Keep you safe");
     await app.send.expectSendSenderDescriptionError(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
@@ -55,7 +55,7 @@ describe("Send flow", () => {
     await app.send.setRecipient(Account.SANCTIONED_ETH.address);
     await app.send.expectSendRecipientTitleError("Keep you safe");
     await app.send.expectSendRecipientDescriptionError(
-      "This transaction involves a sanctioned wallet address and cannot be processed.\n-- 0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
     await app.send.expectLearnMoreLink();
     await app.send.expectContinueButtonDisabled();
