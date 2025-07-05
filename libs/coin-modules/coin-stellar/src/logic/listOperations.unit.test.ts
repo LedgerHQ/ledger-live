@@ -96,7 +96,6 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
-          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
@@ -117,7 +116,6 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
-          details: {},
         },
         {
           id: "transaction_hash2-operation_id3",
@@ -138,7 +136,6 @@ describe("listOperations", () => {
           },
           type: "IN",
           value: 505000000n,
-          details: {},
         },
       ],
       "token3",
@@ -232,7 +229,6 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
-          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
@@ -253,7 +249,6 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
-          details: {},
         },
       ],
       "",
