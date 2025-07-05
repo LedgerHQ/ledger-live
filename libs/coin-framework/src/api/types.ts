@@ -144,8 +144,6 @@ export type AccountInfo = {
   balance: string;
   ownerCount: number;
   sequence: number;
-  assets?: AssetInfo[]; // BalanceAsset[]; // Optional, depending on the API
-  spendableBalance?: string; // Optional, depending on the API
 };
 
 export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
