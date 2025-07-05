@@ -6,37 +6,11 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurr
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
+import { StellarOperation } from "../types";
 
-// type BalanceAsset = {
-//   balance: string;
-//   limit: string;
-//   buying_liabilities: string;
-//   selling_liabilities: string;
-//   last_modified_ledger: number;
-//   is_authorized: boolean;
-//   is_authorized_to_maintain_liabilities: boolean;
-//   asset_type: string;
-//   asset_code: string;
-//   asset_issuer: string;
-//   liquidity_pool_id?: string;
-// };
-
-// export type StellarOperation = Operation<StellarOperationExtra>;
-
-// export type StellarOperationExtra = {
-//   pagingToken?: string;
-//   assetCode?: string;
-//   assetIssuer?: string;
-//   assetAmount?: string | undefined;
-//   ledgerOpType: OperationType;
-//   memo?: string;
-//   blockTime: Date;
-//   index: string;
-// };
-
-export interface OperationCommon extends Operation {
-  extra: Record<string, any>;
-}
+// export interface OperationCommon extends Operation {
+//   extra: Record<string, any>;
+// }
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
