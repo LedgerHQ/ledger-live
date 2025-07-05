@@ -46,7 +46,7 @@ describe("Receive Flow", () => {
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 4);
     await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
 

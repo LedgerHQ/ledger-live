@@ -137,8 +137,6 @@ export const mockedAccountList = [
     name: "Sanctioned Ethereum",
     address: "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
     currency: "ethereum",
-    balance: "494006503578097",
-    spendableBalance: "494006503578097",
   },
   {
     id: "2fa370fd-2210-5487-b9c9-bc36971ebc72",
