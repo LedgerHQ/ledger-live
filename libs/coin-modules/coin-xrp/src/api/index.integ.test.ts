@@ -113,6 +113,23 @@ describe("Xrp Api", () => {
         amount: BigInt(10),
         memo: {
           type: "map",
+          memos: new Map(),
+        },
+      });
+      // Then
+      expect(result.length).toEqual(162);
+    });
+
+    it("returns a raw transaction, (memo)", async () => {
+      // When
+      const result = await api.craftTransaction({
+        asset: { type: "native" },
+        type: "send",
+        sender: SENDER,
+        recipient: RECIPIENT,
+        amount: BigInt(10),
+        memo: {
+          type: "map",
           memos: new Map([["memos", ["testdata"]]]),
         },
       });
