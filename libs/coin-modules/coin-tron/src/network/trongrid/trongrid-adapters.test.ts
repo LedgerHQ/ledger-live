@@ -44,7 +44,7 @@ describe("fromTrongridTxInfoToOperation", () => {
       value: BigInt(5000),
       senders: ["from"],
       recipients: ["to"],
-      asset: { standard: "trc20", contractAddress: "boo", type: "token" },
+      asset: { assetOwner: "trc20", assetReference: "boo", assetType: "token" },
     });
   });
 
@@ -92,7 +92,7 @@ describe("fromTrongridTxInfoToOperation", () => {
 
     const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
 
-    expect(result.asset).toEqual({ type: "native" });
+    expect(result.asset).toEqual({ assetType: "native" });
   });
 
   it("should return UNKNOWN operation in default case", () => {

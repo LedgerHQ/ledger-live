@@ -1,7 +1,6 @@
 import { defaultOptions, listOperations, Options } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TronAsset } from "../types";
 
 describe("listOperations", () => {
   beforeAll(() => {
@@ -18,7 +17,7 @@ describe("listOperations", () => {
   describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9 with minHeight", () => {
     // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
 
-    let operations: Operation<TronAsset>[];
+    let operations: Operation[];
 
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
@@ -44,7 +43,7 @@ describe("listOperations", () => {
   describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight 0 / order asc / softLimit 2", () => {
     // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
 
-    let operations: Operation<TronAsset>[];
+    let operations: Operation[];
 
     const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
 
@@ -77,7 +76,7 @@ describe("listOperations", () => {
   describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight / order asc / softLimit 2", () => {
     // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
 
-    let operations: Operation<TronAsset>[];
+    let operations: Operation[];
 
     const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
 
@@ -117,7 +116,7 @@ describe("listOperations", () => {
     // 255 as of 17/02/2025
     const historySize = 255;
 
-    let operations: Operation<TronAsset>[];
+    let operations: Operation[];
 
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
@@ -192,7 +191,7 @@ describe("listOperations", () => {
             value: BigInt(0.012 * magnitudeMultiplier),
             recipients: [testingAccount],
             senders: ["THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi"],
-            asset: { type: "native" },
+            asset: { assetType: "native" },
           });
         });
 
@@ -206,7 +205,7 @@ describe("listOperations", () => {
             value: BigInt(0.1 * magnitudeMultiplier),
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
-            asset: { type: "native" },
+            asset: { assetType: "native" },
           });
         });
       });
@@ -223,9 +222,9 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX"],
             asset: {
-              type: "token",
-              standard: "trc10",
-              tokenId: "1004031",
+              assetType: "token",
+              assetOwner: "trc10",
+              assetReference: "1004031",
             },
           });
         });
@@ -240,9 +239,9 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TVKG4gUar24bpAVrDv4GSzyDRtPkjPkogL"],
             asset: {
-              type: "token",
-              standard: "trc10",
-              tokenId: "1002000",
+              assetType: "token",
+              assetOwner: "trc10",
+              assetReference: "1002000",
             },
           });
         });
@@ -260,8 +259,8 @@ describe("listOperations", () => {
             senders: ["TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N"],
             recipients: [testingAccount],
             asset: {
-              type: "token",
-              standard: "trc20",
+              assetType: "token",
+              assetOwner: "trc20",
               contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
           });
@@ -278,8 +277,8 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
             asset: {
-              type: "token",
-              standard: "trc20",
+              assetType: "token",
+              assetOwner: "trc20",
               contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
           });

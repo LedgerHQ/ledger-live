@@ -1,6 +1,5 @@
 import { AptosTransaction } from "../types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { APTOS_ASSET_ID, DIRECTION } from "../constants";
@@ -40,8 +39,8 @@ const getTokenStandard = (coin_id: string): string => {
 export function transactionsToOperations(
   address: string,
   txs: (AptosTransaction | null)[],
-): Operation<AptosAsset>[] {
-  const operations: Operation<AptosAsset>[] = [];
+): Operation[] {
+  const operations: Operation[] = [];
 
   return txs.reduce((acc, tx) => {
     if (tx === null) {
@@ -62,13 +61,13 @@ export function transactionsToOperations(
     const value = calculateAmount(tx.sender, address, amount_in, amount_out);
     const type = detectType(address, tx, value);
 
-    const op: Operation<AptosAsset> = {
+    const op: Operation = {
       id: tx.hash,
       type,
       senders: [],
       recipients: [],
       value: BigInt(0),
-      asset: { type: "native" },
+      asset: { assetType: "native" },
       details: {
         hasFailed: !tx.success,
       },
@@ -94,9 +93,9 @@ export function transactionsToOperations(
         return acc;
       } else {
         op.asset = {
-          type: "token",
-          standard: getTokenStandard(coin_id),
-          contractAddress: coin_id,
+          assetType: "token",
+          assetOwner: getTokenStandard(coin_id),
+          assetReference: coin_id,
         };
         acc.push(op);
       }

@@ -30,7 +30,7 @@ describe("getBalance", () => {
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
     expect(await api.getBalance(accountAddress)).toStrictEqual([
-      { value: 10n, asset: { type: "native" } },
+      { value: 10n, asset: { assetType: "native" } },
     ]);
   });
 
@@ -54,7 +54,7 @@ describe("getBalance", () => {
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
     expect(await api.getBalance(accountAddress)).toStrictEqual([
-      { value: 15n, asset: { type: "native" } },
+      { value: 15n, asset: { assetType: "native" } },
     ]);
   });
 
@@ -70,7 +70,7 @@ describe("getBalance", () => {
     expect(await api.getBalance(accountAddress)).toStrictEqual([
       {
         value: 25n,
-        asset: { type: "token", contractAddress: TOKEN_ASSET_ID, standard: TOKEN_TYPE.COIN },
+        asset: { assetType: "token", assetReference: TOKEN_ASSET_ID, assetOwner: TOKEN_TYPE.COIN },
       },
     ]);
   });
@@ -88,9 +88,9 @@ describe("getBalance", () => {
       {
         value: 25n,
         asset: {
-          type: "token",
-          contractAddress: TOKEN_ASSET_ID,
-          standard: TOKEN_TYPE.FUNGIBLE_ASSET,
+          assetType: "token",
+          assetReference: TOKEN_ASSET_ID,
+          assetOwner: TOKEN_TYPE.FUNGIBLE_ASSET,
         },
       },
     ]);

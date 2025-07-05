@@ -1,7 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
 import { BoilerplateOperation } from "../../network/types";
-import { BoilerplateAsset } from "../../types";
 
 /**
  * Returns list of operations associated to an account.
@@ -14,14 +13,15 @@ import { BoilerplateAsset } from "../../types";
 export async function listOperations(
   address: string,
   page: Pagination,
-): Promise<[Operation<BoilerplateAsset>[], string]> {
-  const transactions = await getTransactions(address, { from: page.minHeight });
+): Promise<[Operation[], string]> {
+  const minHeight = page.minHeight ?? 0;
+  const transactions = await getTransactions(address, { from: minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
 }
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: BoilerplateOperation): Operation<BoilerplateAsset> => {
+  (operation: BoilerplateOperation): Operation => {
     const {
       meta: { delivered_amount },
       tx: { Fee, hash, inLedger, date, Account, Destination },
@@ -46,7 +46,7 @@ const convertToCoreOperation =
        * value if the transaction hash is not enough to identify it
        */
       id: hash,
-      asset: { type: "native" },
+      asset: { assetType: "native" },
       tx: {
         hash,
         fees: feeValue,
