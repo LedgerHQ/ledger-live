@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.8.12-nightly.3
+
+### Patch Changes
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
 ## 0.8.12-nightly.2
 
 ### Patch Changes

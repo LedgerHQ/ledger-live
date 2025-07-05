@@ -1,5 +1,11 @@
 # @ledgerhq/coin-xrp
 
+## 6.3.0-nightly.3
+
+### Patch Changes
+
+- [#10814](https://github.com/LedgerHQ/ledger-live/pull/10814) [`80b27f4`](https://github.com/LedgerHQ/ledger-live/commit/80b27f4b28d79b1c8fad184d47730eeee082be90) Thanks [@qperrot](https://github.com/qperrot)! - Fix xrp circular imports
+
 ## 6.3.0-nightly.2
 
 ### Patch Changes
