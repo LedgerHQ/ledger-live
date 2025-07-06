@@ -33,7 +33,11 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
-    getAccountInfo,
+    getSequence: async (address: string) => {
+      const accountInfo = await getAccountInfo(address);
+      return accountInfo.sequence;
+    },
+    // getAccountInfo,
   };
 }
 

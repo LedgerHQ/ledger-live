@@ -115,8 +115,8 @@ export const genericSignOperation =
           if (transaction["assetCode"] && transaction["assetIssuer"]) {
             txWithAsset.asset = {
               type: "token",
-              assetCode: transaction["assetCode"],
-              assetIssuer: transaction["assetIssuer"],
+              assetReference: transaction["assetCode"],
+              assetOwner: transaction["assetIssuer"],
             };
           } else {
             txWithAsset.asset = {
@@ -128,6 +128,10 @@ export const genericSignOperation =
             transactionIntent,
           );
 
+          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
+            transactionIntent.sender,
+          );
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
