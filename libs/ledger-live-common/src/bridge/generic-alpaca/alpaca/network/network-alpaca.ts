@@ -10,10 +10,12 @@ import type {
   TransactionValidation,
   AccountInfo,
   Api,
+  Asset,
+  TokenInfoCommon,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp(backendOp: any): Operation<any> {
+function adaptOp<T extends Asset<TokenInfoCommon>>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 
@@ -26,7 +28,7 @@ function adaptOp(backendOp: any): Operation<any> {
 
 const ALPACA_URL = "http://0.0.0.0:3000";
 
-const buildBroadcast = (networkFamily: string) =>
+const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
     const { data } = await network<
       {
@@ -45,7 +47,7 @@ const buildBroadcast = (networkFamily: string) =>
     return data.transactionIdentifier;
   };
 
-const buildCombine = (networkFamily: string) =>
+const buildCombine = networkFamily =>
   async function combine(tx: string, signature: string, pubKey?: string): Promise<string> {
     const { data } = await network<
       {
@@ -64,7 +66,7 @@ const buildCombine = (networkFamily: string) =>
     return data.signedTransaction;
   };
 
-const buildEstimateFees = (networkFamily: string) =>
+const buildEstimateFees = networkFamily =>
   async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
@@ -81,7 +83,7 @@ const buildEstimateFees = (networkFamily: string) =>
     };
   };
 
-const buildValidateIntent = (networkFamily: string) =>
+const buildValidateIntent = networkFamily =>
   async function validateIntent(
     account: Account,
     transaction: Transaction,
@@ -131,22 +133,23 @@ const buildGetAccountInfo = (networkFamily: string) =>
     return data;
   };
 
-const buildListOperations = (networkFamily: string) =>
+const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination,
+    pagination?: Pagination,
   ): Promise<[Operation<any>[], string]> {
+    const minHeight = pagination?.minHeight ?? 0;
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,
       data: {
-        from: pagination.minHeight,
+        from: minHeight,
       },
     });
     return [data.operations.map(op => adaptOp(op)), ""];
   };
 
-const buildLastBlock = (networkFamily: string) =>
+const buildLastBlock = networkFamily =>
   async function lastBlock(): Promise<BlockInfo> {
     const { data } = await network<any, unknown>({
       method: "GET",
@@ -159,7 +162,7 @@ const buildLastBlock = (networkFamily: string) =>
     };
   };
 
-const buildCraftTransaction = (networkFamily: string) =>
+const buildCraftTransaction = networkFamily =>
   async function craftTransaction(intent: TransactionIntent<any>): Promise<string> {
     const { data } = await network<any, unknown>({
       method: "POST",
@@ -181,8 +184,11 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    getAccountInfo: buildGetAccountInfo(networkFamily),
+    // getAccountInfo: buildGetAccountInfo(networkFamily),
+    // getSpendableBalance(address) {
+    //
+    // },
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any>;
+  }) satisfies unknown as Api<any>;

@@ -33,7 +33,11 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
-    getAccountInfo,
+    getSequence: async (address: string) => {
+      const accountInfo = await getAccountInfo(address);
+      return accountInfo.sequence;
+    },
+    // getAccountInfo,
   };
 }
 
@@ -138,9 +142,20 @@ async function operationsFromHeight(
   return [state.accumulator, state.apiNextCursor ?? ""];
 }
 
+// NOTE: double check
 async function operations(
   address: string,
   { minHeight }: Pagination,
+  lastPagingToken?: string,
 ): Promise<[Operation[], string]> {
-  return await operationsFromHeight(address, minHeight);
+  if (minHeight) {
+    return await operationsFromHeight(address, minHeight);
+  }
+  const isInitSync = lastPagingToken === "";
+
+  const newPagination = {
+    minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
+  };
+  // TODO token must be implemented properly (waiting ack from the design document)
+  return await operationsFromHeight(address, newPagination.minHeight);
 }
