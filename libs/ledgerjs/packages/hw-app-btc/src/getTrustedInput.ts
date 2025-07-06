@@ -22,7 +22,6 @@ export async function getTrustedInputRaw(
 
   const trustedInput = await transport.send(0xe0, 0x42, firstRound ? 0x00 : 0x80, 0x00, data);
   const res = trustedInput.slice(0, trustedInput.length - 2).toString("hex");
-
   return res;
 }
 export async function getTrustedInput(
@@ -78,7 +77,6 @@ export async function getTrustedInput(
   // NOTE: this isn't necessary as consensusBranchId is only set when the transaction is a zcash tx
   // but better safe than sorry
   const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
-
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
@@ -121,7 +119,6 @@ export async function getTrustedInput(
       createVarint(transaction.orchard?.vActions.length || 0),
     ]);
 
-    // send this is sapling data
     await getTrustedInputRaw(transport, data);
     // Sapling
     if (transaction.sapling) {
@@ -132,11 +129,7 @@ export async function getTrustedInput(
       await getTrustedInputRaw(transport, saplingData);
       // send spends
       for (const spend of transaction.sapling.vSpendsSapling) {
-        const spendData = Buffer.concat([
-          spend.cv, //32
-          spend.nullifier, //32
-          spend.rk, //32
-        ]);
+        const spendData = Buffer.concat([spend.cv, spend.nullifier, spend.rk]);
 
         await getTrustedInputRaw(transport, spendData);
       }
@@ -156,20 +149,18 @@ export async function getTrustedInput(
           const start = 52 + i * 128;
           const end = start + 128;
           const outputData = Buffer.concat([output.encCiphertext.slice(start, end)]);
-          
+
           await getTrustedInputRaw(transport, outputData);
         }
       }
       // send outputs noncompact
-      let res;
       for (const output of transaction.sapling.vOutputSapling) {
         const outputData = Buffer.concat([
           output.cv,
-          output.encCiphertext.slice(564, 580), // 32 bytes],
+          output.encCiphertext.slice(564, 580),
           output.outCiphertext,
         ]);
-
-        res = await getTrustedInputRaw(transport, outputData); // TODO
+        await getTrustedInputRaw(transport, outputData);
       }
 
       extraData = Buffer.alloc(0);
@@ -203,7 +194,7 @@ export async function getTrustedInput(
         const actionData = Buffer.concat([
           action.cv,
           action.rk,
-          action.encCiphertext.slice(564, 580), 
+          action.encCiphertext.slice(564, 580),
           action.outCiphertext,
         ]);
 

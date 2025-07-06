@@ -54,9 +54,7 @@ export interface TrustedInput {
 /**
  */
 export interface SaplingData {
-  //nSpendsSapling: Buffer;
   vSpendsSapling: SaplingSpendDescriptionV5[];
-  //nOutputsSapling: Buffer;
   vOutputSapling: SaplingOutputDescriptionV5[];
   valueBalanceSapling: Buffer;
   anchorSapling: Buffer;
