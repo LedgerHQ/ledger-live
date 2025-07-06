@@ -70,7 +70,7 @@ describe("getBalance", () => {
     expect(await api.getBalance(accountAddress)).toStrictEqual([
       {
         value: 25n,
-        asset: { type: "token", standard: TOKEN_TYPE.COIN, reference: TOKEN_ASSET_ID },
+        asset: { type: "token", standard: TOKEN_TYPE.COIN, assetReference: TOKEN_ASSET_ID },
       },
     ]);
   });
