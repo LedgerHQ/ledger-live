@@ -9,7 +9,13 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { Transaction, TransactionValidation, Account } from "@ledgerhq/coin-framework/api/types";
+import {
+  Transaction,
+  TransactionValidation,
+  Account,
+  TransactionIntent,
+  AssetInfo,
+} from "@ledgerhq/coin-framework/api/types";
 import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import {
   BASE_RESERVE,
@@ -28,45 +34,54 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
+  StellarMemo,
 } from "../types";
 import BigNumber from "bignumber.js";
+import { getBalance } from "./getBalance";
 
 export const getTransactionStatus = async (
-  account: Account,
-  transaction: Transaction,
+  transactionIntent: TransactionIntent<StellarMemo>,
+  // account: Account,
+  // transaction: Transaction,
 ): Promise<TransactionValidation> => {
   // const asset = account; // FIXME:
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const useAllAmount = !!transaction.useAllAmount;
+  // FIXME: useAllAmount logic should be in generic-adapter
+  const useAllAmount = !!transactionIntent.useAllAmount;
 
   const destinationNotExistMessage = new NotEnoughBalanceBecauseDestinationNotCreated("", {
     minimalAmount: `${MIN_BALANCE} XLM`,
   });
 
-  if (account.pendingOperations > 0) {
-    throw new AccountAwaitingSendPendingOperations();
-  }
+  // FIXME: move this logic into generic-addapter
+  // if (account.pendingOperations > 0) {
+  //   throw new AccountAwaitingSendPendingOperations();
+  // }
 
   // NOTE: recheck this
   // if (!transaction.fee || !transaction.baseReserve) {
   //   errors.fees = new FeeNotLoaded();
   // }
-  const networkInfo = await fetchAccountNetworkInfo(account.address);
+  const networkInfo = await fetchAccountNetworkInfo(transactionIntent.sender);
 
-  const estimatedFees = !transaction.fee ? 0n : transaction.fee;
-  const baseReserve = transaction.baseReserve
-    ? transaction.baseReserve
-    : networkInfo.baseReserve
-      ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
-      : 0n;
-  const isAssetPayment =
-    transaction.subAccountId &&
-    transaction.assetCode &&
-    transaction.assetIssuer &&
-    account?.subAccount;
-  const nativeBalance = account.balance;
-  const nativeAmountAvailable = account.spendableBalance - estimatedFees;
+  const estimatedFees = transactionIntent.fees ?? 0n;
+  const baseReserve = networkInfo.baseReserve
+    ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
+    : 0n;
+  const isAssetPayment = transactionIntent.asset.type === "token";
+  //
+  //
+  //   .subAccountId &&
+  // transaction.assetCode &&
+  // transaction.assetIssuer &&
+  // account?.subAccount;
+  const balances = await getBalance(transactionIntent.sender);
+  const nativeBalance = balances.find(b => b.asset.type === "native");
+  if (!nativeBalance) {
+    throw new StellarAssetNotFound(); // FIXME: proper error
+  }
+  const nativeAmountAvailable = nativeBalance.value - (nativeBalance.locked || 0n) - estimatedFees;
 
   let amount = 0n;
   let maxAmount = 0n;
@@ -77,18 +92,23 @@ export const getTransactionStatus = async (
     errors.amount = new StellarNotEnoughNativeBalance();
   }
 
+  const networkInfoBaseFee = BigInt(networkInfo.baseFee.toString() || "0");
+  const networkFees = BigInt(networkInfo.fees.toString() || "0");
   // Entered fee is smaller than base fee
-  if (estimatedFees < (transaction.networkInfo?.baseFee || 0n)) {
+  if (estimatedFees < networkInfoBaseFee) {
     errors.transaction = new StellarFeeSmallerThanBase();
     // Entered fee is smaller than recommended
-  } else if (estimatedFees < (transaction.networkInfo?.fees || 0n)) {
+  } else if (estimatedFees < networkFees) {
     warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
   // Operation specific checks
-  if (transaction.type === "changeTrust") {
+  if (transactionIntent.type === "changeTrust") {
     // Check asset provided
-    if (!transaction.assetCode || !transaction.assetIssuer) {
+    if (
+      transactionIntent.asset.type === "token" &&
+      (!transactionIntent.asset.assetReference || !transactionIntent.asset.assetOwner)
+    ) {
       // This is unlikely
       errors.transaction = new StellarAssetRequired("");
     }
@@ -105,18 +125,18 @@ export const getTransactionStatus = async (
   } else {
     // Payment
     // Check recipient address
-    if (!transaction.recipient) {
+    if (!transactionIntent.recipient) {
       errors.recipient = new RecipientRequired("");
-    } else if (!isAddressValid(transaction.recipient)) {
+    } else if (!isAddressValid(transactionIntent.recipient)) {
       errors.recipient = new InvalidAddress("", {
-        currencyName: account.currencyName,
+        currencyName: "FIXME", // FIXME: before account.currencyName,
       });
-    } else if (account.address === transaction.recipient) {
+    } else if (transactionIntent.sender === transactionIntent.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
     const recipientAccount = await getRecipientAccount({
-      recipient: transaction.recipient,
+      recipient: transactionIntent.recipient,
     });
 
     // Check recipient account
@@ -133,67 +153,82 @@ export const getTransactionStatus = async (
     }
 
     // Asset payment
-    if (isAssetPayment && account.subAccount) {
+    if (isAssetPayment) {
+      let asset = transactionIntent.asset;
+      if (asset.type !== "token") throw StellarAssetNotFound;
       // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
       // const asset = findSubAccountById(account, transaction.subAccountId || "");
-      const asset = account.subAccount;
-
-      if (!asset === null) {
-        // This is unlikely
-        throw new StellarAssetNotFound();
-      }
 
       // Check recipient account accepts asset
       if (
         recipientAccount?.id &&
         !errors.recipient &&
         !warnings.recipient &&
-        !recipientAccount.assetIds.includes(`${transaction.assetCode}:${transaction.assetIssuer}`)
+        !recipientAccount.assetIds.includes(`${asset.assetReference}:${asset.assetOwner}`)
       ) {
         errors.recipient = new StellarAssetNotAccepted("", {
-          assetCode: transaction.assetCode,
+          assetCode: asset.assetReference,
         });
       }
 
-      const assetBalance = BigInt(asset?.balance.toString()) || 0n;
+      // const assetBalance = BigInt(asset?.balance.toString()) || 0n;
+      const assetBalance = balances.find(
+        b =>
+          b.asset.type === "token" &&
+          b.asset.assetReference === asset.assetReference &&
+          b.asset.assetOwner === asset.assetOwner,
+      );
 
-      maxAmount = BigInt(asset?.spendableBalance.toString()) || assetBalance;
-      amount = useAllAmount ? maxAmount : transaction.amount;
+      if (!assetBalance) {
+        // This is unlikely
+        throw new StellarAssetNotFound();
+      }
+      const assetSpendableBalance = assetBalance.value - (assetBalance?.locked || 0n);
+
+      maxAmount = assetSpendableBalance || assetBalance.value;
+      amount = useAllAmount ? maxAmount : transactionIntent.amount;
       totalSpent = amount;
 
-      if (!errors.amount && amount > assetBalance) {
+      if (!errors.amount && amount > assetBalance.value) {
         errors.amount = new NotEnoughBalance();
       }
     } else {
       // Native payment
       maxAmount = nativeAmountAvailable;
-      amount = useAllAmount ? maxAmount : transaction.amount ?? 0n;
+      amount = useAllAmount ? maxAmount : transactionIntent.amount ?? 0n;
 
       if (amount > maxAmount) {
         errors.amount = new NotEnoughBalance();
       }
 
-      totalSpent = useAllAmount ? nativeAmountAvailable : transaction.amount + estimatedFees;
+      totalSpent = useAllAmount ? nativeAmountAvailable : transactionIntent.amount + estimatedFees;
 
       // Need to send at least 1 XLM to create an account
       if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount < 10000000n) {
         errors.amount = destinationNotExistMessage;
       }
 
-      if (totalSpent > nativeBalance - baseReserve) {
+      if (totalSpent > nativeBalance.value - baseReserve) {
         errors.amount = new NotEnoughSpendableBalance(undefined, {
-          minimumAmount: formatCurrencyUnit(
-            account.currencyUnit,
-            new BigNumber(baseReserve.toString()),
-            {
-              disableRounding: true,
-              showCode: true,
-            },
-          ),
+          minimumAmount: 0,
+          // FIXME
+          // formatCurrencyUnit(
+          //   account.currencyUnit,
+          //
+          //   new BigNumber(baseReserve.toString()),
+          //   {
+          //     disableRounding: true,
+          //     showCode: true,
+          //   },
+          // ),
         });
       }
 
-      if (!errors.recipient && !errors.amount && (amount < 0n || totalSpent > nativeBalance)) {
+      if (
+        !errors.recipient &&
+        !errors.amount &&
+        (amount < 0n || totalSpent > nativeBalance.value)
+      ) {
         errors.amount = new NotEnoughBalance();
         totalSpent = 0n;
         amount = 0n;
@@ -205,14 +240,13 @@ export const getTransactionStatus = async (
     }
   }
 
-  if (await isAccountMultiSign(account.address)) {
+  if (await isAccountMultiSign(transactionIntent.sender)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (
-    typeof transaction.memoType === "string" &&
-    typeof transaction.memoValue === "string" &&
-    !isMemoValid(transaction.memoType, transaction.memoValue)
+    transactionIntent.memo.type !== "NO_MEMO" &&
+    !isMemoValid(transactionIntent.memo.type, transactionIntent.memo.value)
   ) {
     errors.transaction = new StellarWrongMemoFormat();
   }

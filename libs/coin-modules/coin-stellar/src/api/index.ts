@@ -1,5 +1,6 @@
 import type {
   Api,
+  AssetInfo,
   FeeEstimation,
   Operation,
   Pagination,
@@ -35,21 +36,45 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    validateIntent: getTransactionStatus,
-    getAccountInfo: async (address: string) => {
-      const balance = await getBalance(address);
-      const sequence = await fetchSequence(address);
-      const res = await fetchAccount(address);
-      return {
-        isNewAccount: false,
-        balance: balance.map(b => b.value).join(","),
-        ownerCount: 0, // TODO: check
-        sequence: sequence.plus(1).toNumber(),
-        assets: res.assets, // TODO: comment and retry?
-        spendableBalance: res.spendableBalance.toString(),
-        // Add other account details as needed
-      };
+    validateIntent: async (transactionIntent: TransactionIntent<StellarMemo>) => {
+      return getTransactionStatus(transactionIntent);
     },
+    getSequence: async (address: string) => {
+      const sequence = await fetchSequence(address);
+      // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
+      return sequence.plus(1).toNumber();
+    },
+    getSpendableBalance: async (address: string) => {
+      // FIXME: we should try recompute this value from generic-adapter
+      const res = await fetchAccount(address);
+      return res.spendableBalance.toString();
+    },
+    // getAssets: async (address: string) => {
+    //   const res = await fetchAccount(address);
+    //   const balanceAssets = res.assets;
+    //   const assets = balanceAssets.map(asset => ({
+    //     type: "token",
+    //     assetReference: asset.asset_code,
+    //     assetOwner: asset.asset_issuer,
+    //     standard: asset.asset_type, // TODO: check
+    //   }));
+    //   debugger;
+    //   return assets;
+    // },
+    // getAccountInfo: async (address: string) => {
+    //   const balance = await getBalance(address);
+    //   const sequence = await fetchSequence(address);
+    //   const res = await fetchAccount(address);
+    //   return {
+    //     isNewAccount: false,
+    //     balance: balance.map(b => b.value).join(","),
+    //     ownerCount: 0, // TODO: check
+    //     sequence: sequence.plus(1).toNumber(),
+    //     assets: res.assets, // TODO: comment and retry?
+    //     spendableBalance: res.spendableBalance.toString(),
+    //     // Add other account details as needed
+    //   };
+    // },
   };
 }
 

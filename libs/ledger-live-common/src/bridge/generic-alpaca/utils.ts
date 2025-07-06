@@ -2,7 +2,11 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  AssetInfo,
+  Operation as CoreOperation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   let opType = op.type as OperationType;
@@ -23,7 +27,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.assetAmount = op.details.assetAmount as string;
   }
 
-  if (op.asset?.assetType === "token") {
+  if (op.asset?.type === "token") {
     extra.assetCode = op.asset.assetReference;
     extra.assetIssuer = op.asset.assetOwner;
   }
@@ -43,11 +47,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     recipients: op.recipients,
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
-    // TODO: double check
-    asset: {
-      type: "native",
-    },
-    extra: {},
+    extra,
   };
 
   return res;
@@ -77,7 +77,7 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-  const res = {
+  const res: TransactionIntent = {
     fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
@@ -87,6 +87,7 @@ export function transactionToIntent(
   };
   if (transaction.assetCode && transaction.assetIssuer) {
     res.asset = {
+      type: "token",
       assetReference: transaction.assetCode,
       assetOwner: transaction.assetIssuer,
     };
@@ -119,7 +120,7 @@ export const buildOptimisticOperation = (
     accountId: account.id,
     date: new Date(),
     // TODO: double check
-    asset: { type: "native" },
+    // asset: { type: "native" },
     extra: {
       ledgerOpType: type,
       blockTime: new Date(),

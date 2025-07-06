@@ -20,7 +20,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
-    listOperations: (address: string, pagination?: Pagination) =>
+    listOperations: (address: string, pagination: Pagination) =>
       client.listOperations(address, pagination),
   };
 }

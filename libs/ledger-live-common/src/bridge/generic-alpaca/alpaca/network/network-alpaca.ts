@@ -184,8 +184,11 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    getAccountInfo: buildGetAccountInfo(networkFamily),
+    // getAccountInfo: buildGetAccountInfo(networkFamily),
+    // getSpendableBalance(address) {
+    //
+    // },
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
-  }) satisfies Api<any>;
+  }) satisfies unknown as Api<any>;

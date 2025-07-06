@@ -51,6 +51,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const blockInfo = await getAlpacaApi(network, kind).lastBlock();
     const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
+    const assetsBalance = balanceRes.filter(b => b.asset.type === "token");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
     const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
     let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
@@ -84,16 +85,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       }
     });
 
-    const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
+    // const assets = await getAlpacaApi(network, kind).getAssets(address);
+    // const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(address);
     // TODO: make this more generic this looks to be only for stellar
-    if (accountInfo?.spendableBalance) {
-      spendableBalance = BigInt(accountInfo.spendableBalance);
-    }
+    // if (accountInfo?.spendableBalance) {
+    //   spendableBalance = BigInt(accountInfo.spendableBalance);
+    // }
     const subAccounts =
       buildSubAccounts({
         currency,
         accountId,
-        assets: accountInfo.assets ?? [],
+        assetsBalance,
         syncConfig,
         operations: assetOperations,
       }) || [];
