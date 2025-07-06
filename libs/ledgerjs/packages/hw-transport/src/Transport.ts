@@ -267,12 +267,6 @@ export default class Transport {
     }
 
     tracer.trace("Starting an exchange", { abortTimeoutMs });
-    console.log(
-      "RABL: APDU: send",
-      Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]).toString(
-        "hex",
-      ),
-    );
     const response = await this.exchange(
       // The size of the data is added in 1 byte just before `data`
       Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),

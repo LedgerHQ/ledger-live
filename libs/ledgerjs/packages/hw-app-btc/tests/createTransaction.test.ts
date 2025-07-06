@@ -26,6 +26,8 @@ describe("createTransaction", () => {
         <= 9000
         => e0428000223df2c202000000001976a914fc0da061ca85923e01d97ac276aa8dc890a28efa88ac
         <= 9000
+        => e042800003000000
+        <= 9000
         => e042800009000000000400000000
         <= 3200ed40989caa0731d6526fe4e03d49c54720be148f911924129e15d7ecf6e190829edb0000000050c3000000000000d53c396d2f5c98619000
         => e04200001100000000050000800a27a7265510e7c801
@@ -43,6 +45,8 @@ describe("createTransaction", () => {
         => e042800022404b4c00000000001976a914c59ace9b52af703379f3f89ebbc8ec1813ca50ec88ac
         <= 9000
         => e0428000220e532a00000000001976a9144cd6509f71020b6a9e890bef43c4d5e61f9c0dad88ac
+        <= 9000
+        => e042800003000000
         <= 9000
         => e042800009000000000400000000
         <= 320071857203407d7ff3f5832db7c37973ac01569a832cd78a6dbd3627e4f9ee7458532200000000404b4c0000000000aa2ea74bcab3a20a9000
@@ -147,6 +151,7 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
       );
     });
   });
+
   describe("getDefaultVersions", () => {
     it("should return default versions for non-Zcash and non-Decred with no expiryHeight", () => {
       const result = getDefaultVersions({

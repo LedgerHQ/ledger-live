@@ -116,7 +116,6 @@ export function splitTransaction(
     if (isZcashv5) {
       varint = getVarint(transaction, offset);
       const nSpendsSapling = varint[0];
-      console.log("RABL WE WERE HERE splitTransaction: nSpendsSapling", nSpendsSapling);
       offset += varint[1];
 
       const vSpendsSapling: SaplingSpendDescriptionV5[] = [];
@@ -135,15 +134,8 @@ export function splitTransaction(
         } as SaplingSpendDescriptionV5);
       }
 
-      vSpendsSapling.forEach((spend, idx) => {
-        console.log(
-          `RABL WE WERE HERE vSpendsSapling[${idx}]: cv=${spend.cv.toString("hex")}, nullifier=${spend.nullifier.toString("hex")}, rk=${spend.rk.toString("hex")}`,
-        );
-      });
-
       varint = getVarint(transaction, offset);
       const nOutputsSapling = varint[0];
-      console.log("RABL WE WERE HERE splitTransaction: nOutputsSapling", nOutputsSapling);
       offset += varint[1];
       const vOutputSapling: SaplingOutputDescriptionV5[] = [];
 
@@ -172,32 +164,16 @@ export function splitTransaction(
         } as SaplingOutputDescriptionV5);
       }
 
-      vOutputSapling.forEach((output, idx) => {
-        console.log(
-          `RABL WE WERE HERE  vOutputSapling[${idx}]: cv=${output.cv.toString("hex")}, cmu=${output.cmu.toString("hex")}, ephemeralKey=${output.ephemeralKey.toString("hex")}, encCiphertext=${output.encCiphertext.toString("hex")}, outCiphertext=${output.outCiphertext.toString("hex")}`,
-        );
-      });
-
       let valueBalanceSapling = Buffer.alloc(0);
       if (nSpendsSapling + nOutputsSapling > 0) {
         valueBalanceSapling = transaction.slice(offset, offset + 8);
         offset += 8;
-
-        console.log(
-          "RABL WE WERE HERE splitTransaction: valueBalanceSapling",
-          valueBalanceSapling.toString("hex"),
-        );
       }
 
       let anchorSapling = Buffer.alloc(0);
       if (nSpendsSapling > 0) {
         anchorSapling = transaction.slice(offset, offset + 32);
         offset += 32;
-
-        console.log(
-          "RABL WE WERE HERE splitTransaction: anchorSapling",
-          anchorSapling.toString("hex"),
-        );
       }
 
       let vSpendProofsSapling = Buffer.alloc(0);
@@ -220,17 +196,9 @@ export function splitTransaction(
       if (nSpendsSapling + nOutputsSapling > 0) {
         bindingSigSapling = transaction.slice(offset, offset + 64);
         offset += 64;
-
-        console.log(
-          "RABL WE WERE HERE splitTransaction: bindingSigSapling",
-          bindingSigSapling.toString("hex"),
-        );
       }
 
       if (nSpendsSapling + nOutputsSapling > 0) {
-        console.log(
-          "RABL WE WERE HERE splitTransaction: ADD SAPLING DATA"
-        );
         sapling = {
           nSpendsSapling,
           vSpendsSapling,
@@ -371,9 +339,6 @@ export function splitTransaction(
     }
   }
 
-  console.log("RABL add zcash", sapling);
-  console.log("RABL add zcash", orchard);
-  
   const t: Transaction = {
     version,
     inputs,
