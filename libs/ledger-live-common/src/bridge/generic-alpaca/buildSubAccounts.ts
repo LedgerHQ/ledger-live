@@ -6,6 +6,7 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurr
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { AssetInfo, Balance } from "@ledgerhq/coin-framework/lib/api/types";
 
 type BalanceAsset = {
   balance: string;
@@ -40,26 +41,28 @@ export interface OperationCommon extends Operation {
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-export const getAssetIdFromAsset = (asset: BalanceAsset) =>
-  `${asset.asset_code}:${asset.asset_issuer}`;
+export const getAssetIdFromAsset = (asset: AssetInfo) =>
+  asset.type === "token" ? `${asset.assetReference}:${asset.assetOwner}` : "";
 
 function buildStellarTokenAccount({
   parentAccountId,
-  stellarAsset,
+  assetBalance,
   token,
   operations,
 }: {
   parentAccountId: string;
-  stellarAsset: BalanceAsset;
+  assetBalance: Balance;
   token: TokenCurrency;
   operations: OperationCommon[];
 }): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
-  const balance = parseCurrencyUnit(token.units[0], stellarAsset.balance || "0");
+  const balance = parseCurrencyUnit(token.units[0], assetBalance.value.toString() || "0");
 
-  const reservedBalance = new BigNumber(stellarAsset.balance).minus(
-    stellarAsset.selling_liabilities || 0,
+  // TODO: recheck this logic
+  const reservedBalance = new BigNumber(assetBalance.value.toString()).minus(
+    // assetBalance.selling_liabilities || 0,
+    new BigNumber(assetBalance.locked?.toString() || "0"),
   );
   const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
@@ -90,43 +93,45 @@ function buildStellarTokenAccount({
 export function buildSubAccounts({
   currency,
   accountId,
-  assets,
+  assetsBalance,
   syncConfig,
   operations,
 }: {
   currency: CryptoCurrency;
   accountId: string;
-  assets: BalanceAsset[];
+  assetsBalance: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
 }): TokenAccount[] | undefined {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
 
-  if (allTokens.length === 0 || assets.length === 0) {
+  if (allTokens.length === 0 || assetsBalance.length === 0) {
     return undefined;
   }
 
   const tokenAccounts: TokenAccount[] = [];
 
-  assets.map(asset => {
-    const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
+  assetsBalance
+    .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
+    .map(balance => {
+      const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(balance.asset)}`);
 
-    if (token && !blacklistedTokenIds.includes(token.id)) {
-      tokenAccounts.push(
-        buildStellarTokenAccount({
-          parentAccountId: accountId,
-          stellarAsset: asset,
-          token,
-          operations: operations.filter(
-            op =>
-              op.extra.assetCode === asset.asset_code &&
-              op.extra.assetIssuer === asset.asset_issuer,
-          ),
-        }),
-      );
-    }
-  });
+      if (token && !blacklistedTokenIds.includes(token.id)) {
+        tokenAccounts.push(
+          buildStellarTokenAccount({
+            parentAccountId: accountId,
+            assetBalance: balance,
+            token,
+            operations: operations.filter(
+              op =>
+                op.extra.assetCode === balance.asset["assetReference"] &&
+                op.extra.assetIssuer === balance.asset["assetOwner"], // NOTE: we could narrow type
+            ),
+          }),
+        );
+      }
+    });
 
   return tokenAccounts;
 }

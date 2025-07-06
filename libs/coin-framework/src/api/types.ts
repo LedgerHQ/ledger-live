@@ -70,11 +70,11 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
-  baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
-  networkInfo?: {
-    baseFee?: bigint;
-    fees?: bigint;
-  };
+  // baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
+  // networkInfo?: {
+  //   baseFee?: bigint;
+  //   fees?: bigint;
+  // };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 // Other coins take differents parameters What do we want to do ?
@@ -83,9 +83,9 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
-  pendingOperations: number; // NOTE: can get away with only the number of pending operations?
+  // pendingOperations: number; // NOTE: can get away with only the number of pending operations?
   spendableBalance: bigint; // NOTE:: check if we can get rid of this one
-  subAccount?: TokenAccount;
+  // subAccount?: TokenAccount;
 };
 
 export type Balance = {
@@ -131,7 +131,8 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   expiration?: number;
   recipient: string;
   amount: bigint;
-  fees?: BigNumber | null | undefined; // Optional, depending on the API
+  fees?: bigint | null | undefined; // Optional, depending on the API
+  useAllAmount?: boolean; // FIXME: might be better to live inside generic-adapter?
   asset: AssetInfo;
   sequence?: number;
 } & MaybeMemo<MemoType>;
@@ -186,10 +187,17 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
-export type BridgeApi = {
-  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
+  // FIXME: single param -> transactionIntent
+  validateIntent: (
+    transactionIntent: TransactionIntent<MemoType>,
+  ) => Promise<TransactionValidation>;
   // TODO: make it available on alpacaApi
-  getAccountInfo: (address: string) => Promise<AccountInfo>;
+  // getAccountInfo: (address: string) => Promise<AccountInfo>;
+  getSequence: (address: string) => Promise<number>;
+  getSpendableBalance?: (address: string) => Promise<string>;
+  // getAssets: (address: string) => Promise<AssetInfo[]>; // NOTE: or BalanceAsset[];
 };
 
-export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
+  BridgeApi<MemoType>;
