@@ -1,7 +1,7 @@
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-type EvmConfig = {
+export type EvmConfig = {
   node:
     | {
         type: "external";
