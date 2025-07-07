@@ -4,13 +4,12 @@ import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 
-const cache = getEnv("MOCK")
-  ? () => fetchSanctionedAddresses()
-  : makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12));
+const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", hours(12));
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   try {
-    const { data } = await axios.get(getEnv("SANCTIONED_ADDRESSES_URL"));
+    const url = getEnv("SANCTIONED_ADDRESSES_URL");
+    const { data } = await axios.get(url);
     return data;
   } catch (_) {
     // We dont want if call fails for some reason to stop the workflow, user must be able to make transaction
@@ -31,7 +30,9 @@ export async function isAddressSanctioned(
     "tmp_sanctioned_addresses",
   );
 
-  const data: Record<string, string[]> = await cache();
+  const data: Record<string, string[]> = getEnv("MOCK")
+    ? await fetchSanctionedAddresses()
+    : await cache();
   const addresses = data["bannedAddresses"] || [];
 
   if (temporarySanctionedAddress) {
