@@ -1,11 +1,14 @@
 import {
-  PaginatedTransactionResponse,
-  SuiClient,
+  Checkpoint,
   ExecuteTransactionBlockParams,
-  TransactionEffects,
+  PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  SuiCallArg,
+  SuiClient,
+  SuiTransactionBlockResponse,
+  TransactionBlockData,
+  TransactionEffects,
 } from "@mysten/sui/client";
-import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
@@ -40,8 +43,7 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
     apiMap[url] = new SuiClient({ url });
   }
 
-  const result = await execute(apiMap[url]);
-  return result;
+  return await execute(apiMap[url]);
 }
 
 export const getBalanceCached = makeLRUCache(
@@ -256,8 +258,8 @@ export const getOperations = async (
   cursor?: string | null | undefined,
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperations({ api, addr, type: "OUT", cursor });
-    const receivedOps = await loadOperations({ api, addr, type: "IN", cursor });
+    const sentOps = await loadTransactionsByAddress({ api, addr, type: "OUT", cursor });
+    const receivedOps = await loadTransactionsByAddress({ api, addr, type: "IN", cursor });
     const rawTransactions = [...sentOps, ...receivedOps].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
@@ -267,14 +269,42 @@ export const getOperations = async (
 
 export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
   withApi(async api => {
-    const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
-    const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
+    const opsOut = await loadTransactionsByAddress({ api, addr, type: "OUT", cursor });
+    const opsIn = await loadTransactionsByAddress({ api, addr, type: "IN", cursor });
 
     const rawTransactions = [...opsIn, ...opsOut].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
     const list = uniqBy(rawTransactions, tx => tx.digest);
     return list.map(t => transactionToOp(addr, t));
+  });
+
+/**
+ * Get a checkpoint (a.k.a, a block) metadata.
+ *
+ * @param id the checkpoint digest or sequence number (as a string)
+ */
+export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
+  withApi(async api => api.getCheckpoint({ id }));
+
+/**
+ * Get a checkpoint (a.k.a, a block) metadata with all transactions.
+ *
+ * @param id the checkpoint digest or sequence number (as a string)
+ */
+export const getCheckpointWithTransactions = async (
+  id: string,
+): Promise<{ checkpoint: Checkpoint; transactions: Operation[] }> => // FIXME type
+  withApi(async api => {
+    const checkpoint = await api.getCheckpoint({ id });
+    const rawTransactions = await queryTransactionsByDigest({
+      api,
+      digests: checkpoint.transactions,
+    });
+    const transactions = rawTransactions.map(
+      transaction => transactionToOperation("accountId", "addr", transaction), // FIXME
+    );
+    return { checkpoint, transactions };
   });
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
@@ -362,7 +392,7 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
-export const loadOperations = async (params: {
+export const loadTransactionsByAddress = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
@@ -373,7 +403,7 @@ export const loadOperations = async (params: {
 
   while (operations.length < TRANSACTIONS_LIMIT) {
     try {
-      const { data, nextCursor, hasNextPage } = await queryTransactions({
+      const { data, nextCursor, hasNextPage } = await queryTransactionsByAddress({
         ...params,
         cursor: currentCursor,
       });
@@ -394,8 +424,6 @@ export const loadOperations = async (params: {
         });
 
         currentCursor = null;
-
-        continue;
       } else {
         log("coin:sui", "(network/sdk): loadOperations error", { error, params });
 
@@ -410,7 +438,7 @@ export const loadOperations = async (params: {
 /**
  * Query transactions for given address from RPC
  */
-export const queryTransactions = async (params: {
+export const queryTransactionsByAddress = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
@@ -424,6 +452,50 @@ export const queryTransactions = async (params: {
     filter,
     cursor,
     order: "descending",
+    options: {
+      showInput: true,
+      showBalanceChanges: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
+    limit: TRANSACTIONS_LIMIT_PER_QUERY,
+  });
+};
+
+/**
+ * Query transactions by digest.
+ */
+export const queryTransactionsByDigest = async (params: {
+  api: SuiClient;
+  digests: string[];
+}): Promise<SuiTransactionBlockResponse[]> => {
+  const { api, digests } = params;
+
+  return await api.multiGetTransactionBlocks({
+    digests,
+    options: {
+      showInput: true,
+      showBalanceChanges: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
+  });
+};
+
+/**
+ * Query transactions for given checkpoint from RPC
+ */
+export const queryTransactionsByCheckpoint = async (params: {
+  api: SuiClient;
+  /** checkpoint id or sequence number */
+  id: string;
+  cursor?: string | null | undefined;
+}): Promise<PaginatedTransactionResponse> => {
+  const { api, id, cursor } = params;
+  const filter: QueryTransactionBlocksParams["filter"] = { Checkpoint: id }; // FIXME not supported
+
+  return await api.queryTransactionBlocks({
+    filter,
+    cursor,
+    order: "ascending",
     options: {
       showInput: true,
       showBalanceChanges: true,
