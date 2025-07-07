@@ -19,6 +19,11 @@ on:
         description: The version of the application to run the tests on
         required: true
         type: string
+      enable-comparison:
+        description: Compare performance metrics against the latest successful release workflow run.
+        required: false
+        default: false
+        type: boolean
       latest:
         description: The application to upload is the latest version of the application
         required: false
@@ -43,6 +48,9 @@ on:
       DATADOG_APP_KEY:
         description: The Datadog app key to use
         required: true
+
+permissions:
+  actions: read
 
 jobs:
   run-tests:
@@ -128,6 +136,11 @@ jobs:
           subdomain: ${{ inputs.datadog-subdomain }}
           public-id: ${{ steps.datadog-config.outputs.public_id }}
           mobile-application-version: ${{ steps.upload-version.outputs.version-id }}
+          mobile-application-version-name: ${{ inputs.version }}
+          mobile-application-platform: ${{ inputs.platform }}
+          enable-comparison: ${{ inputs.enable-comparison }}
+          baseline-repo: ${{ github.repository }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print performance tests results
         run: |
