@@ -9,11 +9,14 @@ import {
   type AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { type EvmConfig, setCoinConfig } from "../config";
 import { EvmAsset } from "../types";
+import { lastBlock } from "../logic/lastBlock";
 
-export function createApi(config: EvmConfig, _currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
+export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: (_tx: string): Promise<string> => {
@@ -36,9 +39,7 @@ export function createApi(config: EvmConfig, _currencyId: CryptoCurrencyId): Alp
     getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
       throw new Error("UnsupportedMethod");
     },
-    lastBlock: (): Promise<BlockInfo> => {
-      throw new Error("UnsupportedMethod");
-    },
+    lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       _address: string,
       _pagination: Pagination,
