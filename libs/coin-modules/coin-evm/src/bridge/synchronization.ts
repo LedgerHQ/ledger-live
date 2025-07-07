@@ -22,6 +22,7 @@ import { ExplorerApi } from "../network/explorer/types";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
 import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
+import { lastBlock } from "../logic/lastBlock";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -37,7 +38,7 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   const { initialAccount, address, derivationMode, currency } = infos;
   const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
-    nodeApi.getBlockByHeight(currency, "latest"),
+    lastBlock(currency),
     nodeApi.getCoinBalance(currency, address),
   ]);
   const blockHeight = latestBlock.height;
