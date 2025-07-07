@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import type { CeloAccount, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import buildTransaction from "./buildTransaction";
 
 const getFeesForTransaction = async ({
@@ -29,10 +28,6 @@ const getFeesForTransaction = async ({
   );
   // Deduct pending lock operations from the spendable balance
   const totalSpendableBalance = account.spendableBalance.minus(pendingOperationAmounts.lock);
-
-  // Check if it's a token transaction
-  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
   if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
     value = transaction.useAllAmount
