@@ -79,3 +79,5 @@ export const blacklistedTokenIdsSelector = () => {};
 
 export const getLLDCoinFamily = () => ({});
 export const isAccountEmpty = () => false;
+export const languageSelector = () => ({});
+export const openURL = () => {};
