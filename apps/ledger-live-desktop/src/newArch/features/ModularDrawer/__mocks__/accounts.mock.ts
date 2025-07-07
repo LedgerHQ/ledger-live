@@ -73,7 +73,7 @@ export const useCountervaluesPolling = () => ({
 
 export const useCountervaluesUserSettingsContext = () => ({ trackingPairs: [] });
 
-export const userThemeSelector = () => {};
+export const userThemeSelector = () => "light";
 
 export const blacklistedTokenIdsSelector = () => {};
 
