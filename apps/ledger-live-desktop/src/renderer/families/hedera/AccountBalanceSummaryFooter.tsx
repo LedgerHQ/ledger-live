@@ -95,7 +95,7 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
           <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.delegated.tooltip" />}>
             <TitleWrapper>
               <Title>
-                <Trans i18nKey="hedera.account.balanceFooter.delegated.title" />
+                <Trans i18nKey="account.delegatedAssets" />
               </Title>
               <InfoCircle size={13} />
             </TitleWrapper>
@@ -107,11 +107,14 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
       )}
       {delegatedAssets.gt(0) && (
         <BalanceDetail>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="hedera.account.balanceFooter.claimable.title" />
-            </Title>
-          </TitleWrapper>
+          <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.claimable.tooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="account.claimableRewards" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
           <AmountValue>
             <Discreet>{formattedClaimableRewards}</Discreet>
           </AmountValue>

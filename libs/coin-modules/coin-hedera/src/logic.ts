@@ -59,11 +59,20 @@ const getMemo = (tx: HederaMirrorTransaction): string | null => {
   return tx.memo_base64 ? Buffer.from(tx.memo_base64, "base64").toString("utf-8") : null;
 };
 
+const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
+  if (validators.length === 0) return null;
+
+  return validators.reduce((highest, current) =>
+    current.activeStake.gt(highest.activeStake) ? current : highest,
+  );
+};
+
 export {
   getTransactionExplorer,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
   getValidatorFromAccount,
+  getDefaultValidator,
   getHederaOperationType,
   getMemo,
 };

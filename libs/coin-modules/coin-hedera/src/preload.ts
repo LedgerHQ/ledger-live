@@ -32,8 +32,6 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
     };
   });
 
-  // FIXME: sorting
-
   const data: HederaPreloadData = {
     validators,
   };

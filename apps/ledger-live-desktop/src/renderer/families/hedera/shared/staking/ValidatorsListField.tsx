@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { Account } from "@ledgerhq/types-live";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
+import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/logic";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
@@ -26,8 +27,9 @@ const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValida
   const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency, search);
 
-  const defaultValidator = validators[0];
+  const defaultValidator = getDefaultValidator(validators);
   const selectedValidator = validators.find(v => v.address === selectedValidatorAddress);
+  const value = selectedValidator ?? defaultValidator;
 
   const renderItem = (validator: HederaValidator) => {
     return (
@@ -53,7 +55,7 @@ const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValida
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            data={showAll ? validators : [selectedValidator ?? defaultValidator].filter(Boolean)}
+            data={showAll ? validators : value ? [value] : []}
             style={{
               flex: showAll ? "1 0 256px" : "1 0 64px",
               marginBottom: 0,

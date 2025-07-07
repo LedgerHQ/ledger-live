@@ -6661,11 +6661,10 @@
     "account": {
       "balanceFooter": {
         "delegated": {
-          "title": "Delegated assets",
           "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"
         },
         "claimable": {
-          "title": "Claimable rewards"
+          "tooltip": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
         }
       },
       "bodyHeader": {

@@ -4,11 +4,12 @@ import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -95,16 +96,14 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     useBridgeTransaction(() => {
       const bridge: AccountBridge<Transaction> = getAccountBridge(account);
       const t = bridge.createTransaction(account);
-
-      // FIXME: default validator logic
-      const defaultValidator = validators[0];
+      const defaultValidator = getDefaultValidator(validators);
 
       const transaction = bridge.updateTransaction(t, {
-        recipient: defaultValidator.address,
+        recipient: defaultValidator?.address,
         properties: {
           name: "staking",
           mode: "delegate",
-          stakedNodeId: defaultValidator.nodeId,
+          stakedNodeId: defaultValidator?.nodeId,
         },
       });
 

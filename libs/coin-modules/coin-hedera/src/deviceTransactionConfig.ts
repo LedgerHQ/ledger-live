@@ -18,7 +18,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Method",
-      value: transaction.properties.mode === "claimRewards" ? "Collect Rewards" : "Update Account",
+      value: transaction.properties.mode === "claimRewards" ? "Claim Rewards" : "Update Account",
     });
 
     if (typeof transaction.properties.stakedNodeId === "number") {
