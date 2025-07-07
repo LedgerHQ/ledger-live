@@ -14,11 +14,15 @@ export function ModularDrawer({ isOpen, onClose, selectedStep }: Props) {
 
   // In prevision of tracking the back button press
   const onBackButtonPress = () => viewModel.prevStep();
+  const onCloseButtonPress = () => {
+    onClose?.();
+    viewModel.reset();
+  };
 
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpen}
-      onClose={onClose}
+      onClose={onCloseButtonPress}
       hasBackButton={viewModel.hasBackButton}
       onBack={onBackButtonPress}
     >
