@@ -118,6 +118,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
         from: account.freshAddress,
         to: stableToken.address,
         data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+        value: value.toFixed(),
       };
     } else {
       const token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
@@ -125,6 +126,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
         from: account.freshAddress,
         to: token.address,
         data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+        value: value.toFixed(),
       };
     }
   } else {

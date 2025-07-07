@@ -1,6 +1,12 @@
 import BigNumber from "bignumber.js";
 import buildTransaction from "../../bridge/buildTransaction";
 import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { faker } from "@faker-js/faker";
+import { TokenAccount } from "@ledgerhq/types-live";
+
+const currency = getCryptoCurrencyById("celo");
 
 const chainIdMock = jest.fn();
 const nonceMock = jest.fn();
@@ -58,6 +64,22 @@ jest.mock("../../network/sdk", () => {
             },
           })),
           address: "register_address",
+        })),
+        getStableToken: jest.fn(async () => ({
+          address: "stable_token_address",
+          transfer: jest.fn(() => ({
+            txo: {
+              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
+            },
+          })),
+        })),
+        getErc20: jest.fn(async () => ({
+          address: "erc20_token_address",
+          transfer: jest.fn(() => ({
+            txo: {
+              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
+            },
+          })),
         })),
       },
       connection: {
@@ -320,20 +342,115 @@ describe("buildTransaction", () => {
     });
   });
 
-  // it("should build a token transaction", async () => {
-  //   const transaction = await buildTransaction(
-  //     { ...accountFixture, spendableBalance: BigNumber(123) },
-  //     {
-  //       ...transactionFixture,
-  //       mode: "send",
-  //     },
-  //   );
+  it("should build a token transaction", async () => {
+    const subAccounts = [
+      {
+        id: "subAccountId",
+        type: "TokenAccount",
+        parentId: accountFixture.id,
+        token: {
+          type: "TokenCurrency",
+          id: "celoToken",
+          contractAddress: "contract_address",
+          parentCurrency: currency,
+        } as TokenCurrency,
+        balance: BigNumber(100),
+        spendableBalance: BigNumber(100),
+        creationDate: faker.date.past(),
+        operationsCount: 0,
+        operations: [],
+        pendingOperations: [],
+        balanceHistoryCache: {
+          HOUR: {
+            latestDate: null,
+            balances: [],
+          },
+          DAY: {
+            latestDate: null,
+            balances: [],
+          },
+          WEEK: {
+            latestDate: null,
+            balances: [],
+          },
+        },
+        swapHistory: [],
+      },
+    ] as TokenAccount[];
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        subAccounts,
+      },
+      {
+        ...transactionFixture,
+        subAccountId: subAccounts[0].id,
+        mode: "send",
+      },
+    );
 
-  //   expect(transaction).toMatchObject({
-  //     from: accountFixture.freshAddress,
-  //     to: transactionFixture.recipient,
-  //     value: "10",
-  //     gas: 3,
-  //   });
-  // });
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "erc20_token_address",
+      value: "10",
+      gas: 3,
+    });
+  });
+
+  it("should build a stable token transaction", async () => {
+    const subAccounts = [
+      {
+        id: "subAccountId",
+        type: "TokenAccount",
+        parentId: accountFixture.id,
+        token: {
+          type: "TokenCurrency",
+          id: "cEUR",
+          contractAddress: "contract_address",
+          parentCurrency: currency,
+        } as TokenCurrency,
+        balance: BigNumber(100),
+        spendableBalance: BigNumber(100),
+        creationDate: faker.date.past(),
+        operationsCount: 0,
+        operations: [],
+        pendingOperations: [],
+        balanceHistoryCache: {
+          HOUR: {
+            latestDate: null,
+            balances: [],
+          },
+          DAY: {
+            latestDate: null,
+            balances: [],
+          },
+          WEEK: {
+            latestDate: null,
+            balances: [],
+          },
+        },
+        swapHistory: [],
+      },
+    ] as TokenAccount[];
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        subAccounts,
+      },
+      {
+        ...transactionFixture,
+        subAccountId: subAccounts[0].id,
+        mode: "send",
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "stable_token_address",
+      value: "10",
+      gas: 3,
+    });
+  });
 });
