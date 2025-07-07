@@ -1255,6 +1255,9 @@ importers:
       react-native-fast-pbkdf2:
         specifier: 0.3.1
         version: 0.3.1(patch_hash=hsxraxacbj7ixutjkwcickkwma)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-fast-shadow:
+        specifier: 0.1.1
+        version: 0.1.1(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-gesture-handler:
         specifier: 2.22.0
         version: 2.22.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -30340,6 +30343,12 @@ packages:
 
   react-native-fast-pbkdf2@0.3.1:
     resolution: {integrity: sha512-G+1EdQs+w7RhgZKXbodbGPy6zKxX3qdSe1YSh9B7x6qZLTd3dDI15R33faWoiQjrESepbfvX3M64UevBT6SDDA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-fast-shadow@0.1.1:
+    resolution: {integrity: sha512-TsGx0aX1UuaN3FjUAcETVB2+JfrEMMpWlQK2J1BYokEWuOBHjYl4zKWLNsewfmqolSEPm8iEh7N2nsKBX6C/Bw==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -67464,6 +67473,11 @@ snapshots:
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   react-native-fast-pbkdf2@0.3.1(patch_hash=hsxraxacbj7ixutjkwcickkwma)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+
+  react-native-fast-shadow@0.1.1(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)

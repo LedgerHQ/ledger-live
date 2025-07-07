@@ -4,7 +4,6 @@ import {
   DeviceSessionState,
   DeviceSessionStateType,
   DeviceStatus,
-  UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 
@@ -92,10 +91,10 @@ describe("PrepareConnectManagerDeviceAction", () => {
             },
             status: DeviceActionStatus.Pending,
           },
-          // Error
+          // Error is ignored
           {
-            error: new UnknownDAError("GoToDashboard failed"),
-            status: DeviceActionStatus.Error,
+            output: undefined,
+            status: DeviceActionStatus.Completed,
           },
         ];
 
