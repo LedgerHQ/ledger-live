@@ -1,0 +1,75 @@
+import React from "react";
+import ScanAccounts from ".";
+import type { Meta, StoryObj } from "@storybook/react";
+import {
+  arbitrumCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  mockNetworksConfiguration,
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import { legacy_createStore as createStore } from "redux";
+import { Provider } from "react-redux";
+import { fn } from "@storybook/test";
+import { res } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { ETH_ACCOUNT, ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+
+const networks = [ethereumCurrency, arbitrumCurrency];
+
+const onNetworkSelected = fn();
+
+const store = createStore(() => ({
+  //   accounts: [ETH_ACCOUNT, ARB_ACCOUNT],
+  //   currency: {
+  //     type: "FiatCurrency",
+  //     ticker: "USD",
+  //     name: "US Dollar",
+  //     symbol: "$",
+  //     units: [
+  //       {
+  //         code: "$",
+  //         name: "US Dollar",
+  //         magnitude: 2,
+  //         showAllDigits: true,
+  //         prefixCode: true,
+  //       },
+  //     ],
+  //   },
+  //   application: { debug: {} },
+}));
+
+const meta: Meta<typeof ScanAccounts> = {
+  title: "ModularDrawer/ScanAccounts",
+  component: ScanAccounts,
+  args: {
+    currency: bitcoinCurrency,
+  },
+  //   args: {
+  //     networks,
+  //     networksConfiguration: mockNetworksConfiguration,
+  //     onNetworkSelected: onNetworkSelected,
+  //     selectedAssetId: ethereumCurrency.id,
+  //     currenciesByProvider: res.result.currenciesByProvider,
+  //   },
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <div style={{ width: "100%", height: "100%" }}>
+          <Story />
+        </div>
+      </Provider>
+    ),
+  ],
+};
+
+export default meta;
+
+type Story = StoryObj<typeof ScanAccounts>;
+
+export const Default: Story = {
+  //   args: {
+  //     networksConfiguration: {
+  //       leftElement: "undefined",
+  //       rightElement: "undefined",
+  //     },
+  //   },
+};

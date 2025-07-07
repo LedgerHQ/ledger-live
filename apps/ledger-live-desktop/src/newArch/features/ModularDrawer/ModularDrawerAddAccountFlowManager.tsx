@@ -78,7 +78,6 @@ const ModularDrawerAddAccountFlowManager = ({
 
   const handleConnect = useCallback(
     (result: AppResult) => {
-      console.log(result);
       setConnectAppResult(result);
       navigateToScanAccounts();
     },
