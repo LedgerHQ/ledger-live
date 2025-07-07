@@ -157,7 +157,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
     } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
-      setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
       setToggleOnboardingEarlyCheckType(null);
