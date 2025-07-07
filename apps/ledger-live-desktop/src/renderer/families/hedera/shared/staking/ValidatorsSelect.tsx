@@ -39,8 +39,6 @@ export default function ValidatorsSelect({
     return options.find(v => v.address === selectedValidatorAddress) ?? null;
   }, [selectedValidatorAddress, options]);
 
-  console.log("[DEBUG] select", { error, selectedValidatorAddress, value, options });
-
   return (
     <>
       <Select

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount } from "./utils";
@@ -22,9 +23,9 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   const { amount } = await calculateAmount({ account, transaction });
   transaction.amount = amount;
 
-  // claiming staking rewards is triggered by sending 1 tinybar to 0.0.800 (staking reward account)
+  // claiming staking rewards is triggered by sending 1 tinybar to staking reward account
   if (isStakingTransaction(transaction) && transaction.properties.mode === "claimRewards") {
-    transaction.recipient = "0.0.800";
+    transaction.recipient = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
     transaction.amount = new BigNumber(1);
     transaction.memo = "Collect Staking Rewards";
   }

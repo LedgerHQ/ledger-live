@@ -55,7 +55,9 @@ export type OperationType =
   | "UNSTAKE"
   | "WITHDRAW_UNSTAKED"
   // SOLANA
-  | "BURN";
+  | "BURN"
+  // HEDERA
+  | "UPDATE_ACCOUNT";
 
 export type OperationExtra = unknown;
 /**

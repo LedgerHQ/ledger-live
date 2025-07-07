@@ -1,12 +1,13 @@
+import BigNumber from "bignumber.js";
 import type {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 export type NetworkInfo = {
   family: "hedera";
@@ -26,12 +27,14 @@ export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
   properties?: StakingTransactionProperties;
+  maxFee?: BigNumber | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
   properties?: StakingTransactionProperties;
+  maxFee?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
@@ -69,6 +72,24 @@ export type HederaAccountRaw = AccountRaw & {
 export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
+  memo?: string | null;
 };
 
 export type HederaOperationType = "CryptoTransfer" | "CryptoUpdate";
+
+export type HederaOperation = Operation<HederaOperationExtra>;
+
+export type HederaValidator = {
+  nodeId: number;
+  minStake: BigNumber;
+  maxStake: BigNumber;
+  activeStake: BigNumber;
+  activeStakePercentage: BigNumber;
+  address: string;
+  name: string;
+  overstaked: boolean;
+};
+
+export type HederaPreloadData = {
+  validators: HederaValidator[];
+};

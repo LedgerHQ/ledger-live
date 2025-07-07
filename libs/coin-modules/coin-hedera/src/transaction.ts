@@ -1,4 +1,4 @@
-import type { Transaction, TransactionRaw } from "./types";
+import BigNumber from "bignumber.js";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -9,6 +9,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { Transaction, TransactionRaw } from "./types";
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
   const amount = formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
@@ -26,6 +27,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...common,
     family: tr.family,
     memo: tr.memo,
+    maxFee: tr.maxFee ? new BigNumber(tr.maxFee) : undefined,
   };
 }
 
@@ -36,6 +38,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     ...common,
     family: t.family,
     memo: t.memo,
+    maxFee: t.maxFee ? t.maxFee.toString() : undefined,
   };
 }
 

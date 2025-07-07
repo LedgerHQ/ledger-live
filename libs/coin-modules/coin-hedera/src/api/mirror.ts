@@ -1,14 +1,15 @@
 import { AccountId } from "@hashgraph/sdk";
 import network from "@ledgerhq/live-network/network";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { base64ToUrlSafeBase64 } from "../bridge/utils";
-import { HederaOperationExtra } from "../types";
 import { HederaAddAccountError } from "../errors";
-import { HederaMirrorAccount, HederaMirrorNode } from "./types";
+import { getMemo } from "../logic";
+import type { HederaOperationExtra } from "../types";
+import type { HederaMirrorAccount, HederaMirrorNode } from "./types";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -53,8 +54,11 @@ interface HederaMirrorTransfer {
   amount: number;
 }
 
-interface HederaMirrorTransaction {
+export interface HederaMirrorTransaction {
   transfers: HederaMirrorTransfer[];
+  staking_reward_transfers: HederaMirrorTransfer[];
+  name: "CRYPTOUPDATEACCOUNT" | (string & {});
+  memo_base64: string | null;
   charged_tx_fee: string;
   transaction_hash: string;
   consensus_timestamp: string;
@@ -124,6 +128,7 @@ export async function getOperationsForAccount(
     const fee = new BigNumber(raw.charged_tx_fee);
     let value = new BigNumber(0);
     let type: OperationType = "NONE";
+    const isUpdateAccountTx = raw.name === "CRYPTOUPDATEACCOUNT";
 
     for (let i = raw.transfers.length - 1; i >= 0; i--) {
       const transfer = raw.transfers[i];
@@ -145,8 +150,8 @@ export async function getOperationsForAccount(
       } else {
         if (account.shard.eq(0) && account.realm.eq(0)) {
           if (account.num.lt(100)) {
-            // account is a node, only add to list if we have none
-            if (recipients.length === 0) {
+            // account is a node, only add to list if we have none or it's an update account transaction
+            if (isUpdateAccountTx || recipients.length === 0) {
               recipients.push(transfer.account);
             }
           } else if (account.num.lt(1000)) {
@@ -161,23 +166,62 @@ export async function getOperationsForAccount(
       }
     }
 
+    if (isUpdateAccountTx) {
+      type = "UPDATE_ACCOUNT";
+    }
+
+    const stakingReward = raw.staking_reward_transfers.reduce((acc, transfer) => {
+      const transferAmount = new BigNumber(transfer.amount);
+
+      if (transfer.account === address) {
+        acc = acc.plus(transferAmount);
+      }
+
+      return acc;
+    }, new BigNumber(0));
+
     // NOTE: earlier addresses are the "fee" addresses
     recipients.reverse();
     senders.reverse();
 
     const hash = base64ToUrlSafeBase64(raw.transaction_hash);
+    // NOTE: there are no "blocks" in hedera, set a value just so that it's considered confirmed according to isConfirmedOperation
+    const blockHeight = 5;
+    const blockHash = null;
+    const extra = {
+      memo: getMemo(raw),
+      consensusTimestamp: consensus_timestamp,
+      transactionId: transaction_id,
+    } satisfies HederaOperationExtra;
+
+    if (stakingReward.gt(0)) {
+      // offset timestamp by +1s to ensure it appears just before the triggering operation in the list
+      const stakingRewardTimestamp = new Date(timestamp.getTime() + 1000);
+      const stakingRewardHash = `${hash}-staking-reward`;
+      const stakingRewardType: OperationType = "REWARD";
+
+      operations.push({
+        value: stakingReward,
+        date: stakingRewardTimestamp,
+        blockHeight,
+        blockHash,
+        extra,
+        fee: new BigNumber(0),
+        hash: stakingRewardHash,
+        recipients: [address],
+        senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+        accountId: ledgerAccountId,
+        id: encodeOperationId(ledgerAccountId, stakingRewardHash, stakingRewardType),
+        type: stakingRewardType,
+      });
+    }
 
     operations.push({
       value,
       date: timestamp,
-      // NOTE: there are no "blocks" in hedera
-      // Set a value just so that it's considered confirmed according to isConfirmedOperation
-      blockHeight: 5,
-      blockHash: null,
-      extra: {
-        consensusTimestamp: consensus_timestamp,
-        transactionId: transaction_id,
-      } satisfies HederaOperationExtra,
+      blockHeight,
+      blockHash,
+      extra,
       fee,
       hash,
       recipients,

@@ -39,7 +39,6 @@ function StepValidators({
     if (!validator) return;
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
-      console.log("[DEBUG] updating tx", validator);
       return bridge.updateTransaction(transaction, {
         recipient: validator.address,
         properties: {

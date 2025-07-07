@@ -217,6 +217,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
+  HEDERA_STAKING_REWARD_ACCOUNT_ID: {
+    def: "0.0.800",
+    parser: stringParser,
+    desc: "hedera staking reward account id",
+  },
   API_HEDERA_MIRROR: {
     def: "https://hedera.coin.ledger.com",
     parser: stringParser,

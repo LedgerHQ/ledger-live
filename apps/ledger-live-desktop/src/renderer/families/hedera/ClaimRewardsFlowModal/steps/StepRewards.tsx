@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -17,7 +18,7 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { StepProps } from "../types";
 
-function StepRewards({ account, parentAccount, transaction, error }: StepProps) {
+function StepRewards({ t, account, parentAccount, transaction, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const validators = useHederaValidators(account.currency);
@@ -40,12 +41,16 @@ function StepRewards({ account, parentAccount, transaction, error }: StepProps) 
     return null;
   }
 
+  const feeIsLargerThanClaimable = transaction.maxFee?.gt(claimableRewards) ?? false;
   const formattedClaimableRewards = formatCurrencyUnit(unit, claimableRewards, formatConfig);
 
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error && <ErrorBanner error={error} />}
+      {feeIsLargerThanClaimable && (
+        <Alert type="warning">{t("hedera.claimRewards.flow.steps.rewards.feesAlert")}</Alert>
+      )}
       <Text ff="Inter|SemiBold" fontSize={4} textAlign="center">
         <Trans
           i18nKey="hedera.claimRewards.flow.steps.rewards.description"

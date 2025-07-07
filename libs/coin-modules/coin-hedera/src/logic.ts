@@ -1,5 +1,6 @@
 import type { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { Operation } from "@ledgerhq/types-live";
+import type { HederaMirrorTransaction } from "./api/mirror";
 import { getCurrentHederaPreloadData } from "./preload-data";
 import type {
   HederaAccount,
@@ -45,9 +46,14 @@ const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null
   return validator ?? null;
 };
 
+const getMemo = (tx: HederaMirrorTransaction): string | null => {
+  return !!tx.memo_base64 ? Buffer.from(tx.memo_base64, "base64").toString("utf-8") : null;
+};
+
 export {
   getTransactionExplorer,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
   getValidatorFromAccount,
+  getMemo,
 };
