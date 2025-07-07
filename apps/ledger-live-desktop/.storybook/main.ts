@@ -14,6 +14,8 @@ const madDir = "./src/newArch/features/ModularDrawer";
 const detailedAccountsMockDir = `${madDir}/__mocks__/accounts.mock.ts`;
 const selectAssetFlowHookMockDir = `${madDir}/__mocks__/useSelectAssetFlow.mock.ts`;
 const useGroupedCurrenciesByProvider = `${madDir}/__mocks__/useGroupedCurrenciesByProvider.mock.ts`;
+const bridge = `${madDir}/__mocks__/bridge.mock.tsx`;
+const useConnectAppAction = `${madDir}/__mocks__/useConnectAppAction.mock.ts`;
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -61,7 +63,12 @@ const config: StorybookConfig = {
             useGroupedCurrenciesByProvider,
           ),
 
-          "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
+          // TODO WIP
+          "~/renderer/bridge/cache": resolve(bridge),
+          "~/renderer/components/DeviceAction": resolve(bridge),
+          "~/renderer/hooks/useConnectAppAction": resolve(useConnectAppAction),
+
+          // "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
 
           "~": resolve("./src"),
           https: false,
