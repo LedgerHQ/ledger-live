@@ -1,12 +1,10 @@
 import BigNumber from "bignumber.js";
 import buildTransaction from "../../bridge/buildTransaction";
-import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { faker } from "@faker-js/faker";
-import { TokenAccount } from "@ledgerhq/types-live";
-
-const currency = getCryptoCurrencyById("celo");
+import {
+  accountFixture,
+  accountWithTokenAccountFixture,
+  transactionFixture,
+} from "../../bridge/getFixtures";
 
 const chainIdMock = jest.fn();
 const nonceMock = jest.fn();
@@ -343,49 +341,14 @@ describe("buildTransaction", () => {
   });
 
   it("should build a token transaction", async () => {
-    const subAccounts = [
-      {
-        id: "subAccountId",
-        type: "TokenAccount",
-        parentId: accountFixture.id,
-        token: {
-          type: "TokenCurrency",
-          id: "celoToken",
-          contractAddress: "contract_address",
-          parentCurrency: currency,
-        } as TokenCurrency,
-        balance: BigNumber(100),
-        spendableBalance: BigNumber(100),
-        creationDate: faker.date.past(),
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        balanceHistoryCache: {
-          HOUR: {
-            latestDate: null,
-            balances: [],
-          },
-          DAY: {
-            latestDate: null,
-            balances: [],
-          },
-          WEEK: {
-            latestDate: null,
-            balances: [],
-          },
-        },
-        swapHistory: [],
-      },
-    ] as TokenAccount[];
     const transaction = await buildTransaction(
       {
-        ...accountFixture,
+        ...accountWithTokenAccountFixture,
         spendableBalance: BigNumber(123),
-        subAccounts,
       },
       {
         ...transactionFixture,
-        subAccountId: subAccounts[0].id,
+        subAccountId: accountWithTokenAccountFixture.subAccounts[0].id,
         mode: "send",
       },
     );
@@ -399,49 +362,23 @@ describe("buildTransaction", () => {
   });
 
   it("should build a stable token transaction", async () => {
-    const subAccounts = [
-      {
-        id: "subAccountId",
-        type: "TokenAccount",
-        parentId: accountFixture.id,
-        token: {
-          type: "TokenCurrency",
-          id: "cEUR",
-          contractAddress: "contract_address",
-          parentCurrency: currency,
-        } as TokenCurrency,
-        balance: BigNumber(100),
-        spendableBalance: BigNumber(100),
-        creationDate: faker.date.past(),
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        balanceHistoryCache: {
-          HOUR: {
-            latestDate: null,
-            balances: [],
-          },
-          DAY: {
-            latestDate: null,
-            balances: [],
-          },
-          WEEK: {
-            latestDate: null,
-            balances: [],
-          },
-        },
-        swapHistory: [],
-      },
-    ] as TokenAccount[];
     const transaction = await buildTransaction(
       {
-        ...accountFixture,
+        ...accountWithTokenAccountFixture,
         spendableBalance: BigNumber(123),
-        subAccounts,
+        subAccounts: [
+          {
+            ...accountWithTokenAccountFixture.subAccounts[0],
+            token: {
+              ...accountWithTokenAccountFixture.subAccounts[0].token,
+              id: "cEUR",
+            },
+          },
+        ],
       },
       {
         ...transactionFixture,
-        subAccountId: subAccounts[0].id,
+        subAccountId: accountWithTokenAccountFixture.subAccounts[0].id,
         mode: "send",
       },
     );
