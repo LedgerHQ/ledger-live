@@ -668,6 +668,7 @@ export const DEFAULT_FEATURES: Features = {
       vitalsUpdateFrequency: "AVERAGE",
     },
   },
+  llmSentry: { enabled: true },
 };
 
 // Firebase SDK treat JSON values as strings

@@ -258,6 +258,7 @@ export type Features = CurrencyFeatures & {
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
     }>;
   };
+  llmSentry: DefaultFeature;
 };
 
 /**
