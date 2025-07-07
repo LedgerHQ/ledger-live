@@ -479,28 +479,3 @@ export const queryTransactionsByDigest = async (params: {
     },
   });
 };
-
-/**
- * Query transactions for given checkpoint from RPC
- */
-export const queryTransactionsByCheckpoint = async (params: {
-  api: SuiClient;
-  /** checkpoint id or sequence number */
-  id: string;
-  cursor?: string | null | undefined;
-}): Promise<PaginatedTransactionResponse> => {
-  const { api, id, cursor } = params;
-  const filter: QueryTransactionBlocksParams["filter"] = { Checkpoint: id }; // FIXME not supported
-
-  return await api.queryTransactionBlocks({
-    filter,
-    cursor,
-    order: "ascending",
-    options: {
-      showInput: true,
-      showBalanceChanges: true,
-      showEffects: true, // To get transaction status and gas fee details
-    },
-    limit: TRANSACTIONS_LIMIT_PER_QUERY,
-  });
-};
