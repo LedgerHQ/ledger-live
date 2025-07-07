@@ -8,6 +8,7 @@ export type BlockInfo = {
   // transaction could be created at a particular moment, but depending on network conditions
   // mining time, and block intervals, it might not get included in the blockchain until later
   time?: Date;
+  parent?: BlockInfo;
 };
 
 type TokenInfoCommon = Record<string, unknown>;
@@ -57,7 +58,15 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-// Other coins take differents parameters What do we want to do ?
+export type Block<
+  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = {
+  info: BlockInfo;
+  operations: Operation<AssetInfo, MemoType>[];
+};
+
+// Other coins take different parameters What do we want to do ?
 export type Account = {
   currencyName: string;
   address: string;
@@ -163,6 +172,8 @@ export type AlpacaApi<
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
+  getBlockInfo: (height: number) => Promise<BlockInfo>;
+  getBlock: (height: number) => Promise<Block>;
   listOperations: (
     address: string,
     pagination: Pagination,
