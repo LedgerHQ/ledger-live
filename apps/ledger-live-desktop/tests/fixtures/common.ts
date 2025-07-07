@@ -1,4 +1,4 @@
-import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
+import { test as base, Page, ElectronApplication } from "@playwright/test";
 import fsPromises from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
@@ -117,7 +117,7 @@ export const test = base.extend<TestFixtures>({
     page.setDefaultTimeout(120000);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
-      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      const client = await page.context().newCDPSession(page);
       await client.send("Emulation.setCPUThrottlingRate", {
         rate: parseInt(process.env.PLAYWRIGHT_CPU_THROTTLING_RATE),
       });

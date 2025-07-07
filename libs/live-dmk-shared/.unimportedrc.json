@@ -10,5 +10,8 @@
   "ignoreUnresolved": [
     "@ledgerhq/device-management-kit"
   ],
+  "ignoreUnused": [
+    "@types/semver"
+  ],
   "ignoreUnimported": []
 }

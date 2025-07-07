@@ -13,4 +13,10 @@ export class ChooseAssetDrawer extends Drawer {
     await this.searchInput.fill(currency);
     await this.currencyRow(currency).first().click();
   }
+
+  @step("Verify choose asset drawer is visible")
+  async verifyChooseAssetDrawer() {
+    await expect(this.selectAssetTitle).toBeVisible();
+    await expect(this.searchInput).toBeVisible();
+  }
 }

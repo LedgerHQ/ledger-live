@@ -98,6 +98,7 @@ class AddressCell extends PureComponent<Props> {
   render() {
     const { operation } = this.props;
     const lense =
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       perOperationType[operation.type as keyof typeof perOperationType] || perOperationType._;
     const value = lense(operation);
     return value ? (

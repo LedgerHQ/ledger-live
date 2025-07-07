@@ -11639,7 +11639,7 @@
           ],
           "swapHistory": [
             {
-              "status": "pending",
+              "status": "finished",
               "provider": "changelly",
               "operationId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:-0x12d09eea0443d9c21634c1d8b6222d0e3d8c4070b8149454b53fd1ef93e60e64-OUT",
               "swapId": "fmwnt4mc0tiz75kz",
