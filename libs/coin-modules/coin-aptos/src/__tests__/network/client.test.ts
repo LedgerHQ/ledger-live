@@ -688,8 +688,7 @@ describe("Aptos API", () => {
       const api = new AptosAPI("aptos");
       const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "coin",
+          type: "coin",
           assetReference: "0x111",
         },
         type: "send",
@@ -754,8 +753,7 @@ describe("Aptos API", () => {
       const api = new AptosAPI("aptos");
       const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "fungible_asset",
+          type: "fungible_asset",
           assetReference: "0x111",
         },
         type: "send",

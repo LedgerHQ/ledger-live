@@ -54,8 +54,7 @@ describe("craftTransaction", () => {
     const transactionIntent: TransactionIntent = {
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         assetReference: "contractAddress",
       },
       recipient: "recipient",
@@ -88,8 +87,7 @@ describe("craftTransaction", () => {
     const amount: number = 1000;
     const transactionIntent = {
       asset: {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         assetReference: "contractAddress",
       },
       amount: BigInt(amount),
@@ -115,8 +113,7 @@ describe("craftTransaction", () => {
     const amount = 1000;
     const transactionIntent = {
       asset: {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         assetReference: "contractAddress",
       },
       amount: BigInt(amount),
@@ -145,8 +142,7 @@ describe("craftTransaction", () => {
         await craftTransaction(
           {
             asset: {
-              type: "token",
-              standard: "trc20",
+              type: "trc20",
               assetReference: "contractAddress",
             },
           } as TransactionIntent,

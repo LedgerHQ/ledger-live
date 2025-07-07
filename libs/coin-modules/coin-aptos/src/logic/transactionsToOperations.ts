@@ -28,7 +28,7 @@ const detectType = (address: string, tx: AptosTransaction, value: BigNumber): DI
   return type;
 };
 
-const getTokenStandard = (coin_id: string) => {
+const getTokenType = (coin_id: string) => {
   const parts = coin_id.split("::");
   if (parts.length === 3) {
     return "coin";
@@ -93,8 +93,7 @@ export function transactionsToOperations(
         return acc;
       } else {
         op.asset = {
-          type: "token",
-          standard: getTokenStandard(coin_id),
+          type: getTokenType(coin_id),
           assetReference: coin_id,
         };
         acc.push(op);

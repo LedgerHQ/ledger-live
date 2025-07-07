@@ -50,7 +50,7 @@ describe("craftTransaction", () => {
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "token", standard: "coin", assetReference: "0x42::token::Token" },
+      asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -132,7 +132,7 @@ describe("craftTransaction", () => {
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      asset: { type: "token", standard: "coin", assetReference: "0x42::token::Token" },
+      asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -173,7 +173,7 @@ describe("craftTransaction", () => {
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 0n,
-      asset: { type: "token", standard: "fungible_asset", assetReference: "0x42" },
+      asset: { type: "fungible_asset", assetReference: "0x42" },
     };
 
     const tx = await api.craftTransaction(txArg);
@@ -214,8 +214,8 @@ describe("craftTransaction", () => {
       senderPublicKey: "public-key",
       recipient: RECIPIENT_ADDR,
       amount: 10n,
-      // @ts-expect-error intentionally assigning invalid standard
-      asset: { type: "token", standard: "asset", assetReference: "0x42::token::Token" },
+      // @ts-expect-error intentionally assigning invalid type
+      asset: { type: "asset", assetReference: "0x42::token::Token" },
     };
 
     expect(async () => await api.craftTransaction(txArg)).rejects.toThrow(

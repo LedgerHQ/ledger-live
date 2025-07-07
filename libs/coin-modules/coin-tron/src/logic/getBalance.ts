@@ -28,8 +28,7 @@ function extractTrc10Balance(account: AccountTronAPI): Balance[] {
       return {
         value: BigInt(trc.value),
         asset: {
-          type: "token",
-          standard: "trc10",
+          type: "trc10",
           assetReference: trc.key,
         },
       };
@@ -43,8 +42,7 @@ function extractTrc20Balance(account: AccountTronAPI): Balance[] {
     return {
       value: BigInt(balance),
       asset: {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         assetReference: contractAddress,
       },
     };

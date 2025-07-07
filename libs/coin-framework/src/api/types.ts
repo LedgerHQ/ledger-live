@@ -10,6 +10,7 @@ export type BlockInfo = {
 };
 
 export type TokenStandard =
+  | "token"
   | "coin" // Aptos native token type
   | "fungible_asset" // Aptos FA standard
   | "trc10"
@@ -19,8 +20,7 @@ export type TokenStandard =
 export type AssetInfo =
   | { type: "native" }
   | {
-      type: "token";
-      standard?: TokenStandard;
+      type: TokenStandard;
       assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
       assetOwner?: string;
     };

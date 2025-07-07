@@ -71,8 +71,7 @@ describe("createApi", () => {
 
       const fees = await api.estimateFees({
         asset: {
-          type: "token",
-          standard: "coin",
+          type: "coin",
           assetReference:
             "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::usdc_coin::USDCoin",
         },
@@ -91,8 +90,7 @@ describe("createApi", () => {
 
       const fees = await api.estimateFees({
         asset: {
-          type: "token",
-          standard: "fungible_asset",
+          type: "fungible_asset",
           assetReference: "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
         },
         type: "send",
@@ -138,8 +136,7 @@ describe("createApi", () => {
           recipient: recipient.freshAddress,
           type: "send",
           asset: {
-            type: "token",
-            standard: "coin",
+            type: "coin",
             assetReference:
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
@@ -165,8 +162,7 @@ describe("createApi", () => {
           recipient: recipient.freshAddress,
           type: "send",
           asset: {
-            type: "token",
-            standard: "coin",
+            type: "coin",
             assetReference:
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
@@ -194,8 +190,7 @@ describe("createApi", () => {
           recipient: r.freshAddress,
           type: "send",
           asset: {
-            type: "token",
-            standard: "fungible_asset",
+            type: "fungible_asset",
             assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
           },
         },
@@ -345,8 +340,7 @@ describe("createApi", () => {
         recipients: [tokenAccount.freshAddress],
         senders: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         asset: {
-          type: "token",
-          standard: "coin",
+          type: "coin",
           assetReference:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
@@ -364,8 +358,7 @@ describe("createApi", () => {
         recipients: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         senders: [tokenAccount.freshAddress],
         asset: {
-          type: "token",
-          standard: "coin",
+          type: "coin",
           assetReference:
             "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
         },
@@ -388,8 +381,7 @@ describe("createApi", () => {
         recipients: [tokenAccount.freshAddress],
         senders: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         asset: {
-          type: "token",
-          standard: "fungible_asset",
+          type: "fungible_asset",
           assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {
@@ -406,8 +398,7 @@ describe("createApi", () => {
         recipients: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         senders: [tokenAccount.freshAddress],
         asset: {
-          type: "token",
-          standard: "fungible_asset",
+          type: "fungible_asset",
           assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
         },
         tx: {

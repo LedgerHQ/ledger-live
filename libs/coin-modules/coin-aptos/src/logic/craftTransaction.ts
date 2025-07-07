@@ -39,7 +39,7 @@ export async function craftTransaction(
   }
 
   if (transactionIntent.asset.type !== "native") {
-    tokenType = transactionIntent.asset.standard as TOKEN_TYPE;
+    tokenType = transactionIntent.asset.type as TOKEN_TYPE;
   }
 
   const aptosTx = await buildTransaction(
@@ -54,7 +54,7 @@ export async function craftTransaction(
 }
 
 function getContractAddress(txIntent: TransactionIntent): string {
-  if (txIntent.asset.type !== "native" && isTokenType(txIntent.asset.standard as string)) {
+  if (txIntent.asset.type !== "native" && isTokenType(txIntent.asset.type as string)) {
     return txIntent.asset.assetReference as string;
   }
 

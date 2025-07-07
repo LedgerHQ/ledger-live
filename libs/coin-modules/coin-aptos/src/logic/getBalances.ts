@@ -11,7 +11,7 @@ export async function getBalances(
 
   return balances.map(balance => {
     const isNative = balance.contractAddress === APTOS_ASSET_ID;
-    const standard =
+    const type =
       balance.contractAddress.split("::").length === 3
         ? TOKEN_TYPE.COIN
         : TOKEN_TYPE.FUNGIBLE_ASSET;
@@ -20,7 +20,7 @@ export async function getBalances(
       value: BigInt(balance.amount.toString()),
       asset: isNative
         ? { type: "native" }
-        : { type: "token", standard: standard, assetReference: balance.contractAddress },
+        : { type: type, assetReference: balance.contractAddress },
     };
   });
 }

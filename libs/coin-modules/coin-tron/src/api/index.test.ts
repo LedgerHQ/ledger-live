@@ -55,8 +55,7 @@ describe("createApi", () => {
       recipient: "recipient",
       amount: BigInt(10),
       asset: {
-        type: "token",
-        standard: "trc10",
+        type: "trc10",
         assetReference: "1002000",
       },
     };

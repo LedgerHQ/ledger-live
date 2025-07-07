@@ -222,8 +222,7 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX"],
             asset: {
-              type: "token",
-              standard: "trc10",
+              type: "trc10",
               assetReference: "1004031",
             },
           });
@@ -239,8 +238,7 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TVKG4gUar24bpAVrDv4GSzyDRtPkjPkogL"],
             asset: {
-              type: "token",
-              standard: "trc10",
+              type: "trc10",
               assetReference: "1002000",
             },
           });
@@ -259,8 +257,7 @@ describe("listOperations", () => {
             senders: ["TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N"],
             recipients: [testingAccount],
             asset: {
-              type: "token",
-              standard: "trc20",
+              type: "trc20",
               contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
           });
@@ -277,8 +274,7 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
             asset: {
-              type: "token",
-              standard: "trc20",
+              type: "trc20",
               contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
           });

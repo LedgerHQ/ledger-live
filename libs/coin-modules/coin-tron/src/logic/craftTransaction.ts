@@ -16,7 +16,7 @@ export async function craftTransaction(
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
-  if (asset.type === "token" && asset.standard === "trc20" && asset.assetReference) {
+  if (asset.type === "trc20" && asset.assetReference) {
     if (customFees !== undefined && (customFees <= 0 || customFees > Number.MAX_SAFE_INTEGER)) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
@@ -37,9 +37,8 @@ export async function craftTransaction(
     );
     return rawDataHex as string;
   } else {
-    const isTransferAsset = asset.type === "token" && asset.standard === "trc10";
-    const tokenId =
-      asset.type === "token" && asset.standard === "trc10" ? asset.assetReference : undefined;
+    const isTransferAsset = asset.type === "trc10";
+    const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
     const { raw_data_hex: rawDataHex } = await craftStandardTransaction(
       tokenId,
       recipientAddress,

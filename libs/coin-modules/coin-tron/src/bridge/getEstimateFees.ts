@@ -56,11 +56,10 @@ const getFeesFromAccountActivation = async (
       asset:
         tokenAccount?.token.tokenType === "trc20"
           ? {
-              type: "token",
-              standard: "trc20",
+              type: "trc20",
               assetReference: tokenAccount.token.contractAddress,
             }
-          : { type: "token", standard: "trc10", assetReference: tokenAccount?.token.id },
+          : { type: "trc10", assetReference: tokenAccount?.token.id },
     };
 
     // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.

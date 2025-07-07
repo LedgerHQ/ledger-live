@@ -185,9 +185,9 @@ export class AptosAPI {
 
     // TODO: this should be looked over again, might be more precise in terms of types..
     if (transactionIntent.asset.type !== "native") {
-      const { standard } = transactionIntent.asset;
+      const { type } = transactionIntent.asset;
 
-      if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
+      if (type === TOKEN_TYPE.FUNGIBLE_ASSET) {
         txPayload.function = "0x1::primary_fungible_store::transfer";
         txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
         txPayload.functionArguments = [
@@ -195,7 +195,7 @@ export class AptosAPI {
           transactionIntent.recipient,
           transactionIntent.amount,
         ];
-      } else if (standard === TOKEN_TYPE.COIN) {
+      } else if (type === TOKEN_TYPE.COIN) {
         txPayload.function = "0x1::aptos_account::transfer_coins";
         txPayload.typeArguments = [transactionIntent.asset.assetReference as string];
       }

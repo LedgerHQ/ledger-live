@@ -23,8 +23,7 @@ describe("estimateFees", () => {
       recipient: "recipient1",
       amount: BigInt(1000),
       asset: {
-        type: "token",
-        standard: "trc10",
+        type: "trc10",
         assetReference: "1002000",
       },
     };
@@ -41,8 +40,7 @@ describe("estimateFees", () => {
       recipient: "recipient1",
       amount: BigInt(1000),
       asset: {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         assetReference: "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb",
       },
     };

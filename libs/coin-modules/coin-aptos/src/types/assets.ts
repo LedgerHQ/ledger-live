@@ -1,5 +1,5 @@
 export type AptosTokenInformation = {
-  standard: string;
+  type: string;
   contractAddress: string;
 };
 
