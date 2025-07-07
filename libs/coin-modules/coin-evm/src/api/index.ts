@@ -41,7 +41,6 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
       throw new Error("UnsupportedMethod");
     },
-
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       _address: string,
