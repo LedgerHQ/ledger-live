@@ -61,3 +61,14 @@ export const SCROLL_ACCOUNT = genAccount("scroll-1", {
   currency: scrollCurrency,
   operationsSize: 100,
 });
+
+export const useCountervaluesPolling = () => ({
+  wipe: () => {},
+  poll: () => {},
+  start: () => {},
+  stop: () => {},
+  pending: false,
+  error: null,
+});
+
+export const useCountervaluesUserSettingsContext = () => ({ trackingPairs: [] });
