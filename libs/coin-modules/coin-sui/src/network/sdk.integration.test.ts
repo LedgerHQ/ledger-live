@@ -6,6 +6,8 @@ import {
   createTransaction,
   DEFAULT_COIN_TYPE,
   getAccountBalances,
+  getCheckpoint,
+  getCheckpointWithTransactions,
   getOperations,
   paymentInfo,
 } from "./sdk";
@@ -171,6 +173,39 @@ describe("SUI SDK Integration tests", () => {
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
+    });
+  });
+
+  describe("getCheckpoint", () => {
+    test("getCheckpoint", async () => {
+      const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      const checkpointBySequenceNumber = await getCheckpoint("164167623");
+      expect(checkpointById.epoch).toEqual("814");
+      expect(checkpointById.sequenceNumber).toEqual("164167623");
+      expect(checkpointById.timestampMs).toEqual("1751696298663");
+      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+      expect(checkpointById.transactions.length).toEqual(19);
+      expect(checkpointById).toEqual(checkpointBySequenceNumber);
+    });
+
+    test("getCheckpointWithTransactions", async () => {
+      const { checkpoint: checkpointById, transactions: checkpointByIdTransactions } =
+        await getCheckpointWithTransactions("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      const {
+        checkpoint: checkpointBySequenceNumber,
+        transactions: checkpointBySequenceNumberTransactions,
+      } = await getCheckpointWithTransactions("164167623");
+      expect(checkpointById.epoch).toEqual("814");
+      expect(checkpointById.sequenceNumber).toEqual("164167623");
+      expect(checkpointById.timestampMs).toEqual("1751696298663");
+      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+      expect(checkpointById.transactions.length).toEqual(19);
+      expect(checkpointById).toEqual(checkpointBySequenceNumber);
+      expect(checkpointByIdTransactions.length).toEqual(19);
+      expect(checkpointBySequenceNumberTransactions.length).toEqual(19);
+      expect(checkpointByIdTransactions).toEqual(checkpointBySequenceNumberTransactions);
     });
   });
 });

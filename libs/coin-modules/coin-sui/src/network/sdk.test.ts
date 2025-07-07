@@ -9,8 +9,8 @@ import {
   getOperationDate,
   getOperationCoinType,
   transactionToOperation,
-  loadOperations,
-  queryTransactions,
+  loadTransactionsByAddress,
+  queryTransactionsByAddress,
   TRANSACTIONS_LIMIT_PER_QUERY,
   TRANSACTIONS_LIMIT,
   getOperations,
@@ -497,7 +497,7 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await queryTransactions({
+    const result = await queryTransactionsByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -517,7 +517,7 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await queryTransactions({
+    const result = await queryTransactionsByAddress({
       api: mockApi,
       addr: "0xdef",
       type: "OUT",
@@ -548,7 +548,7 @@ describe("loadOperations", () => {
         hasNextPage: false,
       });
 
-    const result = await loadOperations({
+    const result = await loadTransactionsByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -573,7 +573,7 @@ describe("loadOperations", () => {
       hasNextPage: true,
     });
 
-    const result = await loadOperations({
+    const result = await loadTransactionsByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "OUT",
@@ -597,7 +597,7 @@ describe("loadOperations", () => {
       }),
     );
 
-    const result = await loadOperations({
+    const result = await loadTransactionsByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -617,7 +617,7 @@ describe("loadOperations", () => {
       hasNextPage: false,
     });
 
-    const result = await loadOperations({
+    const result = await loadTransactionsByAddress({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
@@ -651,7 +651,7 @@ describe("loadOperations", () => {
   it("should should not retry after unexpected errors and return empty data", async () => {
     mockApi.queryTransactionBlocks.mockRejectedValueOnce(new Error("unexpected"));
 
-    const result = await loadOperations({
+    const result = await loadTransactionsByAddress({
       api: mockApi,
       addr: "0xerr",
       type: "IN",
