@@ -73,6 +73,8 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
+import { DmkError } from "@ledgerhq/live-dmk-desktop";
+import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
@@ -786,7 +788,7 @@ export const renderError = ({
   Icon,
   stretch,
 }: {
-  error: Error | ErrorConstructor;
+  error: Error | ErrorConstructor | DmkError;
   t: TFunction;
   withOpenManager?: boolean;
   onRetry?: (() => void) | null | undefined;
@@ -834,10 +836,10 @@ export const renderError = ({
   }
   // if no supportLink is provided, we fallback on the related url linked to
   // tmpError name, if any
-  const supportLinkUrl = supportLink ?? urls.errors[error?.name];
+  const supportLinkUrl = supportLink ?? urls.errors[isDmkError(error) ? error._tag : error?.name];
 
   return (
-    <Wrapper id={`error-${error.name}`}>
+    <Wrapper id={`error-${isDmkError(error) ? error._tag : error.name}`}>
       <ErrorBody
         Icon={
           Icon
