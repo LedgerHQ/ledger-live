@@ -21,7 +21,11 @@ const INITIAL_STATE = {
   isAddressVerified: null,
   verifyAddressError: null,
 };
-const ReceiveModal = () => {
+interface ReceiveModalProps {
+  isFromPostOnboardingEntryPoint?: boolean;
+}
+
+const ReceiveModal = (props: ReceiveModalProps) => {
   const [state, setState] = useState<State>(INITIAL_STATE);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
@@ -69,12 +73,14 @@ const ReceiveModal = () => {
 
   const openAddAccounts = useCallback(() => {
     dispatch(closeModal("MODAL_RECEIVE"));
+
     dispatch(
       openModal("MODAL_ADD_ACCOUNTS", {
         currency: null,
+        isFromPostOnboardingEntryPoint: props.isFromPostOnboardingEntryPoint,
       }),
     );
-  }, [dispatch]);
+  }, [dispatch, props.isFromPostOnboardingEntryPoint]);
 
   useEffect(() => {
     if (!hasAccounts) {

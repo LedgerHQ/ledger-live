@@ -10,7 +10,7 @@ import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -28,6 +28,7 @@ export type Props = {
   existingAccounts: Account[];
   closeModal: (a: string) => void;
   addAccountsAction: typeof addAccountsAction;
+  openModal: (a: string, options: { isFromPostOnboardingEntryPoint?: boolean }) => void;
   blacklistedTokenIds?: string[];
 } & UserProps;
 
@@ -37,6 +38,7 @@ export type UserProps = {
   flow?: string | null;
   onClose?: () => void;
   preventSkippingCurrencySelection?: boolean | undefined | null;
+  isFromPostOnboardingEntryPoint?: boolean;
 };
 
 type StepId = "chooseCurrency" | "connectDevice" | "import" | "finish";
@@ -134,6 +136,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   addAccountsAction,
   closeModal,
+  openModal,
 };
 const INITIAL_STATE: State = {
   stepId: "chooseCurrency",
@@ -230,6 +233,13 @@ class AddAccounts extends PureComponent<Props, State> {
     }));
   };
 
+  handleReopenReceive = () => {
+    const { openModal, isFromPostOnboardingEntryPoint } = this.props;
+    if (isFromPostOnboardingEntryPoint && this.state.scannedAccounts.length > 0) {
+      openModal("MODAL_RECEIVE", { isFromPostOnboardingEntryPoint: true });
+    }
+  };
+
   render() {
     const {
       device,
@@ -281,6 +291,7 @@ class AddAccounts extends PureComponent<Props, State> {
           const handleCloseModal = () => {
             this.props.onClose?.();
             onClose && onClose();
+            this.handleReopenReceive();
           };
           return (
             <Stepper
