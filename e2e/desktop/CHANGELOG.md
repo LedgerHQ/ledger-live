@@ -1,5 +1,15 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
+  - @ledgerhq/live-common@34.40.0
+  - @ledgerhq/types-live@6.76.0
+  - @ledgerhq/live-cli@24.19.3
+  - @ledgerhq/live-wallet@0.11.3
+
 ## 0.1.4-next.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.38.0
+
+### Minor Changes
+
+- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+
 ## 0.38.0-next.0
 
 ### Minor Changes

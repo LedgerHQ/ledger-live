@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.32.0
+
+### Minor Changes
+
+- [#10759](https://github.com/LedgerHQ/ledger-live/pull/10759) [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ui quick wins mad add account
+
+- [#10732](https://github.com/LedgerHQ/ledger-live/pull/10732) [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hover effect if there is no onclick params + fix layout issues in the FundScreen
+
 ## 0.32.0-next.0
 
 ### Minor Changes

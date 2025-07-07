@@ -1,5 +1,7 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.2.0
+
 ## 0.2.0-next.0
 
 ### Minor Changes
