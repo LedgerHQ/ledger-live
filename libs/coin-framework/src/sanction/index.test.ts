@@ -11,14 +11,23 @@ jest.mock("@ledgerhq/live-config/LiveConfig");
 const mockedLiveConfig = LiveConfig as jest.Mocked<typeof LiveConfig>;
 
 const VALID_SACTIONED_ADDRESS_URL =
-  "https://ofac-compliance.pages.dev/all_sanctioned_addresses.json";
+  "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json";
 
 const CURRENCY = { ticker: "ETH" } as unknown as CryptoCurrency;
 
 describe("Testing blacklist functions", () => {
   describe("Testing isAddressBlacklisted", () => {
+    beforeAll(() => {
+      setEnv("MOCK", "1");
+    });
+
     beforeEach(() => {
-      jest.clearAllMocks();
+      mockedAxios.get.mockReset();
+      mockedAxios.get.mockResolvedValue({
+        data: { bannedAddresses: ["0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"] },
+      });
+
+      mockedLiveConfig.getValueByKey.mockReset();
       mockedLiveConfig.getValueByKey.mockImplementation(key => {
         if (key === "config_currency") {
           return { checkSanctionedAddress: true };
@@ -38,6 +47,7 @@ describe("Testing blacklist functions", () => {
       const randomInvalidUrl = "some random invalid url";
       setEnv("SANCTIONED_ADDRESSES_URL", randomInvalidUrl);
 
+      mockedLiveConfig.getValueByKey.mockReset();
       mockedLiveConfig.getValueByKey.mockImplementation(key => {
         if (key === "config_currency") {
           return { checkSanctionedAddress: false };
@@ -50,17 +60,16 @@ describe("Testing blacklist functions", () => {
         throw new Error(`key ${key} is not handled in test`);
       });
 
-      const address = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf";
-      mockedAxios.get.mockResolvedValue({
-        data: { bannedAddresses: [address] },
-      });
-
-      const result = await isAddressSanctioned(CURRENCY, address);
+      const result = await isAddressSanctioned(
+        CURRENCY,
+        "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      );
       expect(result).toBe(false);
       expect(mockedAxios.get).not.toHaveBeenCalledWith(randomInvalidUrl);
     });
 
     it("should return false when feature flag is disabled", async () => {
+      mockedLiveConfig.getValueByKey.mockReset();
       mockedLiveConfig.getValueByKey.mockImplementation(key => {
         if (key === "config_currency") {
           return { checkSanctionedAddress: false };
@@ -73,17 +82,16 @@ describe("Testing blacklist functions", () => {
         throw new Error(`key ${key} is not handled in test`);
       });
 
-      const address = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf";
-      mockedAxios.get.mockResolvedValue({
-        data: { bannedAddresses: [address] },
-      });
-
-      const result = await isAddressSanctioned(CURRENCY, address);
+      const result = await isAddressSanctioned(
+        CURRENCY,
+        "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      );
       expect(result).toBe(false);
       expect(mockedAxios.get).not.toHaveBeenCalledWith(VALID_SACTIONED_ADDRESS_URL);
     });
 
     it("should return false when check is disabled for a specific coin", async () => {
+      mockedLiveConfig.getValueByKey.mockReset();
       mockedLiveConfig.getValueByKey.mockImplementation(key => {
         if (key === "config_currency") {
           return { checkSanctionedAddress: true };
@@ -96,18 +104,17 @@ describe("Testing blacklist functions", () => {
         throw new Error(`key ${key} is not handled in test`);
       });
 
-      const address = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf";
-      mockedAxios.get.mockResolvedValue({
-        data: { bannedAddresses: [address] },
-      });
-
-      const result = await isAddressSanctioned(CURRENCY, address);
+      const result = await isAddressSanctioned(
+        CURRENCY,
+        "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+      );
       expect(result).toBe(false);
       expect(mockedAxios.get).not.toHaveBeenCalledWith(VALID_SACTIONED_ADDRESS_URL);
     });
 
     it("should return true when the address is blacklisted", async () => {
       const address = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf";
+      mockedAxios.get.mockReset();
       mockedAxios.get.mockResolvedValue({
         data: { bannedAddresses: [address] },
       });
@@ -117,22 +124,20 @@ describe("Testing blacklist functions", () => {
         address,
       );
       expect(result).toBe(true);
-      expect(mockedAxios.get).toHaveBeenCalledWith(VALID_SACTIONED_ADDRESS_URL);
+      expect(mockedAxios.get.mock.calls[0][0]).toEqual(VALID_SACTIONED_ADDRESS_URL);
     });
 
     it("should return false when the address is not blacklisted", async () => {
       const address = "0xc0ffee254729296a45a3885639AC7E10F9d54979";
-      mockedAxios.get.mockResolvedValue({
-        data: { bannedAddresses: ["0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"] },
-      });
 
       const result = await isAddressSanctioned(CURRENCY, address);
       expect(result).toBe(false);
-      expect(mockedAxios.get).toHaveBeenCalledWith(VALID_SACTIONED_ADDRESS_URL);
+      expect(mockedAxios.get.mock.calls[0][0]).toEqual(VALID_SACTIONED_ADDRESS_URL);
     });
 
     it("should return false when no sanctioned addresses was found", async () => {
       const address = "0xc0ffee254729296a45a3885639AC7E10F9d54979";
+      mockedAxios.get.mockReset();
       mockedAxios.get.mockResolvedValue({
         data: {},
       });
@@ -142,7 +147,7 @@ describe("Testing blacklist functions", () => {
         address,
       );
       expect(result).toEqual(false);
-      expect(mockedAxios.get).toHaveBeenCalledWith(VALID_SACTIONED_ADDRESS_URL);
+      expect(mockedAxios.get.mock.calls[0][0]).toEqual(VALID_SACTIONED_ADDRESS_URL);
     });
   });
 });

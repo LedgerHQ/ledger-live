@@ -46,11 +46,9 @@ test("Blacklisted addresses", async ({ app }) => {
     expect(senderErrorMessage?.startsWith("Keeping you safe")).toBe(true);
 
     const remainingMessage = senderErrorMessage?.replace("Keeping you safe", "");
-    expect(
-      remainingMessage?.includes(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
-      ),
-    ).toBe(true);
+    expect(remainingMessage).toEqual(
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToDebit.address} Learn more`,
+    );
 
     expect(await app.send.getContinueButton()).toBeDisabled();
 
@@ -74,11 +72,9 @@ test("Blacklisted addresses", async ({ app }) => {
     expect(senderErrorMessage?.startsWith("Keeping you safe")).toBe(true);
 
     const remainingMessage = senderErrorMessage?.replace("Keeping you safe", "");
-    expect(
-      remainingMessage?.includes(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
-      ),
-    ).toBe(true);
+    expect(remainingMessage).toEqual(
+      `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${transaction.accountToCredit.address} Learn more`,
+    );
 
     expect(await app.send.getContinueButton()).toBeDisabled();
 
