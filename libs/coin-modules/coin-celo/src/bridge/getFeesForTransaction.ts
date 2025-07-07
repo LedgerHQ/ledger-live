@@ -3,7 +3,7 @@ import type { CeloAccount, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { CELO_STABLE_COINS } from "../constants";
+import buildTransaction from "./buildTransaction";
 
 const getFeesForTransaction = async ({
   account,
@@ -102,38 +102,10 @@ const getFeesForTransaction = async ({
     const accounts = await kit.contracts.getAccounts();
 
     gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
-  } else if (isTokenTransaction) {
-    if (CELO_STABLE_COINS.includes(account.currency.id)) {
-      const stableToken = await kit.contracts.getStableToken();
-
-      const celoTransaction = {
-        from: account.freshAddress,
-        to: stableToken.address,
-        data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      };
-
-      gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
-    } else {
-      const token = await kit.contracts.getErc20(transaction.recipient);
-
-      const celoTransaction = {
-        from: account.freshAddress,
-        to: token.address,
-        data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      };
-
-      gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
-    }
   } else {
-    const celoToken = await kit.contracts.getGoldToken();
-
-    const celoTransaction = {
-      from: account.freshAddress,
-      to: celoToken.address,
-      data: celoToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-    };
-
-    gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+    // Send
+    const tx = await buildTransaction(account, transaction);
+    gas = tx.gas ? Number(tx.gas) : 0;
   }
 
   const gasPrice = new BigNumber(await kit.connection.gasPrice());

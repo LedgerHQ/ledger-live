@@ -4,9 +4,7 @@ import { isValidAddress } from "@celo/utils/lib/address";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { CeloAccount, Transaction } from "../types";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { ethers } from "ethers";
-import { ERC20_ABI } from "../abis";
-import { CELO_STABLE_COINS } from "../constants";
+import { CELO_STABLE_TOKENS } from "../constants";
 import { celoKit } from "../network/sdk";
 
 export const prepareTransaction: AccountBridge<
@@ -37,7 +35,7 @@ export const prepareTransaction: AccountBridge<
   let data;
 
   if (isTokenTransaction) {
-    if (CELO_STABLE_COINS.includes(account.currency.id)) {
+    if (CELO_STABLE_TOKENS.includes(account.currency.id)) {
       const stableToken = await kit.contracts.getStableToken();
       data = stableToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
     } else {
