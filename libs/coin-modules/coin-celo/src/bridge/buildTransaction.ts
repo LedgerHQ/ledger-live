@@ -4,12 +4,15 @@ import { celoKit } from "../network/sdk";
 import { BigNumber } from "bignumber.js";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { CELO_STABLE_TOKENS, getStableToken } from "../constants";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
 
-  let value = transactionValue(account, transaction);
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
+  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
+  let value = transactionValue(account, transaction);
   let celoTransaction: CeloTx;
 
   if (transaction.mode === "lock") {
@@ -106,30 +109,38 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       data: accounts.createAccount().txo.encodeABI(),
       gas: await accounts.createAccount().txo.estimateGas({ from: account.freshAddress }),
     };
+  } else if (isTokenTransaction) {
+    value = transaction.useAllAmount ? tokenAccount.balance : value;
+
+    if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
+      const stableToken = await kit.contracts.getStableToken(getStableToken(tokenAccount.token.id));
+      celoTransaction = {
+        from: account.freshAddress,
+        to: stableToken.address,
+        data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+      };
+    } else {
+      const token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
+      celoTransaction = {
+        from: account.freshAddress,
+        to: token.address,
+        data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
+      };
+    }
   } else {
     // Send
-    const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
-    const isTokenTransaction = tokenAccount?.type === "TokenAccount";
-    if (isTokenTransaction) {
-      value = transaction.useAllAmount ? tokenAccount.balance : value;
-    }
-
     celoTransaction = {
       from: account.freshAddress,
-      to: isTokenTransaction ? tokenAccount.token.contractAddress : transaction.recipient,
+      to: transaction.recipient,
       value: value.toFixed(),
-    };
-
-    const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
-
-    celoTransaction = {
-      ...celoTransaction,
-      gas,
     };
   }
 
+  const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+
   const tx: CeloTx = {
     ...celoTransaction,
+    gas: celoTransaction.gas ?? gas,
     chainId: await kit.connection.chainId(),
     nonce: await kit.connection.nonce(account.freshAddress),
   };
