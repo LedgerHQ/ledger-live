@@ -30,13 +30,18 @@ async function buildUnsignedCoinTransaction({
   const accountId = account.freshAddress;
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
-  return new TransferTransaction()
+  const tx = new TransferTransaction()
     .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
-    .addHbarTransfer(transaction.recipient, hbarAmount)
-    .freeze();
+    .addHbarTransfer(transaction.recipient, hbarAmount);
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  return tx.freeze();
 }
 
 async function buildUnsignedUpdateAccountTransaction({
@@ -55,6 +60,10 @@ async function buildUnsignedUpdateAccountTransaction({
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId);
 
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
   if (typeof transaction.properties.stakedNodeId === "number") {
     tx.setStakedNodeId(transaction.properties.stakedNodeId);
   }
@@ -63,9 +72,7 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.clearStakedNodeId();
   }
 
-  tx.freeze();
-
-  return tx;
+  return tx.freeze();
 }
 
 export async function buildUnsignedTransaction({

@@ -101,7 +101,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
       const transaction = bridge.updateTransaction(t, {
         recipient: defaultValidator.address,
-        memo: "Stake",
         properties: {
           name: "staking",
           mode: "delegate",

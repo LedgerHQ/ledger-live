@@ -93,7 +93,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       invariant(validator, "hedera: validator not found in redelegate flow");
 
       const transaction = bridge.updateTransaction(t, {
-        memo: "Restake",
         properties: {
           name: "staking",
           mode: "redelegate",

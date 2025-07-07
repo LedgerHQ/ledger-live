@@ -1,21 +1,62 @@
-import { Account, Operation } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { HederaOperationExtra, Transaction } from "../types";
 import { getEstimatedFees } from "./utils";
-import { Transaction } from "../types";
+import { isStakingTransaction } from "../logic";
 
-export const buildOptimisticOperation = async ({
+const buildOptimisticStakingOperation = async ({
   account,
   transaction,
 }: {
   account: Account;
   transaction: Transaction;
 }): Promise<Operation> => {
+  invariant(isStakingTransaction(transaction), "invalid transaction properties");
+
+  const estimatedFee = await getEstimatedFees(account, "CryptoUpdate");
+  const value = transaction.amount;
+  const type: OperationType = "UPDATE_ACCOUNT";
+
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", "OUT"),
+    id: encodeOperationId(account.id, "", type),
     hash: "",
-    type: "OUT",
-    value: transaction.amount,
-    fee: await getEstimatedFees(account, "CryptoTransfer"),
+    type,
+    value,
+    fee: estimatedFee,
+    blockHash: null,
+    blockHeight: null,
+    senders: [account.freshAddress.toString()],
+    recipients: [transaction.recipient],
+    accountId: account.id,
+    date: new Date(),
+    extra: {
+      memo: transaction.memo ?? null,
+    } satisfies Partial<HederaOperationExtra>,
+  };
+
+  return operation;
+};
+
+const buildOptimisticCoinOperation = async ({
+  account,
+  transaction,
+  transactionType,
+}: {
+  account: Account;
+  transaction: Transaction;
+  transactionType?: OperationType;
+}): Promise<Operation> => {
+  const estimatedFee = await getEstimatedFees(account, "CryptoTransfer");
+  const value = transaction.amount;
+  const type: OperationType = transactionType ?? "OUT";
+
+  const operation: Operation = {
+    id: encodeOperationId(account.id, "", type),
+    hash: "",
+    type,
+    value,
+    fee: estimatedFee,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
@@ -26,4 +67,18 @@ export const buildOptimisticOperation = async ({
   };
 
   return operation;
+};
+
+export const buildOptimisticOperation = async ({
+  account,
+  transaction,
+}: {
+  account: Account;
+  transaction: Transaction;
+}): Promise<Operation> => {
+  if (isStakingTransaction(transaction)) {
+    return buildOptimisticStakingOperation({ account, transaction });
+  } else {
+    return buildOptimisticCoinOperation({ account, transaction });
+  }
 };

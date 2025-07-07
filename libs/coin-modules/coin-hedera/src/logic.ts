@@ -8,6 +8,7 @@ import type {
   HederaValidator,
   Transaction,
   StakingTransactionProperties,
+  HederaOperationType,
 } from "./types";
 
 const getTransactionExplorer = (
@@ -46,8 +47,16 @@ const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null
   return validator ?? null;
 };
 
+const getHederaOperationType = (tx: Transaction): HederaOperationType => {
+  if (isStakingTransaction(tx)) {
+    return "CryptoUpdate";
+  }
+
+  return "CryptoTransfer";
+};
+
 const getMemo = (tx: HederaMirrorTransaction): string | null => {
-  return !!tx.memo_base64 ? Buffer.from(tx.memo_base64, "base64").toString("utf-8") : null;
+  return tx.memo_base64 ? Buffer.from(tx.memo_base64, "base64").toString("utf-8") : null;
 };
 
 export {
@@ -55,5 +64,6 @@ export {
   isStakingTransaction,
   extractCompanyFromNodeDescription,
   getValidatorFromAccount,
+  getHederaOperationType,
   getMemo,
 };

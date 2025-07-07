@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -11,20 +12,12 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { HederaInvalidStakedNodeIdError, HederaRedundantStakedNodeIdError } from "../errors";
 import { isStakingTransaction } from "../logic";
 import { getCurrentHederaPreloadData } from "../preload-data";
-import type {
-  HederaAccount,
-  StakingTransactionProperties,
-  Transaction,
-  TransactionStatus,
-} from "../types";
+import type { HederaAccount, Transaction, TransactionStatus } from "../types";
 import { calculateAmount, getEstimatedFees } from "./utils";
 
-type StakingTransaction = Extract<
-  Required<Transaction>,
-  { properties: StakingTransactionProperties }
->;
+const verifyStakingFlowStatus = async (account: HederaAccount, transaction: Transaction) => {
+  invariant(isStakingTransaction(transaction), "invalid transaction properties");
 
-const verifyStakingFlowStatus = async (account: HederaAccount, transaction: StakingTransaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const { validators } = getCurrentHederaPreloadData(account.currency);
@@ -49,9 +42,6 @@ const verifyStakingFlowStatus = async (account: HederaAccount, transaction: Stak
       errors.stakedNodeId = new HederaRedundantStakedNodeIdError();
     }
   }
-
-  // update maxFee to current estimated fees
-  transaction.maxFee = estimatedFees;
 
   return {
     amount: new BigNumber(0),
@@ -94,9 +84,6 @@ const verifyDefaultFlowStatus = async (account: HederaAccount, transaction: Tran
   }
 
   const estimatedFees = await getEstimatedFees(account, "CryptoTransfer");
-
-  // update maxFee to current estimated fees
-  transaction.maxFee = estimatedFees;
 
   return {
     amount,

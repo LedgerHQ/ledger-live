@@ -28,7 +28,7 @@ const AmountField = ({ account }: Props) => {
             backgroundColor: theme.colors.palette.background.paper,
           },
         }}
-        unit={unit}
+        defaultUnit={unit}
         value={account.spendableBalance}
         onChange={noop}
         renderLeft={<InputLeft>{unit.code}</InputLeft>}

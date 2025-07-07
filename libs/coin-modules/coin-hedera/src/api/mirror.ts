@@ -57,7 +57,7 @@ interface HederaMirrorTransfer {
 export interface HederaMirrorTransaction {
   transfers: HederaMirrorTransfer[];
   staking_reward_transfers: HederaMirrorTransfer[];
-  name: "CRYPTOUPDATEACCOUNT" | (string & {});
+  name: "CRYPTOUPDATEACCOUNT";
   memo_base64: string | null;
   charged_tx_fee: string;
   transaction_hash: string;

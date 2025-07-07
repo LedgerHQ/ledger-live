@@ -94,7 +94,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
       const transaction = bridge.updateTransaction(t, {
         recipient: validator.address,
-        memo: "Unstake",
         properties: {
           name: "staking",
           mode: "undelegate",

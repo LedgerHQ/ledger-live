@@ -27,7 +27,8 @@ export function useHederaValidators(currency: CryptoCurrency, search?: string): 
 
     const filtered = validators.filter(
       validator =>
-        validator.name?.toLowerCase().includes(lowercaseSearch) ||
+        validator.nodeId.toString().includes(lowercaseSearch) ||
+        validator.name.toLowerCase().includes(lowercaseSearch) ||
         validator.address.toLowerCase().includes(lowercaseSearch),
     );
 
