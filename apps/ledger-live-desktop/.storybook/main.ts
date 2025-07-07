@@ -72,6 +72,7 @@ const config: StorybookConfig = {
 
           "~/renderer/families": resolve(detailedAccountsMockDir),
           "@ledgerhq/live-common/account/index": resolve(detailedAccountsMockDir),
+          "~/renderer/linking": resolve(detailedAccountsMockDir),
 
           // "../ModularDrawerAddAccountFlowManager": resolve(".storybook/stub.ts"), // TODO: This is a temporary patch to get storybook to work. This should be replaced by appropriate mocks of ModularDrawerAddAccountFlowManager's dependencies. Ticket LIVE-19799
 
