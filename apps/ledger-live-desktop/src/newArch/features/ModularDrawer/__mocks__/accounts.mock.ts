@@ -72,3 +72,10 @@ export const useCountervaluesPolling = () => ({
 });
 
 export const useCountervaluesUserSettingsContext = () => ({ trackingPairs: [] });
+
+export const userThemeSelector = () => {};
+
+export const blacklistedTokenIdsSelector = () => {};
+
+export const getLLDCoinFamily = () => ({});
+export const isAccountEmpty = () => false;
