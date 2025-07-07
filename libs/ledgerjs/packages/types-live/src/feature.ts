@@ -134,6 +134,9 @@ export type CurrencyFeatures = {
   currencySui: DefaultFeature;
   currencyMina: DefaultFeature;
   currencyBabylon: DefaultFeature;
+  currencySeiNetworkEvm: DefaultFeature;
+  currencyBerachain: DefaultFeature;
+  currencyHyperevm: DefaultFeature;
 };
 
 /**
