@@ -5,7 +5,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setEnv } from "@ledgerhq/live-env";
 
 const VALID_SACTIONED_ADDRESS_URL =
-  "https://infraprj-9150.ofac-compliance.pages.dev/all_sanctioned_addresses_without_ticker.json";
+  "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json";
 
 LiveConfig.setConfig({
   config_currency: {
@@ -22,6 +22,10 @@ LiveConfig.setConfig({
 const spiedAxios = jest.spyOn(axios, "get");
 
 describe("Testing blacklist functions", () => {
+  beforeAll(() => {
+    setEnv("MOCK", "1");
+  });
+
   describe("Testing isAddressBlacklisted", () => {
     beforeEach(() => {
       jest.clearAllMocks();
