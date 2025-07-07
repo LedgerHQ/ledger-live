@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { fromTransactionRaw } from "../bridge/transaction";
-import { DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "../types";
+import { MAINNET_CHAIN_TAG } from "../types";
 import { vechain1, vechain3 } from "../datasets";
 import { generateNonce } from "../common-logic";
 
@@ -48,8 +48,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -87,8 +88,9 @@ const vechain: CurrenciesData<Transaction> = {
                     .toString(),
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -113,8 +115,9 @@ const vechain: CurrenciesData<Transaction> = {
               blockRef: "0x00634a0c856ec1db",
               expiration: 18,
               clauses: [{ to: "", value: 0, data: "0x" }],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -144,8 +147,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -180,8 +184,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -225,8 +230,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },

@@ -47,7 +47,6 @@ test("signMessage", async () => {
         data: "0x",
       },
     ],
-    gasPriceCoef: 0,
     gas: "0",
     dependsOn: null,
     nonce: 0,

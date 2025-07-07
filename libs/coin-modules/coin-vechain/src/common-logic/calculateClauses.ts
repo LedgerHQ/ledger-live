@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { VTHO_ADDRESS } from "../contracts/constants";
 import { VIP180 } from "../contracts/abis/VIP180";
-import { HEX_PREFIX, VechainSDKTransactionClause } from "../types";
+import { VechainSDKTransactionClause } from "../types";
 
 export const calculateClausesVtho = async (
   recipient: string,
@@ -34,7 +34,7 @@ export const calculateClausesVet = async (
     data: "0x",
   };
 
-  updatedClause.value = `${HEX_PREFIX}${amount.toString(16)}`;
+  updatedClause.value = `0x${amount.toString(16)}`;
   updatedClause.to = recipient;
 
   clauses.push(updatedClause);

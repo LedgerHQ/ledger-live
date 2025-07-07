@@ -43,4 +43,6 @@ export type TransactionInfo = {
   tokenAccount: TokenAccount | undefined;
   estimatedFees: string;
   estimatedGas: number;
+  maxFeePerGas: number;
+  maxPriorityFeePerGas: number;
 };

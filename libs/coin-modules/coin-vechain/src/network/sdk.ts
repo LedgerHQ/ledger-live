@@ -6,7 +6,6 @@ import {
   TokenTxsQuery,
   Query,
   QueryResponse,
-  HEX_PREFIX,
   TransferLog,
   EventLog,
   VechainSDKTransaction,
@@ -125,7 +124,7 @@ export const getTokenOperations = async (
  */
 export const submit = async (transaction: VechainSDKTransaction): Promise<string> => {
   const encodedRawTx = {
-    raw: `${HEX_PREFIX}${Buffer.from(transaction.encoded).toString("hex")}`,
+    raw: `0x${Buffer.from(transaction.encoded).toString("hex")}`,
   };
 
   const { data } = await network<{ id: string }>({

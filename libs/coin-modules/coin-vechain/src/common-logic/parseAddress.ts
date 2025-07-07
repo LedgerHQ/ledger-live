@@ -1,11 +1,11 @@
 import { Address } from "@vechain/sdk-core";
-import hexUtils from "./hex-utils";
+import { fixPrefixCase } from "./fixPrefixCase";
 
 /**
  * Validate the address
  * @param address - the address to validate
  * @returns true if the address is valid, false otherwise
  */
-export const isValid = (address: string): boolean => {
-  return Address.isValid(hexUtils.addPrefix(address));
+export const parseAddress = (address: string): boolean => {
+  return Address.isValid(fixPrefixCase(address));
 };
