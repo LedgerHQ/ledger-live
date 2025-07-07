@@ -1,24 +1,26 @@
-export type Transaction<Op extends Operation> = {
+export type Transaction<
+  AssetType extends Record<string, unknown>,
+  OperationType extends Operation<AssetType>,
+  DetailsType extends Record<string, unknown>,
+> = {
   hash: string;
   value: bigint;
   failed: boolean;
-  operations: Op[];
-  details?: Record<string, unknown>;
-  fee: bigint;
-  feePayer: string;
+  operations: OperationType[];
+  details?: DetailsType;
 };
 
-export type Operation = Transfer | Fee;
+export type Operation<AssetType> = Transfer<AssetType> | Fee<AssetType>;
 
-export type Transfer = {
+export type Transfer<AssetType> = {
   type: "transfer";
   from: string;
   to: string;
-  asset: Record<string, unknown>;
+  asset: AssetType;
 };
 
-export type Fee = {
+export type Fee<AssetType> = {
   type: "fee";
   amount: bigint;
-  asset: Record<string, unknown>;
+  asset: AssetType;
 };
