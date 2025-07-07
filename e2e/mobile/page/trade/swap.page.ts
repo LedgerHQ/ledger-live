@@ -144,18 +144,19 @@ export default class SwapPage {
 
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
-    await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
-    await waitForElementNotVisible(this.deviceActionLoading);
+    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
   }
 
   @Step("Verify the amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
-    await waitForElementById(this.confirmSwapOnDeviceDrawerId);
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
-    await waitForElementNotVisible(this.deviceActionLoading);
+    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
+  }
+
+  @Step("Verify device action loading is not visible")
+  async verifyDeviceActionLoadingNotVisible() {
+    await detoxExpect(getElementById(this.deviceActionLoading)).not.toBeVisible();
   }
 
   @Step("Wait for swap success and continue")

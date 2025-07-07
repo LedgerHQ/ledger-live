@@ -228,10 +228,13 @@ export function runTooLowAmountForQuoteSwapsTest(
         swap.accountToDebit,
         swap.accountToCredit,
       );
+
+      const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
+
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
-        minAmount,
+        actualAmount,
         quotesVisible,
       );
       if (quotesVisible) {
@@ -290,6 +293,7 @@ export function runUserRefusesTransactionTest(
 
       await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, selectedProvider, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("User refused");
     });
   });
