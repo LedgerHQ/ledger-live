@@ -8,45 +8,71 @@ import {
   TransactionIntent,
   type AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { type EvmConfigInfo, setCoinConfig } from "../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BroadcastConfig } from "@ledgerhq/types-live";
+import { type CoinConfig, setCoinConfig } from "../config";
+import broadcastLogic from "../logic/broadcast";
 import { EvmAsset } from "../types";
 
-export function createEvmApi(
-  config: EvmConfigInfo,
-  _currency: CryptoCurrencyId,
-): AlpacaApi<EvmAsset> {
-  setCoinConfig(_ => ({ info: config }));
+const coinEvmInstances = new Map<string, CoinEvmApi>();
 
-  return {
-    broadcast: (_tx: string): Promise<string> => {
-      throw new Error("UnsupportedMethod");
-    },
-    combine: (_tx: string, _signature: string, _pubkey?: string): string | Promise<string> => {
-      throw new Error("UnsupportedMethod");
-    },
-    craftTransaction: (
-      _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
-      _customFees?: bigint,
-    ): Promise<string> => {
-      throw new Error("UnsupportedMethod");
-    },
-    estimateFees: (
-      _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
-    ): Promise<FeeEstimation> => {
-      throw new Error("UnsupportedMethod");
-    },
-    getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
-      throw new Error("UnsupportedMethod");
-    },
-    lastBlock: (): Promise<BlockInfo> => {
-      throw new Error("UnsupportedMethod");
-    },
-    listOperations: (
-      _address: string,
-      _pagination: Pagination,
-    ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> => {
-      throw new Error("UnsupportedMethod");
-    },
+export class CoinEvmApi implements AlpacaApi<EvmAsset> {
+  private currency: CryptoCurrency;
+
+  constructor(currency: CryptoCurrency) {
+    this.currency = currency;
+  }
+
+  async broadcast(tx: string, broadcastConfig?: BroadcastConfig): Promise<string> {
+    return await broadcastLogic({ currency: this.currency, signature: tx, broadcastConfig });
+  }
+
+  combine(_tx: string, _signature: string, _pubkey?: string): string | Promise<string> {
+    throw new Error("UnsupportedMethod");
+  }
+
+  async craftTransaction(
+    _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+    _customFees?: bigint,
+  ): Promise<string> {
+    throw new Error("UnsupportedMethod");
+  }
+
+  async estimateFees(
+    _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+  ): Promise<FeeEstimation> {
+    throw new Error("UnsupportedMethod");
+  }
+
+  async getBalance(_address: string): Promise<Balance<EvmAsset>[]> {
+    throw new Error("UnsupportedMethod");
+  }
+
+  async lastBlock(): Promise<BlockInfo> {
+    throw new Error("UnsupportedMethod");
+  }
+
+  async listOperations(
+    _address: string,
+    _pagination: Pagination,
+  ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> {
+    throw new Error("UnsupportedMethod");
+  }
+}
+
+export function createEvmApi(
+  config: CoinConfig,
+): (currency: CryptoCurrency) => AlpacaApi<EvmAsset> {
+  setCoinConfig(config);
+
+  return (currency: CryptoCurrency): AlpacaApi<EvmAsset> => {
+    const currencyId = currency.id;
+
+    if (!coinEvmInstances.has(currencyId)) {
+      const instance = new CoinEvmApi(currency);
+      coinEvmInstances.set(currencyId, instance);
+    }
+
+    return coinEvmInstances.get(currencyId)!;
   };
 }
