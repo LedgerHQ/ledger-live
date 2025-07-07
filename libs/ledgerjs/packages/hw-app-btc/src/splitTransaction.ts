@@ -11,7 +11,11 @@ import type {
 } from "./types";
 import { getVarint } from "./varint";
 import { formatTransactionDebug } from "./debug";
-import { zCashOutCiphertextSize, zCashEncCiphertextSize } from "./constants";
+import {
+  zCashOutCiphertextSize,
+  zCashEncCiphertextSize,
+  zCashProofsSaplingSize,
+} from "./constants";
 
 export function splitTransaction(
   transactionHex: string,
@@ -186,10 +190,7 @@ export function splitTransaction(
 }
 
 /**
- * Splits the Sapling part of a Zcash v5 transaction buffer.
- * @param transaction The transaction buffer.
- * @param offset The current offset in the buffer.
- * @returns An object containing the SaplingData (if present) and the new offset.
+ * Splits the Sapling part of a Zcash v5 transaction buffer according to https://zips.z.cash/zip-0225
  */
 function splitSaplingPart(
   transaction: Buffer,
@@ -260,8 +261,11 @@ function splitSaplingPart(
   let vSpendProofsSapling = Buffer.alloc(0);
   let vSpendAuthSigsSapling = Buffer.alloc(0);
   if (nSpendsSapling > 0) {
-    vSpendProofsSapling = transaction.slice(offset, offset + 192 * nSpendsSapling);
-    offset += 192 * nSpendsSapling;
+    vSpendProofsSapling = transaction.slice(
+      offset,
+      offset + zCashProofsSaplingSize * nSpendsSapling,
+    );
+    offset += zCashProofsSaplingSize * nSpendsSapling;
 
     vSpendAuthSigsSapling = transaction.slice(offset, offset + 64 * nSpendsSapling);
     offset += 64 * nSpendsSapling;
@@ -269,8 +273,11 @@ function splitSaplingPart(
 
   let vOutputProofsSapling = Buffer.alloc(0);
   if (nOutputsSapling > 0) {
-    vOutputProofsSapling = transaction.slice(offset, offset + 192 * nOutputsSapling);
-    offset += 192 * nOutputsSapling;
+    vOutputProofsSapling = transaction.slice(
+      offset,
+      offset + zCashProofsSaplingSize * nOutputsSapling,
+    );
+    offset += zCashProofsSaplingSize * nOutputsSapling;
   }
 
   let bindingSigSapling = Buffer.alloc(0);
@@ -299,10 +306,7 @@ function splitSaplingPart(
 }
 
 /**
- * Splits the Orchard part of a Zcash v5 transaction buffer.
- * @param transaction The transaction buffer.
- * @param offset The current offset in the buffer.
- * @returns An object containing the OrchardData (if present) and the new offset.
+ * Splits the Orchard part of a Zcash v5 transaction buffer according to https://zips.z.cash/zip-0225
  */
 function splitOrchardPart(
   transaction: Buffer,

@@ -36,3 +36,4 @@ export const ZCASH_ACTIVATION_HEIGHTS = {
 
 export const zCashEncCiphertextSize = 580; //https://zips.z.cash/zip-0225
 export const zCashOutCiphertextSize = 80; //https://zips.z.cash/zip-0225
+export const zCashProofsSaplingSize = 192; //https://zips.z.cash/zip-0225
