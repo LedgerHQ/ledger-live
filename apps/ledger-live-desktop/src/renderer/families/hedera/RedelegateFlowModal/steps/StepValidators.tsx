@@ -84,7 +84,7 @@ function StepValidators({
         <Label mb={4}>
           <Trans i18nKey="hedera.redelegate.flow.steps.validators.amountLabel" />
         </Label>
-        <AmountField status={status} account={account} transaction={transaction} />
+        <AmountField account={account} />
       </Box>
       <Alert
         type="primary"

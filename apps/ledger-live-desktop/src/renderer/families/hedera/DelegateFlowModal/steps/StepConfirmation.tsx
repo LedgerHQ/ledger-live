@@ -41,7 +41,7 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage
-          category="Hedera Delegation"
+          category="Hedera delegation"
           name="Step Confirmed"
           flow="stake"
           action="delegation"
@@ -60,7 +60,7 @@ function StepConfirmation({
     return (
       <Container shouldSpace={signed}>
         <TrackPage
-          category="Delegation Hedera"
+          category="Hedera delegation"
           name="Step Confirmation Error"
           flow="stake"
           action="delegation"

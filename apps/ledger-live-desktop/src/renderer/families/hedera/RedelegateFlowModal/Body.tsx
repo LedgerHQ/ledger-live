@@ -17,7 +17,7 @@ import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, closeModal, openModal } from "~/renderer/actions/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -41,8 +41,8 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: (a: string) => void;
-  openModal: (a: string) => void;
+  closeModal: () => void;
+  openModal: OpenModal;
 };
 
 type Props = OwnProps & StateProps;

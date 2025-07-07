@@ -26,6 +26,9 @@ const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValida
   const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency, search);
 
+  const defaultValidator = validators[0];
+  const selectedValidator = validators.find(v => v.address === selectedValidatorAddress);
+
   const renderItem = (validator: HederaValidator) => {
     return (
       <ValidatorListItem
@@ -50,11 +53,7 @@ const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValida
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            data={
-              showAll
-                ? validators
-                : [validators.find(v => v.address === selectedValidatorAddress) || validators[0]]
-            }
+            data={showAll ? validators : [selectedValidator ?? defaultValidator].filter(Boolean)}
             style={{
               flex: showAll ? "1 0 256px" : "1 0 64px",
               marginBottom: 0,

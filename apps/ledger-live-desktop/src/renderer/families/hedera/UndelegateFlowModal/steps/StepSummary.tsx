@@ -13,7 +13,7 @@ import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/Validato
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
 
-function StepSummary({ t, account, parentAccount, transaction, status, error }: StepProps) {
+function StepSummary({ t, account, parentAccount, transaction, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const validators = useHederaValidators(account.currency);
@@ -37,7 +37,7 @@ function StepSummary({ t, account, parentAccount, transaction, status, error }: 
         <Label mb={4}>
           <Trans i18nKey="hedera.undelegate.flow.steps.summary.amountLabel" />
         </Label>
-        <AmountField status={status} account={account} transaction={transaction} />
+        <AmountField account={account} />
       </Box>
       <Alert type="primary">{t("hedera.undelegate.flow.steps.summary.alert")}</Alert>
     </Box>

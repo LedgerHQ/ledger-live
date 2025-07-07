@@ -1,15 +1,13 @@
 import noop from "lodash/noop";
 import React from "react";
 import styled, { useTheme } from "styled-components";
-import type { HederaAccount, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 interface Props {
   account: HederaAccount;
-  transaction: Transaction;
-  status: TransactionStatus;
 }
 
 const AmountField = ({ account }: Props) => {

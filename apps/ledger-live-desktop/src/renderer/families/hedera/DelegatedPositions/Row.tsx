@@ -41,7 +41,7 @@ const Column = styled(TableLine).attrs<{
   clickable?: boolean;
   strong?: boolean;
 }>`
-  cursor: ${p => (p.clickable ? "pointer" : "cursor")};
+  cursor: ${p => (p.clickable ? "pointer" : "default")};
   ${p =>
     p.clickable
       ? `

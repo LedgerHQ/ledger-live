@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import type { TFunction } from "i18next";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
@@ -12,12 +11,11 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
-import { getValidatorFromAccount } from "@ledgerhq/live-common/families/hedera/logic";
 import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, closeModal, openModal } from "~/renderer/actions/modals";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -41,8 +39,8 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: (a: string) => void;
-  openModal: (a: string) => void;
+  closeModal: () => void;
+  openModal: OpenModal;
 };
 
 type Props = OwnProps & StateProps;
@@ -88,9 +86,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     useBridgeTransaction(() => {
       const bridge: AccountBridge<Transaction> = getAccountBridge(account);
       const t = bridge.createTransaction(account);
-
-      const validator = getValidatorFromAccount(account);
-      invariant(validator, "hedera: validator not found in redelegate flow");
 
       const transaction = bridge.updateTransaction(t, {
         properties: {
@@ -178,7 +173,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
-      <Track onUnmount event="CloseModalRedelegation" />
+      <Track onUnmount event="CloseModalClaimRewards" />
     </Stepper>
   );
 };

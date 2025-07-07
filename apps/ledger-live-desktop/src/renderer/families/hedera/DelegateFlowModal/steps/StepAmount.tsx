@@ -30,7 +30,7 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
         <>
-          <AmountField status={status} account={account} transaction={transaction} />
+          <AmountField account={account} />
           <Alert
             type="primary"
             learnMoreUrl={urls.hedera.staking}
