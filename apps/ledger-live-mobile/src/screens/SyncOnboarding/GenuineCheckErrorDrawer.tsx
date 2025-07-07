@@ -65,7 +65,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const isNotFoundEntity =
     error &&
     (error instanceof FirmwareNotRecognized ||
-      (error as unknown as Error).message === "not found entity");
+      (error instanceof Error && error.message === "not found entity"));
 
   const onGoToSettings = useCallback(() => {
     track("button_clicked", {
