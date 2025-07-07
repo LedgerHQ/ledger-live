@@ -164,7 +164,6 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const availableOnStake = !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id);
 
   return {
-    openAddAccounts,
     onBuy,
     onSwap,
     onStake,
