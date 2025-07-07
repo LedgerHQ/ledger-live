@@ -1,21 +1,22 @@
 import React from "react";
-import ConnectYourDevice from ".";
+import AccountsWarning from ".";
 import type { Meta, StoryObj } from "@storybook/react";
-
+import { bitcoinCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { legacy_createStore as createStore } from "redux";
 import { Provider } from "react-redux";
 
 const store = createStore(() => ({}));
 
-const meta: Meta<typeof ConnectYourDevice> = {
-  title: "ModularDrawer/ConnectYourDevice",
-  component: ConnectYourDevice,
+const meta: Meta<typeof AccountsWarning> = {
+  title: "ModularDrawer/AccountsWarning",
+  component: AccountsWarning,
+  args: {
+    currency: bitcoinCurrency,
+  },
   decorators: [
     Story => (
       <Provider store={store}>
-        <div style={{ width: "100%", height: "100%" }}>
-          <Story />
-        </div>
+        <Story />
       </Provider>
     ),
   ],
@@ -23,6 +24,6 @@ const meta: Meta<typeof ConnectYourDevice> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ConnectYourDevice>;
+type Story = StoryObj<typeof AccountsWarning>;
 
 export const Default: Story = {};
