@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { FlatList } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { AssetItem, AssetType } from "../AssetItem/AssetItem";
 
 export const AssetList = ({
@@ -15,14 +15,14 @@ export const AssetList = ({
   scrollToTop?: boolean;
   hasNextPage?: boolean;
 }) => {
-  const flatListRef = useRef<FlatList<AssetType>>(null);
+  const flatListRef = useRef<FlashList<AssetType>>(null);
 
   const renderAssetItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={onClick} />,
     [onClick],
   );
 
-  const keyExtractor = useCallback((item: AssetType) => item.id, []);
+  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
   useEffect(() => {
     if (scrollToTop && flatListRef.current) {
@@ -41,12 +41,13 @@ export const AssetList = ({
     data: assets,
     renderItem: renderAssetItem,
     keyExtractor,
-    style: { flex: 1, width: "100%" },
+    estimatedItemSize: 72,
+    style: { flex: 1, width: "100%" as const },
     ...(hasNextPage && {
       onEndReached: handleEndReached,
       onEndReachedThreshold: 0.1,
     }),
   };
 
-  return <FlatList {...flatListProps} />;
+  return <FlashList {...flatListProps} />;
 };

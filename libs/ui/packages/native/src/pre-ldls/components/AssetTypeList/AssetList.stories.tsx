@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+import { View } from "react-native";
 import { AssetList } from "./AssetList";
 import { createRightElement, leftElement } from "../sharedStoryBook";
 
@@ -15,6 +17,13 @@ const meta: Meta<typeof AssetList> = {
     onClick: () => {},
     scrollToTop: false,
   },
+  decorators: [
+    (Story: React.ComponentType) => (
+      <View style={{ height: 600, width: "100%" }}>
+        <Story />
+      </View>
+    ),
+  ],
   parameters: {
     docs: {
       description: {

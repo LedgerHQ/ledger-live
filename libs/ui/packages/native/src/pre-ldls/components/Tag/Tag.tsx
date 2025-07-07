@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components/native";
+import { TextStyle } from "react-native";
 import { Text } from "../../../components";
 
 const Wrapper = styled.View`
@@ -14,7 +15,7 @@ export const Tag = ({
   textTransform = "none",
   children,
 }: {
-  textTransform?: "none" | "uppercase" | "capitalize" | "lowercase";
+  textTransform?: TextStyle["textTransform"];
   children: ReactNode;
 }) => {
   return (
