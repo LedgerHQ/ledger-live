@@ -71,7 +71,6 @@ jobs:
 
       - name: Merge into main
         uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
         with:
           base-branch: "main"
           head-branch: "${{ inputs.ref }}"
