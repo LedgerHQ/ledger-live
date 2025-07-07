@@ -15,6 +15,12 @@ import { act } from "react-dom/test-utils";
 import { State } from "~/renderer/reducers";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { mockDomMeasurements } from "./shared";
+import { formatAddress } from "~/newArch/utils/formatAddress";
+
+beforeEach(async () => {
+  mockDomMeasurements();
+});
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   __esModule: true,
@@ -209,6 +215,11 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
     await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
+    expect(track).toHaveBeenNthCalledWith(3, "button_clicked", {
+      button: "Fund my account",
+      flow: "Add account",
+      page: "add account success",
+    });
 
     const buy = screen.getByText(/buy crypto securely with cash/i);
     await userEvent.click(buy);
@@ -219,11 +230,6 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     const receive = screen.getByText(/receive crypto from another wallet/i);
     await userEvent.click(receive);
     expect(openModal).toHaveBeenCalledWith("MODAL_RECEIVE", expect.objectContaining({}));
-    expect(track).toHaveBeenNthCalledWith(3, "button_clicked", {
-      button: "Fund my account",
-      flow: "Add account",
-      page: "add account success",
-    });
   });
 
   it("should navigate to fund an account for non-on-ramp currency", async () => {
@@ -254,6 +260,27 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     await userEvent.click(confirm);
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
+  });
+
+  it("should show both existing and new accounts and flow to fund account", async () => {
+    setup(arbitrumCurrency);
+
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+
+    expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("checkbox", { checked: false }));
+    const confirm = screen.getByRole("button", { name: "Confirm" });
+    await userEvent.click(confirm);
+    expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
+    expect(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
+    expect(screen.getByText(formatAddress(NEW_ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress)));
+    expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
   });
 
   it("should error on already imported empty account", async () => {
