@@ -17,24 +17,24 @@
   ],
   "ignoreUnimported": [
     "src/__tests__/*",
-    "**/*.test.*",
-    "**/*.spec.*",
-    "src/datasets/ethereum1.ts",
-    "src/abis/index.ts"
+    "src/abis/index.ts",
+    "src/api/index.ts",
+    "src/datasets/ethereum1.ts"
   ],
   "ignoreUnresolved": [
-    "@ethersproject/bytes",
-    "@ethersproject/logger",
-    "@ethersproject/bignumber",
-    "@ethersproject/properties",
     "@ethersproject/address",
+    "@ethersproject/bignumber",
+    "@ethersproject/bytes",
     "@ethersproject/constants",
-    "@ethersproject/strings",
     "@ethersproject/hash",
     "@ethersproject/keccak256",
+    "@ethersproject/logger",
+    "@ethersproject/properties",
     "@ethersproject/signing-key",
+    "@ethersproject/strings",
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
     "bn.js",
     "lru-cache"
-  ]
+  ],
+  "ignoreUnused": []
 }
