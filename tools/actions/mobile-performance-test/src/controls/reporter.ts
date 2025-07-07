@@ -3,11 +3,12 @@ import type {
   PerformanceReport,
   PerformanceStatsExtended,
 } from "../models/performance";
-import type { Test, TestResultStep } from "../models/datadog-test-output";
+import type { Test, TestResultStep } from "../models/datadog";
 import { SUB_TEST_NAME, SUB_TEST_TYPE } from "../constants";
 import * as calc from "./calculator";
 
-export class PerformanceTestReporter {
+/** Performance reporter for a single synthetics test result */
+export class PerformanceReporter {
   /** The test result to generate a report for */
   private readonly testResult: Test;
 
@@ -25,11 +26,44 @@ export class PerformanceTestReporter {
     this.testId = testResult.test.public_id;
   }
 
+  /**
+   * Generates the performance report
+   *
+   * @returns
+   * The performance report
+   */
   generate(): PerformanceReport {
     const durations = getStepsDurations(this.testResult.result.steps);
     const deltaAccuracy = calc.deltaAccuracyFromDurations(durations);
     const report = perfReport(durations, this.testId, deltaAccuracy);
     return report;
+  }
+
+  /**
+   * Formats the performance report for output
+   *
+   * @param report
+   * The performance report to format
+   *
+   * @returns
+   * The formatted performance report
+   */
+  format(report: PerformanceReport): string {
+    return [
+      `Performance report for test ${this.testId}:`,
+      `  - Total runs: ${report.individualRuns.totalRuns}`,
+      `  - Mean duration: ${report.current.mean.toFixed(0)}ms`,
+      `  - Median duration: ${report.current.median.toFixed(0)}ms`,
+      `  - 75th percentile duration: ${report.current.p75.toFixed(0)}ms`,
+      `  - 95th percentile duration: ${report.current.p95.toFixed(0)}ms`,
+      `  - 99th percentile duration: ${report.current.p99.toFixed(0)}ms`,
+      "Relevance analysis:",
+      `  - Variability analysis: ${report.variabilityAnalysis.isVariationSignificant ? "Significant" : "Not significant"}`,
+      `  - Relevance score: ${report.variabilityAnalysis.relevanceScore.toFixed(0)}%`,
+      `  - Coefficient of variation: ${report.variabilityAnalysis.coefficientOfVariation.toFixed(0)}%`,
+      `  - Max delta between runs: ${report.variabilityAnalysis.maxDeltaBetweenRuns.toFixed(0)}ms`,
+      `  - Recommendation: ${report.variabilityAnalysis.recommendation}`,
+    ].join("\n");
   }
 }
 
