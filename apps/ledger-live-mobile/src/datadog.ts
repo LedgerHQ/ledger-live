@@ -82,13 +82,18 @@ const isExcludedErrorDescription = (errorDescription: string): boolean => {
  * @param event The RUMErrorEvent object.
  * @returns The modified RUMErrorEvent object, or null if the event should be dropped.
  */
-export const customErrorEventMapper: ErrorEventMapper = event => {
-  if (isExcludedErrorName(event.stacktrace) || isExcludedErrorDescription(event.message)) {
-    return null; // Return null to drop the event
-  }
+export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEventMapper =
+  disableErrorTracking => event => {
+    if (
+      disableErrorTracking ||
+      isExcludedErrorName(event.stacktrace) ||
+      isExcludedErrorDescription(event.message)
+    ) {
+      return null; // Return null to drop the event
+    }
 
-  return event;
-};
+    return event;
+  };
 
 /**
  * A predicate function to determine the view name for tracking purposes.
