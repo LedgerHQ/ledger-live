@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
@@ -29,8 +29,8 @@
   "dependencies": {
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/context-module": "1.4.0",
-    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118",
     "@ledgerhq/device-signer-kit-ethereum": "0.0.0-challenge-nano-s-20250515175634",
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250630141416",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "rxjs": "7.8.1"

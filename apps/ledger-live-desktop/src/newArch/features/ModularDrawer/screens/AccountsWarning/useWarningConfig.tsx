@@ -13,7 +13,11 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 
-export const useWarningConfig = (currency: CryptoCurrency, emptyAccount?: Account) => {
+export const useWarningConfig = (
+  currency: CryptoCurrency,
+  navigateToFundAccount: (account: Account) => void,
+  emptyAccount?: Account,
+) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const history = useHistory();
@@ -36,6 +40,10 @@ export const useWarningConfig = (currency: CryptoCurrency, emptyAccount?: Accoun
 
   const handleClose = useCallback(() => setDrawer(), []);
 
+  const handleFundAccount = useCallback(() => {
+    emptyAccount && navigateToFundAccount(emptyAccount);
+  }, [emptyAccount, navigateToFundAccount]);
+
   const emptyAccountWarning = {
     icon: <Icons.WarningFill size="L" color="palette.warning.c70" />,
     title: t("modularAssetDrawer.scanAccounts.warning.title", { currency: currency.name }),
@@ -51,7 +59,7 @@ export const useWarningConfig = (currency: CryptoCurrency, emptyAccount?: Accoun
     ) : null,
     primaryAction: {
       text: t("modularAssetDrawer.scanAccounts.warning.cta"),
-      onClick: () => {}, // TODO: Redirect to add funds quick action
+      onClick: handleFundAccount,
     },
     secondaryAction: {
       text: t("modularAssetDrawer.scanAccounts.warning.close"),

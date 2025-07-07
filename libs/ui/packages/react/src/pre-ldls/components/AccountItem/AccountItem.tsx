@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
-import { Checkbox, Icon, Text, Box } from "../../../components";
+import { Checkbox, Icon, Text, Flex } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
@@ -10,7 +10,7 @@ export type Account = {
   address: string;
   balance?: string;
   cryptoId?: string;
-  fiatValue: string;
+  fiatValue?: string;
   id: string;
   name: string;
   parentId?: string;
@@ -37,7 +37,7 @@ export type AccountItemProps = {
   backgroundColor?: string;
 };
 
-const Wrapper = styled.div<{ backgroundColor?: string }>`
+const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
   ${withTokens(
     "spacing-xxxs",
     "spacing-xxs",
@@ -53,8 +53,7 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
   )}
 
   display: flex;
-  padding: var(--margin-s);
-  cursor: pointer;
+  cursor: ${p => (p.isClickable ? "pointer" : "default")};
   border-radius: var(--radius-m);
   justify-content: space-between;
   align-items: center;
@@ -66,13 +65,19 @@ const Wrapper = styled.div<{ backgroundColor?: string }>`
 
   background-color: ${p => (p.backgroundColor ? p.backgroundColor : "transparent")};
 
-  :hover {
-    background-color: var(--colors-surface-transparent-hover);
-  }
+  ${p =>
+    p.isClickable
+      ? `
+    padding: var(--margin-s);
+    :hover {
+      background-color: var(--colors-surface-transparent-hover);
+    }
 
-  :active {
-    background-color: var(--colors-surface-transparent-pressed);
-  }
+    :active {
+      background-color: var(--colors-surface-transparent-pressed);
+    }
+  `
+      : ""}
 `;
 
 const ContentContainer = styled.div`
@@ -139,7 +144,7 @@ export const AccountItem = ({
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick} backgroundColor={backgroundColor}>
+    <Wrapper onClick={onClick} backgroundColor={backgroundColor} isClickable={!!onClick}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
@@ -176,7 +181,7 @@ export const AccountItem = ({
           />
         </AccountInfoContainer>
         <BalanceContainer>
-          <Text fontSize="14px">{fiatValue}</Text>
+          {fiatValue && <Text fontSize="14px">{fiatValue}</Text>}
           {balance && (
             <Text fontSize="12px" color="var(--colors-content-subdued-default-default)">
               {balance}
@@ -184,14 +189,14 @@ export const AccountItem = ({
           )}
         </BalanceContainer>
         {rightElement && rightElement.type === "checkbox" && (
-          <Box data-testid="right-element-checkbox">
+          <Flex data-testid="right-element-checkbox">
             <Checkbox {...rightElement.checkbox} size={20} />
-          </Box>
+          </Flex>
         )}
         {rightElement && rightElement.type === "arrow" && (
-          <Box data-testid="right-element-arrow-icon">
+          <Flex data-testid="right-element-arrow-icon">
             <Icon name="ChevronRight" size={24} />
-          </Box>
+          </Flex>
         )}
       </ContentContainer>
     </Wrapper>

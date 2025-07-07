@@ -116,4 +116,13 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://uniswap.org/",
     needsKYC: false,
   },
+  velora: {
+    type: "DEX",
+    useInExchangeApp: false,
+    displayName: "Velora",
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.velora.xyz/",
+    needsKYC: false,
+  },
 };

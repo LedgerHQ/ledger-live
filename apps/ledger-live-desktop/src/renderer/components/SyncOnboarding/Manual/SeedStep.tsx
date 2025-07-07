@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
+import { Flex, VerticalTimeline, Link, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
-import ExternalLink from "~/renderer/components/ExternalLink";
-import CharonPng from "./assets/charon.png";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { openURL } from "~/renderer/linking";
+import Animation from "~/renderer/animations";
+import CHARON from "~/renderer/animations/charon/charon.json";
+import styled from "styled-components";
 
 export type SeedPathStatus =
   | "choice_new_or_restore"
@@ -42,6 +43,17 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
     });
     openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
+
+  const StyledAnimation = styled(Animation)`
+    border-radius: 6.4px;
+    box-shadow:
+      0px 63.291px 50.633px 0px rgba(0, 0, 0, 0.19),
+      0px 26.442px 21.153px 0px rgba(0, 0, 0, 0.14),
+      0px 14.137px 11.31px 0px rgba(0, 0, 0, 0.11),
+      0px 7.925px 6.34px 0px rgba(0, 0, 0, 0.09),
+      0px 4.209px 3.367px 0px rgba(0, 0, 0, 0.08),
+      0px 1.751px 1.401px 0px rgba(0, 0, 0, 0.05);
+  `;
 
   useEffect(() => {
     if (seedPathStatus == "backup_charon" && charonSupported) {
@@ -78,11 +90,18 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
-            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
+            <Flex
+              style={{
+                width: 220,
+                height: 150,
+                overflow: "visible",
+                justifyContent: "center",
+              }}
+            >
               <img
                 src={SecretRecoveryPhrasePng}
                 alt="Secret Recovery Phrase"
-                style={{ width: 220, height: 220 }}
+                style={{ height: 220, objectFit: "contain" }}
               />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
@@ -165,28 +184,35 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
       ) : seedPathStatus === "backup_charon" ? (
         <Flex flexDirection="column">
           <Flex alignItems="center" justifyContent="center" flexDirection="column">
-            <Flex style={{ width: 220, height: 170, overflow: "visible" }}>
-              <img src={CharonPng} alt="Charon" style={{ width: 220, height: 220 }} />
+            <Flex
+              style={{
+                height: 108,
+                overflow: "visible",
+                justifyContent: "center",
+                paddingTop: 8,
+                marginBottom: 24,
+              }}
+            >
+              <StyledAnimation animation={CHARON as object} />
             </Flex>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
+            <StepText mb={24} fontWeight="semiBold" variant="largeLineHeight" color="neutral.c100">
               {t("syncOnboarding.manual.seedContent.backupCharonTitle")}
             </StepText>
             {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText mb={6}>
+            <StepText mb={24} textAlign="center">
               {t("syncOnboarding.manual.seedContent.backupCharonDescription")}
             </StepText>
-
-            <Flex flexDirection="column" color="neutral.c100" mb={6}>
-              <ExternalLink
-                label={
-                  <Text fontWeight="bold" variant="body" color="neutral.c80">
-                    {t("syncOnboarding.manual.seedContent.backupCharonCta")}
-                  </Text>
-                }
+            <Flex flexDirection="column" color="neutral.c100" mb={24}>
+              <Link
+                alwaysUnderline
+                Icon={() => <Icons.ExternalLink size="S" />}
                 onClick={handleLearnMoreClick}
-                isInternal={false}
-              />
+                style={{ justifyContent: "flex-start" }}
+                textProps={{ fontSize: 14 }}
+              >
+                {t("syncOnboarding.manual.seedContent.backupCharonCta")}
+              </Link>
             </Flex>
           </Flex>
 

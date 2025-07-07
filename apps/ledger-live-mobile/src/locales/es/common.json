@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "Restaurar el acceso a tus activos",
         "desc" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta o Ledger Recover.",
-        "descWithCharon" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta, Ledger Recover o Ledger Charon."
+        "descWithCharon" : "Este proceso te permite restaurar con tu copia de respaldo (Frase de Recuperación Secreta, Ledger Recover o Ledger Recovery Key)."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Crea una copia de respaldo nueva en una tarjeta protegida por PIN con un chip de Elemento Seguro integrado, de forma que puedas restaurar el acceso a tus activos con sólo unos toques.",
         "cta" : "Más información o comprar",
         "continueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}"
       },
@@ -2357,8 +2357,8 @@
           "description" : "Para garantizar la máxima seguridad, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Usa tu Recovery Key para restaurar el acceso a tus activos."
         },
         "ledgerRecover" : {
           "title" : "Suscripción a Ledger Recover",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "Elige la opción que prefieras en tu {{productName}}."
       },
       "restoreLedgerCharon" : {
-        "title" : "Restaurar con Ledger Charon",
+        "title" : "Restaurar con Ledger Recovery Key",
         "description" : "Para restaurar, sigue las instrucciones que aparecen en la pantalla segura de tu Ledger.",
         "continueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}."
       },

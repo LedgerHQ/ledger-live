@@ -329,10 +329,17 @@ export type Redirect<M extends PlatformManifestId> = {
   queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
+export type VersionedRedirect = {
+  desktop_version?: string;
+  mobile_version?: string;
+  redirects: Record<string, Redirect<PlatformManifestId>>;
+};
+
 export type Feature_StakePrograms = Feature<{
   list: string[];
   /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
   redirects: Record<string, Redirect<PlatformManifestId>>;
+  versions?: VersionedRedirect[];
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;

@@ -1,4 +1,4 @@
-import { Left, Right } from "purify-ts";
+import { Right } from "purify-ts";
 import { assign, setup } from "xstate";
 
 import type {
@@ -20,16 +20,12 @@ import type {
   PrepareConnectManagerDAIntermediateValue,
 } from "./types";
 
-type PrepareConnectManagerMachineInternalState = {
-  readonly error: PrepareConnectManagerDAError | null;
-};
-
 export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
   PrepareConnectManagerDAOutput,
   PrepareConnectManagerDAInput,
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
-  PrepareConnectManagerMachineInternalState
+  undefined
 > {
   makeStateMachine(
     internalApi: InternalApi,
@@ -38,14 +34,14 @@ export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
     PrepareConnectManagerDAInput,
     PrepareConnectManagerDAError,
     PrepareConnectManagerDAIntermediateValue,
-    PrepareConnectManagerMachineInternalState
+    undefined
   > {
     type types = StateMachineTypes<
       PrepareConnectManagerDAOutput,
       PrepareConnectManagerDAInput,
       PrepareConnectManagerDAError,
       PrepareConnectManagerDAIntermediateValue,
-      PrepareConnectManagerMachineInternalState
+      undefined
     >;
 
     const unlockTimeout = this.input.unlockTimeout ?? 0;
@@ -67,17 +63,6 @@ export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
       actors: {
         goToDashboard: goToDashboardMachine,
       },
-      guards: {
-        hasError: ({ context }) => context._internalState.error !== null,
-      },
-      actions: {
-        assignErrorFromEvent: assign({
-          _internalState: _ => ({
-            ..._.context._internalState,
-            error: _.event["error"], // NOTE: it should never happen, the error is not typed anymore here
-          }),
-        }),
-      },
     }).createMachine({
       id: "PrepareConnectManagerDeviceAction",
       initial: "DeviceReady",
@@ -89,9 +74,7 @@ export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
           intermediateValue: {
             requiredUserInteraction: UserInteractionRequired.None,
           },
-          _internalState: {
-            error: null,
-          },
+          _internalState: undefined,
         };
       },
       states: {
@@ -121,59 +104,30 @@ export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
               }),
             },
             onDone: {
-              target: "GoToDashboardCheck",
-              actions: assign({
-                _internalState: _ => {
-                  // Invalidate device session state fields that can be modified by the manager
-                  const state = internalApi.getDeviceSessionState();
-                  if (state.sessionStateType !== DeviceSessionStateType.Connected) {
-                    internalApi.setDeviceSessionState({
-                      ...state,
-                      firmwareUpdateContext: undefined,
-                      installedApps: [],
-                      appsUpdates: undefined,
-                    });
-                  }
-                  return _.event.output.caseOf<PrepareConnectManagerMachineInternalState>({
-                    Right: _data => _.context._internalState,
-                    Left: error => ({
-                      ..._.context._internalState,
-                      error,
-                    }),
+              target: "Success",
+              actions: () => {
+                // Invalidate device session state fields that can be modified by the manager
+                const state = internalApi.getDeviceSessionState();
+                if (state.sessionStateType !== DeviceSessionStateType.Connected) {
+                  internalApi.setDeviceSessionState({
+                    ...state,
+                    firmwareUpdateContext: undefined,
+                    installedApps: [],
+                    appsUpdates: undefined,
                   });
-                },
-              }),
-            },
-            onError: {
-              target: "Error",
-              actions: "assignErrorFromEvent",
+                }
+              },
             },
           },
-        },
-        GoToDashboardCheck: {
-          always: [
-            {
-              target: "Error",
-              guard: "hasError",
-            },
-            {
-              target: "Success",
-            },
-          ],
         },
         Success: {
           type: "final",
         },
-        Error: {
-          type: "final",
-        },
       },
-      output: args => {
-        const { context } = args;
-        const { error } = context._internalState;
-        if (error) {
-          return Left(error);
-        }
+      output: _ => {
+        // Ignore device action errors that can happen if the device is in bootloader mode.
+        // The goal here is just to clean DMK session state, but actual connectManager is done in
+        // outside of the DMK, and errors will be caught there instead.
         return Right(undefined);
       },
     });

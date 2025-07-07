@@ -359,8 +359,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpcapi.fantom.network",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/250",
+        type: "blockscout",
+        uri: "https://ftmscout.com/api",
       },
       showNfts: false,
     },

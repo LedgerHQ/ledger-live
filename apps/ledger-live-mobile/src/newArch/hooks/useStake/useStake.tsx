@@ -1,5 +1,4 @@
 import { useCallback, useContext, useMemo } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -15,6 +14,7 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { useVersionedStakePrograms } from "./useVersionedStakePrograms";
 
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 
@@ -32,7 +32,7 @@ const getRemoteLiveAppManifestById = (
 };
 
 export function useStake() {
-  const featureFlag = useFeature("stakePrograms");
+  const featureFlag = useVersionedStakePrograms();
   const enabledCurrencies = useMemo(
     () => featureFlag?.params?.list || [],
     [featureFlag?.params?.list],

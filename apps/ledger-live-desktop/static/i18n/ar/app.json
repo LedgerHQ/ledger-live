@@ -1260,7 +1260,7 @@
         "titleCompleted" : "تم تأكيد عبارة الاسترداد السرية",
         "recoverSeed" : "Placeholder: استرداد",
         "restoreSeed" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
-        "restoreCharonTitle" : "الاستعادة باستخدام Ledger Charon",
+        "restoreCharonTitle" : "الاستعادة باستخدام Recovery Key",
         "restoreCharonDescription" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة لديك.",
         "restoreCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
         "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "هذا يُنشئ عبارة استرداد سرية جديدة.",
         "selectionRestoreTitle" : "استعادة الوصول إلى الأصول",
         "selectionRestoreDescription" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover.",
-        "selectionRestoreDescriptionWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Charon.",
+        "selectionRestoreDescriptionWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Recovery Key.",
         "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
         "selectionNewSeedTitle" : "عبارة الاسترداد السرية",
         "selectionNewSeedSubtitle" : "احفظها بأمان وخصوصية",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
         "restoreChoiceSRPTitle" : "عبارة الاسترداد السرية",
         "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "الوصف الوصف الوصف الوصف الوصف الوصف.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "استخدم Recovery Key الخاص بك لاستعادة الوصول إلى أصولك.",
         "restoreChoiceRecoverTitle" : "اشتراك Ledger Recover",
         "restoreChoiceRecoverDescription" : "استخدم اشتراكك لاستعادة الوصول إلى أصولك بواسطة هويّتك.",
         "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
         "backupCharonCta" : "معرفة المزيد أو الشراء",
         "backupCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
       },
@@ -7085,6 +7085,12 @@
       },
       "newAccount" : "حساب جديد"
     },
+    "fundAccount" : {
+      "receive" : "تلقي",
+      "receiveDescription" : "تلقى الأصول المشفرة من محفظة أخرى",
+      "buy" : "شراء",
+      "buyDescription" : "شراء الأصول المشفرة بأمان باستخدام النقود"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "إيقاف المسح الضوئي"
@@ -7123,6 +7129,7 @@
       "title_other" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
       "cta" : {
         "addFunds" : "إضافة أموال إلى حسابي",
+        "selectAccount" : "متابعة",
         "close" : "إغلاق"
       }
     }
@@ -7138,5 +7145,14 @@
     "title" : "الموقع غير متاح",
     "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
+  },
+  "versionBlocking" : {
+    "title" : "تحديث Ledger Live مطلوب",
+    "errorTitle" : "فشل التحديث",
+    "errorDescription" : "لقد فشل التحديث. يُرجى اتباع الرابط التالي لتنزيل أحدث إصدار من Ledger Live. ",
+    "description" : "هذا الإصدار من Ledger Live غير متوافق مع أحدث أنظمة تشغيل الجهاز. قم بالتحديث الآن للاستمتاع باتصال مُحسّن.",
+    "restart" : "إعادة التشغيل",
+    "downloadOnLedger" : "تنزيل من Ledger.com",
+    "downloadProgress" : "جارٍ التنزيل... %{{ progress }}"
   }
 }

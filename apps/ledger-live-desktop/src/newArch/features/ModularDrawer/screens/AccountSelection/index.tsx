@@ -8,22 +8,36 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { Observable } from "rxjs";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/types";
+import {
+  MODULAR_DRAWER_PAGE_NAME,
+  ModularDrawerEventName,
+} from "../../analytics/modularDrawer.types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
   source: string;
   flow: string;
   accounts$?: Observable<WalletAPIAccount[]>;
+  hideAddAccountButton?: boolean;
+  overridePageName?: ModularDrawerEventName;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
-export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSelected }: Props) => {
+export const AccountSelection = ({
+  asset,
+  source,
+  flow,
+  accounts$,
+  onAccountSelected,
+  hideAddAccountButton,
+  overridePageName,
+}: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     flow,
     source,
     accounts$,
+    onAccountSelected,
   );
 
   const BottomComponent = (
@@ -35,7 +49,7 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
   return (
     <>
       <TrackDrawerScreen
-        page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
+        page={overridePageName ?? MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
         source={source}
         flow={flow}
       />
@@ -45,7 +59,7 @@ export const AccountSelection = ({ asset, source, flow, accounts$, onAccountSele
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}
-        bottomComponent={BottomComponent}
+        bottomComponent={!hideAddAccountButton && BottomComponent}
       />
     </>
   );

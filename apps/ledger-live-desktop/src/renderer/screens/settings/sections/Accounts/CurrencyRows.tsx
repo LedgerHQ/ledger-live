@@ -62,13 +62,15 @@ function CurrencyRows({ currency }: Props) {
         >
           <Track onUpdate event="ConfirmationsNb" confirmationsNb={confirmationsNb} />
           {defaults.confirmationsNb ? (
-            <StepperNumber
-              min={defaults.confirmationsNb.min}
-              max={defaults.confirmationsNb.max}
-              step={1}
-              onChange={handleChangeConfirmationsNb}
-              value={confirmationsNb}
-            />
+            <Box width={150}>
+              <StepperNumber
+                min={defaults.confirmationsNb.min}
+                max={defaults.confirmationsNb.max}
+                step={1}
+                onChange={handleChangeConfirmationsNb}
+                value={confirmationsNb}
+              />
+            </Box>
           ) : null}
         </Row>
       ) : (
@@ -82,11 +84,7 @@ function CurrencyRows({ currency }: Props) {
       <Row title={t("account.settings.unit.title")} desc={t("account.settings.unit.desc")} inset>
         <Track onUpdate event="unit" unit={unit} />
 
-        <Box
-          style={{
-            width: 150,
-          }}
-        >
+        <Box width={150}>
           <Select
             isSearchable={false}
             onChange={handleChangeUnit}

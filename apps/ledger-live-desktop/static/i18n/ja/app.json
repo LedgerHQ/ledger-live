@@ -1260,7 +1260,7 @@
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
         "restoreSeed" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
-        "restoreCharonTitle" : "Ledger Charonを使用して復元",
+        "restoreCharonTitle" : "Recovery Keyを使用して復元",
         "restoreCharonDescription" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
         "restoreCharonContinueOnDevice" : "{{productName}}の指示に従う",
         "selection" : "最適な設定オプションを選択してください：",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "新たにシークレットリカバリーフレーズが生成されます。",
         "selectionRestoreTitle" : "資産へのアクセスを復元",
         "selectionRestoreDescription" : "これにより、バックアップ（シークレットリカバリーフレーズまたはLedger Recover）を使用して復元できます。",
-        "selectionRestoreDescriptionWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Charon）を使用して復元できます。",
+        "selectionRestoreDescriptionWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。",
         "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択",
         "selectionNewSeedTitle" : "シークレットリカバリーフレーズ",
         "selectionNewSeedSubtitle" : "安全かつプライベートに保管",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
         "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズ",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Recovery Keyを使用して、資産へのアクセスを復元します。",
         "restoreChoiceRecoverTitle" : "Ledger Recoverサブスクリプション",
         "restoreChoiceRecoverDescription" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。",
         "followInstructions" : "{{productName}}に表示される指示に従ってください。",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
         "backupCharonCta" : "詳細の確認または購入",
         "backupCharonContinueOnDevice" : "{{productName}}の指示に従う"
       },
@@ -4178,7 +4178,7 @@
   },
   "settings" : {
     "title" : "設定",
-    "discreet" : "ダークモードに切り替える",
+    "discreet" : "非表示モードに切り替える",
     "helpButton" : "ヘルプ",
     "tabs" : {
       "display" : "一般",
@@ -7085,6 +7085,12 @@
       },
       "newAccount" : "新しいアカウント"
     },
+    "fundAccount" : {
+      "receive" : "受け取る",
+      "receiveDescription" : "暗号資産を別のウォレットから受け取る",
+      "buy" : "購入",
+      "buyDescription" : "現金で安全に暗号資産を購入する"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "スキャン停止"
@@ -7123,6 +7129,7 @@
       "title_other" : "{{count}}個のアカウントがポートフォリオに追加されました",
       "cta" : {
         "addFunds" : "資金をアカウントに追加する",
+        "selectAccount" : "続行",
         "close" : "閉じる"
       }
     }
@@ -7138,5 +7145,14 @@
     "title" : "利用不可のロケーション",
     "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
     "learnMore" : "詳細はこちら"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Liveのアップデートが必要です",
+    "errorTitle" : "アップデートに失敗",
+    "errorDescription" : "アップデートに失敗しました。以下のリンクから、Ledger Liveの最新バージョンをダウンロードしてください。 ",
+    "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
+    "restart" : "再起動",
+    "downloadOnLedger" : "Ledger.comでダウンロード",
+    "downloadProgress" : "ダウンロード中...{{ progress }}%"
   }
 }

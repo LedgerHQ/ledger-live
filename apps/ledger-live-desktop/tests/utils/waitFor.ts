@@ -24,7 +24,3 @@ export async function waitFor(
     }, timeout);
   });
 }
-
-export async function waitForTimeOut(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}

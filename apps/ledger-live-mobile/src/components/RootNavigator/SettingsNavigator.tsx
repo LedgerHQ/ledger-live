@@ -80,6 +80,7 @@ import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMo
 import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
+import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -535,6 +536,14 @@ export default function SettingsNavigator() {
         component={SwiperScreenDebug}
         options={{
           title: "Swiper Screen Debug",
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.DebugModularAssetDrawer}
+        component={ModularDrawerScreenDebug}
+        options={{
+          title: "ModularAssetDrawer Screen Debug",
         }}
       />
     </Stack.Navigator>
