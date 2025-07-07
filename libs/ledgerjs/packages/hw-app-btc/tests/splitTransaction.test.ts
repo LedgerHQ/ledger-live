@@ -52,14 +52,16 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     expect(tx.outputs?.length).toBe(2);
 
     expect(tx.outputs![0].amount.toString("hex")).toBe("4078150100000000");
-    expect(tx.outputs![0].script.toString("hex")).toBe("76a9144cf48844c49a77ba86e48b070f06151b712c862988ac");
-    
+    expect(tx.outputs![0].script.toString("hex")).toBe(
+      "76a9144cf48844c49a77ba86e48b070f06151b712c862988ac",
+    );
+
     expect(tx.extraData).toBeDefined();
     expect(tx.extraData?.length).toBe(11); // valueBalance (8) + shieldedSpend (1) + shieldedOutput (1) + joinSplit (1)
-    expect(tx.extraData!.toString("hex")).toBe("0000000000000000" + "00" +  "00" + "00"); // empty shielded stuff
+    expect(tx.extraData!.toString("hex")).toBe("0000000000000000" + "00" + "00" + "00"); // empty shielded stuff
   });
 
-  test.only("Zcash NU5 transaction (v5)", async () => {
+  test("Zcash NU5 transaction (v5)", async () => {
     const transport = await openTransportReplayer(RecordStore.fromString(""));
     const btc = new Btc({ transport, currency: "zcash" });
 
@@ -77,13 +79,15 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     expect(tx.outputs?.length).toBe(1);
 
     expect(tx.outputs![0].amount.toString("hex")).toBe("c0a7950000000000");
-    expect(tx.outputs![0].script.toString("hex")).toBe("76a914168bb00f59a2d1a059d7e60fcc709cd5a979992988ac");
+    expect(tx.outputs![0].script.toString("hex")).toBe(
+      "76a914168bb00f59a2d1a059d7e60fcc709cd5a979992988ac",
+    );
     expect(tx.extraData).toBeDefined();
     // Overwinter : use nJoinSplit (1)
     expect(tx.extraData!.length).toBe(0); // no extraData for pure NU5 transparent tx
   });
 
-  test.only("Zcash NU5 transaction Orchard (v5)", async () => {
+  test("Zcash NU5 transaction Orchard (v5)", async () => {
     const transport = await openTransportReplayer(RecordStore.fromString(""));
     const btc = new Btc({ transport, currency: "zcash" });
 
@@ -101,38 +105,74 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     expect(tx.outputs?.length).toBe(1);
 
     expect(tx.outputs![0].amount.toString("hex")).toBe("488e100000000000");
-    expect(tx.outputs![0].script.toString("hex")).toBe("76a914e58749ee655c0e39ae3ce063a33fb9edc86d23dd88ac");
+    expect(tx.outputs![0].script.toString("hex")).toBe(
+      "76a914e58749ee655c0e39ae3ce063a33fb9edc86d23dd88ac",
+    );
 
     expect(tx.orchard).toBeDefined();
     expect(tx.orchard?.vActions.length).toBe(2);
 
-    expect(tx.orchard?.vActions[0].cmx.toString("hex")).toBe("a9856f1ec074084e8a91d7008cbed27a00a4e4a816f66e2772c5e04b3f876c08");
-    expect(tx.orchard?.vActions[0].cv.toString("hex")).toBe("bd730701f6e2e1feffc2021707919aaced34d5e43c13a5010695cd9d333c19bf");
-    expect(tx.orchard?.vActions[0].encCiphertext.toString("hex")).toBe("ff76ee84fae0912e178422fff4dc220610589d344a461acaf9487f231d5091575a7deec69f9cdccec92a537b5c996e60a6c16f8502f1e4c873bc88dd2eb2036ba2bfa9cc7b515d721844ce251df61955f78c4e84bff6fdc62404cfbd3bd360b5020bae564e47594ef6cbb4687065749579ab477623d2752f38f30eda3d2231a513b0238b4f45101b2378b50acf8877b182bce2b994ff166cb95f6d319e2b50a0eb432ef7fc556a0e66752fe8ebb0b4184c38820c733fccbeee6e78f3b72f8d61838721f689c4a6a6b1cf8f0fb6bfa1bbdf860ac1631567de443b9cdde8ccdb458b12413f1a1cc90966b40d34249e60eb49d24d9476c89e19721a2d32ce4dbf125a6ffc0a3a9bf3423328ae97e7a2227a08da8e4d1d5031e9d2a6ee04c8d800b1ce42e223d6a16afb88657a46663d7256288e6949b751b4df845a9f544a2366e7976f9ff491e4779dc41431393c7ad99747b2470f24302b28df856506a16ec7b88e77e2c37e2a7a7580d0d6122c63e2f34b63de3011526e6ce4b16bfe43eed07a5364f230d0689c7cc97a2945a7a7e8e8535fa147e665e20bce1d8370e96be7629f34aa72d2a9031c90faf92b8383ed3c51065378b01e143fa64a2eb8322fcf01207c740437b9a9470a67815e541ee1cc3da71349c9092bc296e2d20da040120345717b18df4bb6559caca87349389d9b5567267c640f8289f6caf7c701dc11d0decd9996c47227cc6418c3b13bedd9f4086c7b874b96f0e15bbd6793ba29bd74a4f969f75697e1a817ddba599b2878885724727a32624758df64f86e09d78667e26b4ada");
-    expect(tx.orchard?.vActions[0].ephemeralKey.toString("hex")).toBe("671af32842982bcc7f344410d8eb50a2b166e7b00f6a4e7ff64cb368d84fa789");
-    expect(tx.orchard?.vActions[0].nullifier.toString("hex")).toBe("310746abef4d8a77fdd55fc303a306f3953f794a95bb8f14d9c94b59d63f792b");
-    expect(tx.orchard?.vActions[0].outCiphertext.toString("hex")).toBe("d05f7d8a539a15e7e19eff71fd29a71c6f58bf920456d8a1348f1225fc1d0b1abbc25bce80a645839d272389faf7a0d4367dcff461a64922b85186de7534bdac9739c57bd8dccd9c0b543a2c1cb1a2ed");
-    expect(tx.orchard?.vActions[0].rk.toString("hex")).toBe("9e6f9133be659f9cc8b53fc1a26f2e1a9e4e132dd0e78df56be5d06688f103b2");
+    expect(tx.orchard?.vActions[0].cmx.toString("hex")).toBe(
+      "a9856f1ec074084e8a91d7008cbed27a00a4e4a816f66e2772c5e04b3f876c08",
+    );
+    expect(tx.orchard?.vActions[0].cv.toString("hex")).toBe(
+      "bd730701f6e2e1feffc2021707919aaced34d5e43c13a5010695cd9d333c19bf",
+    );
+    expect(tx.orchard?.vActions[0].encCiphertext.toString("hex")).toBe(
+      "ff76ee84fae0912e178422fff4dc220610589d344a461acaf9487f231d5091575a7deec69f9cdccec92a537b5c996e60a6c16f8502f1e4c873bc88dd2eb2036ba2bfa9cc7b515d721844ce251df61955f78c4e84bff6fdc62404cfbd3bd360b5020bae564e47594ef6cbb4687065749579ab477623d2752f38f30eda3d2231a513b0238b4f45101b2378b50acf8877b182bce2b994ff166cb95f6d319e2b50a0eb432ef7fc556a0e66752fe8ebb0b4184c38820c733fccbeee6e78f3b72f8d61838721f689c4a6a6b1cf8f0fb6bfa1bbdf860ac1631567de443b9cdde8ccdb458b12413f1a1cc90966b40d34249e60eb49d24d9476c89e19721a2d32ce4dbf125a6ffc0a3a9bf3423328ae97e7a2227a08da8e4d1d5031e9d2a6ee04c8d800b1ce42e223d6a16afb88657a46663d7256288e6949b751b4df845a9f544a2366e7976f9ff491e4779dc41431393c7ad99747b2470f24302b28df856506a16ec7b88e77e2c37e2a7a7580d0d6122c63e2f34b63de3011526e6ce4b16bfe43eed07a5364f230d0689c7cc97a2945a7a7e8e8535fa147e665e20bce1d8370e96be7629f34aa72d2a9031c90faf92b8383ed3c51065378b01e143fa64a2eb8322fcf01207c740437b9a9470a67815e541ee1cc3da71349c9092bc296e2d20da040120345717b18df4bb6559caca87349389d9b5567267c640f8289f6caf7c701dc11d0decd9996c47227cc6418c3b13bedd9f4086c7b874b96f0e15bbd6793ba29bd74a4f969f75697e1a817ddba599b2878885724727a32624758df64f86e09d78667e26b4ada",
+    );
+    expect(tx.orchard?.vActions[0].ephemeralKey.toString("hex")).toBe(
+      "671af32842982bcc7f344410d8eb50a2b166e7b00f6a4e7ff64cb368d84fa789",
+    );
+    expect(tx.orchard?.vActions[0].nullifier.toString("hex")).toBe(
+      "310746abef4d8a77fdd55fc303a306f3953f794a95bb8f14d9c94b59d63f792b",
+    );
+    expect(tx.orchard?.vActions[0].outCiphertext.toString("hex")).toBe(
+      "d05f7d8a539a15e7e19eff71fd29a71c6f58bf920456d8a1348f1225fc1d0b1abbc25bce80a645839d272389faf7a0d4367dcff461a64922b85186de7534bdac9739c57bd8dccd9c0b543a2c1cb1a2ed",
+    );
+    expect(tx.orchard?.vActions[0].rk.toString("hex")).toBe(
+      "9e6f9133be659f9cc8b53fc1a26f2e1a9e4e132dd0e78df56be5d06688f103b2",
+    );
 
-    expect(tx.orchard?.vActions[1].cmx.toString("hex")).toBe("d3bec60fed5d37c0d46a2384516ecb02520a8dc06f83f747504078569c55a029");
-    expect(tx.orchard?.vActions[1].cv.toString("hex")).toBe("bdbcc7541c03dab9665eda1bc07682ce3dcf4f2293e1bba1aabdbfeb2464739a");
-    expect(tx.orchard?.vActions[1].encCiphertext.toString("hex")).toBe("4ee493445fdb428c95de6016203993655595c7785d3a0c912bfd6af29601429fb773514ed6eb27f376f56384f52c65f9090fa4627cf17b3c4c577685b1aa7f19ddb6c0596f48447d7aa8253d8faca7bf9bfdb76217500e6a9f1fb794c2c5dba36a4d7efafdbc74d28b7b6f36234312a1e3a99bb412bbe14ebc9e94287994e7846e14ac765809eef7e87289665d0089ed4f3399d547f9156ed34a0598852d52a4daff4096ebd3998e748de36a262e718514577baf7ad16d6be978d382ff83fceefd37cc18940c9f9d7f88e1797023fdd4a017721e876088c86121667780e9a32ed92c749bb018e06157b1c7dcd81d7d35de08e3886338b1c6309b15b099c98281ebb79662526753596f9c5784ef6306c04cadf30f3fa650c2ce49bea66bbbe67580585f7e21cc4d04a16b0f2a3729881307020ee35efac01ae6a79a209dfdc911d4119a57ee9184ac38ccba8475d39c40010d2ae5fbb61fa0b0846cdff83afb9f35e63331743fe8b7098da2e58e0ce97593e9cab30bf362537a49ebe30469fc08aad3e75c9ccdd067d73afa042656a1395d15197f98d3ed1034e0552d852202e4eb34b89b801b10d0402a9d698897e6f9d650f685064794d16c7f93755da6db19cd37de31a41746bbb43199e832f0e7f5f675470e9df5d3afc38716873cb0ade0c4b0e1b5e6275d3adf97e260b10fb74fc379407ccb329c4e06645d80c4ab188a7d952a3e631dc16f1ec82e2c5cafd39005006737d047c276aa7ef03325d4405c9e2bd86ad616d9d343dc8cf2b4543a437be4de0d544dd47d91d7e218a16ee75597137e5f");
-    expect(tx.orchard?.vActions[1].ephemeralKey.toString("hex")).toBe("0ea78f4a3b765cd00d69a3f60ad695b42d652b285caf3aea639aadb694e24f37");
-    expect(tx.orchard?.vActions[1].nullifier.toString("hex")).toBe("e16a84f5840e498b935bce15d2900a592d33446c14e9b9bfd8d05b4e24d0142a");
-    expect(tx.orchard?.vActions[1].outCiphertext.toString("hex")).toBe("4d95e868a9a0939cc41f3d36bae7c2e769f5a6c5607b6f314d667d1a7dd951ae5351c98c4595cce67cec410a6609a15472670b6841cc12719e645b97aad11afce304cb7ffe866cd9297717de348d25c6");
-    expect(tx.orchard?.vActions[1].rk.toString("hex")).toBe("9027b8a15f11e25d9efd7886e96a214344bbd44c046b223bd1ee5f0b636c5e07");
+    expect(tx.orchard?.vActions[1].cmx.toString("hex")).toBe(
+      "d3bec60fed5d37c0d46a2384516ecb02520a8dc06f83f747504078569c55a029",
+    );
+    expect(tx.orchard?.vActions[1].cv.toString("hex")).toBe(
+      "bdbcc7541c03dab9665eda1bc07682ce3dcf4f2293e1bba1aabdbfeb2464739a",
+    );
+    expect(tx.orchard?.vActions[1].encCiphertext.toString("hex")).toBe(
+      "4ee493445fdb428c95de6016203993655595c7785d3a0c912bfd6af29601429fb773514ed6eb27f376f56384f52c65f9090fa4627cf17b3c4c577685b1aa7f19ddb6c0596f48447d7aa8253d8faca7bf9bfdb76217500e6a9f1fb794c2c5dba36a4d7efafdbc74d28b7b6f36234312a1e3a99bb412bbe14ebc9e94287994e7846e14ac765809eef7e87289665d0089ed4f3399d547f9156ed34a0598852d52a4daff4096ebd3998e748de36a262e718514577baf7ad16d6be978d382ff83fceefd37cc18940c9f9d7f88e1797023fdd4a017721e876088c86121667780e9a32ed92c749bb018e06157b1c7dcd81d7d35de08e3886338b1c6309b15b099c98281ebb79662526753596f9c5784ef6306c04cadf30f3fa650c2ce49bea66bbbe67580585f7e21cc4d04a16b0f2a3729881307020ee35efac01ae6a79a209dfdc911d4119a57ee9184ac38ccba8475d39c40010d2ae5fbb61fa0b0846cdff83afb9f35e63331743fe8b7098da2e58e0ce97593e9cab30bf362537a49ebe30469fc08aad3e75c9ccdd067d73afa042656a1395d15197f98d3ed1034e0552d852202e4eb34b89b801b10d0402a9d698897e6f9d650f685064794d16c7f93755da6db19cd37de31a41746bbb43199e832f0e7f5f675470e9df5d3afc38716873cb0ade0c4b0e1b5e6275d3adf97e260b10fb74fc379407ccb329c4e06645d80c4ab188a7d952a3e631dc16f1ec82e2c5cafd39005006737d047c276aa7ef03325d4405c9e2bd86ad616d9d343dc8cf2b4543a437be4de0d544dd47d91d7e218a16ee75597137e5f",
+    );
+    expect(tx.orchard?.vActions[1].ephemeralKey.toString("hex")).toBe(
+      "0ea78f4a3b765cd00d69a3f60ad695b42d652b285caf3aea639aadb694e24f37",
+    );
+    expect(tx.orchard?.vActions[1].nullifier.toString("hex")).toBe(
+      "e16a84f5840e498b935bce15d2900a592d33446c14e9b9bfd8d05b4e24d0142a",
+    );
+    expect(tx.orchard?.vActions[1].outCiphertext.toString("hex")).toBe(
+      "4d95e868a9a0939cc41f3d36bae7c2e769f5a6c5607b6f314d667d1a7dd951ae5351c98c4595cce67cec410a6609a15472670b6841cc12719e645b97aad11afce304cb7ffe866cd9297717de348d25c6",
+    );
+    expect(tx.orchard?.vActions[1].rk.toString("hex")).toBe(
+      "9027b8a15f11e25d9efd7886e96a214344bbd44c046b223bd1ee5f0b636c5e07",
+    );
 
-    expect(tx.orchard?.anchor.toString("hex")).toBe("6cfe8df49885ea5ba8005b075db957a0f11d524a1f226a2da39e912e990ca93e");
+    expect(tx.orchard?.anchor.toString("hex")).toBe(
+      "6cfe8df49885ea5ba8005b075db957a0f11d524a1f226a2da39e912e990ca93e",
+    );
 
-    expect(tx.orchard?.vSpendsAuthSigs.toString("hex")).toBe("c89d60b899bc3e54079da17c5cc487ccc555ab83ebd36d44b401f772169dea21bd14563007373e0e55ca1a084d35fa557ef0c66a57f708912193a6cb1f924d28037c98e42a44153fe28ddb7023aa8bc77a60806c4a0d8be104a42004dda77aa056165106b0b13510dd97514e3bd5f4059b2f9b525b565bc798020e4582c60602");
+    expect(tx.orchard?.vSpendsAuthSigs.toString("hex")).toBe(
+      "c89d60b899bc3e54079da17c5cc487ccc555ab83ebd36d44b401f772169dea21bd14563007373e0e55ca1a084d35fa557ef0c66a57f708912193a6cb1f924d28037c98e42a44153fe28ddb7023aa8bc77a60806c4a0d8be104a42004dda77aa056165106b0b13510dd97514e3bd5f4059b2f9b525b565bc798020e4582c60602",
+    );
 
-    expect(tx.orchard?.bindingSig.toString("hex")).toBe("48c8075628cd39d663497ade707a4be75a347b27ef86fb9d73f1fec0d2c877b42f28b999406f533b158ed8c2b05180966c375922eaffb8a096c4ae9eed2b073d");
+    expect(tx.orchard?.bindingSig.toString("hex")).toBe(
+      "48c8075628cd39d663497ade707a4be75a347b27ef86fb9d73f1fec0d2c877b42f28b999406f533b158ed8c2b05180966c375922eaffb8a096c4ae9eed2b073d",
+    );
 
     expect(tx.extraData).toBeDefined();
     expect(tx.extraData?.length).toBe(0);
   });
 
-  test.only("Zcash NU5 transaction Sapling (v5)", async () => {
+  test("Zcash NU5 transaction Sapling (v5)", async () => {
     const transport = await openTransportReplayer(RecordStore.fromString(""));
     const btc = new Btc({ transport, currency: "zcash" });
 
@@ -150,34 +190,70 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     expect(tx.outputs?.length).toBe(1);
 
     expect(tx.outputs![0].amount.toString("hex")).toBe("20d6130000000000");
-    expect(tx.outputs![0].script.toString("hex")).toBe("76a914040ac822bd91e60f709174ac94bee1fb1aaadf2a88ac");
+    expect(tx.outputs![0].script.toString("hex")).toBe(
+      "76a914040ac822bd91e60f709174ac94bee1fb1aaadf2a88ac",
+    );
 
     expect(tx.sapling).toBeDefined();
     expect(tx.sapling?.vSpendsSapling.length).toBe(1);
 
-    expect(tx.sapling?.vSpendsSapling[0].cv.toString("hex")).toBe("2b88b763bbed1f015f89aca3786acd2702a5ec69482404fc90cb4e6f597827a1");
-    expect(tx.sapling?.vSpendsSapling[0].nullifier.toString("hex")).toBe("884a2be02987a69f1461b3d479661407c8f31f5f26140c964c7e28315e429115");
-    expect(tx.sapling?.vSpendsSapling[0].rk.toString("hex")).toBe("c534b33f896e0320f630a4c4418b25db0c2ce8412a386f29be29a138d496a260");
+    expect(tx.sapling?.vSpendsSapling[0].cv.toString("hex")).toBe(
+      "2b88b763bbed1f015f89aca3786acd2702a5ec69482404fc90cb4e6f597827a1",
+    );
+    expect(tx.sapling?.vSpendsSapling[0].nullifier.toString("hex")).toBe(
+      "884a2be02987a69f1461b3d479661407c8f31f5f26140c964c7e28315e429115",
+    );
+    expect(tx.sapling?.vSpendsSapling[0].rk.toString("hex")).toBe(
+      "c534b33f896e0320f630a4c4418b25db0c2ce8412a386f29be29a138d496a260",
+    );
 
     expect(tx.sapling?.vOutputSapling.length).toBe(2);
 
-    expect(tx.sapling?.vOutputSapling[0].cv.toString("hex")).toBe("d50845284903cd9e2f3da8b5d716217e82aa6021acf7e402a5918dd39602710c");
-    expect(tx.sapling?.vOutputSapling[0].cmu.toString("hex")).toBe("bfd33cf9757e6da7374d12598bdfee4a821f915254a1fed7189a0acecf52aa40");
-    expect(tx.sapling?.vOutputSapling[0].ephemeralKey.toString("hex")).toBe("87d61a8797497ba66dffeec0d3451b01c16b4dcbcc27f6896cdf59f07d4d535f");
-    expect(tx.sapling?.vOutputSapling[0].encCiphertext.toString("hex")).toBe("b3b9f3b7a013d2b69aee28b9d4bdee0eaab836b776e6419324d5690dc1050b0b10063bead8c37ea1ebf03e390be41f313d370e709953f91cfa0923a220f031b58e536e503cc161a046d7eefe1194f7fe3d879417b3ad8ed4e04620ecf771cf503939eb441fd2586d2711a1d1228292e66bc09986d06e332b697153228efa383094ecb27eca5288771f6a721185ec59bfeb7695b66692de9207a638386304b2fef517c1002158b7a340230d79be282d56764e78c77a4c09bb70874e0888a9c4b54df76e92621ec8ce3981e3413e0ce4576caa99a2fbeee2cbaa9d4448fa22c27fa588455bdb6ea9cf2515c8edb475a6da460a5e0072150f5d71568bf875a6cc0be52944aaa360dd425722ef70ff6e785263b45d0ce6053ea2a48360ad66432b84550e1634d6eb40a99e8c44e229d9de18306325d64f1595c928df3bece71461c281ed948fb54ad4c059cd78e0bd50f39a38cbeeb68977582b90ec18cc799ae9c63fbb028d884d4c32067cd6e73809b42b473c1c5031de16e524fe242c2840d8cb2d554544525e4d2e48655ed17c5d8f98a5f0b30d72a4be22fe250ea5d4b28e51421ecfa3d6c146edafdc90c6950f8f86c1c5db73b53e8323a1c59347de9f6a420aab8a1ea3245f0eac5c420e8d2333c25846289515ccfe15288670d870c2de8ff6dc737b5bb15b6d8c59366d59a15b3361475f7de91fabf0972e323356ecd6ee3bbe8129eac8c8a55dbd4945ad6c02b774dd986503ea7dbd1ef4d0fe00e88efbf09cc2ce2754963e085076cbda51a43fe04ffbc5a57e7862ccbfa5b7ebf4f999c2450108");
-    expect(tx.sapling?.vOutputSapling[0].outCiphertext.toString("hex")).toBe("589143fbcd257fade54537bd6b808f0f59a020033cc09166790f7eae8eb2c236bbcfa0515846939b10f8d675a0c39d5dadf8f8df6039d7c56965255de8b22f43bf40749c65ff1c6b9c939d394e165be0");
+    expect(tx.sapling?.vOutputSapling[0].cv.toString("hex")).toBe(
+      "d50845284903cd9e2f3da8b5d716217e82aa6021acf7e402a5918dd39602710c",
+    );
+    expect(tx.sapling?.vOutputSapling[0].cmu.toString("hex")).toBe(
+      "bfd33cf9757e6da7374d12598bdfee4a821f915254a1fed7189a0acecf52aa40",
+    );
+    expect(tx.sapling?.vOutputSapling[0].ephemeralKey.toString("hex")).toBe(
+      "87d61a8797497ba66dffeec0d3451b01c16b4dcbcc27f6896cdf59f07d4d535f",
+    );
+    expect(tx.sapling?.vOutputSapling[0].encCiphertext.toString("hex")).toBe(
+      "b3b9f3b7a013d2b69aee28b9d4bdee0eaab836b776e6419324d5690dc1050b0b10063bead8c37ea1ebf03e390be41f313d370e709953f91cfa0923a220f031b58e536e503cc161a046d7eefe1194f7fe3d879417b3ad8ed4e04620ecf771cf503939eb441fd2586d2711a1d1228292e66bc09986d06e332b697153228efa383094ecb27eca5288771f6a721185ec59bfeb7695b66692de9207a638386304b2fef517c1002158b7a340230d79be282d56764e78c77a4c09bb70874e0888a9c4b54df76e92621ec8ce3981e3413e0ce4576caa99a2fbeee2cbaa9d4448fa22c27fa588455bdb6ea9cf2515c8edb475a6da460a5e0072150f5d71568bf875a6cc0be52944aaa360dd425722ef70ff6e785263b45d0ce6053ea2a48360ad66432b84550e1634d6eb40a99e8c44e229d9de18306325d64f1595c928df3bece71461c281ed948fb54ad4c059cd78e0bd50f39a38cbeeb68977582b90ec18cc799ae9c63fbb028d884d4c32067cd6e73809b42b473c1c5031de16e524fe242c2840d8cb2d554544525e4d2e48655ed17c5d8f98a5f0b30d72a4be22fe250ea5d4b28e51421ecfa3d6c146edafdc90c6950f8f86c1c5db73b53e8323a1c59347de9f6a420aab8a1ea3245f0eac5c420e8d2333c25846289515ccfe15288670d870c2de8ff6dc737b5bb15b6d8c59366d59a15b3361475f7de91fabf0972e323356ecd6ee3bbe8129eac8c8a55dbd4945ad6c02b774dd986503ea7dbd1ef4d0fe00e88efbf09cc2ce2754963e085076cbda51a43fe04ffbc5a57e7862ccbfa5b7ebf4f999c2450108",
+    );
+    expect(tx.sapling?.vOutputSapling[0].outCiphertext.toString("hex")).toBe(
+      "589143fbcd257fade54537bd6b808f0f59a020033cc09166790f7eae8eb2c236bbcfa0515846939b10f8d675a0c39d5dadf8f8df6039d7c56965255de8b22f43bf40749c65ff1c6b9c939d394e165be0",
+    );
 
-    expect(tx.sapling?.vOutputSapling[1].cv.toString("hex")).toBe("66bc1edf06b465f42ffaabddc059f238e02879ade2a08041314665b38ab2e13b");
-    expect(tx.sapling?.vOutputSapling[1].cmu.toString("hex")).toBe("ef91cb7052c730740ca3fdb5082ca9316fd7fbe4ce63ad66fc32bdfe7106bb34");
-    expect(tx.sapling?.vOutputSapling[1].ephemeralKey.toString("hex")).toBe("f6cf09d89739dff6205051189a6d1bd7aa4f7518e2cf1872272f9a90baa053c9");
-    expect(tx.sapling?.vOutputSapling[1].encCiphertext.toString("hex")).toBe("32622ebd195de4ce00c7c3fdbdde46c11fd616fee703cf770caa03e9f6ffa1f32b77e21fffee6fa03badeb99dadaafdfd20ad05a98c04020e8a852c105a2b82a543e8e1e3b24646e196fbf1d75fe4bd77a82990a4cf54935d02b33b2853504567b9f8b3c2d056c489d991b16543cfbaf6e69a42cc356b799705085b7b58347272a5ff0c454dc5ba733dc6127d573844e4f7461f57de2ec04eb97bd94dc29f9bd700cd4f7e0f0c5144e1e24c83528735e17ce585d4ca2ca7318d44f5fe00b069cc27806c557c5dba69f3e8ab910ba3509f25ec05af5a0f0e7e86eaec4ec1264124c02d7c35bb90ef500cc813d1f1f37ead8eba59e3c7c346042e4bf29055a823c820bb47000d8e0aa07707f33f0ba4254538532066f0e59ac60a64547acf69ba15b4cd61bc6b7e7d4fa111fcbe7eed9cd125f57358c74d1a0db663487ea4f88ae079460c09199e93315defab6ace9df089954beb09dde24549b5ec3e6e0c6d95580ea1a25516016f87b52ecb902c9bc87f9386e668867f920a6c0da05ff9da0718fb6dff84d3f381f1c40da6e1bc75b6045a54296b759f99071e145d99b9772616280d04c278bff7c3688070fc7ac4ff6e0bdb3294224af07e1efe10cf57f6898a39b63ddd9792c4effd933414a1cbc23b20ccf1f3624a187b4faab8687ad58b18a4dc5753343ddff7477370f8e766d74e7c5db381910c768270cb62096b110dd9268ad97149fc13c5513024dfafb4093fd6d31c942d9bfb0630f98957d9782dac478f39c6d74affcdf031a56e63e090437d1670afc2a1e75cbd359667fd002f83c70aa35");
-    expect(tx.sapling?.vOutputSapling[1].outCiphertext.toString("hex")).toBe("685314e8c9a8e00d3e653a9d90ccff47b02cd6621ee5ddd94e3e3a822c52bbbfce64b8a55bfe6d3da9bfb1b1f8948c3a7fdfee92bf369b43bb432954273d98f251d344aa710d812c8b84b8ab4f694080");
+    expect(tx.sapling?.vOutputSapling[1].cv.toString("hex")).toBe(
+      "66bc1edf06b465f42ffaabddc059f238e02879ade2a08041314665b38ab2e13b",
+    );
+    expect(tx.sapling?.vOutputSapling[1].cmu.toString("hex")).toBe(
+      "ef91cb7052c730740ca3fdb5082ca9316fd7fbe4ce63ad66fc32bdfe7106bb34",
+    );
+    expect(tx.sapling?.vOutputSapling[1].ephemeralKey.toString("hex")).toBe(
+      "f6cf09d89739dff6205051189a6d1bd7aa4f7518e2cf1872272f9a90baa053c9",
+    );
+    expect(tx.sapling?.vOutputSapling[1].encCiphertext.toString("hex")).toBe(
+      "32622ebd195de4ce00c7c3fdbdde46c11fd616fee703cf770caa03e9f6ffa1f32b77e21fffee6fa03badeb99dadaafdfd20ad05a98c04020e8a852c105a2b82a543e8e1e3b24646e196fbf1d75fe4bd77a82990a4cf54935d02b33b2853504567b9f8b3c2d056c489d991b16543cfbaf6e69a42cc356b799705085b7b58347272a5ff0c454dc5ba733dc6127d573844e4f7461f57de2ec04eb97bd94dc29f9bd700cd4f7e0f0c5144e1e24c83528735e17ce585d4ca2ca7318d44f5fe00b069cc27806c557c5dba69f3e8ab910ba3509f25ec05af5a0f0e7e86eaec4ec1264124c02d7c35bb90ef500cc813d1f1f37ead8eba59e3c7c346042e4bf29055a823c820bb47000d8e0aa07707f33f0ba4254538532066f0e59ac60a64547acf69ba15b4cd61bc6b7e7d4fa111fcbe7eed9cd125f57358c74d1a0db663487ea4f88ae079460c09199e93315defab6ace9df089954beb09dde24549b5ec3e6e0c6d95580ea1a25516016f87b52ecb902c9bc87f9386e668867f920a6c0da05ff9da0718fb6dff84d3f381f1c40da6e1bc75b6045a54296b759f99071e145d99b9772616280d04c278bff7c3688070fc7ac4ff6e0bdb3294224af07e1efe10cf57f6898a39b63ddd9792c4effd933414a1cbc23b20ccf1f3624a187b4faab8687ad58b18a4dc5753343ddff7477370f8e766d74e7c5db381910c768270cb62096b110dd9268ad97149fc13c5513024dfafb4093fd6d31c942d9bfb0630f98957d9782dac478f39c6d74affcdf031a56e63e090437d1670afc2a1e75cbd359667fd002f83c70aa35",
+    );
+    expect(tx.sapling?.vOutputSapling[1].outCiphertext.toString("hex")).toBe(
+      "685314e8c9a8e00d3e653a9d90ccff47b02cd6621ee5ddd94e3e3a822c52bbbfce64b8a55bfe6d3da9bfb1b1f8948c3a7fdfee92bf369b43bb432954273d98f251d344aa710d812c8b84b8ab4f694080",
+    );
 
     expect(tx.sapling?.valueBalanceSapling.toString("hex")).toBe("b810140000000000");
-    expect(tx.sapling?.anchorSapling.toString("hex")).toBe("ec191fd9bc3a13624b396dcdef5d13559ced5bcc2058b98f55b2250b9b98b658");
-    expect(tx.sapling?.vSpendProofsSapling.toString("hex")).toBe("8ac98d92427f8008c4b292c3b75d1c36a92f1fa92d5c3581993230b572fa0324334ce2b7379cbc0dd5bc13e66cb27bc1a87c4cabe06c49c246a1bacb9745f3cf64f626cf9d7d0483a8049efa634490ca4c93d7fd5f7d2fbfbdcc61adef53e7ee09652156e3d9a5564d3db8ac040346fe5b133fe6839a67ac05876dbf3c14152da4efff436c1b593208f30a3d61c232bbae6caf5a916f8a3b402bb60d2f07a38976445eef9c9cf097b7bb08c81d1a84dcdbffd0af6fb144ef1da6320d97e4370e");
-    expect(tx.sapling?.vOutputProofsSapling.toString("hex")).toBe("a9fba81b3f6270c485ef960fed6e94f95c130f3e82407700b37f195436bf54b2f7fa679420d98c7ce817432617bc2c0fa3cd3699a93b282e565bdbaeb0c79f686efe2ffa7210e55c0197441b2316f744dfd63715090558fa80c68f453a1d54f314dd356cc57c8978c625695cccca179f03105571a2011068727b471d019824edbc6f15edfb241adc0e4ce0dfd2bae8188a295745ae69027f0781127116d6ed72afcc49584d26cb063d6cee4adf4900e82d2173202cd905a9db2ea254e7126a5786ea4eede15bb2b57f0b218faba033aeb9e6ae9a57c3ce635638f7d40364624a516c5dca0b8df23f1564eba8fd9cae02920a6a7e20a904efcb5f049545c95625289f8c3f1d3772ba556272d7eec84592d1838cbba94b44ef68a74a11da7cc92c0cf2230a01bd6c7724ee6bf9893af8b75574e785614c0d0ed207dbf9f6b469ac449de4c4bbb2c48036a86580c4fa36ccb51d617dba9bf9281eddf1ec1c417e5ba2282cae6f071052ed783de396ba2d4c2cf3699c46aad4b4d678e4a314553c6e");
-    expect(tx.sapling?.bindingSigSapling.toString("hex")).toBe("f5488e3905fc621c3c5281194a4a941a922b6a4cf323db5cd9a5ae1cf1582c808d0165b9cc46af1a13c7eb30737a74464daf551415cfd91b33ae98e350e56a07");
+    expect(tx.sapling?.anchorSapling.toString("hex")).toBe(
+      "ec191fd9bc3a13624b396dcdef5d13559ced5bcc2058b98f55b2250b9b98b658",
+    );
+    expect(tx.sapling?.vSpendProofsSapling.toString("hex")).toBe(
+      "8ac98d92427f8008c4b292c3b75d1c36a92f1fa92d5c3581993230b572fa0324334ce2b7379cbc0dd5bc13e66cb27bc1a87c4cabe06c49c246a1bacb9745f3cf64f626cf9d7d0483a8049efa634490ca4c93d7fd5f7d2fbfbdcc61adef53e7ee09652156e3d9a5564d3db8ac040346fe5b133fe6839a67ac05876dbf3c14152da4efff436c1b593208f30a3d61c232bbae6caf5a916f8a3b402bb60d2f07a38976445eef9c9cf097b7bb08c81d1a84dcdbffd0af6fb144ef1da6320d97e4370e",
+    );
+    expect(tx.sapling?.vOutputProofsSapling.toString("hex")).toBe(
+      "a9fba81b3f6270c485ef960fed6e94f95c130f3e82407700b37f195436bf54b2f7fa679420d98c7ce817432617bc2c0fa3cd3699a93b282e565bdbaeb0c79f686efe2ffa7210e55c0197441b2316f744dfd63715090558fa80c68f453a1d54f314dd356cc57c8978c625695cccca179f03105571a2011068727b471d019824edbc6f15edfb241adc0e4ce0dfd2bae8188a295745ae69027f0781127116d6ed72afcc49584d26cb063d6cee4adf4900e82d2173202cd905a9db2ea254e7126a5786ea4eede15bb2b57f0b218faba033aeb9e6ae9a57c3ce635638f7d40364624a516c5dca0b8df23f1564eba8fd9cae02920a6a7e20a904efcb5f049545c95625289f8c3f1d3772ba556272d7eec84592d1838cbba94b44ef68a74a11da7cc92c0cf2230a01bd6c7724ee6bf9893af8b75574e785614c0d0ed207dbf9f6b469ac449de4c4bbb2c48036a86580c4fa36ccb51d617dba9bf9281eddf1ec1c417e5ba2282cae6f071052ed783de396ba2d4c2cf3699c46aad4b4d678e4a314553c6e",
+    );
+    expect(tx.sapling?.bindingSigSapling.toString("hex")).toBe(
+      "f5488e3905fc621c3c5281194a4a941a922b6a4cf323db5cd9a5ae1cf1582c808d0165b9cc46af1a13c7eb30737a74464daf551415cfd91b33ae98e350e56a07",
+    );
 
     expect(tx.extraData).toBeDefined();
     expect(tx.extraData?.length).toBe(0);
