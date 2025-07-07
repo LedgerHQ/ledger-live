@@ -4,11 +4,13 @@ import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { closeModal } from "~/renderer/actions/modals";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 
 type State = {
   stepId: StepId;
@@ -67,14 +69,12 @@ const ReceiveModal = () => {
   const dispatch = useDispatch();
   const hasAccounts = !!accounts.length;
 
+  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, "receive");
+
   const openAddAccounts = useCallback(() => {
     dispatch(closeModal("MODAL_RECEIVE"));
-    dispatch(
-      openModal("MODAL_ADD_ACCOUNTS", {
-        currency: null,
-      }),
-    );
-  }, [dispatch]);
+    openAssetFlow(true);
+  }, [dispatch, openAssetFlow]);
 
   useEffect(() => {
     if (!hasAccounts) {

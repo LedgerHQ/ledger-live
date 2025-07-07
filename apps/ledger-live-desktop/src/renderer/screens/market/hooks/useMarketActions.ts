@@ -1,8 +1,7 @@
 import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { openModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "../../stake/constants";
@@ -14,6 +13,10 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { Account } from "@ledgerhq/types-live";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 export enum Page {
   Market = "Page Market",
@@ -27,7 +30,6 @@ type MarketActionsProps = {
 };
 
 export const useMarketActions = ({ currency, page, currenciesAll }: MarketActionsProps) => {
-  const dispatch = useDispatch();
   const history = useHistory();
 
   const startStakeFlow = useStakeFlow();
@@ -43,15 +45,24 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
 
   const internalCurrency = currency?.internalCurrency;
 
+  const onAccountSelected = useCallback(
+    (account: Account) => {
+      setDrawer();
+      history.push({
+        pathname: "/swap",
+        state: {
+          defaultAccount: account,
+        },
+      });
+    },
+    [history],
+  );
+
+  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, "market");
+
   const openAddAccounts = useCallback(() => {
-    if (internalCurrency)
-      dispatch(
-        openModal("MODAL_ADD_ACCOUNTS", {
-          currency: internalCurrency,
-          preventSkippingCurrencySelection: true,
-        }),
-      );
-  }, [internalCurrency, dispatch]);
+    if (internalCurrency) openAddAccountFlow(internalCurrency, true, onAccountSelected);
+  }, [internalCurrency, onAccountSelected, openAddAccountFlow]);
 
   const onBuy = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
