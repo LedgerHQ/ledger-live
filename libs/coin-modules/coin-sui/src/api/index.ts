@@ -11,8 +11,10 @@ import {
 import type { SuiAsset } from "./types";
 import {
   AlpacaApi,
-  FeeEstimation, Operation, Pagination,
-  TransactionIntent
+  FeeEstimation,
+  Operation,
+  Pagination,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
 export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
@@ -40,8 +42,11 @@ async function estimate(transactionIntent: TransactionIntent<SuiAsset>): Promise
   return { value: fees };
 }
 
-async function list(address: string, pagination: Pagination): Promise<[Operation<SuiAsset>[], string]> {
-  return operationsFromHeight(address, pagination.minHeight)
+async function list(
+  address: string,
+  pagination: Pagination,
+): Promise<[Operation<SuiAsset>[], string]> {
+  return operationsFromHeight(address, pagination.minHeight);
 }
 
 type PaginationState = {
