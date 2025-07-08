@@ -14,8 +14,6 @@ import {
   FeeEstimation, Operation, Pagination,
   TransactionIntent
 } from "@ledgerhq/coin-framework/api/index";
-import errors_1 from "@ledgerhq/errors";
-import logs_1 from "@ledgerhq/logs";
 
 export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
