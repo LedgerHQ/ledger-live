@@ -34,6 +34,7 @@ for (const modelId of modelIds) {
       });
 
       await test.step(`[${modelId}] Select stax device`, async () => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         await onboardingPage.selectDevice(modelId as "nanoS" | "nanoX" | "nanoSP" | "stax");
       });
 

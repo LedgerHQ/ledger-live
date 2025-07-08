@@ -56,6 +56,7 @@ export default function StepValidator({
         page="Step Validator"
       />
       {error && <ErrorBanner error={error} />}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       {status ? (
         <ValidatorsField
           account={account}
@@ -74,7 +75,7 @@ export function StepValidatorFooter({
   transaction,
 }: StepProps) {
   const { errors } = status;
-  const canNext = !bridgePending && !errors.voteAccAddr;
+  const canNext = !bridgePending && !errors.voteAccAddr && !errors.sender;
   if (!transaction) return null;
   return (
     <>

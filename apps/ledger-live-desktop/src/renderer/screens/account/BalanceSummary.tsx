@@ -138,6 +138,7 @@ export default function AccountBalanceSummary({
             magnitude={chartMagnitude}
             color={chartColor}
             // TODO we need to make Date non optional in live-common
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             data={history as Data}
             height={200}
             tickXScale={range}

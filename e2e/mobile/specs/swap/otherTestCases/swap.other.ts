@@ -9,6 +9,7 @@ import {
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -26,7 +27,15 @@ async function beforeAllFunction(options: ApplicationOptions) {
       ptxSwapLiveAppMobile: {
         enabled: true,
         params: {
-          manifest_id: "swap-live-app-demo-3-stg",
+          manifest_id:
+            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+        },
+      },
+      llmAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+          entryPoints: [],
         },
       },
     },
@@ -215,10 +224,17 @@ export function runTooLowAmountForQuoteSwapsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage} - LLM`, async () => {
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
+
+      const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
+
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
-        swap.amount,
+        actualAmount,
         quotesVisible,
       );
       if (quotesVisible) {
@@ -277,6 +293,7 @@ export function runUserRefusesTransactionTest(
 
       await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, selectedProvider, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("User refused");
     });
   });

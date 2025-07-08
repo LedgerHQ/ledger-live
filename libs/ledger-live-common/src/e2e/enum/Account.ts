@@ -277,6 +277,12 @@ export class Account {
     "0x50F293e4C3815F5214dac1Bae8F8FC3F24b8BA59",
     3,
   );
+  static readonly SANCTIONED_ETH = new Account(
+    Currency.ETH,
+    "Sanctioned Ethereum",
+    "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+    0,
+  );
 
   static readonly INJ_1 = new Account(
     Currency.INJ,

@@ -10,7 +10,6 @@ import {
   LiveAppManifest,
   LiveAppManifestSchema,
   LiveAppManifestDappSchema,
-  LiveAppManifestDapp,
   LiveAppManifestParamsNetwork,
   LiveAppManifestSchemaType,
 } from "@ledgerhq/live-common/platform/types";
@@ -64,9 +63,7 @@ function FormLocalManifest({
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
     setForm((prevState: LiveAppManifest) => {
-      !isDapp
-        ? (prevState.dapp = cloneDeep(DEFAULT_FORM.dapp) as LiveAppManifestDapp)
-        : delete prevState.dapp;
+      !isDapp ? (prevState.dapp = cloneDeep(DEFAULT_FORM.dapp)) : delete prevState.dapp;
       return prevState;
     });
   };
@@ -96,13 +93,13 @@ function FormLocalManifest({
         en: value,
       }).success;
       const optional = LiveAppManifestSchema.shape.content.shape[contentKey].isOptional();
-      const path = `content.${contentKey as string}.en`;
+      const path = `content.${contentKey}.en`;
 
       return (
         <FormLiveAppInput
-          key={contentKey as string}
+          key={contentKey}
           type={typeof value}
-          fieldName={contentKey as string}
+          fieldName={contentKey}
           value={value}
           optional={optional}
           parseCheck={parseCheck}
@@ -138,13 +135,13 @@ function FormLocalManifest({
 
                       const optional = networkKeySchema.isOptional();
                       const parseCheck = networkKeySchema.safeParse(value).success;
-                      const path = `dapp.${dappKey}.${index}.${networkKey as string}`;
+                      const path = `dapp.${dappKey}.${index}.${networkKey}`;
 
                       return (
                         <FormLiveAppInput
-                          key={networkKey as string}
+                          key={networkKey}
                           type={typeof value}
-                          fieldName={networkKey as string}
+                          fieldName={networkKey}
                           value={value}
                           optional={optional}
                           parseCheck={parseCheck}
@@ -159,7 +156,7 @@ function FormLocalManifest({
             }
 
             const value = form.dapp![dappKey];
-            const path = `dapp.${dappKey as string}`;
+            const path = `dapp.${dappKey}`;
             const shape = LiveAppManifestDappSchema.shape[dappKey];
             const parseCheck = shape.safeParse(value).success;
             const optional = shape.isOptional();
@@ -181,9 +178,9 @@ function FormLocalManifest({
 
             return (
               <FormLiveAppInput
-                key={dappKey as string}
+                key={dappKey}
                 type={typeof value}
-                fieldName={dappKey as string}
+                fieldName={dappKey}
                 value={value}
                 optional={optional}
                 parseCheck={parseCheck}
@@ -199,13 +196,16 @@ function FormLocalManifest({
               small
               primary
               onClick={() => {
-                setForm((prevState: LiveAppManifest) => {
-                  const newNetwork = [...prevState.dapp!.networks];
-                  newNetwork.push({ ...DEFAULT_FORM.dapp!.networks[0] });
+                setForm((prevState): LiveAppManifest => {
+                  if (!prevState.dapp) {
+                    return prevState;
+                  }
+                  const networks = [...prevState.dapp.networks];
+                  networks.push({ ...DEFAULT_FORM.dapp.networks[0] });
                   return {
                     ...prevState,
-                    dapp: { ...prevState.dapp, networks: newNetwork },
-                  } as LiveAppManifest;
+                    dapp: { ...prevState.dapp, networks },
+                  };
                 });
               }}
             >
@@ -216,13 +216,16 @@ function FormLocalManifest({
               danger
               disabled={form.dapp?.networks.length === 1}
               onClick={() => {
-                setForm((prevState: LiveAppManifest) => {
-                  const newNetwork = [...prevState.dapp!.networks];
-                  newNetwork.pop();
+                setForm(prevState => {
+                  if (!prevState.dapp) {
+                    return prevState;
+                  }
+                  const networks = [...prevState.dapp.networks];
+                  networks.pop();
                   return {
                     ...prevState,
-                    dapp: { ...prevState.dapp, networks: newNetwork },
-                  } as LiveAppManifest;
+                    dapp: { ...prevState.dapp, networks: networks },
+                  };
                 });
               }}
             >
@@ -266,10 +269,11 @@ function FormLocalManifest({
                   const value = form[key];
                   const isArray = Array.isArray(value);
                   const formKeySchema =
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     LiveAppManifestSchema.shape[key as keyof LiveAppManifestSchemaType];
                   const parseCheck = formKeySchema.safeParse(value).success;
                   const optional = formKeySchema.isOptional();
-                  const path = `${key as string}`;
+                  const path = `${key}`;
 
                   if (key === "platforms") {
                     return (
@@ -308,9 +312,9 @@ function FormLocalManifest({
                   if (key === "permissions" || key === "categories" || key === "currencies") {
                     return (
                       <FormLiveAppArraySelect
-                        key={key as string}
+                        key={key}
                         options={[...DEFAULT_VALUES[key]]}
-                        fieldName={key as string}
+                        fieldName={key}
                         initialValue={value as string[]}
                         optional={optional}
                         parseCheck={parseCheck}
@@ -325,8 +329,8 @@ function FormLocalManifest({
                   if (isArray) {
                     return (
                       <FormLiveAppArrayInput
-                        key={key as string}
-                        fieldName={key as string}
+                        key={key}
+                        fieldName={key}
                         initialValue={[...value]}
                         optional={optional}
                         parseCheck={parseCheck}
@@ -338,9 +342,9 @@ function FormLocalManifest({
 
                   return (
                     <FormLiveAppInput
-                      key={key as string}
+                      key={key}
                       type={typeof value}
-                      fieldName={key as string}
+                      fieldName={key}
                       value={value}
                       optional={optional}
                       parseCheck={parseCheck}

@@ -59,10 +59,6 @@ export const useSearch = ({
         return;
       }
 
-      if (query.length < 2 && prevQuery.length < 2) {
-        return;
-      }
-
       trackModularDrawerEvent(
         "asset_searched",
         {
@@ -76,10 +72,9 @@ export const useSearch = ({
         },
       );
 
-      const results =
-        query.trim().length < 2
-          ? originalAssets
-          : fuse.search(query).map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
+      const results = fuse
+        .search(query)
+        .map((result: Fuse.FuseResult<CryptoOrTokenCurrency>) => result.item);
 
       setItemsToDisplay(results);
     },

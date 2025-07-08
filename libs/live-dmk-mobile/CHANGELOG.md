@@ -1,5 +1,34 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.8.0
+
+### Minor Changes
+
+- [#10585](https://github.com/LedgerHQ/ledger-live/pull/10585) [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add support for firmware IO revamp
+
+### Patch Changes
+
+- Updated dependencies [[`f92d1e2`](https://github.com/LedgerHQ/ledger-live/commit/f92d1e270237a23ba50ad386a22b12aac6898628), [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7)]:
+  - @ledgerhq/live-dmk-shared@0.10.0
+
+## 0.8.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`f92d1e2`](https://github.com/LedgerHQ/ledger-live/commit/f92d1e270237a23ba50ad386a22b12aac6898628)]:
+  - @ledgerhq/live-dmk-shared@0.10.0-next.1
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#10585](https://github.com/LedgerHQ/ledger-live/pull/10585) [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add support for firmware IO revamp
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7)]:
+  - @ledgerhq/live-dmk-shared@0.10.0-next.0
+
 ## 0.7.0
 
 ### Minor Changes

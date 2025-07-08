@@ -1,3 +1,7 @@
+import {
+  isAddressSanctioned,
+  isCheckSanctionedAddressEnabled,
+} from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
@@ -5,9 +9,17 @@ import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  AccountLike,
+  CurrencyBridge,
+  TransactionCommon,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const alpacaized = {
   xrp: true,
@@ -70,7 +82,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
     if (type === "mock") {
       const mockBridge = mockBridges[family];
-      if (mockBridge) return mockBridge.accountBridge;
+      if (mockBridge) return wrapAccountBridge(mockBridge.accountBridge);
     }
   }
 
@@ -85,5 +97,60 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
   if (!jsBridge) {
     throw new CurrencyNotSupported("account bridge not found " + family);
   }
-  return jsBridge.accountBridge;
+  return wrapAccountBridge(jsBridge.accountBridge);
+}
+
+function wrapAccountBridge<T extends TransactionCommon>(
+  bridge: AccountBridge<T>,
+): AccountBridge<T> {
+  return {
+    ...bridge,
+    getTransactionStatus: async (...args) => {
+      const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
+
+      const account = args[0];
+      if (!isCheckSanctionedAddressEnabled(account.currency)) {
+        return blockchainTransactionStatus;
+      }
+
+      const commonTransactionStatus = await commonGetTransactionStatus(...args);
+      return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
+    },
+  };
+}
+
+function mergeResults(
+  blockchainTransactionStatus: TransactionStatusCommon,
+  commonTransactionStatus: Partial<TransactionStatusCommon>,
+): TransactionStatusCommon {
+  const errors = { ...blockchainTransactionStatus.errors, ...commonTransactionStatus.errors };
+  const warnings = { ...blockchainTransactionStatus.warnings, ...commonTransactionStatus.warnings };
+  return { ...blockchainTransactionStatus, errors, warnings };
+}
+
+async function commonGetTransactionStatus(
+  account: Account,
+  transaction: TransactionCommon,
+): Promise<Partial<TransactionStatusCommon>> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  let isRecipientSanctioned = false;
+  if (transaction.recipient && transaction.recipient !== "") {
+    isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
+    if (isRecipientSanctioned) {
+      errors.recipient = new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [transaction.recipient],
+      });
+    }
+  }
+
+  const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
+  if (isSenderSanctioned) {
+    errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+      addresses: [account.freshAddress],
+    });
+  }
+
+  return { errors, warnings };
 }

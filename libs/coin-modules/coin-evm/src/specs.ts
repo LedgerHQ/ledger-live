@@ -19,7 +19,7 @@ import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
-import { getEstimatedFees } from "./logic";
+import { getEstimatedFees } from "./utils";
 
 const testTimeout = 10 * 60 * 1000;
 
