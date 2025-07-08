@@ -290,11 +290,23 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
+    "DisconnectError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
     "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
+    "ReconnectionFailedError" : {
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
@@ -2341,11 +2353,11 @@
       "selectionRestore" : {
         "title" : "Varlıklarınıza erişiminizi kurtarın",
         "desc" : "Bu işlem, Gizli Kurtarma İfadesi veya Ledger Recover yedeklemenizi kullanarak hesaplarınızı geri yüklemenize olanak tanır.",
-        "descWithCharon" : "Bu işlem, Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Charon yedeklemeniz ile hesaplarınızı geri yüklemenize olanak tanır."
+        "descWithCharon" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
         "cta" : "Daha fazla bilgi edinin veya satın alın",
         "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
       },
@@ -2357,8 +2369,8 @@
           "description" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Varlıklarınıza yeniden erişebilmek için Recovery Key'inizi kullanın."
         },
         "ledgerRecover" : {
           "title" : "Ledger Recover aboneliği",
@@ -2371,7 +2383,7 @@
         "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin."
       },
       "restoreLedgerCharon" : {
-        "title" : "Ledger Charon ile hesaplarınızı geri yükleyin",
+        "title" : "Recovery Key ile geri yükleyin",
         "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
         "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin."
       },
