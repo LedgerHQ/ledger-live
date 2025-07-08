@@ -198,6 +198,7 @@ export const urls = {
   hedera: {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+    staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
   },
   nft: {
     supportDisableIos: "https://support.ledger.com/article/7572912170653-zd",

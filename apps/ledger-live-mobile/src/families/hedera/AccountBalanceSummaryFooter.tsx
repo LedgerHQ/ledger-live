@@ -51,6 +51,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         data={infoName ? info[infoName] : []}
       />
       <InfoItem
+        isLast={!delegation}
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
         value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}

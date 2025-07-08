@@ -1,15 +1,17 @@
+import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getNodes } from "./api/mirror";
+import { extractCompanyFromNodeDescription } from "./logic";
 import { setHederaPreloadData } from "./preload-data";
 import { HederaPreloadData, HederaValidator } from "./types";
-import { getNodes } from "./api/mirror";
-import BigNumber from "bignumber.js";
-import { extractCompanyFromNodeDescription } from "./logic";
 
 export const getPreloadStrategy = () => ({
   preloadMaxAge: 15 * 60 * 1000, // 15 minutes
 });
 
 export async function preload(currency: CryptoCurrency): Promise<HederaPreloadData> {
+  log("hedera/preload", "preloading hedera data...");
   const nodes = await getNodes();
 
   const validators: HederaValidator[] = nodes.map(mirrorNode => {
@@ -41,6 +43,35 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
   return data;
 }
 
-export function hydrate(data: HederaPreloadData, currency: CryptoCurrency): void {
-  setHederaPreloadData(data, currency);
+function mapRawValidatorToValidator(validatorRaw: Record<string, any>): HederaValidator {
+  return {
+    nodeId: validatorRaw.nodeId,
+    address: validatorRaw.address,
+    name: validatorRaw.name,
+    minStake: new BigNumber(validatorRaw.minStake),
+    maxStake: new BigNumber(validatorRaw.maxStake),
+    activeStake: new BigNumber(validatorRaw.activeStake),
+    activeStakePercentage: new BigNumber(validatorRaw.activeStakePercentage),
+    overstaked: validatorRaw.overstaked,
+  };
+}
+
+function fromHydratePreloadData(data: unknown): HederaPreloadData {
+  let validators: HederaValidator[] = [];
+
+  if (data && typeof data === "object" && "validators" in data) {
+    if (Array.isArray(data.validators)) {
+      validators = data.validators.map(mapRawValidatorToValidator);
+    }
+  }
+
+  return {
+    validators,
+  };
+}
+
+export function hydrate(data: unknown, currency: CryptoCurrency): void {
+  const hydrated = fromHydratePreloadData(data);
+  log("hedera/preload", `hydrated ${hydrated.validators.length} hedera validators`);
+  setHederaPreloadData(hydrated, currency);
 }

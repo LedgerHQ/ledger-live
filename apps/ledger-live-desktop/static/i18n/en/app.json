@@ -6687,7 +6687,6 @@
       }
     },
     "delegate": {
-      "commission": "Commission",
       "totalStake": "Total stake",
       "flow": {
         "title": "Delegate",
@@ -6726,7 +6725,8 @@
             "title": "Amount",
             "validatorLabel": "Validator",
             "amountLabel": "Amount to undelegate",
-            "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake."
+            "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake.",
+            "learnMore": "Learn more"
           },
           "connectDevice": {
             "title": "Device"

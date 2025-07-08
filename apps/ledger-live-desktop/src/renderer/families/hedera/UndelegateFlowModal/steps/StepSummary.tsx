@@ -3,15 +3,16 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/ValidatorsSelect";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
+import ValidatorsSelect from "../../shared/staking/ValidatorsSelect";
 
 function StepSummary({ t, account, parentAccount, transaction, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
@@ -39,7 +40,13 @@ function StepSummary({ t, account, parentAccount, transaction, error }: StepProp
         </Label>
         <AmountField account={account} />
       </Box>
-      <Alert type="primary">{t("hedera.undelegate.flow.steps.summary.alert")}</Alert>
+      <Alert
+        type="primary"
+        learnMoreUrl={urls.hedera.staking}
+        learnMoreLabel={<Trans i18nKey="hedera.undelegate.flow.steps.summary.learnMore" />}
+      >
+        {t("hedera.undelegate.flow.steps.summary.alert")}
+      </Alert>
     </Box>
   );
 }

@@ -4856,16 +4856,11 @@
             "warning": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees.",
             "cta": "Continue"
           },
-          "verification": {
+          "confirmation": {
             "success": {
               "title": "Rewards successfully claimed!",
-              "text": "Your rewards were added to your available balance.",
-              "cta": "Go to account"
-            },
-            "pending": {
-              "title": "Broadcasting transaction..."
-            },
-            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+              "text": "Your rewards were added to your available balance."
+            }
           }
         }
       }
@@ -6821,6 +6816,45 @@
       "claimable": {
         "title": "Claimable rewards",
         "description": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
+      }
+    },
+    "delegation": {
+      "nodeName": "Node {{index}}: {{name}}",
+      "alreadyDelegatedModal": {
+        "title": "Already Delegated",
+        "description": "Your entire balance is already delegated"
+      },
+      "stepperHeader": {
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "summary": {
+          "delegate": "I delegate",
+          "to": "to",
+          "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+          "learnMore": "Learn more"
+        },
+        "validator": {
+          "title": "Validators",
+          "totalStake": "Total Stake",
+          "rowSubtitlePercentage": "Staked {{percentage}}% of max",
+          "rowSubtitleOverstaked": "Node is overstaked",
+          "learnMore": "Learn more"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "You have successfully delegated your assets",
+            "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
       }
     }
   },

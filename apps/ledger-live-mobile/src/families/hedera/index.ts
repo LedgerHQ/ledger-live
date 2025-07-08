@@ -1,3 +1,4 @@
 import * as HederaEditMemo from "./EditMemo";
+import * as HederaDelegationFlow from "./DelegationFlow";
 
-export { HederaEditMemo };
+export { HederaEditMemo, HederaDelegationFlow };

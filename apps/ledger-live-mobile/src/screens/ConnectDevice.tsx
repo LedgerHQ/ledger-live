@@ -46,6 +46,7 @@ import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/comp
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
+import type { HederaDelegationFlowParamList } from "~/families/hedera/DelegationFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -105,6 +106,7 @@ type Props =
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
+  | StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>;
