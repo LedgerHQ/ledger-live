@@ -364,8 +364,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= CompanionStepKey.Seed &&
-      companionStepKey > CompanionStepKey.Seed &&
-      !analyticsSeedingTracked.current
+      companionStepKey === CompanionStepKey.Seed &&
+      !analyticsSeedingTracked.current &&
+      seedPathStatus === "backup_charon"
     ) {
       screen(
         "Set up device: Step 3 Seed Success",
@@ -383,7 +384,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = companionStepKey;
-  }, [companionStepKey, productName]);
+  }, [companionStepKey, productName, seedPathStatus]);
 
   const seededDeviceHandled = useRef(false);
 
