@@ -15,6 +15,7 @@ const voteMock = jest.fn(() => ({
   },
 }));
 const revokeMock = jest.fn();
+const activateMock = jest.fn();
 const voteSignerToAccountMock = jest.fn();
 
 jest.mock("../../network/sdk", () => {
@@ -51,6 +52,14 @@ jest.mock("../../network/sdk", () => {
         getElection: jest.fn(async () => ({
           vote: voteMock,
           revoke: revokeMock,
+          activate: jest.fn(() => ({
+            find: jest.fn(() => ({
+              txo: {
+                encodeABI: jest.fn(() => ({ data: "vote_data" })),
+                estimateGas: jest.fn(async () => 3),
+              },
+            })),
+          })),
           address: "vote_address",
         })),
         getAccounts: jest.fn(async () => ({
@@ -149,6 +158,37 @@ describe("buildTransaction", () => {
       },
       {
         ...transactionFixture,
+        mode: "unlock",
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "address",
+      data: { data: "unlock_data" },
+      gas: 3,
+    });
+  });
+
+  it("should build an unlock transaction with useAllAmount", async () => {
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      {
+        ...transactionFixture,
+        useAllAmount: true,
         mode: "unlock",
       },
     );
@@ -304,6 +344,74 @@ describe("buildTransaction", () => {
       new BigNumber(10),
     );
     expect(voteSignerToAccountMock).toHaveBeenCalledWith(accountFixture.freshAddress);
+  });
+
+  it("should build a revoke transaction with useAllAmount", async () => {
+    revokeMock.mockClear();
+
+    voteSignerToAccountMock.mockReturnValue("signer_account");
+    revokeMock.mockReturnValue({
+      find: jest.fn(() => ({
+        txo: {
+          encodeABI: jest.fn(() => ({ data: "revoke_data" })),
+          estimateGas: jest.fn(async () => 2),
+        },
+      })),
+    });
+
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      {
+        ...transactionFixture,
+        useAllAmount: true,
+        mode: "revoke",
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "vote_address",
+      data: { data: "revoke_data" },
+      gas: 2,
+    });
+
+    expect(revokeMock).toHaveBeenCalledTimes(1);
+    expect(revokeMock).toHaveBeenCalledWith(
+      "signer_account",
+      transactionFixture.recipient,
+      new BigNumber(10),
+    );
+    expect(voteSignerToAccountMock).toHaveBeenCalledWith(accountFixture.freshAddress);
+  });
+
+  it("should build an activate transaction", async () => {
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: BigNumber(123) },
+      {
+        ...transactionFixture,
+        mode: "activate",
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: "vote_address",
+      data: { data: "vote_data" },
+      gas: 3,
+    });
   });
 
   it("should build a register transaction", async () => {
