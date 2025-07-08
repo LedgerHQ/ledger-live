@@ -29,7 +29,7 @@ export async function sendCardano(tx: Transaction) {
   await pressBoth();
   await waitFor(DeviceLabels.TRANSACTION_FEE);
   await pressBoth();
-  await waitFor(DeviceLabels.CONFIRM_TRANSACTION);
+  await waitFor(DeviceLabels.CONFIRM);
   if (isNanoS) {
     await pressRightButton();
   } else {
@@ -41,38 +41,40 @@ export async function sendCardano(tx: Transaction) {
 
 export async function delegateCardano() {
   const commonSteps = [
-    { label: DeviceLabels.NEW_ORDINARY, action: "both" },
-    { label: DeviceLabels.TRANSACTION_FEE, action: "both" },
-    { label: DeviceLabels.REGISTER, action: "both" },
-    { label: DeviceLabels.STAKE_KEY, action: "both" },
-    { label: DeviceLabels.CONFIRM, action: "both" },
-    { label: DeviceLabels.DELEGATE_STAKE, action: "both" },
-    { label: DeviceLabels.STAKE_KEY, action: "both" },
-    { label: DeviceLabels.CONFIRM, action: "both" },
-    { label: DeviceLabels.CONFIRM, action: "both" },
-  ];
+    [DeviceLabels.NEW_ORDINARY, "both"],
+    [DeviceLabels.TRANSACTION_FEE, "both"],
+    [DeviceLabels.REGISTER, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.DEPOSIT, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+    [DeviceLabels.DELEGATE_STAKE, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+  ] as const;
 
   const LNSSpecificSteps = [
-    { label: DeviceLabels.NEW_ORDINARY, action: "right" },
-    { label: DeviceLabels.TRANSACTION_FEE, action: "both" },
-    { label: DeviceLabels.REGISTER, action: "both" },
-    { label: DeviceLabels.STAKE_KEY, action: "both" },
-    { label: DeviceLabels.CONFIRM, action: "right" },
-    { label: DeviceLabels.DELEGATE_STAKE, action: "both" },
-    { label: DeviceLabels.STAKE_KEY, action: "both" },
-    { label: DeviceLabels.CONFIRM, action: "right" },
-    { label: DeviceLabels.CONFIRM, action: "right" },
-  ];
+    [DeviceLabels.NEW_ORDINARY, "right"],
+    [DeviceLabels.TRANSACTION_FEE, "both"],
+    [DeviceLabels.REGISTER, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.CONFIRM, "right"],
+    [DeviceLabels.DELEGATE_STAKE, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.CONFIRM, "right"],
+    [DeviceLabels.CONFIRM, "right"],
+  ] as const;
 
-  const stepsToExecute =
-    process.env.SPECULOS_DEVICE === Device.LNS ? LNSSpecificSteps : commonSteps;
+  const steps = process.env.SPECULOS_DEVICE === Device.LNS ? LNSSpecificSteps : commonSteps;
 
-  for (const step of stepsToExecute) {
-    await waitFor(step.label);
-    if (step.action === "both") {
-      await pressBoth();
-    } else if (step.action === "right") {
-      await pressRightButton();
+  for (const [label, action] of steps) {
+    try {
+      await waitFor(label);
+      action === "both" ? await pressBoth() : await pressRightButton();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error while waiting for "${label}":`, message);
+      break;
     }
   }
 }
