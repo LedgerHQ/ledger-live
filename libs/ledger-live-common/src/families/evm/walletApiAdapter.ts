@@ -1,4 +1,4 @@
-import { createTransaction } from "@ledgerhq/coin-evm/createTransaction";
+import { createTransaction } from "@ledgerhq/coin-evm/bridge/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import {

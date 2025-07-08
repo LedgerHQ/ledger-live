@@ -14,6 +14,7 @@ export const getFeature = <T extends FeatureId>({
   allowOverride?: boolean;
   localOverrides?: { [key in FeatureId]?: Feature | undefined };
 }): Features[T] => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   if (localOverrides?.[key]) return localOverrides?.[key] as Features[T];
   return DEFAULT_FEATURES[key];
 };

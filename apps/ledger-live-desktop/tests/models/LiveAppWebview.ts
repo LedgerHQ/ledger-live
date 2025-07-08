@@ -243,6 +243,7 @@ export class LiveAppWebview {
     `;
 
     return this.page.evaluate(functionToExecute => {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const webview = document.querySelector("webview") as WebviewTag;
       return webview.executeJavaScript(functionToExecute);
     }, sendFunction);

@@ -275,14 +275,20 @@ function mapTxToAccountOperation(
     }
   }
 
-  const mainOperationType: OperationType = tx.certificate.stakeDelegations.length
-    ? "DELEGATE"
-    : tx.certificate.stakeDeRegistrations.length
-      ? "UNDELEGATE"
-      : getOperationType({
-          valueChange: operationValue,
-          fees: new BigNumber(tx.fees),
-        });
+  let mainOperationType: OperationType;
+  if (tx.certificate.stakeDelegations.length) {
+    mainOperationType = "DELEGATE";
+  } else if (
+    tx.certificate.stakeDeRegistrations.length ||
+    tx.certificate.stakeDeRegsConway?.length
+  ) {
+    mainOperationType = "UNDELEGATE";
+  } else {
+    mainOperationType = getOperationType({
+      valueChange: operationValue,
+      fees: new BigNumber(tx.fees),
+    });
+  }
 
   return {
     accountId,

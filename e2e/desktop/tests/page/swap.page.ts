@@ -484,17 +484,6 @@ export class SwapPage extends AppPage {
     return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
   }
 
-  @step("Check URL contains all values")
-  async expectUrlToContainAll(url: string, values: string[]) {
-    if (!url) {
-      throw new Error("URL is null or undefined");
-    }
-    const normalizedUrl = url.toLowerCase();
-    for (const value of values) {
-      expect(normalizedUrl).toContain(value.toLowerCase());
-    }
-  }
-
   @step("Click on swap max")
   async clickSwapMax(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();

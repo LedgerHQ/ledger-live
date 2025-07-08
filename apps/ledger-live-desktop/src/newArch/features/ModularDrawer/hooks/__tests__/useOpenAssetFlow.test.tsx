@@ -32,7 +32,7 @@ describe("useOpenAssetFlow", () => {
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
-      data: undefined,
+      data: { newModalName: undefined },
     });
     expect(setDrawer).not.toHaveBeenCalled();
   });

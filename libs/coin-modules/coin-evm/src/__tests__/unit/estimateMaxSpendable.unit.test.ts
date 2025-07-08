@@ -3,8 +3,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
-import { estimateMaxSpendable } from "../../estimateMaxSpendable";
-import * as nodeApi from "../../api/node/rpc.common";
+import { estimateMaxSpendable } from "../../bridge/estimateMaxSpendable";
+import * as nodeApi from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 
 jest.mock("../../config");

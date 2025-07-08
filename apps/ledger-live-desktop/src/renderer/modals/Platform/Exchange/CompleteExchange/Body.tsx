@@ -164,6 +164,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     }) => {
       const params = getUpdateAccountWithUpdaterParams({
         result: inputs.result,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         exchange: exchange as ExchangeSwap,
         transaction: transactionParams,
         magnitudeAwareRate: inputs.magnitudeAwareRate,
@@ -184,12 +185,15 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           swapId,
           mode: ExchangeModeEnum.Swap,
           provider,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
         }
       : {
           provider,
           mode: ExchangeModeEnum.Sell,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
         };
   };
@@ -203,11 +207,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSwapTransaction = (operation: Operation, result: ResultsState) => {
     const newResult = {
       operation,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       swapId: swapId as string,
     };
 
     updateAccount({
       result: newResult,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       magnitudeAwareRate: magnitudeAwareRate as BigNumber,
     });
 

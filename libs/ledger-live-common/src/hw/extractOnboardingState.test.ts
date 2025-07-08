@@ -35,6 +35,15 @@ describe("@hw/extractOnboardingState", () => {
             expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
             expect(onboardingState?.charonStatus).toBeNull();
           });
+
+          it("should ignore charon update status", () => {
+            const charonState = Buffer.from([0x20]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBeNull();
+          });
         });
 
         describe("and the user refuse to backup the charon", () => {

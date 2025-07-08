@@ -112,7 +112,7 @@ export const LearnMoreLink = ({
   const IconComponent = Icon || IconsLegacy.ExternalLinkMedium;
   return (
     <LinkTouchable onPress={onPress}>
-      <BaseAlert.UnderlinedText mr="5px">
+      <BaseAlert.UnderlinedText testID="learn-more-link" mr="5px">
         <Trans i18nKey={learnMoreKey || "common.learnMore"} values={transValues} />
       </BaseAlert.UnderlinedText>
       {(Icon || !learnMoreIsInternal) && <IconComponent size={16} />}

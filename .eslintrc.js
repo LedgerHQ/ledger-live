@@ -25,6 +25,12 @@ module.exports = {
         ],
       },
     ],
+    "@typescript-eslint/consistent-type-assertions": [
+      "warn",
+      {
+        assertionStyle: "never",
+      },
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
