@@ -15,7 +15,6 @@ const voteMock = jest.fn(() => ({
   },
 }));
 const revokeMock = jest.fn();
-const activateMock = jest.fn();
 const voteSignerToAccountMock = jest.fn();
 
 jest.mock("../../network/sdk", () => {
