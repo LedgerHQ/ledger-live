@@ -136,5 +136,5 @@ jobs:
       - name: Upload performance report
         uses: actions/upload-artifact@v4
         with:
-          name: performance-report.json
+          name: ${{ inputs.platform }}-performance-report.json
           path: ./performance-report.json
