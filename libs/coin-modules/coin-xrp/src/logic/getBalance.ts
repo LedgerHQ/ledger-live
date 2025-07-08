@@ -18,6 +18,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
       value: BigInt(accountInfo.balance),
       asset: { type: "native" },
       locked: BigInt(locked.toString()),
+      spendableBalance: BigInt(BigInt(accountInfo.balance) - BigInt(locked.toString())),
     },
   ];
 }

@@ -1,6 +1,4 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { TokenAccount } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 export type BlockInfo = {
   height: number;
@@ -88,6 +86,7 @@ export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
+  spendableBalance: bigint;
 };
 
 export interface Memo {
@@ -190,7 +189,7 @@ export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   // TODO: make it available on alpacaApi
   // getAccountInfo: (address: string) => Promise<AccountInfo>;
   getSequence: (address: string) => Promise<number>;
-  getSpendableBalance?: (address: string) => Promise<string>;
+  // getSpendableBalance?: (address: string) => Promise<string>;
   // getAssets: (address: string) => Promise<AssetInfo[]>; // NOTE: or BalanceAsset[];
 };
 

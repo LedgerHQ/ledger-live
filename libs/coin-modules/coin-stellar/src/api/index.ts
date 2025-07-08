@@ -1,6 +1,5 @@
 import type {
   Api,
-  AssetInfo,
   FeeEstimation,
   Operation,
   Pagination,
@@ -44,11 +43,11 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return sequence.plus(1).toNumber();
     },
-    getSpendableBalance: async (address: string) => {
-      // FIXME: we should try recompute this value from generic-adapter
-      const res = await fetchAccount(address);
-      return res.spendableBalance.toString();
-    },
+    // getSpendableBalance: async (address: string) => {
+    //   // FIXME: we should try recompute this value from generic-adapter
+    //   const res = await fetchAccount(address);
+    //   return res.spendableBalance.toString();
+    // },
     // getAssets: async (address: string) => {
     //   const res = await fetchAccount(address);
     //   const balanceAssets = res.assets;

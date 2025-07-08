@@ -51,7 +51,7 @@ describe("getTransactionStatus", () => {
     mockCachedRecipientIsNew.mockResolvedValue(false);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 20_000_000n,
         fee: 10_000n,
@@ -74,7 +74,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 200_000n, // 20%
@@ -96,7 +96,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 10_000_000n,
         recipient: RECIPIENT,
@@ -116,7 +116,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 10_000_000n,
         fee: 10_000n,
@@ -139,7 +139,7 @@ describe("getTransactionStatus", () => {
     mockCachedRecipientIsNew.mockResolvedValue(true);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 5_000_000n,
         fee: 10_000n,
@@ -160,7 +160,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 0n,
         fee: 10_000n,
@@ -181,7 +181,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 10_000n,
@@ -202,7 +202,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 10_000n,
