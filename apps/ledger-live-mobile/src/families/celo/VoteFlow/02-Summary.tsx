@@ -32,6 +32,9 @@ import Words from "../components/Words";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 
@@ -197,6 +200,17 @@ export default function VoteSummary({ navigation, route }: Props) {
           />
         </View>
       </View>
+      {status.errors.sender && (
+        <>
+          <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+            <TranslatedError error={status.errors.sender} />
+          </LText>
+          <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+            <TranslatedError error={status.errors.sender} field="description" />
+          </LText>
+          <SupportLinkError error={status.errors.sender} type="alert" />
+        </>
+      )}
       <View style={styles.footer}>
         <Button
           event="SummaryContinue"
@@ -261,6 +275,10 @@ const styles = StyleSheet.create({
   continueButton: {
     alignSelf: "stretch",
     marginTop: 12,
+  },
+  fieldStatus: {
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 

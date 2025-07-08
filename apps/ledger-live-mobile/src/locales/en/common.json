@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
+    },
+    "AddressesSanctionedError": {
+      "title": "Keep you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
   "crash": {
@@ -3400,7 +3404,13 @@
         "verify": "The address of {{accountType}} was not verified. Verify addresses on your device to stay secure."
       },
       "noResultsFound": "No crypto asset found",
-      "noResultsDesc": "Please verify the spelling and try again"
+      "noResultsDesc": "Please verify the spelling and try again",
+      "sanctionedAddress": {
+        "title": "Keeping you safe",
+        "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close": "Close",
+        "learnMore": "Learn More"
+      }
     },
     "buy": {
       "title": "Buy",
