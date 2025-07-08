@@ -115,8 +115,8 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
 
-                    navigation.navigate(NavigatorName.CustomError, {
-                      screen: ScreenName.CustomErrorScreen,
+                    navigation.navigate(NavigatorName.SwapCustomError, {
+                      screen: ScreenName.SwapCustomErrorScreen,
                       params: {
                         error: result.error,
                         displayError: result.error instanceof AddressesSanctionedError,
@@ -170,8 +170,8 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
                     navigation.pop();
-                    navigation.navigate(NavigatorName.CustomError, {
-                      screen: ScreenName.CustomErrorScreen,
+                    navigation.navigate(NavigatorName.SwapCustomError, {
+                      screen: ScreenName.SwapCustomErrorScreen,
                       params: {
                         error: result.error,
                       },
