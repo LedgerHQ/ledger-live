@@ -1,22 +1,25 @@
 import React from "react";
-import { View, Button } from "react-native";
-import { useModularDrawerFlowStepManager } from "../hooks/useModularDrawerFlowStepManager";
-import { Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ModularDrawerStep } from "../types";
 import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
+import NetworkSelection from "../screens/NetworkSelection";
+import { ModularDrawerFlowProps } from ".";
 
-export type ModularDrawerFlowViewModel = ReturnType<typeof useModularDrawerFlowStepManager>;
-
-export function ModularDrawerFlowView({ viewModel }: { viewModel: ModularDrawerFlowViewModel }) {
-  const { currentStep, nextStep, prevStep, reset, isFirstStep, isLastStep } = viewModel;
+export function ModularDrawerFlowView({
+  navigationStepViewModel,
+  assetsViewModel,
+  networksViewModel,
+  isReadyToBeDisplayed,
+}: ModularDrawerFlowProps) {
+  const { currentStep } = navigationStepViewModel;
 
   const renderStepContent = () => {
     switch (currentStep) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection assetsToDisplay={[]} />;
+        return <AssetSelection {...assetsViewModel} />;
       case ModularDrawerStep.Network:
-        return <Text>{"Netwok Selection Step Content"}</Text>;
+        return <NetworkSelection {...networksViewModel} />;
       case ModularDrawerStep.Account:
         return <Text>{"Account Selection Step Content"}</Text>;
       default:
@@ -25,16 +28,19 @@ export function ModularDrawerFlowView({ viewModel }: { viewModel: ModularDrawerF
   };
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center" }}>
-      <Title step={currentStep} />
-      {renderStepContent()}
+    <Flex flexDirection="column" rowGap={5}>
+      {isReadyToBeDisplayed ? (
+        <>
+          <Title step={currentStep} />
 
-      {/* TODO : REMOVE WHEN Navigation between steps is implemented */}
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        {!isFirstStep && <Button title="Previous" onPress={prevStep} color="#2196F3" />}
-        {!isLastStep && <Button title="Next" onPress={nextStep} color="#4CAF50" />}
-        <Button title="Reset" onPress={reset} color="#F44336" />
-      </View>
-    </View>
+          {renderStepContent()}
+        </>
+      ) : (
+        // TODO: to be replaced with a proper loading component Skeleton
+        <Flex height={50} width="100%" justifyContent="center" alignItems="center">
+          <InfiniteLoader color="primary.c50" size={38} />
+        </Flex>
+      )}
+    </Flex>
   );
 }

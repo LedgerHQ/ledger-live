@@ -4,30 +4,96 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerStep } from "./types";
 import { useModularDrawerFlowStepManager } from "./hooks/useModularDrawerFlowStepManager";
 
-type Props = {
-  selectedStep: ModularDrawerStep;
-  isOpen?: boolean;
-  onClose?: () => void;
-};
-export function ModularDrawer({ isOpen, onClose, selectedStep }: Props) {
-  const viewModel = useModularDrawerFlowStepManager({ selectedStep });
+import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
+import { useAssets } from "./hooks/useAssets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
-  // In prevision of tracking the back button press
-  const onBackButtonPress = () => viewModel.prevStep();
-  const onCloseButtonPress = () => {
+/**
+ * Props for the ModularDrawer component.
+ */
+type ModularDrawerProps = {
+  /**
+   * The current step to display in the drawer navigation flow.
+   */
+  selectedStep: ModularDrawerStep;
+  /**
+   * Whether the drawer is open.
+   */
+  isOpen?: boolean;
+  /**
+   * Callback fired when the drawer is closed.
+   */
+  onClose?: () => void;
+  /**
+   * List of currencies to display in the drawer.
+   */
+  currencies: CryptoOrTokenCurrency[];
+};
+/**
+ * ModularDrawer is a generic drawer component for asset/network selection flows.
+ * Handles navigation steps, asset/network selection, and drawer state.
+ *
+ * @param {ModularDrawerProps} props - The props for the ModularDrawer component.
+ */
+export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
+  const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
+
+  const { sortedCryptoCurrencies, isReadyToBeDisplayed } = useInitModularDrawer();
+
+  const { assetsToDisplay, filteredSortedCryptoCurrencies } = useAssets(
+    currencies,
+    sortedCryptoCurrencies,
+  );
+
+  const {
+    onAssetSelected,
+    onNetworkSelected,
+    networksToDisplay,
+    resetState,
+    goBackToAssetSelection,
+    goBackToNetworkSelection,
+  } = useModularDrawerState({
+    nextStep: navigationStepManager.nextStep,
+    prevStep: navigationStepManager.prevStep,
+    filteredSortedCryptoCurrencies,
+  });
+
+  /**
+   * Handlers for the back & close button in the drawer.
+   */
+  const handleBackButton = () => {
+    navigationStepManager.handleBackButton(goBackToAssetSelection, goBackToNetworkSelection);
+  };
+  const handleCloseButton = () => {
     onClose?.();
-    viewModel.reset();
+    navigationStepManager.reset();
+    resetState();
   };
 
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpen}
-      onClose={onCloseButtonPress}
-      hasBackButton={viewModel.hasBackButton}
-      onBack={onBackButtonPress}
+      onClose={handleCloseButton}
+      hasBackButton={navigationStepManager.hasBackButton}
+      onBack={handleBackButton}
+      containerStyle={{
+        maxHeight: "90%",
+      }}
     >
       {/* TODO: Drawer Transitions & animations will be implemented here. */}
-      <ModularDrawerFlowManager {...viewModel} />
+      <ModularDrawerFlowManager
+        navigationStepViewModel={navigationStepManager}
+        assetsViewModel={{
+          assetsToDisplay,
+          onAssetSelected,
+        }}
+        networksViewModel={{
+          onNetworkSelected,
+          networksToDisplay,
+        }}
+        isReadyToBeDisplayed={isReadyToBeDisplayed}
+      />
     </QueuedDrawer>
   );
 }
