@@ -9,6 +9,7 @@ export const defaultFeatureFlags: OptionalFeatureMap = {
       live_app: true,
       receive_flow: true,
       send_flow: true,
+      enableModularization: false,
     },
   },
 };
