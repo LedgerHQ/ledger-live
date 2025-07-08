@@ -182,7 +182,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        if (staking === false) {
+        if (!staking) {
           await app.earnDashboard.verifyRewardsPotentials();
           await app.earnDashboard.verifyYourEligibleAssets(account.accountName);
           await app.earnDashboard.verifyEligibleAssets(account);
