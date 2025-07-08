@@ -290,11 +290,23 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
+    "DisconnectError" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
     "DeviceDisconnectedWhileSendingError" : {
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+    },
+    "ReconnectionFailedError" : {
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
     },
@@ -2341,11 +2353,11 @@
       "selectionRestore" : {
         "title" : "استعادة الوصول إلى أصولك",
         "desc" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover.",
-        "descWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Charon."
+        "descWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Recovery Key."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف الوصف",
+        "title" : "Ledger Recovery Key",
+        "desc" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
         "cta" : "معرفة المزيد أو الشراء",
         "continueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
       },
@@ -2357,8 +2369,8 @@
           "description" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "الوصف الوصف الوصف الوصف الوصف."
+          "title" : "Ledger Recovery Key",
+          "description" : "استخدم Recovery Key الخاص بك لاستعادة الوصول إلى أصولك."
         },
         "ledgerRecover" : {
           "title" : "اشتراك Ledger Recover",
@@ -2371,7 +2383,7 @@
         "continueOnDevice" : "حدد الخيار ذي الصلة على جهازك {{productName}}."
       },
       "restoreLedgerCharon" : {
-        "title" : "الاستعادة باستخدام Ledger Charon",
+        "title" : "الاستعادة باستخدام Recovery Key",
         "description" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة لديك.",
         "continueOnDevice" : "اتبع التعليمات على جهازك {{productName}}."
       },
