@@ -324,8 +324,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= StepKey.Seed &&
-      stepKey > StepKey.Seed &&
-      !analyticsSeedingTracked.current
+      stepKey === StepKey.Seed &&
+      !analyticsSeedingTracked.current &&
+      seedPathStatus === "backup_charon"
     ) {
       trackPage(
         `Set up ${productName}: Step 3 Seed Success`,
@@ -343,7 +344,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [productName, stepKey]);
+  }, [productName, seedPathStatus, stepKey]);
 
   useEffect(() => {
     if (lockedDevice) {
