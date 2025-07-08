@@ -30,7 +30,7 @@ export default class AccountPage {
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
   subAccountId = (account: Account) =>
-    `js:2:${account.currency.id}:${account.parentAccount!.address}:${account.currency.id}Sub+${account.address}`;
+    `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Open accounts list via deeplink")
@@ -104,12 +104,6 @@ export default class AccountPage {
     );
   }
 
-  @Step("Scroll to a Specific SubAccount Row")
-  async scrollToSubAccount(subAccountId: string) {
-    await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(subAccountId, this.accountScreenScrollView, 500, "bottom");
-  }
-
   @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
     await detoxExpect(this.accountGraph(accountId)).toBeVisible();
@@ -152,10 +146,10 @@ export default class AccountPage {
   @Step("Navigate to token in account")
   async navigateToTokenInAccount(subAccount: Account) {
     const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
-    await this.scrollToSubAccount(subAccountId);
+    await scrollToId(subAccountId, this.accountScreenScrollView, 100, "up");
     await waitForElementById(subAccountId);
     await tapById(subAccountId);
-    await waitForElementById(this.accountGraphId(this.subAccountId(subAccount)));
+    await detoxExpect(getElementByText(subAccount.currency.name)).toBeVisible();
   }
 
   @Step("Scroll to history and click on last operation")
