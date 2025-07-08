@@ -23,7 +23,11 @@ export function runAddAccountTest(
       await app.receive.selectCurrency(currency.id);
       await app.receive.selectNetworkIfAsked(currency.id);
 
-      const accountId = await app.addAccount.addAccountAtIndex(currency.name, currency.id, 0);
+      const accountId = await app.addAccount.addAccountAtIndex(
+        `${currency.name} 1`,
+        currency.id,
+        0,
+      );
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.name);
