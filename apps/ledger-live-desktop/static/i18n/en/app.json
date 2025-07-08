@@ -6659,6 +6659,13 @@
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
     "account": {
+      "header": {
+        "actions": {
+          "stake": {
+            "alreadyDelegatedTooltip": "Your entire balance is already delegated"
+          }
+        }
+      },
       "balanceFooter": {
         "delegated": {
           "tooltip": "When staking on Hedera, your full balance is delegated and remains liquid"

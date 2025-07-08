@@ -11,6 +11,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useStake } from "LLD/hooks/useStake";
 import type { HederaFamily } from "./types";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -56,8 +57,17 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
+  const { getCanStakeCurrency } = useStake();
 
-  if (account.type !== "Account" || !account.hederaResources) return null;
+  if (account.type !== "Account" || !account.hederaResources) {
+    return null;
+  }
+
+  const isStakingEnabled = getCanStakeCurrency(account.currency.id);
+
+  if (!isStakingEnabled) {
+    return null;
+  }
 
   const formatConfig = {
     alwaysShowSign: false,
