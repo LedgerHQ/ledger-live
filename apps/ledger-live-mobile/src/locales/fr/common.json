@@ -290,11 +290,23 @@
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
+    "DisconnectError" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
     "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
+    "ReconnectionFailedError" : {
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
@@ -2341,11 +2353,11 @@
       "selectionRestore" : {
         "title" : "Restaurer l’accès à vos actifs",
         "desc" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète ou Ledger Recover.",
-        "descWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Charon."
+        "descWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Recovery Key."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Créez une nouvelle sauvegarde sur une carte protégée par un code PIN et dotée d’une puce Secure Element. Vous pourrez récupérer l’accès à vos actifs en un clin d’œil.",
         "cta" : "En savoir plus ou acheter",
         "continueOnDevice" : "Suivez les instructions sur votre {{productName}}"
       },
@@ -2357,8 +2369,8 @@
           "description" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Utilisez votre Ledger Recovery Key pour restaurer l’accès à vos actifs."
         },
         "ledgerRecover" : {
           "title" : "Abonnement Ledger Recover",
@@ -2371,7 +2383,7 @@
         "continueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}."
       },
       "restoreLedgerCharon" : {
-        "title" : "Restaurer avec Ledger Charon",
+        "title" : "Restaurer avec une Recovery Key",
         "description" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
         "continueOnDevice" : "Suivez les instructions affichées sur votre {{productName}}."
       },
