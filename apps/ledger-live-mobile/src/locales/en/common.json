@@ -7511,5 +7511,83 @@
     "title": "Ledger Live Update Required",
     "description": "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
     "openStore": "Update"
+  },
+  "swapErrors": {
+    "incorrectCommandData": {
+      "title": "Incorrect command data",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "deserializationFailed": {
+      "title": "Payload deserialization failed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongTransactionId": {
+      "title": "Wrong transaction ID",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidAddress": {
+      "title": "Invalid address",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to the connected device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description": "This sending account does not belong to the connected device. Please change and retry."
+    },
+    "userRefused": {
+      "title": "Operation denied on device",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "internalError": {
+      "title": "Internal error",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP1": {
+      "title": "Wrong P1",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP2": {
+      "title": "Wrong P2",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP2Extension": {
+      "title": "Wrong P2 extension",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidP2Extension": {
+      "title": "Something went wrong",
+      "description": "Invalid P2 extension"
+    },
+    "unexpectedInstruction": {
+      "title": "Something went wrong",
+      "description": "Unexpected instruction"
+    },
+    "classNotSupported": {
+      "title": "Something went wrong", 
+      "description": "Class not supported"
+    },
+    "invalidInstruction": {
+      "title": "Invalid instruction",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "malformedApdu": {
+      "title": "APDU header malformed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidDataLength": {
+      "title": "Invalid data length",
+      "description": "This command does not accept data of that length"
+    },
+    "signatureVerificationFail": {
+      "title": "Signature verification failed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "default": {
+      "title": "Something went wrong",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    }
   }
 }

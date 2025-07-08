@@ -52,6 +52,7 @@ import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNa
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
+import { SwapCustomErrorNavigatorParamList } from "./SwapCustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
@@ -249,6 +250,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
   [NavigatorName.CustomError]: NavigatorScreenParams<CustomErrorNavigatorParamList>;
+  [NavigatorName.SwapCustomError]: NavigatorScreenParams<SwapCustomErrorNavigatorParamList>;
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;
   [NavigatorName.PolkadotNominateFlow]: NavigatorScreenParams<PolkadotNominateFlowParamList>;
