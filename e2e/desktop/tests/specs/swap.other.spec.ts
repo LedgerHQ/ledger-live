@@ -954,7 +954,7 @@ test.describe("Swap history", () => {
   );
 });
 
-test.describe.only("Swap - Block blacklisted addresses", () => {
+test.describe("Swap - Block blacklisted addresses", () => {
   setupEnv(true);
 
   const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
