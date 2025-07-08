@@ -1,5 +1,22 @@
 # @ledgerhq/coin-evm
 
+## 2.23.0-next.0
+
+### Minor Changes
+
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
+
+- [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
+
+- [#10797](https://github.com/LedgerHQ/ledger-live/pull/10797) [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-evm): move files to meet architecture
+
+### Patch Changes
+
+- Updated dependencies [[`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542)]:
+  - @ledgerhq/coin-framework@5.6.0-next.0
+  - @ledgerhq/domain-service@1.2.36-next.0
+  - @ledgerhq/evm-tools@1.7.0
+
 ## 2.22.6
 
 ### Patch Changes

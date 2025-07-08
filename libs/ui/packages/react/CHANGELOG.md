@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
+
 ## 0.32.0
 
 ### Minor Changes
