@@ -12,7 +12,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
-import { broadcast, lastBlock } from "../logic/";
+import { broadcast, combine, lastBlock } from "../logic/";
 import { EvmAsset } from "../types";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
@@ -22,9 +22,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
   return {
     broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
       broadcast(currency, { signature: tx, broadcastConfig }),
-    combine: (_tx: string, _signature: string, _pubkey?: string): string | Promise<string> => {
-      throw new Error("UnsupportedMethod");
-    },
+    combine,
     craftTransaction: (
       _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
       _customFees?: bigint,
