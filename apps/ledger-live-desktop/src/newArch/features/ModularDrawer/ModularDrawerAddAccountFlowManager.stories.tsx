@@ -7,13 +7,12 @@ import { bitcoinCurrency } from "./__mocks__/useSelectAssetFlow.mock";
 import { Provider } from "react-redux";
 import { legacy_createStore as createStore } from "redux";
 import { triggerComplete, triggerNext } from "./__mocks__/bridge.mock";
-import { BTC_ACCOUNT } from "./__mocks__/accounts.mock";
+import { accountsSelector, BTC_ACCOUNT } from "./__mocks__/accounts.mock";
 import { Account } from "@ledgerhq/types-live";
-
-let accountsStore: Account[] = [];
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const store = createStore(() => ({
-  accounts: accountsStore,
+  accounts: [],
 }));
 
 const ScanControls = () => {
@@ -24,6 +23,7 @@ const ScanControls = () => {
     const newAccount = {
       ...BTC_ACCOUNT,
       id: accounts.length + 1 + BTC_ACCOUNT.id.slice(1),
+      freshAddress: `id${accounts.length + 1}-${BTC_ACCOUNT.freshAddress.slice(4)}`,
     };
     setAccounts([...accounts, newAccount]);
 
@@ -33,7 +33,7 @@ const ScanControls = () => {
   const handleComplete = () => {
     setScanComplete(true);
     triggerComplete();
-    accountsStore = accounts;
+    accountsSelector.mockImplementation(() => accounts);
   };
 
   return (
@@ -92,6 +92,7 @@ const meta: Meta<ModularDrawerAddAccountFlowManagerProps> = {
               position: "relative",
               width: "450px",
               height: "80vh",
+              paddingTop: "50px",
             }}
           >
             <Provider store={store}>
@@ -105,5 +106,59 @@ const meta: Meta<ModularDrawerAddAccountFlowManagerProps> = {
 };
 
 export default meta;
+
+export const testAddSingleAccountFlow: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByText("Trigger device connected and unlocked"));
+    expect(
+      canvas.getByText("Looking for any existing accounts on the Blockchain..."),
+    ).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText("Add Account #1"));
+    await userEvent.click(canvas.getByText("Finish Scan"));
+
+    expect(canvas.getByText("We found 1 account")).toBeInTheDocument();
+    await userEvent.click(canvas.getByText("Confirm"));
+
+    expect(canvas.getByText("Account added to your portfolio")).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText("Add funds to my account"));
+    expect(canvas.getByText("Receive")).toBeInTheDocument();
+  },
+};
+
+export const testAddMultipleAccountsFlow: StoryObj = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const waitForAnimationExit = (text: RegExp) =>
+      waitFor(() => {
+        const [el] = canvas.queryAllByText(text);
+        if (canvas.queryAllByText(text).length !== 1) throw new Error();
+        return el;
+      });
+
+    await userEvent.click(canvas.getByText("Trigger device connected and unlocked"));
+    expect(
+      canvas.getByText("Looking for any existing accounts on the Blockchain..."),
+    ).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText("Add Account #1"));
+    await userEvent.click(canvas.getByText("Add Account #2"));
+    await userEvent.click(canvas.getByText("Finish Scan"));
+
+    expect(canvas.getByText("We found 2 accounts")).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText("Confirm"));
+    expect(canvas.getByText("2 Accounts added to your portfolio")).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText("Add funds to my account"));
+    await waitForAnimationExit(/id1-/);
+    await userEvent.click(canvas.getByText(/id1-/));
+    expect(canvas.getByText("Receive")).toBeInTheDocument();
+  },
+};
 
 export const ModularDrawerAddAccountFlow: StoryObj<ModularDrawerAddAccountFlowManagerProps> = {};
