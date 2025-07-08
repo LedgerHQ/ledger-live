@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, View } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Text from "../../../components/Text";
 import { CryptoIcon } from "../CryptoIcon/CryptoIcon";
@@ -17,7 +17,7 @@ type AssetItemProps = AssetType & {
   onClick: (asset: AssetType) => void;
 };
 
-const Wrapper = styled(TouchableOpacity)`
+const Wrapper = styled(Pressable)`
   flex-direction: row;
   align-items: center;
   overflow: hidden;
@@ -47,7 +47,8 @@ export const AssetItem = ({
   rightElement,
 }: AssetItemProps) => {
   const theme = useTheme();
-  const tokens = useTokens(theme.colors.type as "dark" | "light", [
+  const colorType = theme.colors.type === "dark" ? "dark" : "light";
+  const tokens = useTokens(colorType, [
     "spacing-xxs",
     "margin-s",
     "radius-s",
@@ -59,24 +60,24 @@ export const AssetItem = ({
   return (
     <Wrapper
       onPress={() => onClick({ name, ticker, id })}
-      activeOpacity={0.7}
-      style={{
-        padding: tokens["spacing-xxs"] as number,
-        borderRadius: tokens["radius-s"] as number,
-        backgroundColor: tokens["colors-surface-transparent-default"] as string,
-      }}
+      style={({ pressed }) => ({
+        padding: Number(tokens["spacing-xxs"]),
+        borderRadius: Number(tokens["radius-s"]),
+        backgroundColor: String(tokens["colors-surface-transparent-default"]),
+        opacity: pressed ? 0.7 : 1,
+      })}
     >
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper
         style={{
-          marginLeft: tokens["margin-s"] as number,
+          marginLeft: Number(tokens["margin-s"]),
         }}
       >
         <Text
           fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"
-          color={tokens["colors-content-default-default"] as string}
+          color={String(tokens["colors-content-default-default"])}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
@@ -88,7 +89,7 @@ export const AssetItem = ({
             lineHeight="16px"
             variant="bodyLineHeight"
             fontWeight="medium"
-            color={tokens["colors-content-subdued-default-default"] as string}
+            color={String(tokens["colors-content-subdued-default-default"])}
           >
             {ticker}
           </Text>

@@ -15,7 +15,7 @@ export const AssetList = ({
   scrollToTop?: boolean;
   hasNextPage?: boolean;
 }) => {
-  const flatListRef = useRef<FlashList<AssetType>>(null);
+  const flashListRef = useRef<FlashList<AssetType>>(null);
 
   const renderAssetItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={onClick} />,
@@ -25,8 +25,8 @@ export const AssetList = ({
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
   useEffect(() => {
-    if (scrollToTop && flatListRef.current) {
-      flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+    if (scrollToTop && flashListRef.current) {
+      flashListRef.current.scrollToOffset({ offset: 0, animated: true });
     }
   }, [scrollToTop]);
 
@@ -36,8 +36,8 @@ export const AssetList = ({
     }
   }, [hasNextPage, onVisibleItemsScrollEnd]);
 
-  const flatListProps = {
-    ref: flatListRef,
+  const flashListProps = {
+    ref: flashListRef,
     data: assets,
     renderItem: renderAssetItem,
     keyExtractor,
@@ -49,5 +49,5 @@ export const AssetList = ({
     }),
   };
 
-  return <FlashList {...flatListProps} />;
+  return <FlashList {...flashListProps} />;
 };
