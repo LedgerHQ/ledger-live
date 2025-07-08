@@ -66,6 +66,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           isLast
           title={t("hedera.info.claimable.title")}
+          onPress={onPressInfoCreator("claimable")}
           value={<CurrencyUnitValue unit={unit} value={claimableRewards} disableRounding />}
         />
       )}
@@ -97,6 +98,11 @@ function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
         description: t("hedera.info.delegated.description"),
       },
     ],
-    claimable: [],
+    claimable: [
+      {
+        title: t("hedera.info.claimable.title"),
+        description: t("hedera.info.claimable.description"),
+      },
+    ],
   };
 }

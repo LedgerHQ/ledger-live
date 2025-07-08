@@ -6819,7 +6819,8 @@
         "description": "When staking on Hedera, your full balance is delegated and remains liquid"
       },
       "claimable": {
-        "title": "Claimable rewards"
+        "title": "Claimable rewards",
+        "description": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
       }
     }
   },
