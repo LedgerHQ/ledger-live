@@ -9,8 +9,8 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
-  let opType = op.type as OperationType;
-  let value = new BigNumber(op.value.toString());
+  const opType = op.type as OperationType;
+  // let value = op.value;
 
   const extra: {
     assetCode?: string;
@@ -39,7 +39,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value,
+    value: new BigNumber(op.value.toString()),
     fee: new BigNumber(op.tx.fees.toString()),
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
@@ -53,15 +53,40 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   return res;
 }
 
+/**
+ * Converts a transaction object into a `TransactionIntent` object, which is used to represent
+ * the intent of a transaction in a standardized format.
+ *
+ * @template MemoType - The type of memo supported by the transaction, defaults to `MemoNotSupported`.
+ *
+ * @param account - The account initiating the transaction. Contains details such as the sender's address.
+ * @param transaction - The transaction object containing details about the operation to be performed.
+ *   - `assetIssuer` (optional): The issuer of the asset, if applicable.
+ *   - `assetCode` (optional): The code of the asset, if applicable.
+ *   - `mode` (optional): The mode of the transaction, e.g., "changetrust" or "send".
+ *   - `fees` (optional): The fees associated with the transaction.
+ *   - `memoType` (optional): The type of memo to attach to the transaction.
+ *   - `memoValue` (optional): The value of the memo to attach to the transaction.
+ *
+ * @returns A `TransactionIntent` object containing the standardized representation of the transaction.
+ *   - Includes details such as type, sender, recipient, amount, fees, asset, and an optional memo.
+ *   - If `assetCode` and `assetIssuer` are provided, the asset is represented as a token.
+ *   - If `memoType` and `memoValue` are provided, a memo is included; otherwise, a default memo of type "NO_MEMO" is added.
+ *
+ * @throws An error if the transaction mode is unsupported.
+ */
 export function transactionToIntent(
   account: Account,
   transaction: TransactionCommon & {
     assetIssuer?: string;
     assetCode?: string;
     mode?: string;
-    fees?: BigNumber | null | undefined;
+    fees?: bigint | null | undefined;
+    memoType?: string;
+    memoValue?: string;
+    useAllAmount?: boolean;
   },
-): TransactionIntent<any> {
+): TransactionIntent<any> & { memo?: { type: string; value?: string } } {
   // NOTE: why Payment here and not PAYMENT like in getTransactionStatus
   let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
   if (transaction.mode) {
@@ -77,13 +102,14 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-  const res: TransactionIntent = {
+  const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
     fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
     asset: { type: "native" },
+    useAllAmount: !!transaction.useAllAmount,
   };
   if (transaction.assetCode && transaction.assetIssuer) {
     res.asset = {
@@ -91,6 +117,14 @@ export function transactionToIntent(
       assetReference: transaction.assetCode,
       assetOwner: transaction.assetIssuer,
     };
+  }
+  if (transaction.memoType && transaction.memoValue) {
+    res.memo = {
+      type: transaction.memoType,
+      value: transaction.memoValue,
+    };
+  } else {
+    res.memo = { type: "NO_MEMO" };
   }
   return res;
 }
@@ -101,7 +135,7 @@ export const buildOptimisticOperation = (
   sequenceNumber?: number,
 ): Operation => {
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
-  const fees = transaction["fees"] ?? BigNumber(0);
+  const fees = transaction["fees"] ?? 0n;
 
   const { subAccountId } = transaction;
   const { subAccounts } = account;
@@ -111,7 +145,7 @@ export const buildOptimisticOperation = (
     hash: "",
     type: type,
     value: subAccountId ? fees : transaction.amount, // match old behavior
-    fee: transaction["fees"] ?? BigNumber(0),
+    fee: transaction["fees"] ?? 0n,
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

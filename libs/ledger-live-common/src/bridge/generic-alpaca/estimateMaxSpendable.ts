@@ -4,6 +4,7 @@ import { getAlpacaApi } from "./alpaca";
 import { createTransaction } from "./createTransaction";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
+// import { tr } from "date-fns/locale";
 
 export function genericEstimateMaxSpendable(
   network,
@@ -23,29 +24,30 @@ export function genericEstimateMaxSpendable(
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(mainAccount, draftTransaction),
     );
-    const { freshAddress, balance, currency, pendingOperations, spendableBalance, subAccounts } =
-      account;
+    // const { freshAddress, balance, currency, pendingOperations, spendableBalance, subAccounts } =
+    //   account;
     // FIXME: hardcoding type here
     const { amount } = await getAlpacaApi(network, kind).validateIntent(
-      {
-        currencyName: currency.name,
-        address: freshAddress,
-        balance: BigInt(balance.toString()),
-        currencyUnit: currency.units[0],
-        pendingOperations: pendingOperations.length,
-        spendableBalance: BigInt(spendableBalance.toString()),
-        subAccount: subAccounts
-          ? subAccounts.find(t => t.id === transaction.subAccountId)
-          : undefined,
-      },
-      {
-        type: "PAYMENT",
-        recipient: draftTransaction.recipient,
-        amount: BigInt(draftTransaction.amount?.toString() ?? "0"),
-        fee: BigInt(draftTransaction["fees"]?.toString() ?? "0"),
-        useAllAmount: !!draftTransaction.useAllAmount,
-        subAccountId: transaction?.subAccountId || "",
-      },
+      transactionToIntent(account, { ...draftTransaction }),
+      // {
+      //   currencyName: currency.name,
+      //   address: freshAddress,
+      //   balance: BigInt(balance.toString()),
+      //   currencyUnit: currency.units[0],
+      //   pendingOperations: pendingOperations.length,
+      //   spendableBalance: BigInt(spendableBalance.toString()),
+      //   subAccount: subAccounts
+      //     ? subAccounts.find(t => t.id === transaction.subAccountId)
+      //     : undefined,
+      // },
+      // {
+      //   type: "PAYMENT",
+      //   recipient: draftTransaction.recipient,
+      //   amount: BigInt(draftTransaction.amount?.toString() ?? "0"),
+      //   fee: BigInt(draftTransaction["fees"]?.toString() ?? "0"),
+      //   useAllAmount: !!draftTransaction.useAllAmount,
+      //   subAccountId: transaction?.subAccountId || "",
+      // },
     );
     if (network === "stellar") {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);

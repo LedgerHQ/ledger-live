@@ -1,21 +1,20 @@
 import type {
-  Account,
+  // Account,
   Balance,
   BlockInfo,
   Operation,
   FeeEstimation,
   Pagination,
   TransactionIntent,
-  Transaction,
+  // Transaction,
   TransactionValidation,
-  AccountInfo,
+  // AccountInfo,
   Api,
-  Asset,
-  TokenInfoCommon,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp<T extends Asset<TokenInfoCommon>>(backendOp: Operation<T>): Operation<T> {
+function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 
@@ -84,10 +83,7 @@ const buildEstimateFees = networkFamily =>
   };
 
 const buildValidateIntent = networkFamily =>
-  async function validateIntent(
-    account: Account,
-    transaction: Transaction,
-  ): Promise<TransactionValidation> {
+  async function validateIntent(transaction: TransactionIntent): Promise<TransactionValidation> {
     const { data } = await network<
       {
         errors: Record<string, Error>;
@@ -102,7 +98,6 @@ const buildValidateIntent = networkFamily =>
       url: `${ALPACA_URL}/${networkFamily}/transaction/validate`,
       data: {
         transaction,
-        account,
       },
     });
     return data;
@@ -119,13 +114,14 @@ const buildGetBalance = (networkFamily: string) =>
       {
         value: BigInt(data.value),
         asset: data.asset,
+        spendableBalance: BigInt(data.spendableBalance),
       },
     ];
   };
 
-const buildGetAccountInfo = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<AccountInfo> {
-    const { data } = await network<AccountInfo, unknown>({
+const buildGetSequence = (networkFamily: string) =>
+  async function getSequence(address: string): Promise<number> {
+    const { data } = await network<number, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
     });
@@ -188,6 +184,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     // getSpendableBalance(address) {
     //
     // },
+    getSequence: buildGetSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),

@@ -5,8 +5,14 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurr
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 export async function getBalance(addr: string): Promise<Balance[]> {
-  const { balance, assets } = await fetchAccount(addr);
-  const nativeRes = [{ value: BigInt(balance.toString()), asset: { type: "native" as const } }];
+  const { balance, assets, spendableBalance } = await fetchAccount(addr);
+  const nativeRes = [
+    {
+      value: BigInt(balance.toString()),
+      asset: { type: "native" as const },
+      spendableBalance: BigInt(spendableBalance.toString()),
+    },
+  ];
   if (assets && assets.length > 0) {
     const assetBalances = assets
       .filter(asset => findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`))
@@ -20,6 +26,7 @@ export async function getBalance(addr: string): Promise<Balance[]> {
             assetCode: asset.asset_code,
             assetIssuer: asset.asset_issuer,
           },
+          spendableBalance: BigInt(spendableBalance.toString()),
         };
       });
     return [...nativeRes, ...assetBalances];
