@@ -290,11 +290,23 @@
       "title" : "设备已断开",
       "description" : "Ledger Live 无法连接到您的设备。请重试。"
     },
+    "DisconnectError" : {
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+    },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "设备已断开",
       "description" : "Ledger Live 无法连接到您的设备。请重试。"
     },
     "DeviceDisconnectedWhileSendingError" : {
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+    },
+    "ReconnectionFailedError" : {
       "title" : "设备已断开",
       "description" : "Ledger Live 无法连接到您的设备。请重试。"
     },
@@ -2340,12 +2352,12 @@
       },
       "selectionRestore" : {
         "title" : "恢复对您资产的访问权限",
-        "desc" : "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
-        "descWithCharon" : "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Charon."
+        "desc" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "descWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。"
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key 恢复钥匙",
+        "desc" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
         "cta" : "了解详情或购买",
         "continueOnDevice" : "按照 {{productName}} 上的说明进行操作"
       },
@@ -2357,8 +2369,8 @@
           "description" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。"
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key 恢复钥匙",
+          "description" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。"
         },
         "ledgerRecover" : {
           "title" : "Ledger Recover 订阅",
@@ -2371,7 +2383,7 @@
         "continueOnDevice" : "在 {{productName}} 上选择相应选项。"
       },
       "restoreLedgerCharon" : {
-        "title" : "Restore using Ledger Charon",
+        "title" : "使用 Recovery Key 进行恢复",
         "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
         "continueOnDevice" : "按照 {{productName}} 上的说明进行操作。"
       },
@@ -7503,7 +7515,7 @@
   },
   "versionBlocking" : {
     "title" : "需要更新 Ledger Live",
-    "description" : "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
+    "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
     "openStore" : "更新"
   }
 }
