@@ -2608,7 +2608,8 @@
       "WITHDRAW": "Withdrawn",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
-      "WITHDRAW_UNSTAKED": "Withdrawn"
+      "WITHDRAW_UNSTAKED": "Withdrawn",
+      "UPDATE_ACCOUNT": "Updated account"
     }
   },
   "operationDetails": {
