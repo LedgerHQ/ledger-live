@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 5.6.0-nightly.0
+
+### Minor Changes
+
+- [#10792](https://github.com/LedgerHQ/ledger-live/pull/10792) [`c91510b`](https://github.com/LedgerHQ/ledger-live/commit/c91510b67fa598f7fbe7b4495415c737171ae41a) Thanks [@Canestin](https://github.com/Canestin)! - fix: Error handling when trying to stake XTZ with a low amount
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32)]:
+  - @ledgerhq/types-live@6.77.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.1-nightly.0
+
 ## 5.5.0
 
 ### Minor Changes

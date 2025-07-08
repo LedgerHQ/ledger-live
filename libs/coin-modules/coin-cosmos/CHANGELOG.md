@@ -1,5 +1,13 @@
 # @ledgerhq/coin-cosmos
 
+## 0.16.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32)]:
+  - @ledgerhq/types-live@6.77.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.1-nightly.0
+
 ## 0.16.1
 
 ### Patch Changes

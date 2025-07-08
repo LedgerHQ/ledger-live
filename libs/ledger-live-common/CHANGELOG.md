@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.41.0-nightly.0
+
+### Minor Changes
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10842](https://github.com/LedgerHQ/ledger-live/pull/10842) [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Charon onboarding status parser should ignore update status
+
+### Patch Changes
+
+- Updated dependencies [[`c91510b`](https://github.com/LedgerHQ/ledger-live/commit/c91510b67fa598f7fbe7b4495415c737171ae41a)]:
+  - @ledgerhq/coin-tezos@5.6.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.13-nightly.0
+  - @ledgerhq/coin-aptos@2.5.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.4-nightly.0
+  - @ledgerhq/coin-cardano@0.8.13-nightly.0
+  - @ledgerhq/coin-casper@2.0.4-nightly.0
+  - @ledgerhq/coin-celo@1.1.11-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.0
+  - @ledgerhq/coin-evm@2.22.7-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.0
+  - @ledgerhq/coin-hedera@1.8.2-nightly.0
+  - @ledgerhq/coin-icon@0.10.13-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.13-nightly.0
+  - @ledgerhq/coin-mina@1.1.12-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.0
+  - @ledgerhq/coin-near@0.11.13-nightly.0
+  - @ledgerhq/coin-polkadot@6.3.1-nightly.0
+  - @ledgerhq/coin-solana@0.27.2-nightly.0
+  - @ledgerhq/coin-stacks@0.8.13-nightly.0
+  - @ledgerhq/coin-stellar@5.3.1-nightly.0
+  - @ledgerhq/coin-sui@0.6.1-nightly.0
+  - @ledgerhq/coin-ton@0.13.2-nightly.0
+  - @ledgerhq/coin-tron@4.4.1-nightly.0
+  - @ledgerhq/coin-vechain@2.7.13-nightly.0
+  - @ledgerhq/coin-xrp@6.3.1-nightly.0
+  - @ledgerhq/device-core@0.5.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.11-nightly.0
+  - @ledgerhq/live-countervalues@0.5.13-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.0
+  - @ledgerhq/live-nft@0.8.13-nightly.0
+  - @ledgerhq/live-signer-evm@0.5.6-nightly.0
+  - @ledgerhq/live-signer-solana@0.4.1-nightly.0
+  - @ledgerhq/live-wallet@0.11.4-nightly.0
+  - @ledgerhq/hw-app-celo@6.33.9-nightly.0
+
 ## 34.40.0
 
 ### Minor Changes

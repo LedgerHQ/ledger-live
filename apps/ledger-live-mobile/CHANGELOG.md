@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.86.0-nightly.0
+
+### Minor Changes
+
+- [#10840](https://github.com/LedgerHQ/ledger-live/pull/10840) [`93377f9`](https://github.com/LedgerHQ/ledger-live/commit/93377f9cc0b6d7593ff461ee193899daea13cb8f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD 😈 : Add title step component based on the current step
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784)]:
+  - @ledgerhq/types-live@6.77.0-nightly.0
+  - @ledgerhq/native-ui@0.39.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.0
+  - @ledgerhq/coin-evm@2.22.7-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.0
+  - @ledgerhq/coin-stacks@0.8.13-nightly.0
+  - @ledgerhq/domain-service@1.2.36-nightly.0
+  - @ledgerhq/live-countervalues@0.5.13-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.0
+  - @ledgerhq/live-nft@0.8.13-nightly.0
+  - @ledgerhq/live-nft-react@0.9.13-nightly.0
+  - @ledgerhq/live-wallet@0.11.4-nightly.0
+
 ## 3.85.0
 
 ### Minor Changes

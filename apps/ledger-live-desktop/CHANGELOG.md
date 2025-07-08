@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.121.0-nightly.0
+
+### Minor Changes
+
+- [#10825](https://github.com/LedgerHQ/ledger-live/pull/10825) [`49c5ef8`](https://github.com/LedgerHQ/ledger-live/commit/49c5ef888890270c34426cd30fb260ec52d4401e) Thanks [@Canestin](https://github.com/Canestin)! - Fix: ETH ENS Resolution
+
+- [#10800](https://github.com/LedgerHQ/ledger-live/pull/10800) [`9cbee5f`](https://github.com/LedgerHQ/ledger-live/commit/9cbee5fbdc4614a0ac78379dee9d3899139bfff7) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Removed new from the earn nav item
+
+- [#10809](https://github.com/LedgerHQ/ledger-live/pull/10809) [`365a399`](https://github.com/LedgerHQ/ledger-live/commit/365a39918d92f39ba00262f83bb70f451e7df661) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - integration test for add account
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4)]:
+  - @ledgerhq/types-live@6.77.0-nightly.0
+  - @ledgerhq/live-common@34.41.0-nightly.0
+  - @ledgerhq/coin-framework@5.5.1-nightly.0
+  - @ledgerhq/coin-aptos@2.5.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.16.4-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.0
+  - @ledgerhq/coin-evm@2.22.7-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.0
+  - @ledgerhq/domain-service@1.2.36-nightly.0
+  - @ledgerhq/live-countervalues@0.5.13-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.0
+  - @ledgerhq/live-nft@0.8.13-nightly.0
+  - @ledgerhq/live-nft-react@0.9.13-nightly.0
+  - @ledgerhq/live-wallet@0.11.4-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.0
+
 ## 2.120.0
 
 ### Minor Changes
