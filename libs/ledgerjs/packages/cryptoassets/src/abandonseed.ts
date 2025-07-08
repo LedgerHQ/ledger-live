@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 
-const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
+const EVM_DEAD_ADDRESS = "0x100000000000000000000000000000000000dEaD";
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
