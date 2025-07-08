@@ -290,11 +290,23 @@
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
+    "DisconnectError" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
     "DeviceDisconnectedWhileSendingError" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
+    "ReconnectionFailedError" : {
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
