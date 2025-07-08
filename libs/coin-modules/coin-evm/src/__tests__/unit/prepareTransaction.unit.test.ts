@@ -2,10 +2,10 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { addTokens, convertERC20, getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
+import { prepareForSignOperation, prepareTransaction } from "../../bridge/prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
-import { DEFAULT_NONCE, createTransaction } from "../../createTransaction";
-import * as nodeApi from "../../api/node/rpc.common";
+import { createTransaction } from "../../bridge/createTransaction";
+import * as nodeApi from "../../network/node/rpc.common";
 import {
   account,
   expectedData,
@@ -14,10 +14,10 @@ import {
   tokenTransaction,
   transaction,
 } from "../fixtures/prepareTransaction.fixtures";
-import { getEstimatedFees } from "../../logic";
 import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "../../types";
-import * as nftAPI from "../../api/nft";
+import * as nftAPI from "../../network/nft";
 import { getCoinConfig } from "../../config";
+import { DEFAULT_NONCE, getEstimatedFees } from "../../utils";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);

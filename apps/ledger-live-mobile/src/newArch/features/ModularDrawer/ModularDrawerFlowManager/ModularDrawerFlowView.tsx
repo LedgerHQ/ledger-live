@@ -1,24 +1,46 @@
 import React from "react";
-import { View, Button } from "react-native";
-import { useModularDrawerFlowStepManager } from "../hooks/useModularDrawerFlowStepManager";
-import { Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { ModularDrawerStep } from "../types";
+import { Title } from "../components/Title";
+import AssetSelection from "../screens/AssetSelection";
+import NetworkSelection from "../screens/NetworkSelection";
+import { ModularDrawerFlowProps } from ".";
 
-export type ModularDrawerFlowViewModel = ReturnType<typeof useModularDrawerFlowStepManager>;
+export function ModularDrawerFlowView({
+  navigationStepViewModel,
+  assetsViewModel,
+  networksViewModel,
+  isReadyToBeDisplayed,
+}: ModularDrawerFlowProps) {
+  const { currentStep } = navigationStepViewModel;
 
-export function ModularDrawerFlowView({ viewModel }: { viewModel: ModularDrawerFlowViewModel }) {
-  const { currentStep, nextStep, prevStep, reset, isFirstStep, isLastStep, currentStepIndex } =
-    viewModel;
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case ModularDrawerStep.Asset:
+        return <AssetSelection {...assetsViewModel} />;
+      case ModularDrawerStep.Network:
+        return <NetworkSelection {...networksViewModel} />;
+      case ModularDrawerStep.Account:
+        return <Text>{"Account Selection Step Content"}</Text>;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center" }}>
-      <Text
-        style={{ fontSize: 24, marginBottom: 16 }}
-      >{`Step ${currentStepIndex + 1}: ${currentStep}`}</Text>
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        {!isFirstStep && <Button title="Previous" onPress={prevStep} color="#2196F3" />}
-        {!isLastStep && <Button title="Next" onPress={nextStep} color="#4CAF50" />}
-        <Button title="Reset" onPress={reset} color="#F44336" />
-      </View>
-    </View>
+    <Flex flexDirection="column" rowGap={5}>
+      {isReadyToBeDisplayed ? (
+        <>
+          <Title step={currentStep} />
+
+          {renderStepContent()}
+        </>
+      ) : (
+        // TODO: to be replaced with a proper loading component Skeleton
+        <Flex height={50} width="100%" justifyContent="center" alignItems="center">
+          <InfiniteLoader color="primary.c50" size={38} />
+        </Flex>
+      )}
+    </Flex>
   );
 }

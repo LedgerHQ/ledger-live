@@ -10,6 +10,8 @@ export class AccountPage extends AppPage {
   private stakeButton = this.page.getByTestId("stake-button");
   readonly stakeBanner = this.page.getByTestId("account-stake-banner");
   private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
+  private sendButton = this.page.getByTestId("send-button");
+  private receiveButton = this.page.getByTestId("receive-account-action-button");
 
   async navigateToBuy() {
     await this.buyButton.click();
@@ -41,5 +43,15 @@ export class AccountPage extends AppPage {
     await this.settingsButton.click();
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
+  }
+
+  @step("Click Send button")
+  async clickSend() {
+    await this.sendButton.click();
+  }
+
+  @step("Click Receive button")
+  async clickReceive() {
+    await this.receiveButton.click();
   }
 }

@@ -4,7 +4,7 @@ import { expect } from "@playwright/test";
 
 export class ChooseAssetDrawer extends Drawer {
   private searchInputTestId = "select-asset-drawer-search-input";
-  private searchInput = this.page.getByTestId(this.searchInputTestId);
+  private searchInput = this.page.getByTestId(this.searchInputTestId).first();
   private currencyRow = (currencyName: string) =>
     this.page.getByTestId(`currency-row-${currencyName.toLowerCase()}`);
 
@@ -15,7 +15,7 @@ export class ChooseAssetDrawer extends Drawer {
     });
 
     await expect(this.searchInput.first()).toBeVisible();
-    await this.searchInput.first().fill(currency);
+    await this.searchInput.fill(currency);
     await this.currencyRow(currency).first().click();
   }
 

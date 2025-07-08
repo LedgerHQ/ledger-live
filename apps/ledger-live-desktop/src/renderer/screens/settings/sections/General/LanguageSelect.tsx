@@ -55,17 +55,18 @@ const LanguageSelectComponent: React.FC<Props> = ({ disableLanguagePrompt }) => 
 
   const languages = useMemo(
     () =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       [{ value: null as Language | null, label: t(`language.system`) }].concat(
-        (Object.keys(supportedLanguages) as Array<keyof typeof Languages>).map(language => {
-          return {
-            value: language,
-            label: Languages[language].label,
-          };
-        }),
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (Object.keys(supportedLanguages) as Array<keyof typeof Languages>).map(language => ({
+          value: language,
+          label: Languages[language].label,
+        })),
       ),
     [supportedLanguages, t],
   );
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const selectedLanguage = useMemo(
     () => (useSystem ? languages[0] : languages.find(l => l.value === language)),
     [language, languages, useSystem],

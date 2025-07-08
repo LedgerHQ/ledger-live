@@ -11,10 +11,20 @@ import useBridgeTransaction, {
   getGlobalOnBridgeError,
 } from "./useBridgeTransaction";
 import { setSupportedCurrencies } from "../currencies";
+import { LiveConfig } from "@ledgerhq/live-config/lib/LiveConfig";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 
 setSupportedCurrencies(["bitcoin"]);
+
+LiveConfig.setConfig({
+  config_currency_bitcoin: {
+    type: "object",
+    default: {
+      checkSanctionedAddress: false,
+    },
+  },
+});
 
 describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {

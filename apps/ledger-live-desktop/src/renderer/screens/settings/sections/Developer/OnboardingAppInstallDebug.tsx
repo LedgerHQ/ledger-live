@@ -15,6 +15,7 @@ type Step = Steps[number] & { key: number };
 
 const defaultDeviceToRestore: DeviceModelInfo = {
   modelId: DeviceModelId.nanoX,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   deviceInfo: {} as DeviceInfo,
   apps: [
     { name: "Ethereum", version: "" },
@@ -53,11 +54,12 @@ const OnboardingAppInstallDebugScreen = () => {
 
   useEffect(() => {
     if (selectedDeviceToRestoreOption) {
-      setRestore(selectedDeviceToRestoreOption.value !== null);
-      if (selectedDeviceToRestoreOption.value) {
+      const modelId = selectedDeviceToRestoreOption.value;
+      setRestore(modelId !== null);
+      if (modelId) {
         setDeviceToRestore(prev => ({
           ...prev,
-          modelId: selectedDeviceToRestoreOption.value as DeviceModelId,
+          modelId,
         }));
       }
     }

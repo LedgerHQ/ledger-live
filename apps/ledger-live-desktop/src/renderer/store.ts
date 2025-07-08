@@ -8,6 +8,7 @@ const store = new ElectronStore({
 
 export function getStoreValue<T>(key: string, storeId: string): T | undefined {
   const value = store.get(`${storeId}-${key}`);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return isEmpty(value) ? undefined : (value as T);
 }
 

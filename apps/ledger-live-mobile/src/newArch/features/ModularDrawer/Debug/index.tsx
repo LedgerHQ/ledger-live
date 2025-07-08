@@ -3,6 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";
 import { ModularDrawer } from "../ModularDrawer";
 import { ModularDrawerStep } from "../types";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 const steps = [ModularDrawerStep.Asset, ModularDrawerStep.Network, ModularDrawerStep.Account];
 
@@ -16,6 +17,8 @@ function ModularDrawerScreenDebug() {
     setSelectedStep(ModularDrawerStep.Asset);
   };
   const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
+
+  const currencies = listAndFilterCurrencies({ includeTokens: false, currencies: [] });
 
   return (
     <Flex flexDirection="column" rowGap={4} px={6}>
@@ -38,6 +41,7 @@ function ModularDrawerScreenDebug() {
         isOpen={isDrawerOpen}
         onClose={handleDrawerClose}
         selectedStep={selectedStep}
+        currencies={currencies}
       />
     </Flex>
   );

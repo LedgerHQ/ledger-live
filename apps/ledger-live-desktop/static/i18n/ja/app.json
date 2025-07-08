@@ -7086,10 +7086,10 @@
       "newAccount" : "新しいアカウント"
     },
     "fundAccount" : {
-      "receive" : "Receive",
-      "receiveDescription" : "Receive crypto from another wallet",
-      "buy" : "Buy",
-      "buyDescription" : "Buy crypto securely with cash"
+      "receive" : "受け取る",
+      "receiveDescription" : "暗号資産を別のウォレットから受け取る",
+      "buy" : "購入",
+      "buyDescription" : "現金で安全に暗号資産を購入する"
     },
     "scanAccounts" : {
       "cta" : {
@@ -7129,7 +7129,7 @@
       "title_other" : "{{count}}個のアカウントがポートフォリオに追加されました",
       "cta" : {
         "addFunds" : "資金をアカウントに追加する",
-        "selectAccount" : "Continue",
+        "selectAccount" : "続行",
         "close" : "閉じる"
       }
     }
@@ -7145,5 +7145,14 @@
     "title" : "利用不可のロケーション",
     "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
     "learnMore" : "詳細はこちら"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Liveのアップデートが必要です",
+    "errorTitle" : "アップデートに失敗",
+    "errorDescription" : "アップデートに失敗しました。以下のリンクから、Ledger Liveの最新バージョンをダウンロードしてください。 ",
+    "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
+    "restart" : "再起動",
+    "downloadOnLedger" : "Ledger.comでダウンロード",
+    "downloadProgress" : "ダウンロード中...{{ progress }}%"
   }
 }

@@ -31,6 +31,7 @@ export default class SwapPage {
   }
 
   async selectAccount(accountText: string) {
+    await scrollToText(accountText);
     await tapByText(accountText);
   }
 

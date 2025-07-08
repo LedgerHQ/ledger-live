@@ -153,6 +153,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,
@@ -530,7 +531,6 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: { link: null },
   },
-  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {

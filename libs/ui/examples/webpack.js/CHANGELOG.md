@@ -1,5 +1,19 @@
 # webpack.js-example
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f), [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175)]:
+  - @ledgerhq/react-ui@0.32.0
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f), [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175)]:
+  - @ledgerhq/react-ui@0.32.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

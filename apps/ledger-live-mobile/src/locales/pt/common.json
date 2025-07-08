@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "Recupere o acesso a seus ativos",
         "desc" : "Isso permite que você restaure usando seu backup — frase de recuperação secreta ou Ledger Recover.",
-        "descWithCharon" : "Isso permite que você restaure usando seu backup — frase de recuperação secreta, Ledger Recover ou Ledger Charon."
+        "descWithCharon" : "Estas opções permitem que você restaure usando seu backup — frase de recuperação secreta, o Ledger Recover ou o Ledger Recovery Key."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "Descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Crie um novo backup em um cartão protegido por PIN com um chip Elemento Seguro — assim você consegue restaurar o acesso aos seus ativos com apenas alguns toques.",
         "cta" : "Saiba mais ou compre",
         "continueOnDevice" : "Siga as instruções em sua {{productName}}"
       },
@@ -2357,8 +2357,8 @@
           "description" : "Use uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para ter o máximo de segurança."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "Descrição descrição descrição descrição descrição."
+          "title" : "Ledger Recovery Key",
+          "description" : "Use seu Recovery Key para restaurar o acesso a seus ativos."
         },
         "ledgerRecover" : {
           "title" : "Inscrição no Ledger Recover",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "Escolha a opção relevante em sua {{productName}}."
       },
       "restoreLedgerCharon" : {
-        "title" : "Restaurar usando Ledger Charon",
+        "title" : "Restaurar com Recovery Key",
         "description" : "Para restaurar, siga as instruções que aparecem na tela segura da sua Ledger.",
         "continueOnDevice" : "Siga as instruções em sua {{productName}}."
       },
