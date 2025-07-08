@@ -292,7 +292,7 @@ function SendSummary({ navigation, route }: Props) {
             bridgePending ||
             !!transactionError ||
             (!!error && error instanceof NotEnoughGas) ||
-            displayedError
+            !!displayedError
           }
           pending={bridgePending}
         />
