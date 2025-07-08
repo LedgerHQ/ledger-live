@@ -36,43 +36,53 @@ export const genericSignOperation =
         if (!transaction["fees"]) throw new FeeNotLoaded();
 
         if (transaction["useAllAmount"]) {
-          const {
-            freshAddress,
-            balance,
-            currency,
-            pendingOperations,
-            subAccounts,
-            spendableBalance,
-          } = account;
+          // const {
+          //   freshAddress,
+          //   balance,
+          //   currency,
+          //   pendingOperations,
+          //   subAccounts,
+          //   spendableBalance,
+          // } = account;
           // if (subAccounts && transaction?.subAccountId) {
           //   spendableBalance =
           //     subAccounts.find(t => t.id === transaction.subAccountId)?.spendableBalance ||
           //     new BigNumber(0);
           // }
           // FIXME: fix this one also (hardcoded type)
-
+          const draftTransaction = {
+            type: "PAYMENT",
+            recipient: transaction.recipient,
+            amount: transaction.amount ?? 0n,
+            fee: transaction["fees"] ?? 0n,
+            useAllAmount: !!transaction.useAllAmount,
+            assetCode: transaction?.["assetCode"] || "",
+            assetIssuer: transaction?.["assetIssuer"] || "",
+            subAccountId: transaction.subAccountId || "",
+          };
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
-            {
-              currencyName: currency.name,
-              address: freshAddress,
-              balance: BigInt(balance.toString()),
-              currencyUnit: currency.units[0],
-              pendingOperations: pendingOperations.length,
-              spendableBalance: BigInt(spendableBalance.toString()),
-              subAccount: subAccounts
-                ? subAccounts.find(t => t.id === transaction.subAccountId)
-                : undefined,
-            },
-            {
-              type: "PAYMENT",
-              recipient: transaction.recipient,
-              amount: BigInt(transaction.amount?.toString() ?? "0"),
-              fee: BigInt(transaction["fees"]?.toString() ?? "0"),
-              useAllAmount: !!transaction.useAllAmount,
-              assetCode: transaction?.["assetCode"] || "",
-              assetIssuer: transaction?.["assetIssuer"] || "",
-              subAccountId: transaction.subAccountId || "",
-            },
+            transactionToIntent(account, draftTransaction),
+            // {
+            //   currencyName: currency.name,
+            //   address: freshAddress,
+            //   balance: BigInt(balance.toString()),
+            //   currencyUnit: currency.units[0],
+            //   pendingOperations: pendingOperations.length,
+            //   spendableBalance: BigInt(spendableBalance.toString()),
+            //   subAccount: subAccounts
+            //     ? subAccounts.find(t => t.id === transaction.subAccountId)
+            //     : undefined,
+            // },
+            // {
+            //   type: "PAYMENT",
+            //   recipient: transaction.recipient,
+            //   amount: BigInt(transaction.amount?.toString() ?? "0"),
+            //   fee: BigInt(transaction["fees"]?.toString() ?? "0"),
+            //   useAllAmount: !!transaction.useAllAmount,
+            //   assetCode: transaction?.["assetCode"] || "",
+            //   assetIssuer: transaction?.["assetIssuer"] || "",
+            //   subAccountId: transaction.subAccountId || "",
+            // },
           );
           transaction.amount = new BigNumber(amount.toString());
         }

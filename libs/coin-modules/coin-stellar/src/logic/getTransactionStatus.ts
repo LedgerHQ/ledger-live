@@ -38,6 +38,7 @@ import {
 } from "../types";
 import BigNumber from "bignumber.js";
 import { getBalance } from "./getBalance";
+import { fetchAccount, fetchSellingLiabilities } from "../network/horizon";
 
 export const getTransactionStatus = async (
   transactionIntent: TransactionIntent<StellarMemo>,
@@ -62,7 +63,9 @@ export const getTransactionStatus = async (
   // NOTE: recheck this
   // if (!transaction.fee || !transaction.baseReserve) {
   //   errors.fees = new FeeNotLoaded();
-  // }
+  // const sellingLiabilities =
+  //   (await fetchSellingLiabilities(transactionIntent.sender, transactionIntent.asset)) || "0";
+  const { spendableBalance, balance } = await fetchAccount(transactionIntent.sender);
   const networkInfo = await fetchAccountNetworkInfo(transactionIntent.sender);
 
   const estimatedFees = transactionIntent.fees ?? 0n;
@@ -77,12 +80,21 @@ export const getTransactionStatus = async (
   // transaction.assetIssuer &&
   // account?.subAccount;
   const balances = await getBalance(transactionIntent.sender);
-  const nativeBalance = balances.find(b => b.asset.type === "native");
-  if (!nativeBalance) {
-    throw new StellarAssetNotFound(); // FIXME: proper error
-  }
-  const nativeAmountAvailable = nativeBalance.value - (nativeBalance.locked || 0n) - estimatedFees;
-
+  const nativeBalance = BigInt(balance.toString());
+  // if (!nativeBalance) {
+  //   throw new StellarAssetNotFound(); // FIXME: proper error
+  // }
+  const nativeAmountAvailable = BigInt(spendableBalance.toString()) - estimatedFees;
+  // nativeBalance.value -
+  // (nativeBalance.locked || 0n) -
+  // estimatedFees -
+  // BigInt(sellingLiabilities.toString());
+  // if (BigInt(sellingLiabilities.toString()) > 0n) {
+  //   console.log("useAllAmount is true, sellingLiabilities", sellingLiabilities.toString());
+  //   console.log("useAllAmount is true, nativeAmountAvailable", transactionIntent);
+  //   console.log("nativeBalance.value", nativeBalance.value.toString());
+  //   console.log("nativeAmountAvailable", nativeAmountAvailable.toString());
+  // }
   let amount = 0n;
   let maxAmount = 0n;
   let totalSpent = 0n;
@@ -154,7 +166,7 @@ export const getTransactionStatus = async (
 
     // Asset payment
     if (isAssetPayment) {
-      let asset = transactionIntent.asset;
+      const asset = transactionIntent.asset;
       if (asset.type !== "token") throw StellarAssetNotFound;
       // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
       // const asset = findSubAccountById(account, transaction.subAccountId || "");
@@ -201,14 +213,14 @@ export const getTransactionStatus = async (
         errors.amount = new NotEnoughBalance();
       }
 
-      totalSpent = useAllAmount ? nativeAmountAvailable : transactionIntent.amount + estimatedFees;
+      totalSpent = useAllAmount ? nativeAmountAvailable : amount + estimatedFees;
 
       // Need to send at least 1 XLM to create an account
       if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount < 10000000n) {
         errors.amount = destinationNotExistMessage;
       }
 
-      if (totalSpent > nativeBalance.value - baseReserve) {
+      if (totalSpent > nativeBalance - baseReserve) {
         errors.amount = new NotEnoughSpendableBalance(undefined, {
           minimumAmount: 0,
           // FIXME
@@ -224,11 +236,7 @@ export const getTransactionStatus = async (
         });
       }
 
-      if (
-        !errors.recipient &&
-        !errors.amount &&
-        (amount < 0n || totalSpent > nativeBalance.value)
-      ) {
+      if (!errors.recipient && !errors.amount && (amount < 0n || totalSpent > nativeBalance)) {
         errors.amount = new NotEnoughBalance();
         totalSpent = 0n;
         amount = 0n;
@@ -243,10 +251,10 @@ export const getTransactionStatus = async (
   if (await isAccountMultiSign(transactionIntent.sender)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
-
+  // console.log("memo type", transactionIntent);
   if (
-    transactionIntent.memo.type !== "NO_MEMO" &&
-    !isMemoValid(transactionIntent.memo.type, transactionIntent.memo.value)
+    transactionIntent?.memo?.type !== "NO_MEMO" &&
+    !isMemoValid(transactionIntent?.memo?.type, transactionIntent?.memo?.value)
   ) {
     errors.transaction = new StellarWrongMemoFormat();
   }

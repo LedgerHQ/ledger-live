@@ -1,10 +1,10 @@
 import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
-import BigNumber from "bignumber.js";
+// import BigNumber from "bignumber.js";
 
-function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
-  return !a && !b ? true : !a || !b ? false : a.eq(b);
+function bnEq(a: bigint | null | undefined, b: bigint | null | undefined): boolean {
+  return !a && !b ? true : !a || !b ? false : a === b;
 }
 
 export function genericPrepareTransaction(
@@ -14,7 +14,7 @@ export function genericPrepareTransaction(
   return async (
     account,
     transaction: TransactionCommon & {
-      fees: BigNumber | null | undefined;
+      fees: bigint | null | undefined;
       assetCode?: string;
       assetIssuer?: string;
       subAccountId?: string;
@@ -24,14 +24,14 @@ export function genericPrepareTransaction(
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(account, transaction),
     );
-    const bnFee = BigNumber(fees.value.toString());
+    // const bnFee = BigNumber(fees.value.toString());
 
     // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
     // for reference, stellar checked this:
     // transaction.networkInfo !== networkInfo ||
     // transaction.baseReserve !== baseReserve
-    if (!bnEq(transaction.fees, bnFee)) {
-      return { ...transaction, fees: bnFee, assetCode, assetIssuer };
+    if (!bnEq(transaction.fees, fees.value)) {
+      return { ...transaction, fees: fees.value, assetCode, assetIssuer };
     }
 
     return transaction;

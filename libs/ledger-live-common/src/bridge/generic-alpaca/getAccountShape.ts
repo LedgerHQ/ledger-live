@@ -53,8 +53,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const assetsBalance = balanceRes.filter(b => b.asset.type === "token");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
-    const lockedBalance = BigInt(nativeAsset?.locked ?? "0");
-    let spendableBalance = nativeBalance > lockedBalance ? nativeBalance - lockedBalance : 0n;
+    const spendableBalance = BigInt(nativeAsset?.spendableBalance ?? "0");
 
     const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
