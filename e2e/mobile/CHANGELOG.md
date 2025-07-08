@@ -1,5 +1,13 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.2.0
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#10799](https://github.com/LedgerHQ/ledger-live/pull/10799) [`2769bd7`](https://github.com/LedgerHQ/ledger-live/commit/2769bd7afae9b7b4794cb06deb95344e5e674129) Thanks [@buyochini](https://github.com/buyochini)! - remove hardcoded ptxSwapLiveAppMobile feature flag from E2E mobile tests
+
 ## 0.1.0
 
 ### Minor Changes

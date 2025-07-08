@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-MYLedger pluralization issue
+integration test for add account

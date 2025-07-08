@@ -35,7 +35,7 @@ export const ConnectYourDevice = ({
   return (
     <>
       <TrackAddAccountScreen
-        page={ADD_ACCOUNT_PAGE_NAME.DEVICE_CONNEXION}
+        page={ADD_ACCOUNT_PAGE_NAME.DEVICE_CONNECTION}
         source={source}
         flow={ADD_ACCOUNT_FLOW_NAME}
       />

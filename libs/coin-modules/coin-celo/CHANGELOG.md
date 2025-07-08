@@ -1,39 +1,26 @@
 # @ledgerhq/coin-celo
 
-## 1.1.10-nightly.3
+## 1.1.10
 
 ### Patch Changes
 
-- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
-  - @ledgerhq/coin-evm@2.23.0-nightly.3
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0
+  - @ledgerhq/types-live@6.76.0
+  - @ledgerhq/coin-framework@5.5.0
+  - @ledgerhq/coin-evm@2.22.6
+  - @ledgerhq/hw-app-eth@6.45.10
 
-## 1.1.10-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
-  - @ledgerhq/types-live@6.76.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.2
-  - @ledgerhq/coin-evm@2.22.6-nightly.2
-  - @ledgerhq/hw-app-eth@6.45.10-nightly.0
-
-## 1.1.10-nightly.1
+## 1.1.10-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.1
-  - @ledgerhq/coin-framework@5.5.0-nightly.1
-  - @ledgerhq/coin-evm@2.22.6-nightly.1
-
-## 1.1.10-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.0
-  - @ledgerhq/coin-evm@2.22.6-nightly.0
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0-next.0
+  - @ledgerhq/types-live@6.76.0-next.0
+  - @ledgerhq/coin-framework@5.5.0-next.0
+  - @ledgerhq/coin-evm@2.22.6-next.0
+  - @ledgerhq/hw-app-eth@6.45.10-next.0
 
 ## 1.1.9
 

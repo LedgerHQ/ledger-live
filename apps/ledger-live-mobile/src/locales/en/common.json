@@ -7511,5 +7511,10 @@
     "title": "Ledger Live Update Required",
     "description": "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
     "openStore": "Update"
+  },
+  "modularDrawer": {
+    "selectAsset": "Select asset",
+    "selectNetwork": "Select network",
+    "selectAccount": "Select account"
   }
 }

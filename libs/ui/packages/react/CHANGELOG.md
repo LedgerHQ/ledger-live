@@ -1,17 +1,14 @@
 # @ledgerhq/react-ui
 
-## 0.32.0-nightly.1
+## 0.32.0
 
 ### Minor Changes
 
-- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
+- [#10759](https://github.com/LedgerHQ/ledger-live/pull/10759) [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ui quick wins mad add account
 
-### Patch Changes
+- [#10732](https://github.com/LedgerHQ/ledger-live/pull/10732) [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hover effect if there is no onclick params + fix layout issues in the FundScreen
 
-- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
-  - @ledgerhq/crypto-icons-ui@1.16.0-nightly.0
-
-## 0.32.0-nightly.0
+## 0.32.0-next.0
 
 ### Minor Changes
 

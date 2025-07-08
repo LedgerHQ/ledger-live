@@ -1,54 +1,44 @@
 # @ledgerhq/live-cli
 
-## 24.19.3-nightly.4
+## 24.19.3
 
 ### Patch Changes
 
-- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
-  - @ledgerhq/live-common@34.40.0-nightly.4
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
+  - @ledgerhq/cryptoassets@13.21.0
+  - @ledgerhq/live-common@34.40.0
+  - @ledgerhq/coin-framework@5.5.0
+  - @ledgerhq/coin-bitcoin@0.16.3
+  - @ledgerhq/live-countervalues@0.5.12
+  - @ledgerhq/live-wallet@0.11.3
+  - @ledgerhq/device-core@0.5.1
 
-## 24.19.3-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
-  - @ledgerhq/live-common@34.40.0-nightly.3
-  - @ledgerhq/coin-framework@5.5.0-nightly.2
-  - @ledgerhq/coin-bitcoin@0.16.3-nightly.2
-  - @ledgerhq/device-core@0.5.1-nightly.0
-  - @ledgerhq/live-countervalues@0.5.12-nightly.2
-  - @ledgerhq/live-wallet@0.11.3-nightly.2
-
-## 24.19.3-nightly.2
+## 24.19.3-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818)]:
-  - @ledgerhq/live-common@34.40.0-nightly.2
+- Updated dependencies [[`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0)]:
+  - @ledgerhq/live-common@34.40.0-next.2
 
-## 24.19.3-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.1
-  - @ledgerhq/live-common@34.40.0-nightly.1
-  - @ledgerhq/coin-framework@5.5.0-nightly.1
-  - @ledgerhq/coin-bitcoin@0.16.3-nightly.1
-  - @ledgerhq/live-countervalues@0.5.12-nightly.1
-  - @ledgerhq/live-wallet@0.11.3-nightly.1
-
-## 24.19.3-nightly.0
+## 24.19.3-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.0
-  - @ledgerhq/live-common@34.40.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.0
-  - @ledgerhq/coin-bitcoin@0.16.3-nightly.0
-  - @ledgerhq/live-countervalues@0.5.12-nightly.0
-  - @ledgerhq/live-wallet@0.11.3-nightly.0
+- Updated dependencies [[`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4)]:
+  - @ledgerhq/live-common@34.40.0-next.1
+
+## 24.19.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
+  - @ledgerhq/cryptoassets@13.21.0-next.0
+  - @ledgerhq/live-common@34.40.0-next.0
+  - @ledgerhq/coin-framework@5.5.0-next.0
+  - @ledgerhq/coin-bitcoin@0.16.3-next.0
+  - @ledgerhq/live-countervalues@0.5.12-next.0
+  - @ledgerhq/live-wallet@0.11.3-next.0
+  - @ledgerhq/device-core@0.5.1-next.0
 
 ## 24.19.2
 

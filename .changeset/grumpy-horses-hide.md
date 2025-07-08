@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-MAD - fix account name issue
+Removed new from the earn nav item

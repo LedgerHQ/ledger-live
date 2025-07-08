@@ -1260,7 +1260,7 @@
         "titleCompleted" : "Gizli Kurtarma İfadesi onaylandı",
         "recoverSeed" : "Yer tutucu: Recover",
         "restoreSeed" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
-        "restoreCharonTitle" : "Ledger Charon ile hesaplarınızı geri yükleyin",
+        "restoreCharonTitle" : "Recovery Key ile geri yükleyin",
         "restoreCharonDescription" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
         "restoreCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
         "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "Bu işlem yeni bir Gizli Kurtarma İfadesi oluşturur.",
         "selectionRestoreTitle" : "Varlıklarınıza yeniden erişin",
         "selectionRestoreDescription" : "Bu işlem, Gizli Kurtarma İfadesi veya Ledger Recover yedeklemenizi kullanarak hesaplarınızı geri yüklemenize olanak tanır.",
-        "selectionRestoreDescriptionWithCharon" : "Bu işlem, Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Charon yedeklemeniz ile hesaplarınızı geri yüklemenize olanak tanır.",
+        "selectionRestoreDescriptionWithCharon" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key.",
         "selectionContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin",
         "selectionNewSeedTitle" : "Gizli Kurtarma İfadesi",
         "selectionNewSeedSubtitle" : "Onu güvende ve gizli tutun",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin",
         "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesi",
         "restoreChoiceSRPDescription" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Varlıklarınıza yeniden erişebilmek için Recovery Key'inizi kullanın.",
         "restoreChoiceRecoverTitle" : "Ledger Recover aboneliği",
         "restoreChoiceRecoverDescription" : "Varlıklarınıza kimliğinizle yeniden erişebilmek için aboneliğinizi kullanın.",
         "followInstructions" : "{{productName}} cihazınızdaki yönergeleri izleyin.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
         "backupCharonCta" : "Daha fazla bilgi edinin veya satın alın",
         "backupCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
       },
@@ -7085,6 +7085,12 @@
       },
       "newAccount" : "Yeni hesap"
     },
+    "fundAccount" : {
+      "receive" : "Al",
+      "receiveDescription" : "Başka bir cüzdandan kripto alın",
+      "buy" : "Satın al",
+      "buyDescription" : "Nakit karşılığında güvenli bir şekilde kripto satın alın"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "Taramayı durdur"
@@ -7123,6 +7129,7 @@
       "title_other" : "Portföyünüze {{count}} hesap eklendi",
       "cta" : {
         "addFunds" : "Hesabınıza fon ekleyin",
+        "selectAccount" : "Devam",
         "close" : "Kapat"
       }
     }
@@ -7138,5 +7145,14 @@
     "title" : "Konum kullanılamıyor",
     "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live Güncellemesi Gerekli",
+    "errorTitle" : "Güncelleme başarısız",
+    "errorDescription" : "Güncelleme başarısız oldu. Lütfen aşağıdaki bağlantıdan Ledger Live'ın en son sürümünü indirin. ",
+    "description" : "Ledger Live'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
+    "restart" : "Yeniden başlat",
+    "downloadOnLedger" : "Ledger.com'dan indirin",
+    "downloadProgress" : "İndiriliyor... %{{ progress }}"
   }
 }

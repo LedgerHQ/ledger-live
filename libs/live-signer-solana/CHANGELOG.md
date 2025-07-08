@@ -1,20 +1,6 @@
 # @ledgerhq/live-signer-solana
 
-## 0.4.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.27.1-nightly.2
-
-## 0.4.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.27.1-nightly.1
-
-## 0.4.0-nightly.0
+## 0.4.0
 
 ### Minor Changes
 
@@ -23,8 +9,20 @@
 ### Patch Changes
 
 - Updated dependencies [[`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e)]:
-  - @ledgerhq/ledger-cal-service@1.1.1-nightly.0
-  - @ledgerhq/coin-solana@0.27.1-nightly.0
+  - @ledgerhq/ledger-cal-service@1.2.0
+  - @ledgerhq/coin-solana@0.27.1
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#10691](https://github.com/LedgerHQ/ledger-live/pull/10691) [`14f840d`](https://github.com/LedgerHQ/ledger-live/commit/14f840d9c6228a786dfacb975b3aed1bd59f18a2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version to `1.9.2`
+
+### Patch Changes
+
+- Updated dependencies [[`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e)]:
+  - @ledgerhq/ledger-cal-service@1.2.0-next.0
+  - @ledgerhq/coin-solana@0.27.1-next.0
 
 ## 0.3.1
 

@@ -1,4 +1,4 @@
-import coinConfig, { type SuiCoinConfig } from "../config";
+import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,
   combine,
@@ -15,7 +15,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
-export function createApi(config: SuiCoinConfig): AlpacaApi<SuiAsset> {
+export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

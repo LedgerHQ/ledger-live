@@ -1,10 +1,16 @@
 # @ledgerhq/types-live
 
-## 6.76.0-nightly.0
+## 6.76.0
 
 ### Minor Changes
 
-- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+## 6.76.0-next.0
+
+### Minor Changes
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
 
 ## 6.75.0
 

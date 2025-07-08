@@ -1,34 +1,22 @@
 # @ledgerhq/coin-cardano
 
-## 0.8.12-nightly.3
+## 0.8.12
 
 ### Patch Changes
 
-- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0
+  - @ledgerhq/types-live@6.76.0
+  - @ledgerhq/coin-framework@5.5.0
 
-## 0.8.12-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
-  - @ledgerhq/types-live@6.76.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.2
-
-## 0.8.12-nightly.1
+## 0.8.12-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.1
-  - @ledgerhq/coin-framework@5.5.0-nightly.1
-
-## 0.8.12-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
-  - @ledgerhq/cryptoassets@13.21.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.0-nightly.0
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0-next.0
+  - @ledgerhq/types-live@6.76.0-next.0
+  - @ledgerhq/coin-framework@5.5.0-next.0
 
 ## 0.8.11
 

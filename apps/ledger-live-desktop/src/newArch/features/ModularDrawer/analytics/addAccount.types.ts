@@ -7,7 +7,7 @@ export const ADD_ACCOUNT_EVENTS_NAME = {
   FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
   FUNDING_ACTIONS: "add account funding actions",
   CANT_ADD_NEW_ACCOUNT: "cant add new account",
-  DEVICE_CONNEXION: "device connexion",
+  DEVICE_CONNECTION: "device connection",
 } as const;
 
 export type AddAccountEventName =
@@ -48,7 +48,7 @@ export type AddAccountEventParams = {
     source: string;
     reason: string;
   };
-  [ADD_ACCOUNT_EVENTS_NAME.DEVICE_CONNEXION]: {
+  [ADD_ACCOUNT_EVENTS_NAME.DEVICE_CONNECTION]: {
     source: string;
     flow: string;
   };
@@ -60,7 +60,7 @@ export const ADD_ACCOUNT_PAGE_NAME = {
   FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
   FUNDING_ACTIONS: "add account funding actions",
   CANT_ADD_NEW_ACCOUNT: "cant add new account",
-  DEVICE_CONNEXION: "device connexion",
+  DEVICE_CONNECTION: "device connection",
 } as const;
 
 export type AddAccountPageName = (typeof ADD_ACCOUNT_PAGE_NAME)[keyof typeof ADD_ACCOUNT_PAGE_NAME];

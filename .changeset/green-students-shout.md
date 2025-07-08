@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Adjust UI changes
+Fix: ETH ENS Resolution
