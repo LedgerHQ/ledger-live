@@ -19,6 +19,8 @@ export class Currency {
 
   static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS);
 
+  static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA);
+
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
