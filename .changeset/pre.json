@@ -149,5 +149,36 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "angry-waves-beg",
+    "brave-eels-call",
+    "brave-parrots-perform",
+    "clean-shirts-call",
+    "cyan-eyes-drum",
+    "dry-planes-shop",
+    "fair-fans-joke",
+    "forty-insects-itch",
+    "four-pugs-share",
+    "friendly-goats-think",
+    "funny-steaks-type",
+    "gold-spoons-share",
+    "green-students-shout",
+    "grumpy-horses-hide",
+    "healthy-books-obey",
+    "hungry-mails-melt",
+    "itchy-rocks-wash",
+    "light-berries-teach",
+    "lucky-steaks-cheer",
+    "nice-grapes-joke",
+    "odd-pens-thank",
+    "serious-walls-smash",
+    "smooth-toes-grab",
+    "stale-badgers-invent",
+    "strong-steaks-train",
+    "tame-bats-collect",
+    "tame-hornets-double",
+    "thirty-turkeys-talk",
+    "two-penguins-cheer",
+    "weak-chicken-sniff"
+  ]
 }
