@@ -1260,7 +1260,7 @@
         "titleCompleted" : "Фраза восстановления подтверждена",
         "recoverSeed" : "Заглушка: Ledger Recover",
         "restoreSeed" : "Для восстановления следуйте руководству на защищённом экране Ledger.",
-        "restoreCharonTitle" : "Восстановить из Ledger Charon",
+        "restoreCharonTitle" : "Восстановить с помощью Запасного ключа",
         "restoreCharonDescription" : "Для восстановления следуйте руководству на защищённом экране Ledger.",
         "restoreCharonContinueOnDevice" : "Следуйте инструкции на {{productName}}",
         "selection" : "Выберите подходящий вариант настройки:",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "Будет создана новая секретная фраза восстановления.",
         "selectionRestoreTitle" : "Восстановите доступ к активам",
         "selectionRestoreDescription" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления или Ledger Recover.",
-        "selectionRestoreDescriptionWithCharon" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления, Ledger Recover или Ledger Charon.",
+        "selectionRestoreDescriptionWithCharon" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления, Ledger Recover или Запасного ключа Ledger.",
         "selectionContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
         "selectionNewSeedTitle" : "Секретная фраза восстановления",
         "selectionNewSeedSubtitle" : "Держите комбинацию в надёжном месте",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
         "restoreChoiceSRPTitle" : "Секретная фраза восстановления",
         "restoreChoiceSRPDescription" : "Для безопасности криптоактивов используйте секретную фразу восстановления, которая была создана устройством Ledger.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Описание описание описание описание описание описание.",
+        "restoreChoiceCharonTitle" : "Запасной ключ Ledger",
+        "restoreChoiceCharonDescription" : "Используйте Запасной ключ, чтобы восстановить доступ к криптоактивам.",
         "restoreChoiceRecoverTitle" : "Подписка на Ledger Recover",
         "restoreChoiceRecoverDescription" : "Используйте подписку, чтобы восстановить доступ к криптоактивам через подтверждение личности.",
         "followInstructions" : "Следуйте руководству на {{productName}}.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Описание описание описание описание описание описание описание описание описание описание.",
+        "backupCharonTitle" : "Запасной ключ Ledger",
+        "backupCharonDescription" : "Создайте новую резервную копию с помощью защищённого ПИН-кодом брелока, со встроенным чипом Secure Element. Восстановить доступ к активам можно в несколько касаний.",
         "backupCharonCta" : "Узнать больше или купить",
         "backupCharonContinueOnDevice" : "Следуйте инструкции на {{productName}}"
       },
@@ -2415,7 +2415,8 @@
         "streaming" : {
           "accurate" : "Загружаем... ({{percentage}})",
           "inaccurate" : "Загружаем..."
-        }
+        },
+        "gettingTransactionCheckResults" : "Ждём итог проверки транзакции..."
       },
       "confirmation" : {
         "title" : "Подтверждение",
@@ -7085,6 +7086,12 @@
       },
       "newAccount" : "Новый счёт"
     },
+    "fundAccount" : {
+      "receive" : "Получить",
+      "receiveDescription" : "Получайте криптовалюту с другого кошелька",
+      "buy" : "Купить",
+      "buyDescription" : "Безопасно покупайте криптовалюту за фиат"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "Остановить сканирование"
@@ -7123,6 +7130,7 @@
       "title_other" : "Добавлено счетов в Портфель: {{count}}",
       "cta" : {
         "addFunds" : "Добавить монеты на счёт",
+        "selectAccount" : "Продолжить",
         "close" : "Закрыть"
       }
     }
@@ -7138,5 +7146,14 @@
     "title" : "Страна не обслуживается",
     "description" : "Кошелёк Ledger недоступен в этой локации.",
     "learnMore" : "Подробнее..."
+  },
+  "versionBlocking" : {
+    "title" : "Требуется обновить Ledger Live",
+    "errorTitle" : "Сбой обновления",
+    "errorDescription" : "Не удалось обновить. Перейдите по ссылке ниже, чтобы загрузить актуальную версию Ledger Live. ",
+    "description" : "Эта версия Ledger Live не поддерживает актуальную версию ОС устройства. Обновите приложение, чтобы нормализовать подключение.",
+    "restart" : "Перезагрузить",
+    "downloadOnLedger" : "Загрузить с Ledger.com",
+    "downloadProgress" : "Скачиваем... {{ progress }}%"
   }
 }
