@@ -178,7 +178,20 @@ export type AccountInfo = {
   sequence: number;
 };
 
-export type AlpacaApi<
+export type AlpacaBlockchainApi<AssetInfo extends Asset<TokenInfoCommon>> = {
+  lastBlock: () => Promise<BlockInfo>;
+  getBlockInfo: (height: number) => Promise<BlockInfo>;
+  getBlock: (height: number) => Promise<Block<AssetInfo>>;
+};
+
+export type AlpacaReadApi<AssetInfo extends Asset<TokenInfoCommon>> = {
+  ensureAccountAddress: (accountId: string, address: string) => Promise<unknown>;
+  ensureAccountSynced: (accountId: string) => Promise<unknown>;
+  getBalance: (addressOrAccount: string) => Promise<Balance<AssetInfo>[]>;
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation<AssetInfo>[], string]>;
+};
+
+export type AlpacaWriteApi<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
@@ -191,14 +204,6 @@ export type AlpacaApi<
     transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
-  lastBlock: () => Promise<BlockInfo>;
-  getBlockInfo: (height: number) => Promise<BlockInfo>;
-  getBlock: (height: number) => Promise<Block<AssetInfo>>;
-  listOperations: (
-    address: string,
-    pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
 };
 
 export type BridgeApi = {
@@ -210,4 +215,4 @@ export type BridgeApi = {
 export type Api<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+> = AlpacaBlockchainApi<AssetInfo> & AlpacaReadApi<AssetInfo> & AlpacaWriteApi<AssetInfo, MemoType> & BridgeApi;
