@@ -672,6 +672,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmSentry: { enabled: true },
+  supportDeviceApex: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

@@ -262,6 +262,7 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmSentry: DefaultFeature;
+  supportDeviceApex: DefaultFeature;
 };
 
 /**
@@ -698,6 +699,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
+
+export type Feature_SupportDeviceApex = DefaultFeature;
 
 /**
  * Utils types.
