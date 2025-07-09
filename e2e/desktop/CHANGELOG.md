@@ -1,5 +1,11 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.2.0-next.1
+
+### Minor Changes
+
+- [#10848](https://github.com/LedgerHQ/ledger-live/pull/10848) [`69a610e`](https://github.com/LedgerHQ/ledger-live/commit/69a610eb043b2c21bf65e659f08e48a7c4461284) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add missing app.json for swap test
+
 ## 0.1.5-next.0
 
 ### Patch Changes
