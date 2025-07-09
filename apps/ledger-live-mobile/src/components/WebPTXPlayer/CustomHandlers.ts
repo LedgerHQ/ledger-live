@@ -52,6 +52,12 @@ export function useCustomExchangeHandlers({
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
+    const ptxCustomHandlers = {
+      "custom.close": () => {
+        navigation.popToTop();
+      },
+    };
+
     return {
       ...exchangeHandlers({
         accounts,
@@ -182,6 +188,7 @@ export function useCustomExchangeHandlers({
           },
         },
       }),
+      ...ptxCustomHandlers,
     };
   }, [
     accounts,
