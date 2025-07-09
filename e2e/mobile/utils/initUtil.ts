@@ -1,4 +1,4 @@
-import { findFreePort, setFeatureFlags } from "../bridge/server";
+import { findFreePort, loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -297,6 +297,7 @@ export class InitializationManager {
     options: InitOptions,
     userdataPath: string,
     commonPage: CommonPage,
+    userdataSpeculos: string,
   ): Promise<void> {
     const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
     const uniqueOnApp = Array.from(
@@ -315,7 +316,7 @@ export class InitializationManager {
     }
 
     await executeGlobalCommands(cliCommands, userdataPath, speculosApp, entryMap);
-
+    await loadConfig(userdataSpeculos, true);
     if (featureFlags) await setFeatureFlags(featureFlags);
   }
 }
