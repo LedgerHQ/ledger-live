@@ -132,14 +132,13 @@ const buildGetSequence = (networkFamily: string) =>
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination?: Pagination,
+    pagination: Pagination = { minHeight: 0 },
   ): Promise<[Operation<any>[], string]> {
-    const minHeight = pagination?.minHeight ?? 0;
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,
       data: {
-        from: minHeight,
+        from: pagination.minHeight,
       },
     });
     return [data.operations.map(op => adaptOp(op)), ""];
