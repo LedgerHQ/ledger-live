@@ -1260,7 +1260,7 @@
         "titleCompleted" : "Phrase de récupération secrète confirmée",
         "recoverSeed" : "Placeholder : Ledger Recover",
         "restoreSeed" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
-        "restoreCharonTitle" : "Restaurer avec Ledger Charon",
+        "restoreCharonTitle" : "Restaurer avec une Recovery Key",
         "restoreCharonDescription" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
         "restoreCharonContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
         "selection" : "Choisissez votre option de configuration :",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "Pour générer une nouvelle phrase de récupération secrète.",
         "selectionRestoreTitle" : "Récupérer l’accès à vos actifs",
         "selectionRestoreDescription" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète ou Ledger Recover.",
-        "selectionRestoreDescriptionWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Charon.",
+        "selectionRestoreDescriptionWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Recovery Key.",
         "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
         "selectionNewSeedTitle" : "Phrase de récupération secrète",
         "selectionNewSeedSubtitle" : "Conservez-la en lieu sûr et gardez-la confidentielle",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
         "restoreChoiceSRPTitle" : "Phrase de récupération secrète",
         "restoreChoiceSRPDescription" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Utilisez votre Ledger Recovery Key pour restaurer l’accès à vos actifs.",
         "restoreChoiceRecoverTitle" : "Abonnement Ledger Recover",
         "restoreChoiceRecoverDescription" : "Utilisez ce service pour restaurer l’accès à vos actifs à l’aide de votre identité.",
         "followInstructions" : "Suivez les instructions affichées sur votre {{productName}}.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Créez une nouvelle sauvegarde sur une carte protégée par un code PIN et dotée d’une puce Secure Element. Vous pourrez récupérer l’accès à vos actifs en un clin d’œil.",
         "backupCharonCta" : "En savoir plus ou acheter",
         "backupCharonContinueOnDevice" : "Suivez les instructions sur votre {{productName}}"
       },
@@ -2415,7 +2415,8 @@
         "streaming" : {
           "accurate" : "Chargement... ({{percentage}})",
           "inaccurate" : "Chargement..."
-        }
+        },
+        "gettingTransactionCheckResults" : "Chargement des résultats de la vérification..."
       },
       "confirmation" : {
         "title" : "Confirmation",
@@ -7085,6 +7086,12 @@
       },
       "newAccount" : "Nouveau compte"
     },
+    "fundAccount" : {
+      "receive" : "Recevoir",
+      "receiveDescription" : "Recevez des cryptos d’un autre wallet",
+      "buy" : "Acheter",
+      "buyDescription" : "Achetez des cryptos en toute sécurité"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "Arrêter le balayage"
@@ -7123,6 +7130,7 @@
       "title_other" : "{{count}} comptes ajoutés à votre portefeuille",
       "cta" : {
         "addFunds" : "Approvisionner mon compte",
+        "selectAccount" : "Continuer",
         "close" : "Fermer"
       }
     }
@@ -7138,5 +7146,14 @@
     "title" : "Région indisponible",
     "description" : "L’application n’est pas disponible dans ce pays/région.",
     "learnMore" : "En savoir plus"
+  },
+  "versionBlocking" : {
+    "title" : "Mise à jour de Ledger Live nécessaire",
+    "errorTitle" : "Échec de la mise à jour",
+    "errorDescription" : "La mise à jour n’a pas pu être effectuée. Veuillez cliquer sur le lien ci-dessous pour obtenir la version de Ledger Live la plus récente. ",
+    "description" : "Cette version de Ledger Live n’est pas compatible avec la dernière version du système d’exploitation. Pour bénéficier d’une meilleure connectivité, veuillez mettre à jour.",
+    "restart" : "Redémarrer",
+    "downloadOnLedger" : "Télécharger sur Ledger.com",
+    "downloadProgress" : "Téléchargement... {{ progress }}%"
   }
 }
