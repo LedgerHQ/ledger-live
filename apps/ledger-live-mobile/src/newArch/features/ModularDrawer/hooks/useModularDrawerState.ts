@@ -5,9 +5,11 @@ import { getProvider, useProviders } from "./useProviders";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { ModularDrawerStep } from "../types";
-/**
- * Props for useModularDrawerState hook.
- */
+import {
+  getEffectiveCurrency,
+  isCorrespondingCurrency,
+} from "@ledgerhq/live-common/modularDrawer/utils/index";
+
 type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
@@ -15,7 +17,10 @@ type ModularDrawerStateProps = {
 };
 
 /**
- * Custom hook to manage asset and network selection state for the modular drawer.
+ * Custom hook to manage the state of the Modular Drawer.
+ * It handles asset and network selection, navigation between steps, and resetting state.
+ *
+ * @param {ModularDrawerStateProps} props - The properties for the hook.
  */
 export function useModularDrawerState({
   goToStep,
@@ -27,9 +32,6 @@ export function useModularDrawerState({
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
   const { providers, setProviders, getNetworksFromProvider } = useProviders();
 
-  /**
-   * Select an asset and handle navigation depending on available networks.
-   */
   const selectAsset = useCallback(
     (selected: CryptoOrTokenCurrency, networks?: CryptoCurrency[]) => {
       setAsset(selected);
@@ -43,9 +45,6 @@ export function useModularDrawerState({
     [goToStep],
   );
 
-  /**
-   * Select a network and go to the account step.
-   */
   const selectNetwork = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       setAsset(selectedAsset);
@@ -55,34 +54,22 @@ export function useModularDrawerState({
     [goToStep],
   );
 
-  /**
-   * Reset all selection state.
-   */
   const reset = useCallback(() => {
     setAsset(null);
     setNetwork(null);
     setAvailableNetworks([]);
   }, []);
 
-  /**
-   * Go back to asset selection step.
-   */
   const backToAsset = useCallback(() => {
     reset();
     goToStep?.(ModularDrawerStep.Asset);
   }, [goToStep, reset]);
 
-  /**
-   * Go back to network selection step.
-   */
   const backToNetwork = useCallback(() => {
     setNetwork(null);
     goToStep?.(ModularDrawerStep.Network);
   }, [goToStep]);
 
-  /**
-   * Go back to previous step based on current step.
-   */
   const handleBack = useCallback(
     (step: ModularDrawerStep) => {
       switch (step) {
@@ -99,9 +86,6 @@ export function useModularDrawerState({
     [backToAsset, backToNetwork, availableNetworks.length],
   );
 
-  /**
-   * Go to network selection step for a given asset.
-   */
   const goToNetwork = useCallback(
     (currency: CryptoOrTokenCurrency, networks: (string | undefined)[]) => {
       const hasMultiple = networks && networks.length > 1;
@@ -111,14 +95,12 @@ export function useModularDrawerState({
             .map(n => findCryptoCurrencyById(n))
             .filter((c): c is CryptoCurrency => Boolean(c))
         : [];
+
       selectAsset(currency, filtered);
     },
     [selectAsset],
   );
 
-  /**
-   * Go to account selection step for a given asset and network.
-   */
   const goToAccount = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       selectNetwork(selectedAsset, selectedNetwork);
@@ -126,9 +108,6 @@ export function useModularDrawerState({
     [selectNetwork],
   );
 
-  /**
-   * Handle asset selection from UI.
-   */
   const handleAsset = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const provider = getProvider(currency, currenciesByProvider);
@@ -138,7 +117,8 @@ export function useModularDrawerState({
         return;
       }
       const networks = getNetworksFromProvider(provider, currencyIds);
-      goToNetwork(currency, networks);
+      const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
+      goToNetwork(effectiveCurrency, networks);
     },
     [
       currenciesByProvider,
@@ -150,9 +130,6 @@ export function useModularDrawerState({
     ],
   );
 
-  /**
-   * Handle network selection from UI.
-   */
   const handleNetwork = useCallback(
     (selectedNetwork: CryptoOrTokenCurrency) => {
       if (!providers) return;
@@ -177,20 +154,4 @@ export function useModularDrawerState({
     handleAsset,
     handleNetwork,
   };
-}
-
-/**
- * Returns true if the given element corresponds to the network.
- */
-function isCorrespondingCurrency(
-  elem: CryptoOrTokenCurrency,
-  network: CryptoOrTokenCurrency,
-): boolean {
-  if (elem.type === "TokenCurrency") {
-    return elem.parentCurrency?.id === network.id || elem.id === network.id;
-  }
-  if (elem.type === "CryptoCurrency") {
-    return elem.id === network.id;
-  }
-  return false;
 }

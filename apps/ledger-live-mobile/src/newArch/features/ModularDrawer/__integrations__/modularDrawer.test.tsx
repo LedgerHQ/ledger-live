@@ -18,8 +18,8 @@ jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", (
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
 
-describe("ModularDrawer integration | asset/network/account navigation", () => {
-  it.only("should allow full navigation: asset → network → account, with back navigation at each step", async () => {
+describe("ModularDrawer integration", () => {
+  it("should allow full navigation: asset → network → account, with back navigation at each step", async () => {
     const { getByText, getByTestId, user } = render(
       <ModularDrawer
         isOpen={true}
@@ -29,26 +29,23 @@ describe("ModularDrawer integration | asset/network/account navigation", () => {
       />,
     );
 
-    // Step 1: Asset selection
+    // Asset selection
     expect(getByText(/select asset/i)).toBeVisible();
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
     expect(getByText(/select network/i)).toBeVisible();
 
-    // Back to asset
     await user.press(getByTestId("modal-back-button"));
     expect(getByText(/select asset/i)).toBeVisible();
 
-    // Select Ethereum again
     await user.press(getByText(/ethereum/i));
     expect(getByText(/select network/i)).toBeVisible();
 
-    // Select Arbitrum (should go to account selection)
+    // Select Arbitrum (Network) (should go to account selection)
     await user.press(getByText(/arbitrum/i));
     expect(getByText(/select account/i)).toBeVisible();
 
-    // Back to network
     await user.press(getByTestId("modal-back-button"));
     expect(getByText(/select network/i)).toBeVisible();
 
@@ -73,11 +70,9 @@ describe("ModularDrawer integration | asset/network/account navigation", () => {
     await user.press(getByText(/bitcoin/i));
     expect(getByText(/select account/i)).toBeVisible();
 
-    // Back to asset
     await user.press(getByTestId("modal-back-button"));
     expect(getByText(/select asset/i)).toBeVisible();
 
-    // Select Bitcoin again
     await user.press(getByText(/bitcoin/i));
     expect(getByText(/select account/i)).toBeVisible();
   });
