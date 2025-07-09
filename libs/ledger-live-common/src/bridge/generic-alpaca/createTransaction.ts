@@ -21,10 +21,10 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   family: string;
   fee?: BigNumber | null | undefined;
   fees?: BigNumber | null;
-  networkInfo: NetworkInfo | null | undefined;
+  // networkInfo: NetworkInfo | null | undefined;
   tag?: number | null | undefined;
   feeCustomUnit?: Unit | null | undefined;
-  baseReserve?: BigNumber | null;
+  // baseReserve?: BigNumber | null;
   memoType?: string | null;
   memoValue?: string | null;
   mode?: "send" | "changeTrust";
@@ -42,15 +42,15 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         recipient: "",
         fee: null,
         tag: undefined,
-        networkInfo: null,
+        // networkInfo: null,
         feeCustomUnit: null, // NOTE: XRP does not use custom units for fees anymore
       };
     case "stellar":
       return {
         family: currency.family,
         amount: new BigNumber(0),
-        baseReserve: null,
-        networkInfo: null,
+        // baseReserve: null,
+        // networkInfo: null,
         fees: null,
         recipient: "",
         memoValue: null,
