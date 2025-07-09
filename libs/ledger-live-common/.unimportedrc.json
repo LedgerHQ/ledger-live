@@ -298,12 +298,7 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -373,6 +368,7 @@
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
     "src/modularDrawer/enums.ts",
+    "src/modularDrawer/utils/index.ts",
     "src/modularDrawer/useModularDrawerVisibility.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
