@@ -14,45 +14,6 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useStake } from "LLD/hooks/useStake";
 import type { HederaFamily } from "./types";
 
-const Wrapper = styled(Box).attrs(() => ({
-  horizontal: true,
-  mt: 4,
-  p: 5,
-  pb: 0,
-  scroll: true,
-}))`
-  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
-`;
-
-const BalanceDetail = styled(Box).attrs(() => ({
-  flex: "0.25 0 auto",
-  alignItems: "start",
-  paddingRight: 20,
-}))``;
-
-const TitleWrapper = styled(Box).attrs(() => ({
-  horizontal: true,
-  alignItems: "center",
-  mb: 1,
-}))``;
-
-const Title = styled(Text).attrs(() => ({
-  fontSize: 4,
-  ff: "Inter|Medium",
-  color: "palette.text.shade60",
-}))`
-  line-height: ${p => p.theme.space[4]}px;
-  margin-right: ${p => p.theme.space[1]}px;
-`;
-
-const AmountValue = styled(Text).attrs(() => ({
-  fontSize: 6,
-  ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
-}))<{ paddingRight?: number }>`
-  ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
-`;
-
 const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
@@ -133,5 +94,44 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
     </Wrapper>
   );
 };
+
+const Wrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  mt: 4,
+  p: 5,
+  pb: 0,
+  scroll: true,
+}))`
+  border-top: 1px solid ${p => p.theme.colors.palette.text.shade10};
+`;
+
+const BalanceDetail = styled(Box).attrs(() => ({
+  flex: "0.25 0 auto",
+  alignItems: "start",
+  paddingRight: 20,
+}))``;
+
+const TitleWrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  alignItems: "center",
+  mb: 1,
+}))``;
+
+const Title = styled(Text).attrs(() => ({
+  fontSize: 4,
+  ff: "Inter|Medium",
+  color: "palette.text.shade60",
+}))`
+  line-height: ${p => p.theme.space[4]}px;
+  margin-right: ${p => p.theme.space[1]}px;
+`;
+
+const AmountValue = styled(Text).attrs(() => ({
+  fontSize: 6,
+  ff: "Inter|SemiBold",
+  color: "palette.text.shade100",
+}))<{ paddingRight?: number }>`
+  ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
+`;
 
 export default AccountBalanceSummaryFooter;

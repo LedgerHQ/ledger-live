@@ -17,9 +17,11 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
+export type StakingAction = "delegate" | "undelegate" | "redelegate" | "claimRewards";
+
 export type StakingTransactionProperties = {
   name: "staking";
-  mode: "delegate" | "undelegate" | "redelegate" | "claimRewards";
+  mode: StakingAction;
   stakedNodeId?: number | null;
 };
 
@@ -41,10 +43,17 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
+export type HederaDelegationStatus = "active" | "inactive" | "overstaked";
+
 export interface HederaDelegation {
   nodeId: number;
   delegated: BigNumber;
   pendingReward: BigNumber;
+}
+
+export interface HederaDelegationWithMeta extends HederaDelegation {
+  status: HederaDelegationStatus;
+  validator: HederaValidator;
 }
 
 interface HederaDelegationRaw {

@@ -9,6 +9,7 @@ import type {
   Transaction,
   StakingTransactionProperties,
   HederaOperationType,
+  HederaDelegationStatus,
 } from "./types";
 
 const getTransactionExplorer = (
@@ -67,6 +68,18 @@ const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | n
   );
 };
 
+const getDelegationStatus = (validator: HederaValidator | null): HederaDelegationStatus => {
+  if (!validator) {
+    return "inactive";
+  }
+
+  if (validator.overstaked) {
+    return "overstaked";
+  }
+
+  return "active";
+};
+
 export {
   getTransactionExplorer,
   isStakingTransaction,
@@ -74,5 +87,6 @@ export {
   getValidatorFromAccount,
   getDefaultValidator,
   getHederaOperationType,
+  getDelegationStatus,
   getMemo,
 };

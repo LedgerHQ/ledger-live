@@ -6830,6 +6830,28 @@
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
+      "positions": {
+        "rewards": {
+          "title": "Rewards",
+          "cta": "Claim"
+        },
+        "details": {
+          "validatorAddress": "Validator address",
+          "delegatedAccount": "Delegated account",
+          "status": {
+            "title": "Status",
+            "active": "Active",
+            "inactive": "Inactive",
+            "overstaked": "Overstaked"
+          },
+          "rewards": "Rewards",
+          "actions": {
+            "redelegate": "Redelegate",
+            "claimRewards": "Collect rewards",
+            "undelegate": "Undelegate"
+          }
+        }
+      },
       "steps": {
         "summary": {
           "delegate": "I delegate",

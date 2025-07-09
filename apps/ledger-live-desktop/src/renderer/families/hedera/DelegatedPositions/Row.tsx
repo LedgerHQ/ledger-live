@@ -3,11 +3,10 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type {
   HederaAccount,
-  HederaDelegation,
-  HederaValidator,
+  HederaDelegationStatus,
+  HederaDelegationWithMeta,
 } from "@ledgerhq/live-common/families/hedera/types";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import Box from "~/renderer/components/Box/Box";
@@ -90,8 +89,8 @@ const ManageDropDownItem = ({
   );
 };
 
-const DelegationStatus = ({ validator }: { validator: HederaValidator | undefined }) => {
-  if (!validator) {
+const DelegationStatus = ({ status }: { status: HederaDelegationStatus }) => {
+  if (status === "inactive") {
     return (
       <Box color="alertRed" pl={2}>
         <ToolTip
@@ -105,7 +104,7 @@ const DelegationStatus = ({ validator }: { validator: HederaValidator | undefine
     );
   }
 
-  if (validator.overstaked) {
+  if (status === "overstaked") {
     return (
       <Box color="warning" pl={2}>
         <ToolTip
@@ -134,16 +133,15 @@ const DelegationStatus = ({ validator }: { validator: HederaValidator | undefine
 
 type Props = {
   account: HederaAccount;
-  delegatedPosition: HederaDelegation;
+  delegationWithMeta: HederaDelegationWithMeta;
   onManageAction: (action: DelegateModalName) => void;
-  onExternalLink: (validator: HederaValidator) => void;
+  onExternalLink: (delegationWithMeta: HederaDelegationWithMeta) => void;
 };
 
-export function Row({ account, delegatedPosition, onManageAction, onExternalLink }: Props) {
+export function Row({ account, delegationWithMeta, onManageAction, onExternalLink }: Props) {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
-  const validators = useHederaValidators(account.currency);
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -152,11 +150,16 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
     locale,
   };
 
-  const { delegated, pendingReward } = delegatedPosition;
-  const formattedDelegatedAssets = formatCurrencyUnit(unit, delegated, formatConfig);
-  const formattedClaimableRewards = formatCurrencyUnit(unit, pendingReward, formatConfig);
-  const validator = validators.find(v => v.nodeId === delegatedPosition.nodeId);
-  const validatorName = validator?.name ?? "-";
+  const formattedDelegatedAssets = formatCurrencyUnit(
+    unit,
+    delegationWithMeta.delegated,
+    formatConfig,
+  );
+  const formattedClaimableRewards = formatCurrencyUnit(
+    unit,
+    delegationWithMeta.pendingReward,
+    formatConfig,
+  );
 
   const dropDownItems = [
     {
@@ -172,7 +175,7 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
     {
       key: "MODAL_HEDERA_CLAIM_REWARDS",
       label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.claimRewards" />,
-      disabled: pendingReward.eq(0),
+      disabled: delegationWithMeta.pendingReward.eq(0),
     } as const,
   ];
 
@@ -189,17 +192,17 @@ export function Row({ account, delegatedPosition, onManageAction, onExternalLink
         strong
         clickable
         onClick={() => {
-          if (!validator) return;
-          onExternalLink(validator);
+          if (!delegationWithMeta.validator.address) return;
+          onExternalLink(delegationWithMeta);
         }}
       >
         <Box mr={2}>
-          <ValidatorIcon validatorName={validatorName} />
+          <ValidatorIcon validatorName={delegationWithMeta.validator.name} />
         </Box>
-        <Ellipsis>{validatorName}</Ellipsis>
+        <Ellipsis>{delegationWithMeta.validator.name}</Ellipsis>
       </Column>
       <Column>
-        <DelegationStatus validator={validator} />
+        <DelegationStatus status={delegationWithMeta.status} />
       </Column>
       <Column>
         <Ellipsis>

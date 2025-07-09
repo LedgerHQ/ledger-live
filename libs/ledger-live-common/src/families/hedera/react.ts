@@ -1,11 +1,19 @@
+import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 import {
   getCurrentHederaPreloadData,
   getHederaPreloadData,
 } from "@ledgerhq/coin-hedera/preload-data";
-import type { HederaPreloadData, HederaValidator } from "./types";
+import type {
+  HederaAccount,
+  HederaPreloadData,
+  HederaValidator,
+  HederaDelegationWithMeta,
+  HederaDelegation,
+} from "./types";
 import { useObservable } from "../../observable";
+import { getDelegationStatus } from "./logic";
 
 export function useHederaPreloadData(
   currency: CryptoCurrency,
@@ -43,4 +51,28 @@ export function useHederaValidators(currency: CryptoCurrency, search?: string): 
 
     return output;
   }, [data, search]);
+}
+
+export function useHederaDelegationWithMeta(
+  account: HederaAccount,
+  delegation: HederaDelegation,
+): HederaDelegationWithMeta {
+  const validators = useHederaValidators(account.currency);
+  const validatorByNodeId = new Map(validators.map(v => [v.nodeId, v]));
+  const validator = validatorByNodeId.get(delegation.nodeId) ?? null;
+
+  return {
+    ...delegation,
+    status: getDelegationStatus(validator),
+    validator: {
+      name: validator?.name ?? "-",
+      address: validator?.address ?? "",
+      nodeId: delegation.nodeId,
+      minStake: validator?.minStake ?? new BigNumber(0),
+      maxStake: validator?.maxStake ?? new BigNumber(0),
+      activeStake: validator?.activeStake ?? new BigNumber(0),
+      activeStakePercentage: validator?.activeStakePercentage ?? new BigNumber(0),
+      overstaked: validator?.overstaked ?? false,
+    },
+  };
 }

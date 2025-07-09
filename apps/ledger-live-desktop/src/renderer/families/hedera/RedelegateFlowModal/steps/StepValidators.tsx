@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -28,11 +28,11 @@ function StepValidators({
   onUpdateTransaction,
 }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
+  invariant(account.hederaResources?.delegation, "hedera: delegation is required");
+  const { delegation } = account.hederaResources;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const validators = useHederaValidators(account.currency);
+  const delegationWithMeta = useHederaDelegationWithMeta(account, delegation);
 
-  const { delegation } = account.hederaResources ?? {};
-  const currentValidator = validators.find(v => v.nodeId === delegation?.nodeId);
   const selectedValidatorAddress = transaction.recipient ?? null;
 
   const updateValidator = (validator: HederaValidator | null) => {
@@ -50,10 +50,6 @@ function StepValidators({
     });
   };
 
-  if (!currentValidator) {
-    return null;
-  }
-
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
@@ -65,7 +61,7 @@ function StepValidators({
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorAddress={currentValidator.address}
+          selectedValidatorAddress={delegationWithMeta.validator.address}
         />
       </Box>
       <StepRecipientSeparator />

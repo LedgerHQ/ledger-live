@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import { useHederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -20,12 +20,15 @@ import type { StepProps } from "../types";
 
 function StepRewards({ t, account, parentAccount, transaction, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
+  invariant(account.hederaResources?.delegation, "hedera: delegation is required");
+  const { delegation } = account.hederaResources;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const validators = useHederaValidators(account.currency);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
+  const delegationWithMeta = useHederaDelegationWithMeta(account, delegation);
 
+  const claimableRewards = delegationWithMeta.pendingReward;
   const formatConfig = {
     alwaysShowSign: false,
     showCode: true,
@@ -33,11 +36,7 @@ function StepRewards({ t, account, parentAccount, transaction, error }: StepProp
     locale,
   };
 
-  const { delegation } = account.hederaResources ?? {};
-  const currentValidator = validators.find(v => v.nodeId === delegation?.nodeId);
-  const claimableRewards = delegation?.pendingReward;
-
-  if (!delegation || !currentValidator || !claimableRewards) {
+  if (claimableRewards.lte(0)) {
     return null;
   }
 
@@ -65,7 +64,7 @@ function StepRewards({ t, account, parentAccount, transaction, error }: StepProp
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorAddress={currentValidator.address}
+          selectedValidatorAddress={delegationWithMeta.validator.address}
         />
       </Box>
     </Box>

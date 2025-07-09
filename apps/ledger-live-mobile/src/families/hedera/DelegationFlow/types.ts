@@ -13,21 +13,11 @@ export type HederaDelegationFlowParamList = {
     accountId: string;
     parentId?: string;
     validator?: HederaValidator;
-    transaction: Transaction;
-    status?: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationSelectValidator]: {
     accountId: string;
     parentId?: string;
-    transaction: Transaction;
-    status?: TransactionStatus;
-    source?: RouteProp<ParamListBase, ScreenName>;
-  };
-  [ScreenName.SolanaEditAmount]: {
-    accountId: string;
-    parentId?: string;
-    amount?: number;
     transaction: Transaction;
     status?: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;

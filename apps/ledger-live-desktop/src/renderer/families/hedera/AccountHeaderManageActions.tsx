@@ -20,6 +20,10 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
   const isStakingEnabled = getCanStakeCurrency(account.currency.id);
   const isAlreadyStaked = !!account.hederaResources?.delegation;
 
+  if (!isStakingEnabled) {
+    return [];
+  }
+
   const onClick = () => {
     if (isAccountEmpty(account)) {
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
@@ -28,23 +32,21 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     }
   };
 
-  return isStakingEnabled
-    ? [
-        {
-          key: "Stake",
-          onClick: onClick,
-          icon: IconCoins,
-          disabled: isAlreadyStaked,
-          tooltip: isAlreadyStaked
-            ? t("hedera.account.header.actions.stake.alreadyDelegatedTooltip")
-            : undefined,
-          label,
-          event: "button_clicked2",
-          eventProperties: { button: "stake" },
-          accountActionsTestId: "stake-button",
-        },
-      ]
-    : [];
+  return [
+    {
+      key: "Stake",
+      onClick: onClick,
+      icon: IconCoins,
+      disabled: isAlreadyStaked,
+      tooltip: isAlreadyStaked
+        ? t("hedera.account.header.actions.stake.alreadyDelegatedTooltip")
+        : undefined,
+      label,
+      event: "button_clicked2",
+      eventProperties: { button: "stake" },
+      accountActionsTestId: "stake-button",
+    },
+  ];
 };
 
 export default AccountHeaderActions;
