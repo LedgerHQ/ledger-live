@@ -58,10 +58,10 @@ export function slugify(name: string): string {
 
 export async function addDelayBeforeInteractingWithDevice(
   // TODO: QAA-683
-  delayIos: number = 10_000,
-  ms: number = 0,
+  ciDelay: number = 10_000,
+  localDelay: number = 0,
 ) {
-  await delay(isSpeculosRemote() && isIos() ? delayIos : ms);
+  await delay(process.env.CI ? ciDelay : localDelay);
 }
 
 export async function launchApp() {

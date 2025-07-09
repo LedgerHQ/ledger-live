@@ -145,13 +145,13 @@ export default class SwapPage {
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
+    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 
   @Step("Verify the amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
+    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
   }
 
   @Step("Verify device action loading is not visible")

@@ -79,7 +79,9 @@ export default class SwapLiveAppPage {
     while (true) {
       try {
         const providerName = await getWebElementText(this.quoteProviderName, index);
-        const provider = Object.values(Provider).find(p => p.uiName === providerName);
+        const provider = Object.values(Provider).find(
+          p => p.uiName === providerName && p.uiName !== Provider.LIFI.uiName,
+        );
 
         if (provider && !provider.kyc && provider.isNative) {
           await getWebElementByTestId(this.quoteProviderName, index).tap();
