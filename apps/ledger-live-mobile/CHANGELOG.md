@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.86.0-next.1
+
+### Minor Changes
+
+- [#10878](https://github.com/LedgerHQ/ledger-live/pull/10878) [`063aeba`](https://github.com/LedgerHQ/ledger-live/commit/063aeba4bb57e358f1a87b7d22047f13c3c6dce7) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Re-added the custom.close handler required for buy/sell
+
 ## 3.86.0-next.0
 
 ### Minor Changes
