@@ -22,6 +22,7 @@ export type Props = ImageBase64Data & {
    * */
   contrast: number;
   debug?: boolean;
+  bitsPerPixel: 1 | 4;
 };
 
 /**
@@ -64,6 +65,7 @@ export default class ImageProcessor extends React.Component<Props> {
         break;
       case "ERROR":
         __DEV__ && console.error(payload);
+        console.log("ERROR:", payload);
         onError(new ImageProcessingError());
         break;
       case "BASE64_RESULT":
@@ -78,12 +80,7 @@ export default class ImageProcessor extends React.Component<Props> {
         });
         break;
       case "RAW_RESULT":
-        if (
-          !payload.width ||
-          !payload.height ||
-          !payload.hexData ||
-          payload.hexData.length !== payload.width * payload.height
-        ) {
+        if (!payload.width || !payload.height || !payload.hexData) {
           onError(new ImageProcessingError());
           break;
         }
@@ -103,8 +100,8 @@ export default class ImageProcessor extends React.Component<Props> {
   };
 
   processImage = () => {
-    const { imageBase64DataUri } = this.props;
-    this.injectJavaScript(`window.processImage("${imageBase64DataUri}");`);
+    const { imageBase64DataUri, bitsPerPixel } = this.props;
+    this.injectJavaScript(`window.processImage("${imageBase64DataUri}", ${bitsPerPixel});`);
   };
 
   setContrast = () => {

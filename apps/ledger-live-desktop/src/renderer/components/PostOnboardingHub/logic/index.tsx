@@ -216,6 +216,9 @@ export function getPostOnboardingActionsForDevice(
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
       return [assetsTransfer, buyCrypto, customImage, recover];
+    case DeviceModelId.apex:
+      if (mock) return apexPostOnboardingActionsMock;
+      return [customImage];
     default:
       return [];
   }
