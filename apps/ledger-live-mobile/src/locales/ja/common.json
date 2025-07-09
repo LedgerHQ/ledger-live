@@ -7505,5 +7505,10 @@
     "title" : "Ledger Liveのアップデートが必要です",
     "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
     "openStore" : "アップデート"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "暗号資産を選択",
+    "selectNetwork" : "ネットワークを選択",
+    "selectAccount" : "アカウントを選択"
   }
 }
