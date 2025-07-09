@@ -7,4 +7,5 @@ export const dmkToLedgerDeviceIdMap = {
   [DMKDeviceModelId.NANO_SP]: LLDeviceModelId.nanoSP,
   [DMKDeviceModelId.NANO_S]: LLDeviceModelId.nanoS,
   [DMKDeviceModelId.NANO_X]: LLDeviceModelId.nanoX,
+  [DMKDeviceModelId.APEX]: LLDeviceModelId.apex,
 };
