@@ -1,9 +1,5 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-export type AddressesSanctionedErrorAttributes = {
+export const AddressesSanctionedError = createCustomErrorClass<{
   addresses: string[];
-};
-
-export const AddressesSanctionedError = createCustomErrorClass<AddressesSanctionedErrorAttributes>(
-  "AddressesSanctionedError",
-);
+}>("AddressesSanctionedError");

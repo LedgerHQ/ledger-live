@@ -4,10 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import * as cache from "./cache";
 import { BitcoinInput, Transaction } from "./types";
 import getTransactionStatus, { MAX_BLOCK_HEIGHT_FOR_TAPROOT } from "./getTransactionStatus";
-import {
-  AddressesSanctionedError,
-  AddressesSanctionedErrorAttributes,
-} from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import BigNumber from "bignumber.js";
 import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 
@@ -43,7 +40,7 @@ describe("getTransactionStatus on Bitcoin", () => {
     ] as unknown as BitcoinInput[];
 
     isAddressSanctionedSpy.mockImplementation((_, address: string) => {
-      return Promise.resolve(sanctionedAddresses.some(sanctioned => address === sanctioned));
+      return Promise.resolve(sanctionedAddresses.includes(address));
     });
 
     calculateFeesSpy.mockResolvedValue({
@@ -66,15 +63,11 @@ describe("getTransactionStatus on Bitcoin", () => {
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors).toBeDefined();
-    expect(status.errors.sender).toBeDefined();
-    expect(status.errors.sender).toBeInstanceOf(AddressesSanctionedError);
-
-    const error = status.errors.sender as unknown as AddressesSanctionedErrorAttributes;
-    expect(error.addresses.length).toEqual(sanctionedAddresses.length);
-    for (const sanctionedAddress of sanctionedAddresses) {
-      expect(error.addresses).toContain(sanctionedAddress);
-    }
+    expect(status.errors).toEqual({
+      sender: new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: sanctionedAddresses,
+      }),
+    });
   });
 
   it("should return no sender error when no utxo address is sanctioned", async () => {
@@ -119,7 +112,6 @@ describe("getTransactionStatus on Bitcoin", () => {
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors).toBeDefined();
-    expect(status.errors.sender).toBeUndefined();
+    expect(status.errors).toEqual({});
   });
 });

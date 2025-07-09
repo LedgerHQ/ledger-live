@@ -4,10 +4,7 @@ import BigNumber from "bignumber.js";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { CardanoAccount, CardanoOutput, Transaction } from "./types";
 import * as sanction from "@ledgerhq/coin-framework/sanction/index";
-import {
-  AddressesSanctionedError,
-  AddressesSanctionedErrorAttributes,
-} from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import * as mode from "./getTransactionStatusByMode";
 import coinConfig, { CardanoCoinConfig } from "./config";
 
@@ -87,14 +84,11 @@ describe("getTransactionStatus", () => {
     const transaction = {} as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors).toBeDefined();
-    expect(status.errors.sender).toBeInstanceOf(AddressesSanctionedError);
-
-    const error = status.errors.sender as unknown as AddressesSanctionedErrorAttributes;
-    expect(error.addresses.length).toEqual(sanctionedAddresses.length);
-    for (const sanctionedAddress of sanctionedAddresses) {
-      expect(error.addresses).toContain(sanctionedAddress);
-    }
+    expect(status.errors).toEqual({
+      sender: new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: sanctionedAddresses,
+      }),
+    });
   });
 
   it("should return as no sender error when no utxo address is sanctioned", async () => {
@@ -141,7 +135,6 @@ describe("getTransactionStatus", () => {
     } as unknown as Transaction;
 
     const status = await getTransactionStatus(account, transaction);
-    expect(status.errors).toBeDefined();
-    expect(status.errors.sender).toBeUndefined();
+    expect(status.errors).toEqual({});
   });
 });
