@@ -69,7 +69,6 @@
     "eip55",
     "invariant",
     "lodash",
-    "rxjs",
-    "thor-devkit"
+    "rxjs"
   ]
 }

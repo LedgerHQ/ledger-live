@@ -2,13 +2,13 @@ import BigNumber from "bignumber.js";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { fromTransactionRaw } from "../bridge/transaction";
-import { DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "../types";
+import { MAINNET_CHAIN_TAG } from "../types";
 import { vechain1, vechain3 } from "../datasets";
 import { generateNonce } from "../common-logic";
 
 import vechainScanAccounts1 from "../datasets/vechain.scanAccounts.1";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import VIP180 from "../contracts/abis/VIP180";
+import { VIP180 } from "../contracts/abis/VIP180";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { NotEnoughVTHO } from "../errors";
 import {
@@ -48,8 +48,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -79,14 +80,17 @@ const vechain: CurrenciesData<Transaction> = {
                 {
                   to: "0x0000000000000000000000000000456e65726779",
                   value: 0,
-                  data: VIP180.transfer.encode(
-                    "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
-                    "9000000000000000000",
-                  ),
+                  data: VIP180.transfer
+                    .encodeData([
+                      "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+                      "9000000000000000000",
+                    ])
+                    .toString(),
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -111,8 +115,9 @@ const vechain: CurrenciesData<Transaction> = {
               blockRef: "0x00634a0c856ec1db",
               expiration: 18,
               clauses: [{ to: "", value: 0, data: "0x" }],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -142,8 +147,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -178,8 +184,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },
@@ -223,8 +230,9 @@ const vechain: CurrenciesData<Transaction> = {
                   data: "0x",
                 },
               ],
-              gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
               gas: "0",
+              maxFeePerGas: 0,
+              maxPriorityFeePerGas: 0,
               dependsOn: null,
               nonce: generateNonce(),
             },

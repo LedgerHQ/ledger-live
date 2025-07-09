@@ -1,22 +1,21 @@
 import BigNumber from "bignumber.js";
-import { Transaction as VeChainThorTransaction } from "thor-devkit";
 import { VTHO_ADDRESS } from "../contracts/constants";
-import VIP180 from "../contracts/abis/VIP180";
-import { HEX_PREFIX } from "../types";
+import { VIP180 } from "../contracts/abis/VIP180";
+import { VechainSDKTransactionClause } from "../types";
 
 export const calculateClausesVtho = async (
   recipient: string,
   amount: BigNumber,
-): Promise<VeChainThorTransaction.Clause[]> => {
-  const clauses: VeChainThorTransaction.Clause[] = [];
+): Promise<VechainSDKTransactionClause[]> => {
+  const clauses: VechainSDKTransactionClause[] = [];
 
   // Get the existing clause or create a blank one
-  const updatedClause: VeChainThorTransaction.Clause = {
+  const updatedClause: VechainSDKTransactionClause = {
     to: VTHO_ADDRESS,
     value: 0,
     data: "0x",
   };
-  updatedClause.data = VIP180.transfer.encode(recipient, amount.toFixed());
+  updatedClause.data = VIP180.transfer.encodeData([recipient, amount.toFixed()]).toString();
 
   clauses.push(updatedClause);
   return clauses;
@@ -25,17 +24,17 @@ export const calculateClausesVtho = async (
 export const calculateClausesVet = async (
   recipient: string,
   amount: BigNumber,
-): Promise<VeChainThorTransaction.Clause[]> => {
-  const clauses: VeChainThorTransaction.Clause[] = [];
+): Promise<VechainSDKTransactionClause[]> => {
+  const clauses: VechainSDKTransactionClause[] = [];
 
   // Get the existing clause or create a blank one
-  const updatedClause: VeChainThorTransaction.Clause = {
+  const updatedClause: VechainSDKTransactionClause = {
     to: null,
     value: 0,
     data: "0x",
   };
 
-  updatedClause.value = `${HEX_PREFIX}${amount.toString(16)}`;
+  updatedClause.value = `0x${amount.toString(16)}`;
   updatedClause.to = recipient;
 
   clauses.push(updatedClause);

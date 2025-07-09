@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
-import vip180 from "../contracts/abis/VIP180";
+import { VIP180 } from "../contracts/abis/VIP180";
 import { Operation } from "@ledgerhq/types-live";
 import { EventLog, TransferLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getFees } from "../network";
+import { Hex } from "@vechain/sdk-core";
 
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],
@@ -42,20 +43,23 @@ export const mapTokenTransfersToOperations = async (
 ): Promise<Operation[]> => {
   return Promise.all(
     evnts.map(async evnt => {
-      const decoded = vip180.TransferEvent.decode(evnt.data, evnt.topics);
+      const decoded = VIP180.TransferEvent.decodeEventLog({
+        topics: evnt.topics.map(topic => Hex.of(topic)),
+        data: Hex.of(evnt.data),
+      });
+      const from = decoded.args?.[0];
+      const to = decoded.args?.[1];
+      const value = decoded.args?.[2];
+      const type = to === addr.toLowerCase() ? "IN" : "OUT";
       const fees = await getFees(evnt.meta.txID);
       return {
-        id: encodeOperationId(
-          accountId,
-          evnt.meta.txID,
-          decoded.to === addr.toLowerCase() ? "IN" : "OUT",
-        ),
+        id: encodeOperationId(accountId, evnt.meta.txID, type),
         hash: evnt.meta.txID,
-        type: decoded.to === addr.toLowerCase() ? "IN" : "OUT",
-        value: new BigNumber(decoded.value),
+        type,
+        value: new BigNumber(value as string),
         fee: fees,
-        senders: [decoded.from],
-        recipients: [decoded.to],
+        senders: [from as string],
+        recipients: [to as string],
         blockHeight: evnt.meta.blockNumber,
         blockHash: evnt.meta.blockID,
         accountId,
