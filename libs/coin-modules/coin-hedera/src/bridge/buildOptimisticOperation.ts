@@ -1,9 +1,44 @@
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
-import type { Transaction } from "../types";
+import type { HederaOperationExtra, Transaction } from "../types";
 import { getEstimatedFees } from "./utils";
+import { isTokenAssociateTransaction } from "../logic";
+
+const buildOptimisticTokenAssociateOperation = async ({
+  account,
+  transaction,
+}: {
+  account: Account;
+  transaction: Transaction;
+}): Promise<Operation> => {
+  invariant(isTokenAssociateTransaction(transaction), "invalid transaction properties");
+
+  const estimatedFee = await getEstimatedFees(account, "TokenAssociate");
+  const value = transaction.amount;
+  const type: OperationType = "ASSOCIATE_TOKEN";
+
+  const operation: Operation = {
+    id: encodeOperationId(account.id, "", type),
+    hash: "",
+    type,
+    value,
+    fee: estimatedFee,
+    blockHash: null,
+    blockHeight: null,
+    senders: [account.freshAddress.toString()],
+    recipients: [transaction.recipient],
+    accountId: account.id,
+    date: new Date(),
+    extra: {
+      associatedTokenId: transaction.properties.token.contractAddress,
+    } satisfies HederaOperationExtra,
+  };
+
+  return operation;
+};
 
 const buildOptimisticCoinOperation = async ({
   account,
@@ -92,7 +127,9 @@ export const buildOptimisticOperation = async ({
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = isTokenAccount(subAccount);
 
-  if (isTokenTransaction) {
+  if (isTokenAssociateTransaction(transaction)) {
+    return buildOptimisticTokenAssociateOperation({ account, transaction });
+  } else if (isTokenTransaction) {
     return buildOptimisticTokenOperation({ account, tokenAccount: subAccount, transaction });
   } else {
     return buildOptimisticCoinOperation({ account, transaction });

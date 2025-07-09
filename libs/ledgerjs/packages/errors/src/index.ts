@@ -189,6 +189,17 @@ export const ReplacementTransactionUnderpriced = createCustomErrorClass(
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
 export const DustLimit = createCustomErrorClass("DustLimit");
 
+// Hedera family
+export const HederaInsufficientFundsForAssociation = createCustomErrorClass(
+  "HederaInsufficientFundsForAssociation",
+);
+export const HederaRecipientTokenAssociationRequired = createCustomErrorClass(
+  "HederaRecipientTokenAssociationRequired",
+);
+export const HederaRecipientTokenAssociationUnverified = createCustomErrorClass(
+  "HederaRecipientTokenAssociationUnverified",
+);
+
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 

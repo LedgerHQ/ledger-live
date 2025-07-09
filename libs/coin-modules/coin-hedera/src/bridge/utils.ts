@@ -21,14 +21,16 @@ import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import type { HederaOperationType, HederaOperationExtra, Transaction } from "../types";
+import { getAccount } from "../api/mirror";
 import type { HederaMirrorToken } from "../api/types";
-import { isValidExtra } from "../logic";
+import { isTokenAssociateTransaction, isValidExtra } from "../logic";
 
 const ESTIMATED_FEE_SAFETY_RATE = 2;
 const TINYBAR_SCALE = 8;
 const BASE_USD_FEE_BY_OPERATION_TYPE: Record<HederaOperationType, number> = {
   CryptoTransfer: 0.0001 * 10 ** TINYBAR_SCALE,
   TokenTransfer: 0.001 * 10 ** TINYBAR_SCALE,
+  TokenAssociate: 0.05 * 10 ** TINYBAR_SCALE,
 } as const;
 
 // note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
@@ -133,7 +135,9 @@ export const calculateAmount = ({
     return calculateTokenAmount({ account, tokenAccount: subAccount, transaction });
   }
 
-  const operationType: HederaOperationType = "CryptoTransfer";
+  const operationType: HederaOperationType = isTokenAssociateTransaction(transaction)
+    ? "TokenAssociate"
+    : "CryptoTransfer";
 
   return calculateCoinAmount({ account, transaction, operationType });
 };
@@ -265,9 +269,11 @@ type CoinOperationForOrphanChild = Operation & Required<Pick<Operation, "subOper
 
 // this util handles:
 // - linking sub operations with coin operations, e.g. token transfer with fee payment
+// - if possible, assigning `extra.associatedTokenId = mirrorToken.tokenId` based on operation's consensus timestamp
 export const prepareOperations = (
   coinOperations: Operation[],
   tokenOperations: Operation[],
+  mirrorTokens: HederaMirrorToken[],
 ): Operation[] => {
   const preparedCoinOperations = coinOperations.map(op => ({ ...op }));
   const preparedTokenOperations = tokenOperations.map(op => ({ ...op }));
@@ -299,9 +305,25 @@ export const prepareOperations = (
   };
 
   // loop through coin operations to:
+  // - enrich ASSOCIATE_TOKEN operations with extra.associatedTokenId
   // - prepare a map of hash => operations
   const coinOperationsByHash: Record<string, CoinOperationForOrphanChild[]> = {};
   preparedCoinOperations.forEach(op => {
+    const extra = isValidExtra(op.extra) ? op.extra : null;
+
+    if (op.type === "ASSOCIATE_TOKEN" && extra?.consensusTimestamp) {
+      const relatedMirrorToken = mirrorTokens.find(t => {
+        return t.created_timestamp === extra.consensusTimestamp;
+      });
+
+      if (relatedMirrorToken) {
+        op.extra = {
+          ...extra,
+          associatedTokenId: relatedMirrorToken.token_id,
+        } satisfies HederaOperationExtra;
+      }
+    }
+
     if (!coinOperationsByHash[op.hash]) {
       coinOperationsByHash[op.hash] = [];
     }
@@ -432,3 +454,22 @@ export function patchOperationWithExtra(
     nftOperations: (operation.nftOperations ?? []).map(op => ({ ...op, extra })),
   };
 }
+
+export const checkAccountTokenAssociationStatus = makeLRUCache(
+  async (accountId: string, tokenId: string) => {
+    const mirrorAccount = await getAccount(accountId);
+
+    // auto association is enabled
+    if (mirrorAccount.max_automatic_token_associations === -1) {
+      return true;
+    }
+
+    const isTokenAssociated = mirrorAccount.balance.tokens.some(token => {
+      return token.token_id === tokenId;
+    });
+
+    return isTokenAssociated;
+  },
+  (accountId, tokenId) => `${accountId}-${tokenId}`,
+  seconds(30),
+);
