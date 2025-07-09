@@ -2,6 +2,8 @@ import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUt
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { isIos } from "../helpers/commonHelpers";
+import { device } from "detox";
 import { setEnv } from "@ledgerhq/live-env";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
