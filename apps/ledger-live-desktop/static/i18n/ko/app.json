@@ -1260,7 +1260,7 @@
         "titleCompleted" : "비밀 복구 문구 확인됨",
         "recoverSeed" : "자리 표시자: 복구",
         "restoreSeed" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
-        "restoreCharonTitle" : "Ledger Charon으로 복구하기",
+        "restoreCharonTitle" : "Recovery Key로 복구",
         "restoreCharonDescription" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
         "restoreCharonContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "selection" : "가장 적합한 설정 옵션을 선택하세요.",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
         "selectionRestoreTitle" : "자산 액세스 복구",
         "selectionRestoreDescription" : "비밀 복구 문구나 Ledger Recover 등의 백업을 사용하여 복구할 수 있습니다.",
-        "selectionRestoreDescriptionWithCharon" : "비밀 복구 문구, Ledger Recover 또는 Ledger Charon 등의 백업을 사용하여 복구할 수 있습니다.",
+        "selectionRestoreDescriptionWithCharon" : "안내를 따라 백업(비밀 복구 문구, Ledger Recover 또는 Ledger Recovery Key)을 사용하여 복구할 수 있습니다.",
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "selectionNewSeedTitle" : "비밀 복구 문구",
         "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "restoreChoiceSRPTitle" : "비밀 복구 문구",
         "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요.",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "Description description description description description description.",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Recovery Key로 자산 액세스를 복구하세요",
         "restoreChoiceRecoverTitle" : "Ledger Recover 구독",
         "restoreChoiceRecoverDescription" : "구독 후 신원 확인만으로 자산 액세스 복구.",
         "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요.",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "Description description description description description description description description description description.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "PIN 보호 기능과 보안 칩이 탑재된 카드에 새로운 백업을 생성해 보세요.   탭 몇 번이면 자산에 다시 액세스할 수 있어요.",
         "backupCharonCta" : "자세히 알아보기 또는 구매",
         "backupCharonContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
       },
@@ -2415,7 +2415,8 @@
         "streaming" : {
           "accurate" : "로딩 중...({{percentage}})",
           "inaccurate" : "로딩..."
-        }
+        },
+        "gettingTransactionCheckResults" : "트랜잭션 확인 결과 가져오는 중..."
       },
       "confirmation" : {
         "title" : "확인",
@@ -7085,6 +7086,12 @@
       },
       "newAccount" : "새 계정"
     },
+    "fundAccount" : {
+      "receive" : "수령",
+      "receiveDescription" : "다른 지갑에서 암호화폐를 받아보세요",
+      "buy" : "구매",
+      "buyDescription" : "현금으로 암호화폐를 안전하게 구매해보세요"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "스캔 중단"
@@ -7123,6 +7130,7 @@
       "title_other" : "{{count}}개의 계정이 포트폴리오에 추가되었습니다",
       "cta" : {
         "addFunds" : "내 계정에 자금 추가하기",
+        "selectAccount" : "계속",
         "close" : "닫기"
       }
     }
@@ -7138,5 +7146,14 @@
     "title" : "이용 불가능한 지역",
     "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
     "learnMore" : "자세히 알아보기"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live 업데이트 필요",
+    "errorTitle" : "업데이트 실패",
+    "errorDescription" : "업데이트를 완료하지 못했습니다. 아래 링크를 눌러 Ledger Live 최신 버전을 직접 다운로드해 주세요. ",
+    "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
+    "restart" : "재시작",
+    "downloadOnLedger" : "Ledger.com에서 다운로드",
+    "downloadProgress" : "다운로드 중... {{ progress }}%"
   }
 }
