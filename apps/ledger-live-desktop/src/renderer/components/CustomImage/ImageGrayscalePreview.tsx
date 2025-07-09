@@ -8,12 +8,19 @@ import ContrastChoice from "./ContrastChoice";
 import FramedPicture from "./FramedPicture";
 import { useTheme } from "styled-components";
 import { getFramedPictureConfig } from "./framedPictureConfigs";
+import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
 export type ProcessorRawResult = { hexData: string } & ImageDimensions;
 
 export type ProcessorResult = {
+  /**
+   * Image data that can be displayed in LL
+   */
   previewResult: ProcessorPreviewResult;
+  /**
+   * Image data that can be transfered to the device
+   */
   rawResult: ProcessorRawResult;
 };
 
@@ -49,19 +56,21 @@ function applyFilter(
   imageData: ImageData,
   contrastAmount: number,
   dither = true,
+  bitsPerPixel: 1 | 4,
 ): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
   let hexRawResult = "";
   const filteredImageData = [];
 
   const data = imageData.data;
 
-  const numLevelsOfGray = 16;
+  // Determine number of gray levels based on bitsPerPixel
+  const numLevelsOfGray = Math.pow(2, bitsPerPixel);
   const rgbStep = 255 / (numLevelsOfGray - 1);
 
   const { width, height } = imageData;
 
-  const pixels256: number[][] = Array.from(Array(height), () => Array(width));
-  const pixels16: number[][] = Array.from(Array(height), () => Array(width));
+  const pixels256Colors: number[][] = Array.from(Array(height), () => Array(width));
+  const pixelsNColors: number[][] = Array.from(Array(height), () => Array(width));
 
   for (let pxIndex = 0; pxIndex < data.length / 4; pxIndex += 1) {
     const x = pxIndex % width;
@@ -71,14 +80,14 @@ function applyFilter(
     const gray256 = 0.299 * data[redIndex] + 0.587 * data[greenIndex] + 0.114 * data[blueIndex];
 
     /** gray rgb value after applying the contrast */
-    pixels256[y][x] = clamp(contrastRGB(gray256, contrastAmount), 0, 255);
+    pixels256Colors[y][x] = clamp(contrastRGB(gray256, contrastAmount), 0, 255);
   }
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const oldpixel = pixels256[y][x];
-      const posterizedGray16 = Math.floor(oldpixel / rgbStep);
-      const posterizedGray256 = posterizedGray16 * rgbStep;
+      const oldpixel = pixels256Colors[y][x];
+      const posterizedGrayNColors = Math.floor(oldpixel / rgbStep);
+      const posterizedGray256 = posterizedGrayNColors * rgbStep;
       /**
        * Floyd-Steinberg dithering
        * https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
@@ -87,41 +96,66 @@ function applyFilter(
        * y + 1  3 / 16  | 5 / 16 | 1 / 16
        */
       const newpixel = posterizedGray256;
-      pixels256[y][x] = newpixel;
+      pixels256Colors[y][x] = newpixel;
       if (dither) {
         const quantError = oldpixel - newpixel;
         if (x < width - 1) {
-          pixels256[y][x + 1] = Math.floor(pixels256[y][x + 1] + quantError * (7 / 16));
+          pixels256Colors[y][x + 1] = Math.floor(pixels256Colors[y][x + 1] + quantError * (7 / 16));
         }
         if (x > 0 && y < height - 1) {
-          pixels256[y + 1][x - 1] = Math.floor(pixels256[y + 1][x - 1] + quantError * (3 / 16));
+          pixels256Colors[y + 1][x - 1] = Math.floor(
+            pixels256Colors[y + 1][x - 1] + quantError * (3 / 16),
+          );
         }
         if (y < height - 1) {
-          pixels256[y + 1][x] = Math.floor(pixels256[y + 1][x] + quantError * (5 / 16));
+          pixels256Colors[y + 1][x] = Math.floor(pixels256Colors[y + 1][x] + quantError * (5 / 16));
         }
         if (x < width - 1 && y < height - 1) {
-          pixels256[y + 1][x + 1] = Math.floor(pixels256[y + 1][x + 1] + quantError * (1 / 16));
+          pixels256Colors[y + 1][x + 1] = Math.floor(
+            pixels256Colors[y + 1][x + 1] + quantError * (1 / 16),
+          );
         }
       }
 
-      const val16 = clamp(Math.floor(pixels256[y][x] / rgbStep), 0, 16 - 1);
-      pixels16[y][x] = val16;
+      const valNColors = clamp(Math.floor(pixels256Colors[y][x] / rgbStep), 0, numLevelsOfGray - 1);
+      pixelsNColors[y][x] = valNColors;
       /** gray rgb value after applying the contrast, in [0,255] */
-      const val256 = val16 * rgbStep;
-      filteredImageData.push(val256); // R
-      filteredImageData.push(val256); // G
-      filteredImageData.push(val256); // B
+      const val256Colors = valNColors * rgbStep;
+      filteredImageData.push(val256Colors); // R
+      filteredImageData.push(val256Colors); // G
+      filteredImageData.push(val256Colors); // B
       filteredImageData.push(255); // alpha
     }
   }
 
+  const orderedPixelsNColors = [];
   // Raw data -> by column, from right to left, from top to bottom
-  for (let x = width - 1; x >= 0; x--) {
+  for (let x = width; x--; ) {
     for (let y = 0; y < height; y++) {
-      const val16 = pixels16[y][x];
-      const grayHex = val16.toString(16);
-      hexRawResult = hexRawResult.concat(grayHex);
+      orderedPixelsNColors.push(pixelsNColors[y][x]);
     }
+  }
+
+  if (bitsPerPixel === 4) {
+    hexRawResult = orderedPixelsNColors.map(pixel => pixel.toString(16)).join("");
+  } else if (bitsPerPixel === 1) {
+    const hexValues = [];
+    let buffer = 0,
+      bitsCount = 0;
+    for (const pixel of orderedPixelsNColors) {
+      //       1 BPP ─ pack 4 pixels (bits) per 1-hex-digit
+      buffer = (buffer << 1) | (1 - (pixel & 1)); // invert colour bit
+      if (++bitsCount === 4) {
+        // flush every 4 pixels (= 4 bits = 1 hex digit)
+        hexValues.push(buffer.toString(16));
+        buffer = bitsCount = 0;
+      }
+    }
+    if (bitsCount) {
+      // tail padding
+      hexValues.push((buffer << (4 - bitsCount)).toString(16));
+    }
+    hexRawResult = hexValues.join("");
   }
 
   return {
@@ -139,17 +173,23 @@ type ProcessImageArgs = {
    *  - >1: more contrasted than the original
    * */
   contrast: number;
+  bitsPerPixel: 1 | 2 | 4;
 };
 
 function processImage(args: ProcessImageArgs): ProcessorResult {
-  const { image, contrast } = args;
+  const { image, contrast, bitsPerPixel } = args;
   const { context, canvas } = createCanvas(image);
   if (!context) throw Error("Context is null");
   context.drawImage(image, 0, 0);
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
   const { naturalHeight: height, naturalWidth: width } = image;
   // 2. applying filter to the image data
-  const { imageDataResult: grayData, hexRawResult } = applyFilter(imageData, contrast);
+  const { imageDataResult: grayData, hexRawResult } = applyFilter(
+    imageData,
+    contrast,
+    true,
+    bitsPerPixel,
+  );
   context.putImageData(
     new ImageData(grayData, width, height), // eslint-disable-line no-undef
     0,
@@ -191,6 +231,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
         const { previewResult, rawResult } = processImage({
           image: sourceImageRef.current,
           contrast: contrasts[contrastIndex].val,
+          bitsPerPixel: getScreenSpecs(deviceModelId).bitsPerPixel,
         });
         setPreviewResult(previewResult);
         onResult({ previewResult, rawResult });
@@ -209,6 +250,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
     setLoading,
     onError,
     contrastIndex,
+    deviceModelId,
   ]);
 
   const handleSourceLoaded: React.ReactEventHandler<HTMLImageElement> = useCallback(

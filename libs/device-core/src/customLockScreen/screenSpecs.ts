@@ -4,7 +4,7 @@ import {
   supportedDeviceModelIds,
 } from "../capabilities/isCustomLockScreenSupported";
 
-type ScreenSpecs = {
+export type ScreenSpecs = {
   /** width of the screen in pixels */
   width: number;
   /** height of the screen in pixels */
@@ -17,6 +17,8 @@ type ScreenSpecs = {
   paddingLeft: number;
   /** number of pixels at the right of the screen which are not visible */
   paddingRight: number;
+  /** number of bits per pixel */
+  bitsPerPixel: 1 | 4;
 };
 
 const NO_PADDING = {
@@ -32,11 +34,19 @@ export const SCREEN_SPECS: Record<CLSSupportedDeviceModelId, ScreenSpecs> = {
     height: 672,
     ...NO_PADDING,
     paddingBottom: 2,
+    bitsPerPixel: 4,
   },
   [DeviceModelId.europa]: {
     width: 480,
     height: 600,
     ...NO_PADDING,
+    bitsPerPixel: 4,
+  },
+  [DeviceModelId.apex]: {
+    width: 300,
+    height: 400,
+    ...NO_PADDING,
+    bitsPerPixel: 1,
   },
 };
 
@@ -50,7 +60,7 @@ export function getScreenSpecs(deviceModelId: CLSSupportedDeviceModelId) {
 }
 
 const screenDataDimensions: Record<CLSSupportedDeviceModelId, Dimensions> =
-  supportedDeviceModelIds.reduce(
+  supportedDeviceModelIds.reduce<Record<CLSSupportedDeviceModelId, Dimensions>>(
     (acc, deviceModelId) => {
       const { width, height } = SCREEN_SPECS[deviceModelId];
       acc[deviceModelId] = { width, height };
