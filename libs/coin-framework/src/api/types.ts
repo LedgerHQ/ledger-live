@@ -67,8 +67,19 @@ export type Account = {
 
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
-  locked?: bigint;
+  reserve: bigint;
   asset: AssetInfo;
+  staking?: {
+    rewards?: bigint; // rewards earned from staking
+    validator: {
+      address: string; // validator address
+      name?: string; // validator name
+    };
+    releaseDate?: Date;
+    active: boolean;
+  };
+  // allows us to navigate through the flow
+  possibleIntents: string[];
 };
 
 export interface Memo {
