@@ -53,10 +53,10 @@ export default tokens as ERC20Token[];
     );
     expect(mockedFs).toHaveBeenNthCalledWith(
       1,
-      "celo.json",
+      "./celo.json",
       JSON.stringify([["cUSD", 18, "0x765de816845861e75a25fca122bb6898b8b1282a", "Celo Dollar"]]),
     );
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "celo-hash.json", JSON.stringify("etagHash"));
-    expect(mockedFs).toHaveBeenNthCalledWith(3, "celo.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "./celo-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "./celo.ts", expectedFile);
   });
 });
