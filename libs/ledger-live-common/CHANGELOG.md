@@ -1,5 +1,50 @@
 # @ledgerhq/live-common
 
+## 34.41.0-nightly.2
+
+### Minor Changes
+
+- [#10839](https://github.com/LedgerHQ/ledger-live/pull/10839) [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a) Thanks [@themooneer](https://github.com/themooneer)! - chore: toggle sentry initialization based on llmSentry
+
+### Patch Changes
+
+- Updated dependencies [[`f72b7ae`](https://github.com/LedgerHQ/ledger-live/commit/f72b7ae31d2329028f6ef86e89f67e563500e23b)]:
+  - @ledgerhq/coin-sui@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@5.6.0-nightly.2
+  - @ledgerhq/coin-algorand@0.9.13-nightly.2
+  - @ledgerhq/coin-aptos@2.5.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.2
+  - @ledgerhq/coin-cardano@0.9.0-nightly.2
+  - @ledgerhq/coin-casper@2.0.4-nightly.2
+  - @ledgerhq/coin-celo@1.1.11-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.2
+  - @ledgerhq/coin-evm@2.23.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.2
+  - @ledgerhq/coin-hedera@1.8.2-nightly.2
+  - @ledgerhq/coin-icon@0.10.13-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.13-nightly.2
+  - @ledgerhq/coin-mina@1.1.12-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.2
+  - @ledgerhq/coin-near@0.11.13-nightly.2
+  - @ledgerhq/coin-polkadot@6.3.1-nightly.2
+  - @ledgerhq/coin-solana@0.27.2-nightly.2
+  - @ledgerhq/coin-stacks@0.8.13-nightly.2
+  - @ledgerhq/coin-stellar@5.3.1-nightly.2
+  - @ledgerhq/coin-tezos@5.6.0-nightly.2
+  - @ledgerhq/coin-ton@0.13.2-nightly.2
+  - @ledgerhq/coin-tron@4.4.1-nightly.2
+  - @ledgerhq/coin-vechain@2.7.13-nightly.2
+  - @ledgerhq/coin-xrp@6.3.1-nightly.2
+  - @ledgerhq/device-core@0.5.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.11-nightly.1
+  - @ledgerhq/live-countervalues@0.5.13-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.2
+  - @ledgerhq/live-nft@0.8.13-nightly.2
+  - @ledgerhq/live-signer-evm@0.5.6-nightly.2
+  - @ledgerhq/live-signer-solana@0.4.1-nightly.2
+  - @ledgerhq/live-wallet@0.11.4-nightly.2
+  - @ledgerhq/hw-app-celo@6.33.9-nightly.1
+
 ## 34.41.0-nightly.1
 
 ### Minor Changes

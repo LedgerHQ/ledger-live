@@ -1,5 +1,17 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-nightly.2
+
+### Minor Changes
+
+- [#10844](https://github.com/LedgerHQ/ledger-live/pull/10844) [`f72b7ae`](https://github.com/LedgerHQ/ledger-live/commit/f72b7ae31d2329028f6ef86e89f67e563500e23b) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Coin:SUI listOperation uses minHeight parameter
+
+### Patch Changes
+
+- Updated dependencies [[`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a)]:
+  - @ledgerhq/types-live@6.77.0-nightly.1
+  - @ledgerhq/coin-framework@5.6.0-nightly.2
+
 ## 0.6.1-nightly.1
 
 ### Patch Changes
