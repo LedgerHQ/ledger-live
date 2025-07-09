@@ -439,12 +439,12 @@ jobs:
             /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
             /usr/local/lib/android/sdk/emulator/*
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
-          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ secrets.R2_SESSION_TOKEN }}
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
           use-fallback: false
           endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
