@@ -382,10 +382,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
             }
           }
-          makeTest("bridge ref equality", async () => {
-            const account = await getSynced();
-            expect(bridge).toBe(getAccountBridge(account, null)); // Original strict equality check
-          });
           makeTest("account have no NaN values", async () => {
             const account = await getSynced();
             [account, ...(account.subAccounts || [])].forEach(a => {

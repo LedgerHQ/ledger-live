@@ -11,6 +11,8 @@ export interface UseModularDrawerFlowStepManagerProps {
   selectedStep: ModularDrawerStep;
 }
 
+export type StepFlowManagerReturnType = ReturnType<typeof useModularDrawerFlowStepManager>;
+
 export function useModularDrawerFlowStepManager({
   selectedStep,
 }: UseModularDrawerFlowStepManagerProps) {
@@ -32,6 +34,23 @@ export function useModularDrawerFlowStepManager({
 
   const hasBackButton = selectedStep !== currentStep;
 
+  const handleBackButton = (
+    goBackToAssetSelection: () => void,
+    goBackToNetworkSelection: () => void,
+  ): void => {
+    switch (currentStep) {
+      case ModularDrawerStep.Network:
+        goBackToAssetSelection();
+        break;
+      case ModularDrawerStep.Account:
+        goBackToNetworkSelection();
+        break;
+      case ModularDrawerStep.Asset:
+      default:
+        break;
+    }
+  };
+
   return {
     currentStep,
     currentStepIndex: stepIndex,
@@ -41,5 +60,6 @@ export function useModularDrawerFlowStepManager({
     isFirstStep,
     isLastStep,
     hasBackButton,
+    handleBackButton,
   };
 }

@@ -21386,6 +21386,32 @@
           "swapHistory": []
         },
         "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:ethereum:0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf:",
+          "seedIdentifier": "js",
+          "name": "Sanctioned Ethereum",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 349298484,
+          "creationDate": "2024-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2025-03-14T17:34:42.000Z",
+          "balance": "494006503578097",
+          "spendableBalance": "494006503578097",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
       }
     ],
     "countervalues": {}

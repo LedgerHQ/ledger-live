@@ -18,6 +18,7 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -110,6 +111,7 @@ export function useCustomExchangeHandlers({
                       screen: ScreenName.CustomErrorScreen,
                       params: {
                         error: result.error,
+                        displayError: result.error instanceof AddressesSanctionedError,
                       },
                     });
                   }
@@ -129,6 +131,7 @@ export function useCustomExchangeHandlers({
               screen: ScreenName.CustomErrorScreen,
               params: {
                 error,
+                displayError: error instanceof AddressesSanctionedError,
               },
             });
           },

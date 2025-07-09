@@ -1,5 +1,5 @@
 import React, { Fragment, PureComponent } from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -23,6 +23,7 @@ const StepAmount = ({
   bridgePending,
   updateTransaction,
 }: StepProps) => {
+  const { t } = useTranslation();
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const { gasPrice: gasPriceError } = status.errors;
@@ -33,8 +34,18 @@ const StepAmount = ({
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error || warning
         ? !gasPriceError && (
-            <Alert type={error ? "error" : "warning"}>
-              <TranslatedError error={error || warning} />
+            <Alert
+              type={status.errors.sender || error ? "error" : "warning"}
+              title={
+                status.errors.sender
+                  ? t("errors." + status.errors.sender.name + ".title")
+                  : undefined
+              }
+            >
+              <TranslatedError
+                error={status.errors.sender || error || warning}
+                field={status.errors.sender ? "description" : undefined}
+              />
             </Alert>
           )
         : null}

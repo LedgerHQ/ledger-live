@@ -1,4 +1,5 @@
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -150,7 +151,7 @@ export type AlpacaApi<
   AssetInfo extends Asset<TokenInfoCommon>,
   MemoType extends Memo = MemoNotSupported,
 > = {
-  broadcast: (tx: string) => Promise<string>;
+  broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
     transactionIntent: TransactionIntent<AssetInfo, MemoType>,

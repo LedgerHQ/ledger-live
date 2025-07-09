@@ -3,6 +3,8 @@ import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { device } from "detox";
+import { isIos } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -79,9 +81,11 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
       const selectedProvider: string = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(selectedProvider);
       await app.swapLiveApp.tapExecuteSwap();
+      if (isIos()) await device.disableSynchronization();
       await app.common.selectKnownDevice();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, minAmount);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });

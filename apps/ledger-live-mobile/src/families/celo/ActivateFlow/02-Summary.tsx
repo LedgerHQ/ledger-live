@@ -21,6 +21,7 @@ import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloActivateFlowParamList } from "./types";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateSummary>
@@ -120,6 +121,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
       </View>
       <View style={styles.footer}>
         {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
+        {status.errors.sender && <SupportLinkError error={status.errors.sender} type="alert" />}
         {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}
         <Button
           event="SummaryContinue"

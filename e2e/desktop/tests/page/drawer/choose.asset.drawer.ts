@@ -3,7 +3,7 @@ import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 
 export class ChooseAssetDrawer extends Drawer {
-  private searchInput = this.page.getByTestId("select-asset-drawer-search-input");
+  private searchInput = this.page.getByTestId("select-asset-drawer-search-input").first();
   private currencyRow = (currencyName: string) =>
     this.page.getByTestId(`currency-row-${currencyName.toLowerCase()}`);
 
