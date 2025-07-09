@@ -257,6 +257,7 @@ export type Features = CurrencyFeatures & {
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
     }>;
   };
+  supportDeviceApex: DefaultFeature;
 };
 
 /**
@@ -693,6 +694,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
+
+export type Feature_SupportDeviceApex = DefaultFeature;
 
 /**
  * Utils types.

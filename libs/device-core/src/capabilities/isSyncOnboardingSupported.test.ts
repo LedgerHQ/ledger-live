@@ -5,6 +5,7 @@ describe("isSyncOnboardingSupported", () => {
   it("should return true if sync onboarding is supported", () => {
     expect(isSyncOnboardingSupported(DeviceModelId.stax)).toBe(true);
     expect(isSyncOnboardingSupported(DeviceModelId.europa)).toBe(true);
+    expect(isSyncOnboardingSupported(DeviceModelId.apex)).toBe(true);
   });
 
   it("should return false if sync onboarding is not supported", () => {

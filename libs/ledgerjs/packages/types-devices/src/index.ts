@@ -8,6 +8,7 @@ export enum DeviceModelId {
   nanoX = "nanoX",
   stax = "stax",
   europa = "europa",
+  apex = "apex",
 }
 
 /**
