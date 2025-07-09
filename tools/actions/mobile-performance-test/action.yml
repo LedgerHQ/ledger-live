@@ -38,7 +38,7 @@ inputs:
   baseline-workflow:
     description: "The baseline workflow name to fetch performance report from (e.g., 'release-mobile.yml')"
     required: false
-    default: "release-mobile.yml"
+    default: "pre-mobile.yml"
   github-token:
     description: "GitHub token for fetching baseline performance reports"
     required: false
