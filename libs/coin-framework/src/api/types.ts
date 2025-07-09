@@ -58,13 +58,36 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-export type Block<
-  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+/**
+ * A block along with its upstream transactions.
+ */
+export type Block<AssetType extends Asset<TokenInfoCommon>> = {
   info: BlockInfo;
-  operations: Operation<AssetInfo, MemoType>[];
+  transactions: BlockTransaction<AssetType>[];
 };
+
+export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+  hash: string;
+  value: bigint;
+  failed: boolean;
+  operations: BlockOperation<AssetType>[];
+  details?: Record<string, unknown>;
+  fees: bigint;
+  feesPayer: string;
+};
+
+export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> = Transfer<AssetType> | Other;
+
+export type Transfer<AssetType extends Asset<TokenInfoCommon>> = {
+  type: "transfer";
+  from: string;
+  to: string;
+  asset: AssetType;
+};
+
+export type Other = {
+  type: "other";
+} & Record<string, unknown>;
 
 // Other coins take different parameters What do we want to do ?
 export type Account = {
@@ -173,7 +196,7 @@ export type AlpacaApi<
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;
-  getBlock: (height: number) => Promise<Block>;
+  getBlock: (height: number) => Promise<Block<AssetInfo>>;
   listOperations: (
     address: string,
     pagination: Pagination,
