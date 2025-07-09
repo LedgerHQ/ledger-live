@@ -27,7 +27,6 @@ import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 
-import { loadConfig } from "../bridge/server";
 import path from "path";
 import fs from "fs";
 import { setupEnvironment } from "../helpers/commonHelpers";
@@ -82,12 +81,11 @@ export class Application {
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
-    const key = `temp-userdata-${randomUUID()}`;
-    const userdataPath = getUserdataPath(key);
+    const userdataSpeculos = `temp-userdata-${randomUUID()}`;
+    const userdataPath = getUserdataPath(userdataSpeculos);
     fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
     try {
-      await InitializationManager.initialize(options, userdataPath, this.common);
-      await loadConfig(key, true);
+      await InitializationManager.initialize(options, userdataPath, this.common, userdataSpeculos);
     } finally {
       fs.unlinkSync(userdataPath);
     }
