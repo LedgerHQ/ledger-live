@@ -52,6 +52,10 @@ export const getCurrencyBridge = () => ({
     }) => {
       triggerNext = account => next({ account });
       triggerComplete = () => complete();
+
+      return {
+        unsubscribe: triggerComplete,
+      };
     },
   }),
 });
