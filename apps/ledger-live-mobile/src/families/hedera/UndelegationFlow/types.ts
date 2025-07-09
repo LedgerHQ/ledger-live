@@ -1,26 +1,16 @@
-import type {
-  HederaValidator,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/hedera/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "~/const";
 
-export type HederaDelegationFlowParamList = {
-  [ScreenName.HederaDelegationSummary]: {
-    accountId: string;
-    parentId?: string;
-    validator?: HederaValidator;
-    source?: RouteProp<ParamListBase, ScreenName>;
-  };
-  [ScreenName.HederaDelegationSelectValidator]: {
+export type HederaUndelegationFlowParamList = {
+  [ScreenName.HederaUndelegationAmount]: {
     accountId: string;
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationSelectDevice]: {
+  [ScreenName.HederaUndelegationSelectDevice]: {
     device?: Device;
     accountId: string;
     parentId?: string;
@@ -28,7 +18,7 @@ export type HederaDelegationFlowParamList = {
     status: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationConnectDevice]: {
+  [ScreenName.HederaUndelegationConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -41,20 +31,20 @@ export type HederaDelegationFlowParamList = {
     analyticsPropertyFlow?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationValidationError]: {
-    accountId: string;
-    parentId?: string;
-    deviceId: string;
-    transaction: Transaction;
-    error: Error;
-    source?: RouteProp<ParamListBase, ScreenName>;
-  };
-  [ScreenName.HederaDelegationValidationSuccess]: {
+  [ScreenName.HederaUndelegationValidationError]: {
     accountId: string;
     parentId?: string;
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.HederaUndelegationValidationSuccess]: {
+    accountId: string;
+    parentId?: string;
+    deviceId: string;
+    transaction: Transaction;
+    error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

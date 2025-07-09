@@ -1,26 +1,21 @@
-import type {
-  HederaValidator,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/hedera/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "~/const";
 
-export type HederaDelegationFlowParamList = {
-  [ScreenName.HederaDelegationSummary]: {
-    accountId: string;
-    parentId?: string;
-    validator?: HederaValidator;
-    source?: RouteProp<ParamListBase, ScreenName>;
-  };
-  [ScreenName.HederaDelegationSelectValidator]: {
+export type HederaClaimRewardsFlowParamList = {
+  [ScreenName.HederaClaimRewardsSelectReward]: {
     accountId: string;
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationSelectDevice]: {
+  [ScreenName.HederaClaimRewardsClaim]: {
+    accountId: string;
+    parentId?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
+  };
+  [ScreenName.HederaClaimRewardsSelectDevice]: {
     device?: Device;
     accountId: string;
     parentId?: string;
@@ -28,7 +23,7 @@ export type HederaDelegationFlowParamList = {
     status: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationConnectDevice]: {
+  [ScreenName.HederaClaimRewardsConnectDevice]: {
     device: Device;
     accountId: string;
     parentId?: string;
@@ -41,7 +36,7 @@ export type HederaDelegationFlowParamList = {
     analyticsPropertyFlow?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationValidationError]: {
+  [ScreenName.HederaClaimRewardsValidationError]: {
     accountId: string;
     parentId?: string;
     deviceId: string;
@@ -49,7 +44,7 @@ export type HederaDelegationFlowParamList = {
     error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.HederaDelegationValidationSuccess]: {
+  [ScreenName.HederaClaimRewardsValidationSuccess]: {
     accountId: string;
     parentId?: string;
     deviceId: string;

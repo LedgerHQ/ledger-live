@@ -18,7 +18,7 @@ export default function DelegationPlaceholder({ account }: Props) {
 
   const onDelegate = useCallback(() => {
     navigation.navigate(NavigatorName.HederaDelegationFlow, {
-      screen: ScreenName.DelegationSummary,
+      screen: ScreenName.HederaDelegationSummary,
       params: {
         accountId: account.id,
       },

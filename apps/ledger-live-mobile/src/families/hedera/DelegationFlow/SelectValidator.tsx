@@ -23,7 +23,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import type { HederaDelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.DelegationSelectValidator>
+  StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationSelectValidator>
 >;
 
 const keyExtractor = (v: HederaValidator) => v.address;
@@ -40,7 +40,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const onItemPress = useCallback(
     (validator: HederaValidator) => {
-      navigation.navigate(ScreenName.DelegationSummary, {
+      navigation.navigate(ScreenName.HederaDelegationSummary, {
         ...route.params,
         validator,
       });

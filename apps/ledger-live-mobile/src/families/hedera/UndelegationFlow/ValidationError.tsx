@@ -11,10 +11,10 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import ValidateError from "~/components/ValidateError";
 import { ScreenName } from "~/const";
-import type { HederaDelegationFlowParamList } from "./types";
+import type { HederaUndelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationValidationError>
+  StackNavigatorProps<HederaUndelegationFlowParamList, ScreenName.HederaUndelegationValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
@@ -33,10 +33,10 @@ export default function ValidationError({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
-        category="DelegationFlow"
+        category="UndelegationFlow"
         name="ValidationError"
         flow="stake"
-        action="delegation"
+        action="undelegation"
         currency="hedera"
       />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />

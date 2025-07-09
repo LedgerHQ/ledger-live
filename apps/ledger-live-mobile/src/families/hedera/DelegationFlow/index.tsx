@@ -29,7 +29,7 @@ function DelegationFlow() {
       }}
     >
       <Stack.Screen
-        name={ScreenName.DelegationSummary}
+        name={ScreenName.HederaDelegationSummary}
         component={DelegationSummary}
         options={{
           gestureEnabled: false,
@@ -45,7 +45,7 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DelegationSelectValidator}
+        name={ScreenName.HederaDelegationSelectValidator}
         component={DelegationSelectValidator}
         options={{
           gestureEnabled: false,
@@ -53,7 +53,7 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DelegationSelectDevice}
+        name={ScreenName.HederaDelegationSelectDevice}
         component={DelegationSelectDevice}
         options={{
           headerTitle: () => (
@@ -68,7 +68,7 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DelegationConnectDevice}
+        name={ScreenName.HederaDelegationConnectDevice}
         component={DelegationConnectDevice}
         options={{
           gestureEnabled: false,
@@ -84,16 +84,16 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DelegationValidationSuccess}
-        component={DelegationValidationSuccess}
+        name={ScreenName.HederaDelegationValidationError}
+        component={DelegationValidationError}
         options={{
           headerShown: false,
           gestureEnabled: false,
         }}
       />
       <Stack.Screen
-        name={ScreenName.DelegationValidationError}
-        component={DelegationValidationError}
+        name={ScreenName.HederaDelegationValidationSuccess}
+        component={DelegationValidationSuccess}
         options={{
           headerShown: false,
           gestureEnabled: false,

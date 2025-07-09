@@ -189,7 +189,7 @@ function Delegations({ account, delegatedPosition }: Props) {
           (navigation as StackNavigationProp<Record<string, object | undefined>>).navigate(
             NavigatorName.HederaDelegationFlow,
             {
-              screen: ScreenName.DelegationSummary,
+              screen: ScreenName.HederaDelegationSummary,
               params: {
                 accountId: account.id,
               },

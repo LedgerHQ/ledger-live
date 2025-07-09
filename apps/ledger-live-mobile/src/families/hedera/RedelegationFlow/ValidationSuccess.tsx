@@ -16,11 +16,14 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { HederaDelegationFlowParamList } from "./types";
+import { HederaRedelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
-  StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationValidationSuccess>
+  StackNavigatorProps<
+    HederaRedelegationFlowParamList,
+    ScreenName.HederaRedelegationValidationSuccess
+  >
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -41,7 +44,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   useEffect(() => {
     if (delegation)
-      track("staking_completed", {
+      track("restaking_completed", {
         currency: ticker,
         validator: selectedValidatorAddress,
         source,
@@ -65,18 +68,18 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
-        category="SendFunds"
+        category="RedelegationFlow"
         name="ValidationSuccess"
         flow="stake"
-        action="delegation"
+        action="redelegation"
         currency="hedera"
       />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={<Trans i18nKey="hedera.delegation.steps.confirmation.success.title" />}
-        description={<Trans i18nKey="hedera.delegation.steps.confirmation.success.description" />}
+        title={<Trans i18nKey="hedera.redelegation.steps.confirmation.success.title" />}
+        description={<Trans i18nKey="hedera.redelegation.steps.confirmation.success.description" />}
       />
     </View>
   );

@@ -46,6 +46,9 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
+import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
+import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
+import type { HederaClaimRewardsFlowParamList } from "../../../families/hedera/ClaimRewardsFlow/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -301,6 +304,9 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaDelegationFlow]: NavigatorScreenParams<HederaDelegationFlowParamList>;
+  [NavigatorName.HederaUndelegationFlow]: NavigatorScreenParams<HederaUndelegationFlowParamList>;
+  [NavigatorName.HederaRedelegationFlow]: NavigatorScreenParams<HederaRedelegationFlowParamList>;
+  [NavigatorName.HederaClaimRewardsFlow]: NavigatorScreenParams<HederaClaimRewardsFlowParamList>;
 
   [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
 

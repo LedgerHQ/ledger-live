@@ -34,7 +34,7 @@ import TranslatedError from "../../../components/TranslatedError";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 
-type Props = StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.DelegationSummary>;
+type Props = StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationSummary>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -65,11 +65,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onChangeDelegator = useCallback(() => {
     rotateAnim.setValue(0);
-    navigation.navigate(ScreenName.DelegationSelectValidator, route.params);
+    navigation.navigate(ScreenName.HederaDelegationSelectValidator, route.params);
   }, [rotateAnim, navigation, route.params]);
 
   const onContinue = useCallback(async () => {
-    navigation.navigate(ScreenName.DelegationSelectDevice, {
+    navigation.navigate(ScreenName.HederaDelegationSelectDevice, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
