@@ -1,6 +1,7 @@
 import {
   PaginatedTransactionResponse,
   SuiClient,
+  SuiHTTPTransport,
   ExecuteTransactionBlockParams,
   TransactionEffects,
   QueryTransactionBlocksParams,
@@ -19,6 +20,7 @@ import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { SuiAsset } from "../api/types";
+import ky from "ky";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -30,6 +32,16 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
+// Create a ky instance with extended timeout and retry logic
+const kyExtendedTimeout = ky.create({
+  timeout: 60000,
+  retry: {
+    limit: 3,
+    statusCodes: [408, 413, 429, 500, 502, 503, 504],
+    methods: ["get", "post", "put", "head", "delete", "options", "trace"],
+  },
+});
+
 /**
  * Connects to Sui Api
  */
@@ -37,7 +49,11 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
 
   if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
+    const transport = new SuiHTTPTransport({
+      url,
+      fetch: kyExtendedTimeout as typeof fetch, // Type cast for jest test having an issue with the type,
+    });
+    apiMap[url] = new SuiClient({ transport });
   }
 
   const result = await execute(apiMap[url]);
