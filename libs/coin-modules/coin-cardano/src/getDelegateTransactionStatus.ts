@@ -47,11 +47,11 @@ export async function getDelegateTransactionStatus(
     });
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount: new BigNumber(0),
     totalSpent: estimatedFees,
-  });
+  };
 }

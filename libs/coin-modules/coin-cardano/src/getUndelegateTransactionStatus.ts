@@ -35,11 +35,11 @@ export async function getUndelegateTransactionStatus(
     }
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount: new BigNumber(0),
     totalSpent: estimatedFees,
-  });
+  };
 }

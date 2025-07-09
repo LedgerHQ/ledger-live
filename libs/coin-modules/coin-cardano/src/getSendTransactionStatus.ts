@@ -112,11 +112,11 @@ export async function getSendTransactionStatus(
     }
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 }
