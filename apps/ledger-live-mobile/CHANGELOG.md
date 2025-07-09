@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.86.0-nightly.1
+
+### Minor Changes
+
+- [#10847](https://github.com/LedgerHQ/ledger-live/pull/10847) [`02fd258`](https://github.com/LedgerHQ/ledger-live/commit/02fd25829402cdcf1534407c566f799906a9c49b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - introduces the initial setup for managing assets and networks (Part 1)
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+### Patch Changes
+
+- Updated dependencies [[`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713)]:
+  - @ledgerhq/native-ui@0.39.0-nightly.1
+  - @ledgerhq/coin-framework@5.6.0-nightly.1
+  - @ledgerhq/coin-evm@2.23.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.1
+  - @ledgerhq/coin-stacks@0.8.13-nightly.1
+  - @ledgerhq/live-countervalues@0.5.13-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.1
+  - @ledgerhq/live-nft@0.8.13-nightly.1
+  - @ledgerhq/live-nft-react@0.9.13-nightly.1
+  - @ledgerhq/live-wallet@0.11.4-nightly.1
+
 ## 3.86.0-nightly.0
 
 ### Minor Changes

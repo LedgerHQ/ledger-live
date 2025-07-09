@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.23.0-nightly.1
+
+### Minor Changes
+
+- [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
+
+- [#10846](https://github.com/LedgerHQ/ledger-live/pull/10846) [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): add alpaca combine method
+
+### Patch Changes
+
+- Updated dependencies [[`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542)]:
+  - @ledgerhq/coin-framework@5.6.0-nightly.1
+
 ## 2.22.7-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.39.0-nightly.1
+
+### Minor Changes
+
+- [#10835](https://github.com/LedgerHQ/ledger-live/pull/10835) [`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Add AssetList component in LLM ldls
+
 ## 0.39.0-nightly.0
 
 ### Minor Changes
