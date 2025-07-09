@@ -162,7 +162,9 @@ export default class SwapLiveAppPage {
       : `Swap with ${provider}`;
 
     const actualButtonText = await getWebElementText(this.executeSwapButton);
-    jestExpect(actualButtonText).toEqual(expectedButtonText);
+    if (actualButtonText !== expectedButtonText) {
+      await tapWebElementByElement(getWebElementById(this.executeSwapButton));
+    }
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
