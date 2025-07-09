@@ -15,6 +15,7 @@ import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanA
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
+import { useFormatAccount } from "../../hooks/useFormatAccount";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
@@ -49,13 +50,14 @@ const ScanAccounts = ({
     handleConfirm,
     toggleShowAllCreatedAccounts,
     allImportableAccountsSelected,
-    formatAccount,
   } = useScanAccounts({
     navigateToWarningScreen,
     currency,
     deviceId,
     onComplete,
   });
+
+  const formatAccount = useFormatAccount({ currency });
 
   const renderAccount = (account: Account) => {
     const accountFormatted = formatAccount(account);
