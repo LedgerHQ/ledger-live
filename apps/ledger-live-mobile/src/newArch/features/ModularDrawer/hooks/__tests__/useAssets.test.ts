@@ -16,7 +16,7 @@ const mockSortedCryptoCurrencies: CryptoOrTokenCurrency[] = [
 describe("useAssets", () => {
   it("returns filtered sorted crypto currencies by default", () => {
     const { result } = renderHook(() => useAssets(mockCurrencies, mockSortedCryptoCurrencies));
-    expect(result.current.assetsToDisplay).toEqual([
+    expect(result.current.availableAssets).toEqual([
       mockSortedCryptoCurrencies[0],
       mockSortedCryptoCurrencies[1],
     ]);
@@ -24,14 +24,14 @@ describe("useAssets", () => {
 
   it("returns all sorted crypto currencies if currencies is empty", () => {
     const { result } = renderHook(() => useAssets([], mockSortedCryptoCurrencies));
-    expect(result.current.assetsToDisplay).toEqual(mockSortedCryptoCurrencies);
+    expect(result.current.availableAssets).toEqual(mockSortedCryptoCurrencies);
   });
 
   it("allows overriding assetsToDisplay", () => {
     const { result } = renderHook(() => useAssets(mockCurrencies, mockSortedCryptoCurrencies));
     act(() => {
-      result.current.setAssetsToDisplay([mockSortedCryptoCurrencies[2]]);
+      result.current.setAvailableAssets([mockSortedCryptoCurrencies[2]]);
     });
-    expect(result.current.assetsToDisplay).toEqual([mockSortedCryptoCurrencies[2]]);
+    expect(result.current.availableAssets).toEqual([mockSortedCryptoCurrencies[2]]);
   });
 });
