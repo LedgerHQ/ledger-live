@@ -1260,7 +1260,7 @@
         "titleCompleted" : "ยืนยัน Secret Recovery Phrase แล้ว",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
-        "restoreCharonTitle" : "กู้คืนโดยใช้ Ledger Charon",
+        "restoreCharonTitle" : "กู้คืนโดยใช้ Recovery Key",
         "restoreCharonDescription" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
         "restoreCharonContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
         "selection" : "เลือกตัวเลือกการติดตั้งที่เหมาะกับคุณที่สุด:",
@@ -1268,7 +1268,7 @@
         "selectionNewLedgerDescription" : "ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
         "selectionRestoreTitle" : "กู้คืนการเข้าถึงสินทรัพย์",
         "selectionRestoreDescription" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase หรือ Ledger Recover",
-        "selectionRestoreDescriptionWithCharon" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, Ledger Recover หรือ Ledger Charon",
+        "selectionRestoreDescriptionWithCharon" : "สิ่งเหล่านี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, บริการ Ledger Recover หรือ Ledger Recovery Key",
         "selectionContinueOnDevice" : "เลือกตัวเลือกบน {{productName}} ของคุณ",
         "selectionNewSeedTitle" : "Secret Recovery Phrase",
         "selectionNewSeedSubtitle" : "โปรดเก็บรักษาให้ปลอดภัยและเป็นส่วนตัว",
@@ -1278,13 +1278,13 @@
         "restoreChoiceContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
         "restoreChoiceSRPTitle" : "Secret Recovery Phrase",
         "restoreChoiceSRPDescription" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด",
-        "restoreChoiceCharonTitle" : "Ledger Charon",
-        "restoreChoiceCharonDescription" : "คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย",
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "ใช้ Ledger Recovery Key เพื่อกู้คืนการเข้าถึงสินทรัพย์ของคุณ",
         "restoreChoiceRecoverTitle" : "บริการ Ledger Recover",
         "restoreChoiceRecoverDescription" : "ใช้บริการนี้เพื่อกู้คืนการเข้าถึงสินทรัพย์ด้วยการยืนยันตัวตนของคุณ",
         "followInstructions" : "ทำตามคำแนะนำที่แสดงบน {{productName}} ของคุณ",
-        "backupCharonTitle" : "Ledger Charon",
-        "backupCharonDescription" : "คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย คำอธิบาย",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว — เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
         "backupCharonCta" : "ดูข้อมูลหรือซื้อเลย",
         "backupCharonContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
@@ -2415,7 +2415,8 @@
         "streaming" : {
           "accurate" : "กำลังโหลด... ({{percentage}})",
           "inaccurate" : "กำลังโหลด..."
-        }
+        },
+        "gettingTransactionCheckResults" : "กำลังตรวจสอบธุรกรรม..."
       },
       "confirmation" : {
         "title" : "การยืนยัน",
@@ -7085,6 +7086,12 @@
       },
       "newAccount" : "บัญชีใหม่"
     },
+    "fundAccount" : {
+      "receive" : "รับ",
+      "receiveDescription" : "รับคริปโตจากวอลเล็ตอื่น",
+      "buy" : "ซื้อ",
+      "buyDescription" : "ซื้อคริปโตด้วยเงินสดได้อย่างปลอดภัย"
+    },
     "scanAccounts" : {
       "cta" : {
         "stopScanning" : "หยุดการสแกน"
@@ -7123,6 +7130,7 @@
       "title_other" : "เพิ่ม {{count}} บัญชีในพอร์ตโฟลิโอของคุณแล้ว",
       "cta" : {
         "addFunds" : "เติมเงินทุนไปยังบัญชีของฉัน",
+        "selectAccount" : "ดำเนินการต่อ",
         "close" : "ปิด"
       }
     }
@@ -7138,5 +7146,14 @@
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
     "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
     "learnMore" : "เรียนรู้เพิ่มเติม"
+  },
+  "versionBlocking" : {
+    "title" : "ต้องอัปเดต Ledger Live",
+    "errorTitle" : "การอัปเดตล้มเหลว",
+    "errorDescription" : "การอัปเดตล้มเหลว โปรดทำตามลิงก์ด้านล่างเพื่อดาวน์โหลดแอป Ledger Live เวอร์ชันล่าสุด ",
+    "description" : "แอป Ledger Live เวอร์ชันนี้ไม่สามารถใช้งานร่วมกับระบบปฏิบัติการเวอร์ชันล่าสุดของอุปกรณ์ได้ อัปเดตตอนนี้เพื่อประสบการณ์การเชื่อมต่อที่ดีขึ้น",
+    "restart" : "รีสตาร์ท",
+    "downloadOnLedger" : "ดาวน์โหลดได้ที่ Ledger.com",
+    "downloadProgress" : "กำลังดาวน์โหลด... {{ progress }}%"
   }
 }
