@@ -144,7 +144,7 @@ export function ModalHeaderBackButton({
   return (
     <BackContainer>
       <TouchableOpacity onPress={onBack} testID="modal-back-button">
-        <ArrowLeft color={colors.neutral.c100} size="XS" />
+        <ArrowLeft color={colors.neutral.c100} size="M" />
       </TouchableOpacity>
     </BackContainer>
   );

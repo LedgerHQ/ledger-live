@@ -294,6 +294,14 @@
       "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
       "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
+      "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
+      "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
+    },
     "CasperInvalidTransferId" : {
       "title" : "ID การโอนควรเป็นจำนวนบวกที่น้อยกว่า {{maxTransferId}}"
     },
@@ -2164,7 +2172,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Genuine Check และตรวจสอบการอัปเดต OS",
+    "title" : "Genuine Check ของ Ledger",
     "idle" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Genuine Check",
       "checkCta" : "ตรวจสอบ {{ productName }}"
@@ -2200,11 +2208,11 @@
     "genuineCheckStep" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Genuine Check",
       "inactive" : {
-        "title" : "Genuine Check",
+        "title" : "Genuine Check ของ Ledger",
         "description" : "ซึ่งช่วยให้แน่ใจว่า {{productName}} ของคุณเป็น Ledger อย่างเป็นทางการ"
       },
       "active" : {
-        "title" : "Genuine Check",
+        "title" : "Genuine Check ของ Ledger",
         "description" : "ซึ่งช่วยให้แน่ใจว่า {{productName}} ของคุณเป็น Ledger อย่างเป็นทางการ"
       },
       "completed" : {
@@ -2212,23 +2220,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Genuine Check ถูกปฏิเสธ",
+        "title" : "Genuine Check ของ Ledger ถูกปฏิเสธ",
         "description" : "Genuine Check นี้จำเป็นสำหรับการดำเนินการตั้งค่า {{productName}} ของคุณต่อโดยใช้แอป Ledger Live",
         "cta" : "เริ่มต้นการตรวจสอบใหม่"
       },
       "error" : {
-        "title" : "Genuine Check",
+        "title" : "Genuine Check ของ Ledger",
         "description" : "Genuine Check ช่วยให้แน่ใจว่า {{productName}} ของคุณเป็นเครื่องแท้ของ Ledger"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "ตรวจสอบการอัปเดต OS",
-        "description" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{productName}} ของคุณเป็นปัจจุบันหรือไม่ "
+        "title" : "ตรวจสอบ Ledger OS",
+        "description" : "เป็นการตรวจสอบว่าระบบปฏิบัติการ {{productName}} ของคุณเป็นเวอร์ชันล่าสุดแล้วหรือไม่ "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} OS ได้รับการอัปเดตล่าสุดแล้ว"
+          "title" : "Ledger OS เป็นเวอร์ชันปัจจุบันแล้ว"
         }
       },
       "error" : {
@@ -2242,8 +2250,8 @@
         "skipCta" : "ข้ามการอัปเดต"
       },
       "inactive" : {
-        "title" : "ตรวจสอบการอัปเดต OS",
-        "description" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{productName}} ของคุณเป็นปัจจุบันหรือไม่ "
+        "title" : "ตรวจสอบ Ledger OS",
+        "description" : "เป็นการตรวจสอบว่าระบบปฏิบัติการบน {{productName}} ของคุณเป็นเวอร์ชันล่าสุดแล้วหรือไม่ "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2255,7 +2263,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "ตั้งค่า {{deviceName}}",
+    "title" : "เตรียม {{productName}} ของคุณให้พร้อม",
     "estimatedTimeFormat" : "{{estimatedTime}} นาที",
     "deviceSelection" : {
       "title" : "เลือก Ledger ที่คุณต้องการติดตั้ง:",
@@ -2310,7 +2318,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} เป็นอุปกรณ์ของแท้",
-      "subtitle" : "ปลอดภัยที่จะใช้ {{productName}} นี้ คุณสามารถดำเนินการตั้งค่าได้",
+      "subtitle" : "{{productName}} ของคุณปลอดภัยสำหรับการใช้งาน คุณสามารถเริ่มการติดตั้งได้เลย",
       "description" : "แตะที่ {{productName}} เพื่อเริ่มการติดตั้ง"
     },
     "pinStep" : {
@@ -2320,30 +2328,58 @@
       "continueOnDevice" : "ตั้งค่า PIN ของคุณบน {{productName}}"
     },
     "seedStep" : {
-      "title" : "Secret Recovery Phrase",
+      "title" : "การติดตั้งและสำรองข้อมูล",
       "doneTitle" : "ยืนยัน Secret Recovery Phrase แล้ว",
       "description" : "Recovery Phrase ของคุณคือรายการที่มี 24 คำ ซึ่งเป็นความลับ ที่สำรองข้อมูล Private Key ของคุณ {{productName}} ของคุณจะสร้าง Recovery Phrase เฉพาะ Ledger จะไม่เก็บสำเนาของ Recovery Phrase ไว้",
       "choiceRestoreDirectOrRecover" : "Placeholder - ตัวเลือกการกู้คืนโดยตรงหรือใช้ Recover",
       "recoverSeed" : "Placeholder: Recover",
-      "restoreSeed" : "อย่าลืมใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุดสำหรับสินทรัพย์ของคุณ\n\nหากยังไม่มี ใช้ {{productName}} ของคุณเพื่อสร้าง Phrase ใหม่",
       "selection" : "เลือกตัวเลือกการติดตั้งที่เหมาะกับคุณที่สุด:",
       "selectionNewLedger" : {
         "title" : "ติดตั้งเป็นเครื่อง Ledger ใหม่",
-        "desc" : "ช่วยให้คุณสร้าง Wallet ใหม่ได้ ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่"
+        "desc" : "การดำเนินการนี้จะเป็นการสร้าง Secret Recovery Phrase ใหม่ให้กับคุณ"
       },
       "selectionRestore" : {
-        "title" : "กู้คืน",
-        "desc" : "ช่วยให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ที่มีอยู่ด้วย Secret Recovery Phrase ของคุณหรือโดยใช้ Ledger Recover"
+        "title" : "กู้คืนการเข้าถึงสินทรัพย์ของคุณ",
+        "desc" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase หรือ Ledger Recover",
+        "descWithCharon" : "สิ่งเหล่านี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, บริการ Ledger Recover หรือ Ledger Recovery Key"
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว — เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
+        "cta" : "ดูข้อมูลหรือซื้อเลย",
+        "continueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "เลือกวิธีการกู้คืนที่คุณต้องการ:",
+        "continueOnDevice" : "เลือกตัวเลือกที่แสดงบน {{productName}} ของคุณ",
+        "secretRecoveryPhrase" : {
+          "title" : "Secret Recovery Phrase",
+          "description" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด"
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "ใช้ Ledger Recovery Key เพื่อกู้คืนการเข้าถึงสินทรัพย์ของคุณ"
+        },
+        "ledgerRecover" : {
+          "title" : "บริการ Ledger Recover",
+          "description" : "ใช้บริการนี้เพื่อกู้คืนการเข้าถึงสินทรัพย์ด้วยการยืนยันตัวตนของคุณ"
+        }
+      },
+      "restoreSeed" : {
+        "title" : "กู้คืนโดยใช้ Secret Recovery Phrase",
+        "description" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "continueOnDevice" : "เลือกตัวเลือกที่แสดงบน {{productName}} ของคุณ"
+      },
+      "restoreLedgerCharon" : {
+        "title" : "กู้คืนโดยใช้ Recovery Key",
+        "description" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "continueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
       "selectionContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
-      "newSeedDescription" : "ต้องการเรียนรู้เพิ่มเติมเกี่ยวกับ Secret Recovery Phrase หรือเปล่า? ดูวิดีโอเหล่านี้สิ:",
-      "newSeedContinueOnDevice" : "ดำเนินการนี้บน {{productName}} ของคุณ",
-      "recovery" : "อย่าลืมใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุดสำหรับสินทรัพย์ของคุณ\n\nหากยังไม่มี ใช้ {{productName}} ของคุณเพื่อสร้าง Phrase ใหม่",
-      "restoreChoiceContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
-      "restoreChoiceSRPTitle" : "กู้คืนโดยใช้ Secret Recovery Phrase",
-      "restoreChoiceSRPDescription" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด ",
-      "restoreChoiceRecoverTitle" : "กู้คืนโดยใช้ Ledger Recover",
-      "restoreChoiceRecoverDescription" : "หากคุณสมัครใช้งาน Ledger Recover ให้เข้าสู่ระบบ Subscription ของคุณเพื่อเริ่มต้นกระบวนการกู้คืน Secret Recovery Phrase ที่ได้สำรองข้อมูลไว้"
+      "newSeedTitle" : "Secret Recovery Phrase",
+      "newSeedDescription" : "ดูวิดีโอเหล่านี้เพื่อเรียนรู้เพิ่มเติมเกี่ยวกับ Secret Recovery Phrase:",
+      "newSeedContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
+      "recovery" : "อย่าลืมใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุดสำหรับสินทรัพย์ของคุณ\n\nหากยังไม่มี ใช้ {{productName}} ของคุณเพื่อสร้าง Phrase ใหม่"
     },
     "backup" : {
       "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
@@ -3193,6 +3229,12 @@
         "placeholder" : "ข้อมูลผู้ให้บริการ Exchange ในรูปแบบ CAL",
         "currentSetting" : "การตั้งค่าปัจจุบัน",
         "error" : "ค่า CAL ไม่ถูกต้อง"
+      },
+      "customCALRef" : {
+        "title" : "การอ้างอิง CAL ที่กำหนดเอง",
+        "description" : "ระบุสาขาที่กำหนดเอง มอบหมาย หรือแท็กเพื่อใช้งานสำหรับคำขอ CAL ทั้งหมด",
+        "enable" : "เปิดใช้งานการอ้างอิง CAL ที่กำหนดเอง",
+        "disable" : "ปิดใช้งานการอ้างอิง CAL ที่กำหนดเอง"
       }
     },
     "debug" : {
@@ -3564,6 +3606,15 @@
         "providers" : {
           "noProviders" : "ไม่พบผลลัพธ์ ไม่พบโควตราคาตามการตั้งค่าปัจจุบัน"
         }
+      },
+      "quotesList" : {
+        "title" : "เลือกโควตราคา"
+      },
+      "twoStepApproval" : {
+        "title" : "ดำเนินการตามขั้นตอน"
+      },
+      "history" : {
+        "title" : "ประวัติการสวอป"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "สำรวจอุปกรณ์ที่เข้ากันได้",
@@ -7449,5 +7500,10 @@
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
     "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
     "learnMore" : "เรียนรู้เพิ่มเติม"
+  },
+  "versionBlocking" : {
+    "title" : "ต้องอัปเดต Ledger Live",
+    "description" : "แอป Ledger Live เวอร์ชันนี้ไม่สามารถใช้งานร่วมกับระบบปฏิบัติการเวอร์ชันล่าสุดของอุปกรณ์ได้ อัปเดตตอนนี้เพื่อประสบการณ์การเชื่อมต่อที่ดีขึ้น",
+    "openStore" : "อัปเดต"
   }
 }

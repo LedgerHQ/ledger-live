@@ -6635,6 +6635,10 @@
     },
     "AmountTooSmall": {
       "title": "Minimum required amount for this transaction is {{amount}}"
+    },
+    "AddressesSanctionedError": {
+      "title": "Keeping you safe",
+      "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
   "cryptoOrg": {
@@ -7106,7 +7110,9 @@
       "cta": {
         "confirm": "Confirm"
       },
-      "newAccount": "New account"
+      "newAccount": "New account",
+      "addAccountSelection": "Choose account to add funds",
+      "addAccountSelectionPtxFlow": "Select account"
     },
     "fundAccount": {
       "receive": "Receive",
@@ -7166,5 +7172,14 @@
     "title": "Location unavailable",
     "description": "Ledger wallet is not available in this location.",
     "learnMore": "Learn more"
+  },
+  "versionBlocking": {
+    "title": "Ledger Live Update Required",
+    "errorTitle": "Update failed",
+    "errorDescription": "The update failed. Please follow the link below to download the newest version of Ledger Live. ",
+    "description": "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
+    "restart": "Restart",
+    "downloadOnLedger": "Download on Ledger.com",
+    "downloadProgress": "Downloading... {{ progress }}%"
   }
 }

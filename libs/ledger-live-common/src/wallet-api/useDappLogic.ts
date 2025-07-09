@@ -12,7 +12,7 @@ import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoasset
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";

@@ -29,7 +29,7 @@ export const Row: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Fl
 const FeatureFlagDetails: React.FC<Props> = props => {
   const { flagName, focused, setFocusedName } = props;
   const { getFeature } = useFeatureFlags();
-  const flagValue = getFeature(flagName as FeatureId);
+  const flagValue = getFeature(flagName);
   const { t } = useTranslation();
 
   const {

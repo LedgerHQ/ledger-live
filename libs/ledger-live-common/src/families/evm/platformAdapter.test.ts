@@ -1,8 +1,8 @@
-import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { FAMILIES, EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
 import evm from "./platformAdapter";
+import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for ETH platform tx", () => {

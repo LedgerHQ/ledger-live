@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/next.js-example",
   "private": true,
-  "version": "0.1.29",
+  "version": "0.1.31",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",

@@ -60,6 +60,8 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -80,7 +82,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
     const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
@@ -97,6 +99,12 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+
+    // Apply versioned redirects logic to the stakePrograms feature flag
+    const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
 
     const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -157,15 +165,6 @@ const getMEVAttributes = (state: State) => {
 
   return {
     MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
-  };
-};
-
-const getNewAddAccountsAttribues = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
-
-  return {
-    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
   };
 };
 
@@ -273,7 +272,6 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
 
@@ -325,7 +323,6 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
-    ...addAccountsAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,

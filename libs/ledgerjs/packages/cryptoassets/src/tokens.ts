@@ -18,6 +18,7 @@ import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
 import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
 import celoTokens from "./data/celo";
+import suitokens, { SuiToken } from "./data/sui";
 import { ERC20Token } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -61,6 +62,11 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+
+if (getEnv("SUI_ENABLE_TOKENS")) {
+  // Sui tokens
+  addTokens(suitokens.map(convertSuiTokens));
+}
 
 if (getEnv("APTOS_ENABLE_TOKENS")) {
   // Aptos Legacy Coin tokens
@@ -477,6 +483,26 @@ function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
 
 function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
   return convertAptosTokens("fungible_asset", token);
+}
+
+function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById("sui"),
+    name,
+    tokenType: "sui",
+    ticker,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
 }
 
 function convertCardanoNativeTokens([

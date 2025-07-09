@@ -14,8 +14,15 @@ import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
 
-const TRUSTED_NAME_MIN_VERSION = "1.8.1";
-const DYNAMIC_DESCRIPTOR_MIN_VERSION = "1.9.0";
+/**
+ * Required minimum version of App Solana for non NanoS devices.
+ * For NanoS devices (being deprecated), all versions of App Solana
+ * are outdated compared to what we want to enfore in the other cases.
+ * As a result, Firebase `minVersion` can not be used here.
+ * NOTE: The ability to specify a `minVersion` per device model from Firebase
+ * is work in progress {@link https://ledgerhq.atlassian.net/browse/LIVE-17027}
+ */
+const MIN_VERSION = "1.9.2";
 const MANAGER_APP_NAME = "Solana";
 
 function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
@@ -74,6 +81,8 @@ export class LegacySignerSolana implements SolanaSigner {
         throw new Error("Resolution provided without a deviceModelId");
       }
 
+      await this.checkAppVersion(MIN_VERSION, { throwOnOutdated: true });
+
       if (resolution.deviceModelId !== DeviceModelId.nanoS) {
         const { descriptor, signature } = await calService.getCertificate(
           resolution.deviceModelId,
@@ -91,8 +100,6 @@ export class LegacySignerSolana implements SolanaSigner {
         }
 
         if (resolution.tokenAddress) {
-          await this.checkAppVersion(TRUSTED_NAME_MIN_VERSION, { throwOnOutdated: true });
-
           const challenge = await this.signer.getChallenge();
           const { signedDescriptor } = await trustService.getOwnerAddress(
             resolution.tokenAddress,
@@ -104,8 +111,6 @@ export class LegacySignerSolana implements SolanaSigner {
           }
         }
         if (resolution.createATA) {
-          await this.checkAppVersion(TRUSTED_NAME_MIN_VERSION, { throwOnOutdated: true });
-
           const challenge = await this.signer.getChallenge();
           const { signedDescriptor } = await trustService.computedTokenAddress(
             resolution.createATA.address,
@@ -118,13 +123,7 @@ export class LegacySignerSolana implements SolanaSigner {
           }
         }
 
-        const dynamicDescriptorSupport = await this.checkAppVersion(
-          DYNAMIC_DESCRIPTOR_MIN_VERSION,
-          {
-            throwOnOutdated: false,
-          },
-        );
-        if (dynamicDescriptorSupport && resolution.tokenInternalId) {
+        if (resolution.tokenInternalId) {
           const { descriptor: coinMetaDescriptor, signature: coinMetaSignature } =
             await calService.getCertificate(resolution.deviceModelId, "coin_meta", "latest", {
               signatureKind: resolution.certificateSignatureKind,

@@ -14,7 +14,7 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getGasLimit } from "@ledgerhq/coin-evm/logic";
+import { getGasLimit } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 const receive = makeAccountBridgeReceive();
 const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));

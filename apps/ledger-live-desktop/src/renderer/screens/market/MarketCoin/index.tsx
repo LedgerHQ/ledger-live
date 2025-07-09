@@ -72,6 +72,7 @@ export default function MarketCoinScreen() {
 
   const { name, ticker, image, internalCurrency, price } = currency || {};
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (

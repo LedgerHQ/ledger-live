@@ -19,21 +19,18 @@ type OptionProps = {
 const Option = ({ data: { tokenId, amount, contract, standard, currencyId } }: OptionProps) => {
   const { status, metadata } = useNftMetadata(contract, tokenId, currencyId);
   const show = useMemo(() => status === "loading", [status]);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const nftMetadata = metadata as NFTMetadata;
   return (
     <Box horizontal>
       <Skeleton width={30} minHeight={30} show={show}>
-        <Media
-          metadata={metadata as NFTMetadata}
-          tokenId={tokenId}
-          size={30}
-          mediaFormat="preview"
-        />
+        <Media metadata={nftMetadata} tokenId={tokenId} size={30} mediaFormat="preview" />
       </Skeleton>
       <Box horizontal alignItems="center" justifyContent="space-between" flex={1}>
         <Box ml={3}>
           <Skeleton width={142} minHeight={15} barHeight={8} show={show}>
             <Text ff="Inter|Medium" color="palette.text.shade100" fontSize={2}>
-              {(metadata as NFTMetadata)?.nftName || "-"}
+              {nftMetadata?.nftName || "-"}
             </Text>
           </Skeleton>
           <Skeleton width={80} minHeight={15} barHeight={8} show={show}>

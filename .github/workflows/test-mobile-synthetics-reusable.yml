@@ -1,0 +1,140 @@
+name: "[Mobile] - Synthetic Tests - Called"
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: The name of the artifact to upload to Datadog and run the tests on
+        required: true
+        type: string
+      platform:
+        description: The platform to run the tests on (e.g. ios, android)
+        required: true
+        type: string
+      test_env:
+        description: The environment to run the tests on (e.g. prod, stg)
+        required: false
+        default: stg
+        type: string
+      version:
+        description: The version of the application to run the tests on
+        required: true
+        type: string
+      latest:
+        description: The application to upload is the latest version of the application
+        required: false
+        default: false
+        type: boolean
+      ref:
+        description: The ref to run the tests on
+        required: false
+        type: string
+      datadog-site:
+        description: The Datadog site to use
+        required: true
+        type: string
+      datadog-subdomain:
+        description: The Datadog subdomain to use. If your URL is `myorg.datadoghq.com`, the custom subdomain is `myorg`.
+        required: false
+        type: string
+    secrets:
+      DATADOG_API_KEY:
+        description: The Datadog API key to use
+        required: true
+      DATADOG_APP_KEY:
+        description: The Datadog app key to use
+        required: true
+
+jobs:
+  run-tests:
+    runs-on: ledger-live-medium
+    steps:
+      - name: Download mobile application file
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ github.workspace }}/downloaded_artifacts/
+
+      - name: Print downloaded artifact structure
+        run: |
+          echo "=== Downloaded artifacts structure ==="
+          find ${{ github.workspace }}/downloaded_artifacts/ -type f
+          echo "=== End structure ==="
+
+      - name: Set mobile application file path
+        id: artifact-path
+        run: |
+          ARTIFACT_FILE=$(find ${{ github.workspace }}/downloaded_artifacts/ -name "*.ipa" -o -name "*-arm64-v8a-*.apk" | head -1)
+          echo "Found mobile application file: $ARTIFACT_FILE"
+          echo "value=$ARTIFACT_FILE" >> $GITHUB_OUTPUT
+
+      - name: Select Datadog configuration
+        id: datadog-config
+        run: |
+          case "${{ inputs.platform }}-${{ inputs.test_env }}" in
+            ios-prod)
+              echo "app_id=${{ vars.DATADOG_PROD_LLM_IOS_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_PROD_LLM_IOS_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            ios-stg)
+              echo "app_id=${{ vars.DATADOG_STG_LLM_IOS_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_STG_LLM_IOS_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            android-prod)
+              echo "app_id=${{ vars.DATADOG_PROD_LLM_ANDROID_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_PROD_LLM_ANDROID_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            android-stg)
+              echo "app_id=${{ vars.DATADOG_STG_LLM_ANDROID_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_STG_LLM_ANDROID_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown platform-test_env combination: ${{ inputs.platform }}-${{ inputs.test_env }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Upload mobile application file as new version
+        run: >
+          npx @datadog/datadog-ci@3.11.0 synthetics upload-application
+          --datadogSite ${{ inputs.datadog-site }}
+          --apiKey ${{ secrets.DATADOG_API_KEY }}
+          --appKey ${{ secrets.DATADOG_APP_KEY }}
+          --mobileApplicationId ${{ steps.datadog-config.outputs.app_id }}
+          --mobileApplicationVersionFilePath ${{ steps.artifact-path.outputs.value }} 
+          --versionName '${{ inputs.version }}' 
+          ${{ inputs.latest && '--latest' || '' }}
+          | tee upload_output.txt
+
+      - name: Extract mobile application version ID
+        id: upload-version
+        run: |
+          if grep -q "The new version has version ID:" upload_output.txt; then
+            VERSION_ID=$(grep -oE 'The new version has version ID: [a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' upload_output.txt | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+            echo "Found version ID: $VERSION_ID"
+            echo "version-id=$VERSION_ID" >> $GITHUB_OUTPUT
+          else
+            echo "No version ID found in upload output. Upload may have failed or version already exists."
+            echo "Exiting early - no performance tests needed."
+            exit 0
+          fi
+
+      - name: Run performance tests
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@develop
+        id: test-results
+        with:
+          api-key: ${{ secrets.DATADOG_API_KEY }}
+          app-key: ${{ secrets.DATADOG_APP_KEY }}
+          site: ${{ inputs.datadog-site }}
+          subdomain: ${{ inputs.datadog-subdomain }}
+          public-id: ${{ steps.datadog-config.outputs.public_id }}
+          mobile-application-version: ${{ steps.upload-version.outputs.version-id }}
+
+      - name: Print performance tests results
+        run: |
+          echo '${{ steps.test-results.outputs.performance-report }}' > ./performance-report.json
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-performance-report.json
+          path: ./performance-report.json

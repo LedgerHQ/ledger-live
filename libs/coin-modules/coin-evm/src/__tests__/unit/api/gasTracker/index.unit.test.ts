@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { getGasTracker } from "../../../../api/gasTracker";
-import { getGasOptions as ledgerGetGasOptions } from "../../../../api/gasTracker/ledger";
+import { getGasTracker } from "../../../../network/gasTracker";
+import { getGasOptions as ledgerGetGasOptions } from "../../../../network/gasTracker/ledger";
 import { getCoinConfig } from "../../../../config";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
@@ -52,7 +52,7 @@ mockGetConfig.mockImplementation((currency: { id: string }): any => {
 });
 
 describe("EVM Family", () => {
-  describe("api/gasTracker/index.ts", () => {
+  describe("network/gasTracker/index.ts", () => {
     it("should return null if no gas tracker is found", () => {
       expect(getGasTracker(fakeCurrencyWithoutGasTracker as CryptoCurrency)).toBeNull();
     });

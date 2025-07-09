@@ -26,6 +26,7 @@ type Props = {
   countervalueFirst: boolean;
   account: AccountLike;
 };
+
 export default function BalanceSummary({
   unit,
   counterValue,
@@ -116,6 +117,7 @@ export default function BalanceSummary({
             magnitude={chartMagnitude}
             color={chartColor}
             // TODO make date non optional
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             data={history as Data}
             height={200}
             tickXScale={range}

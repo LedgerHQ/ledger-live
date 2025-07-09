@@ -9,7 +9,6 @@ import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import { safeEncodeEIP55 } from "../logic";
 import {
   EtherscanOperation,
   EtherscanERC20Event,
@@ -17,6 +16,7 @@ import {
   EtherscanERC1155Event,
   EtherscanInternalTransaction,
 } from "../types";
+import { safeEncodeEIP55 } from "../utils";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.

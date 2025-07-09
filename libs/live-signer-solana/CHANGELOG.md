@@ -1,5 +1,47 @@
 # @ledgerhq/live-signer-solana
 
+## 0.4.0
+
+### Minor Changes
+
+- [#10691](https://github.com/LedgerHQ/ledger-live/pull/10691) [`14f840d`](https://github.com/LedgerHQ/ledger-live/commit/14f840d9c6228a786dfacb975b3aed1bd59f18a2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version to `1.9.2`
+
+### Patch Changes
+
+- Updated dependencies [[`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e)]:
+  - @ledgerhq/ledger-cal-service@1.2.0
+  - @ledgerhq/coin-solana@0.27.1
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#10691](https://github.com/LedgerHQ/ledger-live/pull/10691) [`14f840d`](https://github.com/LedgerHQ/ledger-live/commit/14f840d9c6228a786dfacb975b3aed1bd59f18a2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(live-signer-solana): bump app Solana min trusted version to `1.9.2`
+
+### Patch Changes
+
+- Updated dependencies [[`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e)]:
+  - @ledgerhq/ledger-cal-service@1.2.0-next.0
+  - @ledgerhq/coin-solana@0.27.1-next.0
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/coin-solana@0.27.0
+  - @ledgerhq/ledger-cal-service@1.1.0
+  - @ledgerhq/ledger-trust-service@0.3.7
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c5070b`](https://github.com/LedgerHQ/ledger-live/commit/0c5070ba6effeacbcb6a009d86738c39a9a831d2), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/coin-solana@0.27.0-next.0
+  - @ledgerhq/ledger-cal-service@1.1.0-next.0
+  - @ledgerhq/ledger-trust-service@0.3.7-next.0
+
 ## 0.3.0
 
 ### Minor Changes

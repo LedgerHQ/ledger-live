@@ -72,7 +72,9 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
       }
 
       if (
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (domainError.error as Error) instanceof NoResolution ||
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (domainError.error as Error) instanceof InvalidDomain
       ) {
         return true;

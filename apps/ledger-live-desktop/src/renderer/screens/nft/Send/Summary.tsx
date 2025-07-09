@@ -19,14 +19,17 @@ type Props = {
   currency: CryptoCurrency;
 };
 const Summary = ({ transaction }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const allNfts = useSelector(getAllNFTs) as ProtoNFT[];
   const specific = getLLDCoinFamily(transaction.family);
   const { contract, tokenId, quantity } = useMemo(
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     () => specific?.nft?.getNftTransactionProperties(transaction) || ({} as Record<string, never>),
     [specific?.nft, transaction],
   );
   const nft = useMemo(() => getNFT(contract, tokenId, allNfts), [allNfts, contract, tokenId]);
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { nftName } = status === "loaded" ? metadata : ({} as Record<string, never>);
   const show = useMemo(() => status === "loading", [status]);
 
@@ -60,7 +63,7 @@ const Summary = ({ transaction }: Props) => {
                 color="palette.text.shade100"
                 fontSize={4}
               >
-                {(nftName as string) || "-"}
+                {nftName || "-"}
               </Text>
             </Skeleton>
             <Skeleton width={42} minHeight={18} barHeight={6} show={show}>
@@ -72,6 +75,7 @@ const Summary = ({ transaction }: Props) => {
           </Box>
           <Skeleton width={48} minHeight={48} show={show}>
             <Media
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               metadata={metadata as NFTMetadata}
               tokenId={tokenId || ""}
               size={48}

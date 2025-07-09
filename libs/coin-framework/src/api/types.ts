@@ -1,3 +1,6 @@
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import { BroadcastConfig } from "@ledgerhq/types-live";
+
 export type BlockInfo = {
   height: number;
   hash?: string;
@@ -13,23 +16,37 @@ export type Asset<TokenInfo extends TokenInfoCommon = never> =
   | { type: "native" }
   | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
 
-export type Operation<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Operation<
+  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = {
   id: string;
   type: string;
+
   senders: string[];
   recipients: string[];
+
   value: bigint;
   asset: AssetInfo;
-  // Field containing dedicated value for each blockchain
+
+  /**
+   * Optional memo associated with the operation.
+   * Use a `Memo` interface like `StringMemo<"text">`, `MapMemo<Kind, Value>`, or `MyMemo`.
+   * Defaults to `MemoNotSupported`.
+   */
+  memo?: MemoType;
+
+  /**
+   * Arbitrary per-blockchain extra fields.
+   * This can include things like status, error messages, swap info, etc.
+   */
   details?: Record<string, unknown>;
+
   tx: {
-    // One tx can trigger multiple operations, hence multiple operations with the same hash
-    hash: string;
-    // In which block this operation's related tx was included
-    block: BlockInfo;
-    fees: bigint;
-    // see BlockInfo.time comment
-    date: Date;
+    hash: string; // transaction hash
+    block: BlockInfo; // block metadata
+    fees: bigint; // network fees paid
+    date: Date; // tx date (may differ from block time)
   };
 };
 
@@ -40,26 +57,80 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
+// Other coins take differents parameters What do we want to do ?
+export type Account = {
+  currencyName: string;
+  address: string;
+  balance: bigint;
+  currencyUnit: Unit;
+};
+
 export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
   value: bigint;
+  locked?: bigint;
   asset: AssetInfo;
 };
 
+export interface Memo {
+  type: string;
+}
+
+// generic implementations that cover many coins (in coin-framework)
+export interface MemoNotSupported extends Memo {
+  type: "none";
+}
+
+// Specialized version, not extending the above
+export interface StringMemo<Kind extends string = "text"> extends Memo {
+  type: "string";
+  kind: Kind;
+  value: string;
+}
+
+export interface MapMemo<Kind extends string, Value> extends Memo {
+  type: "map";
+  memos: Map<Kind, Value>;
+}
+
+export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
+  type: "map";
+  memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
+}
+
+// FIXME: find better maybeMemo type without disabling the rule
+// eslint-disable-next-line @typescript-eslint/ban-types
+type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
+
 export type TransactionIntent<
   AssetInfo extends Asset<TokenInfoCommon>,
-  Extra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
+  MemoType extends Memo = MemoNotSupported,
 > = {
   type: string;
-  sender: Sender;
+  sender: string;
+  senderPublicKey?: string;
+  expiration?: number;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
-} & Extra;
+  sequence?: number;
+} & MaybeMemo<MemoType>;
 
-export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> = {
+export type TransactionValidation = {
+  errors: Record<string, Error>;
+  warnings: Record<string, Error>;
+  estimatedFees: bigint;
+  amount: bigint;
+  totalSpent: bigint;
+};
+
+export type FeeEstimation = {
   value: bigint;
-  parameters?: FeeParameters;
+  parameters?: {
+    storageLimit: bigint;
+    gasLimit: bigint;
+    // Optional gas price, only for Aptos (need to improve)
+    gasPrice?: bigint;
+  };
 };
 
 // TODO rename start to minHeight
@@ -69,19 +140,25 @@ export type FeeEstimation<FeeParameters extends Record<string, bigint> = never> 
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-export type Api<
+
+export type AccountInfo = {
+  isNewAccount: boolean;
+  balance: string;
+  ownerCount: number;
+  sequence: number;
+};
+
+export type AlpacaApi<
   AssetInfo extends Asset<TokenInfoCommon>,
-  TxExtra = Record<string, unknown>,
-  Sender extends Record<string, string> | string = string,
-  FeeParameters extends Record<string, bigint> = never,
+  MemoType extends Memo = MemoNotSupported,
 > = {
-  broadcast: (tx: string) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey?: string) => string;
+  broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
+  combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
-  ) => Promise<FeeEstimation<FeeParameters>>;
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+  ) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
+    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
@@ -91,3 +168,14 @@ export type Api<
     pagination: Pagination,
   ) => Promise<[Operation<AssetInfo>[], string]>;
 };
+
+export type BridgeApi = {
+  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
+  // TODO: make it available on alpacaApi
+  getAccountInfo: (address: string) => Promise<AccountInfo>;
+};
+
+export type Api<
+  AssetInfo extends Asset<TokenInfoCommon>,
+  MemoType extends Memo = MemoNotSupported,
+> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;

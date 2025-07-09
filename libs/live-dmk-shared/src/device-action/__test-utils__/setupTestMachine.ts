@@ -1,4 +1,6 @@
 import {
+  GetDeviceStatusDeviceAction,
+  GetDeviceStatusDAOutput,
   GetDeviceMetadataDeviceAction,
   GetDeviceMetadataDAOutput,
   GoToDashboardDeviceAction,
@@ -38,6 +40,35 @@ export const setupGoToDashboardMock = (error: boolean = false) => {
         },
         output: () => {
           return error ? Left(new UnknownDAError("GoToDashboard failed")) : Right(undefined);
+        },
+      }),
+    ),
+  }));
+};
+
+export const setupGetDeviceStatusMock = (deviceStatus: GetDeviceStatusDAOutput, error = false) => {
+  (GetDeviceStatusDeviceAction as Mock).mockImplementation(() => ({
+    makeStateMachine: vi.fn().mockImplementation(() =>
+      createMachine({
+        id: "MockGetDeviceStatusDeviceAction",
+        initial: "ready",
+        states: {
+          ready: {
+            after: {
+              0: "done",
+            },
+            entry: assign({
+              intermediateValue: () => ({
+                requiredUserInteraction: UserInteractionRequired.None,
+              }),
+            }),
+          },
+          done: {
+            type: "final",
+          },
+        },
+        output: () => {
+          return error ? Left(new UnknownDAError("GetDeviceStatus failed")) : Right(deviceStatus);
         },
       }),
     ),

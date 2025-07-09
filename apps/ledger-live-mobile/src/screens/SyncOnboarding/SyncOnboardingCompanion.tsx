@@ -50,9 +50,11 @@ import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
-import CharonImage from "./assets/charon.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
+import Animation from "~/components/Animation";
+import CHARON from "~/animations/device/charon/charon.json";
+import { ShadowedView } from "react-native-fast-shadow";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -712,13 +714,79 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
-                      <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
+                      <ShadowedView
+                        style={{
+                          shadowOpacity: 0.15,
+                          shadowRadius: 35.633,
+                          shadowOffset: {
+                            width: 0,
+                            height: 53.291,
+                          },
+                        }}
+                      >
+                        <ShadowedView
+                          style={{
+                            shadowOpacity: 0.14,
+                            shadowRadius: 21.153,
+                            shadowOffset: {
+                              width: 0,
+                              height: 26.442,
+                            },
+                          }}
+                        >
+                          <ShadowedView
+                            style={{
+                              shadowOpacity: 0.11,
+                              shadowRadius: 11.31,
+                              shadowOffset: {
+                                width: 0,
+                                height: 14.137,
+                              },
+                            }}
+                          >
+                            <ShadowedView
+                              style={{
+                                shadowOpacity: 0.09,
+                                shadowRadius: 6.34,
+                                shadowOffset: {
+                                  width: 0,
+                                  height: 7.925,
+                                },
+                              }}
+                            >
+                              <ShadowedView
+                                style={{
+                                  shadowOpacity: 0.08,
+                                  shadowRadius: 3.367,
+                                  shadowOffset: {
+                                    width: 0,
+                                    height: 4.209,
+                                  },
+                                }}
+                              >
+                                <ShadowedView
+                                  style={{
+                                    shadowOpacity: 0.05,
+                                    shadowRadius: 1.401,
+                                    shadowOffset: {
+                                      width: 0,
+                                      height: 1.751,
+                                    },
+                                  }}
+                                >
+                                  <Animation style={{ height: 100 }} source={CHARON} />
+                                </ShadowedView>
+                              </ShadowedView>
+                            </ShadowedView>
+                          </ShadowedView>
+                        </ShadowedView>
+                      </ShadowedView>
                     </Flex>
-                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                    <Text variant="h5" fontWeight="semiBold" mb={24}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}
                     </Text>
-                    <BodyText mb={6} textAlign="center">
+                    <BodyText mb={24} textAlign="center">
                       {t("syncOnboarding.seedStep.backupCharon.desc")}
                     </BodyText>
                   </Flex>

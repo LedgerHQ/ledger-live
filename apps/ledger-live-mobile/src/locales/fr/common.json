@@ -294,6 +294,14 @@
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+    },
     "CasperInvalidTransferId" : {
       "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
     },
@@ -1601,7 +1609,7 @@
       },
       "recovery" : "Vous avez déjà une phrase de récupération ?",
       "protect" : {
-        "title" : "Restaurer avec Ledger Recover",
+        "title" : "Restaurer avec Ledger Recover",
         "subTitle" : "Vous devez avoir un abonnement Ledger Recover.",
         "drawer" : {
           "title" : "Utilisez un Ledger Nano X",
@@ -2164,7 +2172,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Vérification de l’authenticité et du système d’exploitation",
+    "title" : "Vérification de l’authenticité Ledger",
     "idle" : {
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
       "checkCta" : "Vérifier le {{ productName }}"
@@ -2200,11 +2208,11 @@
     "genuineCheckStep" : {
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
       "inactive" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "Cela permet de confirmer que votre {{productName}} est officiel."
       },
       "active" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "Cela permet de confirmer que votre {{productName}} est officiel."
       },
       "completed" : {
@@ -2212,23 +2220,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Vérification de l’authenticité refusée",
+        "title" : "Vérification refusée",
         "description" : "La vérification de l’authenticité est obligatoire pour continuer à configurer votre {{productName}} via Ledger Live.",
         "cta" : "Reprendre la vérification"
       },
       "error" : {
-        "title" : "Vérification de l’authenticité",
+        "title" : "Vérification de l’authenticité Ledger",
         "description" : "La vérification de l’authenticité confirme que votre {{productName}} est officiel."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "Vérification du système d’exploitation",
-        "description" : "Cela permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
+        "title" : "Vérification de Ledger OS",
+        "description" : "Cela vérifie si le système d’exploitation de votre {{productName}} est à jour. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Votre {{productName}} est à jour"
+          "title" : "Ledger OS à jour"
         }
       },
       "error" : {
@@ -2242,8 +2250,8 @@
         "skipCta" : "Ignorer la mise à jour"
       },
       "inactive" : {
-        "title" : "Vérification du système d’exploitation",
-        "description" : "Cela permet de vérifier que le système d’exploitation de votre {{productName}} est à jour. "
+        "title" : "Vérification de Ledger OS",
+        "description" : "Cela vérifie si le système d’exploitation de votre {{productName}} est à jour. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2255,7 +2263,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "Configurez votre {{deviceName}}",
+    "title" : "Prenez votre {{productName}} en main",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Choisissez l’appareil que vous souhaitez configurer :",
@@ -2310,7 +2318,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} authentique",
-      "subtitle" : "Vous pouvez utiliser ce {{productName}} en toute sécurité. Poursuivez pour le configurer.",
+      "subtitle" : "Votre {{productName}} peut être utilisé en toute sécurité. Vous pouvez procéder à la configuration.",
       "description" : "Appuyez sur {{productName}} pour commencer la configuration."
     },
     "pinStep" : {
@@ -2320,30 +2328,58 @@
       "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}."
     },
     "seedStep" : {
-      "title" : "Phrase de récupération secrète",
+      "title" : "Configuration et sauvegarde",
       "doneTitle" : "Phrase de récupération secrète confirmée",
       "description" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées. Votre {{productName}} génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci.",
       "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
       "recoverSeed" : "Placeholder : Ledger Recover",
-      "restoreSeed" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
       "selection" : "Choisissez votre option de configuration :",
       "selectionNewLedger" : {
         "title" : "Configurer comme un nouveau wallet",
-        "desc" : "Vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète."
+        "desc" : "Pour générer votre nouvelle phrase de récupération secrète."
       },
       "selectionRestore" : {
-        "title" : "Restaurer",
-        "desc" : "Vous restaurez l’accès à votre wallet à l’aide de votre phrase de récupération secrète ou via Ledger Recover."
+        "title" : "Restaurer l’accès à vos actifs",
+        "desc" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète ou Ledger Recover.",
+        "descWithCharon" : "Pour restaurer avec votre sauvegarde : phrase de récupération secrète, Ledger Recover ou Ledger Recovery Key."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "Créez une nouvelle sauvegarde sur une carte protégée par un code PIN et dotée d’une puce Secure Element. Vous pourrez récupérer l’accès à vos actifs en un clin d’œil.",
+        "cta" : "En savoir plus ou acheter",
+        "continueOnDevice" : "Suivez les instructions sur votre {{productName}}"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "Choisissez la sauvegarde à utiliser :",
+        "continueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
+        "secretRecoveryPhrase" : {
+          "title" : "Phrase de récupération secrète",
+          "description" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Utilisez votre Ledger Recovery Key pour restaurer l’accès à vos actifs."
+        },
+        "ledgerRecover" : {
+          "title" : "Abonnement Ledger Recover",
+          "description" : "Utilisez ce service pour restaurer l’accès à vos actifs à l’aide de votre identité."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "Restaurer avec une phrase de récupération secrète",
+        "description" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "continueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Restaurer avec une Recovery Key",
+        "description" : "Pour restaurer, suivez les instructions affichées sur l’écran sécurisé de votre appareil Ledger.",
+        "continueOnDevice" : "Suivez les instructions affichées sur votre {{productName}}."
       },
       "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
-      "newSeedDescription" : "Vous voulez en savoir plus sur la phrase de récupération secrète ? Jetez un œil à ces vidéos :",
-      "newSeedContinueOnDevice" : "Faites-le sur votre {{productName}}",
-      "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
-      "restoreChoiceContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
-      "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
-      "restoreChoiceSRPDescription" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger. ",
-      "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Si vous êtes abonné(e) à Ledger Recover, connectez-vous pour lancer la restauration de la sauvegarde pour votre phrase de récupération secrète."
+      "newSeedTitle" : "Phrase de récupération secrète",
+      "newSeedDescription" : "Regardez ces vidéos pour en savoir plus sur la phrase de récupération secrète :",
+      "newSeedContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
+      "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
     },
     "backup" : {
       "title" : "Sauvegarde pour votre phrase de récupération",
@@ -2632,7 +2668,7 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking",
+      "stakedAmount" : "Montant staké",
       "accountCreationFee" : "Frais de création de compte"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
@@ -3193,6 +3229,12 @@
         "placeholder" : "Infos prestataire Exchange (CAL)",
         "currentSetting" : "Configuration actuelle",
         "error" : "Valeur CAL non valide"
+      },
+      "customCALRef" : {
+        "title" : "Référence CAL personnalisée",
+        "description" : "Définissez une branche, un commit ou un tag personnalisé à utiliser pour toutes les requêtes CAL.",
+        "enable" : "Activer la réf. CAL personnalisée",
+        "disable" : "Désactiver la réf. CAL personnalisée"
       }
     },
     "debug" : {
@@ -3508,7 +3550,7 @@
       "history" : {
         "button" : "Accéder à l’historique",
         "tab" : "Historique",
-        "disclaimer" : "Vos transactions Swap sur Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
+        "disclaimer" : "Vos transactions Swap via Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
         "exportButton" : "Exporter les opérations",
         "exportFilename" : "Opérations de swap",
         "empty" : {
@@ -3564,6 +3606,15 @@
         "providers" : {
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
+      },
+      "quotesList" : {
+        "title" : "Choisissez une offre"
+      },
+      "twoStepApproval" : {
+        "title" : "Suivez les étapes"
+      },
+      "history" : {
+        "title" : "Historique des échanges"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
@@ -7449,5 +7500,10 @@
     "title" : "Région indisponible",
     "description" : "L’application n’est pas disponible dans ce pays/région.",
     "learnMore" : "En savoir plus"
+  },
+  "versionBlocking" : {
+    "title" : "Mise à jour de Ledger Live nécessaire",
+    "description" : "Cette version de Ledger Live n’est pas compatible avec la dernière version du système d’exploitation. Pour bénéficier d’une meilleure connectivité, veuillez mettre à jour.",
+    "openStore" : "Mettre à jour"
   }
 }

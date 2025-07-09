@@ -31,14 +31,14 @@ test.afterAll(async () => {
   }
 });
 
-test("Live App SDK methods @smoke", async ({ page }) => {
+test("Live App SDK methods @smoke", async ({ page, electronApp }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Live SDK E2E test");
     return;
   }
 
   const discoverPage = new DiscoverPage(page);
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const layout = new Layout(page);
@@ -49,13 +49,13 @@ test("Live App SDK methods @smoke", async ({ page }) => {
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
-    await liveAppWebview.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
+    await liveAppWebview.waitForText("Ledger Live Dummy Test App");
   });
 
   await test.step("List all accounts", async () => {
     await liveAppWebview.getAccountsList();
-    await liveAppWebview.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
-    await liveAppWebview.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_1:");
+    await liveAppWebview.waitForText("mock:1:bitcoin:true_bitcoin_0:");
+    await liveAppWebview.waitForText("mock:1:bitcoin:true_bitcoin_1:");
   });
 
   await test.step("Request Account drawer - open", async () => {
@@ -71,12 +71,12 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   await test.step("Request Account - select BTC", async () => {
     await drawer.selectAccount("Bitcoin", 0);
     await drawer.waitForDrawerToDisappear();
-    await liveAppWebview.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
+    await liveAppWebview.waitForText("mock:1:bitcoin:true_bitcoin_0:");
   });
 
   await test.step("List currencies", async () => {
     await liveAppWebview.listCurrencies();
-    await liveAppWebview.waitForCorrectTextInWebview("CryptoCurrency");
+    await liveAppWebview.waitForText("CryptoCurrency");
   });
 
   await test.step("Verify Address - modal", async () => {
@@ -89,7 +89,7 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   await test.step("Verify Address - address output", async () => {
     await deviceAction.complete();
     await modal.waitForModalToDisappear();
-    await liveAppWebview.waitForCorrectTextInWebview("1xey");
+    await liveAppWebview.waitForText("1xey");
   });
 
   /**
@@ -120,7 +120,7 @@ test("Live App SDK methods @smoke", async ({ page }) => {
 
   await test.step("Sign bitcoin Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
-    await liveAppWebview.waitForCorrectTextInWebview("mock_op_100_mock:1:bitcoin:true_bitcoin_0:");
+    await liveAppWebview.waitForText("mock_op_100_mock:1:bitcoin:true_bitcoin_0:");
   });
   */
 
@@ -159,9 +159,7 @@ test("Live App SDK methods @smoke", async ({ page }) => {
 
   // await test.step("Sign ethereum Transaction - signature output", async () => {
   //   await modal.waitForModalToDisappear();
-  //   await liveAppWebview.waitForCorrectTextInWebview(
-  //     "mock_op_100_mock:1:ethereum:true_ethereum_0:",
-  //   );
+  //   await liveAppWebview.waitForText("mock_op_100_mock:1:ethereum:true_ethereum_0:");
   // });
   /**
    * END OF SIGN ETHEREUM TRANSACTION TESTS

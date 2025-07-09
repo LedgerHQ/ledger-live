@@ -63,7 +63,7 @@ PODS:
     - ExpoModulesCore
   - ExpoAsset (11.0.5):
     - ExpoModulesCore
-  - ExpoCamera (16.0.17):
+  - ExpoCamera (16.0.15):
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
@@ -2189,7 +2189,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - segment-analytics-react-native (2.20.4):
+  - segment-analytics-react-native (2.20.5):
     - React-Core
     - sovran-react-native
   - Sentry/HybridSDK (8.49.2)
@@ -2217,7 +2217,7 @@ DEPENDENCIES:
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@5.0.0_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_gayys6lmbuhty22hyyrml7orm4/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@52.0.46_cco7moedcz4q7tdej7fmgu5jaq/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+prese_hspgqocpnxgmnotpq3uuujmerq/node_modules/expo-asset/ios`)"
-  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@16.0.17_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_metztnwyacjsbj3asjotv4spm4/node_modules/expo-camera/ios`)"
+  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@16.0.15_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_ctocfzi3c5pl5pr5fy5ysr2jje/node_modules/expo-camera/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pres_tnyygicu6p3s7id7pmo4uu47aa/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@18.0.1_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_qqmmjwkjkte236ts4p77w6c2qi/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@13.0.4_expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.2_@babel+cor_mkocetvj65477y7owmopeohmu4/node_modules/expo-font/ios`)"
@@ -2402,7 +2402,7 @@ EXTERNAL SOURCES:
   ExpoAsset:
     :path: "../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+prese_hspgqocpnxgmnotpq3uuujmerq/node_modules/expo-asset/ios"
   ExpoCamera:
-    :path: "../../../node_modules/.pnpm/expo-camera@16.0.17_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_metztnwyacjsbj3asjotv4spm4/node_modules/expo-camera/ios"
+    :path: "../../../node_modules/.pnpm/expo-camera@16.0.15_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_ctocfzi3c5pl5pr5fy5ysr2jje/node_modules/expo-camera/ios"
   ExpoCrypto:
     :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pres_tnyygicu6p3s7id7pmo4uu47aa/node_modules/expo-crypto/ios"
   ExpoFileSystem:
@@ -2667,7 +2667,7 @@ SPEC CHECKSUMS:
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
   Expo: a6ff273c618506b12129a0d06f2a08201bfbcf43
   ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
-  ExpoCamera: 166a23592a0133c162ea7334feb9e75e0231134b
+  ExpoCamera: 969427803b03c9084a3f48e942daf3f0a6da267f
   ExpoCrypto: c5c052d5f9f668c21975cb4caf072cec23c823fa
   ExpoFileSystem: 7d75cef9b407374b05a4d727fb482d89854a7940
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
@@ -2808,7 +2808,7 @@ SPEC CHECKSUMS:
   RNVectorIcons: 68661e35101c98d574fa61a326d2043aec3e049a
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  segment-analytics-react-native: fcee0500ba154bcd44c14fc94ebe545b5a43c92a
+  segment-analytics-react-native: be835fc068af1177254e7b421858d7a4bc3de7d0
   Sentry: 47021097466aa130802420d485a34da445963d99
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594

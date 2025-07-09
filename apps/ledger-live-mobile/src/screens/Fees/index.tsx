@@ -1,5 +1,5 @@
 import { getTypedTransaction } from "@ledgerhq/coin-evm/lib/transaction";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { Flex } from "@ledgerhq/native-ui";

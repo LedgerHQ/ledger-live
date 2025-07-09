@@ -19,7 +19,6 @@ import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
@@ -46,7 +45,6 @@ function ReceiveSelectAccount({
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
   const insets = useSafeAreaInsets();
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -129,34 +127,18 @@ function ReceiveSelectAccount({
       page: "Select account to deposit to",
     });
 
-    if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigationAccount.navigate(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : (currency as CryptoCurrency),
-          context: AddAccountContexts.AddAccounts,
-          inline: true,
-        },
-      });
-    } else {
-      if (currency && currency.type === "TokenCurrency") {
-        navigationAccount.navigate(NavigatorName.AddAccounts, {
-          screen: undefined,
-          params: {
-            token: currency,
-          },
-        });
-      } else {
-        navigationAccount.navigate(NavigatorName.AddAccounts, {
-          screen: undefined,
-          currency,
-        });
-      }
-    }
-  }, [currency, navigationAccount, llmNetworkBasedAddAccountFlow?.enabled]);
+    navigationAccount.navigate(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency:
+          currency.type === "TokenCurrency"
+            ? currency.parentCurrency
+            : (currency as CryptoCurrency),
+        context: AddAccountContexts.AddAccounts,
+        inline: true,
+      },
+    });
+  }, [currency, navigationAccount]);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
@@ -195,9 +177,7 @@ function ReceiveSelectAccount({
           onPress={createNewAccount}
           testID="button-create-account"
         >
-          {llmNetworkBasedAddAccountFlow?.enabled
-            ? t("addAccounts.addNewOrExisting")
-            : t("transfer.receive.selectAccount.cta")}
+          {t("addAccounts.addNewOrExisting")}
         </Button>
       </Flex>
     </>

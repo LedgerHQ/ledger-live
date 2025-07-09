@@ -22,6 +22,7 @@ import DelegationContainer from "../DelegationContainer";
 import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 const urlDelegationHelp = "https://support.ledger.com/article/360010653260-zd?redirect=false";
 
@@ -47,7 +48,7 @@ const Placeholder = styled(Box)`
   height: 14px;
 `;
 
-const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProps) => {
+const StepSummary = ({ account, transaction, eventType, transitionTo, status }: StepProps) => {
   invariant(
     account && transaction && transaction.family === "tezos",
     "step summary requires account and transaction settled",
@@ -206,6 +207,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
           <WarnBox>
             <Trans i18nKey="delegation.flow.steps.summary.termsAndPrivacy" />
           </WarnBox>
+          {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
         </Box>
       ) : null}
     </Box>
@@ -229,7 +231,7 @@ export const StepSummaryFooter = ({
   const canNext = !bridgePending && !anyError;
   return (
     <Box horizontal alignItems="center" flow={2} grow>
-      {!anyError ? (
+      {!anyError || anyError === status.errors.sender ? (
         <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       ) : (
         <Box grow>

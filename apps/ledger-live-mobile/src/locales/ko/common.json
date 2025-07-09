@@ -294,6 +294,14 @@
       "title" : "장치 연결 해제됨",
       "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+    },
     "CasperInvalidTransferId" : {
       "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
     },
@@ -2164,7 +2172,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "정품 확인 및\nOS 업데이트 확인",
+    "title" : "Ledger 정품 확인",
     "idle" : {
       "learnMore" : "정품 확인 자세히 알아보기",
       "checkCta" : "{{ productName }} 확인하기"
@@ -2200,11 +2208,11 @@
     "genuineCheckStep" : {
       "learnMore" : "정품 확인 자세히 알아보기",
       "inactive" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "active" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "completed" : {
@@ -2212,23 +2220,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "정품 확인이 거부되었습니다",
+        "title" : "Ledger 정품 확인 거부됨",
         "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
         "cta" : "확인 재개"
       },
       "error" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "정품 확인을 통해 귀하의 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "OS 업데이트 확인",
-        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
+        "title" : "Ledger OS 확인",
+        "description" : "{{productName}}의 운영 체제가 최신 상태인지 확인합니다. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} OS는 최신 상태입니다"
+          "title" : "Ledger OS가 최신 상태입니다."
         }
       },
       "error" : {
@@ -2242,8 +2250,8 @@
         "skipCta" : "업데이트 건너뛰기"
       },
       "inactive" : {
-        "title" : "OS 업데이트 확인",
-        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
+        "title" : "Ledger OS 확인",
+        "description" : "{{productName}}의 운영 체제가 최신 상태인지 확인합니다. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2255,7 +2263,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}} 설정",
+    "title" : "{{productName}}의 준비를 완료합니다",
     "estimatedTimeFormat" : "{{estimatedTime}}분",
     "deviceSelection" : {
       "title" : "아래와 같이 설정하려는 Ledger 장치를 선택합니다.",
@@ -2310,7 +2318,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}}는 정품입니다",
-      "subtitle" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+      "subtitle" : "{{productName}}을(를) 사용해도 안전합니다. 설정을 시작할 준비가 되었습니다.",
       "description" : "설정을 시작하려면 {{productName}}를 탭하세요."
     },
     "pinStep" : {
@@ -2320,30 +2328,58 @@
       "continueOnDevice" : "{{productName}}에 PIN을 설정하세요."
     },
     "seedStep" : {
-      "title" : "비밀 복구 문구",
+      "title" : "설정 및 백업",
       "doneTitle" : "비밀 복구 문구 확인됨",
       "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
       "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
       "recoverSeed" : "자리 표시자: 복구",
-      "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
       "selection" : "가장 적합한 설정 옵션을 선택하세요.",
       "selectionNewLedger" : {
         "title" : "새 Ledger로 설정",
-        "desc" : "새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다."
+        "desc" : "이를 통해 새로운 비밀 복구 문구가 생성됩니다."
       },
       "selectionRestore" : {
-        "title" : "복구",
-        "desc" : "비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다."
+        "title" : "자산 액세스 복구",
+        "desc" : "비밀 복구 문구나 Ledger Recover 등의 백업을 사용하여 복구할 수 있습니다.",
+        "descWithCharon" : "안내를 따라 백업(비밀 복구 문구, Ledger Recover 또는 Ledger Recovery Key)을 사용하여 복구할 수 있습니다."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "PIN 보호 기능과 보안 칩이 탑재된 카드에 새로운 백업을 생성해 보세요.   탭 몇 번이면 자산에 다시 액세스할 수 있어요.",
+        "cta" : "자세히 알아보기 또는 구매",
+        "continueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
+      },
+      "selectionRestoreChoice" : {
+        "description" : "복구에 사용할 백업 수단을 선택하세요.",
+        "continueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
+        "secretRecoveryPhrase" : {
+          "title" : "비밀 복구 문구",
+          "description" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Recovery Key로 자산 액세스를 복구하세요"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover 구독",
+          "description" : "구독 후 신원 확인만으로 자산 액세스 복구."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "비밀 복구 문구를 사용해 복원하세요",
+        "description" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "continueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Recovery Key로 복구",
+        "description" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "continueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요"
       },
       "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
-      "newSeedDescription" : "비밀 복구 문구에 대해 더 자세히 알고 싶으신가요? 다음의 영상을 시청하세요:",
-      "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
-      "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-      "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
-      "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
-      "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요. ",
-      "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-      "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업 복구 프로세스를 시작하세요."
+      "newSeedTitle" : "비밀 복구 문구",
+      "newSeedDescription" : "준비된 영상으로 비밀 복구 문구에 대해 더 자세히 알아보세요.",
+      "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
+      "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
     "backup" : {
       "title" : "비밀 복구 문구 백업",
@@ -3193,6 +3229,12 @@
         "placeholder" : "CAL 형식의 거래소 공급자 정보",
         "currentSetting" : "현재 설정",
         "error" : "유효하지 않은 CAL 값"
+      },
+      "customCALRef" : {
+        "title" : "사용자 지정 CAL 참조",
+        "description" : "모든 CAL 요청에 사용할 사용자 지정 브랜치, 커밋 또는 태그를 지정하세요",
+        "enable" : "사용자 지정 CAL 참조 활성화",
+        "disable" : "사용자 지정 CAL 참조 비활성화"
       }
     },
     "debug" : {
@@ -3564,6 +3606,15 @@
         "providers" : {
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
+      },
+      "quotesList" : {
+        "title" : "견적 선택"
+      },
+      "twoStepApproval" : {
+        "title" : "단계 완료하기"
+      },
+      "history" : {
+        "title" : "스왑 내역"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
@@ -7449,5 +7500,10 @@
     "title" : "이용 불가능한 지역",
     "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
     "learnMore" : "자세히 알아보기"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live 업데이트 필요",
+    "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
+    "openStore" : "업데이트"
   }
 }

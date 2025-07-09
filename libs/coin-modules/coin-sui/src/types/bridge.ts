@@ -19,16 +19,19 @@ export type SuiResources = object;
  */
 export type SuiResourcesRaw = object;
 
+export type SuiTransactionMode = "send" | "token.send";
+
 /**
  * Sui transaction
  */
 export type Transaction = TransactionCommon & {
-  mode: string;
+  mode: SuiTransactionMode;
   family: "sui";
   amount: BigNumber | null;
   fees?: BigNumber | null;
   errors: Record<string, Error>;
   skipVerify?: boolean;
+  coinType: string;
   // add here all transaction-specific fields when implement other modes than "send"
 };
 
@@ -37,7 +40,8 @@ export type Transaction = TransactionCommon & {
  */
 export type TransactionRaw = TransactionCommonRaw & {
   family: "sui";
-  mode: string;
+  mode: SuiTransactionMode;
+  coinType: string;
   fees?: string;
   // also the transaction fields as raw JSON data
 };
@@ -65,6 +69,7 @@ export type SuiOperation = Operation<SuiOperationExtra>;
 export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
 
 export type SuiOperationExtra = {
+  coinType?: string;
   transferAmount?: BigNumber;
 };
 export type SuiOperationExtraRaw = Record<string, string>;
@@ -79,13 +84,20 @@ export type SuiSignedOperation = {
 };
 
 export type TransferCommand = {
-  kind: "transfer";
+  kind: "send";
   sender: string;
   recipient: string;
   amount: number;
 };
 
-export type Command = TransferCommand;
+export type TokenTransferCommand = {
+  kind: "token.send";
+  sender: string;
+  recipient: string;
+  amount: number;
+};
+
+export type Command = TransferCommand | TokenTransferCommand;
 
 export type CommandDescriptor = {
   command: Command;

@@ -36,6 +36,7 @@ test("Delegate flow using max amount", async () => {
     await delegate.continue();
     await delegate.toggleMaxAmount();
     const availableMaxAmount = await delegate.getSpendableBannerValue();
+    await delegate.waitForCryptoAmountToBePopulated();
     const filledMaxAmount = await delegate.getCryptoAmount();
     expect(filledMaxAmount).toEqual(availableMaxAmount);
     await expect.soft(modalPage.container).toHaveScreenshot(`staking-max-amount-page.png`);

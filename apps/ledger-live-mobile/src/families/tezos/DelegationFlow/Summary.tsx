@@ -35,6 +35,8 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { NotEnoughBalanceToDelegate } from "@ledgerhq/errors";
 import NotEnoughFundFeesAlert from "~/families/shared/StakingErrors/NotEnoughFundFeesAlert";
 import Config from "react-native-config";
+import TranslatedError from "~/components/TranslatedError";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -314,6 +316,22 @@ export default function DelegationSummary({ navigation, route }: Props) {
         <View />
       </View>
       <View style={styles.footer}>
+        {status.errors.amount && (
+          <LText color="alert">
+            <TranslatedError error={status.errors.amount} />
+          </LText>
+        )}
+        {status.errors.sender && (
+          <>
+            <LText color="alert">
+              <TranslatedError error={status.errors.sender} />
+            </LText>
+            <LText color="alert">
+              <TranslatedError error={status.errors.sender} field="description" />
+            </LText>
+            <SupportLinkError error={status.errors.sender} type="alert" />
+          </>
+        )}
         {hasNotEnoughBalanceWhenUndelegating && <NotEnoughFundFeesAlert account={account} />}
         {transaction.mode === "undelegate" ? (
           <Alert type="info" title={t("delegation.warnUndelegation")} />
@@ -326,7 +344,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
           title={t("common.continue")}
           containerStyle={styles.continueButton}
           onPress={onContinue}
-          disabled={bridgePending || !!bridgeError || hasNotEnoughBalanceWhenUndelegating}
+          disabled={
+            bridgePending ||
+            !!bridgeError ||
+            hasNotEnoughBalanceWhenUndelegating ||
+            status.errors.amount !== undefined ||
+            status.errors.sender !== undefined
+          }
           pending={bridgePending}
           testID="tezos-summary-continue-button"
         />

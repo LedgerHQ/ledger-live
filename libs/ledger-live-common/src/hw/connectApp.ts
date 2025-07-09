@@ -35,6 +35,7 @@ import {
   type ApplicationConstraint,
   type ApplicationVersionConstraint,
   type DeviceManagementKit,
+  DeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
@@ -496,11 +497,19 @@ const isDmkTransport = (
 };
 
 const appNameToDependency = (appName: string): ApplicationDependency => {
-  let constraints: ApplicationConstraint[] | undefined = undefined;
-  const minVersion = getMinVersion(appName);
-  if (minVersion !== undefined) {
-    constraints = [{ minVersion: minVersion as ApplicationVersionConstraint }];
-  }
+  const constraints = Object.values(DeviceModelId).reduce<ApplicationConstraint[]>(
+    (result, model) => {
+      const minVersion = getMinVersion(appName, model);
+      if (minVersion) {
+        result.push({
+          minVersion: minVersion as ApplicationVersionConstraint,
+          applicableModels: [model],
+        });
+      }
+      return result;
+    },
+    [],
+  );
   return {
     name: appName,
     constraints,

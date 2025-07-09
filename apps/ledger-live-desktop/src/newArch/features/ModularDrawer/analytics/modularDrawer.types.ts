@@ -2,6 +2,7 @@ export const EVENTS_NAME = {
   MODULAR_ASSET_SELECTION: "Asset Selection",
   MODULAR_NETWORK_SELECTION: "Network Selection",
   MODULAR_ACCOUNT_SELECTION: "Account Selection",
+  MODULAR_FUND_ACCOUNT_LIST: "Fund Account Drawer List",
   ASSET_CLICKED: "asset_clicked",
   NETWORK_CLICKED: "network_clicked",
   ACCOUNT_CLICKED: "account_clicked",
@@ -36,6 +37,10 @@ export type ModularDrawerEventParams = {
     network_component_features?: ModularDrawerNetworkComponentFeatures;
   };
   [EVENTS_NAME.MODULAR_ACCOUNT_SELECTION]: {
+    flow: string;
+    source: string;
+  };
+  [EVENTS_NAME.MODULAR_FUND_ACCOUNT_LIST]: {
     flow: string;
     source: string;
   };
@@ -81,6 +86,7 @@ export const MODULAR_DRAWER_PAGE_NAME = {
   MODULAR_ASSET_SELECTION: "Asset Selection",
   MODULAR_NETWORK_SELECTION: "Network Selection",
   MODULAR_ACCOUNT_SELECTION: "Account Selection",
+  FUND_ACCOUNT_LIST: "Fund Account Drawer List",
 } as const;
 
 export type ModularDrawerPageName =
