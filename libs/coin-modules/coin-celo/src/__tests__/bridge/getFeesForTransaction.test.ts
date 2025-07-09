@@ -105,10 +105,127 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(6));
   });
 
-  it("should return the correct fees for an unlock transaction", async () => {
+  it("should return the correct fees for a revoke transaction without revoked transactions", async () => {
+    revokeMock.mockClear();
+
+    revokeMock.mockReturnValue({
+      find: jest.fn(() => false),
+    });
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "revoke" },
+    });
+
+    expect(fees).toEqual(BigNumber(0));
+  });
+
+  it("should return the correct fees for a revoke transaction with revoked transactions", async () => {
+    revokeMock.mockClear();
+
+    revokeMock.mockReturnValue({
+      find: jest.fn(() => ({
+        txo: {
+          encodeABI: jest.fn(() => ({ data: "revoke_data" })),
+          estimateGas: jest.fn(async () => 2),
+        },
+      })),
+    });
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "revoke" },
+    });
+
+    expect(fees).toEqual(BigNumber(4));
+  });
+
+  it("should return the correct fees for a revoke transaction with revoked transactions and useAllAmount set to true", async () => {
+    revokeMock.mockClear();
+
+    revokeMock.mockReturnValue({
+      find: jest.fn(() => ({
+        txo: {
+          encodeABI: jest.fn(() => ({ data: "revoke_data" })),
+          estimateGas: jest.fn(async () => 2),
+        },
+      })),
+    });
+
+    const fees = await getFeesForTransaction({
+      account: {
+        ...accountFixture,
+        balance: BigNumber(123),
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          ...accountFixture.celoResources,
+          votes: [
+            {
+              activatable: true,
+              amount: BigNumber(10),
+              index: 0,
+              revokable: true,
+              type: "active",
+              validatorGroup: transactionFixture.recipient,
+            },
+          ],
+        },
+      },
+      transaction: { ...transactionFixture, mode: "revoke", useAllAmount: true },
+    });
+
+    expect(fees).toEqual(BigNumber(4));
+  });
+
+  it("should return the correct fees for a withdraw transaction", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "withdraw" },
+    });
+
+    expect(fees).toEqual(BigNumber(6));
+  });
+
+  it("should return the correct fees for a vote transaction", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "vote" },
+    });
+
+    expect(fees).toEqual(BigNumber(2));
+  });
+
+  it("should return the correct fees for a lock transaction", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "lock" },
+    });
+
+    expect(fees).toEqual(BigNumber(4));
+  });
+
+  it("should return the correct fees for a unlock transaction", async () => {
     const fees = await getFeesForTransaction({
       account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
       transaction: { ...transactionFixture, mode: "unlock" },
+    });
+
+    expect(fees).toEqual(BigNumber(6));
+  });
+
+  it("should return the correct fees for an activate transaction", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "activate" },
+    });
+
+    expect(fees).toEqual(BigNumber(6));
+  });
+
+  it("should return the correct fees for a register transaction", async () => {
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "register" },
     });
 
     expect(fees).toEqual(BigNumber(6));
