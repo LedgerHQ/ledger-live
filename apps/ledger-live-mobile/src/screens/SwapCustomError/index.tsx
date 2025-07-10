@@ -2,18 +2,12 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { SwapCustomErrorNavigatorParamList } from "~/components/RootNavigator/types/SwapCustomErrorNavigator";
-import { ScreenName } from "~/const";
+
 import { Trans, useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
+import { SwapCustomErrorProps } from "../Swap/types";
 
-type SwapCustomErrorPropsProps = StackNavigatorProps<
-  SwapCustomErrorNavigatorParamList,
-  ScreenName.SwapCustomErrorScreen
->;
-
-export default function SwapCustomError({ route }: SwapCustomErrorPropsProps) {
+export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
   const error = route.params.error;
   const titleKey = error && "title" in error ? error.title : undefined;

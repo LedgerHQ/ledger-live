@@ -109,12 +109,8 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
 
-                    navigation.navigate(NavigatorName.SwapCustomError, {
-                      screen: ScreenName.SwapCustomErrorScreen,
-                      params: {
-                        error: result.error,
-                        displayError: result.error instanceof AddressesSanctionedError,
-                      },
+                    navigation.navigate(ScreenName.SwapCustomError, {
+                      error: result.error,
                     });
                   }
 
@@ -164,11 +160,8 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
                     navigation.pop();
-                    navigation.navigate(NavigatorName.SwapCustomError, {
-                      screen: ScreenName.SwapCustomErrorScreen,
-                      params: {
-                        error: result.error,
-                      },
+                    navigation.navigate(ScreenName.SwapCustomError, {
+                      error: result.error,
                     });
                   }
                   if (result.operation && exchangeParams.swapId) {
