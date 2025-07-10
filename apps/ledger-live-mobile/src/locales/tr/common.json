@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Sizi güvende tutuyoruz",
+      "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "{{accountType}} hesabının adresi doğrulanmadı. Güvende kalmak için cihazınızdaki adresleri doğrulayın."
       },
       "noResultsFound" : "Kripto varlık bulunamadı",
-      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
+      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin",
+      "sanctionedAddress" : {
+        "title" : "Sizi güvende tutuyoruz",
+        "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Kapat",
+        "learnMore" : "Daha Fazla Bilgi"
+      }
     },
     "buy" : {
       "title" : "Satın Al",
@@ -7505,5 +7515,10 @@
     "title" : "Ledger Live Güncellemesi Gerekli",
     "description" : "Ledger Live'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
     "openStore" : "Güncelle"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "Varlık seçin",
+    "selectNetwork" : "Ağ seçin",
+    "selectAccount" : "Hesap seçin"
   }
 }

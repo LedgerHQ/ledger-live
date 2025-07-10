@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
       "noResultsFound" : "未找到加密资产",
-      "noResultsDesc" : "请检查拼写后重试。"
+      "noResultsDesc" : "请检查拼写后重试。",
+      "sanctionedAddress" : {
+        "title" : "保障您的安全",
+        "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "关闭",
+        "learnMore" : "了解更多"
+      }
     },
     "buy" : {
       "title" : "买入",
@@ -7505,5 +7515,10 @@
     "title" : "需要更新 Ledger Live",
     "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
     "openStore" : "更新"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "选择资产",
+    "selectNetwork" : "选择网络",
+    "selectAccount" : "选择账户"
   }
 }
