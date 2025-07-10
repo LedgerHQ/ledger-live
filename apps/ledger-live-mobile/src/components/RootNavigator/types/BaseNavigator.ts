@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
-import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -52,7 +52,6 @@ import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNa
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
-import { SwapCustomErrorNavigatorParamList } from "./SwapCustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
@@ -212,6 +211,9 @@ export type BaseNavigatorStackParamList = {
     currencyId: string;
     resetSearchOnUmount?: boolean;
   };
+  [ScreenName.SwapCustomError]: {
+    error: SwapLiveError | Error;
+  };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
@@ -250,7 +252,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
   [NavigatorName.CustomError]: NavigatorScreenParams<CustomErrorNavigatorParamList>;
-  [NavigatorName.SwapCustomError]: NavigatorScreenParams<SwapCustomErrorNavigatorParamList>;
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;
   [NavigatorName.PolkadotNominateFlow]: NavigatorScreenParams<PolkadotNominateFlowParamList>;
