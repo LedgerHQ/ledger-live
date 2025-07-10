@@ -97,7 +97,7 @@ export function Row({
   onExternalLink,
 }: Props) {
   const unstakingEnabled = canUnstake(stakingPosition);
-  const withdawingEnabled = canWithdraw(stakingPosition);
+  const withdrawingEnabled = canWithdraw(stakingPosition);
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
       onManageAction(validatorId, action.key as "MODAL_NEAR_UNSTAKE" | "MODAL_NEAR_WITHDRAW");
@@ -114,8 +114,8 @@ export function Row({
     {
       key: "MODAL_NEAR_WITHDRAW",
       label: <Trans i18nKey="near.stake.withdraw" />,
-      disabled: !withdawingEnabled,
-      tooltip: !withdawingEnabled ? <Trans i18nKey="near.withdraw.disabledTooltip" /> : null,
+      disabled: !withdrawingEnabled,
+      tooltip: !withdrawingEnabled ? <Trans i18nKey="near.withdraw.disabledTooltip" /> : null,
     },
   ];
   const onExternalLinkClick = useCallback(
