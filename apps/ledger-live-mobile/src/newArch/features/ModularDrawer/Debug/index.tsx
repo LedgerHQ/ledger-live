@@ -18,7 +18,7 @@ function ModularDrawerScreenDebug() {
   };
   const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
 
-  const currencies = listAndFilterCurrencies({ includeTokens: false, currencies: [] });
+  const currencies = listAndFilterCurrencies({ includeTokens: true });
 
   return (
     <Flex flexDirection="column" rowGap={4} px={6}>
