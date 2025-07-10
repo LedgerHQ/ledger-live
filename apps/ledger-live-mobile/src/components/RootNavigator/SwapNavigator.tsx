@@ -29,6 +29,8 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import SwapCustomError from "~/screens/SwapCustomError";
+import styles from "~/navigation/styles";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {
@@ -195,6 +197,15 @@ export default function SwapNavigator(
                 headerLeft: route.params?.fromPendingOperation ? () => null : undefined,
               }
         }
+      />
+
+      <Stack.Screen
+        name={ScreenName.SwapCustomError}
+        component={SwapCustomError}
+        options={{
+          headerStyle: styles.headerNoShadow,
+          headerTitle: "",
+        }}
       />
 
       {ptxSwapLiveAppMobile?.enabled ? (
