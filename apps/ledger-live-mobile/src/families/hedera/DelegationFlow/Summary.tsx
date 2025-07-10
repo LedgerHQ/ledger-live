@@ -187,7 +187,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <TranslatedError error={error} />
+        <Text color="alert" fontWeight="semiBold" mb={6}>
+          <TranslatedError error={error} />
+        </Text>
         <Button
           event="SummaryContinue"
           type="primary"

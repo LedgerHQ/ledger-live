@@ -1,4 +1,8 @@
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaDelegationWithMeta,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -7,11 +11,13 @@ import { ScreenName } from "~/const";
 export type HederaClaimRewardsFlowParamList = {
   [ScreenName.HederaClaimRewardsSelectReward]: {
     accountId: string;
+    delegationWithMeta: HederaDelegationWithMeta;
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.HederaClaimRewardsClaim]: {
     accountId: string;
+    delegationWithMeta: HederaDelegationWithMeta;
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };

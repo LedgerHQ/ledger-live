@@ -1,4 +1,9 @@
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaDelegationWithMeta,
+  HederaValidator,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/hedera/types";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,11 +13,14 @@ export type HederaRedelegationFlowParamList = {
   [ScreenName.HederaRedelegationSelectValidator]: {
     accountId: string;
     parentId?: string;
+    delegationWithMeta: HederaDelegationWithMeta;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.HederaRedelegationAmount]: {
     accountId: string;
     parentId?: string;
+    delegationWithMeta: HederaDelegationWithMeta;
+    selectedValidator: HederaValidator;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.HederaRedelegationSelectDevice]: {

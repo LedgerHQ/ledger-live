@@ -3,7 +3,8 @@ import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { Flex } from "@ledgerhq/native-ui";
+import { defaultNavigationOptions, getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import SelectDevice from "~/screens/SelectDevice";
@@ -33,21 +34,38 @@ function RedelegationFlow() {
         options={() => ({
           headerTitle: () => (
             <StepHeader
-              title={t("hedera.redelegation.stepperHeader.selectValidatorTitle")}
-              subtitle={t("hedera.redelegation.stepperHeader.selectValidatorSubTitle")}
+              title={t("hedera.redelegation.stepperHeader.selectValidator")}
+              subtitle={t("hedera.redelegation.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
             />
           ),
+          headerLeft: () => null,
+          headerStyle: {
+            ...defaultNavigationOptions.headerStyle,
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+          },
+          gestureEnabled: false,
         })}
       />
       <Stack.Screen
         name={ScreenName.HederaRedelegationAmount}
         component={RedelegationAmount}
-        options={() => ({
+        options={({ route }) => ({
           headerTitle: () => (
-            <StepHeader
-              title={t("hedera.redelegation.stepperHeader.amountTitle")}
-              subtitle={t("hedera.redelegation.stepperHeader.amountSubTitle")}
-            />
+            <Flex flex={1} width="90%" alignSelf="center">
+              <StepHeader
+                adjustFontSize
+                title={t("hedera.redelegation.stepperHeader.amountTitle", {
+                  from: route.params.delegationWithMeta.validator.name,
+                  to: route.params.selectedValidator.name,
+                })}
+                subtitle={t("hedera.redelegation.stepperHeader.amountSubtitle")}
+              />
+            </Flex>
           ),
         })}
       />

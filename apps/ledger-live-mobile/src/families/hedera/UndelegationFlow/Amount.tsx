@@ -21,6 +21,7 @@ import { useAccountUnit } from "~/hooks";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { urls } from "~/utils/urls";
 import type { HederaUndelegationFlowParamList } from "./types";
+import ReadonlyAmountRatio from "../shared/ReadonlyAmountRatio";
 
 type Props = StackNavigatorProps<
   HederaUndelegationFlowParamList,
@@ -95,9 +96,7 @@ function UndelegationAmount({ navigation, route }: Props) {
                 value={route.params.delegationWithMeta.delegated}
               />
             </Text>
-            <View style={[styles.ratioButton, { backgroundColor: colors.primary }]}>
-              <Text textAlign="center">100%</Text>
-            </View>
+            <ReadonlyAmountRatio text="100%" />
           </View>
         </View>
         <View>
@@ -111,7 +110,9 @@ function UndelegationAmount({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <TranslatedError error={error} />
+        <Text color="alert" fontWeight="semiBold" mb={6}>
+          <TranslatedError error={error} />
+        </Text>
         <Button
           event="SummaryContinue"
           type="primary"
@@ -138,14 +139,6 @@ const styles = StyleSheet.create({
   },
   amount: {
     flexGrow: 1,
-    justifyContent: "center",
-  },
-  ratioButton: {
-    marginTop: 16,
-    height: 43,
-    width: 70,
-    borderRadius: 4,
-    marginHorizontal: "auto",
     justifyContent: "center",
   },
   footer: {

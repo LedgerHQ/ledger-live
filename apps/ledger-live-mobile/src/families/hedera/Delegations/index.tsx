@@ -177,9 +177,10 @@ function Delegations({ account, delegatedPosition }: Props) {
       redelegate: [
         NavigatorName.HederaRedelegationFlow,
         {
-          screen: ScreenName.HederaRedelegationAmount,
+          screen: ScreenName.HederaRedelegationSelectValidator,
           params: {
             accountId: account.id,
+            delegationWithMeta,
           },
         },
       ],
@@ -189,6 +190,7 @@ function Delegations({ account, delegatedPosition }: Props) {
           screen: ScreenName.HederaClaimRewardsSelectReward,
           params: {
             accountId: account.id,
+            delegationWithMeta,
           },
         },
       ],
