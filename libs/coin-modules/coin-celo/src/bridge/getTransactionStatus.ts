@@ -80,7 +80,7 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (!["register", "withdraw", "activate"].includes(transaction.mode)) {
-    if (!errors.amount && amount.lte(0) && !useAllAmount) {
+    if (amount.lte(0) && !useAllAmount) {
       errors.amount = new AmountRequired();
     }
   }
@@ -106,9 +106,9 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (transaction.mode === "send") {
-    if (!transaction.recipient) {
+    if (!transaction.recipient && !errors.recipient) {
       errors.recipient = new RecipientRequired();
-    } else if (!isValidAddress(transaction.recipient)) {
+    } else if (!isValidAddress(transaction.recipient) && !errors.recipient) {
       errors.recipient = new InvalidAddress("", {
         currencyName: account.currency.name,
       });
