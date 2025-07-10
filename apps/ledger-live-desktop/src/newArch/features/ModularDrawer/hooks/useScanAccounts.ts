@@ -36,6 +36,11 @@ export type UseScanAccountsProps = {
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 };
 
+interface State {
+  scannedAccounts: Account[];
+  scanning: boolean;
+}
+
 export function useScanAccounts({
   currency,
   deviceId,
@@ -45,13 +50,19 @@ export function useScanAccounts({
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
+  const [{ scannedAccounts, scanning }, setState] = useState<State>({
+    scannedAccounts: [],
+    scanning: true,
+  });
+
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  // TODO
+  // const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscription = useRef<Subscription | null>(null);
 
@@ -72,46 +83,6 @@ export function useScanAccounts({
     [newAccountSchemes],
   );
 
-  const addAccount = useCallback(
-    (accounts: Account[]) => {
-      const latestScannedAccount = accounts[accounts.length - 1];
-      const alreadyImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-
-      const uniqueAccounts = Object.values(
-        // TODO do we need to check unique accounts? This replicates if (!hasAlreadyBeenScanned) { setScannedAccounts([...scannedAccounts, latestScannedAccount]); }
-        accounts.reduce(
-          (acc, obj) => {
-            acc[obj.id] = obj;
-            return acc;
-          },
-          {} as { [a: string]: Account },
-        ),
-      );
-
-      setScannedAccounts(uniqueAccounts);
-
-      if (alreadyImported) return;
-
-      const onlyNewAccounts = accounts.some(account => !isAccountEmpty(account));
-
-      setSelectedIds(prevSelectedIds => {
-        if (onlyNewAccounts) {
-          const newAccountsSelected =
-            prevSelectedIds.length > 0 ? prevSelectedIds : [latestScannedAccount.id];
-          return newAccountsSelected;
-        }
-
-        const isNewAccount = isAccountEmpty(latestScannedAccount);
-        const existingAccountsSelected = isNewAccount
-          ? prevSelectedIds
-          : Array.from(new Set([...prevSelectedIds, latestScannedAccount.id]));
-
-        return existingAccountsSelected;
-      });
-    },
-    [existingAccounts],
-  );
-
   const startSubscription = useCallback(() => {
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
@@ -121,22 +92,47 @@ export function useScanAccounts({
       blacklistedTokenIds: blacklistedTokenIds || [],
     };
 
-    const accountStream = bridge
+    const scannedAccounts$ = bridge
       .scanAccounts({ currency, deviceId, syncConfig })
-      .pipe(RX.scan((acc, { account }) => [...acc, account], [] as Account[]));
+      .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []));
 
-    scanSubscription.current = accountStream.subscribe({
-      next: accounts => {
-        addAccount(accounts);
+    scanSubscription.current = scannedAccounts$.subscribe({
+      next: scannedAccounts => {
+        const uniqueScannedAccounts: Account[] = [];
+        const uniqueScannedAccountsSet = new Set();
+        scannedAccounts.forEach(account => {
+          const alreadyExists = existingAccounts.some(a => a.id === account.id);
+
+          if (!alreadyExists && !uniqueScannedAccountsSet.has(account.id)) {
+            uniqueScannedAccountsSet.add(account.id);
+            uniqueScannedAccounts.push(account);
+          }
+        });
+
+        setState({
+          scanning: true,
+          scannedAccounts: uniqueScannedAccounts,
+        });
+
+        const onlyNewAccounts = uniqueScannedAccounts.every(acc => isAccountEmpty(acc));
+
+        if (onlyNewAccounts) {
+          setSelectedIds(uniqueScannedAccounts.map(x => x.id));
+        } else {
+          setSelectedIds(uniqueScannedAccounts.filter(x => !isAccountEmpty(x)).map(x => x.id));
+        }
       },
       error: error => {
         setError(error);
       },
       complete: () => {
-        setScanning(false);
+        setState(prev => ({
+          ...prev,
+          scanning: false,
+        }));
       },
     });
-  }, [blacklistedTokenIds, currency, deviceId, addAccount]);
+  }, [blacklistedTokenIds, currency, deviceId, existingAccounts]);
 
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
@@ -144,17 +140,20 @@ export function useScanAccounts({
       scanSubscription.current = null;
 
       if (syncUI) {
-        setScanning(false);
+        setState(prev => ({
+          ...prev,
+          scanning: false,
+        }));
       }
     }
   }, []);
-  const state = useCountervaluesState();
+  const counterValueState = useCountervaluesState();
 
   const formatAccount = useCallback(
     (account: Account): AccountItem => {
       const { fiatValue, balance } = getBalanceAndFiatValue(
         account,
-        state,
+        counterValueState,
         counterValueCurrency,
         discreet,
       );
@@ -176,7 +175,7 @@ export function useScanAccounts({
         ticker: account.currency.ticker,
       };
     },
-    [counterValueCurrency, currency, discreet, state, walletState],
+    [counterValueCurrency, counterValueState, currency, discreet, walletState],
   );
 
   const handleConfirm = useCallback(() => {
@@ -290,6 +289,14 @@ export function useScanAccounts({
   }, [startSubscription, stopSubscription]);
 
   useEffect(() => {
+    console.log({
+      notScanning: !scanning,
+      alreadyEmptyAccount,
+      notHasImportableAccounts: !hasImportableAccounts,
+      notHasImportedAccounts: !hasImportedAccounts,
+      selectedIds: selectedIds.length === 0,
+    });
+
     if (
       !scanning &&
       alreadyEmptyAccount &&
