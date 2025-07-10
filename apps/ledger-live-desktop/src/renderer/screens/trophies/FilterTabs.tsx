@@ -57,7 +57,7 @@ export default function FilterTabs({ trophyStats, selectedFilter, setSelectedFil
   return (
     <Container>
       <FilterTab isActive={selectedFilter === "all"} onClick={() => setSelectedFilter("all")}>
-        All Trophies
+        All Rewards
       </FilterTab>
       <FilterTab isActive={selectedFilter === "earned"} onClick={() => setSelectedFilter("earned")}>
         Earned ({trophyStats.earnedCount})

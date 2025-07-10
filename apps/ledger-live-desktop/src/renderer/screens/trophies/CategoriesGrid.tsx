@@ -84,7 +84,7 @@ const TrophyCard = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
     p.isEarned
       ? `0 4px 16px ${rgba(p.theme.colors.palette.primary.main, 0.12)}`
       : `0 2px 8px ${rgba(p.theme.colors.palette.text.shade100, 0.04)}`};
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -400,7 +400,10 @@ export default function CategoriesGrid({ filteredCategories, earnedTrophies, acc
                         <EarnedDate>
                           Earned{" "}
                           {formatDate(
-                            new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+                            new Date(
+                              Date.now() -
+                                (trophy?.time ?? Math.random()) * 365 * 24 * 60 * 60 * 1000,
+                            ),
                           )}
                         </EarnedDate>
                       ) : (

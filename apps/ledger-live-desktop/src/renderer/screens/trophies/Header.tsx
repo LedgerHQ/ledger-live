@@ -30,7 +30,7 @@ const Subtitle = styled(Text)`
 export default function Header() {
   return (
     <Container>
-      <Title>🏆 Trophies & Achievements</Title>
+      <Title>🏆 Rewards & Achievements</Title>
       <Subtitle>
         Track your progress and unlock achievements as you explore the world of crypto with Ledger
         Live. Complete challenges, reach milestones, and earn exclusive trophies to showcase your

@@ -7,6 +7,7 @@ export interface Trophy {
   title: string;
   description: string;
   rarity: "common" | "uncommon" | "rare" | "legendary";
+  time?: number;
   icon: React.ReactElement;
   condition: (accounts: Account[]) => boolean;
   target?: number;

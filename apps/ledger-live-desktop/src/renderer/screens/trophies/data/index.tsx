@@ -4,9 +4,9 @@ import { IconsLegacy } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 
 // Helper function to generate NFT data
-const generateNFTData = (trophyId: string, name: string) => ({
+const generateNFTData = (_trophyId: string, name: string) => ({
   name,
-  link: `https://opensea.io/assets/ethereum/ledger-trophies/${trophyId}`,
+  link: `https://opensea.io/item/ethereum/0x20db9a6007d1735727dec15808578ba39cabf7dd/27`,
   description: `This NFT represents your achievement in the Ledger ecosystem and grants you exclusive benefits.`,
 });
 
@@ -22,12 +22,13 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "First Steps",
         description: "Complete your first transaction",
         rarity: "common" as const,
+        time: 0.5,
         icon: <IconsLegacy.ArrowUpMedium size={24} />,
-        condition: (accounts: Account[]) => accounts.some(acc => acc.operations.length > 0),
+        condition: () => true,
         target: 1,
         progress: (accounts: Account[]) =>
           accounts.some(acc => acc.operations.length > 0) ? 1 : 0,
-        benefits: ["5% discount on Ledger Shop", "Welcome NFT badge"],
+        benefits: ["5% discount on Ledger Shop"],
         nft: generateNFTData("first_transaction", "First Steps NFT"),
       },
       {
@@ -35,13 +36,13 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Transaction Veteran",
         description: "Complete 100 transactions",
         rarity: "rare" as const,
+        time: 0.2,
         icon: <IconsLegacy.ArrowUpMedium size={24} />,
-        condition: (accounts: Account[]) =>
-          accounts.reduce((sum, acc) => sum + acc.operations.length, 0) >= 100,
+        condition: () => true,
         target: 100,
         progress: (accounts: Account[]) =>
           accounts.reduce((sum, acc) => sum + acc.operations.length, 0),
-        benefits: ["15% discount on Ledger Shop", "Free shipping", "Priority support"],
+        benefits: ["15% discount on Ledger Shop"],
         nft: generateNFTData("transaction_veteran", "Transaction Veteran NFT"),
       },
       {
@@ -50,17 +51,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         description: "Complete 1,000 transactions",
         rarity: "legendary" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
-        condition: (accounts: Account[]) =>
-          accounts.reduce((sum, acc) => sum + acc.operations.length, 0) >= 1000,
+        condition: () => false,
         target: 1000,
-        progress: (accounts: Account[]) =>
-          accounts.reduce((sum, acc) => sum + acc.operations.length, 0),
-        benefits: [
-          "25% discount on Ledger Shop",
-          "$50 BTC reward",
-          "VIP support",
-          "Exclusive merchandise",
-        ],
+        progress: () => 120,
+        benefits: ["$50 BTC reward", "VIP support"],
         nft: generateNFTData("transaction_master", "Transaction Master NFT"),
       },
       {
@@ -70,7 +64,7 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         rarity: "legendary" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: ["20% discount on Ledger Shop", "$25 ETH reward", "Premium support"],
+        benefits: ["20% discount on Ledger Shop"],
         nft: generateNFTData("high_value_transaction", "High Roller NFT"),
       },
       {
@@ -78,9 +72,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Speed Demon",
         description: "Complete 10 transactions in one day",
         rarity: "uncommon" as const,
+        time: 0.25,
         icon: <IconsLegacy.ActivityMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: ["10% discount on Ledger Shop", "Speed trading badge"],
+        benefits: ["10% discount on Ledger Shop"],
         nft: generateNFTData("fast_trader", "Speed Demon NFT"),
       },
       {
@@ -90,7 +85,7 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         rarity: "rare" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: ["18% discount on Ledger Shop", "$30 SOL reward", "Free shipping"],
+        benefits: ["$50 BTC reward"],
         nft: generateNFTData("big_spender", "Big Spender NFT"),
       },
     ],
@@ -105,12 +100,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Diversified Investor",
         description: "Hold 5 different cryptocurrencies",
         rarity: "uncommon" as const,
+        time: 0.2,
         icon: <IconsLegacy.WalletMedium size={24} />,
-        condition: (accounts: Account[]) => {
-          const currencies = new Set(accounts.map(acc => acc.currency.id));
-          return currencies.size >= 5;
-        },
-        benefits: ["12% discount on Ledger Shop", "Portfolio insights", "Market analysis"],
+        condition: () => true,
+        benefits: ["15% discount on Ledger Shop"],
         nft: generateNFTData("diversified_portfolio", "Diversified Investor NFT"),
       },
       {
@@ -118,9 +111,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Portfolio Milestone",
         description: "Reach $1,000 in total portfolio value",
         rarity: "rare" as const,
+        time: 0.4,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: ["15% discount on Ledger Shop", "$20 USDC reward", "Premium analytics"],
+        benefits: ["15% discount on Ledger Shop"],
         nft: generateNFTData("portfolio_milestone", "Portfolio Milestone NFT"),
       },
       {
@@ -130,12 +124,7 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         rarity: "legendary" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: [
-          "30% discount on Ledger Shop",
-          "$100 BTC reward",
-          "Exclusive hodler merchandise",
-          "Diamond hands badge",
-        ],
+        benefits: ["30% discount on Ledger Shop"],
         nft: generateNFTData("hodler", "Diamond Hands NFT"),
       },
       {
@@ -144,13 +133,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         description: "Hold over $100,000 in cryptocurrency",
         rarity: "legendary" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
+        target: 100000,
+        progress: () => 1500,
         condition: () => false, // Mock condition
-        benefits: [
-          "35% discount on Ledger Shop",
-          "$500 ETH reward",
-          "VIP whale support",
-          "Exclusive whale events",
-        ],
+        benefits: ["VIP whale support", "Exclusive whale events"],
         nft: generateNFTData("crypto_whale", "Crypto Whale NFT"),
       },
       {
@@ -158,9 +144,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Balanced Investor",
         description: "Maintain a balanced portfolio across asset classes",
         rarity: "uncommon" as const,
+        time: 0.32,
         icon: <IconsLegacy.GraphGrowMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: ["10% discount on Ledger Shop", "Balanced portfolio guide"],
+        benefits: ["10% discount on Ledger Shop"],
         nft: generateNFTData("balanced_investor", "Balanced Investor NFT"),
       },
     ],
@@ -175,23 +162,20 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Staking Pioneer",
         description: "Make your first staking transaction",
         rarity: "uncommon" as const,
+        time: 0.12,
         icon: <IconsLegacy.LendMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: [
-          "12% discount on Ledger Shop",
-          "Staking guide",
-          "Early access to new staking features",
-        ],
+        benefits: ["20% discount on Ledger Shop"],
         nft: generateNFTData("first_stake", "Staking Pioneer NFT"),
       },
       {
         id: "defi_explorer",
-        title: "DeFi Explorer",
-        description: "Use 3 different DeFi protocols",
-        rarity: "rare" as const,
+        title: "Swap Pioneer",
+        description: "Make your first Swap",
+        rarity: "uncommon" as const,
         icon: <IconsLegacy.GraphGrowMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: ["16% discount on Ledger Shop", "$25 DeFi tokens", "DeFi protocol access"],
+        benefits: ["$25 DeFi tokens"],
         nft: generateNFTData("defi_explorer", "DeFi Explorer NFT"),
       },
       {
@@ -201,12 +185,7 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         rarity: "legendary" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: [
-          "22% discount on Ledger Shop",
-          "$75 yield farming bonus",
-          "Advanced yield strategies",
-          "Exclusive farming pools",
-        ],
+        benefits: ["30% discount on Ledger Shop"],
         nft: generateNFTData("yield_farmer", "Yield Farmer NFT"),
       },
     ],
@@ -221,9 +200,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Daily User",
         description: "Use Ledger Live for 7 consecutive days",
         rarity: "common" as const,
+        time: 0.2,
         icon: <IconsLegacy.CalendarMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: ["8% discount on Ledger Shop", "Daily user badge", "Loyalty rewards"],
+        benefits: ["10% discount on Ledger Shop"],
         nft: generateNFTData("daily_user", "Daily User NFT"),
       },
       {
@@ -231,9 +211,10 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         title: "Feature Explorer",
         description: "Try 5 different Ledger Live features",
         rarity: "uncommon" as const,
+        time: 0.33,
         icon: <IconsLegacy.LedgerBlueMedium size={24} />,
         condition: () => true, // Mock condition
-        benefits: ["10% discount on Ledger Shop", "Feature guide", "Beta access"],
+        benefits: ["10% discount on Ledger Shop"],
         nft: generateNFTData("feature_explorer", "Feature Explorer NFT"),
       },
       {
@@ -243,12 +224,7 @@ export const TROPHY_CATEGORIES: TrophyCategory[] = [
         rarity: "rare" as const,
         icon: <IconsLegacy.StarMedium size={24} />,
         condition: () => false, // Mock condition
-        benefits: [
-          "18% discount on Ledger Shop",
-          "$40 rewards credit",
-          "Advanced features access",
-          "Power user support",
-        ],
+        benefits: ["30% discount on Ledger Shop"],
         nft: generateNFTData("power_user", "Power User NFT"),
       },
     ],

@@ -27,7 +27,7 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-})) <{
+}))<{
   shouldSpace?: boolean;
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
@@ -70,7 +70,7 @@ function StepConfirmation({
             ml={2}
             onClick={() => {
               dispatch(closeAllModal());
-              history.push({ pathname: "/trophies" })
+              history.push({ pathname: "/trophies" });
             }}
             primary
           >
