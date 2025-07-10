@@ -20,7 +20,7 @@ export async function sendEVM(tx: Transaction) {
 }
 
 export async function sendEvmNFT(tx: NFTTransaction) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
   expect(isAddressCorrect).toBeTruthy();
