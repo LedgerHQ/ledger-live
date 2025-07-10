@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Queremos garantizar tu seguridad",
+      "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "No se ha verificado la dirección de {{accountType}}. Verifica las direcciones en el dispositivo para mayor seguridad."
       },
       "noResultsFound" : "No se encontraron activos cripto",
-      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo"
+      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo",
+      "sanctionedAddress" : {
+        "title" : "Queremos garantizar tu seguridad",
+        "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Cerrar",
+        "learnMore" : "Más información"
+      }
     },
     "buy" : {
       "title" : "Comprar",
@@ -7505,5 +7515,10 @@
     "title" : "Es necesario actualizar Ledger Live",
     "description" : "Esta versión de Ledger Live no es compatible con la versión más reciente del sistema operativo del dispositivo. Actualiza ya para disfrutar de una conectividad mejorada.",
     "openStore" : "Actualizar"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "Seleccionar activo",
+    "selectNetwork" : "Seleccionar red",
+    "selectAccount" : "Seleccionar cuenta"
   }
 }
