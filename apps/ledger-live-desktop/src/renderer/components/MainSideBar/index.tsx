@@ -372,6 +372,11 @@ const MainSideBar = () => {
     ].filter((path): path is string => !!path), // Filter undefined values,
   );
 
+  const handleClickTrophies = useCallback(() => {
+    push("/trophies");
+    trackEntry("trophies");
+  }, [push, trackEntry]);
+
   return (
     <Transition
       in={!collapsed}
@@ -483,6 +488,16 @@ const MainSideBar = () => {
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
+                  collapsed={secondAnim}
+                />
+                <SideBarListItem
+                  id={"trophies"}
+                  label={t("sidebar.trophies")}
+                  icon={Icons.Shapes}
+                  iconActiveColor="wallet"
+                  isActive={location.pathname.startsWith("/trophies")}
+                  onClick={handleClickTrophies}
+                  disabled={noAccounts}
                   collapsed={secondAnim}
                 />
                 <FeatureToggle featureId="referralProgramDesktopSidebar">
