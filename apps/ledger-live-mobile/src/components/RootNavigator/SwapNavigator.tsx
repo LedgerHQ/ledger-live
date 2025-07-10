@@ -29,7 +29,7 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import SwapCustomError from "~/screens/SwapCustomError";
+import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import styles from "~/navigation/styles";
 
 // Constants for tracking sources

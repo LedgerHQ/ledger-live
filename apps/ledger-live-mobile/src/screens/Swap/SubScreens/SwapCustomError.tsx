@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Trans, useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
-import { SwapCustomErrorProps } from "../Swap/types";
+import { SwapCustomErrorProps } from "../types";
 
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
