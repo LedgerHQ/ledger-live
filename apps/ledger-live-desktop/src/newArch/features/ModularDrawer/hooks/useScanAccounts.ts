@@ -119,7 +119,10 @@ export function useScanAccounts({
         if (onlyNewAccounts) {
           setSelectedIds(uniqueScannedAccounts.map(x => x.id));
         } else {
-          setSelectedIds(uniqueScannedAccounts.filter(x => !isAccountEmpty(x)).map(x => x.id));
+          const latestAccount = uniqueScannedAccounts[uniqueScannedAccounts.length - 1];
+          if (!isAccountEmpty(latestAccount)) {
+            setSelectedIds(ids => [...ids, latestAccount.id]);
+          }
         }
       },
       error: error => {
@@ -289,14 +292,7 @@ export function useScanAccounts({
   }, [startSubscription, stopSubscription]);
 
   useEffect(() => {
-    console.log({
-      notScanning: !scanning,
-      alreadyEmptyAccount,
-      notHasImportableAccounts: !hasImportableAccounts,
-      notHasImportedAccounts: !hasImportedAccounts,
-      selectedIds: selectedIds.length === 0,
-    });
-
+    // TODO handle redirect upon scanning: false
     if (
       !scanning &&
       alreadyEmptyAccount &&
