@@ -21772,6 +21772,35 @@
           "xpub": "4b16bdc2f72ea4502a8c4879c72e71d4d1a8ec46c43620e00a6f46e0b7569c6b"
         },
         "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:hedera:0.0.9354588:hederaBip44",
+          "seedIdentifier": "bf656be40cabb281db4ac3159b4844573708e6613580b4527ab65de35ab3a87e",
+          "used": false,
+          "derivationMode": "hederaBip44",
+          "index": 0,
+          "freshAddress": "0.0.9354588",
+          "freshAddressPath": "44/3030",
+          "blockHeight": 10,
+          "creationDate": "2025-07-09T15:24:15.208Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "hedera",
+          "lastSyncDate": "2025-07-09T15:24:15.208Z",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {
+            "HOUR": { "balances": [], "latestDate": 1752073200000 },
+            "DAY": { "balances": [], "latestDate": 1752015600000 },
+            "WEEK": { "balances": [], "latestDate": 1751756400000 }
+          },
+          "swapHistory": [],
+          "name": "Hedera 1",
+          "starred": false
+        },
+        "version": 1
       }
     ],
     "postOnboarding": {

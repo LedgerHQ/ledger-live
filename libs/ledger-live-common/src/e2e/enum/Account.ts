@@ -284,7 +284,7 @@ export class Account {
     0,
   );
 
-  static readonly HEDERA_1 = new Account(Currency.HBAR, "Hedera 1", "0.0.8835924", 0);
+  static readonly HEDERA_1 = new Account(Currency.HBAR, "Hedera 1", "0.0.9354588", 0);
 
   static readonly INJ_1 = new Account(
     Currency.INJ,
