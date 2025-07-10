@@ -75,7 +75,10 @@ export function useScanAccounts({
   const addAccount = useCallback(
     (accounts: Account[]) => {
       const latestScannedAccount = accounts[accounts.length - 1];
+      const alreadyImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
+
       const uniqueAccounts = Object.values(
+        // TODO do we need to check unique accounts? This replicates if (!hasAlreadyBeenScanned) { setScannedAccounts([...scannedAccounts, latestScannedAccount]); }
         accounts.reduce(
           (acc, obj) => {
             acc[obj.id] = obj;
@@ -85,24 +88,26 @@ export function useScanAccounts({
         ),
       );
 
-      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-      const isNewAccount = isAccountEmpty(latestScannedAccount);
-      const onlyNewAccounts = uniqueAccounts.some(account => !isAccountEmpty(account));
-
       setScannedAccounts(uniqueAccounts);
 
-      if (!hasAlreadyBeenImported) {
-        setSelectedIds(prevSelectedIds => {
+      if (alreadyImported) return;
+
+      const onlyNewAccounts = accounts.some(account => !isAccountEmpty(account));
+
+      setSelectedIds(prevSelectedIds => {
+        if (onlyNewAccounts) {
           const newAccountsSelected =
             prevSelectedIds.length > 0 ? prevSelectedIds : [latestScannedAccount.id];
+          return newAccountsSelected;
+        }
 
-          const existingAccountsSelected = !isNewAccount
-            ? Array.from(new Set([...prevSelectedIds, latestScannedAccount.id]))
-            : prevSelectedIds;
+        const isNewAccount = isAccountEmpty(latestScannedAccount);
+        const existingAccountsSelected = isNewAccount
+          ? prevSelectedIds
+          : Array.from(new Set([...prevSelectedIds, latestScannedAccount.id]));
 
-          return onlyNewAccounts ? newAccountsSelected : existingAccountsSelected;
-        });
-      }
+        return existingAccountsSelected;
+      });
     },
     [existingAccounts],
   );
@@ -116,32 +121,23 @@ export function useScanAccounts({
       blacklistedTokenIds: blacklistedTokenIds || [],
     };
 
-    scanSubscription.current = bridge
-      .scanAccounts({
-        currency: currency,
-        deviceId,
-        syncConfig,
-      })
-      .pipe(RX.scan((acc, { account }) => [...acc, account], [] as Account[]))
-      .subscribe({
-        next: (accounts: Account[]) => {
-          addAccount(accounts);
-        },
-        complete: () => setScanning(false),
-        error: error => {
-          setError(error);
-        },
-      });
+    const accountStream = bridge
+      .scanAccounts({ currency, deviceId, syncConfig })
+      .pipe(RX.scan((acc, { account }) => [...acc, account], [] as Account[]));
+
+    scanSubscription.current = accountStream.subscribe({
+      next: accounts => {
+        addAccount(accounts);
+      },
+      error: error => {
+        setError(error);
+      },
+      complete: () => {
+        setScanning(false);
+      },
+    });
   }, [blacklistedTokenIds, currency, deviceId, addAccount]);
 
-  const restartSubscription = useCallback(() => {
-    setScanning(true);
-    setScannedAccounts([]);
-    setSelectedIds([]);
-    setError(null);
-    setHasImportedAccounts(false);
-    startSubscription();
-  }, [startSubscription]);
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
@@ -172,7 +168,7 @@ export function useScanAccounts({
       return {
         address: formatAddress(account.freshAddress),
         cryptoId: account.currency.id,
-        fiatValue,
+        fiatValue: fiatValue || "",
         balance,
         protocol: protocol || "",
         id: account.id,
@@ -204,16 +200,13 @@ export function useScanAccounts({
     onComplete(scannedAccounts.filter(a => selectedIds.includes(a.id)));
   }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete, trackAddAccountEvent]);
 
-  const onCancel = useCallback(() => {
-    setError(null);
-  }, []);
-
   const toggleShowAllCreatedAccounts = useCallback(
     () => setShowAllCreatedAccounts(prevState => !prevState),
     [],
   );
 
   const { sections, alreadyEmptyAccount } = useMemo(
+    // TODO this could be in an RxJS .last() to grab scannedAccounts?
     () =>
       groupAddAccounts(existingAccounts, scannedAccounts, {
         scanning,
@@ -248,7 +241,7 @@ export function useScanAccounts({
 
   const cantCreateAccount = creatableAccounts.length === 0;
   const hasImportableAccounts = importableAccounts.length > 0;
-  const noImportableAccounts = cantCreateAccount && !hasImportableAccounts;
+
   const allImportableAccountsSelected = useMemo(
     () =>
       importableAccounts.length > 0 &&
@@ -321,7 +314,6 @@ export function useScanAccounts({
     scanning,
     currency,
     CustomNoAssociatedAccounts,
-    scannedAccounts,
     creatableAccounts.length,
     importableAccounts.length,
     navigateToWarningScreen,
@@ -331,17 +323,10 @@ export function useScanAccounts({
 
   return {
     formatAccount,
-    alreadyEmptyAccount,
-    alreadyEmptyAccountName,
-    cantCreateAccount,
     error,
     newAccountSchemes,
     allImportableAccountsSelected,
-    noImportableAccounts,
-    onCancel,
-    restartSubscription,
     stopSubscription,
-    scannedAccounts,
     scanning,
     importableAccounts,
     creatableAccounts,
