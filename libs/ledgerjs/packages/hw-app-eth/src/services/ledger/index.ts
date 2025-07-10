@@ -125,7 +125,8 @@ const loadNanoAppPlugins = async (
 
   // Uniswap has its own way of working, so we need to handle it separately
   // This will prevent an error if we add Uniswap to the CAL service
-  if (shouldResolve.externalPlugins && contractAddress !== UNISWAP_UNIVERSAL_ROUTER_ADDRESS) {
+  const uniswapRouterAddress = UNISWAP_UNIVERSAL_ROUTER_ADDRESS[chainIdUint32]?.toLowerCase();
+  if (shouldResolve.externalPlugins && contractAddress !== uniswapRouterAddress) {
     const contractMethodInfos = await loadInfosForContractMethod(
       contractAddress,
       selector,
