@@ -1,6 +1,7 @@
 import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -8,7 +9,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import React, { Fragment, memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -43,10 +44,6 @@ function Earn({ route }: Props) {
     () => (route.path ? new URL("ledgerlive://" + route.path).searchParams : new URLSearchParams()),
     [route.path],
   );
-  const hideMainNavigator = useMemo(
-    () => ["deposit", "withdraw"].includes(params?.intent ?? ""),
-    [params],
-  );
 
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
@@ -69,10 +66,8 @@ function Earn({ route }: Props) {
     console.error(appManifestNotFoundError);
   }
 
-  const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
-
   return manifest ? (
-    <Container>
+    <TabBarSafeAreaView>
       <TrackScreen category="EarnDashboard" name="Earn" />
       <EarnWebview
         manifest={manifest}
@@ -92,7 +87,7 @@ function Earn({ route }: Props) {
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </Container>
+    </TabBarSafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (
