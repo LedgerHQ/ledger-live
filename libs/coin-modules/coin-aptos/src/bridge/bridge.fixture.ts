@@ -33,6 +33,12 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
+    aptosResources: {
+      stakingPositions: [],
+      activeBalance: BigNumber(0),
+      inactiveBalance: BigNumber(0),
+      pendingInactiveBalance: BigNumber(0),
+    },
     ...account,
   };
 }
@@ -90,6 +96,12 @@ export function createFixtureAccountWithSubAccount(
         swapHistory: [],
       },
     ],
+    aptosResources: {
+      stakingPositions: [],
+      activeBalance: BigNumber(0),
+      inactiveBalance: BigNumber(0),
+      pendingInactiveBalance: BigNumber(0),
+    },
     ...account,
   };
 }
