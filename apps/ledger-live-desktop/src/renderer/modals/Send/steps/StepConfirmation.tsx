@@ -18,12 +18,16 @@ import NodeError from "./Confirmation/NodeError";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { AccountLike } from "@ledgerhq/types-live";
 import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import { useHistory } from "react-router";
+import { useDispatch } from "react-redux";
+import { closeAllModal } from "~/renderer/actions/modals";
+import Text from "~/renderer/components/Text";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))<{
+})) <{
   shouldSpace?: boolean;
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
@@ -40,6 +44,8 @@ function StepConfirmation({
   account,
   parentAccount,
 }: StepProps) {
+  const history = useHistory();
+  const dispatch = useDispatch();
   if (optimisticOperation) {
     return (
       <Container>
@@ -58,6 +64,19 @@ function StepConfirmation({
           title={<Trans i18nKey="send.steps.confirmation.success.title" />}
           description={multiline(t("send.steps.confirmation.success.text"))}
         />
+        <Container>
+          <Text>Congratulations, you have earned a new Ledger reward</Text>
+          <Button
+            ml={2}
+            onClick={() => {
+              dispatch(closeAllModal());
+              history.push({ pathname: "/trophies" })
+            }}
+            primary
+          >
+            Go to Eternals
+          </Button>
+        </Container>
       </Container>
     );
   }
