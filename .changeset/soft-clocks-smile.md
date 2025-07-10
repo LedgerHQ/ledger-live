@@ -8,4 +8,4 @@
 "@ledgerhq/live-env": minor
 ---
 
-Staking Aptos
+Staking for Aptos
