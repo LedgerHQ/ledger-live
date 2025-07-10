@@ -15,7 +15,8 @@ import { AccountsAddedProps } from "./types";
 
 export const AccountsAdded = ({
   accounts,
-  onFundAccount,
+  navigateToEditAccountName,
+  navigateToFundAccount,
   navigateToSelectAccount,
   isAccountSelectionFlow,
   source,
@@ -31,11 +32,11 @@ export const AccountsAdded = ({
     });
 
     if (accounts.length === 1) {
-      onFundAccount(accounts[0]);
+      navigateToFundAccount(accounts[0]);
     } else {
       navigateToSelectAccount();
     }
-  }, [accounts, navigateToSelectAccount, onFundAccount, trackAddAccountEvent]);
+  }, [accounts, navigateToSelectAccount, navigateToFundAccount, trackAddAccountEvent]);
 
   const handleClose = () => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -61,7 +62,11 @@ export const AccountsAdded = ({
         <Title accountsCount={accounts.length} />
       </Flex>
       <ScrollContainer>
-        <AccountList accounts={accounts} formatAccount={formatAccount} />
+        <AccountList
+          accounts={accounts}
+          formatAccount={formatAccount}
+          navigateToEditAccountName={navigateToEditAccountName}
+        />
       </ScrollContainer>
       <ActionButtons
         onAddFunds={handleAddFunds}
