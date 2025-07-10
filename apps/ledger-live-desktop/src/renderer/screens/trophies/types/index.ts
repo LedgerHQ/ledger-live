@@ -11,6 +11,12 @@ export interface Trophy {
   condition: (accounts: Account[]) => boolean;
   target?: number;
   progress?: (accounts: Account[]) => number;
+  benefits?: string[];
+  nft?: {
+    name: string;
+    link: string;
+    description: string;
+  };
 }
 
 export interface TrophyCategory {

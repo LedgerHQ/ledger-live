@@ -63,13 +63,21 @@ const TrophiesGrid = styled(Box)`
   gap: 20px;
 `;
 
+const TrophyCardInner = styled(Box)`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+`;
+
 const TrophyCard = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
   background: ${p =>
     p.isEarned
       ? p.theme.colors.palette.background.paper
       : rgba(p.theme.colors.palette.background.paper, 0.6)};
   border-radius: 16px;
-  padding: 24px;
+  padding: 0;
   border: 1px solid
     ${p => (p.isEarned ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider)};
   box-shadow: ${p =>
@@ -81,6 +89,8 @@ const TrophyCard = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
   position: relative;
   overflow: hidden;
   opacity: ${p => (p.isEarned ? 1 : 0.7)};
+  perspective: 1000px;
+  min-height: 300px;
 
   &:hover {
     transform: translateY(-2px);
@@ -88,6 +98,10 @@ const TrophyCard = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
       p.isEarned
         ? `0 8px 24px ${rgba(p.theme.colors.palette.primary.main, 0.2)}`
         : `0 4px 16px ${rgba(p.theme.colors.palette.text.shade100, 0.08)}`};
+  }
+
+  &:hover ${TrophyCardInner} {
+    transform: rotateY(180deg);
   }
 
   ${p =>
@@ -101,6 +115,88 @@ const TrophyCard = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
         ${p.theme.colors.palette.secondary.main}10
       );
     `}
+`;
+
+const TrophyCardFront = styled(Box)`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+`;
+
+const TrophyCardBack = styled(Box)<{ isEarned: boolean }>`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  background: ${p =>
+    p.isEarned
+      ? `linear-gradient(135deg, ${p.theme.colors.palette.primary.main}15, ${p.theme.colors.palette.secondary.main}15)`
+      : rgba(p.theme.colors.palette.background.paper, 0.8)};
+`;
+
+const BenefitTitle = styled(Text)<{ isEarned: boolean }>`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${p =>
+    p.isEarned ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
+  margin-bottom: 16px;
+`;
+
+const BenefitDescription = styled(Text)<{ isEarned: boolean }>`
+  font-size: 14px;
+  color: ${p =>
+    p.isEarned ? p.theme.colors.palette.text.shade80 : p.theme.colors.palette.text.shade50};
+  line-height: 1.5;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const NFTMessage = styled(Text)<{ isEarned: boolean }>`
+  font-size: 12px;
+  color: ${p =>
+    p.isEarned ? p.theme.colors.palette.text.shade60 : p.theme.colors.palette.text.shade40};
+  line-height: 1.4;
+  margin-bottom: 16px;
+  text-align: center;
+`;
+
+const NFTLink = styled(Box)<{ isEarned: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: ${p =>
+    p.isEarned
+      ? `linear-gradient(135deg, ${p.theme.colors.palette.primary.main}, ${p.theme.colors.palette.secondary.main})`
+      : p.theme.colors.palette.text.shade20};
+  color: ${p => (p.isEarned ? "white" : p.theme.colors.palette.text.shade60)};
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: ${p => (p.isEarned ? "pointer" : "not-allowed")};
+  opacity: ${p => (p.isEarned ? 1 : 0.6)};
+
+  &:hover {
+    ${p =>
+      p.isEarned &&
+      css`
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      `}
+  }
 `;
 
 const TrophyIconContainer = styled(Box)<{ isEarned: boolean; isRare?: boolean }>`
@@ -288,27 +384,59 @@ export default function CategoriesGrid({ filteredCategories, earnedTrophies, acc
 
                   <RarityBadge rarity={trophy.rarity}>{trophy.rarity}</RarityBadge>
 
-                  <TrophyIconContainer isEarned={isEarned} isRare={isRare}>
-                    {trophy.icon}
-                  </TrophyIconContainer>
+                  <TrophyCardInner>
+                    <TrophyCardFront>
+                      <TrophyIconContainer isEarned={isEarned} isRare={isRare}>
+                        {trophy.icon}
+                      </TrophyIconContainer>
 
-                  <TrophyTitle isEarned={isEarned}>{trophy.title}</TrophyTitle>
+                      <TrophyTitle isEarned={isEarned}>{trophy.title}</TrophyTitle>
 
-                  <TrophyDescription isEarned={isEarned}>{trophy.description}</TrophyDescription>
+                      <TrophyDescription isEarned={isEarned}>
+                        {trophy.description}
+                      </TrophyDescription>
 
-                  {isEarned ? (
-                    <EarnedDate>
-                      Earned{" "}
-                      {formatDate(new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000))}
-                    </EarnedDate>
-                  ) : (
-                    trophy.progress && (
-                      <TrophyProgress>
-                        <ProgressBar progress={progress} />
-                        <ProgressText>{Math.round(progress)}% complete</ProgressText>
-                      </TrophyProgress>
-                    )
-                  )}
+                      {isEarned ? (
+                        <EarnedDate>
+                          Earned{" "}
+                          {formatDate(
+                            new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+                          )}
+                        </EarnedDate>
+                      ) : (
+                        trophy.progress && (
+                          <TrophyProgress>
+                            <ProgressBar progress={progress} />
+                            <ProgressText>{Math.round(progress)}% complete</ProgressText>
+                          </TrophyProgress>
+                        )
+                      )}
+                    </TrophyCardFront>
+
+                    <TrophyCardBack isEarned={isEarned}>
+                      <BenefitTitle isEarned={isEarned}>🎁 Trophy Benefits</BenefitTitle>
+                      <BenefitDescription isEarned={isEarned}>
+                        {trophy.benefits
+                          ? trophy.benefits.join(", ")
+                          : "Exclusive perks and rewards"}
+                      </BenefitDescription>
+
+                      <NFTMessage isEarned={isEarned}>
+                        This trophy is an NFT that grants you special privileges within the Ledger
+                        ecosystem
+                      </NFTMessage>
+
+                      {trophy.nft && isEarned ? (
+                        <NFTLink isEarned={isEarned} as="a" href={trophy.nft.link} target="_blank">
+                          🔗 View NFT
+                        </NFTLink>
+                      ) : (
+                        <NFTLink isEarned={isEarned}>
+                          {isEarned ? "🔗 View NFT" : "🔒 Earn to unlock NFT"}
+                        </NFTLink>
+                      )}
+                    </TrophyCardBack>
+                  </TrophyCardInner>
                 </TrophyCard>
               );
             })}
