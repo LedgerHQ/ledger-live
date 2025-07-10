@@ -261,7 +261,6 @@ function padHexImage(hexImage: string, screenSpecs: ScreenSpecs): string {
 
 const bitsPerPixelToBppIndicator: Record<ScreenSpecs["bitsPerPixel"], number> = {
   1: 0,
-  2: 1,
   4: 2,
 };
 
