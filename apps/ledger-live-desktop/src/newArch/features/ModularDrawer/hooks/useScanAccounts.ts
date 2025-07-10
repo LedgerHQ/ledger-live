@@ -50,8 +50,6 @@ export function useScanAccounts({
 
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  // TODO
-  // const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscription = useRef<Subscription | null>(null);
@@ -97,7 +95,7 @@ export function useScanAccounts({
 
         setState({
           scanning: true,
-          scannedAccounts: uniqueScannedAccounts,
+          scannedAccounts,
         });
 
         const onlyNewAccounts = uniqueScannedAccounts.every(acc => isAccountEmpty(acc));
@@ -164,7 +162,6 @@ export function useScanAccounts({
   );
 
   const { sections, alreadyEmptyAccount } = useMemo(
-    // TODO this could be in an RxJS .last() to grab scannedAccounts?
     () =>
       groupAddAccounts(existingAccounts, scannedAccounts, {
         scanning,
@@ -248,7 +245,6 @@ export function useScanAccounts({
   }, [startSubscription, stopSubscription]);
 
   useEffect(() => {
-    // TODO handle redirect upon scanning: false
     if (
       !scanning &&
       alreadyEmptyAccount &&
