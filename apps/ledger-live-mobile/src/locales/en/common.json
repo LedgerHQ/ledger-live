@@ -2840,6 +2840,8 @@
     "delegation": {
       "sectionLabel": "Delegation(s)",
       "addDelegation": "Add delegation",
+      "delegationEarn": "You can now earn {{name}} staking rewards by delegating your account.",
+      "howItWorks": "How delegation works",
       "info": {
         "title": "Earn rewards",
         "cta": "Earn rewards"
@@ -6819,6 +6821,28 @@
         "description": "Rewards will be claimed automatically after each transaction. You can also claim them manually."
       }
     },
+    "delegatedPositions": {
+      "rewards": {
+        "title": "Rewards",
+        "cta": "Claim"
+      },
+      "details": {
+        "validatorAddress": "Validator address",
+        "delegatedAccount": "Delegated account",
+        "status": {
+          "title": "Status",
+          "active": "Active",
+          "inactive": "Inactive",
+          "overstaked": "Overstaked"
+        },
+        "rewards": "Rewards",
+        "actions": {
+          "redelegate": "Redelegate",
+          "claimRewards": "Collect rewards",
+          "undelegate": "Undelegate"
+        }
+      }
+    },
     "delegation": {
       "nodeName": "Node {{index}}: {{name}}",
       "alreadyDelegatedModal": {
@@ -6829,28 +6853,6 @@
         "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
-      },
-      "positions": {
-        "rewards": {
-          "title": "Rewards",
-          "cta": "Claim"
-        },
-        "details": {
-          "validatorAddress": "Validator address",
-          "delegatedAccount": "Delegated account",
-          "status": {
-            "title": "Status",
-            "active": "Active",
-            "inactive": "Inactive",
-            "overstaked": "Overstaked"
-          },
-          "rewards": "Rewards",
-          "actions": {
-            "redelegate": "Redelegate",
-            "claimRewards": "Collect rewards",
-            "undelegate": "Undelegate"
-          }
-        }
       },
       "steps": {
         "summary": {
@@ -6873,7 +6875,33 @@
           "title": "Confirmation",
           "success": {
             "title": "You have successfully delegated your assets",
-            "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+            "description": "Your account balance will be updated when the blockchain confirms the transaction.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
+    "undelegation": {
+      "stepperHeader": {
+        "amount": "Amount to undelegate",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "alert": "Once undelegated your balance & pending rewards will be immediately cashed in. It is not possible to partially undelegate your stake.",
+          "learnMore": "Learn more"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "You have successfully undelegated your assets",
+            "description": "Your account balance will be updated when the blockchain confirms the transaction.",
             "cta": "View details"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
-import type { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -99,7 +98,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         ),
       },
       {
-        label: t("hedera.delegation.positions.details.validatorAddress"),
+        label: t("hedera.delegatedPositions.details.validatorAddress"),
         Component: (
           <Text
             numberOfLines={1}
@@ -113,7 +112,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         ),
       },
       {
-        label: t("hedera.delegation.positions.details.delegatedAccount"),
+        label: t("hedera.delegatedPositions.details.delegatedAccount"),
         Component: (
           <Text
             numberOfLines={1}
@@ -127,7 +126,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         ),
       },
       {
-        label: t("hedera.delegation.positions.details.status.title"),
+        label: t("hedera.delegatedPositions.details.status.title"),
         Component: (
           <Text
             numberOfLines={1}
@@ -136,12 +135,12 @@ function Delegations({ account, delegatedPosition }: Props) {
             style={styles.valueText}
             color={mapStatusToColor[status]}
           >
-            {t(`hedera.delegation.positions.details.status.${status}`)}
+            {t(`hedera.delegatedPositions.details.status.${status}`)}
           </Text>
         ),
       },
       {
-        label: t("hedera.delegation.positions.details.rewards"),
+        label: t("hedera.delegatedPositions.details.rewards"),
         Component: (
           <Text
             numberOfLines={1}
@@ -174,11 +173,43 @@ function Delegations({ account, delegatedPosition }: Props) {
       undelegate: rgba(colors.alert, 0.2),
     } satisfies Record<(typeof allStakeActions)[number], string>;
 
+    const mapStakeActionToNavigationParams = {
+      redelegate: [
+        NavigatorName.HederaRedelegationFlow,
+        {
+          screen: ScreenName.HederaRedelegationAmount,
+          params: {
+            accountId: account.id,
+          },
+        },
+      ],
+      claimRewards: [
+        NavigatorName.HederaClaimRewardsFlow,
+        {
+          screen: ScreenName.HederaClaimRewardsSelectReward,
+          params: {
+            accountId: account.id,
+          },
+        },
+      ],
+      undelegate: [
+        NavigatorName.HederaUndelegationFlow,
+        {
+          screen: ScreenName.HederaUndelegationAmount,
+          params: {
+            accountId: account.id,
+            delegationWithMeta,
+          },
+        },
+      ],
+    } as const;
+
     return allStakeActions.map(action => {
       const enabledActionCircleBgColor = mapStakeActionToColor[action];
+      const actionNavigationParams = mapStakeActionToNavigationParams[action];
 
       const drawerAction: DelegationDrawerActions[number] = {
-        label: t(`hedera.delegation.positions.details.actions.${action}`),
+        label: t(`hedera.delegatedPositions.details.actions.${action}`),
         event: `DelegationAction${capitalize(action)}`,
         Icon: (props: IconProps) => (
           <Circle {...props} bg={enabledActionCircleBgColor}>
@@ -186,21 +217,13 @@ function Delegations({ account, delegatedPosition }: Props) {
           </Circle>
         ),
         onPress: () => {
-          (navigation as StackNavigationProp<Record<string, object | undefined>>).navigate(
-            NavigatorName.HederaDelegationFlow,
-            {
-              screen: ScreenName.HederaDelegationSummary,
-              params: {
-                accountId: account.id,
-              },
-            },
-          );
+          navigation.navigate(...actionNavigationParams);
         },
       };
 
       return drawerAction;
     });
-  }, [account.id, colors.fog, colors.alert, colors.yellow, navigation, t]);
+  }, [account.id, colors.fog, colors.alert, colors.yellow, navigation, delegationWithMeta, t]);
 
   return (
     <View style={styles.root}>
@@ -221,6 +244,7 @@ function Delegations({ account, delegatedPosition }: Props) {
       />
       <View>
         <DelegationRewards
+          account={account}
           claimableRewards={delegationWithMeta.pendingReward}
           currency={currency}
           unit={unit}

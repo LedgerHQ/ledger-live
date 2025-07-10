@@ -19,6 +19,7 @@ function UndelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -29,11 +30,11 @@ function UndelegationFlow() {
       <Stack.Screen
         name={ScreenName.HederaUndelegationAmount}
         component={UndelegationAmount}
-        options={() => ({
+        options={({ route }) => ({
           headerTitle: () => (
             <StepHeader
-              title={t("hedera.undelegation.stepperHeader.amountTitle")}
-              subtitle={t("hedera.undelegation.stepperHeader.amountSubTitle")}
+              subtitle={t("hedera.undelegation.stepperHeader.amount")}
+              title={route.params.delegationWithMeta.validator.name}
             />
           ),
         })}

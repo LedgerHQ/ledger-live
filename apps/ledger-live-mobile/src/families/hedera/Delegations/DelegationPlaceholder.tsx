@@ -28,8 +28,8 @@ export default function DelegationPlaceholder({ account }: Props) {
   return (
     <AccountDelegationInfo
       title={t("account.delegation.info.title")}
-      description={t("hedera.delegation.delegationEarn", { name: account.currency.name })}
-      infoTitle={t("hedera.delegation.info")}
+      description={t("account.delegation.delegationEarn", { name: account.currency.name })}
+      infoTitle={t("account.delegation.howItWorks")}
       ctaTitle={t("account.delegation.info.cta")}
       infoUrl={urls.hedera.staking}
       onPress={onDelegate}
