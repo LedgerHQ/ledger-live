@@ -217,7 +217,7 @@
     "cross-env": "7.0.3",
     "debug": "4.3.4",
     "dmg-builder": "26.0.1",
-    "electron": "36.6.0",
+    "electron": "36.7.0",
     "electron-builder": "26.0.1",
     "electron-devtools-installer": "4.0.0",
     "eslint-plugin-jest": "27.9.0",
