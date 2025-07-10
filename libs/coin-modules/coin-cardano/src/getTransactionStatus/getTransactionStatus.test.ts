@@ -2,11 +2,11 @@
 
 import BigNumber from "bignumber.js";
 import { getTransactionStatus } from "./getTransactionStatus";
-import { CardanoAccount, CardanoOutput, Transaction } from "./types";
+import { CardanoAccount, CardanoOutput, Transaction } from "../types";
 import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
-import * as mode from "./getTransactionStatusByMode";
-import coinConfig, { CardanoCoinConfig } from "./config";
+import * as mode from "./handler";
+import coinConfig, { CardanoCoinConfig } from "../config";
 
 describe("getTransactionStatus", () => {
   it("should return not enough funds error when there are no utxos", async () => {
