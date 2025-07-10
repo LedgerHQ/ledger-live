@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Minimum required amount for this transaction is {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "ปกป้องคุณให้ปลอดภัย",
+      "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "ยืนยัน"
       },
-      "newAccount" : "บัญชีใหม่"
+      "newAccount" : "บัญชีใหม่",
+      "addAccountSelection" : "เลือกบัญชีเพื่อเติมเงินทุน",
+      "addAccountSelectionPtxFlow" : "เลือกบัญชี"
     },
     "fundAccount" : {
       "receive" : "รับ",
