@@ -27,6 +27,7 @@ import {
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
 } from "../analytics/addAccount.types";
+import * as RX from "rxjs/operators";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
@@ -48,9 +49,7 @@ export function useScanAccounts({
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
-  const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
@@ -73,6 +72,41 @@ export function useScanAccounts({
     [newAccountSchemes],
   );
 
+  const addAccount = useCallback(
+    (accounts: Account[]) => {
+      const latestScannedAccount = accounts[accounts.length - 1];
+      const uniqueAccounts = Object.values(
+        accounts.reduce(
+          (acc, obj) => {
+            acc[obj.id] = obj;
+            return acc;
+          },
+          {} as { [a: string]: Account },
+        ),
+      );
+
+      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
+      const isNewAccount = isAccountEmpty(latestScannedAccount);
+      const onlyNewAccounts = uniqueAccounts.some(account => !isAccountEmpty(account));
+
+      setScannedAccounts(uniqueAccounts);
+
+      if (!hasAlreadyBeenImported) {
+        setSelectedIds(prevSelectedIds => {
+          const newAccountsSelected =
+            prevSelectedIds.length > 0 ? prevSelectedIds : [latestScannedAccount.id];
+
+          const existingAccountsSelected = !isNewAccount
+            ? Array.from(new Set([...prevSelectedIds, latestScannedAccount.id]))
+            : prevSelectedIds;
+
+          return onlyNewAccounts ? newAccountsSelected : existingAccountsSelected;
+        });
+      }
+    },
+    [existingAccounts],
+  );
+
   const startSubscription = useCallback(() => {
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
@@ -88,16 +122,18 @@ export function useScanAccounts({
         deviceId,
         syncConfig,
       })
+      .pipe(RX.scan((acc, { account }) => [...acc, account], [] as Account[]))
       .subscribe({
-        next: ({ account }) => {
-          setLatestScannedAccount(account);
+        next: (accounts: Account[]) => {
+          addAccount(accounts);
         },
         complete: () => setScanning(false),
         error: error => {
           setError(error);
         },
       });
-  }, [blacklistedTokenIds, currency, deviceId]);
+  }, [blacklistedTokenIds, currency, deviceId, addAccount]);
+
   const restartSubscription = useCallback(() => {
     setScanning(true);
     setScannedAccounts([]);
@@ -259,33 +295,6 @@ export function useScanAccounts({
     startSubscription();
     return () => stopSubscription(false);
   }, [startSubscription, stopSubscription]);
-
-  useEffect(() => {
-    if (latestScannedAccount) {
-      const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
-      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
-      const isNewAccount = isAccountEmpty(latestScannedAccount);
-
-      if (!isNewAccount) {
-        setOnlyNewAccounts(false);
-      }
-
-      if (!hasAlreadyBeenScanned) {
-        setScannedAccounts([...scannedAccounts, latestScannedAccount]);
-        if (!hasAlreadyBeenImported) {
-          const newAccountsSelected =
-            selectedIds.length > 0 ? selectedIds : [latestScannedAccount.id];
-          const existingAccountsSelected = !isNewAccount
-            ? Array.from(new Set([...selectedIds, latestScannedAccount.id]))
-            : selectedIds;
-          const selectedAccountIds = onlyNewAccounts
-            ? newAccountsSelected
-            : existingAccountsSelected;
-          setSelectedIds(selectedAccountIds);
-        }
-      }
-    }
-  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
     if (
