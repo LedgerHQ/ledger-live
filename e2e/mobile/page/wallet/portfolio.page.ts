@@ -1,9 +1,8 @@
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { Currency, CurrencyType } from "@ledgerhq/live-common/lib/e2e/enum/Currency";
 
 export default class PortfolioPage {
   baseLink = "portfolio";
-  baseAssetItem = "assetItem-";
+  baseAssetName = "assetItem-";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   graphCardChart = "graphCard-chart";
@@ -15,34 +14,18 @@ export default class PortfolioPage {
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
-  quickActionBuyButton = "portfolio-quick-action-button-buy";
-  quickActionSwapButton = "portfolio-quick-action-button-swap";
-  quickActionSendButton = "portfolio-quick-action-button-send";
-  quickActionReceiveButton = "portfolio-quick-action-button-receive";
-  quickActionEarnButton = "portfolio-quick-action-button-earn";
+  quickActionBuyButton = "portoflio-quick-action-button-buy";
+  quickActionSwapButton = "portoflio-quick-action-button-swap";
+  quickActionSendButton = "portoflio-quick-action-button-send";
+  quickActionReceiveButton = "portoflio-quick-action-button-receive";
+  quickActionEarnButton = "portoflio-quick-action-button-earn";
   showAllAssetsButton = "assets-button";
-  showAllAccountsButton = "show-all-accounts-button";
   seeAllTransactionsButton = "portfolio-seeAll-transaction";
   operationRowDate = "operationRowDate";
-  assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
-  tabSelectorBase = "tab-selector-";
-  selectAssetsPageTitle = "select-crypto-header-step1-title";
-  baseBigCurrency = "big-currency";
-  bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
+  assetNameRegExp = new RegExp(`${this.baseAssetName}.*`);
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
-  assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
-  assetItemNameId = (currencyName: string) => `${this.assetItemId(currencyName)}-name`;
-  assetItemCurrencyTickerId = (currencyName: string) => `${this.assetItemId(currencyName)}-ticker`;
-  assetItemBalance = (currencyName: string) => `${this.assetItemId(currencyName)}-balance`;
-  assetItemDelta = (currencyName: string) => `${this.assetItemId(currencyName)}-delta`;
-  bigCurrencyIcon = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-icon-${currencyId}`);
-  bigCurrencyName = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-name-${currencyId}`);
-  bigCurrencySubTitle = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-subtitle-${currencyId}`);
-  tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
+  assetItemId = (currencyName: string) => `${this.baseAssetName}${currencyName}`;
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -102,35 +85,12 @@ export default class PortfolioPage {
 
   @Step("Check asset allocation section")
   async checkAssetAllocationSection() {
-    await scrollToId(this.showAllAssetsButton);
-    const assetsCount = await countElementsById(this.assetItemRegExp);
-    jestExpect(assetsCount).toBeLessThanOrEqual(5);
-
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.assetItemRegExp), i);
-      const currencyName = id.split("-")[1];
-      await detoxExpect(getElementById(this.assetItemNameId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemCurrencyTickerId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemBalance(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemDelta(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(app.common.parentCurrencyIcon, i)).toBeVisible();
-    }
-
+    await scrollToId(this.allocationSectionTitleId);
+    await detoxExpect(getElementById(this.allocationSectionTitleId)).toBeVisible();
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeLessThanOrEqual(5);
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
     await tapById(this.showAllAssetsButton);
-    jestExpect(await countElementsById(this.assetItemRegExp)).toBeGreaterThan(5);
-  }
-
-  @Step("Check accounts section")
-  async checkAccountsSection() {
-    await this.tapTabSelector("Accounts");
-    await scrollToId(this.showAllAccountsButton, undefined, 400);
-    jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeLessThanOrEqual(5);
-    await this.tapShowAllAccountsButton();
-    jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeGreaterThan(5);
-    await app.addAccount.tapAddNewOrExistingAccountButton();
-    await app.addAccount.importWithYourLedger();
-    await this.checkSelectAssetPage();
+    jestExpect(await countElementsById(this.assetNameRegExp)).toBeGreaterThan(5);
   }
 
   @Step("Navigate $0 asset Page")
@@ -155,32 +115,5 @@ export default class PortfolioPage {
   @Step("Click on selected last operation")
   async selectAndClickOnLastOperation() {
     await tapById(this.operationRowDate);
-  }
-
-  @Step("Tap on $0 tab selector")
-  async tapTabSelector(id: "Accounts" | "Assets") {
-    await tapByElement(await this.tabSelector(id));
-  }
-
-  @Step("Tap on (Show All Accounts) button")
-  async tapShowAllAccountsButton() {
-    await scrollToId(this.showAllAccountsButton);
-    await tapById(this.showAllAccountsButton);
-  }
-
-  @Step("Expect (Select Asset) page")
-  async checkSelectAssetPage() {
-    await waitForElementById(this.selectAssetsPageTitle);
-    await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
-    await app.common.expectSearchBarVisible();
-    const assetsCount = await countElementsById(this.bigCurrencyRowRegex);
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.bigCurrencyRowRegex), i);
-      const currencyId = id.split("-")[3];
-      const currencyObj = Object.values(Currency).find((c: CurrencyType) => c.id === currencyId);
-      await detoxExpect(this.bigCurrencyIcon(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencyName(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencySubTitle(currencyObj.ticker)).toBeVisible();
-    }
   }
 }

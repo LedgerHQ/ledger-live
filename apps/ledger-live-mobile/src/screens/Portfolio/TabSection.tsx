@@ -112,13 +112,7 @@ const TabSection: React.FC<TabSectionProps> = ({
           >
             <AddAccountButton sourceScreenName="Wallet" />
             {accountsLength >= maxItemsToDysplay && (
-              <Button
-                type="shade"
-                size="large"
-                outline
-                onPress={onPressButton}
-                testID="show-all-accounts-button"
-              >
+              <Button type="shade" size="large" outline onPress={onPressButton}>
                 {t("portfolio.seeAllAccounts")}
               </Button>
             )}

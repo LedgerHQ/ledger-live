@@ -75,7 +75,7 @@ function PortfolioQuickActionsBar() {
       data={quickActionsData}
       numColumns={5}
       id="asset_five_columns"
-      testID="portfolio-quick-action-button"
+      testID="portoflio-quick-action-button"
     />
   );
 }

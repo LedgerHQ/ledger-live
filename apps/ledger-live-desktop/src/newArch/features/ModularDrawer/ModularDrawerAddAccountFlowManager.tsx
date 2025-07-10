@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
-export type ModularDrawerAddAccountFlowManagerProps = {
+type Props = {
   currency: CryptoOrTokenCurrency;
   source: string;
   onAccountSelected?: (account: Account) => void;
@@ -45,11 +45,7 @@ const StepContainer = styled(Flex)`
   width: 100%;
 `;
 
-const ModularDrawerAddAccountFlowManager = ({
-  currency,
-  source,
-  onAccountSelected,
-}: ModularDrawerAddAccountFlowManagerProps) => {
+const ModularDrawerAddAccountFlowManager = ({ currency, source, onAccountSelected }: Props) => {
   const { t } = useTranslation();
 
   const [connectAppResult, setConnectAppResult] = useState<AppResult>();

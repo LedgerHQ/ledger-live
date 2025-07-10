@@ -5,21 +5,21 @@ export function useAssets(
   currencies: CryptoOrTokenCurrency[],
   sortedCryptoCurrencies: CryptoOrTokenCurrency[],
 ) {
-  const currencyIdsArray = useMemo(() => currencies.map(currency => currency.id), [currencies]);
-  const currencyIdsSet = useMemo(() => new Set(currencyIdsArray), [currencyIdsArray]);
+  const currenciesIdsArray = useMemo(() => currencies.map(currency => currency.id), [currencies]);
+  const currencyIdsSet = useMemo(() => new Set(currenciesIdsArray), [currenciesIdsArray]);
 
   const filteredSortedCryptoCurrencies = useMemo(() => {
     if (currencyIdsSet.size === 0) return sortedCryptoCurrencies;
     return sortedCryptoCurrencies.filter(currency => currencyIdsSet.has(currency.id));
   }, [sortedCryptoCurrencies, currencyIdsSet]);
 
-  const [availableAssets, setAvailableAssets] = useState<CryptoOrTokenCurrency[] | null>(null);
+  const [assetsToDisplay, setAssetsToDisplay] = useState<CryptoOrTokenCurrency[] | null>(null);
 
   return {
-    availableAssets: availableAssets ?? filteredSortedCryptoCurrencies,
-    setAvailableAssets,
+    assetsToDisplay: assetsToDisplay ?? filteredSortedCryptoCurrencies,
+    setAssetsToDisplay,
     filteredSortedCryptoCurrencies,
-    currencyIdsArray,
+    currenciesIdsArray,
     currencyIdsSet,
   };
 }

@@ -1,20 +1,13 @@
 import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { ApplicationOptions } from "page";
 
-async function beforeAllFunction(options: ApplicationOptions) {
-  await app.init({
-    userdata: options.userdata,
-    speculosApp: options.speculosApp,
-  });
-  await app.portfolio.waitForPortfolioPageToLoad();
-}
 export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsLinks: string[]) {
   describe("Portfolio transaction history", () => {
     beforeAll(async () => {
-      await beforeAllFunction({
+      await app.init({
         userdata: "speculos-tests-app",
         speculosApp: currency.speculosApp,
       });
+      await app.portfolio.waitForPortfolioPageToLoad();
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
@@ -30,9 +23,10 @@ export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsL
 export function runPortfolioChartsAndAssetsTest(tmsLinks: string[]) {
   describe("Portfolio charts and assets", () => {
     beforeAll(async () => {
-      await beforeAllFunction({
+      await app.init({
         userdata: "speculos-tests-app",
       });
+      await app.portfolio.waitForPortfolioPageToLoad();
     });
 
     tmsLinks.forEach(link => $TmsLink(link));

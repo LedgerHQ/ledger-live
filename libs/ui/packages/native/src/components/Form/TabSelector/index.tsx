@@ -102,7 +102,6 @@ export default function TabSelector<T extends string>({
               opacity: pressed && selectedIndex !== index ? 0.5 : 1,
               flex: 1,
             })}
-            testID={`tab-selector-${label.id}`}
           >
             <Tab $radius={tabRadius}>
               <Text fontSize={14} fontWeight="semiBold" flexShrink={1} numberOfLines={1}>

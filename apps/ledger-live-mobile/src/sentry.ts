@@ -1,6 +1,7 @@
 import Config from "react-native-config";
 import * as Sentry from "@sentry/react-native";
 import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { getEnabled } from "./components/HookSentry";
 import { getAllDivergedFlags } from "./components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./experimental";
 import { languageSelector } from "./reducers/settings";
@@ -18,9 +19,7 @@ export const navigationIntegration = Sentry.reactNavigationIntegration({
 
 const SENTRY_DEBUG = Config.SENTRY_DEBUG === "true" && __DEV__;
 
-export const initSentry = (automaticBugReportingEnabled: boolean) => {
-  if (!sentryEnabled) return;
-
+if (sentryEnabled) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,
     environment: Config.SENTRY_ENVIRONMENT,
@@ -45,7 +44,7 @@ export const initSentry = (automaticBugReportingEnabled: boolean) => {
       }),
     ],
     beforeSend(event) {
-      if (!automaticBugReportingEnabled) return null;
+      if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,
       // we will not send it to Sentry.
       if (event && typeof event === "object") {
@@ -107,9 +106,8 @@ export const initSentry = (automaticBugReportingEnabled: boolean) => {
   setTimeout(syncTheTags, 5000);
   // We also try to regularly update them so we are sure to get the correct tags (as these are dynamic)
   setInterval(syncTheTags, 60000);
-};
+}
 
-// TODO: remove this when Sentry is completely switched off
 export function withSentry(App: React.ComponentType) {
   return sentryEnabled ? Sentry.wrap(App) : App;
 }

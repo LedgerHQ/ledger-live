@@ -39,30 +39,36 @@ type ModularDrawerProps = {
 export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
   const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
 
-  const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
-    useInitModularDrawer();
+  const { sortedCryptoCurrencies, isReadyToBeDisplayed } = useInitModularDrawer();
 
-  const { availableAssets, currencyIdsArray } = useAssets(currencies, sortedCryptoCurrencies);
+  const { assetsToDisplay, filteredSortedCryptoCurrencies } = useAssets(
+    currencies,
+    sortedCryptoCurrencies,
+  );
 
-  const { handleAsset, handleNetwork, reset, handleBack, availableNetworks } =
-    useModularDrawerState({
-      goToStep: navigationStepManager.goToStep,
-      currenciesByProvider,
-      currencyIds: currencyIdsArray,
-    });
+  const {
+    onAssetSelected,
+    onNetworkSelected,
+    networksToDisplay,
+    resetState,
+    goBackToAssetSelection,
+    goBackToNetworkSelection,
+  } = useModularDrawerState({
+    nextStep: navigationStepManager.nextStep,
+    prevStep: navigationStepManager.prevStep,
+    filteredSortedCryptoCurrencies,
+  });
 
   /**
    * Handlers for the back & close button in the drawer.
    */
-
   const handleBackButton = () => {
-    handleBack(navigationStepManager.currentStep);
+    navigationStepManager.handleBackButton(goBackToAssetSelection, goBackToNetworkSelection);
   };
-
   const handleCloseButton = () => {
     onClose?.();
     navigationStepManager.reset();
-    reset();
+    resetState();
   };
 
   return (
@@ -79,12 +85,12 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
       <ModularDrawerFlowManager
         navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
-          availableAssets,
-          onAssetSelected: handleAsset,
+          assetsToDisplay,
+          onAssetSelected,
         }}
         networksViewModel={{
-          onNetworkSelected: handleNetwork,
-          availableNetworks,
+          onNetworkSelected,
+          networksToDisplay,
         }}
         isReadyToBeDisplayed={isReadyToBeDisplayed}
       />

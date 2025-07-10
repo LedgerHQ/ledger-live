@@ -10,23 +10,21 @@ import {
   usdcToken,
 } from "./currencies.mock";
 
-export const providers = [
-  {
-    providerId: "bitcoin",
-    currenciesByNetwork: [bitcoinCurrency],
-  },
-  {
-    providerId: "ethereum",
-    currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
-  },
-  { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
-  { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
-  { providerId: "injective-protocol", currenciesByNetwork: [injectiveCurrency] },
-];
-
 export const res = {
   result: {
-    currenciesByProvider: providers,
+    currenciesByProvider: [
+      {
+        providerId: "bitcoin",
+        currenciesByNetwork: [bitcoinCurrency],
+      },
+      {
+        providerId: "ethereum",
+        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
+      },
+      { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
+      { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
+      { providerId: "injective-protocol", currenciesByNetwork: [injectiveCurrency] },
+    ],
     sortedCryptoCurrencies: [
       bitcoinCurrency,
       ethereumCurrency,

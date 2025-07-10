@@ -21,7 +21,6 @@ type Props = {
   textProperties?: Partial<BaseTextProps>;
   isPercentSignDisplayed?: boolean;
   isArrowDisplayed?: boolean;
-  testID?: string;
 };
 
 function Delta({
@@ -35,7 +34,6 @@ function Delta({
   textProperties,
   isPercentSignDisplayed = false,
   isArrowDisplayed = true,
-  testID,
 }: Props) {
   const { t } = useTranslation();
 
@@ -90,7 +88,6 @@ function Delta({
           fontWeight={isPercentSignDisplayed ? undefined : "semiBold"}
           variant={"large"}
           color={color}
-          testID={testID}
           {...textProperties}
         >
           {unit && absDelta !== 0 ? (

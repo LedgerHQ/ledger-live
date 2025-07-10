@@ -212,7 +212,7 @@ export default class SwapLiveAppPage {
     const errorText: string = await getWebElementText(this.fromAccountErrorId);
     if (typeof expectedMessage === "string") {
       jestExpect(errorText).toContain(expectedMessage);
-    } else {
+    } else if (expectedMessage instanceof RegExp) {
       jestExpect(errorText).toMatch(expectedMessage);
     }
   }

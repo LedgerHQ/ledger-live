@@ -5,7 +5,7 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export type AssetSelectionStepProps = {
-  availableAssets: CryptoOrTokenCurrency[];
+  assetsToDisplay: CryptoOrTokenCurrency[];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
 };
 
@@ -34,10 +34,10 @@ const AssetList: React.FC<{
 };
 
 const AssetSelection = ({
-  availableAssets,
+  assetsToDisplay,
   onAssetSelected,
 }: Readonly<AssetSelectionStepProps>) => {
-  return <AssetList assets={availableAssets} onAssetSelected={onAssetSelected} />;
+  return <AssetList assets={assetsToDisplay} onAssetSelected={onAssetSelected} />;
 };
 
 export default React.memo(AssetSelection);
