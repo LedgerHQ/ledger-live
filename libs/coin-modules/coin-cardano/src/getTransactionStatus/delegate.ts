@@ -1,9 +1,13 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
-import { buildTransaction } from "./buildTransaction";
-import { CardanoInvalidPoolId, CardanoNotEnoughFunds, CardanoStakeKeyDepositError } from "./errors";
-import { isHexString } from "./logic";
-import type { CardanoAccount, Transaction, TransactionStatus } from "./types";
+import { buildTransaction } from "../buildTransaction";
+import {
+  CardanoInvalidPoolId,
+  CardanoNotEnoughFunds,
+  CardanoStakeKeyDepositError,
+} from "../errors";
+import { isHexString } from "../logic";
+import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 
 export async function getDelegateTransactionStatus(
   account: CardanoAccount,

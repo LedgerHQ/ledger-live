@@ -1,10 +1,10 @@
 /* eslint @typescript-eslint/consistent-type-assertions: 0 */
 
-import * as delegate from "./getDelegateTransactionStatus";
-import * as send from "./getSendTransactionStatus";
-import { getTransactionStatusByTransactionMode } from "./getTransactionStatusByMode";
-import * as undelegate from "./getUndelegateTransactionStatus";
-import { CardanoAccount, Transaction } from "./types";
+import * as delegate from "./delegate";
+import * as send from "./send";
+import { getTransactionStatusByTransactionMode } from "./handler";
+import * as undelegate from "./undelegate";
+import { CardanoAccount, Transaction } from "../types";
 
 jest.mock("./getDelegateTransactionStatus");
 jest.mock("./getSendTransactionStatus");
