@@ -7,7 +7,11 @@ import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { AccountListProps } from "../types";
 
-export const AccountList = ({ accounts, formatAccount }: AccountListProps) => {
+export const AccountList = ({
+  accounts,
+  formatAccount,
+  navigateToEditAccountName,
+}: AccountListProps) => {
   const { colors } = useTheme();
   const history = useHistory();
 
@@ -28,14 +32,23 @@ export const AccountList = ({ accounts, formatAccount }: AccountListProps) => {
           <Box mb={16} key={account.id}>
             <AccountItem
               account={formattedAccount}
-              rightElement={{ type: "arrow" }}
+              rightElement={{
+                type: "edit",
+                onClick: () => navigateToEditAccountName(account),
+              }}
               onClick={() => handleAccountClick(account.id)}
               backgroundColor={colors.opacityDefault.c05}
             />
           </Box>
         );
       }),
-    [accounts, formatAccount, colors.opacityDefault.c05, handleAccountClick],
+    [
+      accounts,
+      formatAccount,
+      colors.opacityDefault.c05,
+      handleAccountClick,
+      navigateToEditAccountName,
+    ],
   );
 
   return (

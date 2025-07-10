@@ -77,9 +77,9 @@ export function useModularDrawerNavigation(
 
 export function useAddAccountNavigation() {
   return useGenericNavigation({
-    stepOrder: ADD_ACCOUNT_STEP_ORDER,
-    initialStep: MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
-    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
     backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
+    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
+    initialStep: MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+    stepOrder: ADD_ACCOUNT_STEP_ORDER,
   });
 }
