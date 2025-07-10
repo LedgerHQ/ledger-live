@@ -56,7 +56,7 @@ import {
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { useFeature } from "@ledgerhq/live-common/lib-es/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -149,7 +149,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
-  const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning").enabled;
+  const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customHandlers = useMemo(
