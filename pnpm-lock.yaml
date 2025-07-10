@@ -8057,8 +8057,8 @@ importers:
         specifier: 0.0.0-io-revamp-20250630141416
         version: 0.0.0-io-revamp-20250630141416(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 0.0.0-challenge-nano-s-20250515175634
-        version: 0.0.0-challenge-nano-s-20250515175634(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1))
+        specifier: 0.0.0-io-revamp-20250710095731
+        version: 0.0.0-io-revamp-20250710095731(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -14141,8 +14141,8 @@ packages:
     peerDependencies:
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515175634':
-    resolution: {integrity: sha512-xIPHVT/saB74BvJOoRpBjiAILzyetVBJZ5C5F7YJ/h2TG7V4WuA4U6R4vtdAfyg7wmKPhvvr7WcR2FATy/r6Og==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-io-revamp-20250710095731':
+    resolution: {integrity: sha512-OMut/Uk14oo8QY4u0UOtgZQEVNG2LQlHsA9Gxk0EUtlHUcDiLit2aS8mUjcdZX8KU8VEWv8068qnNb+u6uWYuQ==}
     peerDependencies:
       '@ledgerhq/context-module': ^1.4.0
       '@ledgerhq/device-management-kit': ^0.7.0
@@ -42891,7 +42891,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-challenge-nano-s-20250515175634(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-io-revamp-20250710095731(@ledgerhq/context-module@1.4.0(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/context-module': 1.4.0(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250630141416(rxjs@7.8.1))
       '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250630141416(rxjs@7.8.1)
