@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.23.0-nightly.3
+
+### Minor Changes
+
+- [#10845](https://github.com/LedgerHQ/ledger-live/pull/10845) [`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): add craft transaction
+
+### Patch Changes
+
+- Updated dependencies [[`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
+  - @ledgerhq/coin-framework@5.6.0-nightly.3
+
 ## 2.23.0-nightly.2
 
 ### Patch Changes

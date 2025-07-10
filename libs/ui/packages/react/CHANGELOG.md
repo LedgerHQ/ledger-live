@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.33.0-nightly.0
+
+### Minor Changes
+
+- [#10860](https://github.com/LedgerHQ/ledger-live/pull/10860) [`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add checkbox to pre-LDLS with correct purple
+
 ## 0.32.0
 
 ### Minor Changes

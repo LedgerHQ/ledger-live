@@ -1,5 +1,49 @@
 # @ledgerhq/live-common
 
+## 34.41.0-nightly.3
+
+### Minor Changes
+
+- [#10861](https://github.com/LedgerHQ/ledger-live/pull/10861) [`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - store device ref between exchange.start and exchange.complete
+
+- [#10856](https://github.com/LedgerHQ/ledger-live/pull/10856) [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab) Thanks [@qperrot](https://github.com/qperrot)! - Fix sequencer number too high
+
+### Patch Changes
+
+- Updated dependencies [[`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
+  - @ledgerhq/coin-evm@2.23.0-nightly.3
+  - @ledgerhq/coin-framework@5.6.0-nightly.3
+  - @ledgerhq/coin-celo@1.1.11-nightly.3
+  - @ledgerhq/live-signer-evm@0.5.6-nightly.3
+  - @ledgerhq/coin-algorand@0.9.13-nightly.3
+  - @ledgerhq/coin-aptos@2.5.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.3
+  - @ledgerhq/coin-cardano@0.9.0-nightly.3
+  - @ledgerhq/coin-casper@2.0.4-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.3
+  - @ledgerhq/coin-hedera@1.8.2-nightly.3
+  - @ledgerhq/coin-icon@0.10.13-nightly.3
+  - @ledgerhq/coin-internet_computer@1.7.13-nightly.3
+  - @ledgerhq/coin-mina@1.1.12-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.3
+  - @ledgerhq/coin-near@0.11.13-nightly.3
+  - @ledgerhq/coin-polkadot@6.3.1-nightly.3
+  - @ledgerhq/coin-solana@0.27.2-nightly.3
+  - @ledgerhq/coin-stacks@0.8.13-nightly.3
+  - @ledgerhq/coin-stellar@5.3.1-nightly.3
+  - @ledgerhq/coin-sui@0.7.0-nightly.3
+  - @ledgerhq/coin-tezos@5.6.0-nightly.3
+  - @ledgerhq/coin-ton@0.13.2-nightly.3
+  - @ledgerhq/coin-tron@4.4.1-nightly.3
+  - @ledgerhq/coin-vechain@2.7.13-nightly.3
+  - @ledgerhq/coin-xrp@6.3.1-nightly.3
+  - @ledgerhq/live-countervalues@0.5.13-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.3
+  - @ledgerhq/live-nft@0.8.13-nightly.3
+  - @ledgerhq/live-wallet@0.11.4-nightly.3
+  - @ledgerhq/live-signer-solana@0.4.1-nightly.3
+
 ## 34.41.0-nightly.2
 
 ### Minor Changes

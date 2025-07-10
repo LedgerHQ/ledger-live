@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.121.0-nightly.3
+
+### Minor Changes
+
+- [#10853](https://github.com/LedgerHQ/ledger-live/pull/10853) [`9d452ec`](https://github.com/LedgerHQ/ledger-live/commit/9d452ec4599ad37f97fcf9af0d6f4fd2381eb4b5) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add account storybook mocks
+
+### Patch Changes
+
+- Updated dependencies [[`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a), [`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3), [`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
+  - @ledgerhq/react-ui@0.33.0-nightly.0
+  - @ledgerhq/live-common@34.41.0-nightly.3
+  - @ledgerhq/coin-evm@2.23.0-nightly.3
+  - @ledgerhq/coin-framework@5.6.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.3
+  - @ledgerhq/coin-aptos@2.5.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.3
+  - @ledgerhq/live-countervalues@0.5.13-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.3
+  - @ledgerhq/live-nft@0.8.13-nightly.3
+  - @ledgerhq/live-nft-react@0.9.13-nightly.3
+  - @ledgerhq/live-wallet@0.11.4-nightly.3
+
 ## 2.121.0-nightly.2
 
 ### Patch Changes

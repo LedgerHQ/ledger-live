@@ -1,5 +1,18 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.2.0-nightly.3
+
+### Minor Changes
+
+- [#10865](https://github.com/LedgerHQ/ledger-live/pull/10865) [`e4a663a`](https://github.com/LedgerHQ/ledger-live/commit/e4a663a2c00c90ba51c9fcc71f17f51f2cb7a83f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add missing app.json for swap test
+
+### Patch Changes
+
+- Updated dependencies [[`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
+  - @ledgerhq/live-common@34.41.0-nightly.3
+  - @ledgerhq/live-cli@24.19.4-nightly.3
+  - @ledgerhq/live-wallet@0.11.4-nightly.3
+
 ## 0.1.5-nightly.2
 
 ### Patch Changes
