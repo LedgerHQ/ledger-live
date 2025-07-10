@@ -46,6 +46,10 @@ import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/comp
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
+import type { AptosStakingFlowParamList } from "~/families/aptos/StakingFlow/types";
+import type { AptosRestakingFlowParamList } from "~/families/aptos/RestakingFlow/types";
+import type { AptosUnstakingFlowParamList } from "~/families/aptos/UnstakingFlow/types";
+import type { AptosWithdrawingFlowParamList } from "~/families/aptos/WithdrawingFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -104,6 +108,10 @@ type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>
+  | StackNavigatorProps<AptosStakingFlowParamList, ScreenName.AptosStakingConnectDevice>
+  | StackNavigatorProps<AptosRestakingFlowParamList, ScreenName.AptosRestakingConnectDevice>
+  | StackNavigatorProps<AptosUnstakingFlowParamList, ScreenName.AptosUnstakingConnectDevice>
+  | StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingConnectDevice>
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
