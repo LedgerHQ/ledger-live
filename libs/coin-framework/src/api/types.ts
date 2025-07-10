@@ -112,6 +112,7 @@ export type TransactionIntent<
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
+  sequence?: number;
 } & MaybeMemo<MemoType>;
 
 export type TransactionValidation = {

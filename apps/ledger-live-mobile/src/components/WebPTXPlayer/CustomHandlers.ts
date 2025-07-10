@@ -8,7 +8,7 @@ import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking"
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -35,6 +35,7 @@ export function useCustomExchangeHandlers({
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const deviceRef = useRef<Device>();
   const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
@@ -76,9 +77,10 @@ export function useCustomExchangeHandlers({
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
+                    deviceRef.current = result.device; // Store in ref for immediate access
                     onSuccess(
                       result.startExchangeResult.nonce,
-                      result.startExchangeResult.device || device,
+                      result.startExchangeResult.device || result.device,
                     );
                   }
 
@@ -122,6 +124,7 @@ export function useCustomExchangeHandlers({
                     onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
+                  deviceRef.current = undefined;
                 },
               },
             });
@@ -141,6 +144,8 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            const currentDevice = deviceRef.current || device; // Use ref value first
+
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -154,7 +159,7 @@ export function useCustomExchangeHandlers({
                   feesStrategy: exchangeParams.feesStrategy,
                   amountExpectedTo: exchangeParams.amountExpectedTo,
                 },
-                device,
+                device: currentDevice,
                 onResult: result => {
                   if (result.error) {
                     onCancel(result.error);
@@ -176,6 +181,7 @@ export function useCustomExchangeHandlers({
                     onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
                   setDevice(undefined);
+                  deviceRef.current = undefined;
                 },
               },
             });
