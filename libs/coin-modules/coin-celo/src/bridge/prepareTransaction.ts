@@ -51,7 +51,7 @@ export const prepareTransaction: AccountBridge<
     ...transaction,
     fees,
     amount,
-    ...(isTokenTransaction && data !== undefined && { data: Buffer.from(data.slice(2), "hex") }),
+    ...(data !== undefined && { data: Buffer.from(data.slice(2), "hex") }),
   };
 };
 
