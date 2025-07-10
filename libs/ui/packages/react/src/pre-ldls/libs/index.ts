@@ -26,11 +26,9 @@ const overrideColor = {
     "border-subdued-default-hover": "#D5D5D5", // override from colours
 
     "border-subdued-default-pressed": "#C1C1C1", // missing from colours
-    "background-active": "#D4A0FF",
   },
   dark: {
     "opacity-default-10": "#FFFFFF1A", // missing from colours
-    "background-active": "#D4A0FF",
   },
 } as const;
 

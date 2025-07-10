@@ -81,7 +81,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
+  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNSP;
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

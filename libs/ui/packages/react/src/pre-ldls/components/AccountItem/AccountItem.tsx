@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon, Text, Flex } from "../../../components";
+import type { CheckboxProps } from "../../../components/form/Checkbox/Checkbox";
+import { Checkbox, Icon, Text, Flex } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
 import { Tag } from "../Tag/Tag";
-import type { CheckboxProps } from "../Checkbox/Checkbox";
-import { Checkbox } from "../Checkbox/Checkbox";
 
 export type Account = {
   address: string;

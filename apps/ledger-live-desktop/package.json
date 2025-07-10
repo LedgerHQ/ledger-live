@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
-    "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",

@@ -5,8 +5,4 @@ export type EvmToken = {
   contractAddress: string;
 };
 
-export function isNative(asset: EvmAsset): asset is { type: "native" } {
-  return asset.type === "native";
-}
-
 export type EvmAsset = Asset<EvmToken>;

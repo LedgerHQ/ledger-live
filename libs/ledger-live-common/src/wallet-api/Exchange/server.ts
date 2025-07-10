@@ -423,6 +423,8 @@ export const handlers = ({
 
       // Step 1: Open the drawer and open exchange app
       const startExchange = async () => {
+        console.log("LLD   custom.exchange.swap uiExchangeStart", exchangeStartParams);
+
         return new Promise<{ transactionId: string; device?: ExchangeStartResult["device"] }>(
           (resolve, reject) => {
             uiExchangeStart({

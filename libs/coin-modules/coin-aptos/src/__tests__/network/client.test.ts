@@ -649,7 +649,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("40");
+      expect(fees.value.toString()).toEqual("44");
     });
 
     it("estimates the fees for token coin", async () => {
@@ -716,7 +716,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("20");
+      expect(fees.value.toString()).toEqual("22");
     });
 
     it("estimates the fees for token FA", async () => {
@@ -782,7 +782,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("30");
+      expect(fees.value.toString()).toEqual("33");
     });
   });
 

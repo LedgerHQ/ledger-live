@@ -39,7 +39,6 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
-  reportErrorsEnabledSelector,
 } from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
@@ -106,7 +105,6 @@ import {
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
-import { initSentry } from "./sentry";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -137,7 +135,6 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
-  const sentryFF = useFeature("llmSentry");
   const isLDMKEnabled = useDeviceManagementKitEnabled();
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
@@ -145,16 +142,15 @@ function App() {
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
-  const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
       trackErrors: datadogFF?.params?.trackErrors ?? false,
       trackInteractions: datadogFF?.params?.trackInteractions ?? false,
       trackResources: datadogFF?.params?.trackResources ?? false,
-      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+      errorEventMapper: customErrorEventMapper,
     }),
-    [datadogFF?.params, automaticBugReportingEnabled],
+    [datadogFF?.params],
   );
 
   useEffect(() => {
@@ -191,12 +187,6 @@ function App() {
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     );
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
-
-  useEffect(() => {
-    if (sentryFF?.enabled) {
-      initSentry(automaticBugReportingEnabled);
-    }
-  }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useFetchCurrencyAll();
@@ -406,7 +396,6 @@ export default class Root extends Component {
             ready ? (
               <>
                 <SetEnvsFromSettings />
-                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
                 <HookSentry />
                 <SegmentSetup />
                 <HookNotifications />

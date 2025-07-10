@@ -9,6 +9,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { getCoinConfig } from "../../config";
@@ -125,9 +126,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
   withApi(
     account.currency,
     async api => {
-      const to = transaction.recipient;
-      const value = ethers.BigNumber.from(transaction.amount.toFixed(0));
-      const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
+      const { to, value, data } = transactionToEthersTransaction(transaction);
 
       try {
         const gasEstimation = await api.estimateGas({

@@ -50,20 +50,22 @@ export const genericSignOperation =
             txWithMemo.memo.memos.set("destinationTag", txMemo);
           }
 
-          const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
-            transactionIntent.sender,
-          );
-          transactionIntent.sequence = accountInfo.sequence;
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
           );
 
+          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+          const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
+            transactionIntent.sender,
+          );
+          const sequenceNumber = accountInfo.sequence;
+
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned);
-          return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
+          return { unsigned, txnSig, publicKey, sequence: sequenceNumber };
         });
 
         /* If the user cancelled inside signerContext */
