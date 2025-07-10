@@ -68,7 +68,7 @@ const Label = styled.label<{ isDisabled: boolean; hasError: boolean; isFocused: 
   font-size: ${EXTRA_FONT_SIZE};
   padding-inline: ${LABEL_PADDING};
   position: absolute;
-  top: ${LABEL_OFFSET_Y}};
+  top: ${LABEL_OFFSET_Y};
   left: calc(${LABEL_OFFSET_X} - ${LABEL_PADDING});
 `;
 
