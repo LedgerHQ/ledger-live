@@ -134,34 +134,51 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
         <Flex flexDirection="column">
           {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <VerticalTimeline.SubtitleText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
-          </VerticalTimeline.SubtitleText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
-          </StepText>
-          {charonSupported && (
-            <>
+
+          <Flex mb={8}>
+            <Icons.Note size="M" color="white" />
+            <Flex ml={5} flexDirection="column" flex={1}>
               {/* @ts-expect-error weird props issue with React 18 */}
-              <VerticalTimeline.SubtitleText>
-                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
+              <VerticalTimeline.SubtitleText mb={2}>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
               </VerticalTimeline.SubtitleText>
               {/* @ts-expect-error weird props issue with React 18 */}
-              <StepText mb={6}>
-                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
+              <StepText>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
               </StepText>
-            </>
+            </Flex>
+          </Flex>
+          {charonSupported && (
+            <Flex mb={8}>
+              <Icons.RecoveryKey size="M" color="white" />
+
+              <Flex ml={5} flexDirection="column" flex={1}>
+                {/* @ts-expect-error weird props issue with React 18 */}
+                <VerticalTimeline.SubtitleText mb={2}>
+                  {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
+                </VerticalTimeline.SubtitleText>
+                {/* @ts-expect-error weird props issue with React 18 */}
+                <StepText>
+                  {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
+                </StepText>
+              </Flex>
+            </Flex>
           )}
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <VerticalTimeline.SubtitleText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
-          </VerticalTimeline.SubtitleText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
-          </StepText>
+
+          <Flex mb={0}>
+            <Icons.ShieldCheck size="M" color="white" />
+
+            <Flex ml={5} flexDirection="column" flex={1}>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <VerticalTimeline.SubtitleText mb={2}>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
+              </VerticalTimeline.SubtitleText>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <StepText>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
+              </StepText>
+            </Flex>
+          </Flex>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
             text={t("syncOnboarding.manual.seedContent.restoreChoiceContinueOnDevice", {
