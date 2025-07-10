@@ -10,8 +10,8 @@ import { Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
  */
 export const sortAccountsByFiatValue = (accounts: DetailedAccount[]) => {
   return [...accounts].sort((a, b) => {
-    const numericBalanceA = a.fiatValue.replace(/[^0-9.-]+/g, "");
-    const numericBalanceB = b.fiatValue.replace(/[^0-9.-]+/g, "");
+    const numericBalanceA = a.fiatValue?.replace(/[^0-9.-]+/g, "") ?? "0";
+    const numericBalanceB = b.fiatValue?.replace(/[^0-9.-]+/g, "") ?? "0";
 
     const balanceA = BigNumber(numericBalanceA);
     const balanceB = BigNumber(numericBalanceB);

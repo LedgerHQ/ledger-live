@@ -4,7 +4,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
-import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
@@ -366,6 +366,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         params: { swap: SwapProps; transaction_id: string };
       }) => {
         const { swap, transaction_id } = params;
+
         if (
           !swap ||
           !transaction_id ||
@@ -467,7 +468,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
-    console.error("onSwapWebviewError", error);
     logger.critical(error);
     setDrawer(WebviewErrorDrawer, error);
   };
@@ -530,6 +530,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           customHandlers={customHandlers as never}
         />
       </SwapWebAppWrapper>

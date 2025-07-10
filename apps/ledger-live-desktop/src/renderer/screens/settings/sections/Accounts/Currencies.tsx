@@ -9,6 +9,7 @@ import Box from "~/renderer/components/Box";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CurrencyRows from "./CurrencyRows";
 import Track from "~/renderer/analytics/Track";
+
 export default function Currencies() {
   const { t } = useTranslation();
   const currencies = useSelector(cryptoCurrenciesSelector);
@@ -51,7 +52,12 @@ export default function Currencies() {
       </Row>
       {currency && (
         <Body>
-          <CurrencyRows currency={currency as CryptoCurrency} />
+          <CurrencyRows
+            currency={
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              currency as CryptoCurrency
+            }
+          />
         </Body>
       )}
     </Box>

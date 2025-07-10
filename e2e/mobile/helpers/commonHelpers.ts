@@ -81,7 +81,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNSP;
+  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";
@@ -105,3 +105,9 @@ export const logMemoryUsage = async (): Promise<void> => {
     },
   );
 };
+
+export const normalizeText = (text: string) =>
+  text
+    .replace(/\s+/g, " ")
+    .replace(/\u202F/g, " ")
+    .trim();

@@ -1,0 +1,13 @@
+diff --git a/dist/commands/synthetics/mobile.js b/dist/commands/synthetics/mobile.js
+index c5c48088e670a9d313283f37ed3d3d83029f5288..03b0f76066cd294173bfee0257527a7ff5fef0b5 100644
+--- a/dist/commands/synthetics/mobile.js
++++ b/dist/commands/synthetics/mobile.js
+@@ -239,7 +239,7 @@ const uploadMobileApplicationsAndUpdateOverrideConfigs = (api, triggerConfigs, t
+     if (!testsAndConfigsOverride.length) {
+         return;
+     }
+-    if (!triggerConfigs.filter((config) => { var _a; return (_a = config.testOverrides) === null || _a === void 0 ? void 0 : _a.mobileApplicationVersionFilePath; }).length) {
++    if (!triggerConfigs.filter((config) => { var _a; return ((_a = config.testOverrides) === null || _a === void 0 ? void 0 : _a.mobileApplicationVersionFilePath) || (config.testOverrides && config.testOverrides.mobileApplicationVersion); }).length) {
+         return;
+     }
+     const appUploadCache = new AppUploadCache();

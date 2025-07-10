@@ -12,6 +12,7 @@ import { CloseButton } from "../components/CloseButton";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { Account } from "@ledgerhq/types-live";
+import { GlobalModalData } from "~/renderer/modals/types";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -44,7 +45,11 @@ function selectCurrency(
   );
 }
 
-export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, source: string) {
+export function useOpenAssetFlow(
+  modularDrawerLocation: ModularDrawerLocation,
+  source: string,
+  modalNameToReopen?: keyof GlobalModalData,
+) {
   const dispatch = useDispatch();
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -67,23 +72,52 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
       autoCloseDrawer: boolean = true,
       onAccountSelected?: (account: Account) => void,
     ) => {
+      const onClose = () => {
+        setDrawer();
+        trackModularDrawerEvent("button_clicked", {
+          button: "Close",
+          flow: "add account",
+          page: currentRouteNameRef.current ?? "Unknown",
+        });
+      };
+
+      const onFlowFinishedWithModalReopen = () => {
+        setDrawer();
+        if (modalNameToReopen) {
+          dispatch(openModal(modalNameToReopen, undefined));
+        }
+      };
       if (featureNetworkBasedAddAccount?.enabled) {
         setDrawer(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
-            onAccountSelected,
+            source,
+            onAccountSelected: modalNameToReopen
+              ? onFlowFinishedWithModalReopen
+              : onAccountSelected,
           },
-          { closeButtonComponent: CloseButton },
+          { closeButtonComponent: CloseButton, onRequestClose: onClose },
         );
       } else {
         const cryptoCurrency =
           currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
         autoCloseDrawer && setDrawer();
-        dispatch(openModal("MODAL_ADD_ACCOUNTS", { currency: cryptoCurrency }));
+        dispatch(
+          openModal("MODAL_ADD_ACCOUNTS", {
+            currency: cryptoCurrency,
+            newModalName: modalNameToReopen,
+          }),
+        );
       }
     },
-    [dispatch, featureNetworkBasedAddAccount?.enabled],
+    [
+      dispatch,
+      featureNetworkBasedAddAccount?.enabled,
+      modalNameToReopen,
+      source,
+      trackModularDrawerEvent,
+    ],
   );
 
   const openAssetFlow = useCallback(
@@ -99,13 +133,18 @@ export function useOpenAssetFlow(modularDrawerLocation: ModularDrawerLocation, s
           handleClose,
         );
       } else {
-        dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+        dispatch(
+          openModal("MODAL_ADD_ACCOUNTS", {
+            newModalName: modalNameToReopen,
+          }),
+        );
       }
     },
     [
       dispatch,
       handleClose,
       isModularDrawerVisible,
+      modalNameToReopen,
       modularDrawerLocation,
       openAddAccountFlow,
       source,

@@ -38,8 +38,8 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import BackgroundRedSvg from "./assets/BackgroundRed";
-import BackgroundBlueSvg from "./assets/BackgroundBlue";
+import BackupBackground from "./assets/BackupBackground";
+import SetupBackground from "./assets/SetupBackground";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -213,9 +213,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
         background:
           seedPathStatus === "new_seed" ? (
-            <BackgroundBlueSvg />
+            <SetupBackground />
           ) : seedPathStatus === "backup_charon" ? (
-            <BackgroundRedSvg />
+            <BackupBackground />
           ) : null,
         renderBody: () => (
           <>
@@ -324,8 +324,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= StepKey.Seed &&
-      stepKey > StepKey.Seed &&
-      !analyticsSeedingTracked.current
+      stepKey === StepKey.Seed &&
+      !analyticsSeedingTracked.current &&
+      seedPathStatus === "backup_charon"
     ) {
       trackPage(
         `Set up ${productName}: Step 3 Seed Success`,
@@ -343,7 +344,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [productName, stepKey]);
+  }, [productName, seedPathStatus, stepKey]);
 
   useEffect(() => {
     if (lockedDevice) {

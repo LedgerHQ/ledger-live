@@ -2,6 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, WarningReason } from "../types";
 import { useAddAccountNavigation } from "./useModularDrawerNavigation";
+import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
+import {
+  ADD_ACCOUNT_EVENTS_NAME,
+  ADD_ACCOUNT_FLOW_NAME,
+  ADD_ACCOUNT_PAGE_NAME,
+} from "../analytics/addAccount.types";
 
 interface UseAddAccountFlowNavigationProps {
   selectedAccounts: Account[];
@@ -13,6 +19,7 @@ export const useAddAccountFlowNavigation = ({
   onAccountSelected,
 }: UseAddAccountFlowNavigationProps) => {
   const { currentStep, navigationDirection, goToStep } = useAddAccountNavigation();
+  const { trackAddAccountEvent } = useAddAccountAnalytics();
 
   const [warningReason, setWarningReason] = useState<WarningReason>();
   const [emptyAccount, setEmptyAccount] = useState<Account>();
@@ -61,6 +68,11 @@ export const useAddAccountFlowNavigation = ({
     switch (currentStep) {
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT: {
         return () => {
+          trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+            button: "Back",
+            page: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS,
+            flow: ADD_ACCOUNT_FLOW_NAME,
+          });
           if (selectedAccounts.length === 0) {
             navigateToWarningScreen();
           } else if (selectedAccounts.length === 1) {
@@ -72,6 +84,11 @@ export const useAddAccountFlowNavigation = ({
       }
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT: {
         return () => {
+          trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+            button: "Back",
+            page: ADD_ACCOUNT_PAGE_NAME.FUND_ACCOUNT_DRAWER_LIST,
+            flow: ADD_ACCOUNT_FLOW_NAME,
+          });
           navigateToAccountsAdded();
         };
       }
@@ -89,6 +106,7 @@ export const useAddAccountFlowNavigation = ({
     navigateToWarningScreen,
     navigateToSelectAccount,
     navigateToAccountsAdded,
+    trackAddAccountEvent,
   ]);
 
   return {

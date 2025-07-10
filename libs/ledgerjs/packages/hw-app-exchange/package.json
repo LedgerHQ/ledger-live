@@ -26,14 +26,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
-    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "asn1.js": "5.4.1",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
     "protobufjs": "7.2.5",
-    "protobufjs-cli": "1.1.2"
+    "protobufjs-cli": "1.1.2",
+    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250630141416"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

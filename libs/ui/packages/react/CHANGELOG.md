@@ -1,5 +1,47 @@
 # @ledgerhq/react-ui
 
+## 0.32.0
+
+### Minor Changes
+
+- [#10759](https://github.com/LedgerHQ/ledger-live/pull/10759) [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ui quick wins mad add account
+
+- [#10732](https://github.com/LedgerHQ/ledger-live/pull/10732) [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hover effect if there is no onclick params + fix layout issues in the FundScreen
+
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#10759](https://github.com/LedgerHQ/ledger-live/pull/10759) [`35a6d83`](https://github.com/LedgerHQ/ledger-live/commit/35a6d83b8ae2fad7bf6408c127fc0b9d75f2194f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - ui quick wins mad add account
+
+- [#10732](https://github.com/LedgerHQ/ledger-live/pull/10732) [`3e3633c`](https://github.com/LedgerHQ/ledger-live/commit/3e3633cf49821ecd9893f6107b315036694c8175) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hover effect if there is no onclick params + fix layout issues in the FundScreen
+
+## 0.31.0
+
+### Minor Changes
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0
+
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#10484](https://github.com/LedgerHQ/ledger-live/pull/10484) [`da942ca`](https://github.com/LedgerHQ/ledger-live/commit/da942caa12eec5de9fd5c90d7e00262291c49543) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Account Success Screen
+
+- [#10433](https://github.com/LedgerHQ/ledger-live/pull/10433) [`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - MAD arch rework of add account
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0-next.0
+
 ## 0.30.0
 
 ### Minor Changes

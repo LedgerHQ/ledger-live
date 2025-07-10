@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.118.1",
+  "version": "2.120.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -55,7 +55,6 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
     "@braze/web-sdk": "4.10.2",
-    "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",

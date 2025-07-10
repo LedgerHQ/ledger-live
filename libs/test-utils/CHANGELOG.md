@@ -1,5 +1,47 @@
 # @ledgerhq/test-utils
 
+## 0.3.20
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
+  - @ledgerhq/live-common@34.40.0
+
+## 0.3.20-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`164791b`](https://github.com/LedgerHQ/ledger-live/commit/164791b7ec316d8aeeaddcd69b7a9d5603272ca0)]:
+  - @ledgerhq/live-common@34.40.0-next.2
+
+## 0.3.20-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`9aa64b3`](https://github.com/LedgerHQ/ledger-live/commit/9aa64b33df9e8be58e755291fc8e0bbbd160c3c4)]:
+  - @ledgerhq/live-common@34.40.0-next.1
+
+## 0.3.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1e1e00b`](https://github.com/LedgerHQ/ledger-live/commit/1e1e00bee94a931970cb4250b895a6211b5d3cf7), [`ad0edaf`](https://github.com/LedgerHQ/ledger-live/commit/ad0edafb6910122f0facbcef2736a179088dc2e0), [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e), [`10f6435`](https://github.com/LedgerHQ/ledger-live/commit/10f6435555b718e51ba050009b95400e43f47498), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207), [`f0865fc`](https://github.com/LedgerHQ/ledger-live/commit/f0865fcc46f712ba8730b175fa4f4b3897bb8cbf), [`09c8dad`](https://github.com/LedgerHQ/ledger-live/commit/09c8dad54f7169f92cf1816c90200d750e0d8802)]:
+  - @ledgerhq/live-common@34.40.0-next.0
+
+## 0.3.19
+
+### Patch Changes
+
+- Updated dependencies [[`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b), [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`90c1393`](https://github.com/LedgerHQ/ledger-live/commit/90c1393713a6164264c615586493fa1eb260a2de), [`b31657b`](https://github.com/LedgerHQ/ledger-live/commit/b31657bde1253628d1f99785288442b5f5d9d605), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`cecfbdc`](https://github.com/LedgerHQ/ledger-live/commit/cecfbdcdd1e37b84e5907c41938447dc0af9aad3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-common@34.39.0
+
+## 0.3.19-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`27bba71`](https://github.com/LedgerHQ/ledger-live/commit/27bba718e39cb737a15803bc5146146fe3581f0b), [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`90c1393`](https://github.com/LedgerHQ/ledger-live/commit/90c1393713a6164264c615586493fa1eb260a2de), [`b31657b`](https://github.com/LedgerHQ/ledger-live/commit/b31657bde1253628d1f99785288442b5f5d9d605), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`cecfbdc`](https://github.com/LedgerHQ/ledger-live/commit/cecfbdcdd1e37b84e5907c41938447dc0af9aad3), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-common@34.39.0-next.0
+
 ## 0.3.18
 
 ### Patch Changes

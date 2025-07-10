@@ -18,6 +18,7 @@ const errors: Record<string, string> = {
   TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
   TronStakingDisable: "https://support.ledger.com/article/9949980566173-zd",
   OperatingSystemOutdated: "https://support.ledger.com/article/8083692639901-zd",
+  AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
 };
 
 export const urls = {
@@ -161,6 +162,9 @@ export const urls = {
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
+  aptos: {
+    staking: "https://support.ledger.com/article/5961622776861-zd",
+  },
   hedera: {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
   },
@@ -202,6 +206,9 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/4409603715217-zd",
   },
   geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
+  sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
 };

@@ -4,12 +4,15 @@ import { WARNING_REASON } from "../../types";
 import { ActionButtons, IconContainer } from "./components";
 import { useWarningConfig } from "./useWarningConfig";
 import { AccountsWarningProps } from "./types";
+import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
+import { ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 
 const AccountsWarning = ({
   warningReason,
   currency,
   emptyAccount,
   navigateToFundAccount,
+  source,
 }: AccountsWarningProps) => {
   const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
     currency,
@@ -24,6 +27,11 @@ const AccountsWarning = ({
 
   return (
     <Flex flexDirection="column" height="100%" alignItems="center">
+      <TrackAddAccountScreen
+        page={ADD_ACCOUNT_PAGE_NAME.CANT_ADD_NEW_ACCOUNT}
+        source={source}
+        reason={warningReason}
+      />
       <Flex flexDirection="column" alignItems="center" flexShrink={0} width={420}>
         <IconContainer icon={warning.icon} />
         <Text

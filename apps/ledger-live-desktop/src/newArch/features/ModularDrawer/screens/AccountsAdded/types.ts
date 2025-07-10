@@ -3,7 +3,8 @@ import { Account } from "@ledgerhq/types-live";
 export interface FormattedAccount {
   address: string;
   cryptoId: string;
-  fiatValue: string;
+  fiatValue?: string;
+  balance: string;
   protocol: string;
   id: string;
   name: string;
@@ -20,4 +21,5 @@ export interface AccountsAddedProps {
   onFundAccount: (account: Account) => void;
   navigateToSelectAccount: () => void;
   isAccountSelectionFlow: boolean;
+  source: string;
 }

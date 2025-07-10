@@ -9,13 +9,18 @@ import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { IconContainer } from "./IconContainer";
+import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
+import {
+  ADD_ACCOUNT_EVENTS_NAME,
+  ADD_ACCOUNT_PAGE_NAME,
+} from "../../../analytics/addAccount.types";
 
 const ActionItem = styled(Flex)`
   cursor: pointer;
   padding: 12px;
+
   border-radius: 8px;
   transition: background-color 0.2s ease;
-
   &:hover {
     background-color: ${p => p.theme.colors.opacityDefault.c05};
   }
@@ -26,9 +31,9 @@ const ActionItem = styled(Flex)`
 `;
 
 const Container = styled(Flex)`
-  width: calc(100% + 48px);
-  margin-left: -24px;
-  margin-right: -24px;
+  width: calc(100% + 72px);
+  margin-left: -36px;
+  margin-right: -36px;
 `;
 
 interface Props {
@@ -41,20 +46,29 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { isCurrencyAvailable } = useRampCatalog();
+  const { trackAddAccountEvent } = useAddAccountAnalytics();
 
   const handleReceive = useCallback(() => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Receive",
+      page: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS,
+    });
     setDrawer();
     if (location.pathname === "/manager") history.push("/accounts");
     dispatch(openModal("MODAL_RECEIVE", { account }));
-  }, [account, dispatch, history]);
+  }, [account, dispatch, history, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Buy",
+      page: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS,
+    });
     setDrawer();
     history.push({
       pathname: "/exchange",
       state: { currency: currencyId, account: account.id, mode: "buy" },
     });
-  }, [currencyId, account.id, history]);
+  }, [currencyId, account.id, history, trackAddAccountEvent]);
 
   const actions = useMemo(() => {
     const baseActions = [
@@ -87,7 +101,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
       height="100%"
       flex={1}
     >
-      <Flex flexDirection="column" width="100%" paddingX={24} paddingTop={24} rowGap={12}>
+      <Flex flexDirection="column" width="100%" paddingX={24} paddingTop={24}>
         {actions.map((action, index) => (
           <ActionItem
             key={index}
@@ -97,7 +111,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
             columnGap={16}
           >
             <IconContainer icon={action.icon} />
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" flex={1}>
               <Text fontSize={16} fontWeight="600">
                 {action.label}
               </Text>

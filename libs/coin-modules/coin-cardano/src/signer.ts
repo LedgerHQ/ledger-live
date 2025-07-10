@@ -67,6 +67,7 @@ export type RegistrationCertificate = {
     stakeCredential: {
       keyPath: string;
     };
+    deposit: string;
   };
 };
 
@@ -76,6 +77,7 @@ export type DeregistrationCertificate = {
     stakeCredential: {
       keyPath: string;
     };
+    deposit: string;
   };
 };
 

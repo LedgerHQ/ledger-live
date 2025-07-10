@@ -48,11 +48,18 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ExternalLinkMedium,
+  RecoveryKey,
+  Note,
+  ShieldCheck,
+} from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
-import CharonImage from "./assets/charon.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
+import Animation from "~/components/Animation";
+import CHARON from "~/animations/device/charon/charon.json";
+import { ShadowedView } from "react-native-fast-shadow";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -362,8 +369,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= CompanionStepKey.Seed &&
-      companionStepKey > CompanionStepKey.Seed &&
-      !analyticsSeedingTracked.current
+      companionStepKey === CompanionStepKey.Seed &&
+      !analyticsSeedingTracked.current &&
+      seedPathStatus === "backup_charon"
     ) {
       screen(
         "Set up device: Step 3 Seed Success",
@@ -381,7 +389,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = companionStepKey;
-  }, [companionStepKey, productName]);
+  }, [companionStepKey, productName, seedPathStatus]);
 
   const seededDeviceHandled = useRef(false);
 
@@ -652,34 +660,51 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
                   </BodyText>
                   {/* Secret Recovery Phrase */}
-                  <SubtitleText mt={6}>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t(
-                      "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
-                    )}
-                  </BodyText>
-                  {/* Recovery Key */}
-                  {deviceOnboardingState?.charonSupported && (
-                    <>
-                      <SubtitleText mt={6}>
-                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                  <Flex flexDirection="row" mt={6}>
+                    <Note size="M" />
+                    <Flex ml={5} flex={1}>
+                      <SubtitleText mb={2}>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title",
+                        )}
                       </SubtitleText>
                       <BodyText>
                         {t(
-                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
                         )}
                       </BodyText>
-                    </>
+                    </Flex>
+                  </Flex>
+                  {/* Recovery Key */}
+                  {deviceOnboardingState?.charonSupported && (
+                    <Flex flexDirection="row" mt={6}>
+                      <RecoveryKey size="M" />
+                      <Flex ml={5} flex={1}>
+                        <SubtitleText mb={2}>
+                          {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                        </SubtitleText>
+                        <BodyText>
+                          {t(
+                            "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                          )}
+                        </BodyText>
+                      </Flex>
+                    </Flex>
                   )}
                   {/* Recover subscription */}
-                  <SubtitleText mt={6}>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description")}
-                  </BodyText>
+                  <Flex flexDirection="row" mt={6} mb={6}>
+                    <ShieldCheck size="M" />
+                    <Flex ml={5} flex={1}>
+                      <SubtitleText mb={2}>
+                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
+                      </SubtitleText>
+                      <BodyText>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description",
+                        )}
+                      </BodyText>
+                    </Flex>
+                  </Flex>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
@@ -712,13 +737,79 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
                   ) : null}
                   <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={3}>
-                      <Image resizeMode="contain" source={CharonImage} style={{ height: 170 }} />
+                    <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
+                      <ShadowedView
+                        style={{
+                          shadowOpacity: 0.15,
+                          shadowRadius: 35.633,
+                          shadowOffset: {
+                            width: 0,
+                            height: 53.291,
+                          },
+                        }}
+                      >
+                        <ShadowedView
+                          style={{
+                            shadowOpacity: 0.14,
+                            shadowRadius: 21.153,
+                            shadowOffset: {
+                              width: 0,
+                              height: 26.442,
+                            },
+                          }}
+                        >
+                          <ShadowedView
+                            style={{
+                              shadowOpacity: 0.11,
+                              shadowRadius: 11.31,
+                              shadowOffset: {
+                                width: 0,
+                                height: 14.137,
+                              },
+                            }}
+                          >
+                            <ShadowedView
+                              style={{
+                                shadowOpacity: 0.09,
+                                shadowRadius: 6.34,
+                                shadowOffset: {
+                                  width: 0,
+                                  height: 7.925,
+                                },
+                              }}
+                            >
+                              <ShadowedView
+                                style={{
+                                  shadowOpacity: 0.08,
+                                  shadowRadius: 3.367,
+                                  shadowOffset: {
+                                    width: 0,
+                                    height: 4.209,
+                                  },
+                                }}
+                              >
+                                <ShadowedView
+                                  style={{
+                                    shadowOpacity: 0.05,
+                                    shadowRadius: 1.401,
+                                    shadowOffset: {
+                                      width: 0,
+                                      height: 1.751,
+                                    },
+                                  }}
+                                >
+                                  <Animation style={{ height: 100 }} source={CHARON} />
+                                </ShadowedView>
+                              </ShadowedView>
+                            </ShadowedView>
+                          </ShadowedView>
+                        </ShadowedView>
+                      </ShadowedView>
                     </Flex>
-                    <Text variant="h5" fontWeight="semiBold" mb={6}>
+                    <Text variant="h5" fontWeight="semiBold" mb={24}>
                       {t("syncOnboarding.seedStep.backupCharon.title")}
                     </Text>
-                    <BodyText mb={6} textAlign="center">
+                    <BodyText mb={24} textAlign="center">
                       {t("syncOnboarding.seedStep.backupCharon.desc")}
                     </BodyText>
                   </Flex>

@@ -4,7 +4,7 @@ import { createApi } from ".";
 //import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
-  const SENDER = { address: "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb" };
+  const SENDER = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
   const api = createApi({ node: "https://s.altnet.rippletest.net:51234" });
 
   describe("estimateFees", () => {
@@ -19,6 +19,10 @@ describe("Xrp Api", () => {
         sender: SENDER,
         amount,
         recipient: "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB",
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
       // Then
@@ -29,15 +33,14 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await api.listOperations(SENDER.address, { minHeight: 200 });
+      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200 });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
       expect(tx.length).toBeGreaterThanOrEqual(287);
       tx.forEach(operation => {
         const isSenderOrReceipt =
-          operation.senders.includes(SENDER.address) ||
-          operation.recipients.includes(SENDER.address);
+          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
         expect(isSenderOrReceipt).toBeTruthy();
       });
     });
@@ -81,7 +84,7 @@ describe("Xrp Api", () => {
 
     it("returns an amount above 0 when address has transactions", async () => {
       // When
-      const result = await api.getBalance(SENDER.address);
+      const result = await api.getBalance(SENDER);
 
       // Then
       expect(result[0].asset).toEqual({ type: "native" });
@@ -108,8 +111,11 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map([["memos", ["testdata"]]]),
+        },
       });
-
       // Then
       expect(result.length).toEqual(162);
     });
@@ -121,6 +127,10 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
       const decodedTransaction = decode(result) as { Fee: string };
@@ -136,6 +146,10 @@ describe("Xrp Api", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: BigInt(10),
+          memo: {
+            type: "map",
+            memos: new Map(),
+          },
         },
         customFees,
       );

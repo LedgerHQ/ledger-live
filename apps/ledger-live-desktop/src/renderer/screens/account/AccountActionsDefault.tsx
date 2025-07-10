@@ -47,6 +47,7 @@ export const SendActionDefault = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     iconComponent={<IconSend size={14} />}
     labelComponent={<Trans i18nKey="send.title" />}
+    accountActionsTestId={"send-button"}
   />
 );
 export const ReceiveActionDefault = ({ onClick }: { onClick: () => void }) => (

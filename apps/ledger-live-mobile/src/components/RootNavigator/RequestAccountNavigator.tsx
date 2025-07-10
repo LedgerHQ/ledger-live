@@ -6,7 +6,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import RequestAccountSelectCrypto from "~/screens/RequestAccount/01-SelectCrypto";
 import RequestAccountSelectAccount from "~/screens/RequestAccount/02-SelectAccount";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import AddAccountsNavigator from "./AddAccountsNavigator";
+import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
 import StepHeader from "../StepHeader";
 import type { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigator";
 

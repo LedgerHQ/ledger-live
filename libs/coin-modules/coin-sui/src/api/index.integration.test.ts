@@ -1,20 +1,17 @@
-import type { Api, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/index";
-import { createApi } from ".";
+import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import { getEnv } from "@ledgerhq/live-env";
 import { SuiAsset } from "./types";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { createApi } from ".";
 
 describe("Sui Api", () => {
-  let module: Api<SuiAsset>;
-  const SENDER = "0x67b511de2697e4567e41a4477a3abccd4c7c00f4c59b45ab8c72d1544f58ceb8";
+  let module: AlpacaApi<SuiAsset>;
+  const SENDER = "0xc6dcb5b920f2fdb751b4a8bad800a4ee04257020d8d6e493c8103b760095016e";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
   beforeAll(() => {
     module = createApi({
-      status: {
-        type: "active",
-      },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getEnv("API_SUI_NODE_PROXY"),
       },
     });
   });
@@ -25,7 +22,7 @@ describe("Sui Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result: FeeEstimation<{ value: bigint }> = await module.estimateFees({
+      const result: FeeEstimation = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -68,6 +65,11 @@ describe("Sui Api", () => {
     it("at least operation should be OUT", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
       expect(txs.some(t => t.type === "OUT")).toBeTruthy();
+    });
+
+    it("uses the minHeight to filter", async () => {
+      const minHeightTxs = await module.listOperations(SENDER, { minHeight: 154925948 });
+      expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
   });
 

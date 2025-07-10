@@ -131,4 +131,55 @@ describe("useAppVersionBlockCheck", () => {
       },
     );
   });
+  describe("LLD", () => {
+    it.each([
+      ["windows", "2.110.9"],
+      ["windows", "2.110.4-next.9"],
+      ["macOS", "2.0.112"],
+      ["macOS", "2.099.122-next.8"],
+      ["linux", "1.9.33"],
+      ["linux", "1.9.33-next.1"],
+    ])("should not update on %s from app version version %s", (platform, appVersion) => {
+      // given
+      const getConfigValue = () => ({
+        lld: {
+          [platform]: "1.9.33",
+        },
+      });
+      // when
+      const { shouldUpdate } = useAppVersionBlockCheck({
+        appVersion,
+        platform: platform as "windows" | "macOS" | "linux",
+        appKey: "lld",
+        getConfigValue,
+      });
+      // then
+      expect(shouldUpdate).toBe(false);
+    });
+
+    it.each([
+      ["windows", "2.110.9"],
+      ["windows", "2.110.4-next.9"],
+      ["macOS", "2.0.112"],
+      ["macOS", "2.99.122-next.8"],
+      ["linux", "1.9.33"],
+      ["linux", "1.9.33-next.1"],
+    ])("should update on %s from app version version %s", (platform, appVersion) => {
+      // given
+      const getConfigValue = () => ({
+        lld: {
+          [platform]: "2.111.5-next.9",
+        },
+      });
+      // when
+      const { shouldUpdate } = useAppVersionBlockCheck({
+        appVersion,
+        platform: platform as "windows" | "macOS" | "linux",
+        appKey: "lld",
+        getConfigValue,
+      });
+      // then
+      expect(shouldUpdate).toBe(true);
+    });
+  });
 });

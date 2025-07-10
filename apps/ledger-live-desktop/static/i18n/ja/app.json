@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "分",
-    "minute_plural" : "分",
+    "minute_other" : "分",
     "minute_short" : "分",
     "second_short" : "秒",
     "hour" : "時間",
-    "hour_plural" : "時間",
+    "hour_other" : "時間",
     "range" : {
       "day" : "1日",
       "week" : "1週",
@@ -575,7 +575,7 @@
       "date" : "日付",
       "from" : "送付元",
       "fromAddress" : "送信元アドレス",
-      "fromAddress_plural" : "送信元アドレス",
+      "fromAddress_other" : "送信元アドレス",
       "to" : "送付先",
       "toProvider" : "プロバイダーのアドレス",
       "initialAmount" : "初期金額",
@@ -1242,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "{{deviceName}}をセットアップする",
+      "title" : "{{deviceName}}を準備",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "この{{deviceName}}は正規品です",
-        "description" : "{{productName}}は安全にご使用いただけます。初期設定に進むことができます。",
+        "title" : "{{deviceName}}は正規品です",
+        "description" : "お持ちの{{productName}}は安全にご利用いただけます。セットアップの準備に進めます。",
         "continueOnDevice" : "{{productName}}をタップしてセットアップを開始"
       },
       "pinContent" : {
@@ -1256,26 +1256,37 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "シークレットリカバリーフレーズ",
+        "title" : "セットアップとバックアップ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "restoreSeed" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreCharonTitle" : "Recovery Keyを使用して復元",
+        "restoreCharonDescription" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "restoreCharonContinueOnDevice" : "{{productName}}の指示に従う",
         "selection" : "最適な設定オプションを選択してください：",
-        "selectionNewLedger" : "<0>「Set up as a new Ledger（新しいLedgerとして設定）」</0>で新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。",
-        "selectionRestore" : "<0>「Restore（復元）」</0>で、シークレットリカバリーフレーズまたはLedger Recoverを使用して既存の資産へのアクセスを復元できます。",
+        "selectionNewLedgerTitle" : "新しいLedgerとしてセットアップ",
+        "selectionNewLedgerDescription" : "新たにシークレットリカバリーフレーズが生成されます。",
+        "selectionRestoreTitle" : "資産へのアクセスを復元",
+        "selectionRestoreDescription" : "これにより、バックアップ（シークレットリカバリーフレーズまたはLedger Recover）を使用して復元できます。",
+        "selectionRestoreDescriptionWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。",
         "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "newSeedDescription1" : "{{productName}}は、24単語からなる一意のリストであるシークレットリカバリーフレーズを生成します。これは、Ledgerが盗難や紛失に遭ったり、PINを忘れた場合に資産を復元する唯一の方法です。",
-        "newSeedDescription2" : "<0>安全かつプライベートに保管：</0>\nシークレットリカバリーフレーズにより全資産を管理できます。シークレットリカバリーフレーズは代替不可能です。フレーズを知っている人は誰でも資産を管理し、盗むこともできます。フレーズを紛失された場合、Ledgerはサポートを提供することができません。",
-        "newSeedDescription3" : "シークレットリカバリーフレーズを尋ねる人物やソフトウェアには、注意してください。それらは、詐欺です。 ",
-        "newSeedDescription4" : "シークレットリカバリーフレーズを入力する必要がある唯一の場所は、Ledgerデバイス上のみです。",
-        "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
-        "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
+        "selectionNewSeedTitle" : "シークレットリカバリーフレーズ",
+        "selectionNewSeedSubtitle" : "安全かつプライベートに保管",
+        "selectionNewSeedDescription" : "お客様のシークレットリカバリーフレーズは、お客様の資産を管理するものであり、代替不可能です。お客様のフレーズを知っている人は誰でも、お客様の資産をすべて盗むことができます。紛失された場合、Ledgerでも、それを取り戻すことはできません。",
+        "selectionNewSeedContinueOnDevice" : "{{productName}}の指示に従う",
+        "restoreDescription" : "復元で使用するバックアップを選択：",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズ",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
-        "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
-        "followInstructions" : "{{productName}}に表示される指示に従ってください。"
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Recovery Keyを使用して、資産へのアクセスを復元します。",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverサブスクリプション",
+        "restoreChoiceRecoverDescription" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。",
+        "followInstructions" : "{{productName}}に表示される指示に従ってください。",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
+        "backupCharonCta" : "詳細の確認または購入",
+        "backupCharonContinueOnDevice" : "{{productName}}の指示に従う"
       },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -1297,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "正規品チェックと\nOSアップデートチェック",
-          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+          "active" : "Ledger正規品チェック",
+          "completed" : "Ledger正規品チェック"
         },
         "exitWarningDrawer" : {
           "title" : "正規品チェックとOSアップデートチェックをキャンセルしますか？",
@@ -1321,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "正規品チェックについて詳しく見る",
-        "startChecksCTA" : "私の{{modelName}}をチェック",
+        "startChecksCTA" : "{{modelName}}をチェック",
         "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
           "title" : {
-            "active" : "正規品チェック",
-            "completed" : "お客様の{{modelName}}は正規品です",
+            "active" : "Ledger正規品チェック",
+            "completed" : "{{modelName}}は正規品です",
             "cancelled" : "正規品チェックが拒否されました"
           },
           "subtitle" : {
@@ -1337,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "OSアップデートチェック",
-            "completed" : "{{modelName}} OSは最新の状態です。",
+            "active" : "Ledger OSチェック",
+            "completed" : "Ledger OSは最新です",
             "updateAvailable" : "OSアップデート{{firmwareVersion}}をご利用いただけます"
           },
           "subtitle" : {
-            "active" : "これにより、{{modelName}}のオペレーティングシステムが最新かどうかがチェックされます。",
-            "completed" : "「Restore apps（アプリを復元）」ボタンを選択して{{modelName}}でアプリの復元を開始します。",
+            "active" : "これは、お持ちの{{modelName}}のオペレーティングシステムが最新かどうかを確認します。",
             "updateAvailable" : "最適なセキュリティを確保し、最新機能へアクセスするためにアップデートしてください。"
           },
           "viewUpdateCTA" : "{{modelName}} OSをアップデートする",
@@ -1783,14 +1793,14 @@
     "fullNodeReadyInfo" : "アカウントは、Bitcoinフルノードを使用して追加されます。",
     "fullNodeConfigure" : "ノードの構成",
     "tokensTip" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。{{currency}}アカウントで直接トークンを受け取ることができます。",
-    "accountToImportSubtitle_plural" : "既存アカウントを追加",
+    "accountToImportSubtitle_other" : "既存アカウントを追加",
     "selectAll" : "すべてを選択 ({{count}})",
     "unselectAll" : "全ての選択解除 ({{count}})",
     "noAccountToImport" : "追加する既存の{{currencyName}}アカウントがありません。",
     "success" : "アカウントが正常に追加されました。",
-    "success_plural" : "アカウントが正常に追加されました。",
+    "success_other" : "アカウントが正常に追加されました。",
     "successDescription" : "他のアカウントを追加、またはポートフォリオに戻る",
-    "successDescription_plural" : "他のアカウントを追加、またはポートフォリオに戻る",
+    "successDescription_other" : "他のアカウントを追加、またはポートフォリオに戻る",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "<1><0>{{accountName}}</0> </1>アカウントで資産を受け取る前に、新しいアカウントを追加することはできません。",
       "noAccountToCreate" : "作成する<1><0>{{currencyName}}</0></1>アカウントが見つかりませんでした。",
@@ -1803,7 +1813,7 @@
     "cta" : {
       "addMore" : "さらに追加",
       "add" : "アカウントを追加",
-      "add_plural" : "アカウントを追加",
+      "add_other" : "アカウントを追加",
       "addAccountName" : "アカウント{{currencyName}}を追加",
       "receive" : "受け取る"
     },
@@ -1901,9 +1911,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "PINコードを使用して{{productName}}のロックを解除し、アップデートを完了します。",
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
-    "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
+    "appNotInstalledTitle_other" : "必要なアプリが揃っていません。",
     "appNotInstalled" : "この操作を完了するには、{{appName}}アプリが必要です。My Ledgerに移動して、デバイスにインストールしてください。",
-    "appNotInstalled_plural" : "この操作を完了するには、{{appName}}アプリが必要です。My Ledgerに移動して、デバイスにインストールしてください",
+    "appNotInstalled_other" : "この操作を完了するには、{{appName}}アプリが必要です。My Ledgerに移動して、デバイスにインストールしてください",
     "openManager" : "My Ledgerを開く",
     "openOnboarding" : "デバイスをセットアップ",
     "outdated" : "アプリのバージョンが最新ではありません。",
@@ -1990,14 +2000,14 @@
       },
       "installSuccess" : {
         "title" : "アプリのインストールが正常に完了しました。{{app}}アカウントの追加が可能です。",
-        "title_plural" : "アプリのインストールが正常に完了しました。アカウントの追加が可能です。",
+        "title_other" : "アプリのインストールが正常に完了しました。アカウントの追加が可能です。",
         "manageAccount" : "アカウントを管理"
       },
       "updatable" : {
         "title" : "アップデートが利用可能です。",
-        "title_plural" : "アップデートが利用可能です。",
+        "title_other" : "アップデート可能",
         "progressTitle" : "{{number}}アプリのアップデート",
-        "progressTitle_plural" : "{{number}}アプリのアップデート",
+        "progressTitle_other" : "{{number}}アプリのアップデート",
         "progressWarning" : "アップデート中にMy Ledgerを終了しないでください。",
         "progress" : "すべてのアプリをアップデート中…"
       },
@@ -4087,7 +4097,7 @@
     "duration" : "期間",
     "durationJustStarted" : "たった今",
     "durationDays" : "{{count}}日",
-    "durationDays_plural" : "{{count}}日間",
+    "durationDays_other" : "{{count}}日間",
     "howItWorks" : "デリゲートの仕組み",
     "delegationEarn" : "アカウントをデリゲートすることで{{name}}ステーキング報酬を得ることができます。",
     "earnRewards" : "報酬を獲得する",
@@ -4168,7 +4178,7 @@
   },
   "settings" : {
     "title" : "設定",
-    "discreet" : "ダークモードに切り替える",
+    "discreet" : "非表示モードに切り替える",
     "helpButton" : "ヘルプ",
     "tabs" : {
       "display" : "一般",
@@ -4407,6 +4417,8 @@
       "mockAppUpdateDesc" : "My Ledgerで利用可能なアプリのアップデートを表示すると、同じバージョンのアプリが再インストールされます。",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
+      "customCALRef" : "カスタムCAL参照",
+      "customCALRefDesc" : "すべてのCALリクエストに使用するカスタムブランチ、コミット、またはタグを指定する",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
       "customLockScreen" : "カスタムロック画面アセット",
@@ -4711,7 +4723,7 @@
     "ctaSuccess" : "完了",
     "noAccounts" : "エクスポートするアカウントがありません。",
     "selectedAccounts" : "含まれるアカウント",
-    "selectedAccounts_plural" : "含まれるアカウント ({{count}})",
+    "selectedAccounts_other" : "含まれるアカウント ({{count}})",
     "disclaimer" : "エクスポートに含まれるカウンターバリューは、情報提供のみを目的としています。これらのデータは、サービスプロバイダーであるKaikoが提供する評価方法に基づき、トランザクション時およびエクスポート時の資産価値を推定したものにすぎないため、会計、税務、規制遵守、および法務上の目的にこれらのデータを使用しないでください。"
   },
   "language" : {
@@ -4749,7 +4761,7 @@
   "informationCenter" : {
     "tooltip" : "お知らせ・最新情報",
     "ongoingIncidentsTooltip" : "{{count}}件の進行中のインシデントがあります",
-    "ongoingIncidentsTooltip_plural" : "{{count}}件の進行中のインシデントがあります",
+    "ongoingIncidentsTooltip_other" : "{{count}}件の進行中のインシデントがあります",
     "tabs" : {
       "announcements" : "最新情報",
       "announcementsUnseen" : "最新情報（{{unseenCount}}）",
@@ -7062,12 +7074,65 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "追加したいアカウントを選択する",
+      "controls" : {
+        "selectAll" : "すべて選択",
+        "deselectAll" : "すべて選択解除"
+      },
+      "cta" : {
+        "confirm" : "確認"
+      },
+      "newAccount" : "新しいアカウント"
+    },
+    "fundAccount" : {
+      "receive" : "受け取る",
+      "receiveDescription" : "暗号資産を別のウォレットから受け取る",
+      "buy" : "購入",
+      "buyDescription" : "現金で安全に暗号資産を購入する"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "スキャン停止"
+      },
+      "warning" : {
+        "title" : "新しい{{currency}}アカウントを追加できませんでした",
+        "description" : "{{account}}アカウントで資産を受け取る前に、新しいアカウントを追加することはできません。",
+        "cta" : "資金をアカウントに追加する",
+        "close" : "閉じる",
+        "noAssociatedAccounts" : {
+          "description" : "{{currency}}エコシステムでは、選択された数のサービスのみが新しいアカウントを作成できます。Ledgerは現在このオンボーディングサービスを提供していませんが、代替サービスは利用可能です。{{currency}}アカウントが作成されたら、Ledger Liveに追加できるようになります。",
+          "cta" : "{{currency}}アカウントの作成方法",
+          "close" : "閉じる"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "アカウントが見つかりません",
+        "foundAccounts" : "{{count}}個のアカウントが見つかりました",
+        "foundAccounts_other" : "{{count}}個のアカウントが見つかりました",
+        "scanning" : "アカウントをスキャン中…"
+      },
+      "title" : "ブロックチェーン上の既存のアカウントを検索中..."
+    },
+    "connectYourDevice" : {
+      "title" : "デバイスを接続してロックを解除する"
+    },
     "searchPlaceholder" : "検索",
+    "emptyAssetList" : "資産が見つかりません",
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
     "selectAccount" : "アカウントを選択",
     "accountCount_one" : "{{count}}アカウント",
-    "accountCount_other" : "{{count}}アカウント"
+    "accountCount_other" : "{{count}}アカウント",
+    "accountsAdded" : {
+      "title" : "ポートフォリオにアカウントが追加されました",
+      "title_other" : "{{count}}個のアカウントがポートフォリオに追加されました",
+      "cta" : {
+        "addFunds" : "資金をアカウントに追加する",
+        "selectAccount" : "続行",
+        "close" : "閉じる"
+      }
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
@@ -7080,5 +7145,14 @@
     "title" : "利用不可のロケーション",
     "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
     "learnMore" : "詳細はこちら"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Liveのアップデートが必要です",
+    "errorTitle" : "アップデートに失敗",
+    "errorDescription" : "アップデートに失敗しました。以下のリンクから、Ledger Liveの最新バージョンをダウンロードしてください。 ",
+    "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
+    "restart" : "再起動",
+    "downloadOnLedger" : "Ledger.comでダウンロード",
+    "downloadProgress" : "ダウンロード中...{{ progress }}%"
   }
 }

@@ -1,5 +1,61 @@
 # @ledgerhq/coin-aptos
 
+## 2.5.0
+
+### Minor Changes
+
+- [#10593](https://github.com/LedgerHQ/ledger-live/pull/10593) [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
+### Patch Changes
+
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0
+  - @ledgerhq/types-live@6.76.0
+  - @ledgerhq/coin-framework@5.5.0
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#10593](https://github.com/LedgerHQ/ledger-live/pull/10593) [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: update transactionintent generic types + remove xrp bridge and introduce the generic alpaca bridge in LLC
+
+### Patch Changes
+
+- Updated dependencies [[`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814), [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95), [`9d646eb`](https://github.com/LedgerHQ/ledger-live/commit/9d646eb6ca28b41af950b264c7d799a7ad536207)]:
+  - @ledgerhq/cryptoassets@13.21.0-next.0
+  - @ledgerhq/types-live@6.76.0-next.0
+  - @ledgerhq/coin-framework@5.5.0-next.0
+
+## 2.4.0
+
+### Minor Changes
+
+- [#10651](https://github.com/LedgerHQ/ledger-live/pull/10651) [`8c9270b`](https://github.com/LedgerHQ/ledger-live/commit/8c9270bad99ec6b6d4e92aaf105d25ef96ff8734) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - fixing value parser
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0
+  - @ledgerhq/cryptoassets@13.20.0
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/coin-framework@5.4.1
+  - @ledgerhq/live-network@2.0.12
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#10651](https://github.com/LedgerHQ/ledger-live/pull/10651) [`8c9270b`](https://github.com/LedgerHQ/ledger-live/commit/8c9270bad99ec6b6d4e92aaf105d25ef96ff8734) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - fixing value parser
+
+### Patch Changes
+
+- Updated dependencies [[`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2), [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc), [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc), [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/types-live@6.75.0-next.0
+  - @ledgerhq/cryptoassets@13.20.0-next.0
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/coin-framework@5.4.1-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
+
 ## 2.3.1
 
 ### Patch Changes

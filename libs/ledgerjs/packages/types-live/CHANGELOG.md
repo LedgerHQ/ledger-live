@@ -1,5 +1,41 @@
 # @ledgerhq/types-live
 
+## 6.76.0
+
+### Minor Changes
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+## 6.76.0-next.0
+
+### Minor Changes
+
+- [#10668](https://github.com/LedgerHQ/ledger-live/pull/10668) [`c3c2069`](https://github.com/LedgerHQ/ledger-live/commit/c3c2069976c43ebca2bce7896036efd071a22814) Thanks [@sergiubreban](https://github.com/sergiubreban)! - handle min require version for native stablecoinyield
+
+## 6.75.0
+
+### Minor Changes
+
+- [#10630](https://github.com/LedgerHQ/ledger-live/pull/10630) [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature Flag for the new Asset Network Account selection
+
+- [#10529](https://github.com/LedgerHQ/ledger-live/pull/10529) [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc) Thanks [@themooneer](https://github.com/themooneer)! - chore: setup Datadog SDK for LLM
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+## 6.75.0-next.0
+
+### Minor Changes
+
+- [#10630](https://github.com/LedgerHQ/ledger-live/pull/10630) [`2274597`](https://github.com/LedgerHQ/ledger-live/commit/227459709ec157b7e49db4e75c52525e15acd8d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature Flag for the new Asset Network Account selection
+
+- [#10529](https://github.com/LedgerHQ/ledger-live/pull/10529) [`7a1b8c8`](https://github.com/LedgerHQ/ledger-live/commit/7a1b8c8e59383efb02676cfe647c5889a31372bc) Thanks [@themooneer](https://github.com/themooneer)! - chore: setup Datadog SDK for LLM
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
 ## 6.74.0
 
 ### Minor Changes

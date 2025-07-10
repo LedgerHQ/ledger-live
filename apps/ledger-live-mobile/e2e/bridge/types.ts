@@ -18,7 +18,6 @@ import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { Server, WebSocket } from "ws";
 
-
 export type ServerData =
   | {
       type: "walletAPIResponse";
@@ -26,6 +25,10 @@ export type ServerData =
     }
   | {
       type: "appLogs";
+      payload: string;
+    }
+  | {
+      type: "appFile";
       payload: string;
     }
   | {

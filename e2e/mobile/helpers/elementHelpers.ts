@@ -268,6 +268,10 @@ export const WebElementHelpers = {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
   },
 
+  async tapWebElementByElement(element: WebElement): Promise<void> {
+    await retryUntilTimeout(async () => element.tap());
+  },
+
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
     await retryUntilTimeout(async () =>
       WebElementHelpers.getWebElementByTestId(id).runScript(
@@ -283,5 +287,16 @@ export const WebElementHelpers = {
         [text],
       ),
     );
+  },
+
+  async getValueByWebTestId(id: string): Promise<string> {
+    const raw = await retryUntilTimeout(() =>
+      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    );
+
+    if (raw != null && typeof raw === "object" && "result" in raw) {
+      return String(raw["result"]);
+    }
+    return String(raw);
   },
 };

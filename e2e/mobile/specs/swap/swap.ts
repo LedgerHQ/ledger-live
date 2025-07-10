@@ -2,6 +2,9 @@ import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
+import { ABTestingVariants } from "@ledgerhq/types-live";
+import { device } from "detox";
+import { isIos } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -13,7 +16,15 @@ const beforeAllFunction = async (swap: SwapType) => {
       ptxSwapLiveAppMobile: {
         enabled: true,
         params: {
-          manifest_id: "swap-live-app-demo-3-stg",
+          manifest_id:
+            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+        },
+      },
+      llmAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+          entryPoints: [],
         },
       },
     },
@@ -62,12 +73,19 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
         swap.accountToDebit,
         swap.accountToCredit,
       );
-      await performSwapUntilQuoteSelectionStep(swap, minAmount);
-      await app.swapLiveApp.selectExchange();
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
+      const selectedProvider: string = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(selectedProvider);
       await app.swapLiveApp.tapExecuteSwap();
+      if (isIos()) await device.disableSynchronization();
       await app.common.selectKnownDevice();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, minAmount);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });

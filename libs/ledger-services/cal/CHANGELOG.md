@@ -1,5 +1,41 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.2.0
+
+### Minor Changes
+
+- [#10707](https://github.com/LedgerHQ/ledger-live/pull/10707) [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add velora data
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#10707](https://github.com/LedgerHQ/ledger-live/pull/10707) [`5299c33`](https://github.com/LedgerHQ/ledger-live/commit/5299c3345335b42ec29d090c7bba6dff85fa237e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add velora data
+
+## 1.1.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/live-network@2.0.12
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/live-network@2.0.12-next.0
+
 ## 1.0.0
 
 ### Major Changes

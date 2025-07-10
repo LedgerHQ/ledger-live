@@ -1,5 +1,47 @@
 # @ledgerhq/cryptoassets
 
+## 13.21.0
+
+### Minor Changes
+
+- [#10699](https://github.com/LedgerHQ/ledger-live/pull/10699) [`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(cryptoassets): update TRON `blockAvgTime` to 9
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - update sui cal data
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+## 13.21.0-next.0
+
+### Minor Changes
+
+- [#10699](https://github.com/LedgerHQ/ledger-live/pull/10699) [`c6005ce`](https://github.com/LedgerHQ/ledger-live/commit/c6005ce8545acb596c2ff7770a0df848378ee83b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(cryptoassets): update TRON `blockAvgTime` to 9
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - update sui cal data
+
+- [#10598](https://github.com/LedgerHQ/ledger-live/pull/10598) [`264316c`](https://github.com/LedgerHQ/ledger-live/commit/264316c9524f13b760460c2f1a2bc822767cff95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+## 13.20.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0
+
+## 13.20.0-next.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0-next.0
+
 ## 13.19.0
 
 ### Minor Changes

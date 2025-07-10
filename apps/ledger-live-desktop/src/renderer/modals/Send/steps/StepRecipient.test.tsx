@@ -5,6 +5,7 @@ import { TFunction } from "i18next";
 import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
 
 describe("StepRecipient", () => {
@@ -14,17 +15,20 @@ describe("StepRecipient", () => {
   ])("displays a warning when the token embeds the %s extension", (_s, extension) => {
     render(
       <StepRecipient
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         t={mockTFunction as unknown as TFunction<"translation", undefined>}
         transitionTo={() => {}}
         openedFromAccount={true}
         device={null}
         parentAccount={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             type: "Account",
             currency: {},
           } as unknown as SolanaAccount
         }
         account={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             type: "TokenAccount",
             extensions: {
@@ -33,6 +37,7 @@ describe("StepRecipient", () => {
           } as unknown as SolanaTokenAccount
         }
         transaction={null}
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         status={{} as unknown as TransactionStatus}
         bridgePending={false}
         error={null}
@@ -66,23 +71,27 @@ describe("StepRecipient", () => {
   it("does not display any warning with no problematic token extensions", () => {
     render(
       <StepRecipient
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         t={mockTFunction as unknown as TFunction<"translation", undefined>}
         transitionTo={() => {}}
         openedFromAccount={true}
         device={null}
         parentAccount={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             type: "Account",
             currency: {},
           } as unknown as SolanaAccount
         }
         account={
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             type: "TokenAccount",
             extensions: {},
           } as unknown as SolanaTokenAccount
         }
         transaction={null}
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         status={{} as unknown as TransactionStatus}
         bridgePending={false}
         error={null}

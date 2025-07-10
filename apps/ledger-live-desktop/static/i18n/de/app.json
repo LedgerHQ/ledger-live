@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "Minute",
-    "minute_plural" : "Minuten",
+    "minute_other" : "Minuten",
     "minute_short" : "Min.",
     "second_short" : "Sek.",
     "hour" : "Stunde",
-    "hour_plural" : "Stunden",
+    "hour_other" : "Stunden",
     "range" : {
       "day" : "1T",
       "week" : "1W",
@@ -575,7 +575,7 @@
       "date" : "Datum",
       "from" : "Von",
       "fromAddress" : "Ursprungsadresse",
-      "fromAddress_plural" : "Ursprungsadressen",
+      "fromAddress_other" : "Ursprungsadressen",
       "to" : "An",
       "toProvider" : "Adresse des Anbieters",
       "initialAmount" : "Anfangsbetrag",
@@ -1242,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "Richte dein {{deviceName}}-Gerät ein",
+      "title" : "{{deviceName}} bereithalten",
       "continueOnDevice" : "Diese Aktion für {{productName}} durchführen",
       "pairedContent" : {
-        "title" : "Dieses {{deviceName}}-Gerät ist echt",
-        "description" : "Die Verwendung dieses {{productName}} ist sicher. Du kannst mit dem Einrichten beginnen.",
+        "title" : "{{deviceName}} ist echt",
+        "description" : "Die Nutzung deiner {{productName}} ist sicher. Du kannst nun mit der Einrichtung beginnen.",
         "continueOnDevice" : "Tippe auf dein {{productName}}-Gerät, um mit dem Einrichten zu beginnen"
       },
       "pinContent" : {
@@ -1256,26 +1256,37 @@
         "continueOnDevice" : "Lege die PIN für dein {{productName}}-Gerät fest"
       },
       "seedContent" : {
-        "title" : "Geheime Wiederherstellungsphrase",
+        "title" : "Einrichtung und Backup",
         "titleCompleted" : "Geheime Wiederherstellungsphrase bestätigt",
         "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
-        "restoreSeed" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase.\n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren.",
+        "restoreSeed" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreCharonTitle" : "Wiederherstellen mit Recovery Key",
+        "restoreCharonDescription" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "restoreCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
         "selection" : "Wähle die zu deinen Anforderungen passende Einrichtungsoption aus:",
-        "selectionNewLedger" : "<0>Set up as a new Ledger</0> (Als neues Ledger-Gerät einrichten) ermöglicht dir die Erstellung einer neuen Wallet. Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
-        "selectionRestore" : "<0>Restore</0> (Wiederherstellen) erlaubt dir den Zugriff auf deine bestehenden Vermögenswerte mittels deiner geheimen Wiederherstellungsphrase oder durch Nutzung von Ledger Recover.",
+        "selectionNewLedgerTitle" : "Als neues Ledger-Gerät einrichten",
+        "selectionNewLedgerDescription" : "Hierbei wird eine neue geheime Wiederherstellungsphrase generiert.",
+        "selectionRestoreTitle" : "Zugriff auf Assets wiederherstellen",
+        "selectionRestoreDescription" : "Mit deinem Backup – geheime Wiederherstellungsphrase oder Ledger Recover – kannst du eine Wiederherstellung durchführen.",
+        "selectionRestoreDescriptionWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Recovery Key – kannst du eine Wiederherstellung durchführen.",
         "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "newSeedDescription1" : "Dein {{productName}}-Gerät generiert für dich eine individuelle 24-Wort-Wiederherstellungsphrase. Sie bildet die einzige Möglichkeit, deine Vermögenswerte wiederherzustellen, falls dein Ledger-Gerät gestohlen wird, verloren geht oder du deine PIN vergisst.",
-        "newSeedDescription2" : "<0>Sicher aufbewahren:</0>\nDeine geheime Wiederherstellungsphrase erlaubt den Zugang zu deinen Vermögenswerten und ist unersetzlich. Wer immer diese Phrase kennt, hat die Kontrolle über dein Vermögen und kann es stehlen. Solltest du die Wiederherstellungsphrase verlieren, kann Ledger dir nicht helfen.",
-        "newSeedDescription3" : "Sei vorsichtig, wenn eine Person oder Software nach deiner geheimen Wiederherstellungsphrase fragt. Dies ist in jedem Fall ein Betrugsversuch („Scam“). ",
-        "newSeedDescription4" : "Der einzige Ort, an dem du deine geheime Wiederherstellungsphrase eingeben darfst, ist dein Ledger-Gerät.",
-        "newSeedDescription5" : "Gib sie nicht weiter. Verliere sie nicht.",
-        "newSeedContinueOnDevice" : "Sieh dir die auf deinem {{productName}}-Gerät generierte geheime Wiederherstellungsphrase an und schreibe sie auf",
+        "selectionNewSeedTitle" : "Geheime Wiederherstellungsphrase",
+        "selectionNewSeedSubtitle" : "Bewahre sie sicher auf:",
+        "selectionNewSeedDescription" : "Deine geheime Wiederherstellungsphrase ermöglicht den Zugriff auf deine Assets und ist unersetzlich. Wer auch immer in Besitz dieser Phrase ist, kann dein gesamtes Guthaben stehlen. Und wenn du sie verlierst, kann auch Ledger sie nicht mehr für dich abrufen.",
+        "selectionNewSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
+        "restoreDescription" : "Wähle ein Backup aus, das du wiederherstellen möchtest:",
         "restoreChoiceContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus",
-        "restoreChoiceSRPTitle" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
+        "restoreChoiceSRPTitle" : "Geheime Wiederherstellungsphrase",
         "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase.",
-        "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Wenn du Ledger Recover abonniert hast, melde sich bei deinem Abonnement an, um die Sicherheitskopie deiner geheimen Wiederherstellungsphrase wiederherzustellen.",
-        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät."
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Mit deinem Recovery Key kannst du den Zugriff auf deine Assets wiederherstellen.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover-Abonnement",
+        "restoreChoiceRecoverDescription" : "Dank deines Abonnements kannst du mit deiner Identität wieder auf deine Assets zugreifen.",
+        "followInstructions" : "Folge den Anweisungen auf deinem {{productName}}-Gerät.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
+        "backupCharonCta" : "Mehr erfahren oder kaufen",
+        "backupCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
       },
       "backup" : {
         "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -1297,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
-          "completed" : "Dein {{modelName}}-Gerät ist echt und auf dem neusten Stand"
+          "active" : "Ledger-Echtheitsprüfung",
+          "completed" : "Ledger-Echtheitsprüfung"
         },
         "exitWarningDrawer" : {
           "title" : "Echtheitsprüfung und Prüfung auf Betriebssystem-Update abbrechen?",
@@ -1321,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "Weitere Informationen zur Echtheitsprüfung",
-        "startChecksCTA" : "Mein {{modelName}}-Gerät überprüfen",
+        "startChecksCTA" : "{{modelName}} überprüfen",
         "continueCTA" : "Weiter zur Einrichtung",
         "genuineCheck" : {
           "title" : {
-            "active" : "Echtheitsprüfung",
-            "completed" : "Dein {{modelName}}-Gerät ist echt",
+            "active" : "Ledger-Echtheitsprüfung",
+            "completed" : "{{modelName}} ist echt",
             "cancelled" : "Echtheitsprüfung abgelehnt"
           },
           "subtitle" : {
@@ -1337,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Prüfung auf Betriebssystem-Update",
-            "completed" : "Das Betriebssystem deines {{modelName}}-Geräts ist auf dem neuesten Stand.",
+            "active" : "Ledger-Betriebssystemprüfung",
+            "completed" : "Ledger OS ist auf dem neusten Stand",
             "updateAvailable" : "Betriebssystem-Update {{firmwareVersion}} verfügbar"
           },
           "subtitle" : {
-            "active" : "Hiermit wird geprüft, ob das Betriebssystem deines {{modelName}}-Geräts auf dem neuesten Stand ist.",
-            "completed" : "Um die App-Wiederherstellung auf deinem {{modelName}}-Gerät zu starten, wähle unten den Button „Restore apps“ (Apps wiederherstellen) aus.",
+            "active" : "Hiermit wird geprüft, ob das Betriebssystem deiner {{modelName}} auf dem neuesten Stand ist.",
             "updateAvailable" : "Für optimale Sicherheit und Zugriff auf die neuesten Funktionen führe bitte ein Update durch."
           },
           "viewUpdateCTA" : "Betriebssystem-Update für {{modelName}}",
@@ -1783,14 +1793,14 @@
     "fullNodeReadyInfo" : "Die Konten werden über Ihren Bitcoin-Knoten (Full Node) hinzugefügt.",
     "fullNodeConfigure" : "Knoten konfigurieren",
     "tokensTip" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token.\n Du kannst Token auf einem {{currency}}-Konto direkt empfangen.",
-    "accountToImportSubtitle_plural" : "Bestehende Konten hinzufügen",
+    "accountToImportSubtitle_other" : "Bestehende Konten hinzufügen",
     "selectAll" : "Alle auswählen ({{count}})",
     "unselectAll" : "Alle abwählen ({{count}})",
     "noAccountToImport" : "Keine vorhandenen {{currencyName}} Konten zum Hinzufügen",
     "success" : "Konto erfolgreich hinzugefügt",
-    "success_plural" : "Konten erfolgreich hinzugefügt",
+    "success_other" : "Konten erfolgreich hinzugefügt",
     "successDescription" : "Andere Konten hinzufügen oder zum Portfolio zurückkehren",
-    "successDescription_plural" : "Andere Konten hinzufügen oder zum Portfolio zurückkehren",
+    "successDescription_other" : "Andere Konten hinzufügen oder zum Portfolio zurückkehren",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "Du kannst erst dann ein neues Konto hinzufügen, wenn du Guthaben auf deinem <1><0>{{accountName}}</0></1>-Konto empfangen hast",
       "noAccountToCreate" : "Es wurde kein <1><0>{{currencyName}}</0></1> Konto gefunden, das erstellt werden kann",
@@ -1803,7 +1813,7 @@
     "cta" : {
       "addMore" : "Mehr hinzufügen",
       "add" : "Konto hinzufügen",
-      "add_plural" : "Konten hinzufügen",
+      "add_other" : "Konten hinzufügen",
       "addAccountName" : "Konto {{currencyName}} hinzufügen",
       "receive" : "Empfangen"
     },
@@ -1901,9 +1911,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "Entsperre dein {{productName}}-Gerät mit deiner PIN, um das Update abzuschließen.",
     "quitApp" : "Beende die Anwendung auf deinem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
-    "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
+    "appNotInstalledTitle_other" : "Fehlende, erforderliche Apps",
     "appNotInstalled" : "Die {{appName}}-App ist erforderlich, um diese Aktion durchzuführen. Bitte wechsle zu My Ledger und installiere sie auf deinem Gerät.",
-    "appNotInstalled_plural" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte wechsle zu My Ledger und installiere sie auf deinem Gerät.",
+    "appNotInstalled_other" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte gehe zu My Ledger und installiere sie auf deinem Gerät.",
     "openManager" : "My Ledger öffnen",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
@@ -1990,14 +2000,14 @@
       },
       "installSuccess" : {
         "title" : "App erfolgreich installiert. Du kannst nun deine {{app}}-Konten hinzufügen",
-        "title_plural" : "Apps erfolgreich installiert. Du kannst nun deine Konten hinzufügen",
+        "title_other" : "Apps erfolgreich installiert. Du kannst nun deine Konten hinzufügen",
         "manageAccount" : "Meine Konten verwalten"
       },
       "updatable" : {
         "title" : "Update verfügbar",
-        "title_plural" : "Updates verfügbar",
+        "title_other" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
-        "progressTitle_plural" : "{{number}} App-Updates",
+        "progressTitle_other" : "{{number}} App-Updates",
         "progressWarning" : "Beende My Ledger nicht, solange das Update noch läuft.",
         "progress" : "Alles aktualisieren…"
       },
@@ -4087,7 +4097,7 @@
     "duration" : "Dauer",
     "durationJustStarted" : "Gerade begonnen",
     "durationDays" : "{{count}} Tag",
-    "durationDays_plural" : "{{count}} Tage",
+    "durationDays_other" : "{{count}} Tage",
     "howItWorks" : "So funktioniert Delegation",
     "delegationEarn" : "Du kannst jetzt Prämien für das {{name}}-Staking verdienen, wenn du dein Konto delegierst.",
     "earnRewards" : "Belohnungen verdienen",
@@ -4407,6 +4417,8 @@
       "mockAppUpdateDesc" : "Zeigt das verfügbare App-Update unter „My Ledger“ an. Dieselbe App-Version wird erneut installiert.",
       "catalogUrl" : "Anbieter Katalog-Apps festlegen",
       "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
+      "customCALRef" : "Benutzerdefinierte CAL-Referenz",
+      "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
@@ -4711,7 +4723,7 @@
     "ctaSuccess" : "Fertig",
     "noAccounts" : "Keine Konten zum Exportieren",
     "selectedAccounts" : "Einzuschließende Konten",
-    "selectedAccounts_plural" : "Einzuschließende Konten ({{count}})",
+    "selectedAccounts_other" : "Einzuschließende Konten ({{count}})",
     "disclaimer" : "Die Gegenwerte im Export werden nur zu Informationszwecken bereitgestellt. Verlassen Sie sich nicht auf diese Daten für buchhalterische, steuerliche, regulatorische oder rechtliche Zwecke, da sie nur eine Schätzung des Preises der Vermögenswerte zum Zeitpunkt der Transaktionen und des Exports darstellen, gemäß den von unserem Dienstleister Kaiko bereitgestellten Bewertungsmethoden"
   },
   "language" : {
@@ -4749,7 +4761,7 @@
   "informationCenter" : {
     "tooltip" : "Informationszentrum",
     "ongoingIncidentsTooltip" : "Es gibt {{count}} laufendes Ereignis",
-    "ongoingIncidentsTooltip_plural" : "Es gibt {{count}} laufende Ereignisse",
+    "ongoingIncidentsTooltip_other" : "Es gibt {{count}} laufende Ereignisse",
     "tabs" : {
       "announcements" : "Neuigkeiten",
       "announcementsUnseen" : "Nachrichten ({{unseenCount}})",
@@ -7062,12 +7074,65 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "Wähle die Konten aus, die du hinzufügen möchtest",
+      "controls" : {
+        "selectAll" : "Alle auswählen",
+        "deselectAll" : "Auswahl aufheben"
+      },
+      "cta" : {
+        "confirm" : "Bestätigen"
+      },
+      "newAccount" : "Neues Konto"
+    },
+    "fundAccount" : {
+      "receive" : "Empfangen",
+      "receiveDescription" : "Empfange Krypto von einer anderen Wallet",
+      "buy" : "Kaufen",
+      "buyDescription" : "Kaufe Krypto sicher mit Bargeld"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "Scannen stoppen"
+      },
+      "warning" : {
+        "title" : "Wir können kein neues {{currency}}-Konto hinzufügen",
+        "description" : "Ein neues Konto kann erst hinzugefügt werden, nachdem du Guthaben auf deinem {{account}}-Konto erhalten hast",
+        "cta" : "Mein Konto mit Guthaben aufladen",
+        "close" : "Schließen",
+        "noAssociatedAccounts" : {
+          "description" : "Im {{currency}}-Ökosystem können nur ausgewählte Services neue Konten erstellen. Ledger bietet diesen Onboarding-Service derzeit zwar nicht an, aber es gibt Alternativen. Du kannst dein {{currency}}-Konto in Ledger Live hinzufügen, nachdem es erstellt wurde.",
+          "cta" : "Wie erstellt man ein {{currency}}-Konto?",
+          "close" : "Schließen"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "Kein Konto gefunden",
+        "foundAccounts" : "Wir haben {{count}} Konto gefunden",
+        "foundAccounts_other" : "Wir haben {{count}} Konten gefunden",
+        "scanning" : "Konten werden gescannt …"
+      },
+      "title" : "Nach vorhandenen Konten in der Blockchain wird gesucht …"
+    },
+    "connectYourDevice" : {
+      "title" : "Verbinde und entsperre dein Gerät"
+    },
     "searchPlaceholder" : "Suche",
+    "emptyAssetList" : "Keine Assets gefunden",
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
     "accountCount_one" : "{{count}} Konto",
-    "accountCount_other" : "{{count}} Konten"
+    "accountCount_other" : "{{count}} Konten",
+    "accountsAdded" : {
+      "title" : "Konto zu deinem Portfolio hinzugefügt",
+      "title_other" : "{{count}} Konten wurden deinem Portfolio hinzugefügt",
+      "cta" : {
+        "addFunds" : "Mein Konto mit Guthaben aufladen",
+        "selectAccount" : "Weiter",
+        "close" : "Schließen"
+      }
+    }
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -7080,5 +7145,14 @@
     "title" : "Nicht am Ort verfügbar",
     "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live-Update erforderlich",
+    "errorTitle" : "Update fehlgeschlagen",
+    "errorDescription" : "Das Update ist fehlgeschlagen. Bitte klicke auf den nachstehenden Link, um die neueste Ledger Live-Version herunterzuladen. ",
+    "description" : "Diese Ledger Live-Version ist nicht mit dem neuesten Betriebssystem deines Geräts kompatibel. Führe jetzt ein Update durch, um von verbesserter Konnektivität zu profitieren.",
+    "restart" : "Neustarten",
+    "downloadOnLedger" : "Von Ledger.com herunterladen",
+    "downloadProgress" : "Download in Bearbeitung … {{ progress }} %"
   }
 }

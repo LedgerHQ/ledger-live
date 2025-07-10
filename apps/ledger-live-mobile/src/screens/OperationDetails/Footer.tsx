@@ -39,6 +39,7 @@ function Footer({ url, urlWhatIsThis, currency }: Props) {
           }}
           outline
           mt={4}
+          testID="operation-detail-view-in-explorer-button"
         >
           <Trans i18nKey="operationDetails.viewInExplorer" />
         </Button>

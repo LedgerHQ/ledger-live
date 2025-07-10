@@ -6,9 +6,9 @@ import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionSta
 import { getAccountAddress } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class SendDrawer extends Drawer {
-  private addressValue = (address: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
+  private sendDrawer = this.page.getByTestId("drawer-content");
+  private addressValue = (address: string) => this.sendDrawer.filter({ hasText: address });
+  private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type");
   private nftName = this.page.getByTestId("nft-name-operationDrawer");
 

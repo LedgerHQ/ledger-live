@@ -1,5 +1,33 @@
 # @ledgerhq/device-react
 
+## 0.2.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.5.1
+
+## 0.2.36-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/device-core@0.5.1-next.0
+
+## 0.2.35
+
+### Patch Changes
+
+- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
+  - @ledgerhq/device-core@0.5.0
+
+## 0.2.35-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc)]:
+  - @ledgerhq/device-core@0.5.0-next.0
+
 ## 0.2.34
 
 ### Patch Changes

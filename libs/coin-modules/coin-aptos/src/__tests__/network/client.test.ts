@@ -14,7 +14,7 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset, AptosExtra, AptosSender } from "../../types/assets";
+import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosBalance, AptosTransaction } from "../../types";
@@ -615,19 +615,20 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "native",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };
@@ -648,7 +649,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("40");
+      expect(fees.value.toString()).toEqual("44");
     });
 
     it("estimates the fees for token coin", async () => {
@@ -679,21 +680,22 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "token",
           standard: "coin",
           contractAddress: "0x111",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };
@@ -714,7 +716,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("20");
+      expect(fees.value.toString()).toEqual("22");
     });
 
     it("estimates the fees for token FA", async () => {
@@ -744,21 +746,22 @@ describe("Aptos API", () => {
       }));
 
       const amount = BigInt(100);
-      const sender: AptosSender = {
+      const sender = {
         xpub: "xpub",
         freshAddress: "address1",
       };
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender> = {
+      const transactionIntent: TransactionIntent<AptosAsset> = {
         asset: {
           type: "token",
           standard: "fungible_asset",
           contractAddress: "0x111",
         },
         type: "send",
-        sender,
+        sender: sender.freshAddress,
+        senderPublicKey: sender.xpub,
         amount,
         recipient,
       };
@@ -779,7 +782,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("30");
+      expect(fees.value.toString()).toEqual("33");
     });
   });
 

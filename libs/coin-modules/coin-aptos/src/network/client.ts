@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   type AccountData,
   Aptos,
@@ -9,6 +8,7 @@ import {
   type InputEntryFunctionData,
   type InputGenerateTransactionOptions,
   MimeType,
+  MoveStructId,
   type RawTransaction,
   type SimpleTransaction,
   type TransactionResponse,
@@ -30,7 +30,12 @@ import {
   ESTIMATE_GAS_MUL,
   TOKEN_TYPE,
 } from "../constants";
-import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
+import type {
+  AptosBalance,
+  AptosTransaction,
+  StakePoolResource,
+  TransactionOptions,
+} from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import type {
   GetAccountTransactionsDataQuery,
@@ -43,7 +48,7 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
@@ -59,7 +64,8 @@ const getIndexerEndpoint = (currencyId: string) =>
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
-  private readonly apolloClient: ApolloClient<object>;
+
+  readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
     if (typeof currencyIdOrSettings === "string") {
@@ -175,10 +181,8 @@ export class AptosAPI {
     };
   }
 
-  async estimateFees(
-    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
-  ): Promise<FeeEstimation<AptosFeeParameters>> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
+  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
 
     const txPayload: InputEntryFunctionData = {
       function: "0x1::aptos_account::transfer_coins",
@@ -208,16 +212,14 @@ export class AptosAPI {
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(
-      transactionIntent.sender.freshAddress,
-      txPayload,
-      txOptions,
-    );
+    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
 
-    const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+    const gasLimit = new BigNumber(completedTx.gas_used)
+      .multipliedBy(ESTIMATE_GAS_MUL)
+      .integerValue();
     const gasPrice = new BigNumber(completedTx.gas_unit_price);
 
     const expectedGas = gasPrice.multipliedBy(gasLimit);
@@ -225,10 +227,43 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
+        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
     };
+  }
+
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      return resource.locked_until_secs;
+    } catch (error) {
+      log("error", "Failed to fetch StakePool resource:", { error });
+    }
+  }
+
+  async getDelegatorBalanceInPool(
+    poolAddress: string,
+    delegatorAddress: string,
+  ): Promise<Array<string>> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (error) {
+      log("error", "Failed to fetch delegation_pool::get_stake", { error });
+      return ["0", "0", "0"];
+    }
   }
 
   async listOperations(

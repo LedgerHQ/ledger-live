@@ -6,6 +6,9 @@ import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 
 export const PORTFOLIO_VIEW_ID = "Portfolio";
 
+import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
+import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
+
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
 
@@ -46,6 +49,51 @@ export const initializeDatadogProvider = async (
     trackingConsent,
   });
 };
+
+/**
+ * Helper function to check if an error name (type) should be excluded.
+ * @param errorName The name/type of the error from Datadog's RUM event.
+ * @returns True if the error name is in the exclusion list, false otherwise.
+ */
+const isExcludedErrorName = (errorName: string): boolean => {
+  return EXCLUDED_LOGS_ERROR_NAME.includes(errorName);
+};
+
+/**
+ * Helper function to check if an error description (message) should be excluded.
+ * Handles both string and RegExp patterns for robust matching.
+ * @param errorDescription The message of the error from Datadog's RUM event.
+ * @returns True if the error description matches any exclusion pattern, false otherwise.
+ */
+const isExcludedErrorDescription = (errorDescription: string): boolean => {
+  return EXCLUDED_ERROR_DESCRIPTION.some(pattern => {
+    if (typeof pattern === "string") {
+      return errorDescription.includes(pattern);
+    } else if (pattern instanceof RegExp) {
+      return pattern.test(errorDescription);
+    }
+    return false;
+  });
+};
+
+/**
+ * The custom errorEventMapper function for Datadog RUM.
+ * This function is called for every RUM error event before it is sent to Datadog.
+ * @param event The RUMErrorEvent object.
+ * @returns The modified RUMErrorEvent object, or null if the event should be dropped.
+ */
+export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEventMapper =
+  disableErrorTracking => event => {
+    if (
+      disableErrorTracking ||
+      isExcludedErrorName(event.stacktrace) ||
+      isExcludedErrorDescription(event.message)
+    ) {
+      return null; // Return null to drop the event
+    }
+
+    return event;
+  };
 
 /**
  * A predicate function to determine the view name for tracking purposes.
