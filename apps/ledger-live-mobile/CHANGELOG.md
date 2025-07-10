@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.86.0-next.2
+
+### Minor Changes
+
+- [#10848](https://github.com/LedgerHQ/ledger-live/pull/10848) [`910be06`](https://github.com/LedgerHQ/ledger-live/commit/910be068403149e674984b69968a67516e7a385b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update translation for message error on blacklist addresses
+
 ## 3.86.0-next.1
 
 ### Minor Changes
