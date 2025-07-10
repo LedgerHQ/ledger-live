@@ -14,7 +14,7 @@ describe("Send flow", () => {
     await app.send.openViaDeeplink();
     await app.send.selectAccount("Ethereum 1");
     await app.send.setRecipient(Account.SANCTIONED_ETH.address);
-    await app.send.expectSendRecipientTitleError("Keep you safe");
+    await app.send.expectSendRecipientTitleError("Keeping you safe");
     await app.send.expectSendRecipientDescriptionError(
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
@@ -28,7 +28,7 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.send.openViaDeeplink();
     await app.send.selectAccount("Sanctioned Ethereum");
-    await app.send.expectSendSenderTitleError("Keep you safe");
+    await app.send.expectSendSenderTitleError("Keeping you safe");
     await app.send.expectSendSenderDescriptionError(
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
@@ -45,7 +45,7 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.send.openViaDeeplink();
     await app.send.selectAccount("Sanctioned Ethereum");
-    await app.send.expectSendSenderTitleError("Keep you safe");
+    await app.send.expectSendSenderTitleError("Keeping you safe");
     await app.send.expectSendSenderDescriptionError(
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
@@ -53,7 +53,7 @@ describe("Send flow", () => {
     await app.send.expectContinueButtonDisabled();
 
     await app.send.setRecipient(Account.SANCTIONED_ETH.address);
-    await app.send.expectSendRecipientTitleError("Keep you safe");
+    await app.send.expectSendRecipientTitleError("Keeping you safe");
     await app.send.expectSendRecipientDescriptionError(
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );
