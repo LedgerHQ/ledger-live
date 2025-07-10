@@ -53,6 +53,14 @@ const e2eDelegationAccountsWithoutBroadcast = [
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-3020",
   },
+  {
+    delegate: new Delegate(
+      Account.APTOS_1,
+      "11.00000000",
+      "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
+    ),
+    xrayTicket: "B2CQA-3564",
+  },
 ];
 
 const validators = [
@@ -203,7 +211,10 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
+        if (
+          account.delegate.account.currency.name == Currency.ADA.name ||
+          account.delegate.account.currency.name == Currency.APT.name
+        ) {
           await app.delegate.openSearchProviderModal();
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
@@ -228,12 +239,15 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         if (account.delegate.account.currency.name !== Currency.ADA.name) {
           await app.delegate.clickViewDetailsButton();
 
+          const transactionType =
+            account.delegate.account.currency.name === Currency.APT.name ? "Staked" : "Delegated";
+
           await app.drawer.waitForDrawerToBeVisible();
           await app.delegateDrawer.verifyTxTypeIsVisible();
-          await app.delegateDrawer.verifyTxTypeIs("Delegated");
+          await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.providerIsVisible(account.delegate);
           await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
-          await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+          await app.delegateDrawer.operationTypeIsCorrect(transactionType);
           await app.drawer.closeDrawer();
         }
       },
