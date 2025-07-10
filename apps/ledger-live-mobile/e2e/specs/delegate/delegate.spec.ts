@@ -31,7 +31,7 @@ describe("Delegate flow", () => {
       Account.ETH_2.address,
     );
 
-    await app.send.expectSendSummaryTitleError("Keep you safe");
+    await app.send.expectSendSummaryTitleError("Keeping you safe");
     await app.send.expectSendSummaryDescriptionError(
       `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${Account.SANCTIONED_ETH.address}`,
     );

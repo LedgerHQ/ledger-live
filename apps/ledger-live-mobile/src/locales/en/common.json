@@ -1086,7 +1086,7 @@
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
     "AddressesSanctionedError": {
-      "title": "Keep you safe",
+      "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
