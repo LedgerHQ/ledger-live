@@ -4,8 +4,8 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AptosAPI } from "../network";
 import { txsToOps } from "./logic";
-import type { AptosAccount } from "../types";
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { AptosAccount, AptosStakingPosition } from "../types";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   decodeTokenAccountId,
@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
@@ -29,7 +30,7 @@ const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
  * In charge of smartly merging sub accounts while maintaining references as much as possible
  */
 export const mergeSubAccounts = (
-  initialAccount: Account | undefined,
+  initialAccount: AptosAccount | undefined,
   newSubAccounts: TokenAccount[],
 ): Array<TokenAccount> => {
   const oldSubAccounts: Array<TokenAccount> | undefined = initialAccount?.subAccounts;
@@ -127,7 +128,7 @@ export const getSubAccountShape = async (
  * Getting all token related operations in order to provide TokenAccounts
  */
 export const getSubAccounts = async (
-  infos: AccountShapeInfo<Account>,
+  infos: AccountShapeInfo<AptosAccount>,
   address: string,
   accountId: string,
   lastTokenOperations: Operation[],
@@ -158,7 +159,9 @@ export const getSubAccounts = async (
   return Promise.all(subAccountsPromises);
 };
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<AptosAccount> = async (
+  info: AccountShapeInfo<AptosAccount>,
+) => {
   const { address, initialAccount, currency, derivationMode, rest } = info;
 
   const publicKey =
@@ -183,11 +186,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
-  const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
-    info,
-    accountId,
-    transactions,
-  );
+  const [newOperations, tokenOperations, stakingOperations]: [
+    Operation[],
+    Operation[],
+    Operation[],
+  ] = txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
@@ -196,24 +199,78 @@ export const getAccountShape: GetAccountShape = async info => {
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
-  operations.forEach(op => {
+  operations?.forEach(op => {
     const subOperations = inferSubOperations(op.hash, subAccounts);
     op.subOperations =
       subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);
   });
 
+  const stakingPositions: AptosStakingPosition[] = [];
+  let activeBalance = BigNumber(0);
+  let inactiveBalance = BigNumber(0);
+  let pendingInactiveBalance = BigNumber(0);
+
+  if (getEnv("APTOS_ENABLE_STAKING") === true) {
+    const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
+    for (const stakingPoolAddress of stakingPoolAddresses) {
+      const [active_string, inactive_string, pending_inactive_string] =
+        await aptosClient.getDelegatorBalanceInPool(stakingPoolAddress, address);
+
+      const active = BigNumber(active_string);
+      const inactive = BigNumber(inactive_string);
+      const pendingInactive = BigNumber(pending_inactive_string);
+
+      stakingPositions.push({
+        active,
+        inactive,
+        pendingInactive,
+        validatorId: stakingPoolAddress,
+      });
+
+      activeBalance = activeBalance.plus(active);
+      inactiveBalance = inactiveBalance.plus(inactive);
+      pendingInactiveBalance = pendingInactiveBalance.plus(pendingInactive);
+    }
+  }
+
+  const aptosResources = {
+    activeBalance,
+    inactiveBalance,
+    pendingInactiveBalance,
+    stakingPositions,
+  };
+
   const shape: Partial<AptosAccount> = {
     type: "Account",
     id: accountId,
     xpub,
-    balance: balance,
+    balance: balance
+      .plus(aptosResources.activeBalance)
+      .plus(aptosResources.pendingInactiveBalance)
+      .plus(aptosResources.inactiveBalance),
     spendableBalance: balance,
     operations,
     operationsCount: operations.length,
     blockHeight,
     lastSyncDate: new Date(),
     subAccounts,
+    aptosResources,
   };
 
   return shape;
+};
+
+export const getStakingPoolAddresses = (stakingOperations: Operation[]): string[] => {
+  const stakingPoolsAddrs: string[] = [];
+
+  for (const op of stakingOperations) {
+    if (!op.recipients.length) continue;
+
+    const poolAddress = op.recipients[0];
+    if (poolAddress === "0x1") continue;
+
+    if (!stakingPoolsAddrs.includes(poolAddress)) stakingPoolsAddrs.push(poolAddress);
+  }
+
+  return stakingPoolsAddrs;
 };

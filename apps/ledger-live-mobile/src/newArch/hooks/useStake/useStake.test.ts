@@ -151,6 +151,7 @@ const feature_stake_programs_json = {
       "cardano",
       "dydx",
       "injective",
+      "aptos",
     ],
     redirects: {
       tron: {
@@ -219,6 +220,7 @@ describe("useStake()", () => {
       "cardano",
       "dydx",
       "injective",
+      "aptos",
     ]);
 
     expect(result.current.partnerSupportedAssets).toEqual([

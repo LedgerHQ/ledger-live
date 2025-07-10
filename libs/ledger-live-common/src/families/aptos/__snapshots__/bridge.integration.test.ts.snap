@@ -3,6 +3,12 @@
 exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
 [
   {
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
     "balance": "19949100",
     "currencyId": "aptos",
     "derivationMode": "aptos",
@@ -21,17 +27,23 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "xpub": "d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956",
   },
   {
-    "balance": "20020000",
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
+    "balance": "20050000",
     "currencyId": "aptos",
     "derivationMode": "aptos",
     "freshAddress": "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
     "freshAddressPath": "44'/637'/1'/0'/0'",
     "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
     "index": 1,
-    "operationsCount": 2,
+    "operationsCount": 5,
     "pendingOperations": [],
     "seedIdentifier": "d6816f4f22f867b56cf9304b776f452a16d107835d73ee8a33c4ced210300583",
-    "spendableBalance": "20020000",
+    "spendableBalance": "20050000",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -39,6 +51,12 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
     "xpub": "6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e",
   },
   {
+    "aptosResources": {
+      "activeBalance": "0",
+      "inactiveBalance": "0",
+      "pendingInactiveBalance": "0",
+      "stakingPositions": [],
+    },
     "balance": "0",
     "currencyId": "aptos",
     "derivationMode": "aptos",
@@ -213,6 +231,27 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
   [
     {
       "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+      "blockHash": "0xb71a59a5f43dc73c945da97ef88043721dab81f658df7a4a4207f95ce7cad0ee",
+      "blockHeight": 366009981,
+      "extra": {
+        "version": "2901622402",
+      },
+      "fee": "1100",
+      "hasFailed": false,
+      "hash": "0x1acd500f32be88a62692698502a296dcb977e5629bbbf12e448bc69737c18c40",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0x1acd500f32be88a62692698502a296dcb977e5629bbbf12e448bc69737c18c40-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
+      ],
+      "transactionSequenceNumber": 179,
+      "type": "IN",
+      "value": "10000",
+    },
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
       "blockHash": "0x27db591a136924b48d10e6e152a3e856a5c38b332654767da252851adbb454b2",
       "blockHeight": 302074528,
       "extra": {
@@ -231,6 +270,48 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "transactionSequenceNumber": 87,
       "type": "IN",
       "value": "20000000",
+    },
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+      "blockHash": "0xadfce17fba19584616fec77888c41c1bacd18ef8702dfe07ccfbfeafd8edfd17",
+      "blockHeight": 366013582,
+      "extra": {
+        "version": "2901672541",
+      },
+      "fee": "1100",
+      "hasFailed": false,
+      "hash": "0x494582adf8f3e2748a30453a687106524f18296bf5924e3c1ead8a2503894970",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0x494582adf8f3e2748a30453a687106524f18296bf5924e3c1ead8a2503894970-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
+      ],
+      "transactionSequenceNumber": 182,
+      "type": "IN",
+      "value": "10000",
+    },
+    {
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
+      "blockHash": "0x1647b469fb104624e4e0a9b7f0b0368facec96a232cde5f83be1235c1068b038",
+      "blockHeight": 366012016,
+      "extra": {
+        "version": "2901651004",
+      },
+      "fee": "1100",
+      "hasFailed": false,
+      "hash": "0x4f42472b8c92d3d6083d05a3a357f38ed97491f5e0750058da49cc04cef82794",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0x4f42472b8c92d3d6083d05a3a357f38ed97491f5e0750058da49cc04cef82794-IN",
+      "recipients": [
+        "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
+      ],
+      "senders": [
+        "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
+      ],
+      "transactionSequenceNumber": 181,
+      "type": "IN",
+      "value": "10000",
     },
     {
       "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
