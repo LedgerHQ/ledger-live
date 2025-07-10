@@ -9,7 +9,7 @@ export async function sendAptos() {
 }
 
 export async function delegateAptos(delegatingAccount: Delegate) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.APPROVE);
   const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
