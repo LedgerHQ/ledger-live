@@ -33,6 +33,18 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
+const TextBox = styled(Box).attrs(() => ({
+  alignItems: "center",
+  grow: true,
+  color: "palette.text.shade100",
+}))<{
+  shouldSpace?: boolean;
+}>`
+  text-align: center;
+  padding: 16px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+`;
 
 function StepConfirmation({
   t,
@@ -64,19 +76,22 @@ function StepConfirmation({
           title={<Trans i18nKey="send.steps.confirmation.success.title" />}
           description={multiline(t("send.steps.confirmation.success.text"))}
         />
-        <Container>
-          <Text>Congratulations, you have earned a new Ledger reward</Text>
+        <TextBox>
+          <Text>
+            Congratulations! You have made your 100th transaction and earned a new Ledger reward 🎉
+          </Text>
           <Button
             ml={2}
+            mt={4}
             onClick={() => {
               dispatch(closeAllModal());
               history.push({ pathname: "/trophies" });
             }}
             primary
           >
-            Go to Eternals
+            See on Eternals
           </Button>
-        </Container>
+        </TextBox>
       </Container>
     );
   }
