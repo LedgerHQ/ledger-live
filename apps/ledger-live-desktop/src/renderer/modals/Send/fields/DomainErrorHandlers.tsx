@@ -11,7 +11,7 @@ type DomainErrorsProps = {
 };
 export const DomainErrorsView = memo(({ domainError, isForwardResolution }: DomainErrorsProps) => {
   const { t } = useTranslation();
-  if ((domainError.error as Error) instanceof InvalidDomain) {
+  if (domainError.error instanceof InvalidDomain) {
     return (
       <div data-testid="domain-error-invalid-domain">
         <Alert
@@ -27,6 +27,7 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   if ((domainError.error as Error) instanceof NoResolution && isForwardResolution) {
     return (
       <div data-testid="domain-error-no-resolution">

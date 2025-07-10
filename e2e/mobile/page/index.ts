@@ -25,6 +25,7 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
+import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
@@ -110,6 +111,7 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
+  private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
 
   public async init({
     speculosApp,
@@ -246,5 +248,9 @@ export class Application {
 
   public get celoManageAssets() {
     return this.celoManageAssetsPageInstance();
+  }
+
+  public get transferMenuDrawer() {
+    return this.TransferMenuDrawerInstance();
   }
 }

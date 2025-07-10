@@ -1,6 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo, useCallback } from "react";
@@ -22,7 +21,7 @@ const EditOperationPanel = (props: Props) => {
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
 
   const handleOpenEditModal = useCallback(() => {
     invariant(operation.transactionRaw, "operation.transactionRaw is required");

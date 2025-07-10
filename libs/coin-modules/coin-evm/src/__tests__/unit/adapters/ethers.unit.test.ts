@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { DEFAULT_NONCE } from "../../../createTransaction";
 import { transactionToEthersTransaction } from "../../../adapters";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../../types";
+import { DEFAULT_NONCE } from "../../../utils";
 
 const testData = Buffer.from("testBufferString").toString("hex");
 const eip1559Tx: EvmTransactionEIP1559 = {

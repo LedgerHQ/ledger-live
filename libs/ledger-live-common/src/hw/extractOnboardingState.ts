@@ -137,6 +137,14 @@ export const extractOnboardingState = (
 
   const currentSeedWordIndex = flagsBytes[2] & currentSeedWordIndexMask;
 
+  const charonSupported = charonState !== undefined && charonState.length > 0;
+  const charonOnboardingBits = charonSupported ? charonState[0] & 0xf : 0;
+  //const charonUpdateBits = charonSupported ? (charonState[0] & 0x30) >> 4 : 0;
+  const charonStatus =
+    charonSupported && fromBitsToCharonStatusMap.has(charonOnboardingBits)
+      ? fromBitsToCharonStatusMap.get(charonOnboardingBits)!
+      : null;
+
   /*
    * Once the device is seeded, there are some additional states for backing up with Charon (for devices that support it)
    * There are 2 scenarios:
@@ -148,9 +156,11 @@ export const extractOnboardingState = (
   if (
     isOnboarded &&
     [OnboardingStep.Ready, OnboardingStep.WelcomeScreen1].includes(currentOnboardingStep) &&
-    charonState !== undefined
+    charonSupported
   ) {
-    currentOnboardingStep = fromBitsToOnboardingStep.get(charonState[0] + CHARON_STEP_BIT_MASK);
+    currentOnboardingStep = fromBitsToOnboardingStep.get(
+      charonOnboardingBits + CHARON_STEP_BIT_MASK,
+    );
 
     if (!currentOnboardingStep) {
       throw new DeviceExtractOnboardingStateError(
@@ -158,12 +168,6 @@ export const extractOnboardingState = (
       );
     }
   }
-
-  const charonSupported = charonState !== undefined && charonState.length > 0;
-  const charonStatus =
-    charonSupported && fromBitsToCharonStatusMap.has(charonState[0])
-      ? fromBitsToCharonStatusMap.get(charonState[0])!
-      : null;
 
   return {
     isOnboarded,

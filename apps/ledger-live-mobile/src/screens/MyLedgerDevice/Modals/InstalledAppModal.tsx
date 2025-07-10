@@ -17,7 +17,6 @@ import AppIcon from "../AppsList/AppIcon";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 type NavigationProps = BaseComposite<
@@ -51,17 +50,14 @@ const ButtonsContainer = styled(Flex).attrs({
 const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const onAddAccount = useCallback(() => {
-    if (llmNetworkBasedAddAccountFlow?.enabled)
-      navigation.navigate(NavigatorName.AssetSelection, {
-        context: AddAccountContexts.AddAccounts,
-        sourceScreenName: "InstalleAppModal",
-      });
-    else navigation.navigate(NavigatorName.AddAccounts);
+    navigation.navigate(NavigatorName.AssetSelection, {
+      context: AddAccountContexts.AddAccounts,
+      sourceScreenName: "InstalleAppModal",
+    });
 
     setHasBeenShown(true);
-  }, [navigation, llmNetworkBasedAddAccountFlow?.enabled]);
+  }, [navigation]);
 
   const successInstalls = useMemo(
     () =>

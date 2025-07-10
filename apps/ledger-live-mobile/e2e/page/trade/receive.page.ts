@@ -23,6 +23,10 @@ export default class ReceivePage {
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
+  sanctionedAccountModalTitle = "sanctioned-account-modal-title";
+  sanctionedAccountModalDescription = "sanctioned-account-modal-description";
+  sanctionedAccountModalCloseButton = "sanctioned-account-modal-close-button";
+
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }

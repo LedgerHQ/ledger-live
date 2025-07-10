@@ -31,6 +31,7 @@ import SendRowsFee from "../SendRowsFee";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloUnlockFlowParamList } from "./types";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
@@ -162,10 +163,21 @@ export default function UnlockAmount({ navigation, route }: Props) {
                 <LText
                   style={[styles.fieldStatus]}
                   color={error ? "alert" : warning ? "orange" : "darkBlue"}
-                  numberOfLines={2}
+                  numberOfLines={5}
                 >
                   <TranslatedError error={error || warning} />
                 </LText>
+                {status.errors.sender && (
+                  <>
+                    <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+                      <TranslatedError error={status.errors.sender} />
+                    </LText>
+                    <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+                      <TranslatedError error={status.errors.sender} field="description" />
+                    </LText>
+                    <SupportLinkError error={status.errors.sender} type="alert" />
+                  </>
+                )}
                 <LText style={styles.info}>
                   <Trans i18nKey={`celo.unlock.flow.steps.amount.info`} />
                 </LText>

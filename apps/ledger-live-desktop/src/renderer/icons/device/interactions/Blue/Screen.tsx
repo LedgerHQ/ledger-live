@@ -89,7 +89,10 @@ const BlueScreen = ({ active, display, error, ...props }: Props) => {
           rx="2"
         />
         <g id="Blue-screen-content" opacity={active ? 1 : 0}>
-          {display ? screens[display as keyof typeof screens] : null}
+          {display
+            ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              screens[display as keyof typeof screens]
+            : null}
         </g>
       </g>
     </ScreenSVG>

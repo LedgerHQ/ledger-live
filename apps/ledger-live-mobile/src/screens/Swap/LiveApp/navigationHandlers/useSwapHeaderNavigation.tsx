@@ -106,7 +106,7 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI>)
         headerRight: () => (
           <Flex p={6}>
             <Touchable
-              touchableTestID="NavigationHeaderSwapHistory"
+              touchableTestID="navigation-header-swap-history"
               onPress={navigateToSwapHistory}
             >
               <Icons.Clock color={"neutral.c100"} />

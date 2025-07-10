@@ -8,6 +8,8 @@ import {
 } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -25,7 +27,15 @@ async function beforeAllFunction(options: ApplicationOptions) {
       ptxSwapLiveAppMobile: {
         enabled: true,
         params: {
-          manifest_id: "swap-live-app-demo-3-stg",
+          manifest_id:
+            process.env.PRODUCTION === "true" ? "swap-live-app-demo-3" : "swap-live-app-demo-3-stg",
+        },
+      },
+      llmAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: ABTestingVariants.variantA,
+          entryPoints: [],
         },
       },
     },
@@ -117,7 +127,11 @@ export function runSwapWithDifferentSeedTest(
         swap.accountToDebit,
         swap.accountToCredit,
       );
-      await performSwapUntilQuoteSelectionStep(swap, minAmount);
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
 
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
@@ -160,7 +174,11 @@ export function runSwapLandingPageTest(
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(swap, minAmount);
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+      );
       const providerList = await app.swapLiveApp.getProviderList();
       await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
       await app.swapLiveApp.checkBestOffer();
@@ -206,7 +224,16 @@ export function runTooLowAmountForQuoteSwapsTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage} - LLM`, async () => {
-      await performSwapUntilQuoteSelectionStep(swap, swap.amount, quotesVisible);
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+        quotesVisible,
+      );
       if (quotesVisible) {
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
@@ -252,7 +279,11 @@ export function runUserRefusesTransactionTest(
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(rejectedSwap, minAmount);
+      await performSwapUntilQuoteSelectionStep(
+        rejectedSwap.accountToDebit,
+        rejectedSwap.accountToCredit,
+        minAmount,
+      );
       const selectedProvider: string = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
@@ -260,6 +291,239 @@ export function runUserRefusesTransactionTest(
       await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, selectedProvider, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapLiveApp.checkErrorMessage("User refused");
+    });
+  });
+}
+
+export function runSwapHistoryOperationsTest(
+  swap: SwapType,
+  provider: Provider,
+  swapId: string,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap history", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapOperation(swapId, swap);
+      await app.swap.openSelectedOperation(swapId);
+      await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
+    });
+  });
+}
+
+export function runExportSwapHistoryOperationsTest(
+  swap: SwapType,
+  provider: Provider,
+  swapId: string,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap history", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+      await app.swap.goToSwapHistory();
+      await app.swap.clickExportOperations();
+      await app.swap.checkExportedFileContents(swap, provider, swapId);
+    });
+  });
+}
+
+export function runSwapWithSendMaxTest(
+  fromAccount: Account,
+  toAccount: Account,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap - Send Max", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(fromAccount, toAccount);
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: AppInfos.EXCHANGE,
+        cliCommandsOnApp: [
+          {
+            app: fromAccount.currency.speculosApp,
+            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          },
+          {
+            app: toAccount.currency.speculosApp,
+            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          },
+        ],
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name} - LLM`, async () => {
+      await app.swapLiveApp.waitForSwapLiveApp();
+
+      await app.swapLiveApp.tapFromCurrency();
+      await app.common.performSearch(fromAccount.currency.name);
+      await app.stake.selectCurrency(fromAccount.currency.id);
+      await app.common.selectFirstAccount();
+      await app.swapLiveApp.tapToCurrency();
+      await app.common.performSearch(toAccount.currency.name);
+      await app.stake.selectCurrency(toAccount.currency.id);
+      await app.common.selectFirstAccount();
+      await app.swapLiveApp.clickSwapMax();
+      const amountToSend = await app.swapLiveApp.getAmountToSend();
+
+      await app.swapLiveApp.tapGetQuotesButton();
+      await app.swapLiveApp.waitForQuotes();
+
+      const selectedProvider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.tapExecuteSwap();
+      await app.common.selectKnownDevice();
+
+      const swap = new Swap(fromAccount, toAccount, amountToSend);
+      await checkSwapInfosOnDeviceVerificationStep(swap, selectedProvider, amountToSend);
+
+      await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
+      await app.swap.waitForSuccessAndContinue();
+    });
+  });
+}
+
+export function runSwapSwitchSendAndReceiveCurrenciesTest(
+  swap: SwapType,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap - Switch You send and You receive currency", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it("Switch You send and You receive currency", async () => {
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        swap.amount,
+        false,
+      );
+      await app.swapLiveApp.switchYouSendAndYouReceive();
+      await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "");
+    });
+  });
+}
+
+export function runSwapCheckProvider(
+  fromAccount: Account,
+  toAccount: Account,
+  provider: Provider,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap - Provider redirection", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(fromAccount, toAccount);
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: AppInfos.EXCHANGE,
+        cliCommandsOnApp: [
+          {
+            app: fromAccount.currency.speculosApp,
+            cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+          },
+          {
+            app: toAccount.currency.speculosApp,
+            cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+          },
+        ],
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Swap test provider redirection (${provider.uiName}) - LLM`, async () => {
+      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount);
+
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        minAmount,
+        true,
+      );
+
+      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
+      await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
+    });
+  });
+}
+
+export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
+  const handleSwapPageFlow = async (account: Account) => {
+    await app.swapLiveApp.expectSwapLiveApp();
+    await app.swapLiveApp.checkAssetFrom(account.currency.ticker, "");
+  };
+
+  describe("Swap - Entry Points - LLM", () => {
+    setupEnv(true);
+
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "speculos-tests-app",
+        speculosApp: AppInfos.EXCHANGE,
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it("Access Swap from different entry points", async () => {
+      await app.portfolio.openViaDeeplink();
+      await app.transferMenuDrawer.open();
+      await app.transferMenuDrawer.navigateToSwap();
+      await handleSwapPageFlow(account);
+
+      await app.account.openViaDeeplink();
+      await app.account.goToAccountByName(account.accountName);
+      await app.account.tapSwap();
+      await handleSwapPageFlow(account);
+
+      await app.portfolio.openViaDeeplink();
+      await app.portfolio.goToSpecificAsset(account.currency.name);
+      await app.assetAccountsPage.tapSwap();
+      await handleSwapPageFlow(account);
     });
   });
 }

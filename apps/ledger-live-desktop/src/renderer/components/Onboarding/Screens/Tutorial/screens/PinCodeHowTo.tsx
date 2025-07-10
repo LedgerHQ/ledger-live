@@ -46,9 +46,7 @@ const PinCodeHowToAnimation = () => {
   return (
     deviceModelId && (
       <AnimationContainer>
-        <Animation
-          animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode") as object}
-        />
+        <Animation animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode")} />
       </AnimationContainer>
     )
   );

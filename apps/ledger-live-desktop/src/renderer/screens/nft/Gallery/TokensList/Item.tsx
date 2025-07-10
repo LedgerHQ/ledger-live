@@ -15,6 +15,7 @@ import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -63,6 +64,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
     }),
   );
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
@@ -79,6 +81,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   }, [id, account]);
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       <NFTContextMenu key={id} nft={nft} account={account} metadata={metadata as NFTMetadata}>
         {children}
       </NFTContextMenu>
@@ -98,6 +101,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
       >
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             metadata={metadata as NFTMetadata}
             tokenId={nft?.tokenId}
             size={40}
@@ -145,6 +149,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                 key={id}
                 nft={nft}
                 account={account}
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 metadata={metadata as NFTMetadata}
                 leftClick={true}
                 onHideCollection={onHideCollection}

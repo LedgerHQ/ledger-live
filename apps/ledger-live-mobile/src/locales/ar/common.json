@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "لم يتم التحقق من عنوان {{accountType}}. تحقق من العناوين على جهازك لتظل آمناً."
       },
       "noResultsFound" : "لم يتم العثور على أي أصول مشفرة",
-      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى"
+      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
+      "sanctionedAddress" : {
+        "title" : "إبقاؤك آمناً",
+        "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "إغلاق",
+        "learnMore" : "تعرّف على المزيد"
+      }
     },
     "buy" : {
       "title" : "شراء",
@@ -7505,5 +7515,10 @@
     "title" : "تحديث Ledger Live مطلوب",
     "description" : "هذا الإصدار من Ledger Live غير متوافق مع أحدث أنظمة تشغيل الجهاز. قم بالتحديث الآن للاستمتاع باتصال مُحسّن.",
     "openStore" : "تحديث"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر شبكة",
+    "selectAccount" : "اختر حساب"
   }
 }

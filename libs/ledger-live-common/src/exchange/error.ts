@@ -31,3 +31,13 @@ export function convertTransportError(
   }
   return err;
 }
+
+export function getSwapStepFromError(error: Error): string {
+  if ((error as CompleteExchangeError).step) {
+    return (error as CompleteExchangeError).step;
+  } else if (error.name === "DisabledTransactionBroadcastError") {
+    return "SIGN_COIN_TRANSACTION";
+  }
+
+  return "UNKNOWN_STEP";
+}

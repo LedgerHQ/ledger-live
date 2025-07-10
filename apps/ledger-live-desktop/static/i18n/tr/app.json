@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Sizi güvende tutuyoruz",
+      "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "Onayla"
       },
-      "newAccount" : "Yeni hesap"
+      "newAccount" : "Yeni hesap",
+      "addAccountSelection" : "Fonların ekleneceği hesabı seçin",
+      "addAccountSelectionPtxFlow" : "Hesap seçin"
     },
     "fundAccount" : {
       "receive" : "Al",

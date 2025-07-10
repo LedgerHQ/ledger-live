@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "确认"
       },
-      "newAccount" : "新账户"
+      "newAccount" : "新账户",
+      "addAccountSelection" : "选择账户用于添加资金",
+      "addAccountSelectionPtxFlow" : "选择账户"
     },
     "fundAccount" : {
       "receive" : "接收",

@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Mantendo você em segurança",
+      "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "Confirmar"
       },
-      "newAccount" : "Nova conta"
+      "newAccount" : "Nova conta",
+      "addAccountSelection" : "Escolha uma conta para adicionar fundos",
+      "addAccountSelectionPtxFlow" : "Selecionar conta"
     },
     "fundAccount" : {
       "receive" : "Receber",

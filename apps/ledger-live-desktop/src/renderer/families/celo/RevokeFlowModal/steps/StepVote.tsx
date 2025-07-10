@@ -20,9 +20,11 @@ export const StepVoteFooter = ({
   onClose,
   bridgePending,
   transaction,
+  status,
 }: StepProps) => {
   invariant(account, "account required");
-  const canNext = !bridgePending && transaction?.recipient && transaction?.index != null;
+  const canNext =
+    !bridgePending && transaction?.recipient && transaction?.index != null && !status.errors.sender;
   return (
     <>
       <Box horizontal>
@@ -48,6 +50,7 @@ const StepVote = ({
   onChangeTransaction,
   transaction,
   error,
+  status,
 }: StepProps) => {
   invariant(
     account && account.celoResources && transaction,
@@ -90,6 +93,7 @@ const StepVote = ({
         currency="celo"
       />
       {error ? <ErrorBanner error={error} /> : null}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       <Alert type="primary" mb={4} learnMoreUrl={urls.celo.learnMore}>
         <Trans i18nKey="celo.revoke.steps.vote.info" />
       </Alert>

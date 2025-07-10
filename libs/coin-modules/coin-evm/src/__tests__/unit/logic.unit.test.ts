@@ -3,7 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
-import * as RPC_API from "../../api/node/rpc.common";
+import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
   attachOperations,
@@ -11,14 +11,10 @@ import {
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
-  getEstimatedFees,
-  getGasLimit,
   getMessageProperties,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
-  padHexString,
-  safeEncodeEIP55,
   setCALHash,
 } from "../../logic";
 import {
@@ -33,6 +29,7 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
+import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);

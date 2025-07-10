@@ -14,7 +14,7 @@ import {
 import axios, { AxiosResponse } from "axios";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { fetchERC20Tokens, hydrate, preload } from "../../preload";
+import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";
 
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1

@@ -9,19 +9,19 @@ describe("ModularDrawer integration flow", () => {
     // Open the drawer
     await user.press(getByText("Open MAD Drawer"));
 
-    expect(getByText(/Step 1: Asset/)).toBeVisible();
+    expect(getByText(/select asset/i)).toBeVisible();
 
     await user.press(getByText("Next"));
-    expect(getByText(/Step 2: Network/)).toBeVisible();
+    expect(getByText(/select network/i)).toBeVisible();
 
     await user.press(getByTestId("modal-back-button"));
 
-    expect(getByText(/Step 1: Asset/)).toBeVisible();
+    expect(getByText(/select asset/i)).toBeVisible();
 
     await user.press(getByText("Next"));
-    expect(getByText(/Step 2: Network/)).toBeVisible();
+    expect(getByText(/select network/i)).toBeVisible();
 
     await user.press(getByText("Next"));
-    expect(getByText(/Step 3: Account/)).toBeVisible();
+    expect(getByText(/select account/i)).toBeVisible();
   });
 });

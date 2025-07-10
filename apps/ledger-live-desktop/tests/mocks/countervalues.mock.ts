@@ -1,6 +1,8 @@
 import { CounterValuesStateRaw, CounterValuesStatus } from "@ledgerhq/live-countervalues/types";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const initialCountervaluesMock = {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   status: {
     "USD ethereum": {
       oldestDateRequested: "2020-04-22T11:51:36.000Z",

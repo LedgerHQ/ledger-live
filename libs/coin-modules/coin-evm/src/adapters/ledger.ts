@@ -16,7 +16,7 @@ import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerInternalTransaction,
 } from "../types";
-import { safeEncodeEIP55 } from "../logic";
+import { safeEncodeEIP55 } from "../utils";
 
 /**
  * Adapter to convert a Ledger Explorer operation

@@ -313,6 +313,22 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await resetWebview();
   });
 
+  await test.step("transaction.sign should block sanctioned address", async () => {
+    const recipient = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"; // Sanctioned address
+    const amount = "500000000000000"; // 0.0005 ETH in wei
+
+    await liveAppWebview.setAccountId("a758d3a7-e057-5fcc-8b6e-23169bc4d577");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.transactionSign();
+
+    await expect(page.getByText(/keeping you safe/i)).toBeVisible();
+    await modal.continueIsDisabled();
+    await modal.close();
+
+    await resetWebview();
+  });
+
   await test.step("transaction.signAndBroadcast", async () => {
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
     const amount = "750000000000000"; // 0.00075 ETH in wei

@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
-import ledgerNodeApi from "../../../../api/node/ledger";
-import rpcNodeApi from "../../../../api/node/rpc";
-import { getNodeApi } from "../../../../api/node";
+import ledgerNodeApi from "../../../../network/node/ledger";
+import rpcNodeApi from "../../../../network/node/rpc";
+import { getNodeApi } from "../../../../network/node";
 import { UnknownNode } from "../../../../errors";
 import { getCoinConfig } from "../../../../config";
 
@@ -9,7 +9,7 @@ jest.mock("../../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
-  describe("api/node/index.ts", () => {
+  describe("network/node/index.ts", () => {
     describe("getNodeApi", () => {
       it("should throw when requesting a non existing node type", async () => {
         mockGetConfig.mockImplementation((): any => {

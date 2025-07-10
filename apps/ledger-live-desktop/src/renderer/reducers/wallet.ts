@@ -54,6 +54,7 @@ export const useAccountName = (account: AccountLike) => {
 };
 
 export default handleActions<WalletState, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as WalletHandlers<false>,
   initialState,
 );

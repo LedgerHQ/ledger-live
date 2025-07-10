@@ -94,7 +94,6 @@ export default function AmountInput({
         <LText
           style={[error ? styles.error : styles.warning]}
           color={error ? "alert" : "orange"}
-          numberOfLines={2}
           testID="send-amount-error"
         >
           <TranslatedError error={error || warning} />
@@ -134,9 +133,10 @@ export default function AmountInput({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    gap: 10,
   },
   wrapper: {
-    flexBasis: 100,
+    flexBasis: 155,
     flexShrink: 0.5,
     flexDirection: "column",
     justifyContent: "center",

@@ -37,7 +37,14 @@ export const AccountsAdded = ({
     }
   }, [accounts, navigateToSelectAccount, onFundAccount, trackAddAccountEvent]);
 
-  const handleClose = () => setDrawer();
+  const handleClose = () => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Close",
+      page: ADD_ACCOUNT_PAGE_NAME.ADD_ACCOUNTS_SUCCESS,
+      flow: ADD_ACCOUNT_FLOW_NAME,
+    });
+    setDrawer();
+  };
 
   useEffect(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ACCOUNT_ADDED, {

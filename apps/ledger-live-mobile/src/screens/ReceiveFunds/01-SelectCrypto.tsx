@@ -23,7 +23,6 @@ import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
@@ -53,31 +52,22 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
 
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
-
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const goToDeviceSelection = useCallback(
-    (currency: CryptoCurrency, createTokenAccount?: boolean) => {
-      if (llmNetworkBasedAddAccountFlow?.enabled) {
-        navigation.replace(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency,
-            context: AddAccountContexts.ReceiveFunds,
-          },
-        });
-      } else {
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+    (currency: CryptoCurrency) => {
+      navigation.replace(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
           currency,
-          ...(createTokenAccount && { createTokenAccount }),
-        });
-      }
+          context: AddAccountContexts.ReceiveFunds,
+        },
+      });
     },
-    [llmNetworkBasedAddAccountFlow?.enabled, navigation],
+    [navigation],
   );
 
   const onPressItem = useCallback(
@@ -112,7 +102,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           currency,
         });
       } else {
-        goToDeviceSelection(currency, isToken);
+        goToDeviceSelection(currency);
       }
     },
     [currenciesByProvider, accounts, navigation, filterCurrencyIds, goToDeviceSelection],

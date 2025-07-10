@@ -10,7 +10,7 @@ import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { closeModal } from "~/renderer/actions/modals";
+import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -21,6 +21,7 @@ import StepImport, { StepImportFooter } from "./steps/StepImport";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { GlobalModalData } from "../types";
 
 export type Props = {
   // props from redux
@@ -29,6 +30,7 @@ export type Props = {
   closeModal: (a: string) => void;
   addAccountsAction: typeof addAccountsAction;
   blacklistedTokenIds?: string[];
+  openModal?: (modalName: keyof GlobalModalData) => void;
 } & UserProps;
 
 export type UserProps = {
@@ -37,6 +39,7 @@ export type UserProps = {
   flow?: string | null;
   onClose?: () => void;
   preventSkippingCurrencySelection?: boolean | undefined | null;
+  newModalName?: keyof GlobalModalData;
 };
 
 type StepId = "chooseCurrency" | "connectDevice" | "import" | "finish";
@@ -111,6 +114,7 @@ const createSteps = (skipChooseCurrencyStep?: boolean | null): St[] => {
   if (skipChooseCurrencyStep) {
     steps.shift();
   }
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return steps as St[];
 };
 type State = {
@@ -133,6 +137,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   addAccountsAction,
   closeModal,
+  openModal,
 };
 const INITIAL_STATE: State = {
   stepId: "chooseCurrency",
@@ -229,6 +234,13 @@ class AddAccounts extends PureComponent<Props, State> {
     }));
   };
 
+  onFlowFinished = () => {
+    const { newModalName, openModal } = this.props;
+    if (newModalName && openModal) {
+      openModal(newModalName);
+    }
+  };
+
   render() {
     const {
       device,
@@ -280,6 +292,7 @@ class AddAccounts extends PureComponent<Props, State> {
           const handleCloseModal = () => {
             this.props.onClose?.();
             onClose && onClose();
+            this.onFlowFinished();
           };
           return (
             <Stepper

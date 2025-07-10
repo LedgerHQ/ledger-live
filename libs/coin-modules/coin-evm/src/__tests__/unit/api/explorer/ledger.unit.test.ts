@@ -7,7 +7,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
-import * as LEDGER_API from "../../../../api/explorer/ledger";
+import * as LEDGER_API from "../../../../network/explorer/ledger";
 import {
   coinOperation1,
   coinOperation2,
@@ -41,7 +41,7 @@ jest.mock("../../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
-  describe("api/explorer/ledger.ts", () => {
+  describe("network/explorer/ledger.ts", () => {
     beforeEach(() => {
       mockGetConfig.mockImplementation((): any => {
         return {

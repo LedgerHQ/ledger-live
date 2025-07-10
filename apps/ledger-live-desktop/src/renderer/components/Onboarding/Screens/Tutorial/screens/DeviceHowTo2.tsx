@@ -45,9 +45,7 @@ const DeviceHowTo2Animation = () => {
   return (
     <AnimationContainer>
       {deviceModelId && (
-        <Animation
-          animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode") as object}
-        />
+        <Animation animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode")} />
       )}
     </AnimationContainer>
   );

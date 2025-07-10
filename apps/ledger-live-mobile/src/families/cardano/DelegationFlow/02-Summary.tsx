@@ -20,6 +20,7 @@ import type {
   CardanoAccount,
   CardanoDelegation,
   TransactionStatus,
+  Transaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -44,6 +45,7 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import Config from "react-native-config";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -190,6 +192,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             chosenPool={chosenPool ?? undefined}
             account={account}
             status={status}
+            transaction={transaction}
           />
         </View>
       </View>
@@ -208,6 +211,19 @@ export default function DelegationSummary({ navigation, route }: Props) {
             <Text fontSize={13} color="orange">
               <TranslatedError error={displayWarning} field="title" />
             </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
+        {status.errors.sender ? (
+          <Box>
+            <Text fontSize={13} color="red">
+              <TranslatedError error={status.errors.sender} />
+            </Text>
+            <Text fontSize={12} color="red">
+              <TranslatedError error={status.errors.sender} field="description" />
+            </Text>
+            <SupportLinkError error={status.errors.sender} type="alert" />
           </Box>
         ) : (
           <></>
@@ -336,6 +352,7 @@ function SummaryWords({
   isFetchingPoolDetails,
   onChangePool,
   status,
+  transaction,
 }: {
   chosenPool?: StakePool;
   account: AccountLike;
@@ -343,6 +360,7 @@ function SummaryWords({
   isFetchingPoolDetails: boolean;
   onChangePool: () => void;
   status: TransactionStatus;
+  transaction: Transaction;
 }) {
   const unit = useAccountUnit(account);
   const { t } = useTranslation();
@@ -574,9 +592,7 @@ function SummaryWords({
               <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
                 {formatCurrencyUnit(
                   unit,
-                  new BigNumber(
-                    (account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit,
-                  ),
+                  new BigNumber(transaction.protocolParams?.stakeKeyDeposit ?? "0"),
                   formatConfig,
                 )}
               </LText>

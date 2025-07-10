@@ -1,7 +1,7 @@
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 
 export function getTransactionByHash(accounts: AccountLike[]) {
   return async ({

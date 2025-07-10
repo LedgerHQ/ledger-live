@@ -211,7 +211,6 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llMevProtection: Feature_LlMevProtection;
-  llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmRebornFlex: DefaultFeature;
@@ -436,6 +435,7 @@ export type Feature_ProtectServicesMobile = Feature<{
 }>;
 
 export type Feature_ProtectServicesDesktop = Feature<{
+  openWithDevTools: boolean;
   availableOnDesktop: boolean;
   isNew: boolean;
   openRecoverFromSidebar: boolean;

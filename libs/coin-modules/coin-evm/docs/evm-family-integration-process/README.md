@@ -48,11 +48,11 @@ _Common steps for all new EVM currency integration_
 _Optional / extra steps that might be needed on a case-by-case basis depending on the integration_
 
 - If the related currency public explorer is not an etherscan-like, you might need to add a new implementation for this currency explorer
-  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-evm/src/api/explorer`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-evm/src/api/explorer) folder
+  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-evm/src/network/explorer`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-evm/src/network/explorer) folder
   - Add the new explorer type to:
-    - the `getExplorerApi` function under [`libs/coin-evm/src/api/explorer/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/api/explorer/index.ts)
+    - the `getExplorerApi` function under [`libs/coin-evm/src/network/explorer/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/network/explorer/index.ts)
     - the `EthereumLikeInfo.explorer.type` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
-    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/api/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
+    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
 
 ## Tokens support
 

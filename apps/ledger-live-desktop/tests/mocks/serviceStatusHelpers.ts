@@ -3,6 +3,7 @@ import {
   ServiceStatusSummary,
   Incident,
 } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
+
 const statuses = {
   page: {
     id: "767c5rcj7z12",
@@ -463,6 +464,7 @@ const statuses = {
       only_show_if_degraded: false,
     },
   ],
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   incidents: [] as Incident[],
   scheduled_maintenances: [],
   status: {
@@ -470,6 +472,7 @@ const statuses = {
     description: "All Systems Operational",
   },
 };
+
 const mockedIncidents: Incident[] = [
   {
     created_at: "2021-02-22T17:58:18.792+02:00",

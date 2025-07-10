@@ -203,6 +203,7 @@
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "17.8.1",
     "@commitlint/prompt-cli": "17.8.1",
+    "@datadog/datadog-ci": "3.11.0",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
     "@react-native-community/cli": "15.1.0",
@@ -259,7 +260,8 @@
       "storyly-react-native": "patches/storyly-react-native.patch",
       "@shopify/react-native-performance": "patches/@shopify__react-native-performance.patch",
       "react-native-webview": "patches/react-native-webview.patch",
-      "detox@20.39.0": "patches/detox@20.39.0.patch"
+      "detox@20.39.0": "patches/detox@20.39.0.patch",
+      "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

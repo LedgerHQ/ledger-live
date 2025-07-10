@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
-import { getGasTracker } from "../../../api/gasTracker/index";
+import { getGasTracker } from "../../../network/gasTracker/index";
 import { getEditTransactionPatch } from "../../../editTransaction/getEditTransactionPatch";
 import {
   getMinEip1559Fees,
@@ -17,7 +17,7 @@ import {
 } from "../../fixtures/transaction.fixtures";
 import { getCoinConfig } from "../../../config";
 
-jest.mock("../../../api/gasTracker/index");
+jest.mock("../../../network/gasTracker/index");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
 
 jest.mock("../../../editTransaction/getMinEditTransactionFees");

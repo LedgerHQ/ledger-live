@@ -36,6 +36,7 @@ const DeviceName: React.FC<Props> = ({
   onRefreshDeviceInfo,
   setPreventResetOnDeviceChange,
 }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const model = identifyTargetId(deviceInfo.targetId as number);
   const editSupported = model?.id && isEditDeviceNameSupported(model.id);
   const editEnabled = !disabled && editSupported;

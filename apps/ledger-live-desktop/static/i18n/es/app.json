@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Queremos garantizar tu seguridad",
+      "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "Confirmar"
       },
-      "newAccount" : "Nueva cuenta"
+      "newAccount" : "Nueva cuenta",
+      "addAccountSelection" : "Elige la cuenta a la que quieres añadir los fondos",
+      "addAccountSelectionPtxFlow" : "Seleccionar cuenta"
     },
     "fundAccount" : {
       "receive" : "Recibir",

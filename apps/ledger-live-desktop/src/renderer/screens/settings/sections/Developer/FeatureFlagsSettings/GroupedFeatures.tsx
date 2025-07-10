@@ -4,7 +4,6 @@ import {
 } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
-import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";
@@ -28,7 +27,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
         <FeatureFlagDetails
           key={flagName}
           focused={focusedName === flagName}
-          flagName={flagName as FeatureId}
+          flagName={flagName}
           setFocusedName={setFocusedName}
         />
       )),

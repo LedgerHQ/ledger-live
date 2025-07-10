@@ -124,6 +124,7 @@ function renderWithMockedCounterValuesProvider(
 ): RenderReturn {
   const {
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
     ...renderOptions
@@ -157,6 +158,7 @@ function renderWithMockedCounterValuesProvider(
 function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
   const {
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
     ...renderOptions
@@ -197,6 +199,7 @@ function renderHook<Result, Props>(
   const {
     initialProps,
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
   } = options;
 
@@ -224,6 +227,7 @@ function renderHookWithLiveAppProvider<Result, Props>(
   const {
     initialProps,
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
   } = options;
 

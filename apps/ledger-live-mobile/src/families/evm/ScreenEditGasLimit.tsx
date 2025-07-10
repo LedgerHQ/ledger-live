@@ -13,7 +13,7 @@ import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/lib/transaction";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/lib/utils";
 
 const options = {
   title: <Trans i18nKey="send.summary.gasLimit" />,

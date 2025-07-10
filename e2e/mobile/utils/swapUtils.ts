@@ -1,4 +1,5 @@
 import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -17,21 +18,23 @@ export function setupEnv(disableBroadcast?: boolean) {
 }
 
 export async function performSwapUntilQuoteSelectionStep(
-  swap: SwapType,
-  minAmount: string,
+  accountToDebit: Account,
+  accountToCredit: Account,
+  amount: string,
   continueToQuotes: boolean = true,
 ) {
   await app.swapLiveApp.waitForSwapLiveApp();
 
   await app.swapLiveApp.tapFromCurrency();
-  await app.common.performSearch(swap.accountToDebit.currency.name);
-  await app.stake.selectCurrency(swap.accountToDebit.currency.id);
+  await app.common.performSearch(accountToDebit.currency.name);
+  await app.stake.selectCurrency(accountToDebit.currency.id);
   await app.common.selectFirstAccount();
   await app.swapLiveApp.tapToCurrency();
-  await app.common.performSearch(swap.accountToCredit.currency.name);
-  await app.stake.selectCurrency(swap.accountToCredit.currency.id);
+  await app.common.performSearch(accountToCredit.currency.name);
+  await app.stake.selectCurrency(accountToCredit.currency.id);
   await app.common.selectFirstAccount();
-  await app.swapLiveApp.inputAmount(minAmount);
+  await app.swapLiveApp.inputAmount(amount);
+
   if (continueToQuotes) {
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
