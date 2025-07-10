@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "จำนวนขั้นต่ำที่กำหนดสำหรับธุรกรรมนี้คือ {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "ปกป้องคุณให้ปลอดภัย",
+      "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "Address {{accountType}} ไม่ได้รับการตรวจสอบ ตรวจสอบ Address บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย"
       },
       "noResultsFound" : "ไม่พบสินทรัพย์คริปโต",
-      "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง"
+      "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง",
+      "sanctionedAddress" : {
+        "title" : "ปกป้องคุณให้ปลอดภัย",
+        "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "ปิด",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
+      }
     },
     "buy" : {
       "title" : "ซื้อ",
@@ -7505,5 +7515,10 @@
     "title" : "ต้องอัปเดต Ledger Live",
     "description" : "แอป Ledger Live เวอร์ชันนี้ไม่สามารถใช้งานร่วมกับระบบปฏิบัติการเวอร์ชันล่าสุดของอุปกรณ์ได้ อัปเดตตอนนี้เพื่อประสบการณ์การเชื่อมต่อที่ดีขึ้น",
     "openStore" : "อัปเดต"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "เลือกสินทรัพย์",
+    "selectNetwork" : "เลือกเครือข่าย",
+    "selectAccount" : "เลือกบัญชี"
   }
 }
