@@ -48,7 +48,12 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ExternalLinkMedium,
+  RecoveryKey,
+  Note,
+  ShieldCheck,
+} from "@ledgerhq/native-ui/assets/icons";
 import SecretRecoveryPhraseImage from "./assets/srp.png";
 import BackgroundBlue from "./assets/BackgroundBlue";
 import BackgroundRed from "./assets/BackgroundRed";
@@ -654,34 +659,51 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
                   </BodyText>
                   {/* Secret Recovery Phrase */}
-                  <SubtitleText mt={6}>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t(
-                      "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
-                    )}
-                  </BodyText>
-                  {/* Recovery Key */}
-                  {deviceOnboardingState?.charonSupported && (
-                    <>
-                      <SubtitleText mt={6}>
-                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                  <Flex flexDirection="row" mt={6}>
+                    <Note size="M" />
+                    <Flex ml={5} flex={1}>
+                      <SubtitleText mb={2}>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title",
+                        )}
                       </SubtitleText>
                       <BodyText>
                         {t(
-                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
                         )}
                       </BodyText>
-                    </>
+                    </Flex>
+                  </Flex>
+                  {/* Recovery Key */}
+                  {deviceOnboardingState?.charonSupported && (
+                    <Flex flexDirection="row" mt={6}>
+                      <RecoveryKey size="M" />
+                      <Flex ml={5} flex={1}>
+                        <SubtitleText mb={2}>
+                          {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
+                        </SubtitleText>
+                        <BodyText>
+                          {t(
+                            "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
+                          )}
+                        </BodyText>
+                      </Flex>
+                    </Flex>
                   )}
                   {/* Recover subscription */}
-                  <SubtitleText mt={6}>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description")}
-                  </BodyText>
+                  <Flex flexDirection="row" mt={6} mb={6}>
+                    <ShieldCheck size="M" />
+                    <Flex ml={5} flex={1}>
+                      <SubtitleText mb={2}>
+                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
+                      </SubtitleText>
+                      <BodyText>
+                        {t(
+                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description",
+                        )}
+                      </BodyText>
+                    </Flex>
+                  </Flex>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
