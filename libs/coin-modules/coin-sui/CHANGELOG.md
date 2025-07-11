@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.6.1
+
+### Patch Changes
+
+- [#10913](https://github.com/LedgerHQ/ledger-live/pull/10913) [`d4a6f38`](https://github.com/LedgerHQ/ledger-live/commit/d4a6f382183922f78cecf00c276ebea99504871a) Thanks [@semeano](https://github.com/semeano)! - sui: fixed send token issue
+
 ## 0.6.1-hotfix.0
 
 ### Patch Changes
