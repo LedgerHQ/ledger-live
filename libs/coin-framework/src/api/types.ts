@@ -8,6 +8,7 @@ export type BlockInfo = {
   // transaction could be created at a particular moment, but depending on network conditions
   // mining time, and block intervals, it might not get included in the blockchain until later
   time?: Date;
+  parent?: BlockInfo;
 };
 
 type TokenInfoCommon = Record<string, unknown>;
@@ -57,7 +58,38 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-// Other coins take differents parameters What do we want to do ?
+/**
+ * A block along with its upstream transactions.
+ */
+export type Block<AssetType extends Asset<TokenInfoCommon>> = {
+  info: BlockInfo;
+  transactions: BlockTransaction<AssetType>[];
+};
+
+export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+  hash: string;
+  value: bigint;
+  failed: boolean;
+  operations: BlockOperation<AssetType>[];
+  details?: Record<string, unknown>;
+  fees: bigint;
+  feesPayer: string;
+};
+
+export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> = Transfer<AssetType> | Other;
+
+export type Transfer<AssetType extends Asset<TokenInfoCommon>> = {
+  type: "transfer";
+  from: string;
+  to: string;
+  asset: AssetType;
+};
+
+export type Other = {
+  type: "other";
+} & Record<string, unknown>;
+
+// Other coins take different parameters What do we want to do ?
 export type Account = {
   currencyName: string;
   address: string;
@@ -163,6 +195,8 @@ export type AlpacaApi<
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
+  getBlockInfo: (height: number) => Promise<BlockInfo>;
+  getBlock: (height: number) => Promise<Block<AssetInfo>>;
   listOperations: (
     address: string,
     pagination: Pagination,
