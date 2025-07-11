@@ -1,5 +1,17 @@
 # @ledgerhq/coin-cardano
 
+## 0.9.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/errors@6.23.0-nightly.0
+  - @ledgerhq/live-env@2.12.0-nightly.0
+  - @ledgerhq/coin-framework@5.6.0-nightly.4
+  - @ledgerhq/devices@8.4.8-nightly.0
+  - @ledgerhq/live-network@2.0.13-nightly.0
+  - @ledgerhq/cryptoassets@13.21.1-nightly.0
+
 ## 0.9.0-nightly.3
 
 ### Patch Changes

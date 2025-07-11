@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.33.0-nightly.1
+
+### Minor Changes
+
+- [#10883](https://github.com/LedgerHQ/ledger-live/pull/10883) [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds new TextInput component and stories
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0-nightly.0
+
 ## 0.33.0-nightly.0
 
 ### Minor Changes

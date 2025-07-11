@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.39.0-nightly.2
+
+### Minor Changes
+
+- [#10858](https://github.com/LedgerHQ/ledger-live/pull/10858) [`7883393`](https://github.com/LedgerHQ/ledger-live/commit/788339359ad9b7fafbf74c0788b1e2d8f7e3bc19) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD NetworkList Component
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0-nightly.0
+
 ## 0.39.0-nightly.1
 
 ### Minor Changes

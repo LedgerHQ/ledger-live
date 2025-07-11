@@ -1,5 +1,49 @@
 # ledger-live-desktop
 
+## 2.121.0-nightly.4
+
+### Minor Changes
+
+- [#10885](https://github.com/LedgerHQ/ledger-live/pull/10885) [`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add recovery key icon. Add icons to onboarding backup flow for LLD and LLM
+
+- [#10852](https://github.com/LedgerHQ/ledger-live/pull/10852) [`ab7a830`](https://github.com/LedgerHQ/ledger-live/commit/ab7a830184359ca1a4eb11ac36f1ce8c5f22dae8) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a track bug in onboarding
+
+- [#10750](https://github.com/LedgerHQ/ledger-live/pull/10750) [`8f24b01`](https://github.com/LedgerHQ/ledger-live/commit/8f24b018fa1152d5b702d6c0bb455f784a0444f4) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - remove seed phrase warning in disclaimer when onboarding
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+- [#10873](https://github.com/LedgerHQ/ledger-live/pull/10873) [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle Asset/network selection
+
+### Patch Changes
+
+- Updated dependencies [[`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789)]:
+  - @ledgerhq/react-ui@0.33.0-nightly.1
+  - @ledgerhq/errors@6.23.0-nightly.0
+  - @ledgerhq/live-common@34.41.0-nightly.4
+  - @ledgerhq/live-env@2.12.0-nightly.0
+  - @ledgerhq/coin-framework@5.6.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.4
+  - @ledgerhq/coin-evm@2.23.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.4
+  - @ledgerhq/domain-service@1.2.36-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.0
+  - @ledgerhq/devices@8.4.8-nightly.0
+  - @ledgerhq/hw-transport@6.31.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.8-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.9-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.8-nightly.0
+  - @ledgerhq/live-network@2.0.13-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.4
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10-nightly.0
+  - @ledgerhq/cryptoassets@13.21.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.13-nightly.4
+  - @ledgerhq/live-nft@0.8.13-nightly.4
+  - @ledgerhq/live-wallet@0.11.4-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.4
+  - @ledgerhq/live-nft-react@0.9.13-nightly.4
+
 ## 2.121.0-nightly.3
 
 ### Minor Changes

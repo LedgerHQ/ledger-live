@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-evm
 
+## 0.6.0-nightly.4
+
+### Minor Changes
+
+- [#10884](https://github.com/LedgerHQ/ledger-live/pull/10884) [`769b0ed`](https://github.com/LedgerHQ/ledger-live/commit/769b0ed64b3a4c0388546ec00966d1185f3aea68) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Remove hardcoded list of ethereum plugins
+
+### Patch Changes
+
+- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/errors@6.23.0-nightly.0
+  - @ledgerhq/coin-evm@2.23.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.45.11-nightly.2
+
 ## 0.5.6-nightly.3
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.2.0-nightly.4
+
+### Minor Changes
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789)]:
+  - @ledgerhq/live-common@34.41.0-nightly.4
+  - @ledgerhq/live-env@2.12.0-nightly.0
+  - @ledgerhq/live-cli@24.19.4-nightly.4
+  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8-nightly.0
+  - @ledgerhq/live-wallet@0.11.4-nightly.4
+
 ## 0.2.0-nightly.3
 
 ### Minor Changes
