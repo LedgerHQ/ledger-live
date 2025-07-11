@@ -33,9 +33,11 @@ export const isSupported = (
 ): boolean => {
   const selector = calldata.slice(0, 10);
   const contractAddress = to?.toLowerCase();
+  const expectedRouterAddress = UNISWAP_UNIVERSAL_ROUTER_ADDRESS[chainId]?.toLowerCase();
+
   if (
     selector !== UNISWAP_EXECUTE_SELECTOR ||
-    contractAddress !== UNISWAP_UNIVERSAL_ROUTER_ADDRESS ||
+    contractAddress !== expectedRouterAddress ||
     !commandsAndTokens.length
   ) {
     return false;
@@ -144,7 +146,11 @@ export const loadInfosForUniswap = async (
   // dynamic length bytes for the plugin name
   const pluginNameBuff = Buffer.from(pluginName);
   // 20 bytes for the contract address
-  const contractAddressBuff = Buffer.from(UNISWAP_UNIVERSAL_ROUTER_ADDRESS.slice(2), "hex");
+  const routerAddress = UNISWAP_UNIVERSAL_ROUTER_ADDRESS[chainId];
+  if (!routerAddress) {
+    throw new Error(`Uniswap Universal Router address not found for chain ${chainId}`);
+  }
+  const contractAddressBuff = Buffer.from(routerAddress.slice(2), "hex");
   // 4 bytes for the selector
   const selectorBuff = Buffer.from(UNISWAP_EXECUTE_SELECTOR.slice(2), "hex");
   // 70 bytes for the signature

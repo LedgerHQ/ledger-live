@@ -1,7 +1,43 @@
 import { UniswapSupportedCommand } from "./types";
+import { UNIVERSAL_ROUTER_ADDRESS, UniversalRouterVersion } from "@uniswap/universal-router-sdk";
 
-export const UNISWAP_UNIVERSAL_ROUTER_ADDRESS = "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad";
 export const UNISWAP_EXECUTE_SELECTOR = "0x3593564c";
+
+// Use UNIVERSAL_ROUTER_ADDRESS from SDK with version V1_2
+export const UNISWAP_UNIVERSAL_ROUTER_ADDRESS = {
+  // Ethereum Mainnet
+  1: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 1),
+  // Ethereum Goerli
+  5: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 5),
+  // Ethereum Sepolia
+  11155111: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 11155111),
+  // Arbitrum One
+  42161: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 42161),
+  // Arbitrum Goerli
+  421613: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 421613),
+  // Avalanche C-Chain
+  43114: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 43114),
+  // BSC
+  56: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 56),
+  // Base
+  8453: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 8453),
+  // Base Goerli
+  84531: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 84531),
+  // Blast
+  23888: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 23888),
+  // Celo
+  42220: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 42220),
+  // Celo Alfajores
+  44787: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 44787),
+  // Optimism
+  10: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 10),
+  // Optimism Goerli
+  420: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 420),
+  // Polygon
+  137: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 137),
+  // Polygon Mumbai
+  80001: UNIVERSAL_ROUTER_ADDRESS(UniversalRouterVersion.V1_2, 80001),
+};
 
 export const WETH_PER_CHAIN_ID = {
   // Ethereum Mainnet
