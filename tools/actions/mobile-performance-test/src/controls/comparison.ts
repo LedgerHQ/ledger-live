@@ -117,6 +117,7 @@ function analyzeTrends(
 
 /**
  * Gets the metrics to compare between current and baseline reports
+ * Prioritizes key metrics (mean, median) over secondary metrics
  *
  * @param current
  * The current performance report
@@ -131,16 +132,65 @@ function getMetricsToCompare(
   current: PerformanceReport,
   baseline: PerformanceReport,
 ): PerformanceMetric[] {
-  const metrics = [
+  // Key metrics (always included)
+  const keyMetrics = [
     { name: "mean", current: current.current.mean, baseline: baseline.current.mean },
     { name: "median", current: current.current.median, baseline: baseline.current.median },
-    { name: "p75", current: current.current.p75, baseline: baseline.current.p75 },
-    { name: "p95", current: current.current.p95, baseline: baseline.current.p95 },
-    { name: "p99", current: current.current.p99, baseline: baseline.current.p99 },
-    { name: "min", current: current.current.min, baseline: baseline.current.min },
-    { name: "max", current: current.current.max, baseline: baseline.current.max },
   ];
-  return metrics;
+
+  // Secondary metrics (only include if they differ significantly from median)
+  const secondaryMetrics = [];
+  const currentMedian = current.current.median;
+  const baselineMedian = baseline.current.median;
+
+  // Only include P75 if it differs significantly from median (>10% difference)
+  if (
+    Math.abs(current.current.p75 - currentMedian) / currentMedian > 0.1 ||
+    Math.abs(baseline.current.p75 - baselineMedian) / baselineMedian > 0.1
+  ) {
+    secondaryMetrics.push({
+      name: "p75",
+      current: current.current.p75,
+      baseline: baseline.current.p75,
+    });
+  }
+
+  // Only include P95 if it differs significantly from median (>20% difference)
+  if (
+    Math.abs(current.current.p95 - currentMedian) / currentMedian > 0.2 ||
+    Math.abs(baseline.current.p95 - baselineMedian) / baselineMedian > 0.2
+  ) {
+    secondaryMetrics.push({
+      name: "p95",
+      current: current.current.p95,
+      baseline: baseline.current.p95,
+    });
+  }
+
+  // Only include P99 if it differs significantly from median (>30% difference)
+  if (
+    Math.abs(current.current.p99 - currentMedian) / currentMedian > 0.3 ||
+    Math.abs(baseline.current.p99 - baselineMedian) / baselineMedian > 0.3
+  ) {
+    secondaryMetrics.push({
+      name: "p99",
+      current: current.current.p99,
+      baseline: baseline.current.p99,
+    });
+  }
+
+  // Include min/max only if they provide meaningful information
+  if (
+    current.current.max - current.current.min > currentMedian * 0.5 ||
+    baseline.current.max - baseline.current.min > baselineMedian * 0.5
+  ) {
+    secondaryMetrics.push(
+      { name: "min", current: current.current.min, baseline: baseline.current.min },
+      { name: "max", current: current.current.max, baseline: baseline.current.max },
+    );
+  }
+
+  return [...keyMetrics, ...secondaryMetrics];
 }
 
 /**
@@ -332,6 +382,7 @@ function calculateConfidenceScore(
 
 /**
  * Formats the dynamic trend analysis
+ * Prioritizes key metrics (mean, median) in the output
  *
  * @param report
  * The performance comparison report
@@ -345,14 +396,41 @@ function formatDynamicTrendAnalysis({
   const { improvements, degradations, overallTrend, confidenceScore } = trend;
   const out = [];
 
-  if (improvements.length > 0) {
-    out.push(`  - ✅ Improvements: ${improvements.length}`);
-    improvements.forEach(improvement => out.push(`    • ${improvement}`));
+  // Separate key metrics from secondary metrics
+  const keyMetrics = ["mean", "median"];
+  const keyImprovements = improvements.filter(imp =>
+    keyMetrics.some(metric => imp.includes(metric)),
+  );
+  const keyDegradations = degradations.filter(deg =>
+    keyMetrics.some(metric => deg.includes(metric)),
+  );
+  const secondaryImprovements = improvements.filter(
+    imp => !keyMetrics.some(metric => imp.includes(metric)),
+  );
+  const secondaryDegradations = degradations.filter(
+    deg => !keyMetrics.some(metric => deg.includes(metric)),
+  );
+
+  // Show key metrics first
+  if (keyImprovements.length > 0) {
+    out.push(`  - ✅ Key metric improvements: ${keyImprovements.length}`);
+    keyImprovements.forEach(improvement => out.push(`    • ${improvement}`));
   }
-  if (degradations.length > 0) {
-    out.push(`  - ❌ Degradations: ${degradations.length}`);
-    degradations.forEach(degradation => out.push(`    • ${degradation}`));
+  if (keyDegradations.length > 0) {
+    out.push(`  - ❌ Key metric degradations: ${keyDegradations.length}`);
+    keyDegradations.forEach(degradation => out.push(`    • ${degradation}`));
   }
+
+  // Show secondary metrics only if there are significant changes
+  if (secondaryImprovements.length > 0) {
+    out.push(`  - ✅ Secondary metric improvements: ${secondaryImprovements.length}`);
+    secondaryImprovements.forEach(improvement => out.push(`    • ${improvement}`));
+  }
+  if (secondaryDegradations.length > 0) {
+    out.push(`  - ❌ Secondary metric degradations: ${secondaryDegradations.length}`);
+    secondaryDegradations.forEach(degradation => out.push(`    • ${degradation}`));
+  }
+
   if (overallTrend === PERFORMANCE_TREND_TYPE.DEGRADED && confidenceScore >= CONFIDENCE_THRESHOLD) {
     out.push(`  - ❌ Performance degradation detected with high confidence (${confidenceScore}%)`);
   }

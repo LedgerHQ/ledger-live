@@ -41,6 +41,7 @@ export class PerformanceReporter {
 
   /**
    * Formats the performance report for output
+   * Uses a hybrid approach: always shows key metrics, shows secondary metrics only when significant
    *
    * @param report
    * The performance report to format
@@ -49,21 +50,59 @@ export class PerformanceReporter {
    * The formatted performance report
    */
   format(report: PerformanceReport): string {
-    return [
+    const lines = [
       `Performance report for test ${this.testId}:`,
       `  - Total runs: ${report.individualRuns.totalRuns}`,
       `  - Mean duration: ${report.current.mean.toFixed(0)}ms`,
       `  - Median duration: ${report.current.median.toFixed(0)}ms`,
-      `  - 75th percentile duration: ${report.current.p75.toFixed(0)}ms`,
-      `  - 95th percentile duration: ${report.current.p95.toFixed(0)}ms`,
-      `  - 99th percentile duration: ${report.current.p99.toFixed(0)}ms`,
-      "Relevance analysis:",
-      `  - Variability analysis: ${report.variabilityAnalysis.isVariationSignificant ? "Significant" : "Not significant"}`,
-      `  - Relevance score: ${report.variabilityAnalysis.relevanceScore.toFixed(0)}%`,
       `  - Coefficient of variation: ${report.variabilityAnalysis.coefficientOfVariation.toFixed(0)}%`,
-      `  - Max delta between runs: ${report.variabilityAnalysis.maxDeltaBetweenRuns.toFixed(0)}ms`,
-      `  - Recommendation: ${report.variabilityAnalysis.recommendation}`,
-    ].join("\n");
+    ];
+
+    // Add secondary metrics only when they're significant
+    const median = report.current.median;
+    const p75 = report.current.p75;
+    const p95 = report.current.p95;
+    const p99 = report.current.p99;
+
+    // Show P75 if it differs significantly from median (>10% difference)
+    if (Math.abs(p75 - median) / median > 0.1) {
+      lines.push(
+        `  - 75th percentile duration: ${p75.toFixed(0)}ms (${(((p75 - median) / median) * 100).toFixed(0)}% from median)`,
+      );
+    }
+
+    // Show P95 if it differs significantly from median (>20% difference)
+    if (Math.abs(p95 - median) / median > 0.2) {
+      lines.push(
+        `  - 95th percentile duration: ${p95.toFixed(0)}ms (${(((p95 - median) / median) * 100).toFixed(0)}% from median)`,
+      );
+    }
+
+    // Show P99 if it differs significantly from median (>30% difference)
+    if (Math.abs(p99 - median) / median > 0.3) {
+      lines.push(
+        `  - 99th percentile duration: ${p99.toFixed(0)}ms (${(((p99 - median) / median) * 100).toFixed(0)}% from median)`,
+      );
+    }
+
+    // Add variability analysis only if variation is significant
+    if (report.variabilityAnalysis.isVariationSignificant) {
+      lines.push(
+        "Relevance analysis:",
+        `  - Variability analysis: Significant`,
+        `  - Relevance score: ${report.variabilityAnalysis.relevanceScore.toFixed(0)}%`,
+        `  - Max delta between runs: ${report.variabilityAnalysis.maxDeltaBetweenRuns.toFixed(0)}ms`,
+        `  - Recommendation: ${report.variabilityAnalysis.recommendation}`,
+      );
+    } else {
+      lines.push(
+        "Relevance analysis:",
+        `  - Variability analysis: Not significant`,
+        `  - Recommendation: ${report.variabilityAnalysis.recommendation}`,
+      );
+    }
+
+    return lines.join("\n");
   }
 }
 
