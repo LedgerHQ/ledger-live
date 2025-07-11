@@ -27,30 +27,15 @@ import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 
-import { loadConfig, setFeatureFlags } from "../bridge/server";
-import { isObservable, lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { log } from "detox";
-import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setupEnvironment } from "../helpers/commonHelpers";
+import { InitializationManager, InitOptions } from "../utils/initUtil";
+import { randomUUID } from "crypto";
 
 setupEnvironment();
 
-type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
-
-export type ApplicationOptions = {
-  speculosApp?: AppInfosType;
-  cliCommands?: CliCommand[];
-  cliCommandsOnApp?: {
-    app: AppInfosType;
-    cmd: CliCommand;
-  }[];
-  userdata?: string;
-  testedCurrencies?: string[];
-  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
-};
+export type ApplicationOptions = InitOptions;
 
 export const getUserdataPath = (userdata: string) => {
   return path.resolve("userdata", `${userdata}.json`);
@@ -63,25 +48,6 @@ const lazyInit = <T>(PageClass: new () => T) => {
     return instance;
   };
 };
-
-async function executeCliCommand(cmd: CliCommand, userdataPath?: string): Promise<unknown> {
-  const resultOrPromise = await cmd(userdataPath);
-
-  let result: unknown;
-  try {
-    if (isObservable(resultOrPromise)) {
-      result = await lastValueFrom(resultOrPromise);
-    } else {
-      result = resultOrPromise;
-    }
-  } catch (err) {
-    log.error("[CLI] ❌ Error executing command:", err);
-    throw err;
-  }
-
-  log.info("[CLI] 🎉 Final result:", result);
-  return result;
-}
 
 export class Application {
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
@@ -113,33 +79,16 @@ export class Application {
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
 
-  public async init({
-    speculosApp,
-    cliCommands,
-    cliCommandsOnApp,
-    userdata,
-    featureFlags,
-  }: ApplicationOptions) {
-    const userdataSpeculos = `temp-userdata-${Date.now()}`;
+  @Step("Account initialization")
+  public async init(options: ApplicationOptions) {
+    const userdataSpeculos = `temp-userdata-${randomUUID()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
-
-    fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
-
-    for (const { app, cmd } of cliCommandsOnApp || []) {
-      const apiPort = await this.common.addSpeculos(app.name);
-      await executeCliCommand(cmd, userdataPath);
-      this.common.removeSpeculos(apiPort);
+    fs.copyFileSync(getUserdataPath(options.userdata || "skip-onboarding"), userdataPath);
+    try {
+      await InitializationManager.initialize(options, userdataPath, this.common, userdataSpeculos);
+    } finally {
+      fs.unlinkSync(userdataPath);
     }
-
-    if (speculosApp) await this.common.addSpeculos(speculosApp.name);
-    for (const cmd of cliCommands || []) {
-      await executeCliCommand(cmd, userdataPath);
-    }
-
-    await loadConfig(userdataSpeculos, true);
-    fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
-
-    featureFlags && (await setFeatureFlags(featureFlags));
   }
 
   public get assetAccountsPage() {
