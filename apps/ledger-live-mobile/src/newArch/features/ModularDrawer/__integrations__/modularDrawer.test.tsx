@@ -4,15 +4,21 @@ import { ModularDrawer } from "../ModularDrawer";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ModularDrawerStep } from "../types";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const ethereumCurrency = getCryptoCurrencyById("ethereum");
+const arbitrumCurrency = getCryptoCurrencyById("arbitrum");
+const baseCurrency = getCryptoCurrencyById("base");
 
 const handleDrawerClose = jest.fn();
 const selectedStep = ModularDrawerStep.Asset;
 const currencies = [
-  { id: "bitcoin", name: "Bitcoin", ticker: "BTC" },
-  { id: "ethereum", name: "Ethereum", ticker: "ETH" },
-  { id: "arbitrum", name: "Arbitrum", ticker: "ARB" },
-  { id: "base", name: "Base", ticker: "BASE" },
-] as CryptoOrTokenCurrency[];
+  bitcoinCurrency,
+  ethereumCurrency,
+  arbitrumCurrency,
+  baseCurrency,
+] satisfies CryptoOrTokenCurrency[];
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
