@@ -1,15 +1,15 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildUnsignedTransaction } from "../api/network";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { Transaction, HederaSigner } from "../types";
+import type { HederaAccount, Transaction, HederaSigner } from "../types";
 
 export const buildSignOperation =
   (
     signerContext: SignerContext<HederaSigner>,
-  ): AccountBridge<Transaction, Account>["signOperation"] =>
+  ): AccountBridge<Transaction, HederaAccount>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       void (async function () {

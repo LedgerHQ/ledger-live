@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import type { HederaOperationExtra, HederaOperationType, Transaction } from "../types";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import invariant from "invariant";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { isValidExtra } from "../logic";
+import type { HederaOperationExtra, HederaOperationType, Transaction } from "../types";
 
 const ESTIMATED_FEE_SAFETY_RATE = 2;
 const TINYBAR_SCALE = 8;
@@ -87,6 +88,25 @@ export function base64ToUrlSafeBase64(data: string): string {
 
   return data.replace(/\//g, "_").replace(/\+/g, "-");
 }
+
+export const applyPendingExtras = (existing: Operation[], pending: Operation[]) => {
+  const pendingOperationsByHash = new Map(pending.map(op => [op.hash, op]));
+
+  return existing.map(op => {
+    const pendingOp = pendingOperationsByHash.get(op.hash);
+    if (!pendingOp) return op;
+    if (!isValidExtra(op.extra)) return op;
+    if (!isValidExtra(pendingOp.extra)) return op;
+
+    return {
+      ...op,
+      extra: {
+        ...pendingOp.extra,
+        ...op.extra,
+      },
+    };
+  });
+};
 
 export function patchOperationWithExtra(
   operation: Operation,

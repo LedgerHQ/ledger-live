@@ -14,9 +14,10 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { HederaAccount } from "../types";
+import { applyPendingExtras } from "./utils";
 
 export const getAccountShape: GetAccountShape<Account> = async (
-  info: any,
+  info,
 ): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
@@ -36,6 +37,7 @@ export const getAccountShape: GetAccountShape<Account> = async (
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
+  const pendingOperations = initialAccount?.pendingOperations ?? [];
   const latestOperationTimestamp = oldOperations[0]
     ? new BigNumber(Math.floor(oldOperations[0].date.getTime() / 1000))
     : null;
@@ -46,7 +48,8 @@ export const getAccountShape: GetAccountShape<Account> = async (
     address,
     latestOperationTimestamp ? latestOperationTimestamp.toString() : null,
   );
-  const operations = mergeOps(oldOperations, newOperations);
+  const enrichedNewOperations = applyPendingExtras(newOperations, pendingOperations);
+  const operations = mergeOps(oldOperations, enrichedNewOperations);
 
   const delegation =
     typeof mirrorAccount.staked_node_id === "number"

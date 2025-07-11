@@ -82,6 +82,8 @@ export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
   memo?: string | null;
+  targetStakingNodeId?: number | null;
+  previousStakingNodeId?: number | null;
 };
 
 export type HederaOperationType = "CryptoTransfer" | "CryptoUpdate";

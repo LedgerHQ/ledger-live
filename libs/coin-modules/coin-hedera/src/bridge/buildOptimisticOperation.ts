@@ -1,7 +1,7 @@
 import invariant from "invariant";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { HederaOperationExtra, Transaction } from "../types";
+import type { HederaAccount, HederaOperationExtra, Transaction } from "../types";
 import { getEstimatedFees } from "./utils";
 import { isStakingTransaction } from "../logic";
 
@@ -9,7 +9,7 @@ const buildOptimisticStakingOperation = async ({
   account,
   transaction,
 }: {
-  account: Account;
+  account: HederaAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
   invariant(isStakingTransaction(transaction), "invalid transaction properties");
@@ -32,6 +32,8 @@ const buildOptimisticStakingOperation = async ({
     date: new Date(),
     extra: {
       memo: transaction.memo ?? null,
+      targetStakingNodeId: transaction.properties?.stakedNodeId ?? null,
+      previousStakingNodeId: account.hederaResources?.delegation?.nodeId ?? null,
     } satisfies Partial<HederaOperationExtra>,
   };
 
@@ -43,7 +45,7 @@ const buildOptimisticCoinOperation = async ({
   transaction,
   transactionType,
 }: {
-  account: Account;
+  account: HederaAccount;
   transaction: Transaction;
   transactionType?: OperationType;
 }): Promise<Operation> => {
@@ -73,7 +75,7 @@ export const buildOptimisticOperation = async ({
   account,
   transaction,
 }: {
-  account: Account;
+  account: HederaAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
   if (isStakingTransaction(transaction)) {
