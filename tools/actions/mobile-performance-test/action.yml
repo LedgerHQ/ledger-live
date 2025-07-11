@@ -16,12 +16,22 @@ inputs:
   subdomain:
     description: "The Datadog subdomain to use. If your URL is `myorg.datadoghq.com`, the custom subdomain is `myorg`."
     required: false
+  mobile-application:
+    description: |
+      The mobile application ID to use for the test. Datadog GUID pointing to the mobile application.
+      Used to retrieve the mobile-application-version if not provided.
+    required: true
   mobile-application-version:
-    description: "The mobile application version ID to use for the test. Datadog GUID pointing to the mobile application version."
+    description: |
+      The mobile application version ID to use for the test. Datadog GUID pointing to the mobile application version.
+      If not provided, and if mobile-application and mobile-application-version-name inputs are provided, it will try
+      to find the version ID by name. Otherwise, will use the latest version to run the performance test.
     required: false
   mobile-application-version-name:
-    description: "The mobile application version name to use for the test (e.g., '1.0.0')."
-    required: false
+    description: |
+      The mobile application version name to use for the test (e.g., '1.0.0').
+      Used to retrieve the mobile-application-version if not provided.
+    required: true
   mobile-application-platform:
     description: "The mobile application platform to use for the test (e.g., 'ios', 'android')."
     required: true
