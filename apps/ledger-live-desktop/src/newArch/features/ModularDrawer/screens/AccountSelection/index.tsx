@@ -42,7 +42,7 @@ export const AccountSelection = ({
 
   const BottomComponent = (
     <AddAccountContainer>
-      <AddAccountButton onAddAccountClick={onAddAccountClick} />
+      <AddAccountButton data-testid="add-account-button" onAddAccountClick={onAddAccountClick} />
     </AddAccountContainer>
   );
 
