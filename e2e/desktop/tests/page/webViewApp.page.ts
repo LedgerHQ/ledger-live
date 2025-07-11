@@ -31,16 +31,12 @@ export abstract class WebViewAppPage extends AppPage {
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    // eslint-disable-next-line
     if (!(webview as any)._ledgerUrlListenerAttached) {
       webview.on("framenavigated", frame => {
         if (frame === webview.mainFrame()) {
           this.webviewUrlHistory.push(frame.url());
         }
       });
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      // eslint-disable-next-line
       (webview as any)._ledgerUrlListenerAttached = true;
     }
 
