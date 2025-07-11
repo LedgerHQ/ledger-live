@@ -14,6 +14,7 @@ import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -34,6 +35,8 @@ export function useSwapCustomHandlers(
           swapId: exchangeParams.swapId!,
           status: "pending",
           receiverAccountId: exchangeParams.transaction.recipient,
+          toCurrency: (exchangeParams.exchange as ExchangeSwap).toCurrency,
+          fromCurrency: (exchangeParams.exchange as ExchangeSwap).fromCurrency,
           operationId: operationHash,
           fromAmount: exchangeParams.transaction.amount,
           toAmount: BigNumber(exchangeParams.amountExpectedTo!),

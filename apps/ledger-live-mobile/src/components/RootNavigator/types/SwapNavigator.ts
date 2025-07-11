@@ -32,7 +32,7 @@ import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, Operation, SwapOperation } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/core";
 import BigNumber from "bignumber.js";
 import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
@@ -40,7 +40,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
-  SwapOperation,
   SwapPendingOperation,
   SwapSelectCurrency,
 } from "../../../screens/Swap/types";
