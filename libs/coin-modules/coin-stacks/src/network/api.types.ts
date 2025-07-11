@@ -36,6 +36,11 @@ export interface TransactionResponse {
         type_id: string;
         address: string;
       };
+      asset: {
+        asset_name: string;
+        contract_address: string;
+        contract_name: string;
+      };
     }>;
     anchor_mode: string;
     is_unanchored: boolean;
@@ -163,6 +168,18 @@ export interface GetNonceResponse {
 
 export interface BalanceResponse {
   balance: string;
+}
+
+export interface TokenBalance {
+  token: string;
+  balance: string;
+}
+
+export interface TokenBalanceResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: TokenBalance[];
 }
 
 export interface NetworkStatusResponse {
