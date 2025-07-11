@@ -3,7 +3,8 @@ import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
 export abstract class WebViewAppPage extends AppPage {
-  private _webviewPage?: Page;
+  public _webviewPage?: Page;
+  public webviewUrlHistory: string[] = [];
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
@@ -29,6 +30,20 @@ export abstract class WebViewAppPage extends AppPage {
       timeout: this.defaultWebViewTimeout,
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    // eslint-disable-next-line
+    if (!(webview as any)._ledgerUrlListenerAttached) {
+      webview.on("framenavigated", frame => {
+        if (frame === webview.mainFrame()) {
+          this.webviewUrlHistory.push(frame.url());
+        }
+      });
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      // eslint-disable-next-line
+      (webview as any)._ledgerUrlListenerAttached = true;
+    }
+
     this._webviewPage = webview;
     return webview;
   }
