@@ -31,7 +31,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.assetCode = op.asset.assetReference;
     extra.assetIssuer = op.asset.assetOwner;
   }
-
+  console.log("OP 1:", op);
   const res = {
     id: extra.ledgerOpType
       ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
@@ -139,13 +139,13 @@ export const buildOptimisticOperation = (
 
   const { subAccountId } = transaction;
   const { subAccounts } = account;
-
+  console.log("buildOptimisticOperation", transaction.amount);
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type: type,
-    value: subAccountId ? fees : transaction.amount, // match old behavior
-    fee: transaction["fees"] ?? 0n,
+    value: subAccountId ? new BigNumber(fees) : transaction.amount, // match old behavior
+    fee: new BigNumber(fees),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

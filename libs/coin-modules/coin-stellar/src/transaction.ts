@@ -43,7 +43,7 @@ export function formatTransaction(
 
 function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const common = fromTransactionCommonRaw(tr);
-  // const { networkInfo } = tr;
+  const { networkInfo } = tr;
   const [assetCode, assetIssuer] = getAssetCodeIssuer(tr);
 
   return {
@@ -53,13 +53,13 @@ function fromTransactionRaw(tr: TransactionRaw): Transaction {
     // baseReserve: tr.baseReserve ? new BigNumber(tr.baseReserve) : null,
     memoValue: tr.memoValue ? tr.memoValue : null,
     memoType: tr.memoType ? tr.memoType : null,
-    // networkInfo: networkInfo && {
-    //   family: networkInfo.family,
-    //   fees: new BigNumber(networkInfo.fees),
-    //   baseFee: new BigNumber(networkInfo.baseFee),
-    //   baseReserve: new BigNumber(networkInfo.baseReserve),
-    //   networkCongestionLevel: networkInfo.networkCongestionLevel,
-    // },
+    networkInfo: networkInfo && {
+      family: networkInfo.family,
+      fees: new BigNumber(networkInfo.fees),
+      baseFee: new BigNumber(networkInfo.baseFee),
+      baseReserve: new BigNumber(networkInfo.baseReserve),
+      networkCongestionLevel: networkInfo.networkCongestionLevel,
+    },
     mode: tr.mode,
     assetCode,
     assetIssuer,

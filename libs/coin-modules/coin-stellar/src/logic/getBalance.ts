@@ -23,8 +23,8 @@ export async function getBalance(addr: string): Promise<Balance[]> {
           value: BigInt(formattedBalance.toString()),
           asset: {
             type: "token" as const,
-            assetCode: asset.asset_code,
-            assetIssuer: asset.asset_issuer,
+            assetReference: asset.asset_code,
+            assetOwner: asset.asset_issuer,
           },
           spendableBalance: BigInt(spendableBalance.toString()),
         };
