@@ -29,7 +29,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import ValidatorIcon from "~/families/hedera/shared/ValidatorIcon";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
-import { HederaDelegationFlowParamList } from "./types";
+import type { HederaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
 import { rgba } from "../../../colors";
 import DelegatingContainer from "../../tezos/DelegatingContainer";

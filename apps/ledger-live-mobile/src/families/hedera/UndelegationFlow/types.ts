@@ -41,7 +41,7 @@ export type HederaUndelegationFlowParamList = {
     parentId?: string;
     deviceId: string;
     transaction: Transaction;
-    result: Operation;
+    error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.HederaUndelegationValidationSuccess]: {
@@ -49,7 +49,7 @@ export type HederaUndelegationFlowParamList = {
     parentId?: string;
     deviceId: string;
     transaction: Transaction;
-    error: Error;
+    result: Operation;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

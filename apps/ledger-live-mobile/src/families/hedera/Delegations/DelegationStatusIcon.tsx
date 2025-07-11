@@ -6,18 +6,19 @@ import ExclamationCircle from "~/icons/ExclamationCircle";
 
 interface Props {
   status: HederaDelegationStatus;
+  size?: number;
 }
 
-export default function DelegationStatusIcon({ status }: Props) {
+export default function DelegationStatusIcon({ status, size = 14 }: Props) {
   const { colors } = useTheme();
 
   if (status === "inactive") {
-    return <ExclamationCircle size={14} color={colors.alert} />;
+    return <ExclamationCircle size={size} color={colors.alert} />;
   }
 
   if (status === "overstaked") {
-    return <ExclamationCircle size={14} color={colors.warning} />;
+    return <ExclamationCircle size={size} color={colors.warning} />;
   }
 
-  return <CheckCircle size={14} color={colors.green} />;
+  return <CheckCircle size={size} color={colors.green} />;
 }

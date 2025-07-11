@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -14,7 +14,7 @@ import type {
 import { getDelegationStatus } from "@ledgerhq/live-common/families/hedera/logic";
 import { useHederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Box, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
 import Circle from "~/components/Circle";
 import DelegationDrawer, { IconProps } from "~/components/DelegationDrawer";
@@ -27,6 +27,7 @@ import ValidatorIcon from "../shared/ValidatorIcon";
 import DelegationPlaceholder from "./DelegationPlaceholder";
 import DelegationRewards from "./DelegationRewards";
 import DrawerStakeActionIcon from "./DrawerStakeActionIcon";
+import DelegationStatusIcon from "./DelegationStatusIcon";
 import DelegationRow from "./Row";
 
 type Props = {
@@ -128,15 +129,18 @@ function Delegations({ account, delegatedPosition }: Props) {
       {
         label: t("hedera.delegatedPositions.details.status.title"),
         Component: (
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            ellipsizeMode="middle"
-            style={styles.valueText}
-            color={mapStatusToColor[status]}
-          >
-            {t(`hedera.delegatedPositions.details.status.${status}`)}
-          </Text>
+          <Flex flexDirection="row" alignItems="center" columnGap={4}>
+            <DelegationStatusIcon status={status} />
+            <Text
+              numberOfLines={1}
+              fontWeight="semiBold"
+              ellipsizeMode="middle"
+              style={styles.valueText}
+              color={mapStatusToColor[status]}
+            >
+              <Trans i18nKey={`hedera.delegatedPositions.details.status.${status}`} />
+            </Text>
+          </Flex>
         ),
       },
       {

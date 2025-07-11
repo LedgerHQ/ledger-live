@@ -16,7 +16,7 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { HederaDelegationFlowParamList } from "./types";
+import type { HederaDelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
