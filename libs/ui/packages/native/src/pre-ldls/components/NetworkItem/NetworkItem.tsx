@@ -28,7 +28,7 @@ const Wrapper = styled(Pressable)<{ tokens: Tokens }>`
 const InfoWrapper = styled(View)<{ tokens: Tokens }>`
   flex-direction: column;
   justify-content: center;
-  margin-left: ${({ tokens }) => tokens["margin-s"]}px;
+  margin-left: 16px;
   flex: 1;
 `;
 
@@ -69,7 +69,7 @@ export const NetworkItem = ({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper tokens={tokens}>
         <Text
           variant="largeLineHeight"

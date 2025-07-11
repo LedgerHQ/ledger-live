@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { FlashList } from "@shopify/flash-list";
 import { Network, NetworkItem } from "../NetworkItem/NetworkItem";
+import { FlatList, FlatListProps } from "react-native";
+
+const ITEM_PADDING = 8;
+const ITEM_HEIGHT = 48 + ITEM_PADDING * 2;
 
 export const NetworkList = ({
   networks,
@@ -15,7 +18,7 @@ export const NetworkList = ({
   scrollToTop?: boolean;
   hasNextPage?: boolean;
 }) => {
-  const flashListRef = useRef<FlashList<Network>>(null);
+  const flatListRef = useRef<FlatList<Network>>(null);
 
   const renderNetworkItem = useCallback(
     ({ item }: { item: Network }) => <NetworkItem {...item} onClick={() => onClick(item.id)} />,
@@ -25,8 +28,8 @@ export const NetworkList = ({
   const keyExtractor = useCallback((item: Network, index: number) => `${item.id}-${index}`, []);
 
   useEffect(() => {
-    if (scrollToTop && flashListRef.current) {
-      flashListRef.current.scrollToOffset({ offset: 0, animated: true });
+    if (scrollToTop && flatListRef.current) {
+      flatListRef.current.scrollToOffset({ offset: 0, animated: true });
     }
   }, [scrollToTop]);
 
@@ -36,18 +39,20 @@ export const NetworkList = ({
     }
   }, [hasNextPage, onVisibleItemsScrollEnd]);
 
-  const flashListProps = {
-    ref: flashListRef,
+  const flatListProps: FlatListProps<Network> = {
     data: networks,
     renderItem: renderNetworkItem,
     keyExtractor,
-    estimatedItemSize: 72,
-    style: { flex: 1, width: "100%" as const },
+    getItemLayout: (data, index) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
     ...(hasNextPage && {
       onEndReached: handleEndReached,
       onEndReachedThreshold: 0.1,
     }),
   };
 
-  return <FlashList {...flashListProps} />;
+  return <FlatList ref={flatListRef} {...flatListProps} />;
 };
