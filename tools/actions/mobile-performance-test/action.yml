@@ -19,10 +19,35 @@ inputs:
   mobile-application-version:
     description: "The mobile application version ID to use for the test. Datadog GUID pointing to the mobile application version."
     required: false
+  mobile-application-version-name:
+    description: "The mobile application version name to use for the test (e.g., '1.0.0')."
+    required: false
+  mobile-application-platform:
+    description: "The mobile application platform to use for the test (e.g., 'ios', 'android')."
+    required: true
+    type: string
+  enable-comparison:
+    description: "Enable performance comparison with another performance report from another workflow run"
+    required: false
+    default: false
+    type: boolean
+  baseline-repo:
+    description: "The repository to fetch baseline performance report from (e.g., 'ledgerhq/ledger-live-build')"
+    required: false
+    default: "ledgerhq/ledger-live-build"
+  baseline-workflow:
+    description: "The baseline workflow name to fetch performance report from (e.g., 'release-mobile.yml')"
+    required: false
+    default: "release-mobile.yml"
+  github-token:
+    description: "GitHub token for fetching baseline performance reports"
+    required: false
 
 outputs:
   performance-report:
     description: "Performance test report in JSON format"
+  comparison-report:
+    description: "Performance comparison report in JSON format (only when enable-comparison is true)"
 
 runs:
   using: node20

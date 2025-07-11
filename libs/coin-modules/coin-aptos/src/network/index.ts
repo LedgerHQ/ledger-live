@@ -11,6 +11,7 @@ import { Account } from "@ledgerhq/types-live";
 import { AptosSigner } from "../types";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import { combineSignedTransaction } from "../logic/combine";
+
 export * from "./client";
 
 export async function signTransaction(

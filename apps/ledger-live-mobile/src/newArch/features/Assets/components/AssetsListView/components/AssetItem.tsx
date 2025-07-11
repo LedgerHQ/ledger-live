@@ -31,15 +31,27 @@ const AssetItem: React.FC<AssetItemProps> = ({ asset, balance }) => {
           fontWeight="semiBold"
           color="neutral.c100"
           flexShrink={1}
+          testID={`assetItem-${currency.name}-name`}
         >
           {currency.name}
         </Text>
-        <Text numberOfLines={1} variant="body" color="neutral.c70" flexShrink={1}>
+        <Text
+          numberOfLines={1}
+          variant="body"
+          color="neutral.c70"
+          flexShrink={1}
+          testID={`assetItem-${currency.name}-ticker`}
+        >
           <CurrencyUnitValue showCode unit={currency?.units?.[0]} value={balance} />
         </Text>
       </Flex>
       <Flex alignItems="flex-end">
-        <Text variant="large" fontWeight="semiBold" color="neutral.c100" testID="asset-balance">
+        <Text
+          variant="large"
+          fontWeight="semiBold"
+          color="neutral.c100"
+          testID={`assetItem-${currency.name}-balance`}
+        >
           <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
         </Text>
         <Delta
@@ -47,6 +59,7 @@ const AssetItem: React.FC<AssetItemProps> = ({ asset, balance }) => {
           show0Delta={balance.toNumber() !== 0}
           fallbackToPercentPlaceholder
           valueChange={countervalueChange}
+          testID={`assetItem-${currency.name}-delta`}
         />
       </Flex>
     </>

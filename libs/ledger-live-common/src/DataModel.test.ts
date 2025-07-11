@@ -1,12 +1,13 @@
 import { Account, AccountRaw, AccountUserData, Operation } from "@ledgerhq/types-live";
-import { createDataModel } from "./DataModel";
-import { fromAccountRaw, toAccountRaw } from "./account";
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/lib/store";
 import {
   APTOS_HARDENED_DERIVATION_PATH,
   APTOS_NON_HARDENED_DERIVATION_PATH,
-} from "./families/aptos/consts";
+} from "@ledgerhq/coin-aptos/constants";
+import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
+import { createDataModel } from "./DataModel";
+import { fromAccountRaw, toAccountRaw } from "./account";
 import { getCurrencyConfiguration } from "./config";
+
 jest.mock("./config", () => ({
   getCurrencyConfiguration: jest.fn(),
 }));
