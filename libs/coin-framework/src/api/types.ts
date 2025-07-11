@@ -15,7 +15,8 @@ export type TokenStandard =
   | "coin" // Aptos native token type
   | "fungible_asset" // Aptos FA standard
   | "trc10"
-  | "trc20";
+  | "trc20"
+  | "erc";
 // | string;              // for future extension (e.g., sui, custom, etc.)
 
 export type AssetInfo =
