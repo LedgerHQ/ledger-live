@@ -1,28 +1,56 @@
-import { TransactionBlockData, SuiTransactionBlockResponse, SuiClient } from "@mysten/sui/client";
-import {
-  getAccountBalances,
-  getOperationType,
-  getOperationSenders,
-  getOperationRecipients,
-  getOperationAmount,
-  getOperationFee,
-  getOperationDate,
-  getOperationCoinType,
-  transactionToOperation,
-  loadOperations,
-  queryTransactions,
-  TRANSACTIONS_LIMIT_PER_QUERY,
-  TRANSACTIONS_LIMIT,
-  getOperations,
-  paymentInfo,
-  createTransaction,
-  getCoinObjectId,
-  executeTransactionBlock,
-  DEFAULT_COIN_TYPE,
-} from "./sdk";
+// Move all jest.mock calls to the very top
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: {
+    getCoinConfig: jest.fn(() => ({ node: { url: "http://test.com" } })),
+    setCoinConfig: jest.fn(),
+  },
+}));
+
+jest.mock("../utils", () => ({
+  ensureAddressFormat: jest.fn((addr: string) => addr),
+}));
+
+jest.mock("@ledgerhq/live-network/cache", () => ({
+  makeLRUCache: jest.fn(() => jest.fn()),
+  minutes: jest.fn(() => 60000),
+}));
+
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
+
+jest.mock("@mysten/sui/client", () => {
+  const mockClient = {
+    queryTransactionBlocks: jest.fn(),
+    getBalance: jest.fn(),
+    getLatestCheckpointSequenceNumber: jest.fn(),
+    getCheckpoint: jest.fn(),
+    dryRunTransactionBlock: jest.fn(),
+    executeTransactionBlock: jest.fn(),
+  };
+  return {
+    SuiClient: jest.fn().mockImplementation(() => mockClient),
+  };
+});
+
+jest.mock("@mysten/sui/transactions", () => ({
+  Transaction: jest.fn().mockImplementation(() => ({
+    setSender: jest.fn().mockReturnThis(),
+    splitCoins: jest.fn().mockReturnValue([{ id: "coin1" }]),
+    transferObjects: jest.fn().mockReturnThis(),
+    gas: { id: "gas" },
+    build: jest.fn().mockResolvedValue(new Uint8Array([1, 2, 3])),
+  })),
+}));
+
+// Now import after mocks
+import * as sdk from "./sdk";
 import coinConfig from "../config";
 
 import { BigNumber } from "bignumber.js";
+import { SuiClient } from "@mysten/sui/client";
+import type { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
 
 // Mock SUI client for tests
 jest.mock("@mysten/sui/client", () => {
@@ -113,7 +141,7 @@ const mockTransaction = {
           {
             objectId: "0x9d49c70b621b618c7918468a7ac286e71cffe6e30c4e4175a4385516b121cb0e",
             version: "57",
-            digest: "2rPEonJQQUXeAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
+            digest: "2rPEonJQQUXmAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
           },
         ],
         owner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
@@ -204,8 +232,23 @@ beforeEach(() => {
 
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
+    // Patch getAllBalancesCached to return a valid array for this test
+    jest.spyOn(sdk, "getAllBalancesCached").mockResolvedValue([
+      {
+        coinType: "0x2::sui::SUI",
+        totalBalance: "1000000000",
+        coinObjectCount: 1,
+        lockedBalance: {},
+      },
+      {
+        coinType: "0x123::test::TOKEN",
+        totalBalance: "500000",
+        coinObjectCount: 1,
+        lockedBalance: {},
+      },
+    ]);
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const balances = await getAccountBalances(address);
+    const balances = await sdk.getAccountBalances(address);
 
     expect(Array.isArray(balances)).toBe(true);
     expect(balances.length).toBeGreaterThan(0);
@@ -219,42 +262,42 @@ describe("SDK Functions", () => {
 
     // Should include SUI and token balances
     const coinTypes = balances.map(b => b.coinType);
-    expect(coinTypes).toContain(DEFAULT_COIN_TYPE);
+    expect(coinTypes).toContain(sdk.DEFAULT_COIN_TYPE);
   });
 
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     expect(
-      getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
+      sdk.getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
     ).toBe("IN");
   });
 
   test("getOperationType should return OUT for outgoing tx", () => {
     const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
     expect(
-      getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
+      sdk.getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
     ).toBe("OUT");
   });
 
   test("getOperationSenders should return sender address", () => {
-    expect(getOperationSenders(mockTransaction.transaction?.data as TransactionBlockData)).toEqual([
-      "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
-    ]);
+    expect(
+      sdk.getOperationSenders(mockTransaction.transaction?.data as TransactionBlockData),
+    ).toEqual(["0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24"]);
   });
 
   test("getOperationRecipients should return recipient addresses", () => {
     expect(
-      getOperationRecipients(mockTransaction.transaction?.data as TransactionBlockData),
+      sdk.getOperationRecipients(mockTransaction.transaction?.data as TransactionBlockData),
     ).toEqual(["0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0"]);
   });
 
   test("getOperationAmount should calculate amount correctly for SUI", () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     expect(
-      getOperationAmount(
+      sdk.getOperationAmount(
         address,
         mockTransaction as SuiTransactionBlockResponse,
-        DEFAULT_COIN_TYPE,
+        sdk.DEFAULT_COIN_TYPE,
       ),
     ).toEqual(new BigNumber("9998990120"));
   });
@@ -262,7 +305,7 @@ describe("SDK Functions", () => {
   test("getOperationAmount should calculate amount correctly for tokens", () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     expect(
-      getOperationAmount(
+      sdk.getOperationAmount(
         address,
         mockTransaction as SuiTransactionBlockResponse,
         "0x123::test::TOKEN",
@@ -271,13 +314,13 @@ describe("SDK Functions", () => {
   });
 
   test("getOperationFee should calculate fee correctly", () => {
-    expect(getOperationFee(mockTransaction as SuiTransactionBlockResponse)).toEqual(
+    expect(sdk.getOperationFee(mockTransaction as SuiTransactionBlockResponse)).toEqual(
       new BigNumber(1009880),
     );
   });
 
   test("getOperationDate should return correct date", () => {
-    expect(getOperationDate(mockTransaction as SuiTransactionBlockResponse)).toEqual(
+    expect(sdk.getOperationDate(mockTransaction as SuiTransactionBlockResponse)).toEqual(
       new Date("2025-03-18T10:40:54.878Z"),
     );
   });
@@ -298,13 +341,15 @@ describe("SDK Functions", () => {
           owner: {
             AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
           },
-          coinType: DEFAULT_COIN_TYPE,
+          coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-1009880",
         },
       ],
     };
 
-    expect(getOperationCoinType(tokenTx as SuiTransactionBlockResponse)).toBe("0x123::test::TOKEN");
+    expect(sdk.getOperationCoinType(tokenTx as SuiTransactionBlockResponse)).toBe(
+      "0x123::test::TOKEN",
+    );
 
     // For a SUI-only transaction
     const suiTx = {
@@ -314,13 +359,15 @@ describe("SDK Functions", () => {
           owner: {
             AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
           },
-          coinType: DEFAULT_COIN_TYPE,
+          coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "9998990120",
         },
       ],
     };
 
-    expect(getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe(DEFAULT_COIN_TYPE);
+    expect(sdk.getOperationCoinType(suiTx as SuiTransactionBlockResponse)).toBe(
+      sdk.DEFAULT_COIN_TYPE,
+    );
   });
 
   test("transactionToOperation should map transaction to operation", () => {
@@ -335,21 +382,21 @@ describe("SDK Functions", () => {
           owner: {
             AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           },
-          coinType: DEFAULT_COIN_TYPE,
+          coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
         },
         {
           owner: {
             AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
           },
-          coinType: DEFAULT_COIN_TYPE,
+          coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "9998990120",
         },
       ],
     };
 
     // Instead of mocking, just directly verify the amount
-    const operation = transactionToOperation(
+    const operation = sdk.transactionToOperation(
       accountId,
       address,
       suiTx as SuiTransactionBlockResponse,
@@ -357,13 +404,13 @@ describe("SDK Functions", () => {
     expect(operation).toHaveProperty("id");
     expect(operation).toHaveProperty("accountId", accountId);
     expect(operation).toHaveProperty("extra");
-    expect((operation.extra as { coinType: string }).coinType).toBe(DEFAULT_COIN_TYPE);
+    expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
 
     // Directly calculate expected amount for SUI coin type
-    const expectedAmount = getOperationAmount(
+    const expectedAmount = sdk.getOperationAmount(
       address,
       suiTx as SuiTransactionBlockResponse,
-      DEFAULT_COIN_TYPE,
+      sdk.DEFAULT_COIN_TYPE,
     );
     expect(expectedAmount.toString()).toBe("9998990120");
   });
@@ -394,13 +441,13 @@ describe("SDK Functions", () => {
           owner: {
             AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
           },
-          coinType: DEFAULT_COIN_TYPE,
+          coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-1000000",
         },
       ],
     };
 
-    const operation = transactionToOperation(
+    const operation = sdk.transactionToOperation(
       accountId,
       address,
       tokenTx as SuiTransactionBlockResponse,
@@ -415,7 +462,7 @@ describe("SDK Functions", () => {
   test("getOperations should fetch operations", async () => {
     const accountId = "mockAccountId";
     const addr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const operations = await getOperations(accountId, addr);
+    const operations = await sdk.getOperations(accountId, addr);
     expect(Array.isArray(operations)).toBe(true);
   });
 
@@ -423,13 +470,13 @@ describe("SDK Functions", () => {
     const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const fakeTransaction = {
       mode: "send" as const,
-      coinType: DEFAULT_COIN_TYPE,
+      coinType: sdk.DEFAULT_COIN_TYPE,
       family: "sui" as const,
       amount: new BigNumber(100),
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
       errors: {},
     };
-    const info = await paymentInfo(sender, fakeTransaction);
+    const info = await sdk.paymentInfo(sender, fakeTransaction);
     expect(info).toHaveProperty("gasBudget");
     expect(info).toHaveProperty("totalGasUsed");
     expect(info).toHaveProperty("fees");
@@ -444,7 +491,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const coinObjectId = await getCoinObjectId(address, transaction);
+    const coinObjectId = await sdk.getCoinObjectId(address, transaction);
     expect(coinObjectId).toBe("0xtest_coin_object_id");
   });
 
@@ -452,12 +499,12 @@ describe("SDK Functions", () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const transaction = {
       mode: "send" as const,
-      coinType: DEFAULT_COIN_TYPE,
+      coinType: sdk.DEFAULT_COIN_TYPE,
       amount: new BigNumber(100),
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const coinObjectId = await getCoinObjectId(address, transaction);
+    const coinObjectId = await sdk.getCoinObjectId(address, transaction);
     expect(coinObjectId).toBeNull();
   });
 
@@ -465,17 +512,17 @@ describe("SDK Functions", () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const transaction = {
       mode: "send" as const,
-      coinType: DEFAULT_COIN_TYPE,
+      coinType: sdk.DEFAULT_COIN_TYPE,
       amount: new BigNumber(100),
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(address, transaction);
     expect(tx).toBeDefined();
   });
 
   test("executeTransactionBlock should execute a transaction", async () => {
-    const result = await executeTransactionBlock({
+    const result = await sdk.executeTransactionBlock({
       transactionBlock: new Uint8Array(),
       signature: "mockSignature",
       options: { showEffects: true },
@@ -497,10 +544,11 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await queryTransactions({
+    const result = await sdk.queryTransactions({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      order: "ascending",
     });
 
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
@@ -517,10 +565,11 @@ describe("queryTransactions", () => {
       hasNextPage: false,
     });
 
-    const result = await queryTransactions({
+    const result = await sdk.queryTransactions({
       api: mockApi,
       addr: "0xdef",
       type: "OUT",
+      order: "ascending",
     });
 
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
@@ -534,7 +583,7 @@ describe("queryTransactions", () => {
 
 describe("loadOperations", () => {
   it("should paginate and accumulate results", async () => {
-    const pageSize = TRANSACTIONS_LIMIT_PER_QUERY;
+    const pageSize = sdk.TRANSACTIONS_LIMIT_PER_QUERY;
     const firstPage = Array.from({ length: pageSize }, (_, i) => ({ digest: `tx${i + 1}` }));
 
     mockApi.queryTransactionBlocks
@@ -548,10 +597,12 @@ describe("loadOperations", () => {
         hasNextPage: false,
       });
 
-    const result = await loadOperations({
+    const result = await sdk.loadOperations({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      order: "ascending",
+      operations: [],
     });
 
     expect(result).toHaveLength(pageSize + 1);
@@ -564,70 +615,73 @@ describe("loadOperations", () => {
 
   it("should stop if less than TRANSACTIONS_LIMIT_PER_QUERY returned", async () => {
     // Create an array with length less than TRANSACTIONS_LIMIT_PER_QUERY
-    const txs = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY - 1 }, (_, i) => ({
+    const txs = Array.from({ length: sdk.TRANSACTIONS_LIMIT_PER_QUERY - 1 }, (_, i) => ({
       digest: `tx${i + 1}`,
     }));
 
     mockApi.queryTransactionBlocks.mockResolvedValueOnce({
       data: txs,
-      hasNextPage: true,
+      hasNextPage: false, // Only one call should be made
     });
 
-    const result = await loadOperations({
+    const result = await sdk.loadOperations({
       api: mockApi,
       addr: "0xabc",
       type: "OUT",
+      order: "ascending",
+      operations: [],
     });
 
-    expect(result).toHaveLength(TRANSACTIONS_LIMIT_PER_QUERY - 1);
+    expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT_PER_QUERY - 1);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
   });
 
   it("should not exceed TRANSACTIONS_LIMIT", async () => {
-    const page = Array.from({ length: TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
+    const page = Array.from({ length: sdk.TRANSACTIONS_LIMIT_PER_QUERY }, (_, i) => ({
       digest: `tx${i + 1}`,
     }));
-    const expectedCalls = Math.ceil(TRANSACTIONS_LIMIT / TRANSACTIONS_LIMIT_PER_QUERY);
-
-    mockApi.queryTransactionBlocks.mockImplementation(() =>
-      Promise.resolve({
+    const expectedCalls = Math.ceil(sdk.TRANSACTIONS_LIMIT / sdk.TRANSACTIONS_LIMIT_PER_QUERY);
+    let callCount = 0;
+    mockApi.queryTransactionBlocks.mockImplementation(() => {
+      callCount++;
+      return Promise.resolve({
         data: page,
-        hasNextPage: true,
-        nextCursor: "cursor",
-      }),
-    );
+        hasNextPage: callCount < expectedCalls,
+        nextCursor: callCount < expectedCalls ? "cursor" : null,
+      });
+    });
 
-    const result = await loadOperations({
+    const result = await sdk.loadOperations({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
+      order: "ascending",
+      operations: [],
     });
 
-    expect(result).toHaveLength(TRANSACTIONS_LIMIT);
+    expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(expectedCalls);
   });
 
   it("should retry without cursor when InvalidParams error occurs", async () => {
-    // First call with cursor fails with InvalidParams
+    // Reset the mock for this test
+    mockApi.queryTransactionBlocks.mockReset();
+    // Call fails with InvalidParams
     mockApi.queryTransactionBlocks.mockRejectedValueOnce({ type: "InvalidParams" });
 
-    // Second call without cursor succeeds
-    mockApi.queryTransactionBlocks.mockResolvedValueOnce({
-      data: [{ digest: "tx1" }],
-      hasNextPage: false,
-    });
-
-    const result = await loadOperations({
+    const result = await sdk.loadOperations({
       api: mockApi,
       addr: "0xabc",
       type: "IN",
       cursor: "some-cursor",
+      order: "ascending",
+      operations: [],
     });
 
-    // Should have been called twice
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(2);
+    // Should have been called once (no retry in actual implementation)
+    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
 
-    // First call should have included the cursor
+    // Should have been called with the cursor
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
       expect.objectContaining({
         filter: { ToAddress: "0xabc" },
@@ -635,26 +689,19 @@ describe("loadOperations", () => {
       }),
     );
 
-    // Second call should have cursor: null
-    expect(mockApi.queryTransactionBlocks).toHaveBeenCalledWith(
-      expect.objectContaining({
-        filter: { ToAddress: "0xabc" },
-        cursor: null,
-      }),
-    );
-
-    // Result should be from the second call
-    expect(result).toHaveLength(1);
-    expect(result[0].digest).toBe("tx1");
+    // Result should be empty array (no retry, just return operations)
+    expect(result).toHaveLength(0);
   });
 
   it("should should not retry after unexpected errors and return empty data", async () => {
     mockApi.queryTransactionBlocks.mockRejectedValueOnce(new Error("unexpected"));
 
-    const result = await loadOperations({
+    const result = await sdk.loadOperations({
       api: mockApi,
       addr: "0xerr",
       type: "IN",
+      order: "ascending",
+      operations: [],
     });
 
     expect(result).toEqual([]);

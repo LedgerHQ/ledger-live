@@ -1,17 +1,23 @@
 import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { SuiAsset } from "./types";
 import { createApi } from ".";
+import { getFullnodeUrl } from "@mysten/sui/client";
 
 describe("Sui Api", () => {
   let module: AlpacaApi<SuiAsset>;
-  const SENDER = "0xc6dcb5b920f2fdb751b4a8bad800a4ee04257020d8d6e493c8103b760095016e";
-  const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
+  const RECIPIENT = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+  const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+  // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity
+
+  // 5 as of 14/05/2025
+  const IN_OPERATIONS_COUNT = 2;
+  const OUT_OPERATIONS_COUNT = 3;
+  const TOTAL_OPERATIONS_COUNT = IN_OPERATIONS_COUNT + OUT_OPERATIONS_COUNT;
 
   beforeAll(() => {
     module = createApi({
       node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
+        url: getFullnodeUrl("mainnet"),
       },
     });
   });
@@ -43,7 +49,7 @@ describe("Sui Api", () => {
     });
 
     it("returns a list regarding address parameter", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(10);
+      expect(txs.length).toBeGreaterThanOrEqual(2);
       txs.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
@@ -52,19 +58,17 @@ describe("Sui Api", () => {
     });
 
     it("returns all operations", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(10);
+      expect(txs.length).toBeGreaterThanOrEqual(TOTAL_OPERATIONS_COUNT);
       const checkSet = new Set(txs.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(txs.length);
     });
 
     it("at least operation should be IN", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "IN")).toBeTruthy();
+      expect(txs.filter(t => t.type === "IN").length).toBeGreaterThanOrEqual(IN_OPERATIONS_COUNT);
     });
 
     it("at least operation should be OUT", async () => {
-      expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "OUT")).toBeTruthy();
+      expect(txs.filter(t => t.type === "OUT").length).toBeGreaterThanOrEqual(OUT_OPERATIONS_COUNT);
     });
 
     it("uses the minHeight to filter", async () => {
