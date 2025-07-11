@@ -141,6 +141,7 @@ jobs:
           mobile-application-platform: ${{ inputs.platform }}
           enable-comparison: ${{ inputs.enable-comparison }}
           baseline-repo: ${{ github.repository }}
+          baseline-workflow: pre-mobile.yml
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print performance tests results
