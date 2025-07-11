@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@datadog/datadog-ci": "3.11.0",
+    "@datadog/datadog-api-client": "2.0.0-beta.1",
+    "@datadog/datadog-api-client-synthetics": "0.0.1-beta.1",
     "@actions/github": "6.0.1",
     "adm-zip": "0.5.16"
   },

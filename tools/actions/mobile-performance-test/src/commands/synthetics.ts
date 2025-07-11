@@ -13,8 +13,8 @@ import { getReporter, resolveSyntheticsConfig } from "../config";
 export async function executeSyntheticsTests(): Promise<Test> {
   synthetics.utils.setCiTriggerApp("github_action");
 
-  const config = resolveSyntheticsConfig();
   const reporter = getReporter();
+  const config = await resolveSyntheticsConfig();
   const startTime = Date.now();
 
   try {
