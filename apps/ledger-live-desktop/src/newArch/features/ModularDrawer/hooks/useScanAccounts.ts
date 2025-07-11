@@ -31,6 +31,23 @@ interface State {
   scanning: boolean;
 }
 
+const processAccounts = (scannedAccounts: Account[], existingAccounts: Account[]) => {
+  const uniqueScannedAccounts: Account[] = [];
+  const uniqueScannedAccountsSet = new Set();
+  scannedAccounts.forEach(account => {
+    const alreadyExists = existingAccounts.some(a => a.id === account.id);
+
+    if (!alreadyExists && !uniqueScannedAccountsSet.has(account.id)) {
+      uniqueScannedAccountsSet.add(account.id);
+      uniqueScannedAccounts.push(account);
+    }
+  });
+
+  const onlyNewAccounts = uniqueScannedAccounts.every(acc => isAccountEmpty(acc));
+
+  return { onlyNewAccounts, uniqueScannedAccounts };
+};
+
 export function useScanAccounts({
   currency,
   deviceId,
@@ -82,23 +99,10 @@ export function useScanAccounts({
 
     scanSubscription.current = scannedAccounts$.subscribe({
       next: scannedAccounts => {
-        const uniqueScannedAccounts: Account[] = [];
-        const uniqueScannedAccountsSet = new Set();
-        scannedAccounts.forEach(account => {
-          const alreadyExists = existingAccounts.some(a => a.id === account.id);
-
-          if (!alreadyExists && !uniqueScannedAccountsSet.has(account.id)) {
-            uniqueScannedAccountsSet.add(account.id);
-            uniqueScannedAccounts.push(account);
-          }
-        });
-
-        setState({
-          scanning: true,
+        const { onlyNewAccounts, uniqueScannedAccounts } = processAccounts(
           scannedAccounts,
-        });
-
-        const onlyNewAccounts = uniqueScannedAccounts.every(acc => isAccountEmpty(acc));
+          existingAccounts,
+        );
 
         if (onlyNewAccounts) {
           setSelectedIds(uniqueScannedAccounts.map(x => x.id));
@@ -108,6 +112,11 @@ export function useScanAccounts({
             setSelectedIds(ids => [...ids, latestAccount.id]);
           }
         }
+
+        setState({
+          scanning: true,
+          scannedAccounts,
+        });
       },
       error: error => {
         setError(error);
@@ -161,41 +170,32 @@ export function useScanAccounts({
     [],
   );
 
-  const { sections, alreadyEmptyAccount } = useMemo(
-    () =>
-      groupAddAccounts(existingAccounts, scannedAccounts, {
-        scanning,
-        preferredNewAccountSchemes: showAllCreatedAccounts
-          ? undefined
-          : [preferredNewAccountScheme!],
-      }),
-    [
-      existingAccounts,
-      scannedAccounts,
+  const { importableAccounts, creatableAccounts, alreadyEmptyAccount } = useMemo(() => {
+    const { sections, alreadyEmptyAccount } = groupAddAccounts(existingAccounts, scannedAccounts, {
       scanning,
-      showAllCreatedAccounts,
-      preferredNewAccountScheme,
-    ],
-  );
+      preferredNewAccountSchemes: showAllCreatedAccounts ? undefined : [preferredNewAccountScheme!],
+    });
 
-  const alreadyEmptyAccountName = useMaybeAccountName(alreadyEmptyAccount);
+    const importableAccounts = sections.find(section => section.id === "importable")?.data || [];
+    const creatableAccounts = sections.find(section => section.id === "creatable")?.data || [];
+
+    return {
+      importableAccounts,
+      creatableAccounts,
+      alreadyEmptyAccount,
+    };
+  }, [
+    existingAccounts,
+    scannedAccounts,
+    scanning,
+    showAllCreatedAccounts,
+    preferredNewAccountScheme,
+  ]);
 
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
       ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
       : null;
-
-  const importableAccounts = useMemo(
-    () => sections.find(section => section.id === "importable")?.data || [],
-    [sections],
-  );
-  const creatableAccounts = useMemo(
-    () => sections.find(section => section.id === "creatable")?.data || [],
-    [sections],
-  );
-
-  const cantCreateAccount = creatableAccounts.length === 0;
-  const hasImportableAccounts = importableAccounts.length > 0;
 
   const allImportableAccountsSelected = useMemo(
     () =>
@@ -248,7 +248,7 @@ export function useScanAccounts({
     if (
       !scanning &&
       alreadyEmptyAccount &&
-      !hasImportableAccounts &&
+      !importableAccounts.length &&
       !hasImportedAccounts &&
       selectedIds.length === 0
     ) {
@@ -262,10 +262,7 @@ export function useScanAccounts({
       navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
     }
   }, [
-    hasImportableAccounts,
-    cantCreateAccount,
     alreadyEmptyAccount,
-    alreadyEmptyAccountName,
     scanning,
     currency,
     CustomNoAssociatedAccounts,
