@@ -6686,14 +6686,14 @@
             "rewards": "Rewards"
           },
           "actions": {
-            "redelegate": "Redelegate",
-            "undelegate": "Undelegate",
+            "redelegation": "Redelegate",
+            "undelegation": "Undelegate",
             "claimRewards": "Claim rewards"
           }
         }
       }
     },
-    "delegate": {
+    "delegation": {
       "totalStake": "Total stake",
       "flow": {
         "title": "Delegate",
@@ -6724,7 +6724,7 @@
         }
       }
     },
-    "undelegate": {
+    "undelegation": {
       "flow": {
         "title": "Undelegate assets",
         "steps": {
@@ -6750,7 +6750,7 @@
         }
       }
     },
-    "redelegate": {
+    "redelegation": {
       "flow": {
         "title": "Redelegate assets",
         "steps": {

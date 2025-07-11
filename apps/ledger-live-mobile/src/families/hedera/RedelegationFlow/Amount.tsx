@@ -43,7 +43,7 @@ function RedelegationAmount({ navigation, route }: Props) {
     const transaction = bridge.updateTransaction(t, {
       properties: {
         name: "staking",
-        mode: "redelegate",
+        mode: "redelegation",
         stakingNodeId: route.params.selectedValidator.nodeId,
       } as const,
     });

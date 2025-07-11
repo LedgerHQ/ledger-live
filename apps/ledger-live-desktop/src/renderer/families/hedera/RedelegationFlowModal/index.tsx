@@ -3,8 +3,8 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 
-function UndelegateModal() {
-  const initialStep: StepId = "summary";
+function RedelegationModal() {
+  const initialStep: StepId = "validators";
   const [stepId, setStepId] = useState<StepId>(initialStep);
 
   const isModalLocked = ["device", "confirmation"].includes(stepId);
@@ -19,7 +19,7 @@ function UndelegateModal() {
 
   return (
     <Modal
-      name="MODAL_HEDERA_UNDELEGATE"
+      name="MODAL_HEDERA_REDELEGATION"
       centered
       onHide={onHide}
       preventBackdropClick={isModalLocked}
@@ -30,4 +30,4 @@ function UndelegateModal() {
   );
 }
 
-export default UndelegateModal;
+export default RedelegationModal;

@@ -19,7 +19,7 @@ export default function DelegationPlaceholder({ account }: { account: HederaAcco
   const dispatch = useDispatch();
 
   const onDelegate = useCallback(() => {
-    dispatch(openModal("MODAL_HEDERA_DELEGATE", { account }));
+    dispatch(openModal("MODAL_HEDERA_DELEGATION", { account }));
   }, [account, dispatch]);
 
   const onHowItWorks = useCallback(() => {

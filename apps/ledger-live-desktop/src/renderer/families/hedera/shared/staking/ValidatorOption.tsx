@@ -33,7 +33,7 @@ function ValidatorOption({ validator, unit }: Props) {
           <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
             <Icons.Warning size="XS" style={{ width: "10px" }} />
             <Text fontSize={2}>
-              {t("hedera.delegate.flow.steps.validator.rowSubtitleOverstaked")}
+              {t("hedera.delegation.flow.steps.validator.rowSubtitleOverstaked")}
             </Text>
           </Flex>
         )}

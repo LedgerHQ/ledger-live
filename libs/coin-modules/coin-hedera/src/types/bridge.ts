@@ -17,7 +17,7 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
-export type StakingAction = "delegate" | "undelegate" | "redelegate" | "claimRewards";
+export type StakingAction = "delegation" | "undelegation" | "redelegation" | "claimRewards";
 
 export type StakingTransactionProperties = {
   name: "staking";

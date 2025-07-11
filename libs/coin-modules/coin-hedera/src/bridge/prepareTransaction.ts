@@ -7,9 +7,9 @@ import { calculateAmount, getEstimatedFees } from "./utils";
 
 const mapStakingModeToMemo: Record<StakingTransactionProperties["mode"], string> = {
   claimRewards: "Collect Staking Rewards",
-  delegate: "Stake",
-  undelegate: "Unstake",
-  redelegate: "Restake",
+  delegation: "Stake",
+  undelegation: "Unstake",
+  redelegation: "Restake",
 } as const;
 
 /**

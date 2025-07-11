@@ -52,9 +52,9 @@ export default function ValidatorsSelect({
         onInputChange={setQuery}
         inputValue={query}
         isDisabled={disabled || options.length <= 1}
-        placeholder={t("hedera.redelegate.flow.steps.validators.newValidatorSelectPlaceholder")}
+        placeholder={t("hedera.redelegation.flow.steps.validators.newValidatorSelectPlaceholder")}
         noOptionsMessage={({ inputValue }) =>
-          t("hedera.redelegate.flow.steps.validators.newValidatorSelectNoOption", {
+          t("hedera.redelegation.flow.steps.validators.newValidatorSelectNoOption", {
             validatorName: inputValue,
           })
         }

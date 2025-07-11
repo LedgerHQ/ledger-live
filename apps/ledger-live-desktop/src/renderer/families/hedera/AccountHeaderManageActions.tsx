@@ -28,7 +28,7 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
     if (isAccountEmpty(account)) {
       dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
     } else {
-      dispatch(openModal("MODAL_HEDERA_DELEGATE", { account }));
+      dispatch(openModal("MODAL_HEDERA_DELEGATION", { account }));
     }
   };
 

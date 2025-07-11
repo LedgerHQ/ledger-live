@@ -42,7 +42,7 @@ function StepValidators({
       return bridge.updateTransaction(transaction, {
         properties: {
           name: "staking",
-          mode: "redelegate",
+          mode: "redelegation",
           stakingNodeId: validator.nodeId ?? null,
         },
       });
@@ -55,7 +55,7 @@ function StepValidators({
       {error && <ErrorBanner error={error} />}
       <Box>
         <Label mb={4}>
-          <Trans i18nKey="hedera.redelegate.flow.steps.validators.currentValidatorLabel" />
+          <Trans i18nKey="hedera.redelegation.flow.steps.validators.currentValidatorLabel" />
         </Label>
         <ValidatorsSelect
           disabled
@@ -66,7 +66,7 @@ function StepValidators({
       <StepRecipientSeparator />
       <Box>
         <Label mb={4}>
-          <Trans i18nKey="hedera.redelegate.flow.steps.validators.newValidatorLabel" />
+          <Trans i18nKey="hedera.redelegation.flow.steps.validators.newValidatorLabel" />
         </Label>
         <ValidatorsSelect
           account={account}
@@ -77,16 +77,16 @@ function StepValidators({
       </Box>
       <Box>
         <Label mb={4}>
-          <Trans i18nKey="hedera.redelegate.flow.steps.validators.amountLabel" />
+          <Trans i18nKey="hedera.redelegation.flow.steps.validators.amountLabel" />
         </Label>
         <AmountField account={account} />
       </Box>
       <Alert
         type="primary"
         learnMoreUrl={urls.hedera.staking}
-        learnMoreLabel={<Trans i18nKey="hedera.redelegate.flow.steps.validators.learnMore" />}
+        learnMoreLabel={<Trans i18nKey="hedera.redelegation.flow.steps.validators.learnMore" />}
       >
-        {t("hedera.redelegate.flow.steps.validators.alert")}
+        {t("hedera.redelegation.flow.steps.validators.alert")}
       </Alert>
     </Box>
   );
@@ -108,7 +108,7 @@ export function StepValidatorsFooter({
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button
-        id="redelegate-continue-button"
+        id="redelegation-continue-button"
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}

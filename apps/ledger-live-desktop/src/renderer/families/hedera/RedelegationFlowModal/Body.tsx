@@ -50,20 +50,20 @@ type Props = OwnProps & StateProps;
 const steps: Array<St> = [
   {
     id: "validators",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.validators.title" />,
+    label: <Trans i18nKey="hedera.redelegation.flow.steps.validators.title" />,
     component: StepValidators,
     noScroll: true,
     footer: StepValidatorsFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="hedera.redelegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("validators"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="hedera.redelegate.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="hedera.redelegation.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -90,12 +90,12 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const t = bridge.createTransaction(account);
 
       const validator = getValidatorFromAccount(account);
-      invariant(validator, "hedera: validator not found in redelegate flow");
+      invariant(validator, "hedera: validator not found in redelegation flow");
 
       const transaction = bridge.updateTransaction(t, {
         properties: {
           name: "staking",
-          mode: "redelegate",
+          mode: "redelegation",
           stakingNodeId: null,
         },
       });
@@ -149,7 +149,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   }
 
   const stepperProps = {
-    title: t("hedera.redelegate.flow.title"),
+    title: t("hedera.redelegation.flow.title"),
     device,
     account,
     transaction,

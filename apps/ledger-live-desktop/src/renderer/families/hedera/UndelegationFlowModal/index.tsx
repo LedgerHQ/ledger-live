@@ -3,11 +3,11 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 
-function DelegateModal() {
-  const initialStep: StepId = "validator";
+function UndelegationModal() {
+  const initialStep: StepId = "summary";
   const [stepId, setStepId] = useState<StepId>(initialStep);
 
-  const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
+  const isModalLocked = ["device", "confirmation"].includes(stepId);
 
   const onHide = useCallback(() => {
     setStepId(initialStep);
@@ -19,16 +19,15 @@ function DelegateModal() {
 
   return (
     <Modal
-      name="MODAL_HEDERA_DELEGATE"
+      name="MODAL_HEDERA_UNDELEGATION"
       centered
       onHide={onHide}
       preventBackdropClick={isModalLocked}
-      width={550}
       render={({ data, onClose }) => (
-        <Body stepId={stepId} onClose={onClose} onChangeStepId={onChange} params={data ?? {}} />
+        <Body params={data} stepId={stepId} onClose={onClose} onChangeStepId={onChange} />
       )}
     />
   );
 }
 
-export default DelegateModal;
+export default UndelegationModal;

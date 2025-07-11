@@ -163,13 +163,13 @@ export function Row({ account, delegationWithMeta, onManageAction, onExternalLin
 
   const dropDownItems = [
     {
-      key: "MODAL_HEDERA_REDELEGATE",
-      label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.redelegate" />,
+      key: "MODAL_HEDERA_REDELEGATION",
+      label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.redelegation" />,
       disabled: false,
     } as const,
     {
-      key: "MODAL_HEDERA_UNDELEGATE",
-      label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.undelegate" />,
+      key: "MODAL_HEDERA_UNDELEGATION",
+      label: <Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.actions.undelegation" />,
       disabled: false,
     } as const,
     {

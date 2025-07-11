@@ -31,22 +31,22 @@ function StepSummary({ t, account, parentAccount, transaction, error }: StepProp
       {error && <ErrorBanner error={error} />}
       <Box>
         <Label mb={4}>
-          <Trans i18nKey="hedera.undelegate.flow.steps.summary.validatorLabel" />
+          <Trans i18nKey="hedera.undelegation.flow.steps.summary.validatorLabel" />
         </Label>
         <ValidatorsSelect disabled account={account} selectedValidatorNodeId={validator.nodeId} />
       </Box>
       <Box>
         <Label mb={4}>
-          <Trans i18nKey="hedera.undelegate.flow.steps.summary.amountLabel" />
+          <Trans i18nKey="hedera.undelegation.flow.steps.summary.amountLabel" />
         </Label>
         <AmountField account={account} />
       </Box>
       <Alert
         type="primary"
         learnMoreUrl={urls.hedera.staking}
-        learnMoreLabel={<Trans i18nKey="hedera.undelegate.flow.steps.summary.learnMore" />}
+        learnMoreLabel={<Trans i18nKey="hedera.undelegation.flow.steps.summary.learnMore" />}
       >
-        {t("hedera.undelegate.flow.steps.summary.alert")}
+        {t("hedera.undelegation.flow.steps.summary.alert")}
       </Alert>
     </Box>
   );
@@ -68,7 +68,7 @@ export function StepSummaryFooter({
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button
-        id="undelegate-continue-button"
+        id="undelegation-continue-button"
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}

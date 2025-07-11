@@ -34,9 +34,9 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
           <Alert
             type="primary"
             learnMoreUrl={urls.hedera.staking}
-            learnMoreLabel={<Trans i18nKey="hedera.delegate.flow.steps.validator.learnMore" />}
+            learnMoreLabel={<Trans i18nKey="hedera.delegation.flow.steps.validator.learnMore" />}
           >
-            {t("hedera.delegate.flow.steps.validator.alert")}
+            {t("hedera.delegation.flow.steps.validator.alert")}
           </Alert>
         </>
       )}

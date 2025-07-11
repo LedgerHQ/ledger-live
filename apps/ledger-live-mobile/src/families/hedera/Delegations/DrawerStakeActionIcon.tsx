@@ -15,10 +15,10 @@ export default function DrawerStakeActionIcon({ enabled, action }: Props) {
   const iconColor = enabled ? undefined : colors.grey;
 
   switch (action) {
-    case "delegate":
-    case "redelegate":
+    case "delegation":
+    case "redelegation":
       return <DelegateIcon color={iconColor} />;
-    case "undelegate":
+    case "undelegation":
       return <UndelegateIcon color={iconColor} />;
     case "claimRewards":
       return <ClaimRewardIcon color={iconColor} />;

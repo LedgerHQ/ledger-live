@@ -40,7 +40,7 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
       onClick={() => onClick(validator)}
       validator={{ address: validator.address }}
       icon={<ValidatorIcon validatorName={validator.name} />}
-      title={t("hedera.delegate.flow.steps.validator.rowTitle", {
+      title={t("hedera.delegation.flow.steps.validator.rowTitle", {
         name: validator.name,
         index: validator.nodeId,
       })}
@@ -55,7 +55,7 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="hedera.delegate.totalStake" />
+              <Trans color="palette.text.shade50" i18nKey="hedera.delegation.totalStake" />
             </Text>
           </Flex>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -70,12 +70,12 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
               <Flex alignItems="center" columnGap={1} color="palette.warning.c70">
                 <Icons.Warning size="XS" style={{ width: "10px" }} />
                 <Text fontSize={2}>
-                  {t("hedera.delegate.flow.steps.validator.rowSubtitleOverstaked")}
+                  {t("hedera.delegation.flow.steps.validator.rowSubtitleOverstaked")}
                 </Text>
               </Flex>
             ) : (
               <Text fontSize={2}>
-                {t("hedera.delegate.flow.steps.validator.rowSubtitlePercentage", {
+                {t("hedera.delegation.flow.steps.validator.rowSubtitlePercentage", {
                   percentage: validator.activeStakePercentage,
                 })}
               </Text>

@@ -49,8 +49,8 @@ function StepConfirmation({
         />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={<Trans i18nKey="hedera.redelegate.flow.steps.confirmation.success.title" />}
-          description={multiline(t("hedera.redelegate.flow.steps.confirmation.success.text"))}
+          title={<Trans i18nKey="hedera.redelegation.flow.steps.confirmation.success.title" />}
+          description={multiline(t("hedera.redelegation.flow.steps.confirmation.success.text"))}
         />
       </Container>
     );
@@ -68,7 +68,7 @@ function StepConfirmation({
         />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="hedera.redelegate.flow.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="hedera.redelegation.flow.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -111,7 +111,7 @@ export function StepConfirmationFooter({
             }
           }}
         >
-          <Trans i18nKey="hedera.redelegate.flow.steps.confirmation.success.cta" />
+          <Trans i18nKey="hedera.redelegation.flow.steps.confirmation.success.cta" />
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

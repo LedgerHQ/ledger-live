@@ -99,7 +99,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         ...prev,
         properties: {
           name: "staking",
-          mode: "delegate",
+          mode: "delegation",
           stakingNodeId: validator?.nodeId,
         } as const,
       };

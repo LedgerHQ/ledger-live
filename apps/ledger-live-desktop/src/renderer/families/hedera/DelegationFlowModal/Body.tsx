@@ -1,29 +1,30 @@
-import invariant from "invariant";
-import type { TFunction } from "i18next";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
+import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
-import { getValidatorFromAccount } from "@ledgerhq/live-common/families/hedera/logic";
-import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { OpenModal, closeModal, openModal } from "~/renderer/actions/modals";
-import logger from "~/renderer/logger";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 import Stepper from "~/renderer/components/Stepper";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
-import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
+import logger from "~/renderer/logger";
+import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { StepProps, St, StepId } from "./types";
+import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
+import { StepId, StepProps, St } from "./types";
 
 export type Data = {
   account: HederaAccount;
@@ -41,7 +42,6 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: () => void;
   openModal: OpenModal;
 };
 
@@ -49,21 +49,29 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "summary",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.summary.title" />,
-    component: StepSummary,
+    id: "validator",
+    label: <Trans i18nKey="hedera.delegation.flow.steps.validator.title" />,
+    component: StepValidator,
     noScroll: true,
-    footer: StepSummaryFooter,
+    footer: StepValidatorFooter,
+  },
+  {
+    id: "amount",
+    label: <Trans i18nKey="hedera.delegation.flow.steps.amount.title" />,
+    component: StepAmount,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
+    noScroll: true,
+    footer: StepAmountFooter,
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="hedera.delegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("summary"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="hedera.undelegate.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="hedera.delegation.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -74,7 +82,6 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
 
@@ -84,19 +91,18 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const validators = useHederaValidators(account.currency);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(() => {
       const bridge: AccountBridge<Transaction> = getAccountBridge(account);
       const t = bridge.createTransaction(account);
-
-      const validator = getValidatorFromAccount(account);
-      invariant(validator, "hedera: validator not found in undelegate flow");
+      const defaultValidator = getDefaultValidator(validators);
 
       const transaction = bridge.updateTransaction(t, {
         properties: {
           name: "staking",
-          mode: "undelegate",
-          stakingNodeId: null,
+          mode: "delegation",
+          stakingNodeId: defaultValidator?.nodeId,
         },
       });
 
@@ -116,7 +122,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
-    onChangeStepId("summary");
+    onChangeStepId("validator");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -142,6 +148,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   const error = transactionError || bridgeError;
   const errorSteps = [];
+
   if (transactionError) {
     errorSteps.push(2);
   } else if (bridgeError) {
@@ -149,7 +156,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   }
 
   const stepperProps = {
-    title: t("hedera.undelegate.flow.title"),
+    title: t("hedera.delegation.flow.title"),
     device,
     account,
     transaction,
@@ -158,7 +165,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     steps,
     errorSteps,
     disabledSteps: [],
-    hideBreadcrumb: !!error && ["summary"].includes(stepId),
+    hideBreadcrumb: !!error && ["validator"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
     onClose,
@@ -179,14 +186,14 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
-      <Track onUnmount event="CloseModalUndelegation" />
+      <Track onUnmount event="CloseModalDelegate" />
     </Stepper>
   );
 };
 
-const C = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body) as React.ComponentType<OwnProps>;
+)(Body);
 
 export default C;

@@ -26,7 +26,7 @@ export default function StepValidator({
       return bridge.updateTransaction(transaction, {
         properties: {
           name: "staking",
-          mode: "delegate",
+          mode: "delegation",
           stakingNodeId: validator.nodeId,
         },
       });

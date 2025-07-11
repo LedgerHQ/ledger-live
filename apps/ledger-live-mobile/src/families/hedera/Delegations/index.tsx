@@ -169,22 +169,26 @@ function Delegations({ account, delegatedPosition }: Props) {
   ]);
 
   const delegationActions = useMemo<DelegationDrawerActions>(() => {
-    const allStakeActions = ["redelegate", "claimRewards", "undelegate"] satisfies StakingAction[];
+    const allStakeActions = [
+      "redelegation",
+      "claimRewards",
+      "undelegation",
+    ] satisfies StakingAction[];
 
     const mapStakeActionToDisabled = {
-      redelegate: false,
+      redelegation: false,
       claimRewards: delegationWithMeta.pendingReward.isZero(),
-      undelegate: false,
+      undelegation: false,
     } as const satisfies Record<(typeof allStakeActions)[number], boolean>;
 
     const mapStakeActionToColor = {
-      redelegate: colors.fog,
+      redelegation: colors.fog,
       claimRewards: rgba(colors.yellow, 0.2),
-      undelegate: rgba(colors.alert, 0.2),
+      undelegation: rgba(colors.alert, 0.2),
     } as const satisfies Record<(typeof allStakeActions)[number], unknown>;
 
     const mapStakeActionToNavigationParams = {
-      redelegate: [
+      redelegation: [
         NavigatorName.HederaRedelegationFlow,
         {
           screen: ScreenName.HederaRedelegationSelectValidator,
@@ -204,7 +208,7 @@ function Delegations({ account, delegatedPosition }: Props) {
           },
         },
       ],
-      undelegate: [
+      undelegation: [
         NavigatorName.HederaUndelegationFlow,
         {
           screen: ScreenName.HederaUndelegationAmount,

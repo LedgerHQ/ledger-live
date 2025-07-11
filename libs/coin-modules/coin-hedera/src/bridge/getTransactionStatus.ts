@@ -26,7 +26,7 @@ const verifyStakingFlowStatus = async (account: HederaAccount, transaction: Tran
   const amount = BigNumber(0);
   const totalSpent = amount.plus(estimatedFees);
 
-  if (["delegate", "redelegate"].includes(transaction.properties.mode)) {
+  if (["delegation", "redelegation"].includes(transaction.properties.mode)) {
     if (typeof transaction.properties.stakingNodeId !== "number") {
       errors.missingStakinNodeId = new HederaInvalidStakingNodeIdError("Validator must be set");
     } else {

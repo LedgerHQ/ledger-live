@@ -43,7 +43,7 @@ function UndelegationAmount({ navigation, route }: Props) {
     const transaction = bridge.updateTransaction(t, {
       properties: {
         name: "staking",
-        mode: "undelegate",
+        mode: "undelegation",
         stakingNodeId: null,
       } as const,
     });
