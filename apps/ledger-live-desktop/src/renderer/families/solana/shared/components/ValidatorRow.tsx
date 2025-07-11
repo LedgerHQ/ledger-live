@@ -53,15 +53,27 @@ function SolanaValidatorRow({ validator, active, onClick, unit, currency, disabl
       onExternalLink={onExternalLink}
       unit={unit}
       subtitle={
-        <>
-          <Trans i18nKey="solana.delegation.commission" />
-          <Text
-            style={{
-              marginLeft: 5,
-              fontSize: 11,
-            }}
-          >{`${validator.commission} %`}</Text>
-        </>
+        validator.apy ? (
+          <>
+            <Trans i18nKey="solana.delegation.netApy" />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 11,
+              }}
+            >{`${(validator.apy * 100).toFixed(2)} %`}</Text>
+          </>
+        ) : (
+          <>
+            <Trans i18nKey="solana.delegation.commission" />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 11,
+              }}
+            >{`${validator.commission} %`}</Text>
+          </>
+        )
       }
       sideInfo={
         <Box
