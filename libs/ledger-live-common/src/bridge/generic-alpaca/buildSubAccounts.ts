@@ -57,14 +57,13 @@ function buildStellarTokenAccount({
 }): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
-  const balance = parseCurrencyUnit(token.units[0], assetBalance.value.toString() || "0");
+  const balance = new BigNumber(assetBalance.value.toString() || "0");
 
   // TODO: recheck this logic
   const reservedBalance = new BigNumber(assetBalance.value.toString()).minus(
     // assetBalance.selling_liabilities || 0,
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
-  const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
   const tokenOperations = operations.map(op => ({
     ...op,
@@ -83,7 +82,7 @@ function buildStellarTokenAccount({
     operations: tokenOperations,
     pendingOperations: [],
     balance,
-    spendableBalance,
+    spendableBalance: reservedBalance,
     swapHistory: [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
@@ -111,12 +110,12 @@ export function buildSubAccounts({
   }
 
   const tokenAccounts: TokenAccount[] = [];
-
+  // console.log("assetsBalance", assetsBalance);
   assetsBalance
     .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
     .map(balance => {
       const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(balance.asset)}`);
-
+      console.log("token", token);
       if (token && !blacklistedTokenIds.includes(token.id)) {
         tokenAccounts.push(
           buildStellarTokenAccount({
@@ -132,6 +131,7 @@ export function buildSubAccounts({
         );
       }
     });
+    console.log("tokenAccounts", tokenAccounts);
 
   return tokenAccounts;
 }
