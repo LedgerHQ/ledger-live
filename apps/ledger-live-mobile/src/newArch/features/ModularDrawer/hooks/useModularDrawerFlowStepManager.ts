@@ -26,30 +26,23 @@ export function useModularDrawerFlowStepManager({
 
   const nextStep = () => setStepIndex(prev => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setStepIndex(prev => Math.max(prev - 1, 0));
-
   const reset = () => setStepIndex(0);
+
+  /**
+   * Go directly to a specific step in the flow, if it exists in the current steps.
+   * @param step ModularDrawerStep to go to
+   */
+  const goToStep = (step: ModularDrawerStep) => {
+    const idx = steps.indexOf(step);
+    if (idx !== -1) {
+      setStepIndex(idx);
+    }
+  };
 
   const isFirstStep = stepIndex === 0;
   const isLastStep = stepIndex === steps.length - 1;
 
   const hasBackButton = selectedStep !== currentStep;
-
-  const handleBackButton = (
-    goBackToAssetSelection: () => void,
-    goBackToNetworkSelection: () => void,
-  ): void => {
-    switch (currentStep) {
-      case ModularDrawerStep.Network:
-        goBackToAssetSelection();
-        break;
-      case ModularDrawerStep.Account:
-        goBackToNetworkSelection();
-        break;
-      case ModularDrawerStep.Asset:
-      default:
-        break;
-    }
-  };
 
   return {
     currentStep,
@@ -57,9 +50,9 @@ export function useModularDrawerFlowStepManager({
     nextStep,
     prevStep,
     reset,
+    goToStep,
     isFirstStep,
     isLastStep,
     hasBackButton,
-    handleBackButton,
   };
 }

@@ -298,12 +298,7 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -373,11 +368,19 @@
     "src/market/utils/timers.ts",
     "src/market/utils/types.ts",
     "src/modularDrawer/enums.ts",
+    "src/modularDrawer/utils/index.ts",
     "src/modularDrawer/useModularDrawerVisibility.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/families/aptos/config.ts",
+    "src/families/aptos/constants.ts",
+    "src/families/aptos/logic.ts",
+    "src/families/aptos/react.ts",
+    "src/families/aptos/staking.ts",
+    "src/families/aptos/types.ts",
+    "src/families/aptos/utils.ts"
   ],
   "ignoreUnused": [
     "@dfinity/agent",

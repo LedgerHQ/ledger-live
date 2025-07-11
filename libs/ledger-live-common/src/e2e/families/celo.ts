@@ -4,7 +4,7 @@ import { Delegate } from "../models/Delegate";
 import expect from "expect";
 
 export async function delegateCelo(tx: Delegate) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();

@@ -5,7 +5,7 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export type NetworkSelectionStepProps = {
-  networksToDisplay?: CryptoOrTokenCurrency[];
+  availableNetworks?: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
 };
 
@@ -34,10 +34,10 @@ const NetworkList: React.FC<{
 };
 
 const NetworkSelection = ({
-  networksToDisplay,
+  availableNetworks,
   onNetworkSelected,
 }: Readonly<NetworkSelectionStepProps>) => {
-  return <NetworkList networks={networksToDisplay} onNetworkSelected={onNetworkSelected} />;
+  return <NetworkList networks={availableNetworks} onNetworkSelected={onNetworkSelected} />;
 };
 
 export default React.memo(NetworkSelection);
