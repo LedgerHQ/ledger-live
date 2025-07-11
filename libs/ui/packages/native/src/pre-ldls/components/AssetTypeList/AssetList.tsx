@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { FlashList } from "@shopify/flash-list";
+import { FlatList, FlatListProps } from "react-native";
 import { AssetItem, AssetType } from "../AssetItem/AssetItem";
+
+const ITEM_PADDING = 8;
+const ITEM_HEIGHT = 48 + ITEM_PADDING * 2;
 
 export const AssetList = ({
   assets,
@@ -15,7 +18,7 @@ export const AssetList = ({
   scrollToTop?: boolean;
   hasNextPage?: boolean;
 }) => {
-  const flashListRef = useRef<FlashList<AssetType>>(null);
+  const flatListRef = useRef<FlatList<AssetType>>(null);
 
   const renderAssetItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={onClick} />,
@@ -25,8 +28,8 @@ export const AssetList = ({
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
   useEffect(() => {
-    if (scrollToTop && flashListRef.current) {
-      flashListRef.current.scrollToOffset({ offset: 0, animated: true });
+    if (scrollToTop && flatListRef.current) {
+      flatListRef.current.scrollToOffset({ offset: 0, animated: true });
     }
   }, [scrollToTop]);
 
@@ -36,18 +39,21 @@ export const AssetList = ({
     }
   }, [hasNextPage, onVisibleItemsScrollEnd]);
 
-  const flashListProps = {
-    ref: flashListRef,
+  const flatListProps: FlatListProps<AssetType> = {
     data: assets,
     renderItem: renderAssetItem,
+    initialNumToRender: 15,
     keyExtractor,
-    estimatedItemSize: 72,
-    style: { flex: 1, width: "100%" as const },
+    getItemLayout: (data, index) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
     ...(hasNextPage && {
       onEndReached: handleEndReached,
       onEndReachedThreshold: 0.1,
     }),
   };
 
-  return <FlashList {...flashListProps} />;
+  return <FlatList ref={flatListRef} {...flatListProps} />;
 };

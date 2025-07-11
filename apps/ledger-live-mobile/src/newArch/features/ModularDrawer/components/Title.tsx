@@ -29,7 +29,6 @@ const TitleContainer = styled(Box)`
   margin-bottom: 16px;
   margin-left: 8px;
   margin-right: 0px;
-  flex: 0 1 auto;
   width: 100%;
   flex-direction: row;
   align-items: center;

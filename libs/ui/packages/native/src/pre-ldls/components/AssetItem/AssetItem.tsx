@@ -67,7 +67,7 @@ export const AssetItem = ({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper
         style={{
           marginLeft: Number(tokens["margin-s"]),
