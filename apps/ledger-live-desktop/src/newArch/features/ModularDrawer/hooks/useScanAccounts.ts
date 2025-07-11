@@ -3,11 +3,9 @@ import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { addAccountsAction, groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Subscription } from "rxjs";
 import { WARNING_REASON, WarningReason } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -18,6 +16,16 @@ import {
   ADD_ACCOUNT_PAGE_NAME,
 } from "../analytics/addAccount.types";
 import * as RX from "rxjs/operators";
+import {
+  deselectImportable,
+  getToggledIds,
+  selectImportable,
+} from "../screens/ScanAccounts/utils/selectionHelpers";
+import {
+  determineSelectedIds,
+  getGroupedAccounts,
+  processAccounts,
+} from "../screens/ScanAccounts/utils/processAccounts";
 
 export type UseScanAccountsProps = {
   currency: CryptoCurrency;
@@ -30,23 +38,6 @@ interface State {
   scannedAccounts: Account[];
   scanning: boolean;
 }
-
-const processAccounts = (scannedAccounts: Account[], existingAccounts: Account[]) => {
-  const uniqueScannedAccounts: Account[] = [];
-  const uniqueScannedAccountsSet = new Set();
-  scannedAccounts.forEach(account => {
-    const alreadyExists = existingAccounts.some(a => a.id === account.id);
-
-    if (!alreadyExists && !uniqueScannedAccountsSet.has(account.id)) {
-      uniqueScannedAccountsSet.add(account.id);
-      uniqueScannedAccounts.push(account);
-    }
-  });
-
-  const onlyNewAccounts = uniqueScannedAccounts.every(acc => isAccountEmpty(acc));
-
-  return { onlyNewAccounts, uniqueScannedAccounts };
-};
 
 export function useScanAccounts({
   currency,
@@ -79,12 +70,21 @@ export function useScanAccounts({
     return [...new Set(accountSchemes)];
   }, [existingAccounts, scannedAccounts]);
 
-  const preferredNewAccountScheme = useMemo(
-    () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
-    [newAccountSchemes],
-  );
+  const stopSubscription = useCallback((syncUI = true) => {
+    if (scanSubscription.current) {
+      scanSubscription.current.unsubscribe();
+      scanSubscription.current = null;
 
-  const startSubscription = useCallback(() => {
+      if (syncUI) {
+        setState(prev => ({
+          ...prev,
+          scanning: false,
+        }));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {
@@ -99,19 +99,14 @@ export function useScanAccounts({
 
     scanSubscription.current = scannedAccounts$.subscribe({
       next: scannedAccounts => {
-        const { onlyNewAccounts, uniqueScannedAccounts } = processAccounts(
+        const { onlyNewAccounts, unimportedAccounts } = processAccounts(
           scannedAccounts,
           existingAccounts,
         );
 
-        if (onlyNewAccounts) {
-          setSelectedIds(uniqueScannedAccounts.map(x => x.id));
-        } else {
-          const latestAccount = uniqueScannedAccounts[uniqueScannedAccounts.length - 1];
-          if (!isAccountEmpty(latestAccount)) {
-            setSelectedIds(ids => [...ids, latestAccount.id]);
-          }
-        }
+        setSelectedIds(current =>
+          determineSelectedIds(unimportedAccounts, onlyNewAccounts, current),
+        );
 
         setState({
           scanning: true,
@@ -128,21 +123,9 @@ export function useScanAccounts({
         }));
       },
     });
-  }, [blacklistedTokenIds, currency, deviceId, existingAccounts]);
 
-  const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscription.current) {
-      scanSubscription.current.unsubscribe();
-      scanSubscription.current = null;
-
-      if (syncUI) {
-        setState(prev => ({
-          ...prev,
-          scanning: false,
-        }));
-      }
-    }
-  }, []);
+    return () => stopSubscription(false);
+  }, [blacklistedTokenIds, currency, deviceId, existingAccounts, stopSubscription]);
 
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -170,32 +153,17 @@ export function useScanAccounts({
     [],
   );
 
-  const { importableAccounts, creatableAccounts, alreadyEmptyAccount } = useMemo(() => {
-    const { sections, alreadyEmptyAccount } = groupAddAccounts(existingAccounts, scannedAccounts, {
-      scanning,
-      preferredNewAccountSchemes: showAllCreatedAccounts ? undefined : [preferredNewAccountScheme!],
-    });
-
-    const importableAccounts = sections.find(section => section.id === "importable")?.data || [];
-    const creatableAccounts = sections.find(section => section.id === "creatable")?.data || [];
-
-    return {
-      importableAccounts,
-      creatableAccounts,
-      alreadyEmptyAccount,
-    };
-  }, [
-    existingAccounts,
-    scannedAccounts,
-    scanning,
-    showAllCreatedAccounts,
-    preferredNewAccountScheme,
-  ]);
-
-  const CustomNoAssociatedAccounts =
-    currency.type === "CryptoCurrency"
-      ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
-      : null;
+  const { importableAccounts, creatableAccounts, alreadyEmptyAccount } = useMemo(
+    () =>
+      getGroupedAccounts(
+        existingAccounts,
+        scannedAccounts,
+        scanning,
+        newAccountSchemes,
+        showAllCreatedAccounts,
+      ),
+    [newAccountSchemes, existingAccounts, scannedAccounts, scanning, showAllCreatedAccounts],
+  );
 
   const allImportableAccountsSelected = useMemo(
     () =>
@@ -204,16 +172,9 @@ export function useScanAccounts({
     [importableAccounts, selectedIds],
   );
 
-  const handleToggle = useCallback(
-    (accountId: string) => {
-      const isChecked = selectedIds.indexOf(accountId) > -1;
-      const newSelectedIds = isChecked
-        ? selectedIds.filter(id => id !== accountId)
-        : [...selectedIds, accountId];
-      setSelectedIds(newSelectedIds);
-    },
-    [selectedIds],
-  );
+  const handleToggle = useCallback((accountId: string) => {
+    setSelectedIds(prev => getToggledIds(prev, accountId));
+  }, []);
 
   const handleSelectAll = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -221,10 +182,7 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    const importableAccountIds = importableAccounts.map(a => a.id);
-    setSelectedIds(prevSelectedIds => {
-      return [...new Set([...prevSelectedIds, ...importableAccountIds])];
-    });
+    setSelectedIds(prev => selectImportable(prev, importableAccounts));
   }, [importableAccounts, trackAddAccountEvent]);
 
   const handleDeselectAll = useCallback(() => {
@@ -233,44 +191,33 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    const importableAccountIds = importableAccounts.map(a => a.id);
-    setSelectedIds(prevSelectedIds => {
-      return prevSelectedIds.filter(id => !importableAccountIds.includes(id));
-    });
+    setSelectedIds(prev => deselectImportable(prev, importableAccounts));
   }, [importableAccounts, trackAddAccountEvent]);
 
   useEffect(() => {
-    startSubscription();
-    return () => stopSubscription(false);
-  }, [startSubscription, stopSubscription]);
+    const CustomNoAssociatedAccounts =
+      currency.type === "CryptoCurrency"
+        ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
+        : null;
 
-  useEffect(() => {
-    if (
-      !scanning &&
-      alreadyEmptyAccount &&
-      !importableAccounts.length &&
-      !hasImportedAccounts &&
-      selectedIds.length === 0
-    ) {
-      navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-    } else if (
-      !scanning &&
-      (!creatableAccounts.length || !importableAccounts.length) &&
-      CustomNoAssociatedAccounts &&
-      !hasImportedAccounts
-    ) {
-      navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+    if (!scanning && !hasImportedAccounts) {
+      if (alreadyEmptyAccount && !importableAccounts.length) {
+        navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
+      } else if (
+        (!creatableAccounts.length || !importableAccounts.length) &&
+        CustomNoAssociatedAccounts
+      ) {
+        navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
+      }
     }
   }, [
     alreadyEmptyAccount,
     scanning,
     currency,
-    CustomNoAssociatedAccounts,
     creatableAccounts.length,
     importableAccounts.length,
     navigateToWarningScreen,
     hasImportedAccounts,
-    selectedIds.length,
   ]);
 
   return {
