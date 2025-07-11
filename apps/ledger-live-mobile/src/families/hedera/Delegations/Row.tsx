@@ -40,11 +40,7 @@ export default function DelegationRow({
       onPress={() => onPress(delegationWithMeta)}
     >
       <View style={[styles.icon]}>
-        <ValidatorIcon
-          size={32}
-          validatorName={delegationWithMeta.validator.name}
-          color={currencyColor}
-        />
+        <ValidatorIcon size={32} validator={delegationWithMeta.validator} color={currencyColor} />
       </View>
       <View style={styles.nameWrapper}>
         <View style={styles.row}>

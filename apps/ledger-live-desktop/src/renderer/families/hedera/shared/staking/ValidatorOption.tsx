@@ -24,7 +24,7 @@ function ValidatorOption({ validator, unit }: Props) {
 
   return (
     <Flex alignItems="center">
-      <ValidatorIcon validatorName={validator.name} />
+      <ValidatorIcon validator={validator} />
       <InfoContainer>
         <Title>
           <Text data-testid="modal-provider-title">{validator.name}</Text>

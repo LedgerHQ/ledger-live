@@ -957,7 +957,7 @@
       "title": "You are already delegating to this node"
     },
     "HederaInvalidStakingNodeIdError": {
-      "title": "Selected node is not a valid validator"
+      "title": "Selected node is not valid"
     },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
@@ -6837,9 +6837,9 @@
         },
         "rewards": "Rewards",
         "actions": {
-          "redelegate": "Redelegate",
+          "redelegation": "Redelegate",
           "claimRewards": "Collect rewards",
-          "undelegate": "Undelegate"
+          "undelegation": "Undelegate"
         }
       }
     },

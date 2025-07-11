@@ -32,7 +32,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   const { delegation } = account.hederaResources;
   const spendableBalance = account.spendableBalance;
-  const delegatedAssets = delegation ? spendableBalance : new BigNumber(0);
+  const delegatedAssets = delegation?.delegated ?? new BigNumber(0);
   const claimableRewards = delegation?.pendingReward ?? new BigNumber(0);
 
   return (
@@ -56,20 +56,20 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         onPress={onPressInfoCreator("available")}
         value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
       />
-      {delegatedAssets.gt(0) && (
-        <InfoItem
-          title={t("hedera.info.delegated.title")}
-          onPress={onPressInfoCreator("delegated")}
-          value={<CurrencyUnitValue unit={unit} value={delegatedAssets} disableRounding />}
-        />
-      )}
-      {delegatedAssets.gt(0) && (
-        <InfoItem
-          isLast
-          title={t("hedera.info.claimable.title")}
-          onPress={onPressInfoCreator("claimable")}
-          value={<CurrencyUnitValue unit={unit} value={claimableRewards} disableRounding />}
-        />
+      {delegation && (
+        <>
+          <InfoItem
+            isLast
+            title={t("hedera.info.claimable.title")}
+            onPress={onPressInfoCreator("claimable")}
+            value={<CurrencyUnitValue unit={unit} value={claimableRewards} disableRounding />}
+          />
+          <InfoItem
+            title={t("hedera.info.delegated.title")}
+            onPress={onPressInfoCreator("delegated")}
+            value={<CurrencyUnitValue unit={unit} value={delegatedAssets} disableRounding />}
+          />
+        </>
       )}
     </ScrollView>
   );

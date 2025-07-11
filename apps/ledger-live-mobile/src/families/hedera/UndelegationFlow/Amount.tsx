@@ -110,9 +110,11 @@ function UndelegationAmount({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
-          <TranslatedError error={error} />
-        </Text>
+        {error && (
+          <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
+            <TranslatedError error={error} />
+          </Text>
+        )}
         <Button
           event="AmountContinue"
           type="primary"

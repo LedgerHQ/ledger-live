@@ -44,7 +44,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   useEffect(() => {
     if (delegation)
-      track("restaking_completed", {
+      track("redelegation_completed", {
         currency: ticker,
         validator: selectedValidatorNodeId,
         source,
@@ -54,10 +54,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [source, selectedValidatorNodeId, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
-    if (!account) return;
-
     const result = route.params?.result;
-    if (!result) return;
+    if (!account || !result) return;
 
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: account.id,

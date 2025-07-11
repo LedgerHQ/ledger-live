@@ -8,11 +8,7 @@ import { Data as UndelegationProps } from "./UndelegationFlowModal/Body";
 import { Data as RedelegationProps } from "./RedelegationFlowModal/Body";
 import { Data as ClaimRewardsProps } from "./ClaimRewardsFlowModal/Body";
 
-export type DelegateModalName =
-  | "MODAL_HEDERA_DELEGATION"
-  | "MODAL_HEDERA_REDELEGATION"
-  | "MODAL_HEDERA_UNDELEGATION"
-  | "MODAL_HEDERA_CLAIM_REWARDS";
+export type DelegateModalName = keyof typeof modals;
 
 export type ModalsData = {
   MODAL_HEDERA_DELEGATION: DelegationProps;
@@ -26,6 +22,6 @@ const modals: MakeModalsType<ModalsData> = {
   MODAL_HEDERA_UNDELEGATION,
   MODAL_HEDERA_REDELEGATION,
   MODAL_HEDERA_CLAIM_REWARDS,
-};
+} as const;
 
 export default modals;

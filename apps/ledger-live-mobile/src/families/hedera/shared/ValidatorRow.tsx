@@ -33,7 +33,7 @@ const ValidatorRow = ({ onPress, validator, account }: Props) => {
       onPress={handlePress}
     >
       <View style={styles.validator}>
-        <ValidatorIcon color={color} size={32} validatorName={validator.name} />
+        <ValidatorIcon color={color} size={32} validator={validator} />
         <View style={styles.validatorBody}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name}

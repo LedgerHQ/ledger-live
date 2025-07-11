@@ -161,7 +161,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
                     transform: [{ rotate }],
                   }}
                 >
-                  <ValidatorIcon color={color} validatorName={selectedValidator?.name} />
+                  <ValidatorIcon color={color} validator={selectedValidator} />
                 </Animated.View>
                 <ChangeDelegator />
               </Circle>

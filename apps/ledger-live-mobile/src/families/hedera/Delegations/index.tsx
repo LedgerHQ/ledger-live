@@ -251,7 +251,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorIcon
-            validatorName={delegationWithMeta.validator.name}
+            validator={delegationWithMeta.validator}
             color={currencyColor}
             size={size}
           />

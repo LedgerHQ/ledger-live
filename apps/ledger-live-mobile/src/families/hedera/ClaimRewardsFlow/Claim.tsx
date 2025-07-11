@@ -114,11 +114,7 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
               columnGap={2}
               mb={8}
             >
-              <ValidatorIcon
-                color={color}
-                size={32}
-                validatorName={selectedDelegation.validator.name}
-              />
+              <ValidatorIcon color={color} size={32} validator={selectedDelegation.validator} />
               <Text numberOfLines={1} fontWeight="semiBold" fontSize={14}>
                 {selectedDelegation.validator.name}
               </Text>
@@ -130,9 +126,11 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
-          <TranslatedError error={error} />
-        </Text>
+        {error && (
+          <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
+            <TranslatedError error={error} />
+          </Text>
+        )}
         <Button
           event="ClaimContinue"
           type="primary"

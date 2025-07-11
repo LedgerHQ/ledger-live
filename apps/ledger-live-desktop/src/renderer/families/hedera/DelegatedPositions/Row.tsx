@@ -196,7 +196,7 @@ export function Row({ account, delegationWithMeta, onManageAction, onExternalLin
         }}
       >
         <Box mr={2}>
-          <ValidatorIcon validatorName={delegationWithMeta.validator.name} />
+          <ValidatorIcon validator={delegationWithMeta.validator} />
         </Box>
         <Ellipsis>{delegationWithMeta.validator.name}</Ellipsis>
       </Column>

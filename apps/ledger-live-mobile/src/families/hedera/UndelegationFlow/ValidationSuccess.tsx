@@ -31,6 +31,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const transaction = route.params.transaction;
+  invariant(account, "account must be defined");
   invariant(transaction.family === "hedera", "hedera tx expected");
 
   const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
@@ -44,7 +45,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   useEffect(() => {
     if (delegation)
-      track("unstaking_completed", {
+      track("undelegation_completed", {
         currency: ticker,
         validator: selectedValidatorNodeId,
         source,

@@ -27,7 +27,7 @@ function StepConfirmation({
 
   useEffect(() => {
     if (optimisticOperation && typeof selectedValidatorNodeId === "number") {
-      track("restaking_completed", {
+      track("redelegation_completed", {
         currency: "HBAR",
         validator: selectedValidatorNodeId,
         source,

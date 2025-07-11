@@ -35,14 +35,14 @@ const DelegationRow = ({ onPress, delegationWithMeta, account }: Props) => {
       disabled={claimableRewards.isZero()}
     >
       <View style={styles.root}>
-        <ValidatorIcon color={color} size={32} validatorName={delegationWithMeta.validator.name} />
+        <ValidatorIcon color={color} size={32} validator={delegationWithMeta.validator} />
         <View style={styles.body}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.name}>
             {delegationWithMeta.validator.name}
           </Text>
         </View>
-        <View style={{ flexDirection: "column", gap: 2, alignItems: "flex-end" }}>
-          <Text fontWeight="semiBold" numberOfLines={1} style={[styles.value]} color="smoke">
+        <View style={styles.column}>
+          <Text fontWeight="semiBold" numberOfLines={1} style={styles.value} color="smoke">
             <Text fontWeight="semiBold" numberOfLines={1}>
               <CurrencyUnitValue showCode unit={unit} value={claimableRewards} />
             </Text>
@@ -69,6 +69,11 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
+  },
+  column: {
+    flexDirection: "column",
+    gap: 2,
+    alignItems: "flex-end",
   },
 });
 

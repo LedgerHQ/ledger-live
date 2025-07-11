@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { FlatList, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/types";
 import { TrackScreen } from "~/analytics";
@@ -16,8 +16,6 @@ type Props = StackNavigatorProps<
   HederaClaimRewardsFlowParamList,
   ScreenName.HederaClaimRewardsSelectReward
 >;
-
-const keyExtractor = (d: HederaDelegationWithMeta) => d.nodeId.toString();
 
 function ClaimRewardsSelectReward({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -36,13 +34,6 @@ function ClaimRewardsSelectReward({ navigation, route }: Props) {
     [navigation, route.params],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: HederaDelegationWithMeta }) => (
-      <DelegationRow account={account} delegationWithMeta={item} onPress={onItemPress} />
-    ),
-    [onItemPress, account],
-  );
-
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
@@ -52,12 +43,13 @@ function ClaimRewardsSelectReward({ navigation, route }: Props) {
         action="claimRewards"
         currency="hedera"
       />
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={[route.params.delegationWithMeta]}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+      <View style={styles.list}>
+        <DelegationRow
+          account={account}
+          delegationWithMeta={route.params.delegationWithMeta}
+          onPress={onItemPress}
+        />
+      </View>
     </SafeAreaView>
   );
 }

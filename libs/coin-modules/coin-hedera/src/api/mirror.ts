@@ -195,8 +195,8 @@ export async function getOperationsForAccount(
     } satisfies HederaOperationExtra;
 
     if (stakingReward.gt(0)) {
-      // offset timestamp by +1s to ensure it appears just before the triggering operation in the list
-      const stakingRewardTimestamp = new Date(timestamp.getTime() + 1000);
+      // offset timestamp by +1ms to ensure it appears just before the triggering operation in the list
+      const stakingRewardTimestamp = new Date(timestamp.getTime() + 1);
       const stakingRewardHash = `${hash}-staking-reward`;
       const stakingRewardType: OperationType = "REWARD";
 

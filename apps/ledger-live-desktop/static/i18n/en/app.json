@@ -6681,7 +6681,7 @@
           "columns": {
             "inactiveTooltip": "Validator not found",
             "overstakedTooltip": "This node is overstaked, APY is lower than optimal",
-            "activeTooltip": "Delegated amount generate rewards",
+            "activeTooltip": "Delegated amount generates rewards",
             "delegated": "Delegated",
             "rewards": "Rewards"
           },
@@ -6702,12 +6702,12 @@
             "title": "Validators",
             "rowTitle": "Node {{index}}: {{name}}",
             "rowSubtitlePercentage": "Staked {{percentage}}% of max",
-            "rowSubtitleOverstaked": "Node is overstaked",
-            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
-            "learnMore": "Learn more"
+            "rowSubtitleOverstaked": "Node is overstaked"
           },
           "amount": {
-            "title": "Amount"
+            "title": "Amount",
+            "alert": "When staking on Hedera, your entire balance is staked. It remains fully liquid and is not exposed to lockup period or slashing risks. You may need to wait up to 48 hours for staking rewards to start.",
+            "learnMore": "Learn more"
           },
           "connectDevice": {
             "title": "Device"

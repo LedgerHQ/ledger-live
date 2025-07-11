@@ -39,7 +39,7 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
 
   const { delegation } = account.hederaResources;
   const spendableBalance = account.spendableBalance;
-  const delegatedAssets = delegation ? spendableBalance : new BigNumber(0);
+  const delegatedAssets = delegation?.delegated ?? new BigNumber(0);
   const claimableRewards = delegation?.pendingReward ?? new BigNumber(0);
 
   const formattedAvailableBalance = formatCurrencyUnit(unit, spendableBalance, formatConfig);
@@ -61,35 +61,35 @@ const AccountBalanceSummaryFooter: HederaFamily["AccountBalanceSummaryFooter"] =
           <Discreet>{formattedAvailableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
-      {delegatedAssets.gt(0) && (
-        <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.delegated.tooltip" />}>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="account.delegatedAssets" />
-              </Title>
-              <InfoCircle size={13} />
-            </TitleWrapper>
-          </ToolTip>
-          <AmountValue>
-            <Discreet>{formattedDelegatedAssets}</Discreet>
-          </AmountValue>
-        </BalanceDetail>
-      )}
-      {delegatedAssets.gt(0) && (
-        <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.claimable.tooltip" />}>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="account.claimableRewards" />
-              </Title>
-              <InfoCircle size={13} />
-            </TitleWrapper>
-          </ToolTip>
-          <AmountValue>
-            <Discreet>{formattedClaimableRewards}</Discreet>
-          </AmountValue>
-        </BalanceDetail>
+      {delegation && (
+        <>
+          <BalanceDetail>
+            <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.delegated.tooltip" />}>
+              <TitleWrapper>
+                <Title>
+                  <Trans i18nKey="account.delegatedAssets" />
+                </Title>
+                <InfoCircle size={13} />
+              </TitleWrapper>
+            </ToolTip>
+            <AmountValue>
+              <Discreet>{formattedDelegatedAssets}</Discreet>
+            </AmountValue>
+          </BalanceDetail>
+          <BalanceDetail>
+            <ToolTip content={<Trans i18nKey="hedera.account.balanceFooter.claimable.tooltip" />}>
+              <TitleWrapper>
+                <Title>
+                  <Trans i18nKey="account.claimableRewards" />
+                </Title>
+                <InfoCircle size={13} />
+              </TitleWrapper>
+            </ToolTip>
+            <AmountValue>
+              <Discreet>{formattedClaimableRewards}</Discreet>
+            </AmountValue>
+          </BalanceDetail>
+        </>
       )}
     </Wrapper>
   );
