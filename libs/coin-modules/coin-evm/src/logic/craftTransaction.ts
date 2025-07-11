@@ -2,7 +2,7 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { EvmAsset, isNative } from "../types";
+import { isNative } from "../types";
 import { getNodeApi } from "../network/node";
 import ERC20ABI from "../abis/erc20.abi.json";
 
@@ -17,7 +17,7 @@ export async function craftTransaction(
   {
     transactionIntent,
   }: {
-    transactionIntent: TransactionIntent<EvmAsset>;
+    transactionIntent: TransactionIntent;
   },
 ): Promise<string> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
@@ -27,7 +27,7 @@ export async function craftTransaction(
   }
 
   const node = getNodeApi(currency);
-  const to = isNative(asset) ? recipient : asset.contractAddress;
+  const to = isNative(asset) ? recipient : (asset?.assetReference as string);
   const nonce = await node.getTransactionCount(currency, sender);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   const value = isNative(asset) ? amount : 0n;

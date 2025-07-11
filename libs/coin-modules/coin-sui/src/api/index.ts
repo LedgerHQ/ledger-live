@@ -41,10 +41,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
   return { value: fees };
 }
 
-async function list(
-  address: string,
-  pagination: Pagination,
-): Promise<[Operation<SuiAsset>[], string]> {
+async function list(address: string, pagination: Pagination): Promise<[Operation[], string]> {
   return operationsFromHeight(address, pagination.minHeight);
 }
 
@@ -52,13 +49,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<SuiAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<SuiAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const state: PaginationState = {
     heightLimit: minHeight,
     continueIterations: true,
