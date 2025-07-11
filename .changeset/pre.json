@@ -149,6 +149,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "ninety-nails-joke",
     "short-ligers-matter"
   ]
 }

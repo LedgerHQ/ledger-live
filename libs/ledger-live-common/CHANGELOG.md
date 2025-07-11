@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.40.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`d4a6f38`](https://github.com/LedgerHQ/ledger-live/commit/d4a6f382183922f78cecf00c276ebea99504871a)]:
+  - @ledgerhq/coin-sui@0.6.1-hotfix.0
+
 ## 34.40.1-hotfix.0
 
 ### Patch Changes
