@@ -53,7 +53,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
       return {
         account,
-        parentAccount,
+        parentAccount: undefined,
         transaction,
       };
     });
@@ -187,7 +187,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" mb={6}>
+        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
           <TranslatedError error={error} />
         </Text>
         <Button

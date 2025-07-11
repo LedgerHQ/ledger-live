@@ -6,6 +6,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
+  ClaimRewardsFeesWarning,
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
 import type { AccountBridge } from "@ledgerhq/types-live";
@@ -40,6 +41,15 @@ const verifyStakingFlowStatus = async (account: HederaAccount, transaction: Tran
 
     if (account.hederaResources?.delegation?.nodeId === transaction.properties.stakedNodeId) {
       errors.stakedNodeId = new HederaRedundantStakedNodeIdError();
+    }
+  }
+
+  if (transaction.properties.mode === "claimRewards") {
+    const claimRewards = account.hederaResources?.delegation?.pendingReward || new BigNumber(0);
+    const transactionFee = transaction.maxFee ?? new BigNumber(0);
+
+    if (transactionFee.gt(claimRewards)) {
+      warnings.claimRewardsFee = new ClaimRewardsFeesWarning();
     }
   }
 

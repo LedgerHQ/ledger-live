@@ -21,6 +21,7 @@ function RedelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -105,7 +106,7 @@ function RedelegationFlow() {
         name={ScreenName.HederaRedelegationValidationError}
         component={RedelegationValidationError}
         options={{
-          headerTitle: "",
+          headerShown: false,
           gestureEnabled: false,
         }}
       />
@@ -113,9 +114,7 @@ function RedelegationFlow() {
         name={ScreenName.HederaRedelegationValidationSuccess}
         component={RedelegationValidationSuccess}
         options={{
-          headerLeft: undefined,
-          headerTitle: "",
-          headerRight: undefined,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

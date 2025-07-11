@@ -30,7 +30,7 @@ type Props = StackNavigatorProps<
 
 function RedelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
@@ -50,7 +50,7 @@ function RedelegationAmount({ navigation, route }: Props) {
 
     return {
       account,
-      parentAccount,
+      parentAccount: undefined,
       transaction,
     };
   });
@@ -73,7 +73,7 @@ function RedelegationAmount({ navigation, route }: Props) {
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="RedelegationFlow"
-        name="Summary"
+        name="Amount"
         flow="stake"
         action="redelegation"
         currency="hedera"
@@ -108,18 +108,18 @@ function RedelegationAmount({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" mb={6}>
+        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
           <TranslatedError error={error} />
         </Text>
         <Button
-          event="SummaryContinue"
+          event="AmountContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
           pending={bridgePending}
-          testID="hedera-summary-continue-button"
+          testID="hedera-amount-continue-button"
         />
       </View>
     </SafeAreaView>

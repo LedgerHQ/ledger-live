@@ -6929,6 +6929,32 @@
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
       }
+    },
+    "claimRewards": {
+      "stepperHeader": {
+        "selectReward": "Select reward to collect",
+        "claim": "Claim rewards",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "claim": {
+          "earned": "You earned",
+          "delegatingTo": "by delegating assets to",
+          "description": "They will be claimed now and added to your available balance."
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "success": {
+            "title": "You have successfully claimed your rewards. They were added to your available balance.",
+            "description": "Your account balance will be updated when the blockchain confirms the transaction."
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
     }
   },
   "asset": {

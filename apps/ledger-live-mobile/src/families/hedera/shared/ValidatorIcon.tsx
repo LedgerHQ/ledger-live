@@ -27,7 +27,7 @@ const ValidatorIcon = ({
   const lineHeight = Math.round(fontSize * 1.6);
 
   return (
-    <Circle crop size={size}>
+    <Circle crop bg={color} size={size}>
       {isLedger ? (
         <LedgerLogo size="M" color={colors.text} />
       ) : (

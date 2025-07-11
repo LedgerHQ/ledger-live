@@ -20,6 +20,7 @@ function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -31,10 +32,15 @@ function ClaimRewardsFlow() {
         name={ScreenName.HederaClaimRewardsSelectReward}
         component={ClaimRewardsSelectReward}
         options={() => ({
+          headerLeft: () => null,
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
-              title={t("hedera.claimRewards.stepperHeader.selectValidatorTitle")}
-              subtitle={t("hedera.claimRewards.stepperHeader.selectValidatorSubTitle")}
+              title={t("hedera.claimRewards.stepperHeader.selectReward")}
+              subtitle={t("hedera.claimRewards.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
             />
           ),
         })}
@@ -43,12 +49,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.HederaClaimRewardsClaim}
         component={ClaimRewardsClaim}
         options={() => ({
-          headerTitle: () => (
-            <StepHeader
-              title={t("hedera.claimRewards.stepperHeader.amountTitle")}
-              subtitle={t("hedera.claimRewards.stepperHeader.amountSubTitle")}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t("hedera.claimRewards.stepperHeader.claim")} />,
         })}
       />
       <Stack.Screen
@@ -87,7 +88,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.HederaClaimRewardsValidationError}
         component={ClaimRewardsValidationError}
         options={{
-          headerTitle: "",
+          headerShown: false,
           gestureEnabled: false,
         }}
       />
@@ -95,9 +96,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.HederaClaimRewardsValidationSuccess}
         component={ClaimRewardsValidationSuccess}
         options={{
-          headerLeft: undefined,
-          headerTitle: "",
-          headerRight: undefined,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

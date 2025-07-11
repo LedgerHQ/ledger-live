@@ -75,7 +75,7 @@ function UndelegationFlow() {
         name={ScreenName.HederaUndelegationValidationError}
         component={UndelegationValidationError}
         options={{
-          headerTitle: "",
+          headerShown: false,
           gestureEnabled: false,
         }}
       />
@@ -83,9 +83,7 @@ function UndelegationFlow() {
         name={ScreenName.HederaUndelegationValidationSuccess}
         component={UndelegationValidationSuccess}
         options={{
-          headerLeft: undefined,
-          headerTitle: "",
-          headerRight: undefined,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

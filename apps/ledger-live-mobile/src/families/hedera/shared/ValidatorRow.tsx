@@ -28,7 +28,7 @@ const ValidatorRow = ({ onPress, validator, account }: Props) => {
 
   return (
     <Touchable
-      event="DelegationFlowChoseValidator"
+      event="DelegationFlowChooseValidator"
       eventProperties={{ validatorName: validator.name }}
       onPress={handlePress}
     >

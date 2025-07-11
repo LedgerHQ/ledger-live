@@ -17,8 +17,9 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { StepProps } from "../types";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
-function StepRewards({ t, account, parentAccount, transaction, error }: StepProps) {
+function StepRewards({ account, parentAccount, transaction, status, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
   invariant(account.hederaResources?.delegation, "hedera: delegation is required");
   const { delegation } = account.hederaResources;
@@ -40,15 +41,16 @@ function StepRewards({ t, account, parentAccount, transaction, error }: StepProp
     return null;
   }
 
-  const feeIsLargerThanClaimable = transaction.maxFee?.gt(claimableRewards) ?? false;
   const formattedClaimableRewards = formatCurrencyUnit(unit, claimableRewards, formatConfig);
 
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error && <ErrorBanner error={error} />}
-      {feeIsLargerThanClaimable && (
-        <Alert type="warning">{t("hedera.claimRewards.flow.steps.rewards.feesAlert")}</Alert>
+      {status.warnings.claimRewardsFee && (
+        <Alert type="warning">
+          <TranslatedError error={status.warnings.claimRewardsFee} />
+        </Alert>
       )}
       <Text ff="Inter|SemiBold" fontSize={4} textAlign="center">
         <Trans

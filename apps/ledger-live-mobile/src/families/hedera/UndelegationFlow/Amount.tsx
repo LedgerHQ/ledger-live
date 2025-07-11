@@ -50,7 +50,7 @@ function UndelegationAmount({ navigation, route }: Props) {
 
     return {
       account,
-      parentAccount,
+      parentAccount: undefined,
       transaction,
     };
   });
@@ -75,7 +75,7 @@ function UndelegationAmount({ navigation, route }: Props) {
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="UndelegationFlow"
-        name="Summary"
+        name="Amount"
         flow="stake"
         action="undelegation"
         currency="hedera"
@@ -110,18 +110,18 @@ function UndelegationAmount({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        <Text color="alert" fontWeight="semiBold" mb={6}>
+        <Text color="alert" fontWeight="semiBold" textAlign="center" mb={6}>
           <TranslatedError error={error} />
         </Text>
         <Button
-          event="SummaryContinue"
+          event="AmountContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
           pending={bridgePending}
-          testID="hedera-summary-continue-button"
+          testID="hedera-amount-continue-button"
         />
       </View>
     </SafeAreaView>

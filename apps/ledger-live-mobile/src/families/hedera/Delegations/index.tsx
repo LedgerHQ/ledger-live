@@ -167,11 +167,17 @@ function Delegations({ account, delegatedPosition }: Props) {
   const delegationActions = useMemo<DelegationDrawerActions>(() => {
     const allStakeActions = ["redelegate", "claimRewards", "undelegate"] satisfies StakingAction[];
 
+    const mapStakeActionToDisabled = {
+      redelegate: false,
+      claimRewards: delegationWithMeta.pendingReward.isZero(),
+      undelegate: false,
+    } as const satisfies Record<(typeof allStakeActions)[number], boolean>;
+
     const mapStakeActionToColor = {
       redelegate: colors.fog,
       claimRewards: rgba(colors.yellow, 0.2),
       undelegate: rgba(colors.alert, 0.2),
-    } satisfies Record<(typeof allStakeActions)[number], string>;
+    } as const satisfies Record<(typeof allStakeActions)[number], unknown>;
 
     const mapStakeActionToNavigationParams = {
       redelegate: [
@@ -204,15 +210,17 @@ function Delegations({ account, delegatedPosition }: Props) {
           },
         },
       ],
-    } as const;
+    } as const satisfies Record<(typeof allStakeActions)[number], unknown>;
 
     return allStakeActions.map(action => {
       const enabledActionCircleBgColor = mapStakeActionToColor[action];
       const actionNavigationParams = mapStakeActionToNavigationParams[action];
+      const disabled = mapStakeActionToDisabled[action];
 
       const drawerAction: DelegationDrawerActions[number] = {
         label: t(`hedera.delegatedPositions.details.actions.${action}`),
         event: `DelegationAction${capitalize(action)}`,
+        disabled,
         Icon: (props: IconProps) => (
           <Circle {...props} bg={enabledActionCircleBgColor}>
             <DrawerStakeActionIcon action={action} enabled />
@@ -245,12 +253,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         actions={delegationActions}
       />
       <View>
-        <DelegationRewards
-          account={account}
-          claimableRewards={delegationWithMeta.pendingReward}
-          currency={currency}
-          unit={unit}
-        />
+        <DelegationRewards account={account} delegationWithMeta={delegationWithMeta} unit={unit} />
         <AccountSectionLabel name={t("account.delegation.sectionLabel")} />
         <Box mt={6}>
           <View style={[styles.delegationsWrapper]}>

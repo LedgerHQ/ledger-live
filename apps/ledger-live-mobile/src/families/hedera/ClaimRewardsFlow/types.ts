@@ -17,7 +17,7 @@ export type HederaClaimRewardsFlowParamList = {
   };
   [ScreenName.HederaClaimRewardsClaim]: {
     accountId: string;
-    delegationWithMeta: HederaDelegationWithMeta;
+    selectedDelegation: HederaDelegationWithMeta;
     parentId?: string;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
