@@ -9373,6 +9373,12 @@ importers:
       '@actions/github':
         specifier: 6.0.1
         version: 6.0.1
+      '@datadog/datadog-api-client':
+        specifier: 2.0.0-beta.1
+        version: 2.0.0-beta.1
+      '@datadog/datadog-api-client-synthetics':
+        specifier: 0.0.1-beta.1
+        version: 0.0.1-beta.1
       '@datadog/datadog-ci':
         specifier: 3.11.0
         version: 3.11.0(patch_hash=hshtsvjisk4nrwuydtrlg3tpk4)
@@ -11875,6 +11881,14 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@datadog/datadog-api-client-synthetics@0.0.1-beta.1':
+    resolution: {integrity: sha512-pI56YQ4YnptOFl8REv2QHiSl1UuKGxdAotzO15W4Mgr22AMIwJrOL584UU0SqY6egjkyHwIZ1UCKdrXzBKY0uA==}
+    engines: {node: '>=18.0.0'}
+
+  '@datadog/datadog-api-client@2.0.0-beta.1':
+    resolution: {integrity: sha512-zQdbrvxd3gcnCigetEKOn30lkvDMo1FKXDFzHLTdtcEDbbkMzTLn5BKwJQ+2DtRBjrSTxaqzIWsZX9pkYFWvZQ==}
+    engines: {node: '>=18.0.0'}
 
   '@datadog/datadog-ci@3.11.0':
     resolution: {integrity: sha512-zRpCKr/sVTju8/c52IAWLilE9mwX+tj6TYi5izUBrOex0w56ztFqMYG5aiJPnYjdcO7l1P+A13NJxmVp3wrBEQ==}
@@ -18835,6 +18849,9 @@ packages:
   '@types/btoa-lite@1.0.2':
     resolution: {integrity: sha512-ZYbcE2x7yrvNFJiU7xJGrpF/ihpkM7zKgw8bha3LNJSesvTtUNxbpzaT7WXBIryf6jovisrxTBvymxMeLLj1Mg==}
 
+  '@types/buffer-from@1.1.3':
+    resolution: {integrity: sha512-2lq4YC9uLUMGHkl2IDtX4tCXSo2+hwMpOJcY1qiIk1kybc31rIlPyM1HCVJhkPFIo75a/pOVxqyvwuf5TpCG/w==}
+
   '@types/cacheable-request@6.0.3':
     resolution: {integrity: sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw==}
 
@@ -19176,6 +19193,9 @@ packages:
 
   '@types/object-hash@2.2.1':
     resolution: {integrity: sha512-i/rtaJFCsPljrZvP/akBqEwUP2y5cZLOmvO+JaYnz01aPknrQ+hB5MRcO7iqCUsFaYfTG8kGfKUyboA07xeDHQ==}
+
+  '@types/pako@1.0.7':
+    resolution: {integrity: sha512-YBtzT2ztNF6R/9+UXj2wTGFnC9NklAnASt3sC0h2m1bbH7G6FyBIkt4AN8ThZpNfxUo1b2iMVO0UawiJymEt8A==}
 
   '@types/pako@2.0.3':
     resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
@@ -27430,6 +27450,10 @@ packages:
   logkitty@0.7.1:
     resolution: {integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==}
     hasBin: true
+
+  loglevel@1.9.2:
+    resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
+    engines: {node: '>= 0.6.0'}
 
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
@@ -36888,7 +36912,7 @@ snapshots:
     dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.0
+      debug: 4.3.4
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -36899,7 +36923,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.0
+      debug: 4.3.4
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -38532,7 +38556,7 @@ snapshots:
       '@babel/parser': 7.27.5
       '@babel/template': 7.27.2
       '@babel/types': 7.27.6
-      debug: 4.4.0
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -39515,6 +39539,26 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@datadog/datadog-api-client-synthetics@0.0.1-beta.1':
+    dependencies:
+      '@datadog/datadog-api-client': 2.0.0-beta.1
+    transitivePeerDependencies:
+      - encoding
+
+  '@datadog/datadog-api-client@2.0.0-beta.1':
+    dependencies:
+      '@types/buffer-from': 1.1.3
+      '@types/node': 22.10.10
+      '@types/pako': 1.0.7
+      buffer-from: 1.1.2
+      cross-fetch: 3.1.8
+      es6-promise: 4.2.8
+      form-data: 4.0.2
+      loglevel: 1.9.2
+      pako: 2.1.0
+    transitivePeerDependencies:
+      - encoding
 
   '@datadog/datadog-ci@3.11.0(patch_hash=hshtsvjisk4nrwuydtrlg3tpk4)':
     dependencies:
@@ -50464,6 +50508,10 @@ snapshots:
 
   '@types/btoa-lite@1.0.2': {}
 
+  '@types/buffer-from@1.1.3':
+    dependencies:
+      '@types/node': 22.10.10
+
   '@types/cacheable-request@6.0.3':
     dependencies:
       '@types/http-cache-semantics': 4.0.4
@@ -50820,6 +50868,8 @@ snapshots:
   '@types/numeral@2.0.5': {}
 
   '@types/object-hash@2.2.1': {}
+
+  '@types/pako@1.0.7': {}
 
   '@types/pako@2.0.3': {}
 
@@ -52478,7 +52528,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -63569,6 +63619,8 @@ snapshots:
       ansi-fragments: 0.2.1
       dayjs: 1.11.10
       yargs: 15.4.1
+
+  loglevel@1.9.2: {}
 
   long@4.0.0: {}
 

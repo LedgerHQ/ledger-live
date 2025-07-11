@@ -135,6 +135,7 @@ jobs:
           site: ${{ inputs.datadog-site }}
           subdomain: ${{ inputs.datadog-subdomain }}
           public-id: ${{ steps.datadog-config.outputs.public_id }}
+          mobile-application: ${{ steps.datadog-config.outputs.app_id }}
           mobile-application-version: ${{ steps.upload-version.outputs.version-id }}
           mobile-application-version-name: ${{ inputs.version }}
           mobile-application-platform: ${{ inputs.platform }}
