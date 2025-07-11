@@ -17,8 +17,9 @@ import ValidatorsSelect from "../../shared/staking/ValidatorsSelect";
 function StepSummary({ t, account, parentAccount, transaction, error }: StepProps) {
   invariant(account && transaction, "hedera: account and transaction required");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const currentValidatorNodeId = account.hederaResources?.delegation?.nodeId;
   const validators = useHederaValidators(account.currency);
-  const validator = validators.find(v => v.address === transaction?.recipient);
+  const validator = validators.find(v => v.nodeId === currentValidatorNodeId);
 
   if (!validator) {
     return null;
@@ -32,7 +33,7 @@ function StepSummary({ t, account, parentAccount, transaction, error }: StepProp
         <Label mb={4}>
           <Trans i18nKey="hedera.undelegate.flow.steps.summary.validatorLabel" />
         </Label>
-        <ValidatorsSelect disabled account={account} selectedValidatorAddress={validator.address} />
+        <ValidatorsSelect disabled account={account} selectedValidatorNodeId={validator.nodeId} />
       </Box>
       <Box>
         <Label mb={4}>

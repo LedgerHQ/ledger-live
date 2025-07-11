@@ -33,7 +33,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const transaction = route.params.transaction;
   invariant(transaction.family === "hedera", "hedera tx expected");
 
-  const selectedValidatorAddress = transaction.recipient;
+  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
   const source = route.params.source?.name ?? "unknown";
   const delegation = getTrackingDelegationType({ type: route.params.result.type });
   const { ticker } = getAccountCurrency(account);
@@ -46,12 +46,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     if (delegation)
       track("restaking_completed", {
         currency: ticker,
-        validator: selectedValidatorAddress,
+        validator: selectedValidatorNodeId,
         source,
         delegation,
         flow: "stake",
       });
-  }, [source, selectedValidatorAddress, delegation, ticker]);
+  }, [source, selectedValidatorNodeId, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

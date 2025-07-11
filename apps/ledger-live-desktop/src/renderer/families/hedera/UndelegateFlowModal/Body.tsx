@@ -93,7 +93,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       invariant(validator, "hedera: validator not found in undelegate flow");
 
       const transaction = bridge.updateTransaction(t, {
-        recipient: validator.address,
         properties: {
           name: "staking",
           mode: "undelegate",

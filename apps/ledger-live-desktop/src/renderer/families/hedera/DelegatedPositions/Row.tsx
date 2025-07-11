@@ -192,7 +192,6 @@ export function Row({ account, delegationWithMeta, onManageAction, onExternalLin
         strong
         clickable
         onClick={() => {
-          if (!delegationWithMeta.validator.address) return;
           onExternalLink(delegationWithMeta);
         }}
       >

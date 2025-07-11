@@ -99,7 +99,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const defaultValidator = getDefaultValidator(validators);
 
       const transaction = bridge.updateTransaction(t, {
-        recipient: defaultValidator?.address,
         properties: {
           name: "staking",
           mode: "delegate",

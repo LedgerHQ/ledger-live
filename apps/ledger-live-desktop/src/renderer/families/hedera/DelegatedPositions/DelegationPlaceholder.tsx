@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Box, Flex } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Button from "~/renderer/components/Button";
+import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
@@ -31,7 +32,7 @@ export default function DelegationPlaceholder({ account }: { account: HederaAcco
         title={<Trans i18nKey="hedera.account.bodyHeader.delegatedPositions.header" />}
         titleProps={{ "data-e2e": "title_Staking" }}
       />
-      <Wrapper>
+      <Wrapper horizontal>
         <Box style={{ maxWidth: "65%" }}>
           <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
             <Trans i18nKey="delegation.delegationEarn" values={{ name: account.currency.name }} />

@@ -66,7 +66,7 @@ function StepRewards({ account, parentAccount, transaction, status, error }: Ste
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorAddress={delegationWithMeta.validator.address}
+          selectedValidatorNodeId={delegationWithMeta.validator.nodeId}
         />
       </Box>
     </Box>

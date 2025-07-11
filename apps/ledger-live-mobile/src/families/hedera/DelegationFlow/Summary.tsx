@@ -84,9 +84,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
   });
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const selectedValidatorAddress = transaction.recipient ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
   const selectedValidator =
-    validators.find(v => v.address === selectedValidatorAddress) ?? defaultValidator ?? undefined;
+    validators.find(v => v.nodeId === selectedValidatorNodeId) ?? defaultValidator ?? undefined;
   const hasErrors = Object.keys(status.errors).length > 0;
   const error = Object.values(status.errors)[0];
 
@@ -97,7 +97,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
     updateTransaction(prev => {
       return {
         ...prev,
-        recipient: validator?.address ?? "",
         properties: {
           name: "staking",
           mode: "delegate",

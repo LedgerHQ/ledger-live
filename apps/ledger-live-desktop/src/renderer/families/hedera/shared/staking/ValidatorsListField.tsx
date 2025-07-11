@@ -17,28 +17,28 @@ import ValidatorListItem from "./ValidatorListItem";
 
 type Props = {
   account: Account;
-  selectedValidatorAddress: string | null;
+  selectedValidatorNodeId: number | null;
   onChangeValidator: (validator: HederaValidator) => void;
 };
 
-const ValidatorsListField = ({ account, selectedValidatorAddress, onChangeValidator }: Props) => {
+const ValidatorsListField = ({ account, selectedValidatorNodeId, onChangeValidator }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const unit = useAccountUnit(account);
   const validators = useHederaValidators(account.currency, search);
 
   const defaultValidator = getDefaultValidator(validators);
-  const selectedValidator = validators.find(v => v.address === selectedValidatorAddress);
+  const selectedValidator = validators.find(v => v.nodeId === selectedValidatorNodeId);
   const value = selectedValidator ?? defaultValidator;
 
   const renderItem = (validator: HederaValidator) => {
     return (
       <ValidatorListItem
         currency={account.currency}
-        key={validator.address}
+        key={validator.nodeId}
         validator={validator}
         unit={unit}
-        active={selectedValidatorAddress === validator.address}
+        active={validator.nodeId === selectedValidatorNodeId}
         onClick={onChangeValidator}
       />
     );

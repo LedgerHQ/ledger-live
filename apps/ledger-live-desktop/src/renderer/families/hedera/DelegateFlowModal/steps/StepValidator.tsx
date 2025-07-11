@@ -24,7 +24,6 @@ export default function StepValidator({
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
-        recipient: validator.address,
         properties: {
           name: "staking",
           mode: "delegate",
@@ -34,7 +33,7 @@ export default function StepValidator({
     });
   };
 
-  const selectedValidatorAddress = transaction.recipient ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
 
   return (
     <Box flow={1}>
@@ -51,7 +50,7 @@ export default function StepValidator({
       <ValidatorsListField
         account={account}
         onChangeValidator={updateValidator}
-        selectedValidatorAddress={selectedValidatorAddress}
+        selectedValidatorNodeId={selectedValidatorNodeId}
       />
     </Box>
   );

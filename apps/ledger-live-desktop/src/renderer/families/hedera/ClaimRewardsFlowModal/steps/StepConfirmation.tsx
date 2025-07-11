@@ -23,19 +23,19 @@ function StepConfirmation({
   transaction,
   source,
 }: Readonly<StepProps>) {
-  const selectedValidatorAddress = transaction?.recipient ?? null;
+  const selectedValidatorNodeId = transaction?.properties?.stakedNodeId ?? null;
 
   useEffect(() => {
-    if (optimisticOperation && selectedValidatorAddress) {
+    if (optimisticOperation && typeof selectedValidatorNodeId === "number") {
       track("claim_rewards_completed", {
         currency: "HBAR",
-        validator: selectedValidatorAddress,
+        validator: selectedValidatorNodeId,
         source,
         delegation: "claim-rewards",
         flow: "stake",
       });
     }
-  }, [optimisticOperation, source, selectedValidatorAddress]);
+  }, [optimisticOperation, source, selectedValidatorNodeId]);
 
   if (optimisticOperation) {
     return (

@@ -18,7 +18,7 @@ type Props = BaseComposite<
   StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationSelectValidator>
 >;
 
-const keyExtractor = (v: HederaValidator) => v.address;
+const keyExtractor = (v: HederaValidator) => v.nodeId.toString();
 
 export default function RedelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

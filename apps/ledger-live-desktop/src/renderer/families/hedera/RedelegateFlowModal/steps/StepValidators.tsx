@@ -33,14 +33,13 @@ function StepValidators({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const delegationWithMeta = useHederaDelegationWithMeta(account, delegation);
 
-  const selectedValidatorAddress = transaction.recipient ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
 
   const updateValidator = (validator: HederaValidator | null) => {
     if (!validator) return;
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
-        recipient: validator.address,
         properties: {
           name: "staking",
           mode: "redelegate",
@@ -61,7 +60,7 @@ function StepValidators({
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorAddress={delegationWithMeta.validator.address}
+          selectedValidatorNodeId={delegationWithMeta.validator.nodeId}
         />
       </Box>
       <StepRecipientSeparator />
@@ -71,7 +70,7 @@ function StepValidators({
         </Label>
         <ValidatorsSelect
           account={account}
-          selectedValidatorAddress={selectedValidatorAddress}
+          selectedValidatorNodeId={selectedValidatorNodeId}
           error={status.errors["stakedNodeId"]}
           onChangeValidator={updateValidator}
         />
