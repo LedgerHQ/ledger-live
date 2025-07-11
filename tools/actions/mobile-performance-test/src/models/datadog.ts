@@ -226,3 +226,58 @@ export interface Test {
 
 // Root type - array of test results
 export type TestOutput = Test[];
+
+/** Mobile Application Response returned by the Datadog API */
+export interface MobileApplicationResponse {
+  /** The list of mobile applications */
+  applications: MobileApplication[];
+}
+
+/** Mobile Application returned by the Datadog API */
+export interface MobileApplication {
+  /** The ID of the mobile application */
+  id: string;
+  /** The name of the mobile application */
+  name: string;
+  /** The description of the mobile application */
+  description: string;
+  /** The platform of the mobile application (e.g. "ios", "android") */
+  platform: string;
+  /** The uploaded versions of the mobile application */
+  versions: MobileApplicationVersion[];
+  /** The framework of the mobile application */
+  framework: string | null;
+  /** The tags of the mobile application */
+  tags: string[];
+  /** The date and time the mobile application was created */
+  created_at: string;
+}
+
+/** Mobile Application Version returned by the Datadog API */
+export interface MobileApplicationVersion {
+  /** The GUID of the mobile application version */
+  id: string;
+  /** The name of the mobile application version (e.g. "1.0.0") */
+  version_name: string;
+  /** The file name of the mobile application version */
+  file_name: string;
+  /** The original file name of the mobile application version */
+  original_file_name: string;
+  /** Whether the mobile application version is flagged as the latest */
+  is_latest: boolean;
+  /** The tests referencing this mobile application version */
+  tests: unknown[];
+  /** The minimum OS version of the mobile application version */
+  minimum_os_version: string;
+  /** The date and time the mobile application version was created */
+  created_at: string;
+  /** The creator of the mobile application version */
+  created_by: {
+    /** The name of the creator */
+    name: string;
+    /** The handle of the creator */
+    handle: string;
+    /** The email of the creator */
+    email: string;
+  };
+}
