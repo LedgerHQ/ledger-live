@@ -13,7 +13,6 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import { broadcast, combine, lastBlock } from "../logic/";
-import { EvmAsset } from "../types";
 import { craftTransaction } from "../logic/craftTransaction";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi {
@@ -24,9 +23,8 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
       broadcast(currency, { signature: tx, broadcastConfig }),
     combine,
-    craftTransaction: (
-      transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
-    ): Promise<string> => craftTransaction(currency, { transactionIntent }),
+    craftTransaction: (transactionIntent: TransactionIntent<MemoNotSupported>): Promise<string> =>
+      craftTransaction(currency, { transactionIntent }),
     estimateFees: (
       _transactionIntent: TransactionIntent<MemoNotSupported>,
     ): Promise<FeeEstimation> => {
