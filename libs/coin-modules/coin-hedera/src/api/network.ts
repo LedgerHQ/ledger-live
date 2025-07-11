@@ -27,13 +27,18 @@ export async function buildUnsignedTransaction({
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
   const accountId = account.freshAddress;
 
-  return new TransferTransaction()
+  const tx = new TransferTransaction()
     .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
-    .addHbarTransfer(transaction.recipient, hbarAmount)
-    .freeze();
+    .addHbarTransfer(transaction.recipient, hbarAmount);
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  return tx.freeze();
 }
 
 export interface AccountBalance {
