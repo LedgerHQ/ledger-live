@@ -290,11 +290,23 @@
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try it again."
     },
+    "DisconnectError": {
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try it again."
+    },
+    "DeviceSessionNotFound": {
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try it again."
+    },
     "DisconnectedDeviceDuringOperation": {
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "DeviceDisconnectedWhileSendingError": {
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
+    },
+    "ReconnectionFailedError": {
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try again."
     },
