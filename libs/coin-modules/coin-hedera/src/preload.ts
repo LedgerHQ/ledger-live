@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNodes } from "./api/mirror";
-import { extractCompanyFromNodeDescription } from "./logic";
+import { extractCompanyFromNodeDescription, sortValidators } from "./logic";
 import { setHederaPreloadData } from "./preload-data";
-import { HederaPreloadData, HederaValidator } from "./types";
+import type { HederaPreloadData, HederaValidator, HederaValidatorRaw } from "./types";
 
 export const getPreloadStrategy = () => ({
   preloadMaxAge: 15 * 60 * 1000, // 15 minutes
@@ -34,6 +34,8 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
     };
   });
 
+  sortValidators(validators);
+
   const data: HederaPreloadData = {
     validators,
   };
@@ -43,7 +45,7 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
   return data;
 }
 
-function mapRawValidatorToValidator(validatorRaw: Record<string, any>): HederaValidator {
+function mapRawValidatorToValidator(validatorRaw: HederaValidatorRaw): HederaValidator {
   return {
     nodeId: validatorRaw.nodeId,
     address: validatorRaw.address,

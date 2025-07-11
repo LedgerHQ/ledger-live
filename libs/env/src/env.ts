@@ -222,6 +222,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "hedera staking reward account id",
   },
+  HEDERA_STAKING_LEDGER_NODE_ID: {
+    def: -1,
+    parser: intParser,
+    desc: "hedera staking ledger node id, used to determine the default validator",
+  },
   API_HEDERA_MIRROR: {
     def: "https://hedera.coin.ledger.com",
     parser: stringParser,

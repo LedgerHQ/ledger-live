@@ -1,3 +1,4 @@
+import { getEnv } from "@ledgerhq/live-env";
 import type { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { Operation } from "@ledgerhq/types-live";
 import type { HederaMirrorTransaction } from "./api/mirror";
@@ -35,17 +36,31 @@ const extractCompanyFromNodeDescription = (description: string): string => {
     .trim();
 };
 
+const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
+  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+
+  // sort validators by nodeId in ASC order, with Ledger node first if it exists
+  return validators.sort((a, b) => {
+    if (typeof ledgerNodeId === "number") {
+      if (a.nodeId === ledgerNodeId) return -1;
+      if (b.nodeId === ledgerNodeId) return 1;
+    }
+
+    return a.nodeId - b.nodeId;
+  });
+};
+
 const getValidatorFromAccount = (account: HederaAccount): HederaValidator | null => {
-  const { delegation } = account.hederaResources || {};
+  const { delegation } = account.hederaResources ?? {};
 
   if (!delegation) {
     return null;
   }
 
   const validators = getCurrentHederaPreloadData(account.currency);
-  const validator = validators.validators.find(v => v.nodeId === delegation.nodeId);
+  const validator = validators.validators.find(v => v.nodeId === delegation.nodeId) ?? null;
 
-  return validator ?? null;
+  return validator;
 };
 
 const getHederaOperationType = (tx: Transaction): HederaOperationType => {
@@ -62,6 +77,12 @@ const getMemo = (tx: HederaMirrorTransaction): string | null => {
 
 const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
   if (validators.length === 0) return null;
+  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+  const ledgerValidator = validators.find(v => v.nodeId === ledgerNodeId);
+
+  if (ledgerValidator) {
+    return ledgerValidator;
+  }
 
   return validators.reduce((highest, current) =>
     current.activeStake.gt(highest.activeStake) ? current : highest,
@@ -84,6 +105,7 @@ export {
   getTransactionExplorer,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
+  sortValidators,
   getValidatorFromAccount,
   getDefaultValidator,
   getHederaOperationType,

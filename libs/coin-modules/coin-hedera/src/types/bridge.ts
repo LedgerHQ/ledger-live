@@ -99,6 +99,17 @@ export type HederaValidator = {
   overstaked: boolean;
 };
 
+export type HederaValidatorRaw = {
+  nodeId: number;
+  minStake: string;
+  maxStake: string;
+  activeStake: string;
+  activeStakePercentage: string;
+  address: string;
+  name: string;
+  overstaked: boolean;
+};
+
 export type HederaPreloadData = {
   validators: HederaValidator[];
 };
