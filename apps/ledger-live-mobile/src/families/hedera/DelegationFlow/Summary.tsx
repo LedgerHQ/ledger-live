@@ -84,7 +84,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   });
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
   const selectedValidator =
     validators.find(v => v.nodeId === selectedValidatorNodeId) ?? defaultValidator ?? undefined;
   const hasErrors = Object.keys(status.errors).length > 0;
@@ -100,7 +100,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         properties: {
           name: "staking",
           mode: "delegate",
-          stakedNodeId: validator?.nodeId,
+          stakingNodeId: validator?.nodeId,
         } as const,
       };
     });

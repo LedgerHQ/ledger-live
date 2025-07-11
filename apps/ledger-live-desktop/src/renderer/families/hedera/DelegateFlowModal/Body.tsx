@@ -102,7 +102,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         properties: {
           name: "staking",
           mode: "delegate",
-          stakedNodeId: defaultValidator?.nodeId,
+          stakingNodeId: defaultValidator?.nodeId,
         },
       });
 

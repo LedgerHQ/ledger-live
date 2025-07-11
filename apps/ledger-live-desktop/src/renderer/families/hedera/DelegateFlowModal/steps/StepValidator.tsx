@@ -27,13 +27,13 @@ export default function StepValidator({
         properties: {
           name: "staking",
           mode: "delegate",
-          stakedNodeId: validator.nodeId,
+          stakingNodeId: validator.nodeId,
         },
       });
     });
   };
 
-  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
 
   return (
     <Box flow={1}>
@@ -71,7 +71,7 @@ export function StepValidatorFooter({
     !bridgePending &&
     !errors.validators &&
     transaction &&
-    typeof transaction.properties?.stakedNodeId === "number";
+    typeof transaction.properties?.stakingNodeId === "number";
 
   return (
     <Box horizontal>

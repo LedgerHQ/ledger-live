@@ -33,7 +33,7 @@ function StepValidators({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const delegationWithMeta = useHederaDelegationWithMeta(account, delegation);
 
-  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
 
   const updateValidator = (validator: HederaValidator | null) => {
     if (!validator) return;
@@ -43,7 +43,7 @@ function StepValidators({
         properties: {
           name: "staking",
           mode: "redelegate",
-          stakedNodeId: validator.nodeId ?? null,
+          stakingNodeId: validator.nodeId ?? null,
         },
       });
     });
@@ -71,7 +71,7 @@ function StepValidators({
         <ValidatorsSelect
           account={account}
           selectedValidatorNodeId={selectedValidatorNodeId}
-          error={status.errors["stakedNodeId"]}
+          error={status.errors.stakingNodeId}
           onChangeValidator={updateValidator}
         />
       </Box>

@@ -23,7 +23,7 @@ function StepConfirmation({
   transaction,
   source,
 }: Readonly<StepProps>) {
-  const selectedValidatorNodeId = transaction?.properties?.stakedNodeId ?? null;
+  const selectedValidatorNodeId = transaction?.properties?.stakingNodeId ?? null;
 
   useEffect(() => {
     if (optimisticOperation && typeof selectedValidatorNodeId === "number") {

@@ -96,7 +96,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         properties: {
           name: "staking",
           mode: "redelegate",
-          stakedNodeId: null,
+          stakingNodeId: null,
         },
       });
 

@@ -6483,10 +6483,10 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
-    "HederaRedundantStakedNodeIdError": {
+    "HederaRedundantStakingNodeIdError": {
       "title": "You are already delegating to this node"
     },
-    "HederaInvalidStakedNodeIdError": {
+    "HederaInvalidStakingNodeIdError": {
       "title": "Selected node is not a valid validator"
     },
     "ImageIncorrectFileTypeError": {

@@ -30,7 +30,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const transaction = route.params.transaction;
   invariant(transaction.family === "hedera", "hedera tx expected");
 
-  const selectedValidatorNodeId = transaction.properties?.stakedNodeId ?? null;
+  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
   const source = route.params.source?.name ?? "unknown";
   const delegation = getTrackingDelegationType({ type: route.params.result.type });
   const { ticker } = getAccountCurrency(account);

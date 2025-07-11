@@ -44,7 +44,7 @@ function UndelegationAmount({ navigation, route }: Props) {
       properties: {
         name: "staking",
         mode: "undelegate",
-        stakedNodeId: null,
+        stakingNodeId: null,
       } as const,
     });
 

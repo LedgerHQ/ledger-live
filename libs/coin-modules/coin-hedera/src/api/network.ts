@@ -64,11 +64,11 @@ async function buildUnsignedUpdateAccountTransaction({
     tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
   }
 
-  if (typeof transaction.properties.stakedNodeId === "number") {
-    tx.setStakedNodeId(transaction.properties.stakedNodeId);
+  if (typeof transaction.properties.stakingNodeId === "number") {
+    tx.setStakedNodeId(transaction.properties.stakingNodeId);
   }
 
-  if (transaction.properties.stakedNodeId === null) {
+  if (transaction.properties.stakingNodeId === null) {
     tx.clearStakedNodeId();
   }
 

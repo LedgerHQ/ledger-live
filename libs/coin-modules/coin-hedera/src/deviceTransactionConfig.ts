@@ -21,13 +21,11 @@ function getDeviceTransactionConfig({
       value: transaction.properties.mode === "claimRewards" ? "Claim Rewards" : "Update Account",
     });
 
-    if (typeof transaction.properties.stakedNodeId === "number") {
-      const { stakedNodeId } = transaction.properties;
-
+    if (typeof transaction.properties.stakingNodeId === "number") {
       fields.push({
         type: "text",
         label: "Staked Node ID",
-        value: `${stakedNodeId}`,
+        value: transaction.properties.stakingNodeId.toString(),
       });
     }
 

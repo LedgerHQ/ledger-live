@@ -22,7 +22,7 @@ export type StakingAction = "delegate" | "undelegate" | "redelegate" | "claimRew
 export type StakingTransactionProperties = {
   name: "staking";
   mode: StakingAction;
-  stakedNodeId?: number | null;
+  stakingNodeId?: number | null;
 };
 
 export type Transaction = TransactionCommon & {

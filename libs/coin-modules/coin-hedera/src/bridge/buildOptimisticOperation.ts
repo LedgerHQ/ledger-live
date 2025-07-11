@@ -32,7 +32,7 @@ const buildOptimisticStakingOperation = async ({
     date: new Date(),
     extra: {
       memo: transaction.memo ?? null,
-      targetStakingNodeId: transaction.properties?.stakedNodeId ?? null,
+      targetStakingNodeId: transaction.properties?.stakingNodeId ?? null,
       previousStakingNodeId: account.hederaResources?.delegation?.nodeId ?? null,
     } satisfies Partial<HederaOperationExtra>,
   };

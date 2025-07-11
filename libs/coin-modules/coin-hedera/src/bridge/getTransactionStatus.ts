@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { HederaInvalidStakedNodeIdError, HederaRedundantStakedNodeIdError } from "../errors";
+import { HederaInvalidStakingNodeIdError, HederaRedundantStakingNodeIdError } from "../errors";
 import { isStakingTransaction } from "../logic";
 import { getCurrentHederaPreloadData } from "../preload-data";
 import type { HederaAccount, Transaction, TransactionStatus } from "../types";
@@ -27,20 +27,20 @@ const verifyStakingFlowStatus = async (account: HederaAccount, transaction: Tran
   const totalSpent = amount.plus(estimatedFees);
 
   if (["delegate", "redelegate"].includes(transaction.properties.mode)) {
-    if (typeof transaction.properties.stakedNodeId !== "number") {
-      errors.missingStakedNodeId = new HederaInvalidStakedNodeIdError("Validator must be set");
+    if (typeof transaction.properties.stakingNodeId !== "number") {
+      errors.missingStakinNodeId = new HederaInvalidStakingNodeIdError("Validator must be set");
     } else {
       const isValid = validators.some(validator => {
-        return validator.nodeId === transaction.properties.stakedNodeId;
+        return validator.nodeId === transaction.properties.stakingNodeId;
       });
 
       if (!isValid) {
-        errors.stakedNodeId = new HederaInvalidStakedNodeIdError();
+        errors.stakingNodeId = new HederaInvalidStakingNodeIdError();
       }
     }
 
-    if (account.hederaResources?.delegation?.nodeId === transaction.properties.stakedNodeId) {
-      errors.stakedNodeId = new HederaRedundantStakedNodeIdError();
+    if (account.hederaResources?.delegation?.nodeId === transaction.properties.stakingNodeId) {
+      errors.stakingNodeId = new HederaRedundantStakingNodeIdError();
     }
   }
 

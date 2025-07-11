@@ -44,7 +44,7 @@ function RedelegationAmount({ navigation, route }: Props) {
       properties: {
         name: "staking",
         mode: "redelegate",
-        stakedNodeId: route.params.selectedValidator.nodeId,
+        stakingNodeId: route.params.selectedValidator.nodeId,
       } as const,
     });
 
