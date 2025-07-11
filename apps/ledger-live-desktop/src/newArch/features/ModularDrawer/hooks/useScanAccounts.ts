@@ -97,6 +97,8 @@ export function useScanAccounts({
       .scanAccounts({ currency, deviceId, syncConfig })
       .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []));
 
+    const processedAccountIds = new Set<string>();
+
     scanSubscription.current = scannedAccounts$.subscribe({
       next: scannedAccounts => {
         const { onlyNewAccounts, unimportedAccounts } = processAccounts(
@@ -104,9 +106,13 @@ export function useScanAccounts({
           existingAccounts,
         );
 
-        setSelectedIds(current =>
-          determineSelectedIds(unimportedAccounts, onlyNewAccounts, current),
-        );
+        const freshAccounts = unimportedAccounts.filter(acc => {
+          if (processedAccountIds.has(acc.id)) return false;
+          processedAccountIds.add(acc.id);
+          return true;
+        });
+
+        setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
 
         setState({
           scanning: true,
