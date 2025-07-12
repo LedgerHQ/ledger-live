@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { pointAddScalar } from "tiny-secp256k1";
+import { pointAddScalar } from "@bitcoinerlab/secp256k1";
 import { BufferWriter } from "../buffertools";
 import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
 import { hashPublicKey } from "../hashPublicKey";
@@ -227,7 +227,7 @@ export class p2tr extends SingleKeyAccount {
     const tweak = this.hashTapTweak(internalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
-    const outputEcdsaKey = Buffer.from(pointAddScalar(evenEcdsaPubkey, tweak));
+    const outputEcdsaKey = Buffer.from(pointAddScalar(evenEcdsaPubkey, tweak)!);
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);
     // Create address
