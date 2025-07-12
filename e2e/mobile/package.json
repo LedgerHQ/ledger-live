@@ -7,6 +7,8 @@
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",
+    "test:ios:2workers": "pnpm test:detox --configuration ios.sim.release --headless --maxWorkers 2",
+    "test:android:2workers": "pnpm test:detox --configuration android.emu.release -- --maxWorkers 2",
     "build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
     "build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",
     "test:ios:debug": "pnpm test:detox --configuration ios.sim.debug",

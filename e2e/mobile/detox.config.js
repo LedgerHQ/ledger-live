@@ -42,7 +42,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: !!process.env.CI,
+      shutdownDevice: false,
     },
   },
   apps: {
@@ -89,14 +89,17 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        name: "iOS Simulator",
+        name: "iOS Simulator-Detox",
       },
+      reuse: true,
+      headless: !!process.env.CI,
     },
     emulator: {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator",
       },
+      reuse: true,
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,
     },

@@ -26,11 +26,10 @@ const jestAllure2ReporterOptions: ReporterOptions = {
 };
 
 // Include problematic ESM packages and their submodules
-const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
+const transformIncludePatterns = ["ky", "@polkadot"];
 
 const config: Config = {
   rootDir: ".",
-  maxWorkers: process.env.CI ? 2 : 1,
   preset: "ts-jest",
   transform: {
     "^.+\\.(js|jsx)$": require.resolve("babel-jest"),
@@ -40,14 +39,16 @@ const config: Config = {
         tsconfig: "<rootDir>/tsconfig.json",
         babelConfig: true,
         diagnostics: false,
+        isolatedModules: true,
       },
     ],
   },
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
-  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
 
+  setupFiles: ["<rootDir>/jest.setup.ts"],
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
   testTimeout: 300_000,

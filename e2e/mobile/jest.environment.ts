@@ -6,6 +6,13 @@ import { logMemoryUsage } from "./helpers/commonHelpers";
 const DetoxEnvironment = require("detox/runners/jest/testEnvironment");
 
 class TestEnvironment extends DetoxEnvironment {
+  constructor(config: any, context: any) {
+    super(config, context);
+    // Initialize per-worker global variables
+    this.global.speculosDevices = new Map();
+    this.global.IS_FAILED = false;
+  }
+
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     await super.handleTestEvent(event, state);
 

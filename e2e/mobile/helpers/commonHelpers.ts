@@ -94,20 +94,30 @@ export function setupEnvironment() {
 
 export const logMemoryUsage = async (): Promise<void> => {
   const pid = process.pid;
-  const isLinux = process.platform !== "darwin";
-  const topArgs = isLinux ? `-b -n 1 -p ${pid}` : `-l 1 -pid ${pid}`;
-  exec(
-    `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
-    async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
+  let topCmd: string;
+
+  if (process.platform === "linux") {
+    topCmd = `top -b -n 1 -p ${pid} | grep "${pid}" | awk '{print $6}'`;
+  } else if (process.platform === "darwin") {
+    topCmd = `top -l 1 -pid ${pid} | grep "${pid}" | awk '{print $8}'`;
+  } else {
+    log.warn("Memory usage logging not supported on this platform.");
+    return;
+  }
+
+  return new Promise<void>(resolve => {
+    exec(topCmd, async (error, stdout, stderr) => {
       if (error || stderr) {
         log.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
+        resolve();
         return;
       }
       const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
       await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
-    },
-  );
+      resolve();
+    });
+  });
 };
 
 export const normalizeText = (text: string) =>
