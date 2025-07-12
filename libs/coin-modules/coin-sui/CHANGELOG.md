@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-nightly.5
+
+### Patch Changes
+
+- [#10901](https://github.com/LedgerHQ/ledger-live/pull/10901) [`6385b56`](https://github.com/LedgerHQ/ledger-live/commit/6385b564624bdcc0d12e96a9730d1baa3849ed56) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - sui: fixed send token issue
+
 ## 0.7.0-nightly.4
 
 ### Patch Changes
