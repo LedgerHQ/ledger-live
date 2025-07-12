@@ -11,12 +11,13 @@ export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicAr
  */
 export const buildTransaction = async (
   { freshAddress }: SuiAccount,
-  { recipient, mode, amount }: Transaction,
+  { recipient, mode, amount, coinType }: Transaction,
 ) => {
   return craftTransaction({
     sender: freshAddress,
     recipient,
     type: mode,
+    coinType,
     amount: BigInt(amount.toString()),
     asset: { type: "native" },
   });

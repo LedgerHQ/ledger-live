@@ -2,6 +2,8 @@ import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUt
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { isIos } from "../helpers/commonHelpers";
+import { device } from "detox";
 
 const proxyAddress = "localhost";
 
@@ -117,6 +119,7 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
+    if (isIos()) await device.disableSynchronization();
     await tapById(this.deviceRowRegex, index);
   }
 

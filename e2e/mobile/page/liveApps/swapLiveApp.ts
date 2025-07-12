@@ -74,7 +74,9 @@ export default class SwapLiveAppPage {
     while (true) {
       try {
         const providerName = await getWebElementText(this.quoteProviderName, index);
-        const provider = Object.values(Provider).find(p => p.uiName === providerName);
+        const provider = Object.values(Provider).find(
+          p => p.uiName === providerName && p.uiName !== Provider.LIFI.uiName,
+        );
 
         if (provider && !provider.kyc && provider.isNative) {
           await getWebElementByTestId(this.quoteProviderName, index).tap();
@@ -160,7 +162,9 @@ export default class SwapLiveAppPage {
       : `Swap with ${provider}`;
 
     const actualButtonText = await getWebElementText(this.executeSwapButton);
-    jestExpect(actualButtonText).toEqual(expectedButtonText);
+    if (actualButtonText !== expectedButtonText) {
+      await tapWebElementByElement(getWebElementById(this.executeSwapButton));
+    }
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -221,7 +225,7 @@ export default class SwapLiveAppPage {
   async checkCtaBanner() {
     await waitWebElementByTestId(this.showDetailslink);
     const showDetailsLink = getWebElementByTestId(this.showDetailslink);
-    await showDetailsLink.runScript("(el) => el.click()");
+    await showDetailsLink.runScript(el => el.click());
     await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }

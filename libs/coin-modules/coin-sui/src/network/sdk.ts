@@ -296,9 +296,11 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
-    const coinObjectId = await getCoinObjectId(sender, fakeTransaction);
+    const coinObjects = await getCoinObjectIds(sender, fakeTransaction);
 
-    const [coin] = tx.splitCoins(coinObjectId ?? tx.gas, [fakeTransaction.amount.toNumber()]);
+    const [coin] = tx.splitCoins(Array.isArray(coinObjects) ? coinObjects[0] : tx.gas, [
+      fakeTransaction.amount.toNumber(),
+    ]);
     tx.transferObjects([coin], fakeTransaction.recipient);
 
     try {
@@ -315,7 +317,7 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
       console.warn("Fee estimation failed:", error);
       // If dry run fails return a reasonable default gas budget as fallback
       return {
-        gasBudget: coinObjectId
+        gasBudget: Array.isArray(coinObjects)
           ? FALLBACK_GAS_BUDGET.TOKEN_TRANSFER
           : FALLBACK_GAS_BUDGET.SUI_TRANSFER,
         totalGasUsed: BigInt(1000000),
@@ -324,19 +326,19 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
     }
   });
 
-export const getCoinObjectId = async (
+export const getCoinObjectIds = async (
   address: string,
   transaction: CreateExtrinsicArg | TransactionType,
 ) =>
   withApi(async api => {
-    let coinObjectId = null;
+    const coinObjectId = null;
 
     if (transaction.coinType !== DEFAULT_COIN_TYPE) {
       const tokenInfo = await api.getCoins({
         owner: address,
         coinType: transaction.coinType,
       });
-      coinObjectId = tokenInfo.data[0].coinObjectId;
+      return tokenInfo.data.map(coin => coin.coinObjectId);
     }
     return coinObjectId;
   });
@@ -346,10 +348,19 @@ export const createTransaction = async (address: string, transaction: CreateExtr
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
 
-    const coinObjectId = await getCoinObjectId(address, transaction);
+    const coinObjects = await getCoinObjectIds(address, transaction);
 
-    const [coin] = tx.splitCoins(coinObjectId ?? tx.gas, [transaction.amount.toNumber()]);
-    tx.transferObjects([coin], transaction.recipient);
+    if (Array.isArray(coinObjects) && transaction.coinType !== DEFAULT_COIN_TYPE) {
+      const coins = coinObjects.map(coinId => tx.object(coinId));
+      if (coins.length > 1) {
+        tx.mergeCoins(coins[0], coins.slice(1));
+      }
+      const [coin] = tx.splitCoins(coins[0], [transaction.amount.toNumber()]);
+      tx.transferObjects([coin], transaction.recipient);
+    } else {
+      const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+      tx.transferObjects([coin], transaction.recipient);
+    }
 
     return tx.build({ client: api });
   });

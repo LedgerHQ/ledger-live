@@ -16,7 +16,7 @@ import {
   getOperations,
   paymentInfo,
   createTransaction,
-  getCoinObjectId,
+  getCoinObjectIds,
   executeTransactionBlock,
   DEFAULT_COIN_TYPE,
 } from "./sdk";
@@ -435,7 +435,7 @@ describe("SDK Functions", () => {
     expect(info).toHaveProperty("fees");
   });
 
-  test("getCoinObjectId should return object ID for token transactions", async () => {
+  test("getCoinObjectIds should return array of object IDs for token transactions", async () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const transaction = {
       mode: "token.send" as const,
@@ -444,11 +444,12 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const coinObjectId = await getCoinObjectId(address, transaction);
-    expect(coinObjectId).toBe("0xtest_coin_object_id");
+    const coinObjectIds = await getCoinObjectIds(address, transaction);
+    expect(Array.isArray(coinObjectIds)).toBe(true);
+    expect(coinObjectIds).toContain("0xtest_coin_object_id");
   });
 
-  test("getCoinObjectId should return null for SUI transactions", async () => {
+  test("getCoinObjectIds should return null for SUI transactions", async () => {
     const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
     const transaction = {
       mode: "send" as const,
@@ -457,8 +458,8 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const coinObjectId = await getCoinObjectId(address, transaction);
-    expect(coinObjectId).toBeNull();
+    const coinObjectIds = await getCoinObjectIds(address, transaction);
+    expect(coinObjectIds).toBeNull();
   });
 
   test("createTransaction should build a transaction", async () => {
