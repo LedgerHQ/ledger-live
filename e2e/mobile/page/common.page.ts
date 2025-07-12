@@ -5,9 +5,6 @@ import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Ac
 import { setEnv } from "@ledgerhq/live-env";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
-import { setEnv } from "@ledgerhq/live-env";
-import { isIos } from "../helpers/commonHelpers";
-import { device } from "detox";
 
 const proxyAddress = "localhost";
 
