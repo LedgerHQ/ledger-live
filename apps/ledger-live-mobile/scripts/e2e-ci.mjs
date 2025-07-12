@@ -7,14 +7,17 @@ let cache = true;
 let shard = "";
 let target = "release";
 let filter = "";
+let testFilesArg = [];
 
 $.verbose = true; // everything works like in v7
 
 if (os.platform() === "win32") {
+  // eslint-disable-next-line
   usePowerShell();
 }
 
 const usage = (exitCode = 1) => {
+  // eslint-disable-next-line no-console
   console.log(
     `Usage: ${basename(
       __filename,
@@ -44,7 +47,7 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`;
     await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
@@ -61,8 +64,11 @@ const test_ios = async () => {
     --retries 2 \
     --runInBand \
     --cleanup \
-    --shard ${shard} \
-    ${filter.split(" ")}`;
+    ${filter.split(" ")} \
+    ${testFilesArg} \
+    -- \
+    --json \
+    --outputFile=artifacts/e2e-test-results-ios.json`;
 };
 
 const build_android = async () => {
@@ -70,18 +76,21 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile ${testType}:test \\
-    -c android.emu.${target} \\
-    --loglevel error \\
-    --record-logs failing \\
-    --take-screenshots failing \\
-    --forceExit \\
-    --headless \\
-    --retries 1 \\
-    --runInBand \\
-    --cleanup \\
-    --shard ${shard} \\
-    ${filter.split(" ")}`;
+  await $`pnpm mobile ${testType}:test \
+    -c android.emu.${target} \
+    --loglevel error \
+    --record-logs failing \
+    --take-screenshots failing \
+    --forceExit \
+    --headless \
+    --retries 2 \
+    --runInBand \
+    --cleanup \
+    ${filter.split(" ")} \
+    ${testFilesArg} \
+    -- \
+    --json \
+    --outputFile=artifacts/e2e-test-results-android.json`;
 };
 
 const getTasksFrom = {
@@ -92,7 +101,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: async () =>  await bundle_android(),
+    bundle: async () => await bundle_android(),
     test: test_android,
   },
 };
@@ -142,6 +151,20 @@ for (const argName in argv) {
     default:
       usage(42);
       break;
+  }
+}
+
+const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
+const filteredArgs = extraArgs.filter(arg => {
+  return (
+    arg !== "./scripts/e2e-ci.mjs" && arg !== "ios" && arg !== "android" && !arg.match(/^\d+\/\d+$/)
+  );
+});
+if (filteredArgs.length > 0) {
+  if (filteredArgs.length === 1 && filteredArgs[0].includes(" ")) {
+    testFilesArg = filteredArgs[0].split(" ");
+  } else {
+    testFilesArg = filteredArgs;
   }
 }
 
