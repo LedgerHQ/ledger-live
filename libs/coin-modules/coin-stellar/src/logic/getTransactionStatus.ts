@@ -1,5 +1,4 @@
 import {
-  AccountAwaitingSendPendingOperations,
   AmountRequired,
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -10,9 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
-  Transaction,
   TransactionValidation,
-  Account,
   TransactionIntent,
   AssetInfo,
 } from "@ledgerhq/coin-framework/api/types";
@@ -42,23 +39,14 @@ import { fetchAccount, fetchSellingLiabilities } from "../network/horizon";
 
 export const getTransactionStatus = async (
   transactionIntent: TransactionIntent<StellarMemo>,
-  // account: Account,
-  // transaction: Transaction,
 ): Promise<TransactionValidation> => {
-  // const asset = account; // FIXME:
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  // FIXME: useAllAmount logic should be in generic-adapter
   const useAllAmount = !!transactionIntent.useAllAmount;
 
   const destinationNotExistMessage = new NotEnoughBalanceBecauseDestinationNotCreated("", {
     minimalAmount: `${MIN_BALANCE} XLM`,
   });
-
-  // FIXME: move this logic into generic-addapter
-  // if (account.pendingOperations > 0) {
-  //   throw new AccountAwaitingSendPendingOperations();
-  // }
 
   // NOTE: recheck this
   // if (!transaction.fee || !transaction.baseReserve) {
@@ -81,9 +69,6 @@ export const getTransactionStatus = async (
   // account?.subAccount;
   const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = BigInt(balance.toString());
-  // if (!nativeBalance) {
-  //   throw new StellarAssetNotFound(); // FIXME: proper error
-  // }
   const nativeAmountAvailable = BigInt(spendableBalance.toString()) - estimatedFees;
   // nativeBalance.value -
   // (nativeBalance.locked || 0n) -
@@ -140,8 +125,9 @@ export const getTransactionStatus = async (
     if (!transactionIntent.recipient) {
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(transactionIntent.recipient)) {
+      debugger;
       errors.recipient = new InvalidAddress("", {
-        currencyName: "FIXME", // FIXME: before account.currencyName,
+        currencyName: transactionIntent.asset.name ?? "", // NOTE: before account.currencyName,
       });
     } else if (transactionIntent.sender === transactionIntent.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
@@ -219,20 +205,18 @@ export const getTransactionStatus = async (
       if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount < 10000000n) {
         errors.amount = destinationNotExistMessage;
       }
-
       if (totalSpent > nativeBalance - baseReserve) {
         errors.amount = new NotEnoughSpendableBalance(undefined, {
-          minimumAmount: 0,
-          // FIXME
-          // formatCurrencyUnit(
-          //   account.currencyUnit,
-          //
-          //   new BigNumber(baseReserve.toString()),
-          //   {
-          //     disableRounding: true,
-          //     showCode: true,
-          //   },
-          // ),
+          minimumAmount: transactionIntent.asset.unit
+            ? formatCurrencyUnit(
+                transactionIntent.asset.unit,
+                new BigNumber(baseReserve.toString()),
+                {
+                  disableRounding: true,
+                  showCode: true,
+                },
+              )
+            : "Unknown unit",
         });
       }
 
@@ -251,7 +235,6 @@ export const getTransactionStatus = async (
   if (await isAccountMultiSign(transactionIntent.sender)) {
     errors.recipient = new StellarSourceHasMultiSign();
   }
-  // console.log("memo type", transactionIntent);
   if (
     transactionIntent?.memo?.type !== "NO_MEMO" &&
     !isMemoValid(transactionIntent?.memo?.type, transactionIntent?.memo?.value)

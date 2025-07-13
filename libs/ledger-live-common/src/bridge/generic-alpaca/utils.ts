@@ -108,13 +108,23 @@ export function transactionToIntent(
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
-    asset: { type: "native" },
+    asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount: !!transaction.useAllAmount,
   };
   if (transaction.assetCode && transaction.assetIssuer) {
+    const { subAccountId } = transaction;
+    const { subAccounts } = account;
+
+    const tokenAccount = !subAccountId
+      ? null
+      : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
+
+    debugger;
     res.asset = {
       type: "token",
       assetReference: transaction.assetCode,
+      name: tokenAccount?.token.name ?? transaction.assetCode, // NOTE: for stellar, assetCode = tokenAccount.name, this is futureproofing
+      unit: account.currency.units[0],
       assetOwner: transaction.assetIssuer,
     };
   }
