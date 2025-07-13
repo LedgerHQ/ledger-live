@@ -4,8 +4,6 @@ import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
-import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 // import { getEnv } from "@ledgerhq/live-env";
 // import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
@@ -35,9 +33,13 @@ import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
+    const alpacaApi = getAlpacaApi(network, kind);
 
-    if (address === STELLAR_BURN_ADDRESS) {
-      throw new StellarBurnAddressError();
+    if (alpacaApi.getChainSpecificRules) {
+      const chainSpecificValidation = alpacaApi.getChainSpecificRules();
+      if (chainSpecificValidation.getAccountShape) {
+        chainSpecificValidation.getAccountShape(address);
+      }
     }
 
     const accountId = encodeAccountId({
@@ -48,8 +50,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    const blockInfo = await getAlpacaApi(network, kind).lastBlock();
-    const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
+    const blockInfo = await alpacaApi.lastBlock();
+    const balanceRes = await alpacaApi.getBalance(address);
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
     const assetsBalance = balanceRes.filter(b => b.asset.type === "token");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
@@ -60,7 +62,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // const isInitSync = lastPagingToken === "";
 
     // const pagination = buildPaginationParams(network, isInitSync, lastPagingToken);
-    const [newCoreOps] = await getAlpacaApi(network, kind).listOperations(address, lastPagingToken);
+    const [newCoreOps] = await alpacaApi.listOperations(address, lastPagingToken);
     // FIXME: adaptCoreOperationToLiveOperation should not be StellarOperation but generic
     const newOps = newCoreOps.map(op =>
       adaptCoreOperationToLiveOperation(accountId, op),

@@ -8,11 +8,7 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  TransactionValidation,
-  TransactionIntent,
-  AssetInfo,
-} from "@ledgerhq/coin-framework/api/types";
+import { TransactionValidation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import {
   BASE_RESERVE,

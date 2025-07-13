@@ -62,14 +62,14 @@ export function genericGetTransactionStatus(
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",
     };
-    // console.log("getTransactionStatus draftTransaction: ", transaction);
-    if (alpacaApi.getChainSpecificValidation) {
-      const chainSpecificValidation = alpacaApi.getChainSpecificValidation();
-      if (chainSpecificValidation.throwIfPendingOperation && true) {
-        // account.pendingOperations.length > 0) {
+
+    if (alpacaApi.getChainSpecificRules) {
+      const chainSpecificValidation = alpacaApi.getChainSpecificRules();
+      if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation && true) {
         throw new AccountAwaitingSendPendingOperations();
       }
     }
+
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
       transactionToIntent(account, draftTransaction),
       // {

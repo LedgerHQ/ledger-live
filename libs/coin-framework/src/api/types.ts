@@ -98,7 +98,6 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
-  // pendingOperations: number; // NOTE: can get away with only the number of pending operations?
   spendableBalance: bigint; // NOTE:: check if we can get rid of this one
   // subAccount?: TokenAccount;
 };
@@ -180,15 +179,6 @@ export type FeeEstimation = {
 export type Pagination = { minHeight: number } & { pagingToken?: string; limit?: number }; // For evm, XRP, etc. // NOTE: For Stellar
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 
-export type AccountInfo = {
-  isNewAccount: boolean;
-  balance: string;
-  ownerCount: number;
-  sequence: number;
-  assets?: AssetInfo[]; // BalanceAsset[]; // Optional, depending on the API
-  spendableBalance?: string; // Optional, depending on the API
-};
-
 export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
@@ -203,19 +193,19 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
-export type ChainSpecificValidationRules = {
-  throwIfPendingOperation?: boolean;
+export type ChainSpecificRules = {
+  getAccountShape: (address: string) => any;
+  getTransactionStatus: {
+    throwIfPendingOperation?: boolean;
+  };
 };
 
 export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
-  // FIXME: single param -> transactionIntent
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType>,
   ) => Promise<TransactionValidation>;
-  // TODO: make it available on alpacaApi
-  // getAccountInfo: (address: string) => Promise<AccountInfo>;
   getSequence: (address: string) => Promise<number>;
-  getChainSpecificValidation?: () => ChainSpecificValidationRules;
+  getChainSpecificRules?: () => ChainSpecificRules;
   // getSpendableBalance?: (address: string) => Promise<string>;
   // getAssets: (address: string) => Promise<AssetInfo[]>; // NOTE: or BalanceAsset[];
 };
