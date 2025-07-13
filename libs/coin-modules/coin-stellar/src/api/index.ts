@@ -43,6 +43,10 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return sequence.plus(1).toNumber();
     },
+    getChainSpecificValidation: () => ({
+      throwIfPendingOperation: true,
+    }),
+
     // getSpendableBalance: async (address: string) => {
     //   // FIXME: we should try recompute this value from generic-adapter
     //   const res = await fetchAccount(address);

@@ -14,12 +14,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getServerInfos } from "../network";
 import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
-import {
-  Transaction,
-  TransactionValidation,
-  Account,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+import { TransactionValidation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { XrpMapMemo } from "../types";
 import { getBalance } from "./getBalance";
 
@@ -46,24 +41,19 @@ export const getTransactionStatus = async (
     throw Error("Shouldn't happen");
   }
 
-  let account = {
-    currencyName: transactionIntent.asset, // FIXME: assetname,
-    // currencyUnit: transactionIntent.asset // FIXME: asset currency unit?,
-  };
-
   if (!transactionIntent.fees) {
     errors.fee = new FeeNotLoaded();
   } else if (transactionIntent.fees == 0n) {
     errors.fee = new FeeRequired();
   } else if (totalSpent > nativeBalance.value - BigInt(reserveBaseXRP.toString())) {
     errors.amount = new NotEnoughSpendableBalance("", {
-      minimumAmount: 0,
-      // FIXME: fix this
-      // minimumAmount: formatCurrencyUnit(account.currencyUnit, reserveBaseXRP, {
-      //   disableRounding: true,
-      //   useGrouping: false,
-      //   showCode: true,
-      // }),
+      minimumAmount: transactionIntent.asset.unit
+        ? formatCurrencyUnit(transactionIntent.asset.unit, reserveBaseXRP, {
+            disableRounding: true,
+            useGrouping: false,
+            showCode: true,
+          })
+        : "Unknown unit",
     });
   } else if (
     transactionIntent.recipient &&
@@ -71,12 +61,14 @@ export const getTransactionStatus = async (
     transactionIntent.amount < BigInt(reserveBaseXRP.toString())
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: 0,
-      // minimalAmount: formatCurrencyUnit(account.currencyUnit, reserveBaseXRP, {
-      //   disableRounding: true,
-      //   useGrouping: false,
-      //   showCode: true,
-      // }),
+      // minimalAmount: 0,
+      minimalAmount: transactionIntent.asset.unit
+        ? formatCurrencyUnit(transactionIntent.asset.unit, reserveBaseXRP, {
+            disableRounding: true,
+            useGrouping: false,
+            showCode: true,
+          })
+        : "Unknown unit",
     });
   }
 
@@ -86,7 +78,7 @@ export const getTransactionStatus = async (
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidClassicAddress(transactionIntent.recipient)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: account.currencyName,
+      currencyName: transactionIntent.asset.name ?? "",
     });
   }
 
@@ -94,6 +86,7 @@ export const getTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
+  console.log({ errors });
   return {
     errors,
     warnings,

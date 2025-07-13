@@ -1,7 +1,8 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+// import { Unit } from "@ledgerhq/types-cryptoassets";
+// NOTE: are we ok importing, do we also want to be separated from those
 
 export type BlockInfo = {
   height: number;
@@ -23,12 +24,28 @@ export type TokenStandard =
   | "erc1155";
 // | string;              // for future extension (e.g., sui, custom, etc.)
 
+// NOTE: from crypto-asset
+export type Unit = {
+  // display name of a given unit (example: satoshi)
+  name: string;
+  // string to use when formatting the unit. like 'BTC' or 'USD'
+  code: string;
+  // number of digits after the '.'
+  magnitude: number;
+  // should it always print all digits even if they are 0 (usually: true for fiats, false for cryptos)
+  showAllDigits?: boolean;
+  // true if the code should prefix amount when formatting
+  prefixCode?: boolean;
+};
+
 export type AssetInfo =
-  | { type: "native" }
+  | { type: "native"; name?: string; unit?: Unit }
   | {
       type: TokenStandard;
       assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
       assetOwner?: string;
+      name?: string; // e.g., token name, or asset name
+      unit?: Unit;
       //   selling_liabilities?: string; //FIXME: used for stellar need to be remove from here
       // balance?: string; //FIXME: used for stellar need to be remove from here
     };
@@ -188,6 +205,10 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
+export type ChainSpecificValidationRules = {
+  throwIfPendingOperation?: boolean;
+};
+
 export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   // FIXME: single param -> transactionIntent
   validateIntent: (
@@ -196,6 +217,7 @@ export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   // TODO: make it available on alpacaApi
   // getAccountInfo: (address: string) => Promise<AccountInfo>;
   getSequence: (address: string) => Promise<number>;
+  getChainSpecificValidation?: () => ChainSpecificValidationRules;
   // getSpendableBalance?: (address: string) => Promise<string>;
   // getAssets: (address: string) => Promise<AssetInfo[]>; // NOTE: or BalanceAsset[];
 };

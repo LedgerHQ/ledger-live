@@ -1,4 +1,6 @@
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
+
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
@@ -61,6 +63,13 @@ export function genericGetTransactionStatus(
       memoValue: transaction.memoValue || "",
     };
     // console.log("getTransactionStatus draftTransaction: ", transaction);
+    if (alpacaApi.getChainSpecificValidation) {
+      const chainSpecificValidation = alpacaApi.getChainSpecificValidation();
+      if (chainSpecificValidation.throwIfPendingOperation && true) {
+        // account.pendingOperations.length > 0) {
+        throw new AccountAwaitingSendPendingOperations();
+      }
+    }
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
       transactionToIntent(account, draftTransaction),
       // {
@@ -88,9 +97,6 @@ export function genericGetTransactionStatus(
       // },
     );
 
-    // console.log("getTransactionStatus: ", transaction);
-    // console.log("getTransactionStatus estimatedFees: ", amount.toString());
-    // console.log("getTransactionStatus transaction.amount: ", transaction.amount.toString());
     return Promise.resolve({
       errors,
       warnings,
