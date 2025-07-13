@@ -16,9 +16,10 @@ import {
   getTransactionStatus,
   lastBlock,
   listOperations,
+  STELLAR_BURN_ADDRESS,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarMemo } from "../types";
+import { StellarBurnAddressError, StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
@@ -43,8 +44,16 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return sequence.plus(1).toNumber();
     },
-    getChainSpecificValidation: () => ({
-      throwIfPendingOperation: true,
+    getChainSpecificRules: () => ({
+      getAccountShape: (address: string) => {
+        // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
+        if (address === STELLAR_BURN_ADDRESS) {
+          throw new StellarBurnAddressError();
+        }
+      },
+      getTransactionStatus: {
+        throwIfPendingOperation: true,
+      },
     }),
 
     // getSpendableBalance: async (address: string) => {
