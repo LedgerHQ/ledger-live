@@ -2,38 +2,9 @@ import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/lib/api/types";
-
-type BalanceAsset = {
-  balance: string;
-  limit: string;
-  buying_liabilities: string;
-  selling_liabilities: string;
-  last_modified_ledger: number;
-  is_authorized: boolean;
-  is_authorized_to_maintain_liabilities: boolean;
-  asset_type: string;
-  asset_code: string;
-  asset_issuer: string;
-  liquidity_pool_id?: string;
-};
-
-// export type StellarOperation = Operation<StellarOperationExtra>;
-
-// export type StellarOperationExtra = {
-//   pagingToken?: string;
-//   assetCode?: string;
-//   assetIssuer?: string;
-//   assetAmount?: string | undefined;
-//   ledgerOpType: OperationType;
-//   memo?: string;
-//   blockTime: Date;
-//   index: string;
-// };
 
 export interface OperationCommon extends Operation {
   extra: Record<string, any>;
@@ -44,7 +15,7 @@ export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split(
 export const getAssetIdFromAsset = (asset: AssetInfo) =>
   asset.type === "token" ? `${asset.assetReference}:${asset.assetOwner}` : "";
 
-function buildStellarTokenAccount({
+function buildTokenAccount({
   parentAccountId,
   assetBalance,
   token,
@@ -60,7 +31,7 @@ function buildStellarTokenAccount({
   const balance = new BigNumber(assetBalance.value.toString() || "0");
 
   // TODO: recheck this logic
-  const reservedBalance = new BigNumber(assetBalance.value.toString()).minus(
+  const spendableBalance = new BigNumber(assetBalance.value.toString()).minus(
     // assetBalance.selling_liabilities || 0,
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
@@ -82,7 +53,7 @@ function buildStellarTokenAccount({
     operations: tokenOperations,
     pendingOperations: [],
     balance,
-    spendableBalance: reservedBalance,
+    spendableBalance: spendableBalance,
     swapHistory: [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
@@ -110,15 +81,14 @@ export function buildSubAccounts({
   }
 
   const tokenAccounts: TokenAccount[] = [];
-  // console.log("assetsBalance", assetsBalance);
   assetsBalance
     .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
     .map(balance => {
-      const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(balance.asset)}`);
-      console.log("token", token);
+      const token = findTokenById(`${currency.family}/asset/${getAssetIdFromAsset(balance.asset)}`);
+      // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
       if (token && !blacklistedTokenIds.includes(token.id)) {
         tokenAccounts.push(
-          buildStellarTokenAccount({
+          buildTokenAccount({
             parentAccountId: accountId,
             assetBalance: balance,
             token,
@@ -131,7 +101,5 @@ export function buildSubAccounts({
         );
       }
     });
-    console.log("tokenAccounts", tokenAccounts);
-
   return tokenAccounts;
 }
