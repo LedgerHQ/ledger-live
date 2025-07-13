@@ -1,5 +1,4 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { setupEnv } from "../../../utils/swapUtils";
 import { swapSetup, waitSwapReady } from "../../../bridge/server";
 import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
 import {
@@ -10,6 +9,9 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { setEnv } from "@ledgerhq/live-env";
+
+setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -69,8 +71,6 @@ export function runSwapWithoutAccountTest(
   };
 
   describe("Swap a coin for which you have no account yet", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -110,8 +110,6 @@ export function runSwapWithDifferentSeedTest(
   tags: string[],
 ) {
   describe("Swap - Using different seed", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
@@ -148,8 +146,6 @@ export function runSwapLandingPageTest(
   tags: string[],
 ) {
   describe("Swap - Landing page", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunction({
@@ -195,8 +191,6 @@ export function runTooLowAmountForQuoteSwapsTest(
   tags: string[],
 ) {
   describe("Swap - with too low amount (throwing UI errors)", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
@@ -254,8 +248,6 @@ export function runUserRefusesTransactionTest(
   tags: string[],
 ) {
   describe("Swap - Rejected on device", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunction({
@@ -303,8 +295,6 @@ export function runSwapHistoryOperationsTest(
   tags: string[],
 ) {
   describe("Swap history", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
@@ -332,8 +322,6 @@ export function runExportSwapHistoryOperationsTest(
   tags: string[],
 ) {
   describe("Swap history", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
@@ -359,8 +347,6 @@ export function runSwapWithSendMaxTest(
   tags: string[],
 ) {
   describe("Swap - Send Max", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunction({
@@ -417,8 +403,6 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
   tags: string[],
 ) {
   describe("Swap - Switch You send and You receive currency", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunction({
@@ -451,8 +435,6 @@ export function runSwapCheckProvider(
   tags: string[],
 ) {
   describe("Swap - Provider redirection", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunction({
@@ -498,8 +480,6 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
   };
 
   describe("Swap - Entry Points - LLM", () => {
-    setupEnv(true);
-
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "speculos-tests-app",
