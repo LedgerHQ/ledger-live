@@ -9,7 +9,6 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -34,7 +33,6 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
   invariant(account.type === "Account", "account type must be Account");
 
   const { selectedDelegation } = route.params;
-  const color = getCurrencyColor(account.currency);
   const unit = useAccountUnit(account);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
@@ -114,7 +112,7 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
               columnGap={2}
               mb={8}
             >
-              <ValidatorIcon color={color} size={32} validator={selectedDelegation.validator} />
+              <ValidatorIcon size={32} validator={selectedDelegation.validator} />
               <Text numberOfLines={1} fontWeight="semiBold" fontSize={14}>
                 {selectedDelegation.validator.name}
               </Text>

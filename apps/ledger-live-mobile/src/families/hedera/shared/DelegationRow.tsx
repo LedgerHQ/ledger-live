@@ -2,8 +2,6 @@ import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { HederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/types";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
@@ -18,8 +16,6 @@ interface Props {
 
 const DelegationRow = ({ onPress, delegationWithMeta, account }: Props) => {
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
-  const color = getCurrencyColor(currency);
 
   const claimableRewards = delegationWithMeta.pendingReward;
 
@@ -35,7 +31,7 @@ const DelegationRow = ({ onPress, delegationWithMeta, account }: Props) => {
       disabled={claimableRewards.isZero()}
     >
       <View style={styles.root}>
-        <ValidatorIcon color={color} size={32} validator={delegationWithMeta.validator} />
+        <ValidatorIcon size={32} validator={delegationWithMeta.validator} />
         <View style={styles.body}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.name}>
             {delegationWithMeta.validator.name}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { HederaDelegationWithMeta } from "@ledgerhq/live-common/families/hedera/types";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
@@ -9,7 +9,6 @@ import { useTheme } from "@react-navigation/native";
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
 import ValidatorIcon from "../shared/ValidatorIcon";
-import DelegationStatus from "./DelegationStatusIcon";
 
 type Props = {
   delegationWithMeta: HederaDelegationWithMeta;
@@ -29,8 +28,6 @@ export default function DelegationRow({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const currencyColor = getCurrencyColor(currency);
-
   return (
     <TouchableOpacity
       style={[
@@ -40,7 +37,7 @@ export default function DelegationRow({
       onPress={() => onPress(delegationWithMeta)}
     >
       <View style={[styles.icon]}>
-        <ValidatorIcon size={32} validator={delegationWithMeta.validator} color={currencyColor} />
+        <ValidatorIcon size={32} validator={delegationWithMeta.validator} />
       </View>
       <View style={styles.nameWrapper}>
         <View style={styles.row}>
@@ -52,7 +49,6 @@ export default function DelegationRow({
           >
             {delegationWithMeta.validator.name}
           </Text>
-          <DelegationStatus status={delegationWithMeta.status} />
         </View>
         <View style={styles.row}>
           <Text style={styles.seeMore} color="live">

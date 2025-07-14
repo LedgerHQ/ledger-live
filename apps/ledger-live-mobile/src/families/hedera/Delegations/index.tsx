@@ -4,7 +4,7 @@ import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type {
   HederaAccount,
@@ -22,12 +22,12 @@ import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { useAccountName } from "~/reducers/wallet";
+import { useStake } from "LLM/hooks/useStake/useStake";
 import { rgba } from "../../../colors";
 import ValidatorIcon from "../shared/ValidatorIcon";
 import DelegationPlaceholder from "./DelegationPlaceholder";
 import DelegationRewards from "./DelegationRewards";
 import DrawerStakeActionIcon from "./DrawerStakeActionIcon";
-import DelegationStatusIcon from "./DelegationStatusIcon";
 import DelegationRow from "./Row";
 
 type Props = {
@@ -48,7 +48,6 @@ function Delegations({ account, delegatedPosition }: Props) {
   const unit = useAccountUnit(account);
 
   const currency = getAccountCurrency(account);
-  const currencyColor = getCurrencyColor(currency);
   const formattedClaimableRewards = formatCurrencyUnit(unit, delegationWithMeta.pendingReward, {
     showCode: true,
     disableRounding: true,
@@ -74,12 +73,6 @@ function Delegations({ account, delegatedPosition }: Props) {
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const status = getDelegationStatus(delegationWithMeta.validator);
-
-    const mapStatusToColor: Record<typeof status, string> = {
-      active: colors.green,
-      overstaked: colors.warning,
-      inactive: colors.alert,
-    };
 
     return [
       {
@@ -130,13 +123,12 @@ function Delegations({ account, delegatedPosition }: Props) {
         label: t("hedera.delegatedPositions.details.status.title"),
         Component: (
           <Flex flexDirection="row" alignItems="center" columnGap={4}>
-            <DelegationStatusIcon status={status} />
             <Text
               numberOfLines={1}
               fontWeight="semiBold"
               ellipsizeMode="middle"
               style={styles.valueText}
-              color={mapStatusToColor[status]}
+              color="live"
             >
               <Trans i18nKey={`hedera.delegatedPositions.details.status.${status}`} />
             </Text>
@@ -157,16 +149,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         ),
       },
     ];
-  }, [
-    colors.green,
-    colors.warning,
-    colors.alert,
-    delegationWithMeta,
-    accountName,
-    formattedClaimableRewards,
-    t,
-    openValidatorUrl,
-  ]);
+  }, [delegationWithMeta, accountName, formattedClaimableRewards, t, openValidatorUrl]);
 
   const delegationActions = useMemo<DelegationDrawerActions>(() => {
     const allStakeActions = [
@@ -250,11 +233,7 @@ function Delegations({ account, delegatedPosition }: Props) {
         onClose={onCloseDrawer}
         account={account}
         ValidatorImage={({ size }) => (
-          <ValidatorIcon
-            validator={delegationWithMeta.validator}
-            color={currencyColor}
-            size={size}
-          />
+          <ValidatorIcon validator={delegationWithMeta.validator} size={size} />
         )}
         amount={delegationWithMeta.delegated}
         data={data}
@@ -280,7 +259,14 @@ function Delegations({ account, delegatedPosition }: Props) {
 }
 
 export default function HederaDelegations({ account }: { account: AccountLike }) {
+  const { getCanStakeCurrency } = useStake();
+
   const hederaAccount = account as HederaAccount;
+  const isStakingEnabled = getCanStakeCurrency(hederaAccount.currency.id);
+
+  if (!isStakingEnabled) {
+    return null;
+  }
 
   if (!hederaAccount.hederaResources) {
     return null;

@@ -3,8 +3,6 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Icons, Text } from "@ledgerhq/native-ui";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
@@ -19,8 +17,6 @@ interface Props {
 
 const ValidatorRow = ({ onPress, validator, account }: Props) => {
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
-  const color = getCurrencyColor(currency);
 
   const handlePress = useCallback(() => {
     onPress(validator);
@@ -33,7 +29,7 @@ const ValidatorRow = ({ onPress, validator, account }: Props) => {
       onPress={handlePress}
     >
       <View style={styles.validator}>
-        <ValidatorIcon color={color} size={32} validator={validator} />
+        <ValidatorIcon size={32} validator={validator} />
         <View style={styles.validatorBody}>
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name}

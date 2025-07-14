@@ -84,10 +84,12 @@ const Delegations = ({
 const DelegatedPositions = ({ account }: { account: HederaAccount | TokenAccount }) => {
   const { getCanStakeCurrency } = useStake();
 
-  if (account.type !== "Account") return null;
+  if (account.type !== "Account") {
+    return null;
+  }
 
-  const isStakingEnabled = getCanStakeCurrency(account.currency.id);
   const { delegation } = account.hederaResources ?? {};
+  const isStakingEnabled = getCanStakeCurrency(account.currency.id);
 
   if (!isStakingEnabled) {
     return null;

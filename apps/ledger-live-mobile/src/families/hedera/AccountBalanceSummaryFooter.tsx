@@ -11,6 +11,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
+import { useStake } from "LLM/hooks/useStake/useStake";
 
 interface Props {
   account: HederaAccount;
@@ -19,7 +20,9 @@ interface Props {
 type InfoName = "available" | "delegated" | "claimable";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
+  invariant(account.hederaResources, "hedera: hederaResources is missing");
   const { t } = useTranslation();
+  const { getCanStakeCurrency } = useStake();
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
   const unit = useAccountUnit(account);
@@ -28,22 +31,18 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
 
-  if (!account.hederaResources) return null;
-
+  const isStakingEnabled = getCanStakeCurrency(account.currency.id);
   const { delegation } = account.hederaResources;
   const spendableBalance = account.spendableBalance;
   const delegatedAssets = delegation?.delegated ?? new BigNumber(0);
   const claimableRewards = delegation?.pendingReward ?? new BigNumber(0);
+  const hasDelegationInfo = isStakingEnabled && !!delegation;
 
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={[
-        {
-          paddingHorizontal: 16,
-        },
-      ]}
+      style={[{ paddingHorizontal: 16 }]}
     >
       <InfoModal
         isOpened={!!infoName}
@@ -51,23 +50,23 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         data={infoName ? info[infoName] : []}
       />
       <InfoItem
-        isLast={!delegation}
+        isLast={!hasDelegationInfo}
         title={t("account.availableBalance")}
-        onPress={onPressInfoCreator("available")}
+        onPress={hasDelegationInfo ? onPressInfoCreator("available") : undefined}
         value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
       />
-      {delegation && (
+      {hasDelegationInfo && (
         <>
+          <InfoItem
+            title={t("hedera.info.delegated.title")}
+            onPress={onPressInfoCreator("delegated")}
+            value={<CurrencyUnitValue unit={unit} value={delegatedAssets} disableRounding />}
+          />
           <InfoItem
             isLast
             title={t("hedera.info.claimable.title")}
             onPress={onPressInfoCreator("claimable")}
             value={<CurrencyUnitValue unit={unit} value={claimableRewards} disableRounding />}
-          />
-          <InfoItem
-            title={t("hedera.info.delegated.title")}
-            onPress={onPressInfoCreator("delegated")}
-            value={<CurrencyUnitValue unit={unit} value={delegatedAssets} disableRounding />}
           />
         </>
       )}
@@ -76,7 +75,10 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!account.hederaResources) return null;
+  if (!account.hederaResources) {
+    return null;
+  }
+
   return <AccountBalanceSummaryFooter account={account} />;
 }
 
