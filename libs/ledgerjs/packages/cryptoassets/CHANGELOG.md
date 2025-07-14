@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.22.0-nightly.1
+
+### Minor Changes
+
+- [#10864](https://github.com/LedgerHQ/ledger-live/pull/10864) [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update evm dead addr for zksync
+
 ## 13.21.1-nightly.0
 
 ### Patch Changes
