@@ -224,7 +224,12 @@ export const AccountItem = ({
           <IconButton
             aria-label="Edit account item"
             data-testid="right-element-edit-icon"
-            onClick={rightElement.onClick}
+            onClick={e => {
+              e.stopPropagation();
+              if (rightElement?.type === "edit") {
+                rightElement.onClick();
+              }
+            }}
           >
             <Icons.PenEdit size="S" color="var(--colors-content-default-default)" />
           </IconButton>

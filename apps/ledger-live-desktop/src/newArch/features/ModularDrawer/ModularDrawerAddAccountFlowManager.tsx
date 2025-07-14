@@ -153,7 +153,7 @@ const ModularDrawerAddAccountFlowManager = ({
         }
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <EditAccountName account={accountToEdit} source={source} navigateBack={navigateBack} />
+            <EditAccountName account={accountToEdit} navigateBack={navigateBack} source={source} />
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:

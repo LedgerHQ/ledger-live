@@ -17,11 +17,11 @@ import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
 
 interface Props {
   account: Account;
+  navigateBack?: (track?: boolean) => void;
   source: string;
-  navigateBack: (track?: boolean) => void;
 }
 
-const EditAccountName = ({ account, source, navigateBack }: Props) => {
+const EditAccountName = ({ account, navigateBack, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -45,7 +45,7 @@ const EditAccountName = ({ account, source, navigateBack }: Props) => {
 
     dispatch(setAccountName(account.id, cleanAccountName));
 
-    navigateBack();
+    navigateBack?.();
   }, [account.id, cleanAccountName, dispatch, navigateBack, trackAddAccountEvent]);
 
   return (
