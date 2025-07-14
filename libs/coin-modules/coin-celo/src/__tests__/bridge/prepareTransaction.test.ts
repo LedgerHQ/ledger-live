@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
+import {
+  accountFixture,
+  accountWithTokenAccountFixture,
+  tokenTransactionFixture,
+  transactionFixture,
+} from "../../bridge/getFixtures";
 import prepareTransaction from "../../bridge/prepareTransaction";
 
 const chainIdMock = jest.fn();
@@ -13,25 +18,25 @@ jest.mock("../../network/sdk", () => {
           address: "address",
           lock: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["lock_data"]),
+              encodeABI: jest.fn(() => "0x6C6F636B5F64617461"), // lock_data
               estimateGas: jest.fn(async () => 2),
             },
           })),
           unlock: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["unlock_data"]),
+              encodeABI: jest.fn(() => "0x756E6C6F636B5F64617461"), // unlock_data
               estimateGas: jest.fn(async () => 3),
             },
           })),
           withdraw: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["withdraw_data"]),
+              encodeABI: jest.fn(() => "0x77697468647261775F64617461"), // withdraw_data
               estimateGas: jest.fn(async () => 3),
             },
           })),
           vote: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["vote_data"]),
+              encodeABI: jest.fn(() => "0x766F74655F64617461"), // vote_data
               estimateGas: jest.fn(async () => 3),
             },
           })),
@@ -41,7 +46,7 @@ jest.mock("../../network/sdk", () => {
           address: "gold_token_address",
           transfer: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["send_data"]),
+              encodeABI: jest.fn(() => "0x73656E645F64617461"), // send_data
             },
           })),
         })),
@@ -49,7 +54,7 @@ jest.mock("../../network/sdk", () => {
           address: "stable_token_address",
           transfer: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["send_stable_token_data"]),
+              encodeABI: jest.fn(() => "0x73656E645F746F6B656E5F64617461"), // stable_token_data
             },
           })),
         })),
@@ -57,7 +62,7 @@ jest.mock("../../network/sdk", () => {
           address: "erc20_token_address",
           transfer: jest.fn(() => ({
             txo: {
-              encodeABI: jest.fn(() => ["send_erc20_token_data"]),
+              encodeABI: jest.fn(() => "0x73656E645F65726332305F746F6B656E5F64617461"), // send_erc20_token_data
             },
           })),
         })),
@@ -116,8 +121,82 @@ describe("prepareTransaction", () => {
     );
     expect(transaction).toMatchObject({
       ...transaction,
-      data: Buffer.from("send_data".slice(2), "hex"),
+      data: Buffer.from("0x73656E645F64617461".slice(2), "hex"),
       fees: BigNumber(6),
+    });
+  });
+
+  it("should return the prepared stable token transaction", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+        subAccounts: [
+          {
+            ...accountWithTokenAccountFixture.subAccounts[0],
+            token: {
+              ...accountWithTokenAccountFixture.subAccounts[0].token,
+              id: "cEUR",
+            },
+          },
+        ],
+      },
+      {
+        ...tokenTransactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      ...transaction,
+      data: Buffer.from("0x73656E645F746F6B656E5F64617461".slice(2), "hex"),
+      fees: BigNumber(6),
+    });
+  });
+
+  it("should return the prepared token transaction", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+      },
+      {
+        ...tokenTransactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      ...transaction,
+      data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461".slice(2), "hex"),
+      fees: BigNumber(6),
+    });
+  });
+
+  it("should return the prepared token transaction with useAllAmount", async () => {
+    const transaction = await prepareTransaction(
+      {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(222222),
+        spendableBalance: BigNumber(222222),
+      },
+      {
+        ...tokenTransactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+        useAllAmount: true,
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      ...transaction,
+      data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461".slice(2), "hex"),
+      fees: BigNumber(6),
+      amount: BigNumber(212),
     });
   });
 });

@@ -35,7 +35,7 @@ export const prepareTransaction: AccountBridge<
   let data;
 
   if (isTokenTransaction) {
-    if (CELO_STABLE_TOKENS.includes(account.currency.id)) {
+    if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
       const stableToken = await kit.contracts.getStableToken();
       data = stableToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
     } else {
