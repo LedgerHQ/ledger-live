@@ -6,8 +6,10 @@ import { getTransactionExplorer } from "./logic";
 describe("getTransactionExplorer", () => {
   test("Tx explorer URL is converted from hash to consensus timestamp", async () => {
     const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
-    expect(explorerView).toBeDefined();
-    expect(explorerView.tx).toBeDefined();
+    expect(explorerView).toEqual({
+      tx: expect.any(String),
+      address: expect.any(String),
+    });
 
     const mockOperation: Operation = {
       extra: {
@@ -32,8 +34,10 @@ describe("getTransactionExplorer", () => {
 
   test("Tx explorer URL is based on transaction id if consensus timestamp is not available", async () => {
     const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
-    expect(explorerView).toBeDefined();
-    expect(explorerView.tx).toBeDefined();
+    expect(explorerView).toEqual({
+      tx: expect.any(String),
+      address: expect.any(String),
+    });
 
     const mockOperation: Operation = {
       extra: {
