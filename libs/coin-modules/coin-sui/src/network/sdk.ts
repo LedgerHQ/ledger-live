@@ -229,6 +229,8 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
       block: {
         // agreed to return bigint
         height: BigInt(transaction.checkpoint || "") as unknown as number,
+        hash,
+        time: getOperationDate(transaction),
       },
     },
     asset: { type: "native" },
