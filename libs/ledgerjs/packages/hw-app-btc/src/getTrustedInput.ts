@@ -77,6 +77,16 @@ export async function getTrustedInput(
   // NOTE: this isn't necessary as consensusBranchId is only set when the transaction is a zcash tx
   // but better safe than sorry
   const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
+
+  console.log("rabl: getTrustedInput HERE 1", {
+    version: transaction.version,
+    timestamp: transaction.timestamp,
+    nVersionGroupId: transaction.nVersionGroupId,
+    isZcash,
+    zCashConsensusBranchId,
+    inputsLength: inputs.length,
+  });
+
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
@@ -100,7 +110,6 @@ export async function getTrustedInput(
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
       : processScriptBlocks(input.script, input.sequence));
   }
-
   await getTrustedInputRaw(transport, createVarint(outputs.length));
 
   for (const output of outputs) {
@@ -110,7 +119,79 @@ export async function getTrustedInput(
       createVarint(output.script.length),
       output.script,
     ]);
+    console.log("rabl: getTrustedInput HERE 6", { data });
     await getTrustedInputRaw(transport, data);
+  }
+
+  if (isZcash && transaction.sapling) {
+    console.log("rabl: getTrustedInput 6.0 vSpendsSapling.length", {
+      vSpendsSaplingLength: transaction.sapling.vSpendsSapling.length,
+    });
+    console.log("rabl: getTrustedInput 6.0 vOutputSapling.length", {
+      vOutputSaplingLength: transaction.sapling.vOutputSapling.length,
+    });
+
+    const data = Buffer.concat([
+      locktime,
+      Buffer.from([0x01, 0x00, 0x00, 0x00]),
+      transaction.sapling.valueBalanceSapling,
+      transaction.sapling.anchorSapling,
+      createVarint(transaction.sapling.vSpendsSapling.length),
+      createVarint(transaction.sapling.vOutputSapling.length),
+    ]);
+
+    console.log("rabl: start EXTRA DATA", { data });
+    // send this is sapling data
+    await getTrustedInputRaw(transport, data);
+    console.log("rabl: header sent", { data });
+    // send spends
+    for (const spend of transaction.sapling.vSpendsSapling) {
+      const spendData = Buffer.concat([
+        spend.cv, //32
+        spend.nullifier, //32
+        spend.rk, //32
+      ]);
+      console.log("rabl: getTrustedInput HERE 6.1 spend", { spendData });
+      await getTrustedInputRaw(transport, spendData);
+    }
+    for (const output of transaction.sapling.vOutputSapling) {
+      const outputData = Buffer.concat([
+        output.cmu,
+        output.ephemeralKey,
+        output.encCiphertext.slice(0, 52),
+      ]);
+      console.log("rabl: getTrustedInput HERE 6.2 compact", { outputData });
+      await getTrustedInputRaw(transport, outputData);
+    }
+    // send outputs memo
+    for (const output of transaction.sapling.vOutputSapling) {
+      // Send memo and noncompact ciphertext in 128-byte blocks
+      for (let i = 0; i < 4; i++) {
+        const start = 52 + i * 128;
+        const end = start + 128;
+        const outputData = Buffer.concat([output.encCiphertext.slice(start, end)]);
+        console.log("rabl: getTrustedInput HERE 6.4 noncompact", { outputData });
+        await getTrustedInputRaw(transport, outputData);
+      }
+    }
+    // send outputs noncompact
+    let res;
+    for (const output of transaction.sapling.vOutputSapling) {
+      const outputData = Buffer.concat([
+        output.cv,
+        output.encCiphertext.slice(564, 580), // 32 bytes],
+        output.outCiphertext,
+      ]);
+      console.log("rabl: getTrustedInput HERE 6.4 noncompact", {
+        outputData: outputData.toString("hex"),
+      });
+      res = await getTrustedInputRaw(transport, outputData);
+    }
+    console.log("rabl: getTrustedInput HERE 6.5 bindingSigSapling", { res });
+    invariant(res, "missing result in processScriptBlocks");
+    return res;
+    // send other
+    // await getTrustedInputRaw(transport, data);
   }
 
   const endData: Buffer[] = [];
