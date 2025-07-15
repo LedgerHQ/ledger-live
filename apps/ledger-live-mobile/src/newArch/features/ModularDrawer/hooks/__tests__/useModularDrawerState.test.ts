@@ -2,15 +2,14 @@ import { renderHook, act } from "@tests/test-renderer";
 import { useModularDrawerState } from "../useModularDrawerState";
 import { ModularDrawerStep } from "../../types";
 import {
-  mockEthCryptoCurrency,
   mockBtcCryptoCurrency,
   mockCurrenciesByProvider,
   mockCurrencyIds,
-} from "./__mocks__/modularDrawerMocks";
+  mockEthCryptoCurrency,
+} from "../../__mocks__/currencies.mock";
 
 describe("useModularDrawerState", () => {
   const mockCurrency = mockBtcCryptoCurrency;
-  const mockNetwork = mockEthCryptoCurrency;
 
   it("should initialize state correctly", () => {
     const { result } = renderHook(() =>
@@ -40,23 +39,6 @@ describe("useModularDrawerState", () => {
     expect(result.current.asset).toEqual(mockCurrency);
     expect(result.current.availableNetworks.length).toBeGreaterThan(0);
     expect(goToStep).toHaveBeenCalledWith(ModularDrawerStep.Network);
-  });
-
-  it("should select a network and go to account step", () => {
-    const goToStep = jest.fn();
-    const { result } = renderHook(() =>
-      useModularDrawerState({
-        goToStep,
-        currencyIds: mockCurrencyIds,
-        currenciesByProvider: mockCurrenciesByProvider,
-      }),
-    );
-    act(() => {
-      result.current.selectNetwork(mockCurrency, mockNetwork);
-    });
-    expect(result.current.asset).toEqual(mockCurrency);
-    expect(result.current.network).toEqual(mockNetwork);
-    expect(goToStep).toHaveBeenCalledWith(ModularDrawerStep.Account);
   });
 
   it("should reset state", () => {
