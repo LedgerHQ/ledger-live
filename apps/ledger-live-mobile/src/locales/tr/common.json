@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "Varlıklarınıza erişiminizi kurtarın",
         "desc" : "Bu işlem, Gizli Kurtarma İfadesi veya Ledger Recover yedeklemenizi kullanarak hesaplarınızı geri yüklemenize olanak tanır.",
-        "descWithCharon" : "Bu işlem, Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Charon yedeklemeniz ile hesaplarınızı geri yüklemenize olanak tanır."
+        "descWithCharon" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
         "cta" : "Daha fazla bilgi edinin veya satın alın",
         "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
       },
@@ -2357,8 +2357,8 @@
           "description" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Varlıklarınıza yeniden erişebilmek için Recovery Key'inizi kullanın."
         },
         "ledgerRecover" : {
           "title" : "Ledger Recover aboneliği",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin."
       },
       "restoreLedgerCharon" : {
-        "title" : "Ledger Charon ile hesaplarınızı geri yükleyin",
+        "title" : "Recovery Key ile geri yükleyin",
         "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
         "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin."
       },
@@ -7505,5 +7505,83 @@
     "title" : "Ledger Live Güncellemesi Gerekli",
     "description" : "Ledger Live'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
     "openStore" : "Güncelle"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Yanlış komut verisi",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "deserializationFailed" : {
+      "title" : "Yük seri durumdan çıkarılamadı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongTransactionId" : {
+      "title" : "Yanlış işlem kimliği",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidAddress" : {
+      "title" : "Geçersiz adres",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu alıcı hesabı, bağlı cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu gönderen hesabı, bağlı cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
+    },
+    "userRefused" : {
+      "title" : "İşlem cihazda reddedildi",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "internalError" : {
+      "title" : "Dâhilî hata",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP1" : {
+      "title" : "Yanlış P1",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP2" : {
+      "title" : "Yanlış P2",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP2Extension" : {
+      "title" : "Yanlış P2 uzantısı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidP2Extension" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Geçersiz P2 uzantısı"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Beklenmedik talimat"
+    },
+    "classNotSupported" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Sınıf desteklenmiyor"
+    },
+    "invalidInstruction" : {
+      "title" : "Geçersiz talimat",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "malformedApdu" : {
+      "title" : "APDU başlığının biçimi yanlış",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidDataLength" : {
+      "title" : "Geçersiz veri uzunluğu",
+      "description" : "Bu komut o uzunlukta veri kabul etmez"
+    },
+    "signatureVerificationFail" : {
+      "title" : "İmza doğrulanamadı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "default" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    }
   }
 }
