@@ -12,6 +12,27 @@
   - @ledgerhq/live-countervalues@0.5.13-next.0
   - @ledgerhq/live-wallet@0.11.4-next.0
 
+## 24.19.4
+
+### Patch Changes
+
+- Updated dependencies [[`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933)]:
+  - @ledgerhq/live-common@34.40.1
+
+## 24.19.4-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.40.1-hotfix.1
+
+## 24.19.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933)]:
+  - @ledgerhq/live-common@34.40.1-hotfix.0
+
 ## 24.19.3
 
 ### Patch Changes
