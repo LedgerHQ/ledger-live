@@ -27,7 +27,7 @@ describe("estimateFees", () => {
   const mockFeeData: FeeData = {
     maxFeePerGas: new BigNumber("20000000000"),
     maxPriorityFeePerGas: new BigNumber("2000000000"),
-    gasPrice: null,
+    gasPrice: new BigNumber("20000000000"),
     nextBaseFee: null,
   };
 
@@ -41,13 +41,12 @@ describe("estimateFees", () => {
     mode: "send",
     amount: new BigNumber(mockIntent.amount.toString()),
     recipient,
-    maxFeePerGas: new BigNumber(0),
-    maxPriorityFeePerGas: new BigNumber(0),
+    gasPrice: new BigNumber(0),
     gasLimit: mockGasLimit,
     nonce: 0,
     chainId,
     feesStrategy: "medium",
-    type: 2,
+    type: 1,
   });
 
   beforeEach(() => {
@@ -61,7 +60,7 @@ describe("estimateFees", () => {
     const result = await estimateFees(mockCurrency, mockIntent);
 
     expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, expectedTx());
-    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.maxFeePerGas!).toFixed()));
+    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.gasPrice!).toFixed()));
   });
 
   it("should estimate fees for token asset", async () => {
@@ -72,11 +71,11 @@ describe("estimateFees", () => {
       mockCurrency,
       expectedTx(mockTokenAsset.contractAddress),
     );
-    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.maxFeePerGas!).toFixed()));
+    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.gasPrice!).toFixed()));
   });
 
-  it("should return 0 when maxFeePerGas is null", async () => {
-    mockNodeApi.getFeeData.mockResolvedValue({ ...mockFeeData, maxFeePerGas: null });
+  it("should return 0 when gasPrice is null", async () => {
+    mockNodeApi.getFeeData.mockResolvedValue({ ...mockFeeData, gasPrice: null });
 
     const result = await estimateFees(mockCurrency, mockIntent);
     expect(result).toBe(BigInt(0));
