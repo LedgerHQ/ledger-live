@@ -2340,12 +2340,12 @@
       },
       "selectionRestore" : {
         "title" : "恢复对您资产的访问权限",
-        "desc" : "This lets you restore using your backup — Secret Recovery Phrase or Ledger Recover.",
-        "descWithCharon" : "This lets you restore using your backup — Secret Recovery Phrase, Ledger Recover, or Ledger Charon."
+        "desc" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "descWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。"
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key 恢复钥匙",
+        "desc" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
         "cta" : "了解详情或购买",
         "continueOnDevice" : "按照 {{productName}} 上的说明进行操作"
       },
@@ -2357,8 +2357,8 @@
           "description" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。"
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key 恢复钥匙",
+          "description" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。"
         },
         "ledgerRecover" : {
           "title" : "Ledger Recover 订阅",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "在 {{productName}} 上选择相应选项。"
       },
       "restoreLedgerCharon" : {
-        "title" : "Restore using Ledger Charon",
+        "title" : "使用 Recovery Key 进行恢复",
         "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
         "continueOnDevice" : "按照 {{productName}} 上的说明进行操作。"
       },
@@ -7503,7 +7503,85 @@
   },
   "versionBlocking" : {
     "title" : "需要更新 Ledger Live",
-    "description" : "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
+    "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
     "openStore" : "更新"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "命令数据不正确",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "deserializationFailed" : {
+      "title" : "有效负载反序列化失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongTransactionId" : {
+      "title" : "交易 ID 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidAddress" : {
+      "title" : "地址无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "出错了",
+      "description" : "此接收账户不属于已连接的设备。请更改并重试。"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "出错了",
+      "description" : "此发送账户不属于已连接的设备。请更改并重试。"
+    },
+    "userRefused" : {
+      "title" : "操作在设备上被拒绝",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "internalError" : {
+      "title" : "内部错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP1" : {
+      "title" : "P1 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2" : {
+      "title" : "P2 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2 扩展名错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidP2Extension" : {
+      "title" : "出错了",
+      "description" : "P2 扩展名无效"
+    },
+    "unexpectedInstruction" : {
+      "title" : "出错了",
+      "description" : "指令异常"
+    },
+    "classNotSupported" : {
+      "title" : "出错了",
+      "description" : "不支持的类"
+    },
+    "invalidInstruction" : {
+      "title" : "指令无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "malformedApdu" : {
+      "title" : "APDU 标头格式错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidDataLength" : {
+      "title" : "数据长度无效",
+      "description" : "此命令不接受该长度的数据"
+    },
+    "signatureVerificationFail" : {
+      "title" : "签名验证失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "default" : {
+      "title" : "出错了",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    }
   }
 }
