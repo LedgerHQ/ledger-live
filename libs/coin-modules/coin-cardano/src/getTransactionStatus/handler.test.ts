@@ -6,9 +6,9 @@ import { getTransactionStatusByTransactionMode } from "./handler";
 import * as undelegate from "./undelegate";
 import { CardanoAccount, Transaction } from "../types";
 
-jest.mock("./getDelegateTransactionStatus");
-jest.mock("./getSendTransactionStatus");
-jest.mock("./getUndelegateTransactionStatus");
+jest.mock("./delegate");
+jest.mock("./send");
+jest.mock("./undelegate");
 
 describe("getTransactionStatusByMode on Cardano", () => {
   const sendMock = send.getSendTransactionStatus as jest.Mock;
