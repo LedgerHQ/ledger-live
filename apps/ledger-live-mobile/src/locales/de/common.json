@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "Zugriff auf deine Assets wiederherstellen",
         "desc" : "Mit deinem Backup – geheime Wiederherstellungsphrase oder Ledger Recover – kannst du eine Wiederherstellung durchführen.",
-        "descWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Charon – kannst du eine Wiederherstellung durchführen."
+        "descWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Recovery Key – kannst du eine Wiederherstellung durchführen."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
         "cta" : "Mehr erfahren oder kaufen",
         "continueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
       },
@@ -2357,8 +2357,8 @@
           "description" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung Beschreibung."
+          "title" : "Ledger Recovery Key",
+          "description" : "Mit deinem Recovery Key kannst du den Zugriff auf deine Assets wiederherstellen."
         },
         "ledgerRecover" : {
           "title" : "Ledger Recover-Abonnement",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus."
       },
       "restoreLedgerCharon" : {
-        "title" : "Wiederherstellen mit Ledger Charon",
+        "title" : "Wiederherstellen mit Recovery Key",
         "description" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
         "continueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}."
       },
@@ -7502,8 +7502,86 @@
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {
-    "title" : "Ledger Live Update Required",
-    "description" : "This version of Ledger Live is not compatible with the latest device operating system. Update now to enjoy improved connectivity.",
-    "openStore" : "Update"
+    "title" : "Ledger Live-Update erforderlich",
+    "description" : "Diese Ledger Live-Version ist nicht mit dem neuesten Betriebssystem deines Geräts kompatibel. Führe jetzt ein Update durch, um von verbesserter Konnektivität zu profitieren.",
+    "openStore" : "Aktualisieren"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Fehlerhafte Befehlsdaten",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "deserializationFailed" : {
+      "title" : "Deserialisierung der Nutzlast fehlgeschlagen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongTransactionId" : {
+      "title" : "Falsche Transaktions-ID",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidAddress" : {
+      "title" : "Ungültige Adresse",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Das empfangende Konto ist dem verbundenen Gerät nicht zugeordnet. Bitte nutze das richtige Gerät und versuche es noch einmal."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Das versendende Konto ist dem verbundenen Gerät nicht zugeordnet. Bitte nutze das richtige Gerät und versuche es noch einmal."
+    },
+    "userRefused" : {
+      "title" : "Aktion auf Gerät verweigert",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "internalError" : {
+      "title" : "Interner Fehler",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP1" : {
+      "title" : "P1 falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP2" : {
+      "title" : "P2 falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2-Erweiterung falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidP2Extension" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "P2-Erweiterung ungültig"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Unerwartete Anweisung"
+    },
+    "classNotSupported" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Klasse wird nicht unterstützt"
+    },
+    "invalidInstruction" : {
+      "title" : "Ungültige Anweisung",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "malformedApdu" : {
+      "title" : "Fehlformatierter APDU-Header",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidDataLength" : {
+      "title" : "Ungültige Datenlänge",
+      "description" : "Dieser Befehl akzeptiert keine Daten dieser Länge"
+    },
+    "signatureVerificationFail" : {
+      "title" : "Signaturverifizierung fehlgeschlagen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "default" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    }
   }
 }
