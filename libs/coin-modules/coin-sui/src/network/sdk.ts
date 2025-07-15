@@ -1,9 +1,10 @@
 import {
-  PaginatedTransactionResponse,
-  SuiClient,
   ExecuteTransactionBlockParams,
-  TransactionEffects,
+  PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  SuiClient,
+  SuiHTTPTransport,
+  TransactionEffects,
 } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
@@ -19,6 +20,8 @@ import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { SuiAsset } from "../api/types";
+import ky from "ky";
+import { getEnv } from "@ledgerhq/live-env";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -37,7 +40,22 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
 
   if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
+    // Create a ky instance with extended timeout and retry logic
+    const kyExtendedTimeout = ky.create({
+      timeout: 60000,
+      headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
+      retry: {
+        limit: 3,
+        statusCodes: [408, 413, 429, 500, 502, 503, 504],
+        methods: ["get", "post", "put", "head", "delete", "options", "trace"],
+      },
+    });
+    const transport = new SuiHTTPTransport({
+      url,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      fetch: kyExtendedTimeout as typeof fetch, // Type cast for jest test having an issue with the type,
+    });
+    apiMap[url] = new SuiClient({ transport });
   }
 
   const result = await execute(apiMap[url]);
