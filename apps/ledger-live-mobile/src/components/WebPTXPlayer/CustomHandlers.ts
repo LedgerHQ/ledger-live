@@ -25,6 +25,7 @@ type CustomExchangeHandlersHookType = {
   accounts: AccountLike[];
   sendAppReady: () => void;
   onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
+  onCompleteError?: (error: Error) => void;
 };
 
 export function useCustomExchangeHandlers({
@@ -32,6 +33,7 @@ export function useCustomExchangeHandlers({
   accounts,
   onCompleteResult,
   sendAppReady,
+  onCompleteError,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
@@ -166,9 +168,7 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
                     navigation.pop();
-                    navigation.navigate(ScreenName.SwapCustomError, {
-                      error: result.error,
-                    });
+                    onCompleteError?.(result.error);
                   }
                   if (result.operation && exchangeParams.swapId) {
                     syncAccountById(exchangeParams.exchange.fromAccount.id);
@@ -194,6 +194,7 @@ export function useCustomExchangeHandlers({
     device,
     manifest,
     navigation,
+    onCompleteError,
     onCompleteResult,
     sendAppReady,
     syncAccountById,
