@@ -14,11 +14,12 @@ export default function Delta({ account, range }: Props) {
     range,
   });
   return (
-    <Box flex="10%" justifyContent="flex-end">
+    <Box flex="10%" horizontal justifyContent="flex-end" paddingRight={20}>
       {!countervalueChange.percentage ? (
         <PlaceholderLine width={16} height={2} />
       ) : (
         <FormattedVal
+          inline
           isPercent
           val={Math.round(countervalueChange.percentage * 100)}
           alwaysShowSign
