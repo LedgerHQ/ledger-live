@@ -2341,11 +2341,11 @@
       "selectionRestore" : {
         "title" : "Restaurar el acceso a tus activos",
         "desc" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta o Ledger Recover.",
-        "descWithCharon" : "Este proceso te permite restaurar con tu copia de respaldo: Frase de Recuperación Secreta, Ledger Recover o Ledger Charon."
+        "descWithCharon" : "Este proceso te permite restaurar con tu copia de respaldo (Frase de Recuperación Secreta, Ledger Recover o Ledger Recovery Key)."
       },
       "backupCharon" : {
-        "title" : "Ledger Charon",
-        "desc" : "description description description description description description description description description description description description",
+        "title" : "Ledger Recovery Key",
+        "desc" : "Crea una copia de respaldo nueva en una tarjeta protegida por PIN con un chip de Elemento Seguro integrado, de forma que puedas restaurar el acceso a tus activos con sólo unos toques.",
         "cta" : "Más información o comprar",
         "continueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}"
       },
@@ -2357,8 +2357,8 @@
           "description" : "Para garantizar la máxima seguridad, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger."
         },
         "ledgerCharon" : {
-          "title" : "Ledger Charon",
-          "description" : "description description description description description."
+          "title" : "Ledger Recovery Key",
+          "description" : "Usa tu Recovery Key para restaurar el acceso a tus activos."
         },
         "ledgerRecover" : {
           "title" : "Suscripción a Ledger Recover",
@@ -2371,7 +2371,7 @@
         "continueOnDevice" : "Elige la opción que prefieras en tu {{productName}}."
       },
       "restoreLedgerCharon" : {
-        "title" : "Restaurar con Ledger Charon",
+        "title" : "Restaurar con Ledger Recovery Key",
         "description" : "Para restaurar, sigue las instrucciones que aparecen en la pantalla segura de tu Ledger.",
         "continueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}."
       },
@@ -7505,5 +7505,83 @@
     "title" : "Es necesario actualizar Ledger Live",
     "description" : "Esta versión de Ledger Live no es compatible con la versión más reciente del sistema operativo del dispositivo. Actualiza ya para disfrutar de una conectividad mejorada.",
     "openStore" : "Actualizar"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Datos de comando incorrectos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "deserializationFailed" : {
+      "title" : "La deserialización de la carga útil ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transacción incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidAddress" : {
+      "title" : "Dirección inválida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta emisora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "userRefused" : {
+      "title" : "Operación denegada en el dispositivo",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "internalError" : {
+      "title" : "Error interno",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensión de P2 incorrecta",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Extensión de P2 no válida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Instrucción inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Clase no admitida"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrucción no válida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "malformedApdu" : {
+      "title" : "La cabecera de APDU tiene un formato incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidDataLength" : {
+      "title" : "Longitud de los datos no válida",
+      "description" : "Este comando no acepta datos de esa longitud"
+    },
+    "signatureVerificationFail" : {
+      "title" : "La verificación de la firma ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "default" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    }
   }
 }
