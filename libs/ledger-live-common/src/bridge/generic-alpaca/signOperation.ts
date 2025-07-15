@@ -103,6 +103,7 @@ export const genericSignOperation =
             };
             txWithMemoTag.memo.memos.set("destinationTag", txMemo);
           }
+          // FIXME: stellarmemo??
           const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
           // if (transaction["memoType"] && transaction["memoValue"]) {
           //   const txMemoType = String(transaction["memoType"]);
