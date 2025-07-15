@@ -102,7 +102,6 @@ describe.each([
         },
       });
 
-      expect(result).toHaveProperty("value");
       expect(typeof result.value).toBe("bigint");
       expect(result.value).toBeGreaterThan(0n);
     });
@@ -120,7 +119,6 @@ describe.each([
         },
       });
 
-      expect(result).toHaveProperty("value");
       expect(typeof result.value).toBe("bigint");
       expect(result.value).toBeGreaterThan(0n);
     });

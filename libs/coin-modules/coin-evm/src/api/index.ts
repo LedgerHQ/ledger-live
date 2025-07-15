@@ -12,10 +12,15 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
-import { broadcast, combine, lastBlock } from "../logic/";
+import {
+  broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
+  lastBlock,
+  listOperations,
+} from "../logic/";
 import { EvmAsset } from "../types";
-import { listOperations } from "../logic/listOperations";
-import { estimateFees, craftTransaction } from "../logic/";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
