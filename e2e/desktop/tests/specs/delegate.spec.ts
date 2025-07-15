@@ -211,11 +211,11 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
 
-        if (
-          account.delegate.account.currency.name == Currency.ADA.name ||
-          account.delegate.account.currency.name == Currency.APT.name
-        ) {
+        if (account.delegate.account.currency.name == Currency.ADA.name) {
           await app.delegate.openSearchProviderModal();
+          await app.delegate.inputProvider(account.delegate.provider);
+          await app.delegate.selectProviderByName(account.delegate.provider);
+        } else if (account.delegate.account.currency.name == Currency.APT.name) {
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
         } else {
