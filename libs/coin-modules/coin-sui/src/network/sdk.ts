@@ -298,10 +298,17 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
     tx.setSender(ensureAddressFormat(sender));
     const coinObjects = await getCoinObjectIds(sender, fakeTransaction);
 
-    const [coin] = tx.splitCoins(Array.isArray(coinObjects) ? coinObjects[0] : tx.gas, [
-      fakeTransaction.amount.toNumber(),
-    ]);
+    if (Array.isArray(coinObjects) && fakeTransaction.coinType !== DEFAULT_COIN_TYPE) {
+      const coins = coinObjects.map(coinId => tx.object(coinId));
+      if (coins.length > 1) {
+        tx.mergeCoins(coins[0], coins.slice(1));
+      }
+      const [coin] = tx.splitCoins(coins[0], [fakeTransaction.amount.toNumber()]);
+      tx.transferObjects([coin], fakeTransaction.recipient);
+    } else {
+      const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
     tx.transferObjects([coin], fakeTransaction.recipient);
+    }
 
     try {
       const txb = await tx.build({ client: api });
