@@ -11,12 +11,22 @@ import SelectDevice from "LLM/features/DeviceSelection/screens/SelectDevice";
 import StepHeader from "~/components/StepHeader";
 import { DeviceSelectionNavigatorParamsList } from "./types";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import { extractParam } from "./utils/navigationHelpers";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useModularDrawer } from "LLM/features/ModularDrawer/hooks/useModularDrawer";
+import { MODULAR_DRAWER_KEY, ModularDrawerNavigationParams } from "../ModularDrawer/types";
 
 export default function Navigator() {
+  const { initDrawer } = useModularDrawer();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
+
+  const modularDrawer = extractParam<ModularDrawerNavigationParams>(
+    route.params,
+    MODULAR_DRAWER_KEY,
+  );
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -26,12 +36,23 @@ export default function Navigator() {
     navigation.getParent()?.goBack();
   }, [route, navigation]);
 
+  const onBack = useCallback(() => {
+    navigation.goBack();
+
+    if (modularDrawer?.isFromModularDrawer) {
+      initDrawer(modularDrawer?.asset, modularDrawer?.network, modularDrawer?.step);
+    }
+  }, [navigation, initDrawer, modularDrawer]);
+
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
       headerRight: () => <CloseWithConfirmation onClose={onClose} />,
+      ...(modularDrawer?.isFromModularDrawer && {
+        headerLeft: () => <NavigationHeaderBackButton onPress={onBack} />,
+      }),
     }),
-    [colors, onClose],
+    [colors, modularDrawer, onClose, onBack],
   );
 
   return (

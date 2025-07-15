@@ -9,9 +9,13 @@ import {
   getEffectiveCurrency,
   isCorrespondingCurrency,
 } from "@ledgerhq/live-common/modularDrawer/utils/index";
+import { useModularDrawer } from "./useModularDrawer";
+import { NavigatorName, ScreenName } from "~/const";
+import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
+import { useNavigation } from "@react-navigation/core";
+import { AssetSelectionNavigationProps } from "../../AssetSelection/types";
 
 type ModularDrawerStateProps = {
-  goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
   currenciesByProvider: CurrenciesByProviderId[];
 };
@@ -23,68 +27,114 @@ type ModularDrawerStateProps = {
  * @param {ModularDrawerStateProps} props - The properties for the hook.
  */
 export function useModularDrawerState({
-  goToStep,
   currencyIds,
   currenciesByProvider,
 }: ModularDrawerStateProps) {
-  const [asset, setAsset] = useState<CryptoOrTokenCurrency | null>(null);
-  const [network, setNetwork] = useState<CryptoOrTokenCurrency | null>(null);
+  const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+
+  //To be handled incr2
+  const isAddAccountFlow = true;
+
+  const {
+    selectedAsset,
+    selectedNetwork,
+    currentStep,
+    setSelectedAsset,
+    setSelectedNetwork,
+    resetState,
+    goToStep,
+    closeDrawer,
+  } = useModularDrawer();
+
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
   const { providers, setProviders, getNetworksFromProvider } = useProviders();
 
+  const navigateToDevice = useCallback(
+    (
+      selectedAsset: CryptoCurrency,
+      selectedNetwork?: CryptoOrTokenCurrency,
+      createTokenAccount?: boolean,
+    ) => {
+      closeDrawer();
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency: selectedAsset,
+          createTokenAccount,
+          context: AddAccountContexts.AddAccounts,
+          modularDrawer: {
+            isFromModularDrawer: true,
+            asset: selectedAsset,
+            network: selectedNetwork ?? null,
+            step: currentStep,
+          },
+        },
+      });
+    },
+    [closeDrawer, currentStep, navigation],
+  );
+
+  const processNetworkSelection = useCallback(
+    (selectedCurrency: CryptoOrTokenCurrency, selectedNetwork?: CryptoOrTokenCurrency) => {
+      if (selectedCurrency.type === "TokenCurrency") {
+        navigateToDevice(selectedCurrency.parentCurrency, selectedNetwork, true);
+      } else {
+        navigateToDevice(selectedCurrency, selectedNetwork, false);
+      }
+    },
+    [navigateToDevice],
+  );
+
   const selectAsset = useCallback(
     (selected: CryptoOrTokenCurrency, networks?: CryptoCurrency[]) => {
-      setAsset(selected);
+      setSelectedAsset(selected);
       if ((networks ?? []).length > 1) {
         setAvailableNetworks(uniqWith(networks ?? [], (a, b) => a.id === b.id));
         goToStep?.(ModularDrawerStep.Network);
       } else {
-        goToStep?.(ModularDrawerStep.Account);
+        if (isAddAccountFlow) {
+          processNetworkSelection(selected);
+        } else {
+          goToStep?.(ModularDrawerStep.Account);
+        }
       }
     },
-    [goToStep],
+    [goToStep, isAddAccountFlow, processNetworkSelection, setSelectedAsset],
   );
 
   const selectNetwork = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
-      setAsset(selectedAsset);
-      setNetwork(selectedNetwork);
-      goToStep?.(ModularDrawerStep.Account);
+      setSelectedAsset(selectedAsset);
+      setSelectedNetwork(selectedNetwork);
     },
-    [goToStep],
+    [setSelectedAsset, setSelectedNetwork],
   );
-
-  const reset = useCallback(() => {
-    setAsset(null);
-    setNetwork(null);
-    setAvailableNetworks([]);
-  }, []);
 
   const backToAsset = useCallback(() => {
-    reset();
+    resetState();
     goToStep?.(ModularDrawerStep.Asset);
-  }, [goToStep, reset]);
+  }, [goToStep, resetState]);
 
   const backToNetwork = useCallback(() => {
-    setNetwork(null);
+    setSelectedNetwork(null);
     goToStep?.(ModularDrawerStep.Network);
-  }, [goToStep]);
+  }, [goToStep, setSelectedNetwork]);
 
-  const handleBack = useCallback(
-    (step: ModularDrawerStep) => {
-      switch (step) {
-        case ModularDrawerStep.Network:
+  const handleBack = useCallback(() => {
+    const hasMultipleNetwork = availableNetworks.length > 1;
+    switch (currentStep) {
+      case ModularDrawerStep.Network:
+        backToAsset();
+        break;
+      case ModularDrawerStep.Account:
+        if (hasMultipleNetwork) {
+          backToNetwork();
+        } else {
           backToAsset();
-          break;
-        case ModularDrawerStep.Account:
-          availableNetworks.length > 1 ? backToNetwork() : backToAsset();
-          break;
-        default:
-          break;
-      }
-    },
-    [backToAsset, backToNetwork, availableNetworks.length],
-  );
+        }
+        break;
+    }
+  }, [availableNetworks, currentStep, backToAsset, backToNetwork]);
 
   const goToNetwork = useCallback(
     (currency: CryptoOrTokenCurrency, networks: (string | undefined)[]) => {
@@ -104,8 +154,15 @@ export function useModularDrawerState({
   const goToAccount = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       selectNetwork(selectedAsset, selectedNetwork);
+
+      if (isAddAccountFlow) {
+        processNetworkSelection(selectedAsset, selectedNetwork);
+      } else {
+        // TODO in incr2
+        goToStep?.(ModularDrawerStep.Account);
+      }
     },
-    [selectNetwork],
+    [selectNetwork, isAddAccountFlow, processNetworkSelection, goToStep],
   );
 
   const handleAsset = useCallback(
@@ -142,12 +199,13 @@ export function useModularDrawerState({
   );
 
   return {
-    asset,
-    network,
+    selectedAsset,
+    selectedNetwork,
     availableNetworks,
+    currentStep,
+    resetState,
     selectAsset,
     selectNetwork,
-    reset,
     backToAsset,
     backToNetwork,
     handleBack,

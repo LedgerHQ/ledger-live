@@ -32,6 +32,7 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
+import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modularDrawer";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
 
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
@@ -55,6 +56,7 @@ const initialState = {
   protect: PROTECT_INITIAL_STATE,
   nft: NFT_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,
+  modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
   wallet: WALLET_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,

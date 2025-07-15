@@ -6,6 +6,7 @@ import type {
   FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -34,6 +35,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
+import { ModularDrawerStep } from "LLM/features/ModularDrawer/types";
 
 // === ACCOUNT STATE ===
 
@@ -371,6 +373,15 @@ export type WalletSyncState = {
   activateDrawerStep: Steps;
 };
 
+// === MODULAR DRAWER STATE ===
+
+export type ModularDrawerState = {
+  isDrawerOpen: boolean;
+  currentStep: ModularDrawerStep;
+  selectedAsset: CryptoOrTokenCurrency | null;
+  selectedNetwork: CryptoOrTokenCurrency | null;
+};
+
 // === LARGEMOVER STATE ===
 
 export type LargeMoverState = {
@@ -396,5 +407,6 @@ export type State = {
   wallet: WalletState;
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
+  modularDrawer: ModularDrawerState;
   largeMover: LargeMoverState;
 };

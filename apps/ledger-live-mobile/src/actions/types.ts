@@ -8,6 +8,7 @@ import type {
   Feature,
   FeatureId,
 } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -40,6 +41,7 @@ import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAc
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import { ModularDrawerStep } from "LLM/features/ModularDrawer/types";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -583,6 +585,24 @@ export type WalletSyncPayload =
   | WalletSyncSetActivateDrawer
   | WalletSyncSetActivateStep;
 
+// === MODULAR DRAWER ACTIONS ===
+export enum ModularDrawerActionTypes {
+  MODULAR_DRAWER_SET_DRAWER_OPEN = "MODULAR_DRAWER_SET_DRAWER_OPEN",
+  MODULAR_DRAWER_SET_STEP = "MODULAR_DRAWER_SET_STEP",
+  MODULAR_DRAWER_SET_SELECTED_ASSET = "MODULAR_DRAWER_SET_SELECTED_ASSET",
+  MODULAR_DRAWER_SET_SELECTED_NETWORK = "MODULAR_DRAWER_SET_SELECTED_NETWORK",
+}
+
+export type ModularDrawerSetDrawerOpenPayload = boolean;
+export type ModularDrawerSetStepPayload = ModularDrawerStep;
+export type ModularDrawerSetSelectedAssetPayload = CryptoOrTokenCurrency | null;
+export type ModularDrawerSetSelectedNetworkPayload = CryptoOrTokenCurrency | null;
+export type ModularDrawerPayload =
+  | ModularDrawerSetDrawerOpenPayload
+  | ModularDrawerSetStepPayload
+  | ModularDrawerSetSelectedAssetPayload
+  | ModularDrawerSetSelectedNetworkPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
@@ -598,4 +618,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>;
+  | Action<NftPayload>
+  | Action<ModularDrawerPayload>;

@@ -1,22 +1,17 @@
 import React from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
-import { ModularDrawerStep } from "./types";
-import { useModularDrawerFlowStepManager } from "./hooks/useModularDrawerFlowStepManager";
 
 import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
 import { useAssets } from "./hooks/useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { useModularDrawer } from "./hooks/useModularDrawer";
 
 /**
  * Props for the ModularDrawer component.
  */
 type ModularDrawerProps = {
-  /**
-   * The current step to display in the drawer navigation flow.
-   */
-  selectedStep: ModularDrawerStep;
   /**
    * Whether the drawer is open.
    */
@@ -36,40 +31,34 @@ type ModularDrawerProps = {
  *
  * @param {ModularDrawerProps} props - The props for the ModularDrawer component.
  */
-export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
-  const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
-
+export function ModularDrawer({ isOpen, onClose, currencies }: ModularDrawerProps) {
+  const { resetState, hasBackButton } = useModularDrawer();
   const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
     useInitModularDrawer();
 
   const { availableAssets, currencyIdsArray } = useAssets(currencies, sortedCryptoCurrencies);
 
-  const { handleAsset, handleNetwork, reset, handleBack, availableNetworks } =
-    useModularDrawerState({
-      goToStep: navigationStepManager.goToStep,
-      currenciesByProvider,
-      currencyIds: currencyIdsArray,
-    });
+  const { handleAsset, handleNetwork, handleBack, availableNetworks } = useModularDrawerState({
+    currenciesByProvider,
+    currencyIds: currencyIdsArray,
+  });
 
   /**
    * Handlers for the back & close button in the drawer.
    */
 
-  const handleBackButton = () => {
-    handleBack(navigationStepManager.currentStep);
-  };
+  const handleBackButton = () => handleBack();
 
   const handleCloseButton = () => {
     onClose?.();
-    navigationStepManager.reset();
-    reset();
+    resetState();
   };
 
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpen}
       onClose={handleCloseButton}
-      hasBackButton={navigationStepManager.hasBackButton}
+      hasBackButton={hasBackButton}
       onBack={handleBackButton}
       containerStyle={{
         maxHeight: "90%",
@@ -77,7 +66,6 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
     >
       {/* TODO: Drawer Transitions & animations will be implemented here. */}
       <ModularDrawerFlowManager
-        navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
           availableAssets,
           onAssetSelected: handleAsset,

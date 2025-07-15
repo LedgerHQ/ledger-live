@@ -5,14 +5,14 @@ import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
 import { ModularDrawerFlowProps } from ".";
+import { useModularDrawer } from "../hooks/useModularDrawer";
 
 export function ModularDrawerFlowView({
-  navigationStepViewModel,
   assetsViewModel,
   networksViewModel,
   isReadyToBeDisplayed,
 }: ModularDrawerFlowProps) {
-  const { currentStep } = navigationStepViewModel;
+  const { currentStep } = useModularDrawer();
 
   const renderStepContent = () => {
     switch (currentStep) {

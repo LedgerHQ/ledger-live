@@ -1,23 +1,28 @@
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import {
-  arbitrumCurrency,
   arbitrumToken,
-  baseCurrency,
-  bitcoinCurrency,
-  ethereumCurrency,
   injectiveCurrency,
-  scrollCurrency,
+  mockArbitrumCurrency,
+  mockBaseCurrency,
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+  mockScrollCurrency,
   usdcToken,
 } from "./currencies.mock";
 
 export const providers = [
   {
     providerId: "bitcoin",
-    currenciesByNetwork: [bitcoinCurrency],
+    currenciesByNetwork: [mockBtcCryptoCurrency],
   },
   {
     providerId: "ethereum",
-    currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
+    currenciesByNetwork: [
+      mockEthCryptoCurrency,
+      mockArbitrumCurrency,
+      mockBaseCurrency,
+      mockScrollCurrency,
+    ],
   },
   { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
   { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
@@ -28,11 +33,11 @@ export const res = {
   result: {
     currenciesByProvider: providers,
     sortedCryptoCurrencies: [
-      bitcoinCurrency,
-      ethereumCurrency,
+      mockBtcCryptoCurrency,
+      mockEthCryptoCurrency,
       arbitrumToken,
-      baseCurrency,
-      scrollCurrency,
+      mockBaseCurrency,
+      mockScrollCurrency,
       injectiveCurrency,
     ],
   },

@@ -6,12 +6,14 @@ import {
   NetworkBasedAddAccountNavigator,
 } from "../Accounts/screens/AddAccount/types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ModularDrawerNavigationParams } from "LLM/features/ModularDrawer/types";
 
 type CommonParams = {
   context?: AddAccountContextType;
   onSuccess?: () => void;
   onCloseNavigation?: () => void;
   sourceScreenName?: string;
+  modularDrawer?: ModularDrawerNavigationParams;
 };
 
 export type SelectDeviceRouteParams = CommonParams & {
