@@ -24,6 +24,11 @@ on:
         required: false
         default: false
         type: boolean
+      enable-comparison-notification:
+        description: Enable notification on Slack when the comparison is enabled. Will publish the comparison report to the Slack channel.
+        required: false
+        default: false
+        type: boolean
       latest:
         description: The application to upload is the latest version of the application
         required: false
@@ -47,6 +52,9 @@ on:
         required: true
       DATADOG_APP_KEY:
         description: The Datadog app key to use
+        required: true
+      SLACK_BOT_TOKEN:
+        description: The Slack bot token to use
         required: true
 
 permissions:
@@ -232,4 +240,4 @@ jobs:
           channel-id: "C0895PWD890"
           payload-file-path: "./payload-slack-content.json"
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
