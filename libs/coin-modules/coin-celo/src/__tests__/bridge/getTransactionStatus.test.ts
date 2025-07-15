@@ -1,4 +1,4 @@
-import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
+import { accountFixture, transactionFixture } from "../../bridge/fixtures";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
 import BigNumber from "bignumber.js";
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import getFeesForTransaction from "../../bridge/getFeesForTransaction";
-import { accountFixture, transactionFixture } from "../../bridge/getFixtures";
+import { accountFixture, transactionFixture } from "../../bridge/fixtures";
 
 const chainIdMock = jest.fn();
 const nonceMock = jest.fn();

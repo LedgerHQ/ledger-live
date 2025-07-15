@@ -4,7 +4,7 @@ import {
   accountWithTokenAccountFixture,
   tokenTransactionFixture,
   transactionFixture,
-} from "../../bridge/getFixtures";
+} from "../../bridge/fixtures";
 import prepareTransaction from "../../bridge/prepareTransaction";
 
 const chainIdMock = jest.fn();

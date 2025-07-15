@@ -5,7 +5,7 @@ import {
   accountWithTokenAccountFixture,
   tokenTransactionFixture,
   transactionFixture,
-} from "../../bridge/getFixtures";
+} from "../../bridge/fixtures";
 
 jest.mock("../../bridge/getFeesForTransaction", async () => 12);
 

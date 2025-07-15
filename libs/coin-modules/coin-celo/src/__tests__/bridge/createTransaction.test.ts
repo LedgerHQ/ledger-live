@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import createTransaction from "../../bridge/createTransaction";
-import { accountFixture } from "../../bridge/getFixtures";
+import { accountFixture } from "../../bridge/fixtures";
 
 describe("createTransaction", () => {
   it("returns a dummy transaction", () => {

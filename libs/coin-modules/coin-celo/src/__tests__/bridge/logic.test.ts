@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { accountFixture } from "../../bridge/getFixtures";
+import { accountFixture } from "../../bridge/fixtures";
 import {
   activatableVotes,
   availablePendingWithdrawals,
@@ -342,6 +342,96 @@ describe("logic", () => {
     expect(result).toMatchObject({
       vote: BigNumber(12),
       lock: BigNumber(30),
+    });
+  });
+
+  it("getPendingStakingOperationAmounts", () => {
+    const account = {
+      ...accountFixture,
+      pendingOperations: [
+        {
+          id: "pendingOperation1",
+          accountId: accountFixture.id,
+          blockHash: "block_hash",
+          blockHeight: 1,
+          date: new Date(),
+          type: "VOTE",
+          senders: [],
+          recipients: [],
+          fee: BigNumber(0),
+          value: BigNumber(2),
+          hash: "hash",
+          extra: "extra",
+        } as Operation,
+        {
+          id: "pendingOperation1",
+          accountId: accountFixture.id,
+          blockHash: "block_hash",
+          blockHeight: 1,
+          date: new Date(),
+          type: "VOTE",
+          senders: [],
+          recipients: [],
+          fee: BigNumber(0),
+          value: BigNumber(10),
+          hash: "hash",
+          extra: "extra",
+        } as Operation,
+        {
+          id: "pendingOperation1",
+          accountId: accountFixture.id,
+          blockHash: "block_hash",
+          blockHeight: 1,
+          date: new Date(),
+          type: "LOCK",
+          senders: [],
+          recipients: [],
+          fee: BigNumber(0),
+          value: BigNumber(30),
+          hash: "hash",
+          extra: "extra",
+        } as Operation,
+        {
+          id: "pendingOperation1",
+          accountId: accountFixture.id,
+          blockHash: "block_hash",
+          blockHeight: 1,
+          date: new Date(),
+          type: "REGISTER",
+          senders: [],
+          recipients: [],
+          fee: BigNumber(0),
+          value: BigNumber(30),
+          hash: "hash",
+          extra: "extra",
+        } as Operation,
+      ],
+      celoResources: {
+        ...accountFixture.celoResources,
+        registrationStatus: false,
+      },
+      operations: [
+        {
+          id: "operation1",
+          accountId: accountFixture.id,
+          blockHash: "block_hash",
+          blockHeight: 1,
+          date: new Date(),
+          type: "LOCK",
+          senders: [],
+          recipients: [],
+          fee: BigNumber(0),
+          value: BigNumber(1),
+          hash: "hash",
+          extra: "extra",
+        } as Operation,
+      ],
+      operationsCount: 1,
+    } as CeloAccount;
+    const result = getPendingStakingOperationAmounts(account);
+    expect(result).toMatchObject({
+      vote: BigNumber(0),
+      lock: BigNumber(0),
     });
   });
 
