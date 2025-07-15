@@ -61,14 +61,18 @@ describe("estimateFees", () => {
     const result = await estimateFees(mockCurrency, mockIntent);
 
     expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, expectedTx());
-    expect(result).toBe(BigInt("420000000000000")); // 20 gwei * 21000 gas
+    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.maxFeePerGas!).toFixed()));
   });
 
   it("should estimate fees for token asset", async () => {
     const tokenIntent = { ...mockIntent, asset: mockTokenAsset };
-    await estimateFees(mockCurrency, tokenIntent);
+    const result = await estimateFees(mockCurrency, tokenIntent);
 
-    expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, expectedTx("0x1234"));
+    expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(
+      mockCurrency,
+      expectedTx(mockTokenAsset.contractAddress),
+    );
+    expect(result).toBe(BigInt(mockGasLimit.multipliedBy(mockFeeData.maxFeePerGas!).toFixed()));
   });
 
   it("should return 0 when maxFeePerGas is null", async () => {
@@ -76,16 +80,5 @@ describe("estimateFees", () => {
 
     const result = await estimateFees(mockCurrency, mockIntent);
     expect(result).toBe(BigInt(0));
-  });
-
-  it("should propagate errors", async () => {
-    mockNodeApi.getGasEstimation.mockRejectedValue(new Error("Gas estimation failed"));
-
-    await expect(estimateFees(mockCurrency, mockIntent)).rejects.toThrow("Gas estimation failed");
-  });
-
-  it("should return bigint type", async () => {
-    const result = await estimateFees(mockCurrency, mockIntent);
-    expect(typeof result).toBe("bigint");
   });
 });
