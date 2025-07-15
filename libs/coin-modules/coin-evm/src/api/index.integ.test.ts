@@ -4,13 +4,31 @@ import { EvmAsset } from "../types";
 import { createApi } from "./index";
 
 describe.each([
-  ["external node", { type: "external", uri: "https://ethereum-rpc.publicnode.com" }],
-  ["ledger node", { type: "ledger", explorerId: "eth" }],
-])("EVM Api (%s)", (_, node) => {
+  [
+    "external node and explorer",
+    {
+      node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
+      },
+    },
+  ],
+  [
+    "ledger node and explorer",
+    {
+      node: { type: "ledger", explorerId: "eth" },
+      explorer: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+    },
+  ],
+])("EVM Api (%s)", (_, config) => {
   let module: AlpacaApi<EvmAsset>;
 
   beforeAll(() => {
-    module = createApi({ node } as EvmConfig, "ethereum");
+    module = createApi(config as EvmConfig, "ethereum");
   });
 
   describe("lastBlock", () => {
@@ -52,6 +70,23 @@ describe.each([
       });
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]{204}$/);
+    });
+  });
+
+  describe("listOperations", () => {
+    it("list operations for an address", async () => {
+      const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
+        minHeight: 200,
+      });
+      expect(result.length).toBeGreaterThanOrEqual(52);
+      result.forEach(op => {
+        expect(["FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect(op.senders.concat(op.recipients)).toContain(
+          "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+        );
+        expect(op.value).toBeGreaterThanOrEqual(0n);
+        expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
+      });
     });
   });
 });

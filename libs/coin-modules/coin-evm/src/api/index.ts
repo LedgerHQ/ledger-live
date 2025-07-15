@@ -15,6 +15,7 @@ import { setCoinConfig, type EvmConfig } from "../config";
 import { broadcast, combine, lastBlock } from "../logic/";
 import { EvmAsset } from "../types";
 import { craftTransaction } from "../logic/craftTransaction";
+import { listOperations } from "../logic/listOperations";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
@@ -37,10 +38,9 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     },
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
-      _address: string,
-      _pagination: Pagination,
-    ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> => {
-      throw new Error("UnsupportedMethod");
-    },
+      address: string,
+      pagination: Pagination,
+    ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> =>
+      listOperations(currency, address, pagination),
   };
 }
