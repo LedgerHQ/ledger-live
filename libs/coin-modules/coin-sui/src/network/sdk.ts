@@ -307,7 +307,7 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
       tx.transferObjects([coin], fakeTransaction.recipient);
     } else {
       const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
-    tx.transferObjects([coin], fakeTransaction.recipient);
+      tx.transferObjects([coin], fakeTransaction.recipient);
     }
 
     try {
