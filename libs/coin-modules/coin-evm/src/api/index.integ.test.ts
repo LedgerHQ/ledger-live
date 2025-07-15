@@ -1,4 +1,4 @@
-import { AlpacaApi } from "@ledgerhq/coin-framework/lib/api/types";
+import { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
 import { EvmConfig } from "../config";
 import { EvmAsset } from "../types";
 import { createApi } from "./index";
@@ -87,6 +87,42 @@ describe.each([
         expect(op.value).toBeGreaterThanOrEqual(0n);
         expect(op.tx.block.height).toBeGreaterThanOrEqual(200);
       });
+    });
+  });
+
+  describe("estimateFees", () => {
+    it("estimates fees for native asset transfer", async () => {
+      const result: FeeEstimation = await module.estimateFees({
+        type: "intent",
+        amount: 100000000000000n, // 0.0001 ETH (smaller amount)
+        sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        asset: {
+          type: "native",
+        },
+      });
+
+      expect(result).toHaveProperty("value");
+      expect(typeof result.value).toBe("bigint");
+      expect(result.value).toBeGreaterThan(0n);
+    });
+
+    it("estimates fees for USDC token transfer", async () => {
+      const result = await module.estimateFees({
+        type: "intent",
+        amount: 1000000n, // 1 USDC (6 decimals)
+        sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        asset: {
+          type: "token",
+          standard: "erc",
+          contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        },
+      });
+
+      expect(result).toHaveProperty("value");
+      expect(typeof result.value).toBe("bigint");
+      expect(result.value).toBeGreaterThan(0n);
     });
   });
 });
