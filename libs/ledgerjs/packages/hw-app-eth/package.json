@@ -67,7 +67,8 @@
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "@uniswap/universal-router-sdk": "^4.19.5"
   },
   "overrides": {
     "@ethersproject/providers": {
