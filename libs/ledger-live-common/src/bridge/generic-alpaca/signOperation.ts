@@ -134,19 +134,22 @@ export const genericSignOperation =
               type: "native",
             };
           }
+          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
+            transactionIntent.sender,
+          );
+          transactionIntent.sequence = sequenceNumber;
+
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
           );
 
-          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
-            transactionIntent.sender,
-          );
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned);
+          // return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
           return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
         });
 

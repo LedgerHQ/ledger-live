@@ -2,11 +2,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import {
-  AssetInfo,
-  Operation as CoreOperation,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const opType = op.type as OperationType;
@@ -31,7 +27,6 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.assetCode = op.asset.assetReference;
     extra.assetIssuer = op.asset.assetOwner;
   }
-  console.log("OP 1:", op);
   const res = {
     id: extra.ledgerOpType
       ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
@@ -119,7 +114,6 @@ export function transactionToIntent(
       ? null
       : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
-    debugger;
     res.asset = {
       type: "token",
       assetReference: transaction.assetCode,
@@ -146,10 +140,9 @@ export const buildOptimisticOperation = (
 ): Operation => {
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
   const fees = transaction["fees"] ?? 0n;
-
   const { subAccountId } = transaction;
   const { subAccounts } = account;
-  console.log("buildOptimisticOperation", transaction.amount);
+
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
