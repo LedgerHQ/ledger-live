@@ -35,7 +35,10 @@ export async function executeComparison(performanceReport: PerformanceReport): P
 
       const comparisonJsonOutput = JSON.stringify(comparisonReport);
       core.setOutput("comparison-report", comparisonJsonOutput);
-      core.info(comparisonReporter.format(comparisonReport));
+
+      const formattedReport = comparisonReporter.format(comparisonReport);
+      core.info(formattedReport);
+      core.setOutput("slack-report", formattedReport);
     } catch (comparisonError) {
       throw new Error(`Performance comparison failed: ${comparisonError}`);
     }
