@@ -24,6 +24,11 @@ on:
         required: false
         default: false
         type: boolean
+      enable-comparison-notification:
+        description: Enable notification on Slack when the comparison is enabled. Will publish the comparison report to the Slack channel.
+        required: false
+        default: false
+        type: boolean
       latest:
         description: The application to upload is the latest version of the application
         required: false
@@ -47,6 +52,9 @@ on:
         required: true
       DATADOG_APP_KEY:
         description: The Datadog app key to use
+        required: true
+      SLACK_BOT_TOKEN:
+        description: The Slack bot token to use
         required: true
 
 permissions:
@@ -146,9 +154,103 @@ jobs:
       - name: Print performance tests results
         run: |
           echo '${{ steps.test-results.outputs.performance-report }}' > ./performance-report.json
+          echo '${{ steps.test-results.outputs.slack-report }}' > ./slack-report.txt
 
       - name: Upload performance report
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.platform }}-performance-report.json
           path: ./performance-report.json
+
+      - name: Upload Slack report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-slack-report.txt
+          path: ./slack-report.txt
+
+  report-on-slack:
+    runs-on: ledger-live-medium
+    needs: run-tests
+    if: ${{ inputs.enable-comparison }} && ${{ inputs.enable-comparison-notification }} && (success() || failure())
+    steps:
+      - name: Download Slack report
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-slack-report.txt
+          path: ./
+
+      - name: Format Slack message
+        uses: actions/github-script@v7
+        id: message
+        with:
+          script: |
+            const fs = require("fs");
+            const text = `✨ A new ${{ inputs.platform == 'ios' && 'iOS' || 'Android' }} ${{ inputs.test_env == 'prod' && 'production' || 'staging' }} build has been tested ✨`
+
+            let slackReport = "";
+            try {
+              slackReport = fs.readFileSync('./slack-report.txt', 'utf8');
+            } catch (error) {
+              console.log("Could not read Slack report:", error);
+              slackReport = "⚠️ *Performance Report*: Could not load performance data";
+            }
+
+            // Split the report by blank lines to create separate blocks
+            const reportParts = slackReport.split('\n\n').filter(part => part.trim() !== '');
+            const blocks = [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": [
+                    "🚀 *version*: ${{ inputs.version }}",
+                    "⚙️ *platform*: ${{ inputs.platform }}"
+                  ].join("\n")
+                }
+              },
+              {
+                "type": "divider"
+              },
+            ];
+
+            // Add each part as a separate block
+            reportParts.forEach(part => {
+              blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": part.trim()
+                }
+              });
+            });
+
+            // Add info block
+            blocks.push(
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations"
+                }
+              }
+            );
+            const result = {
+              text,
+              blocks
+            };
+
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: "C0895PWD890"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
