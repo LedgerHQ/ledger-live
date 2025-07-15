@@ -12,7 +12,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
-import { broadcast, combine, lastBlock } from "../logic/";
+import { broadcast, combine, lastBlock, getBalance } from "../logic/";
 import { EvmAsset } from "../types";
 import { craftTransaction } from "../logic/craftTransaction";
 import { listOperations } from "../logic/listOperations";
@@ -33,9 +33,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     ): Promise<FeeEstimation> => {
       throw new Error("UnsupportedMethod");
     },
-    getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
-      throw new Error("UnsupportedMethod");
-    },
+    getBalance: (address: string): Promise<Balance<EvmAsset>[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
