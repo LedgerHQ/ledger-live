@@ -2,9 +2,9 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { runExportSwapHistoryOperationsTest } from "./swap.other";
 
 const swapHistoryTestConfig = {
-  swap: new Swap(Account.ETH_1, Account.XLM_1, "0.008"),
-  provider: Provider.CHANGELLY,
-  swapId: "fmwnt4mc0tiz75kz",
+  swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
+  provider: Provider.EXODUS,
+  swapId: "wQ90NrWdvJz5dA4",
   tmsLinks: ["B2CQA-604"],
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
