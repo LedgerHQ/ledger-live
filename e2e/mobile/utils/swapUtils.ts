@@ -1,22 +1,6 @@
 import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export function setupEnv(disableBroadcast?: boolean) {
-  const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
-  beforeAll(async () => {
-    process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  });
-  afterAll(async () => {
-    delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    if (originalBroadcastValue !== undefined) {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    } else {
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
-    }
-  });
-}
-
 export async function performSwapUntilQuoteSelectionStep(
   accountToDebit: Account,
   accountToCredit: Account,
