@@ -1,10 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import {
-  determineSelectedIds,
-  areAllAccountsEmpty,
-  getUnimportedAccounts,
-  processAccounts,
-} from "./processAccounts";
+import { determineSelectedIds, getUnimportedAccounts } from "./processAccounts";
 import BigNumber from "bignumber.js";
 
 describe("getUnimportedAccounts", () => {
@@ -29,51 +24,6 @@ describe("getUnimportedAccounts", () => {
 
     const result = getUnimportedAccounts(scannedAccounts, []);
     expect(result).toEqual([{ id: "1" }, { id: "2" }]);
-  });
-});
-
-describe("areAllAccountsEmpty", () => {
-  it("should return true if all accounts are empty", () => {
-    const accounts = [
-      { id: "1", balance: BigNumber("0"), operationsCount: 0 },
-      { id: "2", balance: BigNumber("0"), operationsCount: 0 },
-    ] as Account[];
-    expect(areAllAccountsEmpty(accounts)).toBe(true);
-  });
-
-  it("should return false if at least one account is not empty", () => {
-    const accounts = [
-      { id: "1", balance: BigNumber("0") },
-      { id: "2", balance: BigNumber("100"), operationsCount: 1 },
-    ] as Account[];
-    expect(areAllAccountsEmpty(accounts)).toBe(false);
-  });
-});
-
-describe("processAccounts", () => {
-  it("should return unimported accounts with balances", () => {
-    const scannedAccounts = [
-      { id: "1", balance: BigNumber("100"), operationsCount: 1 },
-      { id: "2", balance: BigNumber("100"), operationsCount: 1 },
-    ] as Account[];
-    const existingAccounts = [{ id: "1" }] as Account[];
-
-    const result = processAccounts(scannedAccounts, existingAccounts);
-    expect(result.unimportedAccounts).toEqual([
-      { id: "2", balance: BigNumber("100"), operationsCount: 1 },
-    ]);
-    expect(result.onlyNewAccounts).toBe(false);
-  });
-
-  it("should return true for onlyNewAccounts if all unimported accounts are empty", () => {
-    const scannedAccounts = [{ id: "1", balance: BigNumber("0"), operationsCount: 0 }] as Account[];
-    const existingAccounts = [] as Account[];
-
-    const result = processAccounts(scannedAccounts, existingAccounts);
-    expect(result.unimportedAccounts).toEqual([
-      { id: "1", balance: BigNumber("0"), operationsCount: 0 },
-    ]);
-    expect(result.onlyNewAccounts).toBe(true);
   });
 });
 

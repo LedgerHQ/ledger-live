@@ -2,29 +2,17 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { Account, DerivationMode } from "@ledgerhq/types-live";
 
-export const getUnimportedAccounts = (
-  scannedAccounts: Account[],
-  existingAccounts: Account[],
-): Account[] => {
+export const getUnimportedAccounts = (scanned: Account[], existing: Account[]): Account[] => {
+  const existingIds = new Set(existing.map(acc => acc.id));
   const seen = new Set<string>();
-  return scannedAccounts.filter(account => {
-    const exists = existingAccounts.some(a => a.id === account.id);
-    const isDuplicate = seen.has(account.id);
-    if (!exists && !isDuplicate) {
-      seen.add(account.id);
-      return true;
+
+  return scanned.filter(acc => {
+    if (existingIds.has(acc.id) || seen.has(acc.id)) {
+      return false;
     }
-    return false;
+    seen.add(acc.id);
+    return true;
   });
-};
-
-export const areAllAccountsEmpty = (accounts: Account[]) => accounts.every(isAccountEmpty);
-
-export const processAccounts = (scannedAccounts: Account[], existingAccounts: Account[]) => {
-  const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
-  const onlyNewAccounts = areAllAccountsEmpty(unimportedAccounts);
-
-  return { unimportedAccounts, onlyNewAccounts };
 };
 
 export const determineSelectedIds = (
@@ -37,11 +25,9 @@ export const determineSelectedIds = (
   }
 
   const latestAccount = accounts.at(-1);
-  if (latestAccount && !isAccountEmpty(latestAccount)) {
-    return [...currentSelectedIds, latestAccount.id];
-  }
-
-  return currentSelectedIds;
+  return latestAccount && !isAccountEmpty(latestAccount)
+    ? [...currentSelectedIds, latestAccount.id]
+    : currentSelectedIds;
 };
 
 export const getGroupedAccounts = (
@@ -55,7 +41,10 @@ export const getGroupedAccounts = (
 
   const { sections, alreadyEmptyAccount } = groupAddAccounts(existingAccounts, scannedAccounts, {
     scanning,
-    preferredNewAccountSchemes: showAllCreatedAccounts ? undefined : [preferredNewAccountScheme!],
+    preferredNewAccountSchemes:
+      showAllCreatedAccounts || !preferredNewAccountScheme
+        ? undefined
+        : [preferredNewAccountScheme],
   });
 
   const importableAccounts = sections.find(section => section.id === "importable")?.data || [];

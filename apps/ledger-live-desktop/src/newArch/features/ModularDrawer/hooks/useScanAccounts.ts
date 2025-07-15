@@ -1,42 +1,43 @@
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { Subscription } from "rxjs";
-import { WARNING_REASON, WarningReason } from "../types";
+import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
-import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
 } from "../analytics/addAccount.types";
-import * as RX from "rxjs/operators";
-import {
-  deselectImportable,
-  getToggledIds,
-  selectImportable,
-} from "../screens/ScanAccounts/utils/selectionHelpers";
+import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
 import {
   determineSelectedIds,
   getGroupedAccounts,
-  processAccounts,
+  getUnimportedAccounts,
 } from "../screens/ScanAccounts/utils/processAccounts";
+import { WARNING_REASON, WarningReason } from "../types";
 
-export type UseScanAccountsProps = {
+export const selectImportable = (importable: Account[]) => (selected: string[]) => {
+  const importableIds = importable.map(a => a.id);
+  return [...new Set([...selected, ...importableIds])];
+};
+
+export const deselectImportable = (importable: Account[]) => (selected: string[]) => {
+  const importableIds = new Set(importable.map(a => a.id));
+  return selected.filter(id => !importableIds.has(id));
+};
+
+export interface UseScanAccountsProps {
   currency: CryptoCurrency;
   deviceId: string;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
-};
-
-interface State {
-  scannedAccounts: Account[];
-  scanning: boolean;
 }
 
 export function useScanAccounts({
@@ -51,16 +52,14 @@ export function useScanAccounts({
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const [{ scannedAccounts, scanning }, setState] = useState<State>({
-    scannedAccounts: [],
-    scanning: true,
-  });
+  const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
+  const [scanning, setScanning] = useState(true);
 
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
-  const scanSubscription = useRef<Subscription | null>(null);
+  const scanSubscriptionRef = useRef<Subscription | null>(null);
 
   const newAccountSchemes = useMemo(() => {
     const accountSchemes = scannedAccounts
@@ -71,64 +70,52 @@ export function useScanAccounts({
   }, [existingAccounts, scannedAccounts]);
 
   const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscription.current) {
-      scanSubscription.current.unsubscribe();
-      scanSubscription.current = null;
+    if (scanSubscriptionRef.current) {
+      scanSubscriptionRef.current.unsubscribe();
+      scanSubscriptionRef.current = null;
 
       if (syncUI) {
-        setState(prev => ({
-          ...prev,
-          scanning: false,
-        }));
+        setScanning(false);
       }
     }
   }, []);
 
   useEffect(() => {
-    const bridge = getCurrencyBridge(currency);
-    const syncConfig = {
-      paginationConfig: {
-        operations: 0,
-      },
-      blacklistedTokenIds: blacklistedTokenIds || [],
-    };
-
-    const scannedAccounts$ = bridge
-      .scanAccounts({ currency, deviceId, syncConfig })
-      .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []));
-
     const processedAccountIds = new Set<string>();
 
-    scanSubscription.current = scannedAccounts$.subscribe({
-      next: scannedAccounts => {
-        const { onlyNewAccounts, unimportedAccounts } = processAccounts(
-          scannedAccounts,
-          existingAccounts,
-        );
+    scanSubscriptionRef.current = getCurrencyBridge(currency)
+      .scanAccounts({
+        currency,
+        deviceId,
+        syncConfig: {
+          paginationConfig: {
+            operations: 0,
+          },
+          blacklistedTokenIds: blacklistedTokenIds || [],
+        },
+      })
+      .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
+      .subscribe({
+        next: accounts => {
+          const unimportedAccounts = getUnimportedAccounts(accounts, existingAccounts);
+          const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
 
-        const freshAccounts = unimportedAccounts.filter(acc => {
-          if (processedAccountIds.has(acc.id)) return false;
-          processedAccountIds.add(acc.id);
-          return true;
-        });
+          const freshAccounts = unimportedAccounts.filter(acc => {
+            if (processedAccountIds.has(acc.id)) {
+              return false;
+            }
+            processedAccountIds.add(acc.id);
+            return true;
+          });
 
-        setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
+          setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
 
-        setState({
-          scanning: true,
-          scannedAccounts,
-        });
-      },
-      error: error => {
-        setError(error);
-      },
-      complete: () => {
-        setState(prev => ({
-          ...prev,
-          scanning: false,
-        }));
-      },
-    });
+          setScannedAccounts(accounts);
+          setScanning(true);
+        },
+        error: setError,
+        complete: () => setScanning(false),
+      });
 
     return () => stopSubscription(false);
   }, [blacklistedTokenIds, currency, deviceId, existingAccounts, stopSubscription]);
@@ -179,7 +166,9 @@ export function useScanAccounts({
   );
 
   const handleToggle = useCallback((accountId: string) => {
-    setSelectedIds(prev => getToggledIds(prev, accountId));
+    setSelectedIds(prev =>
+      prev.includes(accountId) ? prev.filter(id => id !== accountId) : [...prev, accountId],
+    );
   }, []);
 
   const handleSelectAll = useCallback(() => {
@@ -188,7 +177,7 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    setSelectedIds(prev => selectImportable(prev, importableAccounts));
+    setSelectedIds(selectImportable(importableAccounts));
   }, [importableAccounts, trackAddAccountEvent]);
 
   const handleDeselectAll = useCallback(() => {
@@ -197,7 +186,7 @@ export function useScanAccounts({
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    setSelectedIds(prev => deselectImportable(prev, importableAccounts));
+    setSelectedIds(deselectImportable(importableAccounts));
   }, [importableAccounts, trackAddAccountEvent]);
 
   useEffect(() => {
@@ -218,28 +207,28 @@ export function useScanAccounts({
     }
   }, [
     alreadyEmptyAccount,
-    scanning,
-    currency,
     creatableAccounts.length,
+    currency,
+    hasImportedAccounts,
     importableAccounts.length,
     navigateToWarningScreen,
-    hasImportedAccounts,
+    scanning,
   ]);
 
   return {
-    error,
-    newAccountSchemes,
     allImportableAccountsSelected,
-    stopSubscription,
-    scanning,
-    importableAccounts,
     creatableAccounts,
-    handleToggle,
-    handleSelectAll,
-    handleDeselectAll,
+    error,
     handleConfirm,
+    handleDeselectAll,
+    handleSelectAll,
+    handleToggle,
+    importableAccounts,
+    newAccountSchemes,
+    scanning,
     selectedIds,
     showAllCreatedAccounts,
+    stopSubscription,
     toggleShowAllCreatedAccounts,
   };
 }
