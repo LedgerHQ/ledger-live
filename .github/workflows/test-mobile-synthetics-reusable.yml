@@ -197,8 +197,7 @@ jobs:
 
             // Split the report by blank lines to create separate blocks
             const reportParts = slackReport.split('\n\n').filter(part => part.trim() !== '');
-
-            const performanceReport = [
+            const blocks = [
               {
                 "type": "divider"
               },
@@ -211,12 +210,15 @@ jobs:
                     "⚙️ *platform*: ${{ inputs.platform }}"
                   ].join("\n")
                 }
-              }
+              },
+              {
+                "type": "divider"
+              },
             ];
 
             // Add each part as a separate block
             reportParts.forEach(part => {
-              performanceReport.push({
+              blocks.push({
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
@@ -225,7 +227,8 @@ jobs:
               });
             });
 
-            const infoBlock = [
+            // Add info block
+            blocks.push(
               {
                 "type": "divider"
               },
@@ -236,9 +239,7 @@ jobs:
                   "text": "<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations"
                 }
               }
-            ];
-
-            const blocks = [performanceReport, infoBlock];
+            );
             const result = {
               text,
               blocks
