@@ -1,10 +1,11 @@
 import React from "react";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { ModularDrawerStep } from "../types";
 import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
 import { ModularDrawerFlowProps } from ".";
+import SkeletonList from "../components/Skeleton/SkeletonList";
 
 export function ModularDrawerFlowView({
   navigationStepViewModel,
@@ -36,10 +37,7 @@ export function ModularDrawerFlowView({
           {renderStepContent()}
         </>
       ) : (
-        // TODO: to be replaced with a proper loading component Skeleton
-        <Flex height={50} width="100%" justifyContent="center" alignItems="center">
-          <InfiniteLoader color="primary.c50" size={38} />
-        </Flex>
+        <SkeletonList />
       )}
     </Flex>
   );
