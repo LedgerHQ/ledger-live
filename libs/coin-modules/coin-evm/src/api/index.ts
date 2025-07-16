@@ -9,13 +9,19 @@ import {
   type AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
-import { broadcast, combine, lastBlock, getBalance } from "../logic/";
+import {
+  broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
+  lastBlock,
+  listOperations,
+  getBalance
+} from "../logic/";
 import { EvmAsset } from "../types";
-import { craftTransaction } from "../logic/craftTransaction";
-import { listOperations } from "../logic/listOperations";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi<EvmAsset> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
@@ -29,10 +35,8 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
     ): Promise<string> => craftTransaction(currency, { transactionIntent }),
     estimateFees: (
-      _transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
-    ): Promise<FeeEstimation> => {
-      throw new Error("UnsupportedMethod");
-    },
+      transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+    ): Promise<FeeEstimation> => estimate(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance<EvmAsset>[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
@@ -41,4 +45,12 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> =>
       listOperations(currency, address, pagination),
   };
+}
+
+async function estimate(
+  currency: CryptoCurrency,
+  transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+): Promise<FeeEstimation> {
+  const fees = await estimateFees(currency, transactionIntent);
+  return { value: fees };
 }

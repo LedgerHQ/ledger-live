@@ -2873,12 +2873,6 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-      docker-compose:
-        specifier: ^1.1.0
-        version: 1.1.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3040,6 +3034,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
+      eslint-plugin-jest:
+        specifier: ^27.4.2
+        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3560,12 +3557,6 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-      docker-compose:
-        specifier: ^1.1.0
-        version: 1.1.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -3690,6 +3681,9 @@ importers:
       axios:
         specifier: 1.7.7
         version: 1.7.7
+      eslint-plugin-jest:
+        specifier: ^27.4.2
+        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -23613,7 +23607,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -57317,6 +57311,17 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)
       jest: 29.7.0(ts-node@10.9.2(typescript@5.6.3))
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
+  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.3):
+    dependencies:
+      '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
+      eslint: 8.57.0
+    optionalDependencies:
+      '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)
+      jest: 29.7.0
     transitivePeerDependencies:
       - supports-color
       - typescript

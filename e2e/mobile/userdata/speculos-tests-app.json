@@ -28,6 +28,7 @@
       "shareAnalytics": true,
       "sharePersonalizedRecommandations": false,
       "hasSeenAnalyticsOptInPrompt": true,
+      "readOnlyModeEnabled": false,
       "sentryLogs": true,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
