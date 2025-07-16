@@ -113,7 +113,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const res = {
       id: accountId,
       xpub: address,
-      blockHeight: blockInfo.height,
+      blockHeight:
+        operationsWithSubs.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
       operations: operationsWithSubs,
