@@ -2,13 +2,13 @@ import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
 import HIDTransport from "@ledgerhq/react-native-hid";
-import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import getBLETransport from "~/react-native-hw-transport-ble";
+import { createStaticProxyTransport } from "@ledgerhq/live-dmk-proxy";
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
@@ -51,7 +51,7 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   });
 
   // Add dev mode support of an http proxy
-  let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
+  let DebugHttpProxy: ReturnType<typeof createStaticProxyTransport>;
   const httpdebug: TransportModule = {
     id: "httpdebug",
     open: id => (id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null),
@@ -62,7 +62,7 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   };
 
   if (__DEV__ && Config.DEVICE_PROXY_URL) {
-    DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
+    DebugHttpProxy = createStaticProxyTransport(Config.DEVICE_PROXY_URL.split("|"));
     httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
       DebugHttpProxy.listen(o),
     ).pipe(
@@ -77,7 +77,7 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
       })),
     );
   } else {
-    DebugHttpProxy = withStaticURLs([]);
+    DebugHttpProxy = createStaticProxyTransport([]);
   }
 
   registerTransportModule(httpdebug);
