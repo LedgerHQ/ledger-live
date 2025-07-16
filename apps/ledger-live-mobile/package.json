@@ -101,6 +101,7 @@
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-dmk-mobile": "workspace:^",
+    "@ledgerhq/live-dmk-proxy": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
