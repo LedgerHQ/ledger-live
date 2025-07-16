@@ -1,9 +1,8 @@
 import flatMap from "lodash/flatMap";
 import { Transaction, Transaction as VechainTransaction } from "../types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { VTHO_ADDRESS } from "../contracts/constants";
-import VIP180 from "../contracts/abis/VIP180";
 import { MustBeVechain } from "../errors";
+import { ABIContract, VIP180_ABI, VTHO_ADDRESS } from "@vechain/sdk-core";
 
 type CliTools = {
   options: Array<{
@@ -63,7 +62,9 @@ function inferTransactions(
       clauses.push({
         value: 0,
         to: VTHO_ADDRESS,
-        data: VIP180.transfer.encode(transaction.recipient, transaction.amount.toFixed()),
+        data: ABIContract.ofAbi(VIP180_ABI)
+          .encodeFunctionInput("transfer", [transaction.recipient, transaction.amount.toFixed()])
+          .toString(),
       });
     } else {
       throw new MustBeVechain();

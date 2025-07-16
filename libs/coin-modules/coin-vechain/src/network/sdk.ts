@@ -1,21 +1,25 @@
 import BigNumber from "bignumber.js";
-import network from "@ledgerhq/live-network/network";
-import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "../types";
+import network from "@ledgerhq/live-network";
+import {
+  AccountResponse,
+  VetTxsQuery,
+  TokenTxsQuery,
+  TransferLog,
+  EventLog,
+  VechainSDKTransaction,
+} from "../types";
 import type { Operation } from "@ledgerhq/types-live";
 import {
   mapVetTransfersToOperations,
   mapTokenTransfersToOperations,
   padAddress,
 } from "../common-logic";
-import { TransferEventSignature } from "../contracts/constants";
-import { Transaction } from "thor-devkit";
-import { HEX_PREFIX } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
 
 export const getAccount = async (address: string): Promise<AccountResponse> => {
-  const { data } = await network({
+  const { data } = await network<AccountResponse>({
     method: "GET",
     url: `${BASE_URL}/accounts/${address}`,
   });
@@ -24,7 +28,7 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
 };
 
 export const getLastBlockHeight = async (): Promise<number> => {
-  const { data } = await network({
+  const { data } = await network<{ number: number }>({
     method: "GET",
     url: `${BASE_URL}/blocks/best`,
   });
@@ -53,7 +57,7 @@ export const getOperations = async (
     order: "desc",
   };
 
-  const { data } = await network({
+  const { data } = await network<TransferLog[]>({
     method: "POST",
     url: `${BASE_URL}/logs/transfer`,
     data: JSON.stringify(query),
@@ -80,6 +84,9 @@ export const getTokenOperations = async (
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
 
+  const TransferEventSignature =
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
   const query: TokenTxsQuery = {
     range: {
       unit: "block",
@@ -100,7 +107,7 @@ export const getTokenOperations = async (
     order: "desc",
   };
 
-  const { data } = await network({
+  const { data } = await network<EventLog[]>({
     method: "POST",
     url: `${BASE_URL}/logs/event`,
     data: JSON.stringify(query),
@@ -112,15 +119,15 @@ export const getTokenOperations = async (
 
 /**
  * Submit a transaction and return the ID
- * @param tx - The transaction to submit
+ * @param transaction - The transaction to submit
  * @returns transaction ID
  */
-export const submit = async (tx: Transaction): Promise<string> => {
+export const submit = async (transaction: VechainSDKTransaction): Promise<string> => {
   const encodedRawTx = {
-    raw: `${HEX_PREFIX}${tx.encode().toString("hex")}`,
+    raw: `0x${Buffer.from(transaction.encoded).toString("hex")}`,
   };
 
-  const { data } = await network({
+  const { data } = await network<{ id: string }>({
     method: "POST",
     url: `${BASE_URL}/transactions`,
     data: encodedRawTx,
@@ -133,26 +140,11 @@ export const submit = async (tx: Transaction): Promise<string> => {
 };
 
 /**
- * Query the blockchain
- * @param queryData - The query data
- * @returns a result of the query
- */
-export const query = async (queryData: Query[]): Promise<QueryResponse[]> => {
-  const { data } = await network({
-    method: "POST",
-    url: `${BASE_URL}/accounts/*`,
-    data: { clauses: queryData },
-  });
-
-  return data;
-};
-
-/**
  * Get the block ref to use in a transaction
  * @returns the block ref of head
  */
 export const getBlockRef = async (): Promise<string> => {
-  const { data } = await network({
+  const { data } = await network<{ id: string }>({
     method: "GET",
     url: `${BASE_URL}/blocks/best`,
   });
@@ -166,7 +158,7 @@ export const getBlockRef = async (): Promise<string> => {
  * @return the fee paid in VTHO or 0
  */
 export const getFees = async (transactionID: string): Promise<BigNumber> => {
-  const { data } = await network({
+  const { data } = await network<{ paid: string }>({
     method: "GET",
     url: `${BASE_URL}/transactions/${transactionID}/receipt`,
     params: { id: transactionID },
