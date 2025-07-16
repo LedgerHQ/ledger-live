@@ -22,7 +22,7 @@ const Container = styled(Flex).attrs({
   flex: 1,
   columnGap: 1,
 })`
-  border: 1px solid ${p => p.theme.colors.neutral.c10};
+  border: 1px solid ${p => p.theme.colors.opacityDefault.c10};
   border-radius: ${p => p.theme.radii[3]}px;
   padding: 4px;
 `;
