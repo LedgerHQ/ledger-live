@@ -68,49 +68,28 @@ export class PerformanceComparisonReporter {
     const secondaryComparisons = comparisons.filter(comp => !keyMetrics.includes(comp.metric));
 
     // Apply specific thresholds for secondary metrics
-    const significantSecondaryComparisons = secondaryComparisons.filter(comp => {
-      const absPercentage = Math.abs(comp.percentageChange);
-      switch (comp.metric) {
-        case "p75":
-          return absPercentage > 10;
-        case "p95":
-          return absPercentage > 20;
-        case "p99":
-          return absPercentage > 30;
-        default:
-          return comp.isSignificant; // For min, max, use original significance
-      }
-    });
+    const significantSecondaryComparisons = secondaryComparisons.filter(
+      isSignificantSecondaryComparison,
+    );
 
     const lines = [
-      `Performance trend analysis:`,
+      "**Performance trend analysis:**",
       `  - Overall trend: ${overallTrend.toUpperCase()}`,
       `  - Confidence score: ${confidenceScore}%`,
     ];
 
     if (keyComparisons.length > 0) {
+      lines.push("");
       lines.push(...formatKeyComparisons(keyComparisons));
     }
 
-    if (secondaryComparisons.length > 0) {
-      lines.push(...formatSecondaryComparisons(secondaryComparisons));
-    }
-
     if (significantSecondaryComparisons.length > 0) {
-      significantSecondaryComparisons.forEach(comp => {
-        const changeEmoji =
-          comp.trend === "improved" ? "📈" : comp.trend === "degraded" ? "📉" : "➡️";
-        const changeText =
-          comp.trend === "improved" ? "faster" : comp.trend === "degraded" ? "slower" : "stable";
-        const percentage = Math.abs(comp.percentageChange).toFixed(1);
-        const difference = Math.abs(comp.difference).toFixed(0);
-        lines.push(
-          `    ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)`,
-        );
-      });
+      lines.push("");
+      lines.push(...formatSecondaryComparisons(significantSecondaryComparisons));
     }
 
-    lines.push(`  - Recommendation: ${recommendation}`);
+    lines.push("");
+    lines.push(`Recommendation: ${recommendation}`);
 
     return lines.join("\n");
   }
@@ -387,14 +366,14 @@ function calculateConfidenceScore(
  */
 function formatKeyComparisons(keyComparisons: PerformanceComparison[]): string[] {
   return [
-    "  - Key metrics:",
+    "**Key metrics:**",
     ...keyComparisons.map(comp => {
       const changeEmoji = formatTrendToEmoji(comp.trend);
       const changeText = formatTrendToText(comp.trend);
       const percentage = Math.abs(comp.percentageChange).toFixed(1);
       const difference = Math.abs(comp.difference).toFixed(0);
       const significance = comp.isSignificant ? " (significant)" : " (stable)";
-      return `    ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)${significance}`;
+      return `  - ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)${significance}`;
     }),
   ];
 }
@@ -410,13 +389,13 @@ function formatKeyComparisons(keyComparisons: PerformanceComparison[]): string[]
  */
 function formatSecondaryComparisons(secondaryComparisons: PerformanceComparison[]): string[] {
   return [
-    "  - Secondary metrics (threshold-based):",
+    "**Secondary metrics (threshold-based):**",
     ...secondaryComparisons.map(comp => {
       const changeEmoji = formatTrendToEmoji(comp.trend);
       const changeText = formatTrendToText(comp.trend);
       const percentage = Math.abs(comp.percentageChange).toFixed(1);
       const difference = Math.abs(comp.difference).toFixed(0);
-      return `    ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)`;
+      return `  - ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)`;
     }),
   ];
 }
@@ -458,6 +437,30 @@ function formatTrendToText(trend: PerformanceTrend): string {
       return "slower";
     default:
       return "stable";
+  }
+}
+
+/**
+ * Checks if a secondary comparison is significant
+ *
+ * @param comp
+ * The comparison
+ *
+ * @returns
+ * True if the comparison is significant, false otherwise
+ */
+function isSignificantSecondaryComparison(comp: PerformanceComparison): boolean {
+  const absPercentage = Math.abs(comp.percentageChange);
+  switch (comp.metric) {
+    case "p75":
+      return absPercentage > 10;
+    case "p95":
+      return absPercentage > 20;
+    case "p99":
+      return absPercentage > 30;
+    default:
+      // For min, max, use original significance
+      return comp.isSignificant;
   }
 }
 

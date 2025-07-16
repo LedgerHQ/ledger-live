@@ -195,6 +195,9 @@ jobs:
               slackReport = "⚠️ *Performance Report*: Could not load performance data";
             }
 
+            // Split the report by blank lines to create separate blocks
+            const reportParts = slackReport.split('\n\n').filter(part => part.trim() !== '');
+
             const performanceReport = [
               {
                 "type": "divider"
@@ -205,13 +208,22 @@ jobs:
                   "type": "mrkdwn",
                   "text": [
                     "🚀 *version*: ${{ inputs.version }}",
-                    "⚙️ *platform*: ${{ inputs.platform }}",
-                    "",
-                    slackReport
+                    "⚙️ *platform*: ${{ inputs.platform }}"
                   ].join("\n")
                 }
               }
             ];
+
+            // Add each part as a separate block
+            reportParts.forEach(part => {
+              performanceReport.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": part.trim()
+                }
+              });
+            });
 
             const infoBlock = [
               {
