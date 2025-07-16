@@ -1,12 +1,14 @@
 import {
-  ExecuteTransactionBlockParams,
+  Checkpoint,
   PaginatedTransactionResponse,
-  QueryTransactionBlocksParams,
+  SuiCallArg,
   SuiClient,
+  SuiTransactionBlockResponse,
+  TransactionBlockData,
   SuiHTTPTransport,
   TransactionEffects,
+  QueryTransactionBlocksParams,
 } from "@mysten/sui/client";
-import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
@@ -354,6 +356,34 @@ export const getListOperations = async (
     return list.map(t => transactionToOp(addr, t));
   });
 
+/**
+ * Get a checkpoint (a.k.a, a block) metadata.
+ *
+ * @param id the checkpoint digest or sequence number (as a string)
+ */
+export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
+  withApi(async api => api.getCheckpoint({ id }));
+
+/**
+ * Get a checkpoint (a.k.a, a block) metadata with all transactions.
+ *
+ * @param id the checkpoint digest or sequence number (as a string)
+ */
+export const getCheckpointWithTransactions = async (
+  id: string,
+): Promise<{ checkpoint: Checkpoint; transactions: Operation[] }> => // FIXME type
+  withApi(async api => {
+    const checkpoint = await api.getCheckpoint({ id });
+    const rawTransactions = await queryTransactionsByDigest({
+      api,
+      digests: checkpoint.transactions,
+    });
+    const transactions = rawTransactions.map(
+      transaction => transactionToOperation("accountId", "addr", transaction), // FIXME
+    );
+    return { checkpoint, transactions };
+  });
+
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
   if (!gasSummary) return BigInt(0);
@@ -518,5 +548,24 @@ export const queryTransactions = async (params: {
       showEffects: true, // To get transaction status and gas fee details
     },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
+  });
+};
+
+/**
+ * Query transactions by digest.
+ */
+export const queryTransactionsByDigest = async (params: {
+  api: SuiClient;
+  digests: string[];
+}): Promise<SuiTransactionBlockResponse[]> => {
+  const { api, digests } = params;
+
+  return await api.multiGetTransactionBlocks({
+    digests,
+    options: {
+      showInput: true,
+      showBalanceChanges: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
   });
 };
