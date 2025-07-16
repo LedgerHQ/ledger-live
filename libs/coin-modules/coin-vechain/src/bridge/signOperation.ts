@@ -1,9 +1,9 @@
 import { Observable } from "rxjs";
-import { Transaction as ThorTransaction } from "thor-devkit";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
 import type { Transaction, VechainSigner } from "../types";
+import { VechainSDKTransaction } from "../types";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -22,14 +22,17 @@ export const buildSignOperation =
     new Observable(o => {
       // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       async function main() {
-        const unsigned = new ThorTransaction(transaction.body);
+        const unsigned = VechainSDKTransaction.of(transaction.body);
 
         o.next({
           type: "device-signature-requested",
         });
 
         const signature = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, unsigned.encode().toString("hex")),
+          signer.signTransaction(
+            account.freshAddressPath,
+            Buffer.from(unsigned.encoded).toString("hex"),
+          ),
         );
 
         o.next({ type: "device-signature-granted" });
