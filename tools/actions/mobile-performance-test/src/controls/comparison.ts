@@ -89,7 +89,8 @@ export class PerformanceComparisonReporter {
     }
 
     lines.push("");
-    lines.push(`Recommendation: ${recommendation}`);
+    lines.push("*Recommendation:*");
+    lines.push(recommendation);
 
     return lines.join("\n");
   }
@@ -366,14 +367,14 @@ function calculateConfidenceScore(
  */
 function formatKeyComparisons(keyComparisons: PerformanceComparison[]): string[] {
   return [
-    "**Key metrics:**",
+    "*Key metrics:*",
     ...keyComparisons.map(comp => {
       const changeEmoji = formatTrendToEmoji(comp.trend);
       const changeText = formatTrendToText(comp.trend);
       const percentage = Math.abs(comp.percentageChange).toFixed(1);
       const difference = Math.abs(comp.difference).toFixed(0);
       const significance = comp.isSignificant ? " (significant)" : " (stable)";
-      return `  - ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)${significance}`;
+      return `  - *${changeEmoji} ${comp.metric}:* ${percentage}% ${changeText} (${difference}ms)${significance}`;
     }),
   ];
 }
@@ -389,13 +390,13 @@ function formatKeyComparisons(keyComparisons: PerformanceComparison[]): string[]
  */
 function formatSecondaryComparisons(secondaryComparisons: PerformanceComparison[]): string[] {
   return [
-    "**Secondary metrics (threshold-based):**",
+    "*Secondary metrics (threshold-based):*",
     ...secondaryComparisons.map(comp => {
       const changeEmoji = formatTrendToEmoji(comp.trend);
       const changeText = formatTrendToText(comp.trend);
       const percentage = Math.abs(comp.percentageChange).toFixed(1);
       const difference = Math.abs(comp.difference).toFixed(0);
-      return `  - ${changeEmoji} ${comp.metric}: ${percentage}% ${changeText} (${difference}ms)`;
+      return `  - *${changeEmoji} ${comp.metric}:* ${percentage}% ${changeText} (${difference}ms)`;
     }),
   ];
 }
@@ -490,41 +491,41 @@ function formatRecommendation(
 ): string {
   const confidenceLevel = formatConfidenceLevel(confidenceScore);
   const recommendation = [
-    `Performance trend: ${overallTrend} (${confidenceLevel} confidence, ${confidenceScore}% score). `,
+    `*Performance trend:* ${overallTrend} (${confidenceLevel} confidence, ${confidenceScore}% score). `,
   ];
 
   switch (overallTrend) {
     case PERFORMANCE_TREND_TYPE.IMPROVED:
       recommendation.push(
-        `Great job! Performance has improved across ${improvements.length} metrics. `,
+        `  - Great job! Performance has improved across ${improvements.length} metrics. `,
       );
       if (degradations.length > 0) {
         recommendation.push(
-          `However, monitor the ${degradations.length} degraded metrics for potential regressions. `,
+          `  - However, monitor the ${degradations.length} degraded metrics for potential regressions. `,
         );
       }
       break;
     case PERFORMANCE_TREND_TYPE.DEGRADED:
-      recommendation.push(`Performance has degraded across ${degradations.length} metrics. `);
+      recommendation.push(`  - Performance has degraded across ${degradations.length} metrics.`);
       recommendation.push(
-        `Investigate the root causes and consider rolling back changes that may have caused this regression. `,
+        "  - Investigate the root causes and consider rolling back changes that may have caused this regression.",
       );
       if (improvements.length > 0) {
-        recommendation.push(`Note: ${improvements.length} metrics showed improvement. `);
+        recommendation.push(`  - *Note:* ${improvements.length} metrics showed improvement. `);
       }
       break;
     case PERFORMANCE_TREND_TYPE.STABLE:
-      recommendation.push(`Performance is stable with no significant changes detected. `);
+      recommendation.push("  - Performance is stable with no significant changes detected.");
       break;
   }
 
   if (confidenceScore < 60) {
     recommendation.push(
-      `Low confidence score suggests high variability or small sample size - consider running more tests for better accuracy.`,
+      "  - Low confidence score suggests high variability or small sample size - consider running more tests for better accuracy.",
     );
   }
 
-  return recommendation.join("");
+  return recommendation.join("\n");
 }
 
 /**
