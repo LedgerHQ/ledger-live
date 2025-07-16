@@ -14,13 +14,7 @@ import {
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
-import type {
-  Block,
-  BlockInfo,
-  BlockTransaction,
-  BlockOperation,
-  Operation as Op,
-} from "@ledgerhq/coin-framework/api/index";
+import type { Block, BlockInfo, Operation as Op } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
