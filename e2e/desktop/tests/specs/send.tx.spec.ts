@@ -205,7 +205,10 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata:
+          transaction.transaction.accountToDebit === Account.APTOS_1
+            ? "speculos-aptos"
+            : "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           (appjsonPath: string) => {
