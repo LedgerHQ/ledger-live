@@ -79,7 +79,10 @@ const AnalyticsRow = () => {
 
   return (
     <>
-      <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} onUpdate />
+      {!llmAnalyticsOptInPromptFeature?.enabled && (
+        <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} onUpdate />
+      )}
+
       <SettingsRow
         event="AnalyticsRow"
         title={t("settings.display.analytics")}

@@ -1,4 +1,4 @@
-name: "Build Web Tools"
+name: "[Web] - Build  - Called"
 
 on:
   workflow_call:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build-web-tools:
-    name: "Build web-tools"
+    name: "Web Tools Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -43,6 +43,7 @@ jobs:
 
   report:
     needs: build-web-tools
+    name: "Web Tools Build > Report"
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:

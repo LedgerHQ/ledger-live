@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
-import type { TokenAccount, Account, SubAccount } from "@ledgerhq/types-live";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -136,7 +136,7 @@ const TokenContextualModal = ({
 
 const mapStateToProps = createStructuredSelector<
   State,
-  { account?: SubAccount },
+  { account?: TokenAccount },
   { parentAccount: Account | undefined }
 >({
   parentAccount: parentAccountSelector,

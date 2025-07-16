@@ -1,8 +1,8 @@
 import Transport from "@ledgerhq/hw-transport";
-import { Account, DeviceId, AnyMessage } from "@ledgerhq/types-live";
+import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 
 export type Result = {
-  rsv: {
+  rsv?: {
     r: string;
     s: string;
     v: number | string;

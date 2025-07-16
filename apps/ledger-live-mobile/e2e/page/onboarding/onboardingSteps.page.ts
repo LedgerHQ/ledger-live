@@ -1,10 +1,3 @@
-import {
-  tapByElement,
-  getElementById,
-  waitForElementById,
-  tapById,
-  scrollToId,
-} from "../../helpers";
 import { ModelId } from "../../models/devices";
 import { expect } from "detox";
 
@@ -19,9 +12,7 @@ export default class OnboardingStepsPage {
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
   buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
-  exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
-  maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   setupLedger = "onboarding-setupLedger";
   selectDevice = (device: ModelId) => `onboarding-device-selection-${device}`;
@@ -39,7 +30,6 @@ export default class OnboardingStepsPage {
   existingRecoveryPhrase2Cta = "onboarding-existingRecoveryPhrase2-cta";
   deviceNotCompatibleModal = "onboarding-deviceNotCompatible-modal";
   deviceNotCompatibleClose = "onboarding-deviceNotCompatible-close";
-  devicePairedContinue = "onboarding-paired-continue";
 
   newWallet = "onboarding-useCase-newWallet";
   stepNewDeviceTitle = (index: number) => `onboarding-stepNewDevice-title${index}`;
@@ -154,9 +144,5 @@ export default class OnboardingStepsPage {
       await tapById(this.quizzCta);
     }
     await tapById(this.quizzFinalCta);
-  }
-
-  async declineNotifications() {
-    await tapByElement(this.maybeLaterButton());
   }
 }

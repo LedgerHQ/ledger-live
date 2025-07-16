@@ -184,7 +184,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     />
                   </View>
                 </View>
-                <View>
+                <View style={styles.available}>
                   <Text color="grey">
                     <InfoIcon size={12} color="grey" />{" "}
                     <Trans

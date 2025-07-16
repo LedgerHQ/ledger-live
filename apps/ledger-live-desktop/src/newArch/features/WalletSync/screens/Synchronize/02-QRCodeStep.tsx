@@ -24,12 +24,12 @@ export enum Options {
   DESKTOP = "desktop",
 }
 
-export default function SynchWithQRCodeStep() {
+export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const { t } = useTranslation();
   const controls = useAnimation();
   const [currentOption, setCurrentOption] = useState<Options>(Options.MOBILE);
 
-  const { startQRCodeProcessing, url, error, isLoading } = useQRCode();
+  const { startQRCodeProcessing, url, error, isLoading } = useQRCode({ sourcePage });
   console.log("url", url);
   useEffect(() => {
     startQRCodeProcessing();
@@ -125,6 +125,7 @@ const QRCodeComponent = ({ url }: { url: string | null }) => {
 
   const steps = [
     { element: t("walletSync.synchronize.qrCode.mobile.steps.step1") },
+    { element: t("walletSync.synchronize.qrCode.mobile.steps.step2") },
     {
       element: (
         <Text
@@ -136,14 +137,14 @@ const QRCodeComponent = ({ url }: { url: string | null }) => {
           color={rgba(colors.neutral.c100, 0.7)}
         >
           <Trans
-            i18nKey="walletSync.synchronize.qrCode.mobile.steps.step2"
+            i18nKey="walletSync.synchronize.qrCode.mobile.steps.step3"
             t={t}
             components={[<Italic key={1} color={rgba(colors.neutral.c100, 0.7)} />]}
           />
         </Text>
       ),
     },
-    { element: t("walletSync.synchronize.qrCode.mobile.steps.step3") },
+    { element: t("walletSync.synchronize.qrCode.mobile.steps.step4") },
   ];
 
   return (
@@ -201,6 +202,7 @@ const DesktopComponent = () => {
 
   const steps = [
     { element: t("walletSync.synchronize.qrCode.desktop.steps.step1") },
+    { element: t("walletSync.synchronize.qrCode.desktop.steps.step2") },
     {
       element: (
         <Text
@@ -212,14 +214,14 @@ const DesktopComponent = () => {
           color={rgba(colors.neutral.c100, 0.7)}
         >
           <Trans
-            i18nKey="walletSync.synchronize.qrCode.desktop.steps.step2"
+            i18nKey="walletSync.synchronize.qrCode.desktop.steps.step3"
             t={t}
             components={[<Italic key={1} color={rgba(colors.neutral.c100, 0.7)} />]}
           />
         </Text>
       ),
     },
-    { element: t("walletSync.synchronize.qrCode.desktop.steps.step3") },
+    { element: t("walletSync.synchronize.qrCode.desktop.steps.step4") },
   ];
 
   return (

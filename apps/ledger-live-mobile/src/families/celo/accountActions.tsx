@@ -49,6 +49,7 @@ const getMainActions = ({
       eventProperties: {
         currency: "CELO",
       },
+      testId: "account-quick-action-button-earn",
     },
   ];
 };

@@ -17,6 +17,7 @@ import { track } from "~/analytics";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import EmptyGraph from "~/icons/EmptyGraph";
 import { Item } from "./Graph/types";
+import { GestureResponderEvent } from "@shopify/react-native-performance";
 
 const { width } = getWindowDimensions();
 
@@ -27,6 +28,7 @@ type Props = {
   useCounterValue?: boolean;
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
+  onTouchEndGraph?: (event: GestureResponderEvent) => void;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -50,6 +52,7 @@ function GraphCard({
   areAccountsEmpty,
   currentPositionY,
   graphCardEndPosition,
+  onTouchEndGraph,
 }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -180,16 +183,18 @@ function GraphCard({
         <EmptyGraph />
       ) : (
         <>
-          <Graph
-            isInteractive={isAvailable}
-            height={110}
-            width={width + 1}
-            color={colors.primary.c80}
-            data={balanceHistory}
-            onItemHover={onItemHover}
-            mapValue={mapGraphValue}
-            fill={colors.background.main}
-          />
+          <Flex onTouchEnd={onTouchEndGraph}>
+            <Graph
+              isInteractive={isAvailable}
+              height={110}
+              width={width + 1}
+              color={colors.primary.c80}
+              data={balanceHistory}
+              onItemHover={onItemHover}
+              mapValue={mapGraphValue}
+              fill={colors.background.main}
+            />
+          </Flex>
           <Flex paddingTop={6} background={colors.background.main}>
             <GraphTabs
               activeIndex={activeRangeIndex}

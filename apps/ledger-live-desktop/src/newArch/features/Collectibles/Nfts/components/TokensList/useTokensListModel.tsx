@@ -42,7 +42,8 @@ export const useTokensListModel = ({ nfts, account }: BaseNftsProps): TokensList
   }, [metadata, nftsList]);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [nftIdToOpen, setNftIdToOpen] = useState<string>("");
+  const [nftIdToOpen, setNftIdToOpen] = useState(formattedNfts[0]?.collectibleId);
+
   const onItemClick = (id: string) => {
     setNftIdToOpen(id);
     setIsDrawerOpen(true);

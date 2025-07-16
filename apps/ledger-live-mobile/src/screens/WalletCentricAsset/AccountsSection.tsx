@@ -36,7 +36,6 @@ const AccountsSection = ({
   const navigation = useNavigation<Navigation["navigation"]>();
   const { t } = useTranslation();
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const accountsToDisplay = useMemo(
     () => accounts.slice(0, NB_MAX_ACCOUNTS_TO_DISPLAY),
@@ -59,7 +58,7 @@ const AccountsSection = ({
     track("button_clicked", {
       button: "See All",
     });
-    if (llmAccountListUI?.enabled && llmNetworkBasedAddAccountFlow?.enabled) {
+    if (llmAccountListUI?.enabled) {
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.AccountsList,
         params: {
@@ -79,14 +78,7 @@ const AccountsSection = ({
         },
       });
     }
-  }, [
-    llmAccountListUI,
-    navigation,
-    llmNetworkBasedAddAccountFlow,
-    accounts,
-    currencyId,
-    currencyTicker,
-  ]);
+  }, [llmAccountListUI, navigation, accounts, currencyId, currencyTicker]);
 
   return (
     <>

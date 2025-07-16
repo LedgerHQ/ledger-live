@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 
 export const nftCollectionParser = (
-  nftCollection: Record<BlockchainEVM, Record<string, NftStatus>>,
+  nftCollection: Record<SupportedBlockchain, Record<string, NftStatus>>,
   applyFilterFn: (arg0: [string, NftStatus]) => boolean,
 ) =>
   Object.values(nftCollection).flatMap(contracts =>
@@ -15,17 +15,28 @@ export const nftCollectionParser = (
       .map(([contract]) => contract),
   );
 
-export function useNftCollectionsStatus() {
+export function useNftCollectionsStatus(forTx?: boolean) {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const llmSpamFilteringTx = useFeature("llmSpamFilteringTx");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
-  const hideSpam = Boolean(nftsFromSimplehashFeature?.enabled);
+  const mayIncludeSpamsInTheList = !!nftsFromSimplehashFeature?.enabled;
+
+  const filteredStatuses = useMemo(
+    () =>
+      forTx && !llmSpamFilteringTx?.enabled
+        ? [NftStatus.whitelisted, NftStatus.spam]
+        : [NftStatus.whitelisted],
+    [forTx, llmSpamFilteringTx],
+  );
 
   const list = useMemo(() => {
     return nftCollectionParser(nftCollectionsStatusByNetwork, ([_, status]) =>
-      hideSpam ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+      mayIncludeSpamsInTheList
+        ? !filteredStatuses.includes(status)
+        : status === NftStatus.blacklisted,
     );
-  }, [nftCollectionsStatusByNetwork, hideSpam]);
+  }, [nftCollectionsStatusByNetwork, mayIncludeSpamsInTheList, filteredStatuses]);
 
   const whitelisted = useMemo(() => {
     return nftCollectionParser(

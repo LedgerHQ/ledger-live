@@ -1,5 +1,345 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.2.35
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0
+  - @ledgerhq/coin-framework@5.0.2
+  - @ledgerhq/live-countervalues@0.5.6
+
+## 0.2.35-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f92f49a`](https://github.com/LedgerHQ/ledger-live/commit/f92f49a003767b83b94955e920cfac8cd565c162)]:
+  - @ledgerhq/cryptoassets@13.17.0-next.0
+  - @ledgerhq/coin-framework@5.0.2-next.0
+  - @ledgerhq/live-countervalues@0.5.6-next.0
+
+## 0.2.34
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/coin-framework@5.0.1
+  - @ledgerhq/live-countervalues@0.5.5
+
+## 0.2.34-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/coin-framework@5.0.1-next.0
+  - @ledgerhq/live-countervalues@0.5.5-next.0
+
+## 0.2.33
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0
+  - @ledgerhq/cryptoassets@13.16.0
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/coin-framework@5.0.0
+  - @ledgerhq/live-countervalues@0.5.4
+
+## 0.2.33-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`b599ac4`](https://github.com/LedgerHQ/ledger-live/commit/b599ac4697688459aad15371f9efea58f331dc33), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-cryptoassets@7.23.0-next.0
+  - @ledgerhq/cryptoassets@13.16.0-next.0
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/coin-framework@5.0.0-next.0
+  - @ledgerhq/live-countervalues@0.5.4-next.0
+
+## 0.2.32
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0
+  - @ledgerhq/live-countervalues@0.5.3
+
+## 0.2.32-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`cf2bf99`](https://github.com/LedgerHQ/ledger-live/commit/cf2bf99ba44e6eaf20e16cb320c0b22068340601)]:
+  - @ledgerhq/coin-framework@4.0.0-next.0
+  - @ledgerhq/live-countervalues@0.5.3-next.0
+
+## 0.2.31
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0
+  - @ledgerhq/coin-framework@3.0.1
+  - @ledgerhq/live-countervalues@0.5.2
+
+## 0.2.31-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0-next.0
+  - @ledgerhq/coin-framework@3.0.1-next.0
+  - @ledgerhq/live-countervalues@0.5.2-next.0
+
+## 0.2.30
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0
+  - @ledgerhq/coin-framework@3.0.0
+  - @ledgerhq/cryptoassets@13.15.0
+  - @ledgerhq/types-cryptoassets@7.22.0
+  - @ledgerhq/live-countervalues@0.5.1
+
+## 0.2.30-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`8d36e9b`](https://github.com/LedgerHQ/ledger-live/commit/8d36e9b2474a4c600427f357adad04f99a89e13d), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0-next.0
+  - @ledgerhq/coin-framework@3.0.0-next.0
+  - @ledgerhq/cryptoassets@13.15.0-next.0
+  - @ledgerhq/types-cryptoassets@7.22.0-next.0
+  - @ledgerhq/live-countervalues@0.5.1-next.0
+
+## 0.2.29
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/live-countervalues@0.5.0
+  - @ledgerhq/cryptoassets@13.14.1
+
+## 0.2.29-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.6.0-next.0
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-countervalues@0.5.0-next.0
+  - @ledgerhq/cryptoassets@13.14.1-next.0
+
+## 0.2.28
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-framework@2.5.0
+  - @ledgerhq/types-live@6.65.0
+  - @ledgerhq/types-cryptoassets@7.21.0
+  - @ledgerhq/cryptoassets@13.14.0
+  - @ledgerhq/live-countervalues@0.4.6
+
+## 0.2.28-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-framework@2.5.0-next.0
+  - @ledgerhq/types-live@6.65.0-next.0
+  - @ledgerhq/types-cryptoassets@7.21.0-next.0
+  - @ledgerhq/cryptoassets@13.14.0-next.0
+  - @ledgerhq/live-countervalues@0.4.6-next.0
+
+## 0.2.27
+
+### Patch Changes
+
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/coin-framework@2.4.0
+  - @ledgerhq/types-live@6.64.0
+  - @ledgerhq/live-countervalues@0.4.5
+
+## 0.2.27-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/coin-framework@2.4.0-next.0
+  - @ledgerhq/types-live@6.64.0-next.0
+  - @ledgerhq/live-countervalues@0.4.5-next.0
+
+## 0.2.26
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0
+  - @ledgerhq/coin-framework@2.3.0
+  - @ledgerhq/live-countervalues@0.4.4
+
+## 0.2.26-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0-next.0
+  - @ledgerhq/coin-framework@2.3.0-next.0
+  - @ledgerhq/live-countervalues@0.4.4-next.0
+
+## 0.2.25
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0
+  - @ledgerhq/coin-framework@2.2.0
+  - @ledgerhq/types-cryptoassets@7.20.0
+  - @ledgerhq/cryptoassets@13.13.0
+  - @ledgerhq/live-countervalues@0.4.3
+
+## 0.2.25-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/types-cryptoassets@7.20.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/live-countervalues@0.4.3-next.0
+
+## 0.2.24
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/coin-framework@2.1.1
+  - @ledgerhq/live-countervalues@0.4.2
+
+## 0.2.24-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/live-countervalues@0.4.2-next.0
+
+## 0.2.23
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/cryptoassets@13.12.0
+  - @ledgerhq/coin-framework@2.1.0
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/live-countervalues@0.4.1
+
+## 0.2.23-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/cryptoassets@13.12.0-next.0
+  - @ledgerhq/coin-framework@2.1.0-next.0
+  - @ledgerhq/types-live@6.60.0-next.0
+  - @ledgerhq/live-countervalues@0.4.1-next.0
+
+## 0.2.22
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/live-countervalues@0.4.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 0.2.22-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/live-countervalues@0.4.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
+## 0.2.21
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/live-countervalues@0.3.0
+  - @ledgerhq/coin-framework@1.0.0
+
+## 0.2.21-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/live-countervalues@0.3.0-next.0
+  - @ledgerhq/coin-framework@1.0.0-next.0
+
+## 0.2.20
+
+### Patch Changes
+
+- Updated dependencies [[`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d), [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/types-live@6.59.0
+  - @ledgerhq/cryptoassets@13.10.0
+  - @ledgerhq/coin-framework@0.25.0
+  - @ledgerhq/live-countervalues@0.2.20
+
+## 0.2.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d), [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/types-live@6.59.0-next.0
+  - @ledgerhq/cryptoassets@13.10.0-next.0
+  - @ledgerhq/coin-framework@0.25.0-next.0
+  - @ledgerhq/live-countervalues@0.2.20-next.0
+
+## 0.2.19
+
+### Patch Changes
+
+- Updated dependencies [[`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81)]:
+  - @ledgerhq/coin-framework@0.24.0
+  - @ledgerhq/live-countervalues@0.2.19
+
+## 0.2.19-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81)]:
+  - @ledgerhq/coin-framework@0.23.1-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.19-hotfix.0
+
+## 0.2.18
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293), [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
+  - @ledgerhq/types-live@6.58.0
+  - @ledgerhq/coin-framework@0.23.0
+  - @ledgerhq/live-countervalues@0.2.18
+
+## 0.2.18-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293), [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
+  - @ledgerhq/types-live@6.58.0-next.0
+  - @ledgerhq/coin-framework@0.23.0-next.0
+  - @ledgerhq/live-countervalues@0.2.18-next.0
+
 ## 0.2.17
 
 ### Patch Changes

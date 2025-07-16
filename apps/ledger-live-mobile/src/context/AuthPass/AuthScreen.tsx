@@ -1,22 +1,12 @@
-import React, { PureComponent } from "react";
+import React, { useState, useCallback } from "react";
 import { withTranslation, useTranslation } from "react-i18next";
-import {
-  TouchableWithoutFeedback,
-  View,
-  StyleSheet,
-  Vibration,
-  Platform,
-  SafeAreaView,
-} from "react-native";
-import * as Keychain from "react-native-keychain";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { StyleSheet } from "react-native";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import type { TFunction } from "react-i18next";
 import type { Privacy } from "~/reducers/types";
 import { withReboot } from "../Reboot";
-import type { RebootFunc } from "../Reboot";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { BaseButton } from "~/components/Button";
@@ -27,33 +17,25 @@ import Touchable from "~/components/Touchable";
 import PasswordInput from "~/components/PasswordInput";
 import KeyboardView from "~/components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
-import KeyboardBackgroundDismiss from "~/components/KeyboardBackgroundDismiss";
-import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
+import SafeKeyboardView from "~/components/KeyboardBackgroundDismiss";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
+import { useAuthSubmit } from "./auth.hooks";
 
-type State = {
-  passwordError: Error | null | undefined;
-  password: string;
-  passwordFocused: boolean;
-  isModalOpened: boolean;
-  secureTextEntry: boolean;
-};
 type OwnProps = {
   privacy: Privacy;
   unlock: () => void;
   lock: () => void;
   biometricsError: Error | null | undefined;
 };
+
 type Props = OwnProps & {
-  reboot: RebootFunc;
   t: TFunction;
   colors: Theme["colors"];
 };
 
-function NormalHeader() {
+const NormalHeader = () => {
   const { colors } = useTheme();
-
   const { t } = useTranslation();
 
   return (
@@ -67,7 +49,7 @@ function NormalHeader() {
       </LText>
     </Flex>
   );
-}
+};
 
 type FormFooterProps = {
   inputFocused: boolean;
@@ -86,19 +68,18 @@ const FormFooter = ({
   onPress,
 }: FormFooterProps) => {
   const { t } = useTranslation();
+
   return inputFocused ? (
-    <TouchableWithoutFeedback>
-      <BaseButton
-        event="SubmitUnlock"
-        title={t("auth.unlock.login")}
-        type="primary"
-        onPress={onSubmit}
-        containerStyle={styles.buttonContainer}
-        disabled={!!passwordError || passwordEmpty}
-        isFocused
-        useTouchable
-      />
-    </TouchableWithoutFeedback>
+    <BaseButton
+      event="SubmitUnlock"
+      title={t("auth.unlock.login")}
+      type="primary"
+      onPress={onSubmit}
+      containerStyle={styles.buttonContainer}
+      disabled={!!passwordError || passwordEmpty}
+      isFocused
+      useTouchable
+    />
   ) : (
     <Touchable event="ForgetPassword" onPress={onPress}>
       <LText semiBold style={styles.link} color="live">
@@ -108,179 +89,109 @@ const FormFooter = ({
   );
 };
 
-class AuthScreen extends PureComponent<Props, State> {
-  state = {
-    passwordError: null,
-    password: "",
-    passwordFocused: false,
-    isModalOpened: false,
-    secureTextEntry: true,
-  };
-  onHardReset = () => {
-    this.props.reboot(true);
-  };
-  unlock = () => {
-    this.setState({
-      passwordError: null,
-      password: "",
-      passwordFocused: false,
-      isModalOpened: false,
-    });
-  };
-  submitId = 0;
-  submit = async () => {
-    const id = ++this.submitId;
-    const { password } = this.state;
-    const { unlock } = this.props;
-    if (!password) return;
+const AuthScreen: React.FC<Props> = ({ t, privacy, biometricsError, lock, unlock, colors }) => {
+  const [passwordError, setPasswordError] = useState<Error | null | undefined>(null);
+  const [password, setPassword] = useState<string>("");
+  const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
+  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
 
-    try {
-      const options =
-        Platform.OS === "ios"
-          ? {}
-          : {
-              accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-              rules: Keychain.SECURITY_RULES.NONE,
-            };
-      const credentials = await Keychain.getGenericPassword(options);
-      if (id !== this.submitId) return;
+  const { submit } = useAuthSubmit({
+    password,
+    unlock,
+    setPasswordError,
+    setPassword,
+  });
 
-      if (credentials && credentials.password === password) {
-        unlock();
-      } else if (credentials) {
-        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
-        this.setState({
-          passwordError: new PasswordIncorrectError(),
-          password: "",
-        });
-      } else {
-        console.log("no credentials stored"); // eslint-disable-line no-console
-      }
-    } catch (err) {
-      if (id !== this.submitId) return;
-      console.log("could not load credentials"); // eslint-disable-line no-console
+  const toggleSecureTextEntry = useCallback(() => {
+    setSecureTextEntry(prev => !prev);
+  }, []);
 
-      this.setState({
-        passwordError: err as Error,
-        password: "",
-      });
-    }
-  };
-  onSubmit = () => {
-    this.submit();
-  };
-  onChange = (password: string) => {
-    this.setState({
-      password,
-      passwordError: null,
-    });
-  };
-  onRequestClose = () => {
-    this.setState({
-      isModalOpened: false,
-    });
-  };
-  onPress = () => {
-    this.setState({
-      isModalOpened: true,
-    });
-  };
-  toggleSecureTextEntry = () => {
-    const { secureTextEntry } = this.state;
-    this.setState({
-      secureTextEntry: !secureTextEntry,
-    });
-  };
-  onFocus = () => {
-    this.setState({
-      passwordFocused: true,
-    });
-  };
-  onBlur = () => {
-    this.setState({
-      passwordFocused: false,
-    });
-  };
+  const onChangeInput = useCallback((password: string) => {
+    setPassword(password);
+    setPasswordError(null);
+  }, []);
 
-  render() {
-    const { t, privacy, biometricsError, lock, colors } = this.props;
-    const { passwordError, isModalOpened, secureTextEntry, passwordFocused } = this.state;
-    return (
-      <KeyboardBackgroundDismiss>
-        <SafeAreaView
-          style={[
-            styles.root,
-            {
-              backgroundColor: colors.background,
-            },
-          ]}
-        >
-          <KeyboardView>
-            <View
-              style={{
-                flex: 1,
-              }}
-            />
+  const onFocusInput = useCallback(() => {
+    setPasswordFocused(true);
+  }, []);
 
-            <View>
-              <View style={styles.header}>
-                {biometricsError ? (
-                  <FailBiometrics lock={lock} privacy={privacy} />
-                ) : (
-                  <NormalHeader />
-                )}
-              </View>
+  const onBlurInput = useCallback(() => {
+    setPasswordFocused(false);
+  }, []);
 
-              <View style={styles.inputWrapper}>
-                <PasswordInput
-                  error={passwordError}
-                  onChange={this.onChange}
-                  onSubmit={this.onSubmit}
-                  toggleSecureTextEntry={this.toggleSecureTextEntry}
-                  secureTextEntry={secureTextEntry}
-                  placeholder={t("auth.unlock.inputPlaceholder")}
-                  onFocus={this.onFocus}
-                  onBlur={this.onBlur}
-                  password={this.state.password}
-                  testID="password-text-input"
-                />
-              </View>
+  const onSubmitInput = useCallback(() => {
+    submit();
+  }, [submit]);
 
-              {passwordError && (
-                <LText style={styles.errorStyle}>
-                  <TranslatedError error={passwordError} />
-                </LText>
+  const onCloseModal = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
+
+  const onOpenModal = useCallback(() => {
+    setIsModalOpened(true);
+  }, []);
+
+  return (
+    <SafeKeyboardView
+      style={{
+        backgroundColor: colors.background,
+      }}
+    >
+      <KeyboardView style={styles.root} behavior="padding">
+        <Flex flex={1} justifyContent="space-between">
+          <Flex flex={1} px={16} justifyContent="center">
+            <Flex alignItems="center" mt={32} mb={24}>
+              {biometricsError ? (
+                <FailBiometrics lock={lock} privacy={privacy} />
+              ) : (
+                <NormalHeader />
               )}
+            </Flex>
 
-              <FormFooter
-                inputFocused={passwordFocused}
-                onSubmit={this.onSubmit}
-                passwordError={passwordError}
-                passwordEmpty={!this.state.password}
-                onPress={this.onPress}
-                colors={colors}
-              />
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-              }}
+            <PasswordInput
+              error={passwordError}
+              onChange={onChangeInput}
+              onSubmit={onSubmitInput}
+              toggleSecureTextEntry={toggleSecureTextEntry}
+              secureTextEntry={secureTextEntry}
+              placeholder={t("auth.unlock.inputPlaceholder")}
+              onFocus={onFocusInput}
+              onBlur={onBlurInput}
+              password={password}
+              testID="password-text-input"
             />
-          </KeyboardView>
+
+            {passwordError && (
+              <LText style={styles.errorStyle}>
+                <TranslatedError error={passwordError} />
+              </LText>
+            )}
+
+            <FormFooter
+              inputFocused={passwordFocused}
+              onSubmit={onSubmitInput}
+              passwordError={passwordError}
+              passwordEmpty={!password}
+              onPress={onOpenModal}
+              colors={colors}
+            />
+          </Flex>
+
           {!passwordFocused && (
-            <View style={styles.footer} pointerEvents="none">
+            <Flex pb={16} pointerEvents="none">
               <PoweredByLedger />
-            </View>
+            </Flex>
           )}
-          <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={this.onRequestClose}>
+
+          <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={onCloseModal}>
             <HardResetModal />
           </QueuedDrawer>
-        </SafeAreaView>
-      </KeyboardBackgroundDismiss>
-    );
-  }
-}
+        </Flex>
+      </KeyboardView>
+    </SafeKeyboardView>
+  );
+};
 
 export default compose<React.ComponentType<OwnProps>>(
   withTranslation(),
@@ -315,12 +226,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   buttonContainer: {
-    marginHorizontal: 16,
-  },
-  buttonTitle: {
-    fontSize: 16,
-  },
-  inputWrapper: {
     marginHorizontal: 16,
   },
   footer: {

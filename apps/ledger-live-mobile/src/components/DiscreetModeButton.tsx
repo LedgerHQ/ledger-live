@@ -11,7 +11,8 @@ export default function DiscreetModeButton({ size = 24 }: { size?: number }) {
   const dispatch = useDispatch();
   const onPress = useCallback(() => {
     track("button_clicked", {
-      button: discreetMode ? "Unmask" : "Mask",
+      button: "Discreet mode",
+      toggle: !discreetMode ? "ON" : "OFF",
     });
     dispatch(setDiscreetMode(!discreetMode));
   }, [discreetMode, dispatch]);

@@ -6,6 +6,13 @@
 # modifies JS files, only @js-owner and not the global
 # owner(s) will be requested for a review.
 
+# fdp-ci team
+.github                                                 @ledgerhq/fdp-ci
+.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
+.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/fdp-ci  @ledgerhq/qaa
+.github/workflows/test-design-system-reusable.yml       @ledgerhq/fdp-ci  @ledgerhq/live-hub
+tools                                                   @ledgerhq/fdp-ci
+
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
 apps/cli/src/commands/live                               @ledgerhq/live-hub
@@ -27,23 +34,46 @@ libs/live-wallet/                                        @ledgerhq/live-hub
 libs/ledger-key-ring-protocol/                           @ledgerhq/live-hub
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
-# Blockchain team
-.github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
-**/live-common-set*.ts                                   @ledgerhq/live-blockchain-support
-apps/**/families/                                        @ledgerhq/live-blockchain-support
-apps/cli/src/commands/blockchain                         @ledgerhq/live-blockchain-support
-apps/web-tools/                                          @ledgerhq/live-blockchain-support
-libs/coin-*/                                             @ledgerhq/live-blockchain-support
-libs/domain-service/                                     @ledgerhq/live-blockchain-support
-libs/evm-tools/                                          @ledgerhq/live-blockchain-support
-libs/ledger-live-common/src/bot/                         @ledgerhq/live-blockchain-support
-libs/ledger-live-common/src/families/                    @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/live-blockchain-support
-libs/live-config/                                        @ledgerhq/live-blockchain-support
-libs/live-network/                                       @ledgerhq/live-blockchain-support
-libs/live-services/                                      @ledgerhq/live-blockchain-support
+# Coin integration team
+.github/**/bot-*.yml                                     @ledgerhq/coin-integration
+.github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
+.github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
+.github/workflows/test-bridge-pr.yml                     @ledgerhq/coin-integration @ledgerhq/fdp-ci
+.github/workflow-templates/bot-coin**                    @ledgerhq/coin-integration
+**/live-common-set*.ts                                   @ledgerhq/coin-integration
+apps/**/families/                                        @ledgerhq/coin-integration
+apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
+apps/web-tools/                                          @ledgerhq/coin-integration
+libs/coin-*/                                             @ledgerhq/coin-integration
+libs/domain-service/                                     @ledgerhq/coin-integration
+libs/evm-tools/                                          @ledgerhq/coin-integration
+libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
+libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
+libs/ledger-services/                                    @ledgerhq/coin-integration
+libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
+libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
+libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
+libs/live-config/                                        @ledgerhq/coin-integration
+libs/live-network/                                       @ledgerhq/coin-integration
+
+# Shared with partners
+## Blockchain support
+libs/coin-modules/coin-aptos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-near/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support
+
+## Zondax
+libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-filecoin/                                         @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-internet_computer/                                @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-mina/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-stacks/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+
+## Hoodies
+ libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support
+
+## Blockydevs
+ libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
@@ -59,9 +89,7 @@ apps/ledger-live-desktop/src/renderer/screens/exchange/              					@ledge
 apps/ledger-live-desktop/src/renderer/screens/stake/                 					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/swapWeb/               					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal							@ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal_deprecated	@ledgerhq/ptx
 apps/ledger-live-mobile/src/families/evm/StakingDrawer/              					@ledgerhq/ptx
-apps/ledger-live-mobile/src/families/evm/StakingDrawer_deprecated/   					@ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/earn.ts                          					@ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/swap.ts                          					@ledgerhq/ptx
 apps/ledger-live-mobile/src/components/ProviderIcon/                 					@ledgerhq/ptx
@@ -109,6 +137,10 @@ apps/cli/src/commands/devices                                      @ledgerhq/liv
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx   @ledgerhq/live-devices
+apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
+apps/ledger-live-mobile/components/RequiresBLE/                    @ledgerhq/live-devices
+apps/ledger-live-mobile/components/RequiresLocation/               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
@@ -146,6 +178,7 @@ apps/web-tools/trustchain/                               @ledgerhq/live-hub
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/qaa
+e2e/                                                                        @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/

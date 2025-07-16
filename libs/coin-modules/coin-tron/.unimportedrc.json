@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/index.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/network/index.ts",
     "src/signer/index.ts"
@@ -18,7 +19,6 @@
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.ts"],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "@ledgerhq/live-env",
     "expect",
     "invariant"
   ]

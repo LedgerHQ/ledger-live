@@ -18,18 +18,15 @@
     "src/api/getNetworkInfo.ts",
     "src/api/getTransactions.ts",
     "src/api/submitTransaction.ts",
+    "src/fixtures/accounts.ts",
+    "src/fixtures/protocolParams.ts",
+    "src/getTransactionStatus.unit.test.ts",
     "src/hw-getAddress.ts",
-    "src/js-broadcast.ts",
-    "src/js-buildTransaction.ts",
-    "src/js-estimateMaxSpendable.ts",
-    "src/js-getTransactionStatus.ts",
-    "src/js-signOperation.ts",
-    "src/js-synchronisation.ts",
-    "src/js-transaction.ts",
     "src/postSyncPatch.ts",
     "src/serialization.ts",
     "src/signer.ts",
-    "src/getTransactionStatus.unit.test.ts",
     "src/synchronisation.unit.test.ts"
-  ]
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": []
 }

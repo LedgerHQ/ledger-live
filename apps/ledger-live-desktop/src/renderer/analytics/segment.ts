@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import invariant from "invariant";
 import { useCallback, useContext } from "react";
 import { ReplaySubject } from "rxjs";
@@ -33,6 +34,7 @@ import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -115,23 +117,25 @@ const getPtxAttributes = () => {
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
 
-  const stakingCurrenciesEnabled =
+  const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length
-      ? Object.fromEntries(
-          stakePrograms.params.list.map((currencyId: string) => [
-            `feature_earn_${currencyId}_enabled`,
-            true,
-          ]),
-        )
-      : {};
+      ? stakePrograms.params.list
+      : "flag not loaded";
+  const partnerStakingCurrenciesEnabled: string[] | string =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects)
+      : "flag not loaded";
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
   return {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
-    ptxCard,
-    ...stakingCurrenciesEnabled,
+    ptxCard: ptxCard?.enabled,
+    stablecoinYield,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
   };
 };
 
@@ -160,6 +164,12 @@ const extraProperties = (store: ReduxStore) => {
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
+  const ldmkTransport = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -196,6 +206,7 @@ const extraProperties = (store: ReduxStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
     ...mandatoryProperties,
@@ -204,6 +215,7 @@ const extraProperties = (store: ReduxStore) => {
     appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
+    platform: "desktop",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -214,12 +226,15 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    tokenWithFunds,
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
   };
 };
 

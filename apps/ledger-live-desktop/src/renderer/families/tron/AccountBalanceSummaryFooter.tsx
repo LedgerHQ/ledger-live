@@ -11,7 +11,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -49,7 +49,7 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: TronAccount | SubAccount;
+  account: TronAccount | TokenAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();

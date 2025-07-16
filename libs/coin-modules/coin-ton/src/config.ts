@@ -1,8 +1,10 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { KnownJetton } from "./types";
 
 export type TonCoinConfig = () => CurrencyConfig & {
   infra: {
     API_TON_ENDPOINT: string;
+    KNOWN_JETTONS: KnownJetton[];
   };
 };
 

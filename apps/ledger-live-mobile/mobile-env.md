@@ -29,10 +29,10 @@ In other cases, these env files will be used:
 # Sentry projects
 | target | iOS | Android |
 |--|--|--|
-|release|[llm-ios](https://sentry.io/organizations/ledger/projects/llm-ios)|[llm-android](https://sentry.io/organizations/ledger/projects/llm-android)|
-|prerelease|[llm-ios-prerelease](https://sentry.io/organizations/ledger/projects/llm-ios-prerelease)|[llm-android-prerelease](https://sentry.io/organizations/ledger/projects/llm-android-prerelease)|
-|nightly|[llm-ios-nightly](https://sentry.io/organizations/ledger/projects/llm-ios-nightly)|[llm-android-nightly](https://sentry.io/organizations/ledger/projects/llm-android-nightly)|
-|staging|[llm-ios-staging](https://sentry.io/organizations/ledger/projects/llm-ios-staging)|[llm-android-staging](https://sentry.io/organizations/ledger/projects/llm-android-staging)|
+|release|[llm-ios](https://sentry.io/organizations/ledger/projects/llm-ios) - ✅ auto upload enabled|[llm-android](https://sentry.io/organizations/ledger/projects/llm-android) - ✅ auto upload enabled|
+|prerelease|[llm-ios-prerelease](https://sentry.io/organizations/ledger/projects/llm-ios-prerelease) - ✅ auto upload enabled|[llm-android-prerelease](https://sentry.io/organizations/ledger/projects/llm-android-prerelease) - ✅ auto upload enabled|
+|nightly|[llm-ios-nightly](https://sentry.io/organizations/ledger/projects/llm-ios-nightly) - ✅ auto upload enabled|[llm-android-nightly](https://sentry.io/organizations/ledger/projects/llm-android-nightly) - ✅ auto upload enabled|
+|staging|[llm-ios-staging](https://sentry.io/organizations/ledger/projects/llm-ios-staging) - ❌ auto upload disabled|[llm-android-staging](https://sentry.io/organizations/ledger/projects/llm-android-staging) - ❌ auto upload disabled|
 # Google Service (feature flag)
 | target | iOS | Android |
 |--|--|--|

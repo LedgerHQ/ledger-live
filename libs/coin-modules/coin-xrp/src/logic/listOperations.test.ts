@@ -1,6 +1,9 @@
 import { assert } from "console";
 import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
+import { Marker } from "../network/types";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -9,45 +12,60 @@ const mockGetServerInfos = jest.fn().mockResolvedValue({
     complete_ledgers: `${minHeight}-${maxHeight}`,
   },
 });
-const mockGetTransactions = jest.fn();
+const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
-  getTransactions: () => mockGetTransactions(),
+  getTransactions: () => mockNetworkGetTransactions(),
 }));
 
 describe("listOperations", () => {
   afterEach(() => {
     mockGetServerInfos.mockClear();
-    mockGetTransactions.mockClear();
+    mockNetworkGetTransactions.mockClear();
   });
+
+  const someMarker: Marker = { ledger: 1, seq: 1 };
+  function mockNetworkTxs(txs: unknown): unknown {
+    return {
+      account: "account",
+      ledger_index_max: 1,
+      ledger_index_min: 1,
+      limit: 1,
+      validated: false,
+      transactions: txs,
+      marker: someMarker,
+      error: "",
+    };
+  }
 
   it("when there are no transactions then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue([]);
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
-    expect(token).toEqual(minHeight);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("when there are no transactions and a limit then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue([]);
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 1 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
-    expect(token).toEqual(minHeight);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   const paymentTx = {
     ledger_hash: "HASH_VALUE_BLOCK",
     hash: "HASH_VALUE",
+    validated: true,
     close_time_iso: "2000-01-01T00:00:01Z",
     meta: { delivered_amount: "100" },
     tx_json: {
@@ -58,6 +76,7 @@ describe("listOperations", () => {
       Account: "sender",
       Destination: "dest",
       Sequence: 1,
+      SigningPubKey: "DEADBEEF",
     },
   };
   const otherTx = { ...paymentTx, tx_json: { ...paymentTx.tx_json, TransactionType: "Other" } };
@@ -65,8 +84,9 @@ describe("listOperations", () => {
   it("should only list operations of type payment", async () => {
     // Given
     const lastTransaction = paymentTx;
-    mockGetTransactions.mockResolvedValueOnce([paymentTx, otherTx, lastTransaction]);
-    mockGetTransactions.mockResolvedValue([]); // subsequent calls
+    const txs = [paymentTx, otherTx, lastTransaction];
+    mockNetworkGetTransactions.mockResolvedValueOnce(mockNetworkTxs(txs));
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([])); // subsequent calls
 
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 3 });
@@ -74,39 +94,39 @@ describe("listOperations", () => {
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called twice because first call yields only 2 transactions, and 3 are asked
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
-  it("should make enough calls so that the limit requested is satified", async () => {
-    const lastTransaction = otherTx;
+  it("should make enough calls so that the limit requested is satisfied", async () => {
     const txs = [paymentTx, paymentTx, otherTx, otherTx, otherTx, otherTx, otherTx, otherTx];
     assert(txs.length === 8);
-    mockGetTransactions.mockResolvedValue(txs);
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 8 });
 
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called 4 times because each call yields only 2 transactions, and 8 are asked
-    expect(mockGetTransactions).toHaveBeenCalledTimes(4);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(4);
     expect(results.length).toEqual(8);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("should make enough calls, even if there is not enough txs to satisfy the limit", async () => {
-    mockGetTransactions.mockResolvedValueOnce([otherTx, otherTx, otherTx, otherTx]);
-    mockGetTransactions.mockResolvedValueOnce([paymentTx, paymentTx]);
-    mockGetTransactions.mockResolvedValue([]); // subsequent calls
-    const lastTransaction = paymentTx;
+    mockNetworkGetTransactions.mockResolvedValueOnce(
+      mockNetworkTxs([otherTx, otherTx, otherTx, otherTx]),
+    );
+    mockNetworkGetTransactions.mockResolvedValueOnce(mockNetworkTxs([paymentTx, paymentTx]));
+    mockNetworkGetTransactions.mockResolvedValue([]); // subsequent calls
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 4 });
 
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called 2 times because the second call is a shortage of txs
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it.each([
@@ -128,130 +148,155 @@ describe("listOperations", () => {
       // Given
       const deliveredAmount = 100;
       const fee = 10;
-      mockGetTransactions.mockResolvedValue([
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Sequence: 1,
+      mockNetworkGetTransactions.mockResolvedValue(
+        mockNetworkTxs([
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              Sequence: 1,
+              SigningPubKey: "DEADBEEF",
+            },
           },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            DestinationTag: 509555,
-            Sequence: 1,
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              DestinationTag: 509555,
+              Sequence: 1,
+              SigningPubKey: "DEADBEEF",
+            },
           },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Memos: [
-              {
-                Memo: {
-                  MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                  MemoData: "72656e74",
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              Memos: [
+                {
+                  Memo: {
+                    MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                    MemoData: "72656e74",
+                  },
                 },
-              },
-            ],
-            Sequence: 1,
+              ],
+              Sequence: 1,
+              SigningPubKey: "DEADBEEF",
+            },
           },
-        },
-      ]);
+        ]),
+      );
 
       // When
-      const [results, _] = await listOperations(address, { minHeight: 0 });
+      const [results, _] = await listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+      expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
       const expectedValue =
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
       expect(results).toEqual([
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
-          value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
-          senders: [opSender],
-          recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
-        },
-        {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
-          value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
-          senders: [opSender],
-          recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
-          details: {
-            destinationTag: 509555,
+          id: "HASH_VALUE",
+          asset: { type: "native" },
+          tx: {
+            fees: BigInt(10),
+            hash: "HASH_VALUE",
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
           },
-        },
-        {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
+          type: expectedType,
           value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             memos: [
               {
                 type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
                 data: "72656e74",
               },
             ],
+            signingPubKey: "DEADBEEF",
           },
         },
-      ]);
+        {
+          id: "HASH_VALUE",
+          asset: { type: "native" },
+          tx: {
+            hash: "HASH_VALUE",
+            fees: BigInt(10),
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+          },
+          type: expectedType,
+          value: expectedValue,
+          senders: [opSender],
+          recipients: [opDestination],
+          details: {
+            sequence: 1,
+            destinationTag: 509555,
+            xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
+          },
+        },
+        {
+          id: "HASH_VALUE",
+          asset: { type: "native" },
+          tx: {
+            hash: "HASH_VALUE",
+            fees: BigInt(10),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+          },
+          details: {
+            sequence: 1,
+            xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
+          },
+          type: expectedType,
+          value: expectedValue,
+          senders: [opSender],
+          recipients: [opDestination],
+        },
+      ] satisfies Operation<XrpAsset>[]);
     },
   );
 });

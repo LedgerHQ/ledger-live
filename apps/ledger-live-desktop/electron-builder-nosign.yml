@@ -11,7 +11,6 @@ mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
   # singleArchFiles: "**/*"
-  mergeASARs: false
   target:
     - target: dmg
       arch:

@@ -137,6 +137,9 @@ class BitcoinLikeExplorer implements IExplorer {
       // @ts-ignore
       delete input.input_index;
     });
+
+    // A transaction is RBF-enabled if any of its inputs have sequence < 0xfffffffe.
+    const rbf = tx.inputs.some(input => input.sequence < 0xfffffffe);
     tx.outputs.forEach(output => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -146,7 +149,7 @@ class BitcoinLikeExplorer implements IExplorer {
       // eslint-disable-next-line no-param-reassign
       output.block_height = tx.block ? tx.block.height : null;
       // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
-      output.rbf = tx.inputs[0] ? tx.inputs[0].sequence < 0xffffffff : false;
+      output.rbf = rbf;
     });
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { IconsLegacy } from "@ledgerhq/native-ui";
+import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import BLEPairingFlow from "./BLEPairingFlow";
@@ -8,9 +8,17 @@ import CustomImage from "./CustomImage";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 
 export default function Features() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigateToLargeMover = () => {
+    navigation.navigate(ScreenName.LargeMoverLandingPage, {
+      currencyIds: "BTC,ETH,SOL",
+      initialRange: InitialRange.Day,
+    });
+  };
   return (
     <SettingsNavigationScrollView>
       <SettingsRow
@@ -103,6 +111,21 @@ export default function Features() {
         desc="See your addresses that are registered in chainwatch"
         iconLeft={<IconsLegacy.NotificationsMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugTransactionsAlerts)}
+      />
+
+      <FeatureToggle featureId="largemoverLandingpage">
+        <SettingsRow
+          title="Large Mover"
+          desc="See the large mover landing page"
+          iconLeft={<Icons.Dollar />}
+          onPress={navigateToLargeMover}
+        />
+      </FeatureToggle>
+      <SettingsRow
+        title="Swiper"
+        desc="Swipe cards"
+        iconLeft={<Icons.CreditCard />}
+        onPress={() => navigation.navigate(ScreenName.DebugSwipe)}
       />
     </SettingsNavigationScrollView>
   );

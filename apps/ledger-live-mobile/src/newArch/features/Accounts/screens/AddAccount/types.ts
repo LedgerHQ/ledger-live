@@ -3,12 +3,15 @@ import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
+import { AddAccountContexts } from "./enums";
+
+export type AddAccountContextType = `${AddAccountContexts}`;
 
 type CommonParams = {
-  context?: "addAccounts" | "receiveFunds";
-  onSuccess?: () => void;
+  context?: AddAccountContextType;
   onCloseNavigation?: () => void;
   currency: CryptoOrTokenCurrency;
+  sourceScreenName?: string;
 };
 export type NetworkBasedAddAccountNavigator = {
   [ScreenName.ScanDeviceAccounts]: CommonParams & {

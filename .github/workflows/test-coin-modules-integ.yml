@@ -1,0 +1,96 @@
+name: "[Coin] - Test Coin modules - Scheduled"
+
+on:
+  schedule:
+    - cron: "20 9 * * *"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Which ref (branch or tag) to pull from?"
+        required: false
+        default: develop
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  integ-tests:
+    name: "Coin modules integration tests"
+    runs-on: ubuntu-22.04
+
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**"
+
+      - name: Build
+        run: pnpm build:coin-modules:deps
+
+      - name: Test
+        shell: bash
+        run: pnpm coin-modules:test-integ
+
+  integ-tests-fail:
+    name: failure report
+    needs: integ-tests
+    if: failure() && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to live-repo-health slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C05FKJ7DFAP"
+            text: "[Test] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "❌ *Coin modules integration tests failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+  integ-tests-success:
+    name: success report
+    needs: integ-tests
+    if: success() && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to live-repo-health slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C05FKJ7DFAP"
+            text: "[Test] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "✅️ *Coin modules integration tests success*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

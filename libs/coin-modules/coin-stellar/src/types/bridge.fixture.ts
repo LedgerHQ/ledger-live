@@ -72,6 +72,7 @@ export function createFixtureOperation(operation?: Partial<StellarOperation>): S
     assetAmount: operation?.extra?.assetAmount || undefined,
     ledgerOpType: operation?.extra?.ledgerOpType || "IN",
     blockTime: operation?.extra?.blockTime || faker.date.past(),
+    index: operation?.id ?? "0",
   };
   if (operation?.extra?.pagingToken) {
     extra = {

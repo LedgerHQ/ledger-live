@@ -1,5 +1,53 @@
 # @ledgerhq/hw-app-btc
 
+## 10.9.0
+
+### Minor Changes
+
+- [#9554](https://github.com/LedgerHQ/ledger-live/pull/9554) [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash, fix consensus branch id computation
+
+## 10.9.0-next.0
+
+### Minor Changes
+
+- [#9554](https://github.com/LedgerHQ/ledger-live/pull/9554) [`ab287c0`](https://github.com/LedgerHQ/ledger-live/commit/ab287c09028b00e4f01da22982644366b4325c15) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash, fix consensus branch id computation
+
+## 10.8.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 10.8.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 10.7.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 10.7.0-next.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 10.6.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
+## 10.6.0-next.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
 ## 10.5.0
 
 ### Minor Changes

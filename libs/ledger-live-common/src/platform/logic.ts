@@ -12,7 +12,7 @@ import {
   deserializePlatformTransaction,
   deserializePlatformSignedTransaction,
 } from "./serializers";
-import type { TrackFunction } from "./tracking";
+import type { TrackingAPI } from "./tracking";
 import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
@@ -29,7 +29,7 @@ export function translateContent(content: string | TranslatableString, locale = 
 export type WebPlatformContext = {
   manifest: LiveAppManifest;
   accounts: AccountLike[];
-  tracking: Record<string, TrackFunction>;
+  tracking: TrackingAPI;
 };
 
 function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | undefined {

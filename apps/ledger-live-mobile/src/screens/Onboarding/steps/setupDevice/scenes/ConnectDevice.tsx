@@ -15,6 +15,7 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
   const action = useManagerDeviceAction();
@@ -74,6 +75,7 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
         onResult={onResult}
         action={action}
         request={null}
+        location={HOOKS_TRACKING_LOCATIONS.onboardingFlow}
       />
       {__DEV__ ? (
         <Button

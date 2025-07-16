@@ -1,4 +1,4 @@
-name: "Test Desktop"
+name: "[Desktop] - Test - Called"
 
 on:
   workflow_call:
@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "LLD Code Checks"
+    name: "Desktop Code Check"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -101,7 +101,7 @@ jobs:
         run: pnpm desktop test:jest:coverage
 
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Ubuntu E2E"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -133,6 +133,13 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: Install CLI dependencies
+        env:
+          LANG: en_US.UTF-8
+        run: pnpm i --filter="live-cli*..."
+        shell: bash
+      - name: Build CLI
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -170,7 +177,9 @@ jobs:
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
+
   report:
+    name: "Test Desktop > Report"
     needs: [codechecks, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
@@ -226,14 +235,11 @@ jobs:
               attempt_number: "${{ github.run_attempt }}",
             });
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
             const keys = {
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Linux")
+                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
               },
             };
 
@@ -416,20 +422,22 @@ jobs:
           path: ${{ github.workspace }}/summary-test-desktop.json
 
   allure-report:
-    name: "Allure Reports Export on Server"
+    name: "Ubuntu E2E > Allure Report"
     needs: e2e-tests-linux
     runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: allure-results-linux
+          pattern: allure-results-linux*
+          merge-multiple: true
       - name: Send Results and Generate Allure Report - Linux
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         with:
-          platform: linux
+          platform: linux-mocked
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: allure-results-linux

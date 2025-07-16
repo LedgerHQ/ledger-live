@@ -1,6 +1,6 @@
 import reduce from "lodash/reduce";
 import forEach from "lodash/forEach";
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 export type SearchResult = {
   account: AccountLike & { disabled?: boolean };
@@ -68,7 +68,7 @@ export const formatSearchResults = (searchResults: AccountLike[], accounts: Acco
 export const formatSearchResultsTuples = (
   searchResults: {
     account: AccountLike;
-    subAccount?: SubAccount | null;
+    subAccount?: TokenAccount | null;
   }[],
 ): SearchResult[] => {
   const formated = reduce(

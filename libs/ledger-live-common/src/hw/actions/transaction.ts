@@ -26,6 +26,8 @@ type State = {
   deviceSignatureRequested: boolean;
   deviceStreamingProgress: number | null | undefined;
   transactionSignError: Error | null | undefined;
+  transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean | null;
   manifestId?: string;
   manifestName?: string;
 };
@@ -81,6 +83,8 @@ const initialState = {
   deviceSignatureRequested: false,
   deviceStreamingProgress: null,
   transactionSignError: null,
+  transactionChecksOptInTriggered: false,
+  transactionChecksOptIn: null,
 };
 
 const reducer = (state: State, e: Event): State => {
@@ -105,6 +109,15 @@ const reducer = (state: State, e: Event): State => {
 
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
+
+    case "transaction-checks-opt-in-triggered":
+      return { ...state, transactionChecksOptInTriggered: true };
+
+    case "transaction-checks-opt-in":
+      return { ...state, transactionChecksOptIn: true };
+
+    case "transaction-checks-opt-out":
+      return { ...state, transactionChecksOptIn: false };
 
     default:
       return state;
@@ -151,6 +164,7 @@ export const createAction = (
           account: mainAccount,
           transaction,
           deviceId: device.deviceId,
+          deviceModelId: device.modelId,
         })
         .pipe(
           catchError(error =>

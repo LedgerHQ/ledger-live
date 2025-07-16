@@ -60,7 +60,7 @@ const StepSummary = (props: StepProps) => {
   const accountName = useMaybeAccountName(account);
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const unit = useMaybeAccountUnit(mainAccount);
+  const unit = useMaybeAccountUnit(account);
 
   if (!mainAccount || !transaction) {
     return null;
@@ -271,7 +271,7 @@ const StepSummary = (props: StepProps) => {
                 <FormattedVal
                   color={"palette.text.shade80"}
                   disableRounding
-                  unit={unit}
+                  unit={estimatedFees.eq(totalSpent) ? feesUnit : unit}
                   val={totalSpent}
                   fontSize={4}
                   inline

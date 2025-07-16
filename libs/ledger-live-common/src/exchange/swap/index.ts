@@ -22,6 +22,7 @@ import getExchangeRates from "./getExchangeRates";
 import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
 import { maybeTronEmptyAccount } from "./maybeTronEmptyAccount";
 import { maybeKeepTronAccountAlive } from "./maybeKeepTronAccountAlive";
+import { getIncompatibleCurrencyKeys } from "./getIncompatibleCurrencyKeys";
 
 export { getAvailableProviders } from "../providers";
 
@@ -148,4 +149,5 @@ export {
   initSwap,
   USStates,
   countries,
+  getIncompatibleCurrencyKeys,
 };

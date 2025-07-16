@@ -20,6 +20,8 @@ setSupportedCurrencies([
   "bsc",
   "polkadot",
   "solana",
+  "solana_testnet",
+  "solana_devnet",
   "ripple",
   "litecoin",
   "polygon",
@@ -33,7 +35,7 @@ setSupportedCurrencies([
   "dash",
   "tron",
   "tezos",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ethereum_classic",
   "zcash",
   "decred",
@@ -100,5 +102,10 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "sui",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
+  "mina",
+  "babylon",
 ]);

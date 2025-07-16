@@ -10,7 +10,9 @@ import { useCallback, useState, useEffect } from "react";
 const { PERMISSIONS, RESULTS } = PermissionsAndroid;
 
 /**
- * On Android 9 and before, the app needs to have the ACCESS_COARSE_LOCATION permission. After it needs the ACCESS_FINE_LOCATION permission.
+ * On Android 9 (SDK level 28) and before, the app needs to have the ACCESS_COARSE_LOCATION permission.
+ *
+ * On Android 10 (SDK level 29) and 11 (SDK level 30), it needs the ACCESS_FINE_LOCATION permission.
  *
  * See https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare
  *
@@ -20,7 +22,9 @@ export const locationPermission: Permission | undefined =
   Platform.OS === "android"
     ? Platform.Version <= 28
       ? PERMISSIONS.ACCESS_COARSE_LOCATION
-      : PERMISSIONS.ACCESS_FINE_LOCATION
+      : Platform.Version <= 30
+        ? PERMISSIONS.ACCESS_FINE_LOCATION
+        : undefined
     : undefined;
 
 /**

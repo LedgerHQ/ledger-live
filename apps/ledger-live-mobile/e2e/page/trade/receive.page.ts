@@ -1,19 +1,8 @@
-import {
-  currencyParam,
-  getElementById,
-  getElementByText,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
 import { by, element, expect } from "detox";
-import jestExpect from "expect";
-
-const baseLink = "receive";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
+  baseLink = "receive";
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
@@ -25,31 +14,21 @@ export default class ReceivePage {
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   buttonCreateAccountId = "button-create-account";
-  buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
-  buttonContinueId = "add-accounts-continue-button";
-  buttonContinue = () => getElementById(this.buttonContinueId);
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
-  receivePageScrollViewId = "receive-screen-scrollView";
 
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
-  tronNewAddressWarningId = "tron-receive-newAddress-warning";
-  tronNewAddressWarningDescription = () =>
-    getElementById(`${this.tronNewAddressWarningId}-description`);
-  tronNewAddressWarningText =
-    "You first need to send at least 0.1 TRX to this address to activate it.";
-
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 
@@ -70,6 +49,7 @@ export default class ReceivePage {
     await expect(this.step2Accounts()).toBeVisible();
   }
 
+  @Step("Select currency in receive list")
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
@@ -107,12 +87,6 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
   }
 
-  @Step("Get the fresh address displayed")
-  async getFreshAddressDisplayed() {
-    await waitForElementById(this.accountFreshAddress);
-    return await getTextOfElement(this.accountFreshAddress);
-  }
-
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
     //set "account" in plural or not in fonction of number account
     const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");
@@ -133,11 +107,6 @@ export default class ReceivePage {
   async createAccount() {
     await waitForElementById(this.buttonCreateAccountId);
     return tapById(this.buttonCreateAccountId);
-  }
-
-  async continueCreateAccount() {
-    await waitForElementById(this.buttonContinueId);
-    return tapById(this.buttonContinueId);
   }
 
   async expectAccountIsCreated(accountName: string) {
@@ -164,20 +133,6 @@ export default class ReceivePage {
     await waitForElementById(receiveTitleTickerId);
     await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();
-  }
-
-  @Step("Expect given address is displayed on receive page")
-  async expectAddressIsCorrect(address: string) {
-    await expect(getElementById(this.accountAddress)).toHaveText(address);
-  }
-
-  @Step("Expect tron new address warning")
-  async expectTronNewAddressWarning() {
-    await scrollToId(this.tronNewAddressWarningId, this.receivePageScrollViewId);
-    await expect(getElementById(this.tronNewAddressWarningId)).toBeVisible();
-    await expect(this.tronNewAddressWarningDescription()).toHaveText(
-      this.tronNewAddressWarningText,
-    );
   }
 
   @Step("Refuse to verify address")

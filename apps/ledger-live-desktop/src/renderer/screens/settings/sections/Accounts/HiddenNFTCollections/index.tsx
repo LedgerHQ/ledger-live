@@ -14,7 +14,7 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import { HiddenNftCollectionRow } from "./row";
 import { decodeCollectionId } from "@ledgerhq/live-nft-react";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 
 // Styled components and layout
 
@@ -33,6 +33,8 @@ const Collections = styled(Box)`
     cursor: pointer;
   }
 `;
+
+const keys: <T extends object>(obj: T) => (keyof T)[] = Object.keys;
 
 const INCREMENT = 10;
 
@@ -57,7 +59,7 @@ export default function HiddenNftCollections() {
   const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
 
   const onUnhideCollection = useCallback(
-    (collectionId: string, blockchain: BlockchainsType) => {
+    (collectionId: string, blockchain: SupportedBlockchain) => {
       dispatch(updateNftStatus(blockchain, collectionId, NftStatus.whitelisted));
     },
     [dispatch],
@@ -108,9 +110,10 @@ export default function HiddenNftCollections() {
         <Body>
           {visibleCollections.map(collectionId => {
             const { accountId, contractAddress } = decodeCollectionId(collectionId);
-            const network = (Object.keys(collections).find(
-              key => collections[key as BlockchainEVM][collectionId],
-            ) ?? BlockchainEVM.Ethereum) as BlockchainsType;
+            const network =
+              keys(collections).find(key => collections[key][collectionId]) ??
+              SupportedBlockchain.Ethereum;
+
             return (
               <HiddenNftCollectionRow
                 key={collectionId}

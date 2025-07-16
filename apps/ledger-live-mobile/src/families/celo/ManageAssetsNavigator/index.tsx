@@ -132,6 +132,7 @@ function ManageAssetsNavigator() {
 
         {isRegistered ? (
           <Button
+            testID="celo-lock-button"
             event="Celo Lock Click"
             onPress={onLock}
             type="main"
@@ -140,6 +141,7 @@ function ManageAssetsNavigator() {
           />
         ) : null}
         <Button
+          testID="celo-unlock-button"
           event="Celo Unlock Click"
           onPress={onUnlock}
           type="main"
@@ -148,6 +150,7 @@ function ManageAssetsNavigator() {
           disabled={!unlockingEnabled}
         />
         <Button
+          testID="celo-withdraw-button"
           event="Celo Withdraw Click"
           onPress={onWithdraw}
           type="main"
@@ -156,6 +159,7 @@ function ManageAssetsNavigator() {
           disabled={!withdrawEnabled}
         />
         <Button
+          testID="celo-vote-button"
           event="Celo Vote Click"
           onPress={onVote}
           type="main"
@@ -165,6 +169,7 @@ function ManageAssetsNavigator() {
         />
 
         <Button
+          testID="celo-activate-vote-button"
           event="Celo Activate Click"
           onPress={onActivate}
           type="main"
@@ -174,6 +179,7 @@ function ManageAssetsNavigator() {
         />
 
         <Button
+          testID="celo-revoke-button"
           event="Celo Revoke Click"
           onPress={onRevoke}
           type="main"

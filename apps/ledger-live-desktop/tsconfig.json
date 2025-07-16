@@ -3,10 +3,11 @@
   "compilerOptions": {
     "allowJs": false,
     "composite": true,
-    "module": "es2020",
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
@@ -22,7 +23,7 @@
     "src",
     "static/**/*.json",
     "src/renderer/styles/palettes/*.json",
-    "src/renderer/animations/*/*.json",
+    "src/renderer/animations/**/*.json",
     "src/renderer/screens/settings/sections/General/regions.json",
     "package.json",
     "release-notes.json",

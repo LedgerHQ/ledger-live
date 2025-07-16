@@ -68,6 +68,7 @@ export const RenderLoadingImage = ({
       alignItems="center"
       data-testid={`device-action-image-loading-${progress}`}
     >
+      <DeviceBlocker />
       <AnimationWrapper>
         <FramedPicture
           frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}

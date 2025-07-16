@@ -17,8 +17,8 @@ import { Search as SearchType } from "../../types";
 export * from "./SearchBar";
 
 const noResultIllustration = {
-  dark: require("~/images/illustration/Dark/_051.png"),
-  light: require("~/images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.webp"),
+  light: require("~/images/illustration/Light/_051.webp"),
 };
 
 const AnimatedView = Animatable.View;

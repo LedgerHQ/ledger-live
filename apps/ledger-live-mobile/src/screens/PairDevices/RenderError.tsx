@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Linking, StyleSheet } from "react-native";
 import { BleError, BleError as DeprecatedError, BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
@@ -10,6 +10,7 @@ import {
   PeerRemovedPairing,
   FirmwareNotRecognized,
 } from "@ledgerhq/errors";
+import { OpeningConnectionError } from "@ledgerhq/device-management-kit";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "~/analytics";
@@ -37,13 +38,25 @@ const hitSlop = {
   bottom: 16,
 };
 
+const getIsBrokenPairing = (error: Error) => {
+  if (error instanceof OpeningConnectionError) {
+    return true;
+  }
+
+  if (error instanceof PeerRemovedPairing) {
+    return true;
+  }
+
+  return false;
+};
+
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
   const isPairingStatus = status === "pairing";
   const isFirmwareNotRecognized = error instanceof FirmwareNotRecognized;
   const isGenuineCheckStatus = status === "genuinecheck";
   const isGenuineCheckSkippableError = isGenuineCheckStatus && !isFirmwareNotRecognized;
-  const isBrokenPairing = error instanceof PeerRemovedPairing;
+  const isBrokenPairing = useMemo(() => getIsBrokenPairing(error), [error]);
 
   const url = isBrokenPairing
     ? urls.errors.PeerRemovedPairing

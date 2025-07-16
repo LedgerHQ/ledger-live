@@ -1,23 +1,13 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
-import jestExpect from "expect";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
-const baseLink = "portfolio";
 export default class PortfolioPage {
+  baseLink = "portfolio";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
-  receiveButton = "receive-button";
   managerTabBarId = "TabBarManager";
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   transactionAmountId = "portfolio-operation-amount";
@@ -25,10 +15,10 @@ export default class PortfolioPage {
   emptyPortfolioList = () => getElementById(this.emptyPortfolioListId);
   portfolioSettingsButtonId = "settings-icon";
   portfolioSettingsButton = () => getElementById(this.portfolioSettingsButtonId);
-  sendMenuButton = () => getElementById("send-button");
-  earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
+  assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
+  allocationSectionTitleId = "portfolio-allocation-section";
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -44,10 +34,6 @@ export default class PortfolioPage {
     await expect(this.emptyPortfolioList()).toBeVisible();
   }
 
-  async receive() {
-    await tapById(this.receiveButton);
-  }
-
   async expectPortfolioReadOnly() {
     await expect(this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
@@ -58,17 +44,14 @@ export default class PortfolioPage {
 
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async openMyLedger() {
     await tapById(this.managerTabBarId);
   }
 
-  async openEarnApp() {
-    await tapByElement(this.earnButton());
-  }
-
+  @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId);
     await tapById(this.addAccountCta);
@@ -89,5 +72,11 @@ export default class PortfolioPage {
 
   async openLastTransaction() {
     await tapByElement(this.lastTransactionAmount());
+  }
+
+  @Step("Go to asset's accounts from portfolio")
+  async goToAccounts(currencyName: string) {
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    await tapById(this.assetItemId(currencyName));
   }
 }

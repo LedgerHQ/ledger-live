@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box, { Card } from "~/renderer/components/Box";
+import { Flex, Link } from "@ledgerhq/react-ui";
+import { openURL } from "~/renderer/linking";
+
 export const SettingsSection = styled(Card).attrs(() => ({
   p: 0,
 }))``;
@@ -94,6 +97,8 @@ type SettingsSectionRowProps = {
   childrenContainerStyle?: React.CSSProperties;
   dataTestId?: string;
   id?: string;
+  externalUrl?: string;
+  linkText?: string;
 };
 export const SettingsSectionRow = ({
   title,
@@ -106,6 +111,8 @@ export const SettingsSectionRow = ({
   childrenContainerStyle,
   dataTestId,
   id,
+  externalUrl,
+  linkText,
 }: SettingsSectionRowProps) => (
   <SettingsSectionRowContainer
     onClick={onClick}
@@ -140,6 +147,28 @@ export const SettingsSectionRow = ({
       >
         {desc}
       </Box>
+      {externalUrl && (
+        <Flex
+          color="palette.text.shade60"
+          mr={1}
+          style={{
+            ...(descContainerStyle || {}),
+          }}
+        >
+          <Link
+            alwaysUnderline
+            color="palette.text.shade60"
+            textProps={{
+              fontFamily: "Inter",
+              fontSize: 3,
+              fontWeight: "500",
+            }}
+            onClick={() => openURL(externalUrl)}
+          >
+            {linkText}
+          </Link>
+        </Flex>
+      )}
     </Box>
     <Box style={childrenContainerStyle}>{children}</Box>
   </SettingsSectionRowContainer>

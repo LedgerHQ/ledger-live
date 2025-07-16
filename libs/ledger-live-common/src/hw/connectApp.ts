@@ -11,6 +11,7 @@ import {
   DisconnectedDevice,
   StatusCodes,
   LockedDeviceError,
+  LatestFirmwareVersionRequired,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -25,7 +26,6 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
@@ -427,6 +427,10 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
             }),
             catchError((e: unknown) => {
               if (
+                (typeof e === "object" &&
+                  e !== null &&
+                  "_tag" in e &&
+                  e._tag === "DeviceDisconnectedWhileSendingError") ||
                 e instanceof DisconnectedDeviceDuringOperation ||
                 e instanceof DisconnectedDevice
               ) {
@@ -475,4 +479,15 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
   );
 };
 
-export default cmd;
+export default function connectAppFactory(
+  {
+    isLdmkConnectAppEnabled,
+  }: {
+    isLdmkConnectAppEnabled: boolean;
+  } = { isLdmkConnectAppEnabled: false },
+) {
+  if (!isLdmkConnectAppEnabled) {
+    return cmd;
+  }
+  throw new Error("LdkmConnectApp is not supported yet");
+}

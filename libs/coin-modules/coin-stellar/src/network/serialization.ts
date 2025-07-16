@@ -43,10 +43,11 @@ export function getReservedBalance(account: Horizon.ServerApi.AccountRecord): Bi
     .plus(amountInOffers);
 }
 
-export function rawOperationsToOperations(
+export async function rawOperationsToOperations(
   operations: RawOperation[],
   addr: string,
   accountId: string,
+  minHeight: number,
 ): Promise<StellarOperation[]> {
   const supportedOperationTypes = [
     "create_account",
@@ -56,7 +57,7 @@ export function rawOperationsToOperations(
     "change_trust",
   ];
 
-  return Promise.all(
+  const ops = await Promise.all(
     operations
       .filter(operation => {
         return (
@@ -69,16 +70,22 @@ export function rawOperationsToOperations(
         );
       })
       .filter(operation => supportedOperationTypes.includes(operation.type))
-      .map(operation => formatOperation(operation, accountId, addr)),
+      .map(operation => formatOperation(operation, accountId, addr, minHeight)),
   );
+
+  return ops.filter(op => op !== undefined) as StellarOperation[];
 }
 
 async function formatOperation(
   rawOperation: RawOperation,
   accountId: string,
   addr: string,
-): Promise<StellarOperation> {
+  minHeight: number,
+): Promise<StellarOperation | undefined> {
   const transaction = await rawOperation.transaction();
+
+  if (transaction.ledger_attr < minHeight) return undefined;
+
   const { hash: blockHash, closed_at: blockTime } = await transaction.ledger();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
@@ -108,6 +115,7 @@ async function formatOperation(
     extra: {
       ledgerOpType: type,
       blockTime: new Date(blockTime),
+      index: rawOperation.id,
     },
   };
 

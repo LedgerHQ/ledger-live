@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   createMaterialTopTabNavigator,
@@ -22,6 +22,7 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "~/const/navigation";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
@@ -35,11 +36,21 @@ export default function WalletTabNavigator() {
   const { t } = useTranslation();
   const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
+  const llmNftSupport = useFeature("llNftSupport");
+
+  const initialRouteName = useMemo(
+    () =>
+      lastVisitedTab === ScreenName.WalletNftGallery && !llmNftSupport?.enabled
+        ? ScreenName.Portfolio
+        : lastVisitedTab,
+    [lastVisitedTab, llmNftSupport?.enabled],
+  );
+
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
-          initialRouteName={lastVisitedTab}
+          initialRouteName={initialRouteName}
           tabBar={tabBarOptions}
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
@@ -71,13 +82,15 @@ export default function WalletTabNavigator() {
             }}
           />
 
-          <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
-            }}
-          />
+          {llmNftSupport?.enabled && (
+            <WalletTab.Screen
+              name={ScreenName.WalletNftGallery}
+              component={WalletNftGallery}
+              options={{
+                title: t("wallet.tabs.nft"),
+              }}
+            />
+          )}
 
           <WalletTab.Screen
             name={NavigatorName.Market}

@@ -71,6 +71,8 @@ import {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
+  SettingsSetSelectedTabPortfolioAssetsPayload,
+  SettingsSetIsRebornPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -144,6 +146,7 @@ export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTy
 export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
   SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
 );
+export const resetNftStatus = createAction(SettingsActionTypes.RESET_NFT_COLLECTION_STATUS);
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
@@ -217,6 +220,9 @@ export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsP
 );
 export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
   SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setIsReborn = createAction<SettingsSetIsRebornPayload>(
+  SettingsActionTypes.SET_IS_REBORN,
 );
 export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
   SettingsActionTypes.SET_ONBOARDING_TYPE,
@@ -305,6 +311,11 @@ export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarket
 export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
   SettingsActionTypes.SET_MEV_PROTECTION,
 );
+
+export const setSelectedTabPortfolioAssets =
+  createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
+    SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
+  );
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

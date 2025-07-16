@@ -46,6 +46,7 @@ let errorRemapping = e => throwError(() => e);
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
 };
+
 const never = new Promise(() => {});
 
 /**
@@ -247,6 +248,7 @@ export const withDevice =
           if (e instanceof TransportInterfaceNotAvailable) throw e;
           if (e instanceof PeerRemovedPairing) throw e;
           if (e instanceof PairingFailed) throw e;
+          console.error(e);
           throw new CantOpenDevice(e.message);
         })
         // Executes the job

@@ -1,4 +1,4 @@
-name: "[Release](Hotfix) Prepare for releasing"
+name: "[Release] - Prepare & Publish Hotfix - Manual"
 
 on:
   workflow_dispatch:
@@ -71,14 +71,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: commit
+      - name: git add
         run: |
           git add .
-          git commit -m "chore(hotfix): :fire: hotfix release [skip ci]"
 
-      - name: push changes
+      - name: commit
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: pull commit
         run: |
-          git push origin ${{ inputs.ref }}
+          git stash
+          git pull
 
       - name: fetch develop and main
         if: ${{ github.event.inputs.tag_version == 'latest' }}
@@ -122,9 +131,38 @@ jobs:
           fi
 
   release-final:
-    name: "[Release] Publish packages and apps"
+    name: "Prepare Hotfix > Publish packages and apps"
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
-      ref: hotfix
+      # release from main if hotfixing the latest version, otherwise from the hotfix branch
+      # For more info about why we do this, see this doc:
+      # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+      ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
+      caller: release-prepare-hotfix
     secrets: inherit
+
+  release-fail:
+    name: "Prepare Hotfix > Failure Reporting"
+    needs: release-final
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Hotfix Preparation failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Hotfix Preparation failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

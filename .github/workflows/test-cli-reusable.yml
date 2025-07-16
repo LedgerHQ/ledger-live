@@ -1,4 +1,4 @@
-name: "CLI Tests"
+name: "[CLI] - Test - Called"
 
 on:
   workflow_call:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   test-cli:
-    name: "Test CLI"
+    name: "CLI Test"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -58,6 +58,7 @@ jobs:
           exit $diff
 
   report:
+    name: "CLI Test > Report"
     needs: test-cli
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04

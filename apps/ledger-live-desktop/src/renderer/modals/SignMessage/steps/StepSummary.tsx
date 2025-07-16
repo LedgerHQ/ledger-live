@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "~/renderer/components/Text";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -12,6 +13,12 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import AngleDown from "~/renderer/icons/AngleDown";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { getTokenUnit } from "~/renderer/utils";
+import { Account } from "@ledgerhq/types-live";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import CopyButton from "../Components/CopyButton";
 
 const Circle = styled.div`
   height: 32px;
@@ -58,45 +65,83 @@ const AdvancedMessageArea = styled.pre`
   word-wrap: break-word;
   white-space: pre-wrap;
   padding: 10px;
+  position: relative;
+  min-height: 60px;
+  word-break: break-word;
 `;
 
-const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
-  if (!value) return null;
+const MessageProperty = memo(
+  ({ label, value, tokenUnit }: MessageProperties[0] & { tokenUnit?: Unit }) => {
+    if (!value) return null;
 
-  return (
-    <Box flex="1" mb={20}>
-      <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-        {label}
-      </Text>
-      <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
-        {typeof value === "string" ? (
-          <ValueWrapper>{value}</ValueWrapper>
-        ) : (
-          <PropertiesList>
-            {value?.map?.((v, i) => (
-              <li key={i}>
-                <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
-              </li>
-            ))}
-          </PropertiesList>
-        )}
-      </Text>
-    </Box>
-  );
-});
+    return (
+      <Box
+        style={{ flexDirection: "row", justifyContent: "space-between", maxWidth: "100%" }}
+        flex="1"
+        mb={20}
+      >
+        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          {label}
+        </Text>
+        <Text
+          ff="Inter|Medium"
+          color="palette.text.shade90"
+          fontSize={3}
+          pl={2}
+          style={{ maxWidth: "90%" }}
+        >
+          {tokenUnit ? (
+            <FormattedVal
+              color={"palette.text.shade90"}
+              val={Number(value)}
+              unit={tokenUnit}
+              fontSize={3}
+              disableRounding
+              alwaysShowValue
+              showCode
+              inline
+            />
+          ) : typeof value === "string" ? (
+            <ValueWrapper>{value}</ValueWrapper>
+          ) : (
+            <PropertiesList>
+              {value?.map?.((v, i) => (
+                <li key={i}>
+                  <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
+                </li>
+              ))}
+            </PropertiesList>
+          )}
+        </Text>
+      </Box>
+    );
+  },
+);
 
 MessageProperty.displayName = "MessageProperty";
 
-const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
-  const { properties } = props;
-  return properties ? (
-    <Box flex="1">
-      {properties.map((p, i) => (
-        <MessageProperty key={i} {...p} />
-      ))}
-    </Box>
-  ) : null;
-});
+const MessagePropertiesComp = memo(
+  (props: {
+    properties: MessageProperties | null;
+    contractAddress?: string | string[];
+    account: Account;
+  }) => {
+    const { properties, account, contractAddress } = props;
+
+    return properties ? (
+      <Box flex="1">
+        {properties.map((p, i) => (
+          <MessageProperty
+            key={i}
+            label={p.label}
+            value={p.value}
+            tokenUnit={getTokenUnit(p.label, account, contractAddress)}
+          />
+        ))}
+      </Box>
+    ) : null;
+  },
+);
 MessagePropertiesComp.displayName = "MessageProperties";
 
 export default function StepSummary({ account, message: messageData }: StepProps) {
@@ -128,7 +173,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={16} currency={account.currency} />
+              <CryptoCurrencyIcon size={14} currency={account.currency} />
             </div>
             <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
               {accountName}
@@ -139,26 +184,26 @@ export default function StepSummary({ account, message: messageData }: StepProps
       <Separator />
 
       {!isACREWithdraw ? (
-        messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp properties={messageFields} />
-        ) : (
-          <MessageProperty label={"message"} value={messageData.message} />
-        )
+        <MessageProperty label={"message"} value={messageData.message.toString()} />
       ) : null}
 
       <MessageContainer flex="1">
         {messageFields ? (
           <Box flex="1">
-            <Button outline small mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+            <Button outline mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+              <Box style={{ transform: `rotate(${showAdvanced ? 0 : -90}deg)` }} mr={10}>
+                <AngleDown size={18} />
+              </Box>
               {showAdvanced
-                ? `- ${t("signmessage.eip712.hideFullMessage")}`
-                : `+ ${t("signmessage.eip712.showFullMessage")}`}
+                ? `${t("signmessage.eip712.hideFullMessage")}`
+                : `${t("signmessage.eip712.showFullMessage")}`}
             </Button>
             {showAdvanced ? (
               <AdvancedMessageArea>
                 {typeof messageData.message === "string"
                   ? `"${messageData.message}"`
                   : JSON.stringify(messageData.message, null, 2)}
+                <CopyButton text={messageData.message.toString()} />
               </AdvancedMessageArea>
             ) : null}
           </Box>
@@ -171,14 +216,14 @@ export default function StepSummary({ account, message: messageData }: StepProps
 export function StepSummaryFooter({ transitionTo }: StepProps) {
   return (
     <Box horizontal justifyContent="flex-end">
-      <Button
+      <ButtonV3
         onClick={() => {
           transitionTo("sign");
         }}
-        primary
+        variant="main"
       >
         <Trans i18nKey="common.continue" />
-      </Button>
+      </ButtonV3>
     </Box>
   );
 }

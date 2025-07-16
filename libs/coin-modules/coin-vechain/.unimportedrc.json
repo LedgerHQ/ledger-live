@@ -21,6 +21,7 @@
     "src/bridge/createTransaction.ts",
     "src/bridge/estimateMaxSpendable.ts",
     "src/bridge/getTransactionStatus.ts",
+    "src/bridge/helpers.ts",
     "src/bridge/index.ts",
     "src/bridge/prepareTransaction.ts",
     "src/bridge/signOperation.ts",

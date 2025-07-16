@@ -2,7 +2,7 @@ import URL from "url";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
-import { APIAccount, APIBlock, APIOperation } from "./types";
+import { APIAccount, APIBlock, APIOperation, AccountsGetOperationsOptions } from "./types";
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -36,11 +36,7 @@ const api = {
   // https://api.tzkt.io/#operation/Accounts_GetOperations
   async getAccountOperations(
     address: string,
-    query: {
-      lastId?: number;
-      sort?: number;
-      limit?: number;
-    },
+    query: AccountsGetOperationsOptions,
   ): Promise<APIOperation[]> {
     // Remove undefined from query
     Object.entries(query).forEach(
@@ -56,10 +52,7 @@ const api = {
   },
 };
 
-const sortOperation = {
-  ascending: 0,
-  descending: 1,
-};
+// TODO this has same purpose as api/listOperations
 export const fetchAllTransactions = async (
   address: string,
   lastId?: number,
@@ -69,7 +62,8 @@ export const fetchAllTransactions = async (
   do {
     const newOps = await api.getAccountOperations(address, {
       lastId,
-      sort: sortOperation.ascending,
+      sort: "Ascending",
+      "level.ge": 0,
     });
     if (newOps.length === 0) return ops;
     ops = ops.concat(newOps);

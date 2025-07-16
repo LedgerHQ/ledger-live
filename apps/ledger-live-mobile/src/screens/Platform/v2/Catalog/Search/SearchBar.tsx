@@ -24,6 +24,7 @@ export function SearchBar({
           onChange={onChange}
           placeholder={t("common.searchProvider")}
           onFocus={onFocus}
+          autoCorrect={false}
         />
       </Flex>
     </>

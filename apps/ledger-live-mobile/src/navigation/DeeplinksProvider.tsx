@@ -15,7 +15,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import * as Sentry from "@sentry/react-native";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
@@ -24,10 +23,15 @@ import { useGeneralTermsAccepted } from "~/logic/terms";
 import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
-import { setEarnInfoModal } from "~/actions/earn";
+import {
+  makeSetEarnInfoModalAction,
+  makeSetEarnMenuModalAction,
+  makeSetEarnProtocolInfoModalAction,
+} from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
-const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+import { navigationIntegration } from "../sentry";
+import { OptionMetadata } from "~/reducers/types";
 const TRACKING_EVENT = "deeplink_clicked";
 
 const themes: {
@@ -258,6 +262,7 @@ const linkingOptions = () => ({
                *
                */
               [ScreenName.GenericLandingPage]: "landing-page",
+              [ScreenName.LargeMoverLandingPage]: "landing-page-large-mover",
             },
           },
 
@@ -592,19 +597,38 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") ?? "";
-              const messageTitle = searchParams.get("messageTitle") ?? "";
-              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
-
-              dispatch(
-                setEarnInfoModal({
-                  message,
-                  messageTitle,
-                  learnMoreLink,
-                }),
-              );
-              return;
+            switch (searchParams.get("action")) {
+              case "info-modal": {
+                const message = searchParams.get("message") ?? "";
+                const messageTitle = searchParams.get("messageTitle") ?? "";
+                const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
+                dispatch(
+                  makeSetEarnInfoModalAction({
+                    message,
+                    messageTitle,
+                    learnMoreLink,
+                  }),
+                );
+                return;
+              }
+              case "menu-modal": {
+                const title = searchParams.get("title") ?? "";
+                const options = searchParams.get("options") ?? "";
+                dispatch(
+                  makeSetEarnMenuModalAction({
+                    title,
+                    options: JSON.parse(options) as {
+                      label: string;
+                      metadata: OptionMetadata;
+                    }[],
+                  }),
+                );
+                return;
+              }
+              case "protocol-info-modal": {
+                dispatch(makeSetEarnProtocolInfoModalAction(true));
+                return;
+              }
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
@@ -674,7 +698,7 @@ export const DeeplinksProvider = ({
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
         setTimeout(() => SplashScreen.hide(), 300);
-        routingInstrumentation.registerNavigationContainer(navigationRef);
+        navigationIntegration.registerNavigationContainer(navigationRef);
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-name: "[Release] Create Branch"
+name: "[Release] - Start Release - Manual"
 
 on:
   workflow_dispatch:
@@ -37,16 +37,19 @@ jobs:
         run: pnpm build:libs
       - name: import CAL tokens
         run: pnpm import:cal-tokens
+      - name: Push branch
+        run: git push -u origin $RELEASE_BRANCH
+      - name: Add changed files
+        run: |
+          git add .
       - name: commit new tokens
-        run: |
-          git add .
-          git commit -m 'chore(prerelease) update cryptoassets' || echo "No new tokens added"
-      - name: update sortByMarketcap snapshot
-        run: pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
-      - name: commit sortByMarketcap.test.ts
-        run: |
-          git add .
-          git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(prerelease) update cryptoassets [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ env.RELEASE_BRANCH }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -56,17 +59,52 @@ jobs:
           to_level: minor
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
-      - name: commit
+      - name: Add changed files
         run: |
+          git stash
+          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
+          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
+          git stash pop
           git add .
-          git commit -m "chore(prerelease): :rocket: entering prerelease mode"
+      - name: commit
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(prerelease): :rocket: entering prerelease mode"
+          repo: ${{ github.repository }}
+          branch: ${{ env.RELEASE_BRANCH }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Get date
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-      - name: push
+      - name: create PR
         run: |
-          git push origin $RELEASE_BRANCH
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  create-release-fail:
+    name: Create Release > Failure Reporting
+    needs: create-release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Create Release failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Create Release failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

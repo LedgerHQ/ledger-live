@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, Pressable } from "react-native";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import Config from "react-native-config";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -11,8 +11,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { TrackScreen } from "~/analytics";
-
-import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
@@ -25,7 +23,23 @@ import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
-import { CantCreateAccountAlert } from "./components/CanCreateAccountAlert";
+import { useRoute } from "@react-navigation/core";
+import { ScanDeviceAccountsNavigationProps } from "./types";
+import useAnalytics from "LLM/hooks/useAnalytics";
+
+const StyledPressable = styled(Pressable)`
+  border-width: 1px;
+  border-style: dotted;
+  border-color: ${({ theme }) => theme.colors.opacityDefault.c10};
+  padding: 16px;
+  margin-vertical: 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 12px;
+`;
 
 function ScanDeviceAccounts() {
   const { colors } = useTheme();
@@ -34,11 +48,14 @@ function ScanDeviceAccounts() {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+  const { t } = useTranslation();
+  const route = useRoute<ScanDeviceAccountsNavigationProps["route"]>();
+  const { context, sourceScreenName } = route.params || {};
+
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
   const {
-    alreadyEmptyAccount,
     cantCreateAccount,
-    CustomNoAssociatedAccounts,
     error,
     importAccounts,
     newAccountSchemes,
@@ -63,13 +80,13 @@ function ScanDeviceAccounts() {
   } = useScanDeviceAccountsViewModel({
     existingAccounts,
     blacklistedTokenIds,
+    analyticsMetadata,
   });
 
-  const emptyTexts = {
-    creatable: alreadyEmptyAccount ? null : CustomNoAssociatedAccounts ? null : (
-      <CantCreateAccountAlert currencyName={currency.name} />
-    ),
-  };
+  const pageTrackingEvent =
+    sections?.length === 0
+      ? analyticsMetadata.ScanDeviceAccounts?.onAccessScreen
+      : analyticsMetadata.AccountsFound?.onAccessScreen;
 
   return (
     <SafeAreaView
@@ -80,9 +97,8 @@ function ScanDeviceAccounts() {
         },
       ]}
     >
-      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
+      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-
       {scanning || !scannedAccounts.length ? (
         <Flex px={6} style={styles.headerTitle}>
           <Text
@@ -108,7 +124,6 @@ function ScanDeviceAccounts() {
           </Flex>
         )
       )}
-
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
@@ -145,7 +160,6 @@ function ScanDeviceAccounts() {
                 onSelectAll={!selectable || id === "creatable" ? undefined : selectAll}
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
-                emptyState={emptyTexts[id as keyof typeof emptyTexts]}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
                 style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
@@ -160,13 +174,12 @@ function ScanDeviceAccounts() {
                       />
                     ) : null
                   ) : (
-                    <Button
-                      event={"AddAccountsMoreAddressType"}
-                      type="secondary"
-                      title={<Trans i18nKey="addAccounts.showMoreChainType" />}
-                      onPress={viewAllCreatedAccounts}
-                      IconRight={() => <Icons.ChevronDown size="L" color="primary.c10" />}
-                    />
+                    <StyledPressable onPress={viewAllCreatedAccounts}>
+                      <Text variant="large" fontWeight="semiBold">
+                        {t("addAccounts.showMoreChainType")}
+                      </Text>
+                      <Icons.ChevronDown size="S" color="neutral.c100" />
+                    </StyledPressable>
                   )}
                 </View>
               ) : null}
@@ -224,7 +237,6 @@ const styles = StyleSheet.create({
   innerContent: {
     paddingBottom: 24,
     backgroundColor: "transparent",
-    flex: 1,
   },
   button: {
     flex: 1,

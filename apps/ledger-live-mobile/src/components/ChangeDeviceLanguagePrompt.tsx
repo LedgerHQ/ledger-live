@@ -20,12 +20,12 @@ type Images = {
 };
 const images: Images = {
   stax: {
-    light: require("~/images/illustration/Light/Device/Stax.png"),
-    dark: require("~/images/illustration/Dark/Device/Stax.png"),
+    light: require("~/images/illustration/Light/Device/Stax.webp"),
+    dark: require("~/images/illustration/Dark/Device/Stax.webp"),
   },
   nanoX: {
-    light: require("~/images/illustration/Light/Device/XFolded.png"),
-    dark: require("~/images/illustration/Dark/Device/XFolded.png"),
+    light: require("~/images/illustration/Light/Device/XFolded.webp"),
+    dark: require("~/images/illustration/Dark/Device/XFolded.webp"),
   },
 };
 

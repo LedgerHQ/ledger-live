@@ -6,7 +6,7 @@ import {
   memberCredentialsSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useMutation } from "@tanstack/react-query";
-import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";

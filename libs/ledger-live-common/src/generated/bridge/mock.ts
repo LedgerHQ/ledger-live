@@ -3,9 +3,9 @@ import bitcoin from "../../families/bitcoin/bridge/mock";
 import cardano from "../../families/cardano/bridge/mock";
 import casper from "../../families/casper/bridge/mock";
 import cosmos from "../../families/cosmos/bridge/mock";
-import elrond from "../../families/elrond/bridge/mock";
 import evm from "../../families/evm/bridge/mock";
 import icon from "../../families/icon/bridge/mock";
+import multiversx from "../../families/multiversx/bridge/mock";
 import polkadot from "../../families/polkadot/bridge/mock";
 import solana from "../../families/solana/bridge/mock";
 import stellar from "../../families/stellar/bridge/mock";
@@ -19,9 +19,9 @@ export default {
   cardano,
   casper,
   cosmos,
-  elrond,
   evm,
   icon,
+  multiversx,
   polkadot,
   solana,
   stellar,

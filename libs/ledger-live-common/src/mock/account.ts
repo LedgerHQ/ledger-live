@@ -14,9 +14,10 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import { TezosAccount } from "@ledgerhq/coin-tezos/types/index";
-import { TronAccount } from "@ledgerhq/coin-tron/types";
+import { TronAccount } from "@ledgerhq/coin-tron/types/index";
 import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";
+import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 
 /**
  * @memberof mock/account
@@ -47,6 +48,12 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
     opts,
     (account: Account, currency: CryptoCurrency, address: string) => {
       switch (currency.family) {
+        case "solana":
+          (account as SolanaAccount).solanaResources = {
+            stakes: [],
+            unstakeReserve: new BigNumber(0),
+          };
+          break;
         case "cosmos":
           (account as CosmosAccount).cosmosResources = {
             // TODO variation in these
@@ -109,7 +116,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             energy: BigNumber(0),
             bandwidth: {
               freeUsed: BigNumber(0),
-              freeLimit: BigNumber(1),
+              freeLimit: BigNumber(opts.bandwidth ? 1 : 0),
               gainedUsed: BigNumber(0),
               gainedLimit: BigNumber(0),
             },
@@ -126,6 +133,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               poolId: "45",
               ticker: "ADA",
               name: "Cardano",
+              dRepHex: undefined,
               rewards: new BigNumber(42),
             },
             externalCredentials: [
@@ -178,6 +186,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               maxTxSize: "",
               maxValueSize: "",
               utxoCostPerByte: "",
+              minFeeRefScriptCostPerByte: "",
               languageView: {} as types.LanguageView,
             },
           };

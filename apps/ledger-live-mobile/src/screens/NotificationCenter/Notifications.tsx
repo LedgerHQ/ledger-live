@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
-
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "~/dynamicContent/types";
@@ -147,34 +147,36 @@ export default function NotificationCenter() {
     );
   };
 
-  const ListItem = (item: NotificationContentCard) => {
-    const time = getTime(item.createdAt);
-    const hasLink = !!item.link && !!item.cta;
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
+
+  const ListItem = (card: NotificationContentCard) => {
+    const time = getTime(card.createdAt);
+    const hasLink = !!card.link && !!card.cta;
 
     return (
       <Swipeable
-        key={item.id}
-        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, item)}
+        key={card.id}
+        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, card)}
         ref={ref => {
-          if (ref && !rowRefs.get(item.id)) {
-            rowRefs.set(item.id, ref);
+          if (ref && !rowRefs.get(card.id)) {
+            rowRefs.set(card.id, ref);
           }
         }}
         onBegan={() => {
           // Close row when starting swipe another
           [...rowRefs.entries()].forEach(([id, ref]) => {
-            if (id !== item.id && ref) ref.close();
+            if (id !== card.id && ref) ref.close();
           });
         }}
       >
         <Box py={7} px={6} zIndex={4} bg="background.main">
           <NotificationCard
-            onClickCard={() => onClickCard(item)}
+            onClickCard={() => onClickCard(card)}
             time={t(`notificationCenter.news.time.${time[1]}`, {
               count: time[0],
             })}
             showLinkCta={hasLink}
-            {...item}
+            {...card}
           />
         </Box>
       </Swipeable>
@@ -204,30 +206,30 @@ export default function NotificationCenter() {
         />
       }
     >
-      <FlatList<NotificationContentCard>
+      <FlatList
         data={notificationCards}
-        keyExtractor={(card: NotificationContentCard) => card.id}
+        keyExtractor={({ id }) => id}
         renderItem={elem => ListItem(elem.item)}
+        ListHeaderComponent={<LNSUpsellBanner location="notification_center" mx={6} my={5} />}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         onViewableItemsChanged={handleViewableItemsChanged}
-        ListEmptyComponent={
-          <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
-            <Text
-              variant="large"
-              fontWeight="semiBold"
-              color="neutral.c100"
-              mb={3}
-              textAlign="center"
-            >
-              {t("notificationCenter.news.emptyState.title")}
-            </Text>
-            <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
-              {t("notificationCenter.news.emptyState.desc")}
-            </Text>
-          </Flex>
-        }
+        ListEmptyComponent={isLNSUpsellBannerShown ? null : <EmptyComponent />}
       />
     </Container>
+  );
+}
+
+function EmptyComponent() {
+  const { t } = useTranslation();
+  return (
+    <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
+      <Text variant="large" fontWeight="semiBold" color="neutral.c100" mb={3} textAlign="center">
+        {t("notificationCenter.news.emptyState.title")}
+      </Text>
+      <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
+        {t("notificationCenter.news.emptyState.desc")}
+      </Text>
+    </Flex>
   );
 }

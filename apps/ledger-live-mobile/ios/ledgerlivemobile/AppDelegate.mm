@@ -7,6 +7,8 @@
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
 #import <Firebase.h>
+#import "RNSplashScreen.h"
+#import <MMKV/MMKV.h>
 
 
 @implementation AppDelegate
@@ -19,7 +21,9 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  
+  [MMKV initializeMMKV:nil];
+  
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
@@ -69,18 +73,12 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
     return NO;
   }
 
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
+  BOOL isRunningDetox = [[[NSProcessInfo processInfo] arguments] containsObject:@"-IS_TEST"];
 
- if (rootView) {
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:[NSBundle mainBundle]];
-  UIViewController *vc = [sb instantiateInitialViewController];
-  rootView.loadingView = vc.view;
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-}
+  if(isRunningDetox) return YES;
+
+  UIView *rootView = self.window.rootViewController.view;
+  [RNSplashScreen show];
 
   return YES;
 }

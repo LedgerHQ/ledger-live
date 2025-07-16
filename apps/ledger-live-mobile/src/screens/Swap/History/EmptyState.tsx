@@ -10,7 +10,7 @@ const EmptyState = () => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <LText secondary style={styles.title}>
+      <LText secondary style={styles.title} testID="swap-history-empty-title">
         <Trans i18nKey="transfer.swap.history.empty.title" />
       </LText>
       <LText style={styles.desc} color="grey">

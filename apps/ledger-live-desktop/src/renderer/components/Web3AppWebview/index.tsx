@@ -26,6 +26,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
       return (
         <WalletAPIWebview
+          key={manifest.id}
           manifest={manifest}
           currentAccountHistDb={currentAccountHistDb}
           inputs={inputs}
@@ -40,6 +41,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     return (
       <PlatformAPIWebview
+        key={manifest.id}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}

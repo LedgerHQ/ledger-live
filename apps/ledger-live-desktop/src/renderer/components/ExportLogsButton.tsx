@@ -2,28 +2,15 @@ import { ipcRenderer, webFrame } from "electron";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs } from "@ledgerhq/live-env";
+import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
-import logger, { memoryLogger } from "~/renderer/logger";
+import logger from "~/renderer/logger";
 import getUser from "~/helpers/user";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useTechnicalDateTimeFn } from "../hooks/useDateFormatter";
-
-const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
-  const memoryLogs = memoryLogger.getMemoryLogs();
-
-  try {
-    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
-    const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
-
-    // Requests the main process to save logs in a file
-    await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
-  } catch (error) {
-    console.error("Error while requesting to save logs from the renderer process", error);
-  }
-};
+import { saveLogs } from "~/helpers/saveLogs";
 
 type RestProps = ButtonProps & {
   icon?: boolean;
@@ -86,16 +73,26 @@ const ExportLogsBtn = ({
       },
       accountsIds: accounts.map(a => a.id),
     });
-    const path = await ipcRenderer.invoke("show-save-dialog", {
-      title: "Export logs",
-      defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.json`,
-      filters: [
-        {
-          name: "All Files",
-          extensions: ["json"],
-        },
-      ],
-    });
+
+    let path;
+    if (!getEnv("PLAYWRIGHT_RUN")) {
+      path = await ipcRenderer.invoke("show-save-dialog", {
+        title: "Export logs",
+        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+        filters: [
+          {
+            name: "All Files",
+            extensions: ["txt"],
+          },
+        ],
+      });
+    } else {
+      path = {
+        canceled: false,
+        filePath: "./ledgerlive-logs.txt",
+      };
+    }
+
     if (path) {
       await saveLogs(path);
     }
@@ -126,7 +123,14 @@ const ExportLogsBtn = ({
   return hookToShortcut ? (
     <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
   ) : (
-    <Button small={small} primary={primary} event="ExportLogs" onClick={handleExportLogs} {...rest}>
+    <Button
+      data-testid="export-logs-button"
+      small={small}
+      primary={primary}
+      event="ExportLogs"
+      onClick={handleExportLogs}
+      {...rest}
+    >
       {text}
     </Button>
   );

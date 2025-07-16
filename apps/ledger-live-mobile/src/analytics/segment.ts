@@ -23,14 +23,17 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
+import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
   languageSelector,
   localeSelector,
-  lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   onboardingHasDeviceSelector,
   notificationsSelector,
@@ -40,9 +43,10 @@ import {
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
-  readOnlyModeEnabledSelector,
+  seenDevicesSelector,
+  isRebornSelector,
 } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
+import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
@@ -55,7 +59,7 @@ import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
-import { getEnv } from "@ledgerhq/live-env";
+import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -77,6 +81,9 @@ const getFeatureFlagProperties = () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
     const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+
+    const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -87,22 +94,29 @@ const getFeatureFlagProperties = () => {
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
-    const stakingCurrenciesEnabled =
+    const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
+
+    const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
-        ? Object.fromEntries(
-            stakePrograms.params.list.map((currencyId: string) => [
-              `feature_earn_${currencyId}_enabled`,
-              true,
-            ]),
-          )
-        : {};
+        ? stakePrograms.params.list
+        : "flag not loaded";
+    const partnerStakingCurrenciesEnabled: string[] | string =
+      stakePrograms?.enabled && stakePrograms?.params?.redirects
+        ? Object.keys(stakePrograms.params.redirects)
+        : "flag not loaded";
+
+    const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
-      ...stakingCurrenciesEnabled,
+      ptxCard: ptxCard?.enabled,
+      stablecoinYield,
+      stakingCurrenciesEnabled,
+      partnerStakingCurrenciesEnabled,
+      ptxSwapLiveAppMobileEnabled,
     });
   })();
 };
@@ -124,10 +138,11 @@ const getLedgerSyncAttributes = (state: State) => {
 const getRebornAttributes = () => {
   if (!analyticsFeatureFlagMethod) return false;
   const reborn = analyticsFeatureFlagMethod("llmRebornLP");
+  const isFFEnabled = reborn?.enabled;
 
   return {
-    llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
-    llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+    llmRebornLP_A: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantA : false,
+    llmRebornLP_B: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantB : false,
   };
 };
 
@@ -139,6 +154,15 @@ const getMEVAttributes = (state: State) => {
 
   return {
     MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+  };
+};
+
+const getNewAddAccountsAttribues = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
+
+  return {
+    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
   };
 };
 
@@ -169,10 +193,17 @@ const extraProperties = async (store: AppStore) => {
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
-  const devices = knownDevicesSelector(state);
+  const devices = seenDevicesSelector(state);
+  const bleDevices = bleDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice = lastSeenDeviceSelector(state) || devices[devices.length - 1];
+  const lastDevice = devices.at(-1) || bleDevices.at(-1);
+  const ldmkTransport = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -186,13 +217,17 @@ const extraProperties = async (store: AppStore) => {
     : {};
 
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
-  const isReborn = readOnlyModeEnabledSelector(state);
+  const isReborn = isRebornSelector(state);
+
   const notifications = notificationsSelector(state);
+  const hasEnabledOsNotifications = await getIsNotifEnabled();
+
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
+    hasEnabledOsNotifications,
   };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
@@ -206,6 +241,7 @@ const extraProperties = async (store: AppStore) => {
         ),
       ]
     : [];
+
   const blockchainsWithNftsOwned = accounts
     ? [
         ...new Set(
@@ -222,9 +258,29 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+  const stakePrograms = analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("stakePrograms");
+  const stakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length ? stakePrograms.params.list : [];
+  const partnerStakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects)
+      : [];
+
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
-  const mevProtectionAtributes = getMEVAttributes(state);
+  const mevProtectionAttributes = getMEVAttributes(state);
+  const addAccountsAttributes = getNewAddAccountsAttribues();
+  const tokenWithFunds = getTokensWithFunds(accounts);
+  const migrationToMMKV = getMigrationUserProps();
+
+  // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
+  // So device counts is approximated as follows:
+  // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
+  const seenBleModels = bleDevices.map(d => d.modelId);
+  const usbDeviceModelSeen = devices.filter(d => !seenBleModels.includes(d.modelId));
+  const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
+  const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
 
   return {
     ...mandatoryProperties,
@@ -232,6 +288,7 @@ const extraProperties = async (store: AppStore) => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
+    platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     appLanguage: language, // In Braze it can't be called language
@@ -239,8 +296,8 @@ const extraProperties = async (store: AppStore) => {
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
-    devicesCount: devices.length,
-    modelIdQtyList: aggregateData(devices),
+    devicesCount,
+    modelIdQtyList,
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,
@@ -261,9 +318,17 @@ const extraProperties = async (store: AppStore) => {
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    stablecoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
-    ...mevProtectionAtributes,
+    ...mevProtectionAttributes,
+    ...addAccountsAttributes,
+    migrationToMMKV,
+    tokenWithFunds,
+    isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
   };
 };
 

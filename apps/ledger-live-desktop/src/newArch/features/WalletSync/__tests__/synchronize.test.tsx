@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "tests/testUtils";
+import { render, screen, act } from "tests/testSetup";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
 import { WalletSyncTestApp, simpleTrustChain, walletSyncActivatedState } from "./shared";
 

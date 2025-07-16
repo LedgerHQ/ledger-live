@@ -10,11 +10,12 @@ import { Trans, useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { setLanguage } from "~/actions/settings";
 import { useLocale } from "~/context/Locale";
-import { languages, supportedLocales, Locale } from "../../languages";
+import { languages, Locale } from "../../languages";
 import { updateIdentify, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import i18next from "i18next";
 import Button from "~/components/Button";
+import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 
 type UiDrawerStatus = "none" | "language-selection" | "firmware-language-update";
 
@@ -32,6 +33,7 @@ const LanguageSelect = () => {
   const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
+  const supportedLocales = useSupportedLocales();
 
   // Will be computed depending on the states. Updating nextDrawerToDisplay
   // triggers the current displayed drawer to close

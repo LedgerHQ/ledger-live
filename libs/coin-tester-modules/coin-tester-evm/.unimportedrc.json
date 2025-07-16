@@ -1,0 +1,5 @@
+{
+  "ignoreUnresolved": ["ansi-styles", "supports-color"],
+  "ignoreUnused": ["dotenv"],
+  "ignoreUnimported": []
+}

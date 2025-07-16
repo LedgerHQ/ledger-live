@@ -17,6 +17,7 @@ import {
 import { NavigatorName, ScreenName } from "~/const";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const CustomLockScreen: React.FC<{
   device: Device;
@@ -53,6 +54,7 @@ const CustomLockScreen: React.FC<{
             params: {
               device,
               deviceModelId,
+              referral: HOOKS_TRACKING_LOCATIONS.myLedgerDashboard,
             },
           }),
     [device, hasCompletedCustomImageFlow, navigation, deviceModelId],

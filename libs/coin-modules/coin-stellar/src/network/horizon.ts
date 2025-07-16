@@ -32,19 +32,26 @@ import {
   getReservedBalance,
   rawOperationsToOperations,
 } from "./serialization";
+import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
-let server: Horizon.Server | undefined;
-const getServer = () => {
-  if (!server) {
-    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
+
+// Horizon client instance is cached to avoid costly rebuild at every request
+// Watch out: cache key is the URL, coin module can be instantiated several times with different URLs
+const servers = new Map<string, Horizon.Server>();
+function getServer(): Horizon.Server {
+  const url = coinConfig.getCoinConfig().explorer.url;
+  let server = servers.get(url);
+  if (server === undefined) {
+    server = new Horizon.Server(url);
+    servers.set(url, server);
   }
   return server;
-};
+}
 
 // Constants
 export const BASE_RESERVE = 0.5;
@@ -183,37 +190,36 @@ export async function fetchAccount(addr: string): Promise<{
 }
 
 /**
- * Fetch all operations for a single account from indexer
+ * Fetch operations for a single account from indexer
  *
  * @param {string} accountId
  * @param {string} addr
  * @param {string} order - "desc" or "asc" order of returned records
  * @param {string} cursor - point to start fetching records
+ * @param {number} maxOperations - maximum number of operations to return, stops fetching after reaching this threshold
  *
  * @return {Operation[]}
  */
-export async function fetchAllOperations({
-  accountId,
-  addr,
-  order,
-  cursor = "0",
-}: {
-  accountId: string;
-  addr: string;
-  order: "asc" | "desc";
-  cursor: string | undefined;
-}): Promise<StellarOperation[]> {
+export async function fetchAllOperations(
+  accountId: string,
+  addr: string,
+  order: "asc" | "desc",
+  cursor: string = "",
+  maxOperations?: number,
+): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
 
+  const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
   let operations: StellarOperation[] = [];
+  let fetchedOpsCount = limit;
 
   try {
     let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT)
+      .limit(limit)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
@@ -225,13 +231,23 @@ export async function fetchAllOperations({
     }
 
     operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId, 0),
     );
 
     while (rawOperations.records.length > 0) {
+      if (maxOperations && fetchedOpsCount >= maxOperations) {
+        break;
+      }
+      fetchedOpsCount += limit;
+
       rawOperations = await rawOperations.next();
       operations = operations.concat(
-        await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+        await rawOperationsToOperations(
+          rawOperations.records as RawOperation[],
+          addr,
+          accountId,
+          0,
+        ),
       );
     }
 
@@ -265,21 +281,25 @@ export async function fetchAllOperations({
   }
 }
 
+// https://developers.stellar.org/docs/data/horizon/api-reference/get-operations-by-account-id
 export async function fetchOperations({
   accountId,
   addr,
+  minHeight,
   order,
-  cursor = "0",
+  cursor,
   limit,
 }: {
   accountId: string;
   addr: string;
+  minHeight: number;
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<StellarOperation[]> {
+}): Promise<[StellarOperation[], string]> {
+  const noResult: [StellarOperation[], string] = [[], ""];
   if (!addr) {
-    return [];
+    return noResult;
   }
 
   const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
@@ -290,29 +310,39 @@ export async function fetchOperations({
       .forAccount(addr)
       .limit(limit ?? defaultFetchLimit)
       .order(order)
-      .cursor(cursor)
+      .cursor(cursor ?? "")
       .includeFailed(true)
       .join("transactions")
       .call();
 
     if (!rawOperations || !rawOperations.records.length) {
-      return [];
+      return noResult;
     }
 
-    return rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId);
+    const rawOps = rawOperations.records as RawOperation[];
+    const filteredOps = await rawOperationsToOperations(rawOps, addr, accountId, minHeight);
+
+    // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
+    const nextCursor =
+      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+
+    return [filteredOps, nextCursor];
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    // update 2025-04-01: in case of NetworkError, the error.response fields are undefined. Hence we cannot rely on status code
+    // the only way to check is the errror message, which may break at some point
     const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
-      return [];
+      return noResult;
     }
-
+    if (errorMsg.match(/too many requests/i)) {
+      throw new LedgerAPI4xx("status code 4xx", { status: 429, url: undefined, method: "GET" });
+    }
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
       throw new LedgerAPI4xx();
     }
-
     if (errorMsg.match(/status code 5[0-9]{2}/)) {
       throw new LedgerAPI5xx();
     }
@@ -367,7 +397,10 @@ export async function fetchSigners(account: Account): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
+  patchHermesTypedArraysIfNeeded();
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+  // Immediately restore
+  unpatchHermesTypedArrays();
   const res = await getServer().submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });

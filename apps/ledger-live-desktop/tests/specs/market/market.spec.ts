@@ -147,7 +147,7 @@ test("Market", async ({ page }) => {
   });
 
   await test.step("change market range", async () => {
-    await marketPage.switchMarketRange("7d");
+    await marketPage.switchMarketRange("1W");
     await marketPage.waitForLoadingWithSwapbtn();
     await expect
       .soft(page)

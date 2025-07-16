@@ -1,5 +1,53 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.10.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+## 0.9.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+## 0.8.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+## 0.7.0
+
+### Minor Changes
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
 ## 0.6.2
 
 ### Patch Changes

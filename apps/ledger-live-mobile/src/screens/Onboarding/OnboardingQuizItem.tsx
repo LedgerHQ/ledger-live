@@ -4,8 +4,8 @@ import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button/in
 import { Image, ImageSourcePropType } from "react-native";
 import Button from "~/components/PreventDoubleClickButton";
 
-import successImage from "~/images/illustration/Light/_053.png";
-import failImage from "~/images/illustration/Light/_054.png";
+import successImage from "~/images/illustration/Light/_053.webp";
+import failImage from "~/images/illustration/Light/_054.webp";
 
 type Answer = {
   answer: string;

@@ -1,6 +1,8 @@
-name: Build and Test External
+name: "[EXT-All Platforms] - Build and Test (External) - PR"
 on:
   pull_request:
+  merge_group:
+    types: [checks_requested]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -22,7 +24,7 @@ jobs:
 
   # External from Fork branches
   build-desktop-external:
-    name: "[External] Build Desktop"
+    name: "Build Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
@@ -32,7 +34,7 @@ jobs:
     secrets: inherit
 
   test-desktop-external:
-    name: "[External] Test Desktop"
+    name: "Test Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
@@ -42,7 +44,7 @@ jobs:
     secrets: inherit
 
   build-mobile-external:
-    name: "[External] Build Mobile"
+    name: "Build Mobile (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
@@ -52,6 +54,7 @@ jobs:
     secrets: inherit
 
   # Final Check required
+  # @todo: Change OK step
   ok:
     name: "OK External"
     needs:

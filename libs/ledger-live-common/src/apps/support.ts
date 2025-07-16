@@ -33,7 +33,9 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
     `config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`,
   )?.minVersion;
   if (minVersion) {
-    return !semver.gte(appVersion || "", minVersion, {
+    // necessary when using test versions on other providers that often end up on -dev
+    const appVersionCoerced = semver.coerce(appVersion);
+    return !semver.gte(appVersionCoerced || "", minVersion, {
       includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
     });
   }

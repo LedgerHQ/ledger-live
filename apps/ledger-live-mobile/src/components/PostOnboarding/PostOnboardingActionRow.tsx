@@ -10,6 +10,7 @@ import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnb
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
@@ -51,7 +52,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const handlePress = () => {
     if ("getNavigationParams" in props) {
-      navigation.navigate(...props.getNavigationParams({ deviceModelId, protectId }));
+      navigation.navigate(
+        ...props.getNavigationParams({
+          deviceModelId,
+          protectId,
+          referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+        }),
+      );
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", {
           button: buttonLabelForAnalyticsEvent,

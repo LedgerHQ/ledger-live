@@ -1,4 +1,3 @@
-import { getElementById, tapByElement } from "../../helpers";
 import { ScreenName, NavigatorName } from "../../../src/const";
 
 export default class WalletTabNavigatorPage {

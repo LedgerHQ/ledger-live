@@ -33,7 +33,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
           fontWeight="semiBold"
           numberOfLines={1}
           color="neutral.c100"
-          testID={`big-currency-name-${currency.name.toLowerCase()}`}
+          testID={`big-currency-name-${currency.id}`}
         >
           {currency.name}
         </Text>

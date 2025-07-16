@@ -30,7 +30,12 @@ export default function useSelectDeviceViewModel(
       setDevice(null);
 
       const { inline } = route.params;
-      const params = { ...route.params, ...meta, context };
+      const params = {
+        ...route.params,
+        ...meta,
+        context,
+        sourceScreenName: ScreenName.SelectDevice,
+      };
       if (inline) {
         navigation.replace(NavigatorName.AddAccounts, {
           screen: ScreenName.ScanDeviceAccounts,

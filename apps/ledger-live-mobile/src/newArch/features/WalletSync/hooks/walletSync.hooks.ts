@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
-import { AnalyticsEvents } from "~/newArch/features/Analytics/enums";
+import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";

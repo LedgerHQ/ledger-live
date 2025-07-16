@@ -349,7 +349,13 @@ export default class BtcNew {
   private async setInput(
     psbt: PsbtV2,
     i: number,
-    input: [Transaction, number, string | null | undefined, number | null | undefined],
+    input: [
+      Transaction,
+      number,
+      string | null | undefined,
+      number | null | undefined,
+      (number | null | undefined)?,
+    ],
     pathElements: number[],
     accountType: AccountType,
     masterFP: Buffer,

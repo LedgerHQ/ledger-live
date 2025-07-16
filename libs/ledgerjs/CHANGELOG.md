@@ -1,5 +1,17 @@
 # ledger-libs
 
+## 0.2.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
 ## 0.1.5
 
 ### Patch Changes

@@ -32,34 +32,36 @@
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
       "dismissedDynamicCards": [],
-      "lastSeenDevice": {
-        "modelId": "nanoX",
-        "deviceInfo": {
-          "version": "2.0.2",
-          "mcuVersion": "2.30",
-          "seVersion": "2.0.2",
-          "majMin": "2.0",
-          "providerName": null,
-          "targetId": 855638020,
-          "seTargetId": 855638020,
-          "isOSU": false,
-          "isBootloader": false,
-          "isRecoveryMode": false,
-          "managerAllowed": false,
-          "pinValidated": true,
-          "onboarded": true
-        },
-        "apps": [
-          {
-            "name": "Bitcoin",
-            "version": "2.0.1"
+      "seenDevices": [
+        {
+          "modelId": "nanoX",
+          "deviceInfo": {
+            "version": "2.0.2",
+            "mcuVersion": "2.30",
+            "seVersion": "2.0.2",
+            "majMin": "2.0",
+            "providerName": null,
+            "targetId": 855638020,
+            "seTargetId": 855638020,
+            "isOSU": false,
+            "isBootloader": false,
+            "isRecoveryMode": false,
+            "managerAllowed": false,
+            "pinValidated": true,
+            "onboarded": true
           },
-          {
-            "name": "Ethereum",
-            "version": "1.9.17"
-          }
-        ]
-      },
+          "apps": [
+            {
+              "name": "Bitcoin",
+              "version": "2.0.1"
+            },
+            {
+              "name": "Ethereum",
+              "version": "1.9.17"
+            }
+          ]
+        }
+      ],
       "latestFirmware": null,
       "blacklistedTokenIds": [],
       "deepLinkUrl": null,

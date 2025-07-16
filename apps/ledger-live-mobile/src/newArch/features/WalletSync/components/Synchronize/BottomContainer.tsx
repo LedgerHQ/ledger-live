@@ -50,7 +50,9 @@ const BottomContainer = ({ steps }: Props) => {
                 {index + 1}
               </Text>
             </BulletPoint>
-            <Flex flex={1}>{step.description}</Flex>
+            <Flex flex={1} mr={4}>
+              {step.description}
+            </Flex>
           </FlexContainer>
         ))}
       </Flex>

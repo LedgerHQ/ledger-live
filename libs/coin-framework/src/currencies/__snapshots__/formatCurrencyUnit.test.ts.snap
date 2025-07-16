@@ -10,7 +10,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Aptos unit (APT) 1`] = `"123.456.789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -24,9 +24,11 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -46,7 +48,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -102,9 +104,9 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -170,7 +172,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -183,6 +185,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -216,7 +220,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -238,7 +242,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -260,7 +264,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -278,6 +282,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stakenet unit (xsn) 1`] = `"123.456.789,00000000- -XSN"`;
@@ -290,6 +298,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
@@ -300,7 +310,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TomoChain unit (TOMO) 1`] = `"123.456.789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Tron unit (TRX) 1`] = `"12.345.678.900,000000- -TRX"`;
 
@@ -324,7 +334,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -350,7 +360,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Aptos unit (APT) 1`] = `"123,456,789.00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -364,9 +374,11 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -386,7 +398,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Bittorent Chain unit (BTT) 1`] = `"0.012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Blast unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -442,9 +454,9 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -510,7 +522,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Linea unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -523,6 +535,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -556,7 +570,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
@@ -578,7 +592,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -600,7 +614,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Rootstock unit (RBTC) 1`] = `"0.012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Scroll unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -618,6 +632,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
@@ -630,6 +648,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
@@ -640,7 +660,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Thundercore unit (TT) 1`] = `"0.012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TomoChain unit (TOMO) 1`] = `"123,456,789.00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TomoChain unit (TOMO) 1`] = `"0.012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Tron unit (TRX) 1`] = `"12,345,678,900.000000- -TRX"`;
 
@@ -664,7 +684,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -690,7 +710,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Aptos unit (APT) 1`] = `"123.456.789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -704,9 +724,11 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -726,7 +748,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -782,9 +804,9 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -850,7 +872,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -863,6 +885,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -896,7 +920,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -918,7 +942,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -940,7 +964,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -958,6 +982,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stakenet unit (xsn) 1`] = `"123.456.789,00000000- -XSN"`;
@@ -970,6 +998,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
@@ -980,7 +1010,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TomoChain unit (TOMO) 1`] = `"123.456.789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Tron unit (TRX) 1`] = `"12.345.678.900,000000- -TRX"`;
 
@@ -1004,7 +1034,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1030,7 +1060,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Aptos unit (APT) 1`] = `"123 456 789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1044,9 +1074,11 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1066,7 +1098,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1122,9 +1154,9 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1190,7 +1222,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format LBRY unit (LBRY) 2`] = `"123 456 789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1203,6 +1235,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
 
@@ -1236,7 +1270,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -1258,7 +1292,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1280,7 +1314,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1298,6 +1332,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stacks unit (STX) 1`] = `"12 345 678 900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stakenet unit (xsn) 1`] = `"123 456 789,00000000- -XSN"`;
@@ -1310,6 +1348,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stride unit (Stride) 1`] = `"12 345 678 900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
@@ -1320,7 +1360,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TomoChain unit (TOMO) 1`] = `"123 456 789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Tron unit (TRX) 1`] = `"12 345 678 900,000000- -TRX"`;
 
@@ -1344,7 +1384,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZCoin unit (XZC) 1`] = `"123 456 789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1370,7 +1410,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Aptos unit (APT) 1`] = `"123,456,789.00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1384,9 +1424,11 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1406,7 +1448,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Bittorent Chain unit (BTT) 1`] = `"0.012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Blast unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1462,9 +1504,9 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1530,7 +1572,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Linea unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1543,6 +1585,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -1576,7 +1620,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
@@ -1598,7 +1642,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1620,7 +1664,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Rootstock unit (RBTC) 1`] = `"0.012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Scroll unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1638,6 +1682,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
@@ -1650,6 +1698,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
@@ -1660,7 +1710,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Thundercore unit (TT) 1`] = `"0.012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TomoChain unit (TOMO) 1`] = `"123,456,789.00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TomoChain unit (TOMO) 1`] = `"0.012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Tron unit (TRX) 1`] = `"12,345,678,900.000000- -TRX"`;
 
@@ -1684,7 +1734,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1710,7 +1760,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Aptos unit (APT) 1`] = `"123,456,789.00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1724,9 +1774,11 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1746,7 +1798,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Bittorent Chain unit (BTT) 1`] = `"0.012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Blast unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1802,9 +1854,9 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1870,7 +1922,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Linea unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1883,6 +1935,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -1916,7 +1970,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
@@ -1938,7 +1992,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1960,7 +2014,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Rootstock unit (RBTC) 1`] = `"0.012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Scroll unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1978,6 +2032,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
@@ -1990,6 +2048,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
@@ -2000,7 +2060,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Thundercore unit (TT) 1`] = `"0.012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TomoChain unit (TOMO) 1`] = `"123,456,789.00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TomoChain unit (TOMO) 1`] = `"0.012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Tron unit (TRX) 1`] = `"12,345,678,900.000000- -TRX"`;
 
@@ -2024,7 +2084,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -2050,7 +2110,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Aptos unit (APT) 1`] = `"123.456.789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2064,9 +2124,11 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2086,7 +2148,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2142,9 +2204,9 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2210,7 +2272,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2223,6 +2285,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -2256,7 +2320,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -2278,7 +2342,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2300,7 +2364,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2318,6 +2382,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stakenet unit (xsn) 1`] = `"123.456.789,00000000- -XSN"`;
@@ -2330,6 +2398,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
@@ -2340,7 +2410,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TomoChain unit (TOMO) 1`] = `"123.456.789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Tron unit (TRX) 1`] = `"12.345.678.900,000000- -TRX"`;
 
@@ -2364,7 +2434,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2390,7 +2460,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Aptos unit (APT) 1`] = `"123 456 789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2404,9 +2474,11 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Axelar unit (Axelar) 1`] = `"12 345 678 900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Babylon unit (Babylon) 1`] = `"12 345 678 900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2426,7 +2498,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2482,9 +2554,9 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2550,7 +2622,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format LBRY unit (LBRY) 2`] = `"123 456 789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2563,6 +2635,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mina unit (MINA) 1`] = `"12 345 678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Monero unit (XMR) 1`] = `"12 345,678900000000- -XMR"`;
 
@@ -2596,7 +2670,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -2618,7 +2692,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2640,7 +2714,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2658,6 +2732,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stacks unit (STX) 1`] = `"12 345 678 900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stakenet unit (xsn) 1`] = `"123 456 789,00000000- -XSN"`;
@@ -2670,6 +2748,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stride unit (Stride) 1`] = `"12 345 678 900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
@@ -2680,7 +2760,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TomoChain unit (TOMO) 1`] = `"123 456 789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Tron unit (TRX) 1`] = `"12 345 678 900,000000- -TRX"`;
 
@@ -2704,7 +2784,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZCoin unit (XZC) 1`] = `"123 456 789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2730,7 +2810,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Aptos unit (APT) 1`] = `"123.456.789,00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2744,9 +2824,11 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Axelar unit (Axelar) 1`] = `"12.345.678.900,000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Babylon unit (Babylon) 1`] = `"12.345.678.900,000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2766,7 +2848,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Bittorent Chain unit (BTT) 1`] = `"0,012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Blast Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Blast unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2822,9 +2904,9 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Classic unit (ETC) 1`] = `"0,012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Holesky unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethereum unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2890,7 +2972,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Linea unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2903,6 +2985,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mina unit (MINA) 1`] = `"12.345.678,900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Monero unit (XMR) 1`] = `"12.345,678900000000- -XMR"`;
 
@@ -2936,7 +3020,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format OP Mainnet unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format OP Sepolia unit (ether) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Onomy unit (Onomy) 1`] = `"0,012345678900000000- -NOM"`;
 
@@ -2958,7 +3042,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2980,7 +3064,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Rootstock unit (RBTC) 1`] = `"0,012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Scroll Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Scroll unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2998,6 +3082,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stakenet unit (xsn) 1`] = `"123.456.789,00000000- -XSN"`;
@@ -3010,6 +3098,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
@@ -3020,7 +3110,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Thundercore unit (TT) 1`] = `"0,012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TomoChain unit (TOMO) 1`] = `"123.456.789,00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TomoChain unit (TOMO) 1`] = `"0,012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Tron unit (TRX) 1`] = `"12.345.678.900,000000- -TRX"`;
 
@@ -3044,7 +3134,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZCoin unit (XZC) 1`] = `"123.456.789,00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ZKsync unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -3070,7 +3160,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Aptos unit (APT) 1`] = `"123,456,789.00000000- -APT"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3084,9 +3174,11 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900.000000- -AXL"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900.000000- -BABY"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3106,7 +3198,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Bittorent Chain unit (BTT) 1`] = `"0.012345678900000000- -BTT"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Blast Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Blast unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3162,9 +3254,9 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Classic unit (ETC) 1`] = `"0.012345678900000000- -ETC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Holesky unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethereum unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3230,7 +3322,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Linea unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3243,6 +3335,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mina unit (MINA) 1`] = `"12,345,678.900000000- -MINA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Monero unit (XMR) 1`] = `"12,345.678900000000- -XMR"`;
 
@@ -3276,7 +3370,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format OP Mainnet unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format OP Sepolia unit (ether) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Onomy unit (Onomy) 1`] = `"0.012345678900000000- -NOM"`;
 
@@ -3298,7 +3392,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3320,7 +3414,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Rootstock unit (RBTC) 1`] = `"0.012345678900000000- -RBTC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Scroll Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Scroll unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3338,6 +3432,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
@@ -3350,6 +3448,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
@@ -3360,7 +3460,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Thundercore unit (TT) 1`] = `"0.012345678900000000- -TT"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TomoChain unit (TOMO) 1`] = `"123,456,789.00000000- -TOMO"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TomoChain unit (TOMO) 1`] = `"0.012345678900000000- -TOMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Tron unit (TRX) 1`] = `"12,345,678,900.000000- -TRX"`;
 
@@ -3384,7 +3484,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZCoin unit (XZC) 1`] = `"123,456,789.00000000- -XZC"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZKsync Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ZKsync unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3423,6 +3523,8 @@ exports[`formatCurrencyUnit with default options should correctly format Atheios
 exports[`formatCurrencyUnit with default options should correctly format Avalanche C-Chain unit (AVAX) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Axelar unit (Axelar) 1`] = `"12,345,678,900"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Babylon unit (Babylon) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Banano unit (BANANO) 1`] = `"123,456,789"`;
 
@@ -3584,6 +3686,8 @@ exports[`formatCurrencyUnit with default options should correctly format Mantra 
 
 exports[`formatCurrencyUnit with default options should correctly format Metis unit (METIS) 1`] = `"0.0123456"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Mina unit (MINA) 1`] = `"12,345,678"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Monero unit (XMR) 1`] = `"12,345.6"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Moonbeam unit (GLMR) 1`] = `"0.0123456"`;
@@ -3678,6 +3782,10 @@ exports[`formatCurrencyUnit with default options should correctly format Solana 
 
 exports[`formatCurrencyUnit with default options should correctly format Songbird unit (SGB) 1`] = `"0.0123456"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Sonic Blaze unit (S) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Sonic unit (S) 1`] = `"0.0123456"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Stacks unit (STX) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Stakenet unit (xsn) 1`] = `"123,456,789"`;
@@ -3690,6 +3798,8 @@ exports[`formatCurrencyUnit with default options should correctly format Stratis
 
 exports[`formatCurrencyUnit with default options should correctly format Stride unit (Stride) 1`] = `"12,345,678,900"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Sui unit (Sui) 1`] = `"12,345,678"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Syscoin unit (SYS) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format TON unit (TON) 1`] = `"12,345,678"`;
@@ -3700,7 +3810,7 @@ exports[`formatCurrencyUnit with default options should correctly format Tezos u
 
 exports[`formatCurrencyUnit with default options should correctly format Thundercore unit (TT) 1`] = `"0.0123456"`;
 
-exports[`formatCurrencyUnit with default options should correctly format TomoChain unit (TOMO) 1`] = `"123,456,789"`;
+exports[`formatCurrencyUnit with default options should correctly format TomoChain unit (TOMO) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Tron unit (TRX) 1`] = `"12,345,678,900"`;
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.2.1",
+  "version": "1.6.6",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -75,32 +75,34 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@hashgraph/sdk": "2.14.2",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/live-countervalues": "workspace:^",
-    "@hashgraph/sdk": "2.14.2",
+    "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "bignumber.js": "^9.1.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
+    "jest-sonar": "0.2.16",
     "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hedera.json",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",

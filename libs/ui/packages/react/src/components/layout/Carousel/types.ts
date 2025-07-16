@@ -5,6 +5,7 @@ export type Variant = "content-card" | "default";
 
 export type Props = {
   children: ReactElement[];
+  initialDelay?: number;
   autoPlay?: number;
   variant?: Variant;
   onPrev?: () => void;

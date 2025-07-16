@@ -87,6 +87,11 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
   currencyZenrock: DEFAULT_FEATURE,
+  currencySonicBlaze: DEFAULT_FEATURE,
+  currencySonic: DEFAULT_FEATURE,
+  currencySui: DEFAULT_FEATURE,
+  currencyMina: DEFAULT_FEATURE,
+  currencyBabylon: DEFAULT_FEATURE,
 };
 
 /**
@@ -110,7 +115,7 @@ export const DEFAULT_FEATURES: Features = {
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
-  stakePrograms: initFeature(),
+  stakePrograms: initFeature({ enabled: false, params: { list: [], redirects: {} } }),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
@@ -121,7 +126,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   deviceInitialApps: {
-    enabled: false,
+    enabled: true,
     params: { apps: ["Bitcoin", "Ethereum"] },
   },
 
@@ -403,6 +408,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnLiveApp: {
+    enabled: true,
+    params: {
+      manifest_id: "earn",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -493,6 +505,8 @@ export const DEFAULT_FEATURES: Features = {
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
+  lldSpamFilteringTx: DEFAULT_FEATURE,
+  llmSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -501,7 +515,10 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: DEFAULT_FEATURE,
+  llMevProtection: {
+    ...DEFAULT_FEATURE,
+    params: { link: null },
+  },
   llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
@@ -513,6 +530,93 @@ export const DEFAULT_FEATURES: Features = {
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
   llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
+  llmLedgerSyncEntryPoints: {
+    ...DEFAULT_FEATURE,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+    },
+  },
+  lldLedgerSyncEntryPoints: {
+    ...DEFAULT_FEATURE,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+      onboarding: true,
+    },
+  },
+  lldNanoSUpsellBanners: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opted_in: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        link: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+        img: "", // TODO
+        "%": 20,
+      },
+      opted_out: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        portfolio: true,
+        link: "https://support.ledger.com/article/Ledger-Nano-S-Limitations?redirect=false",
+      },
+    },
+  },
+  llmNanoSUpsellBanners: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opted_in: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        link: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+        "%": 20,
+      },
+      opted_out: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        wallet: true,
+        link: "https://support.ledger.com/article/Ledger-Nano-S-Limitations?redirect=false",
+      },
+    },
+  },
+  llmThai: DEFAULT_FEATURE,
+  lldThai: DEFAULT_FEATURE,
+  lldSolanaNfts: DEFAULT_FEATURE,
+  llmSolanaNfts: DEFAULT_FEATURE,
+  largemoverLandingpage: DEFAULT_FEATURE,
+  llmMmkvMigration: {
+    ...DEFAULT_FEATURE,
+    params: {
+      shouldRollback: false,
+    },
+  },
+  lldModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+    },
+  },
+  llNftSupport: DEFAULT_FEATURE,
+  llNftEntryPoint: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opensea: false,
+      magiceden: false,
+      chains: ["ethereum", "polygon", "base", "arbitrum"],
+    },
+  },
+  ldmkConnectApp: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

@@ -19,6 +19,7 @@ type EvmConfig = {
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+        batchSize?: number | undefined;
       }
     | {
         type: "none";
@@ -29,6 +30,7 @@ type EvmConfig = {
     type: "ledger";
     explorerId: LedgerExplorerId;
   };
+  showNfts: boolean;
 };
 
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;

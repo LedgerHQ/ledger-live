@@ -14,7 +14,6 @@ import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
-import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
 import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
 import LottieTester from "../Experimental/LottieTester";
@@ -28,6 +27,7 @@ import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
+import NftsTools from "./NftsTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -87,12 +87,7 @@ const Default = () => {
         <EnableLearnPageStagingUrlToggle />
       </Row>
       <RecoverUpsellRow />
-      <Row
-        title={t("settings.developer.enableStagingNftMetadataService")}
-        desc={t("settings.developer.enableStagingNftMetadataServiceDesc")}
-      >
-        <EnableStagingNftMetadataServiceToggle />
-      </Row>
+
       <Row
         title={t("settings.developer.openOnboardingAppInstallDebug")}
         desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
@@ -110,7 +105,13 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
-      <SimpleHashTools />
+      <FeatureToggle featureId="llNftSupport">
+        <FeatureToggle featureId="nftsFromSimplehash">
+          <SimpleHashTools />
+        </FeatureToggle>
+        <NftsTools />
+      </FeatureToggle>
+
       <BrazeTools />
 
       {__DEV__ && (

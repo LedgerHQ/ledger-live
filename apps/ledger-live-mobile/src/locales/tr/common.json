@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "İptal et",
+    "copy" : "Kopyala",
+    "copied" : "Kopyalandı",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
     "seeAllWithNumber" : "Tümünü gör ({{number}})",
@@ -99,7 +101,9 @@
       "id" : "Kimlik {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Teklif"
+    "quote" : "Teklif",
+    "tryAgain" : "Tekrar dene",
+    "ldmkEnabled" : "LDMK taşıma etkinleştirildi"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -476,17 +480,17 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
-    "ElrondDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+    "MultiversXDecimalsLimitReached" : {
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
     "NotEnoughVTHO" : {
@@ -790,6 +794,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Alıcının adresi, gönderenin token adresiyle aynı"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -804,6 +832,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Alıcı adresi için memo gereklidir"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Bu token transfer edilemez",
+      "description" : "Bu token'lar \"soul-bound\" olup transfer edilemez"
     },
     "CardanoMinAmountError" : {
       "title" : "En az {{amount}} ADA gönderilebilir"
@@ -1028,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Takas Live Uygulaması yüklenemedi"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "crash" : {
@@ -1058,6 +1102,32 @@
     "openSettings" : "Konum ayarlarını aç",
     "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
+  },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "Bir protokol seçerken aklınızda bulundurmanız gereken birkaç şey:",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "Bir protokol,",
+            "description" : " yatırdığınız kriptoları borç vermek, likidite sunmak veya staking yapmak için kullanarak ödüller kazanmanızı sağlayan bir platformdur."
+          },
+          "apy" : {
+            "highlighted" : "APY (Yıllık Getiri Yüzdesi),",
+            "description" : " bir yılda ne kadar faiz getirisi elde edebileceğinizi ifade eder. Daha yüksek bir APY, daha yüksek kazançlar anlamına gelir."
+          },
+          "tvl" : {
+            "highlighted" : "TVL (Kilitli toplam değer),",
+            "description" : " diğer kullanıcılar tarafından protokole yatırılan toplam paradır. Daha yüksek bir TVL, protokole daha fazla kişinin güvendiği anlamına gelir."
+          },
+          "strategy" : {
+            "highlighted" : "Strateji,",
+            "description0" : " protokolün sizin için ödüller üretmek amacıyla kullandığı yöntemdir.",
+            "description1" : "Örneğin bir protokol, stratejisi olarak borç vermeyi kullanırsa, yatırdığınız stabil coin’leri borç alanlara borç verir. Siz de talebe göre değişen bir faiz getirisi elde edersiniz."
+          }
+        }
+      }
+    }
   },
   "permissions" : {
     "open" : "Uygulama izinlerini aç",
@@ -1094,6 +1164,11 @@
       "fast" : "hızlı",
       "custom" : "Özel",
       "blockCount" : "{{blockCount}} blok"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 dk.",
+      "medium" : "≈ 30 s.",
+      "fast" : "≈ 15 s."
     }
   },
   "signout" : {
@@ -1359,7 +1434,7 @@
         "desc" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin"
       },
       "earn" : {
-        "title" : "Kazanın",
+        "title" : "Kazan",
         "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
@@ -1392,7 +1467,7 @@
       "skipCTA" : "Daha sonra yapacağım"
     },
     "ongoing" : {
-      "resolving" : "Gereksinimler çözülüyor",
+      "resolving" : "Gereksinimler çözümleniyor",
       "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
       "skipped" : "Henüz {{ productName }} ile kullanılamıyor"
@@ -2063,7 +2138,7 @@
     },
     "pairing" : {
       "success" : {
-        "title" : "{{deviceName}} ile eşleştirildi"
+        "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
         "title" : "{{deviceName}} ile eşleştiriliyor...",
@@ -2194,7 +2269,7 @@
     },
     "pairing" : {
       "success" : {
-        "title" : "{{deviceName}} ile eşleştirildi"
+        "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
         "title" : "{{deviceName}} ile eşleştiriliyor",
@@ -2237,7 +2312,7 @@
     "pinStep" : {
       "title" : "PIN kodu",
       "doneTitle" : "PIN kodu belirlendi",
-      "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
+      "description" : "PIN kodu, tüm parolalar ve giriş kodları gibi {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
       "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin."
     },
     "seedStep" : {
@@ -2374,16 +2449,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Ödeme kartınızı eklemeyi bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın"
       },
       "verifyIdentity" : {
-        "title" : "Kimliğinizi doğrulamayı bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       },
       "connectDevice" : {
-        "title" : "Son adım: Ledger cihazınızı bağlayın",
-        "description" : "Ledger Recover'a erişiminizin 1 adım uzağındasınız."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
     }
   },
@@ -2556,7 +2628,8 @@
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "stakedAmount" : "Stake edilen miktar"
+      "stakedAmount" : "Stake edilen miktar",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -2588,6 +2661,10 @@
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}, şuraya taşınıyor: {{to}}. Daha fazla bilgi edinmek için bu <0>bağlantıyı</0> takip edin veya yardıma ihtiyacınız varsa destek ekibiyle iletişime geçin.",
+      "contactSupport" : "Destek al"
     },
     "willBedeprecatedBanner" : {
       "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
@@ -2745,7 +2822,7 @@
         "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
       }
     },
-    "earn" : "Kazanın",
+    "earn" : "Kazan",
     "quickActions" : "Hızlı işlemler",
     "referralProgram" : "Bizi arkadaşınıza önerin ve $20 değerinde Bitcoin kazanın",
     "banner" : {
@@ -2884,7 +2961,8 @@
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
+      "mevProtectionLearnMore" : "Gizlilik bildirimi",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {
@@ -3103,7 +3181,7 @@
       "title" : "Geliştiriciler için",
       "desc" : "Geliştirici özelliklerini deneyip ne düşündüğünüzü bizimle paylaşın.",
       "customManifest" : {
-        "title" : "Özel Platform Manifest Dosyası Yükle"
+        "title" : "Dizin Yükle"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange Geliştirici Modu",
@@ -3226,7 +3304,7 @@
       },
       "verifyAddress" : {
         "title" : "Adresi doğrula",
-        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adres ile aynı olduğunu doğrulayın. Emin olduktan sonra cihazınızdan \"approve\" (doğrula) düğmesine basabilirsiniz.",
+        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adres ile aynı olduğunu doğrulayın. Emin olduğunuzda cihazınızda onaylayabilirsiniz.",
         "cancel" : {
           "title" : "Bu adresi reddettiniz",
           "subtitle" : "Bunu yapmak istemediyseniz aşağıdaki düğmeye tıklayarak tekrar deneyebilirsiniz.",
@@ -3244,7 +3322,7 @@
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
         "sendWarning" : "Sadece {{network}} ağındaki token'ları gönderin. Başka bir ağdan gönderirseniz token'ları kalıcı olarak kaybedebilirsiniz.",
         "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
-        "bannerTitle" : "Kripto para borsalarından nasıl çekim yapabileceğinizi öğrenmek mi istiyorsunuz?"
+        "bannerTitle" : "Kripto para borsalarından çekim yapma rehberi"
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
@@ -3332,7 +3410,7 @@
       },
       "form" : {
         "validate" : "Takas işlemini onayla",
-        "tab" : "Takas et",
+        "tab" : "Takas",
         "button" : "Devam",
         "from" : "Gönderici",
         "to" : "Alıcı",
@@ -3423,6 +3501,7 @@
         "CTAButton" : "Hesap ekle"
       },
       "history" : {
+        "button" : "Geçmişe git",
         "tab" : "Geçmiş",
         "disclaimer" : "Mobil üzerinden yaptığınız takas işlemleri Ledger Live Masaüstü ile senkronize değildir",
         "exportButton" : "Dışa aktarma işlemleri",
@@ -3488,8 +3567,20 @@
         "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
         "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "near_title" : "Ledger Nano S™, Near takasını desteklemez",
+        "near_description" : "Near takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
-        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "apt_title" : "Ledger Nano S™, Aptos takasını desteklemez",
+        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
+        "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
+        "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
+        "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
+        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -3986,13 +4077,19 @@
   "addAccounts" : {
     "addNew" : "Yeni ekle",
     "seeAllAccounts" : "Tüm hesapları gör",
-    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
     "quitConfirmation" : {
       "title" : "Hesap ekleme iptali",
-      "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
+      "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?",
+      "v2" : {
+        "title" : "Hesap ekleme işlemi iptal edilsin mi?",
+        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek.",
+        "continue" : "Eklemeye devam et",
+        "cancel" : "İptal et"
+      }
     },
     "imported" : "Varlık başarıyla eklendi",
     "added" : "Hesap, portföyünüze eklendi",
@@ -4029,7 +4126,7 @@
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\nToken'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
         "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
@@ -4059,6 +4156,7 @@
       "ctaStopScan" : "Taramayı durdur",
       "confirm" : "Onayla",
       "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "whichAddressType" : "Adres türünün nasıl seçileceğini öğrenin",
       "sections" : {
         "importable" : {
           "title" : "{{count}} hesap bulundu",
@@ -4067,19 +4165,26 @@
         "creatable" : {
           "title" : "Yeni hesap"
         },
-        "imported" : {
-          "title" : "Hesap zaten Portföyde mevcut ({{length}})",
-          "title_plural" : "Portföydeki hesaplar ({{length}})"
-        },
         "migrate" : {
           "title" : "Güncellenecek hesaplar"
         }
-      }
+      },
+      "retryScanning" : "Tekrar dene"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Hesabınıza fon ekleyin",
       "ctaClose" : "Kapat"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Yeni bir hesap ekleyemiyoruz",
+        "body" : "{{accountName}} hesabınıza varlık almadan önce yeni bir hesap eklenemez."
+      },
+      "noAccountToCreate" : {
+        "title" : "Yeni bir {{currency}} hesabı ekleyemedik"
+      }
+    },
+    "chooseAccountToFund" : "Fonların ekleneceği bir hesap seçin"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
@@ -4142,10 +4247,12 @@
       "openManager" : "My Ledger'ı Aç",
       "openOnboarding" : "Cihaz kurulumu"
     },
-    "installApp" : "{{appName}} uygulama kurulumu {{percentage}}",
+    "installApp" : "{{appName}} Uygulama kurulumu {{percentage}}",
     "installAppDescription" : "Lütfen kurulum bitene kadar bekleyin",
     "listApps" : "Uygulama şartları denetleniyor",
-    "listAppsDescription" : "Gerekli tüm uygulamalara sahip olduğunuz kontrol edilirken lütfen bekleyin"
+    "listAppsDescription" : "Gerekli tüm uygulamalara sahip olduğunuz kontrol edilirken lütfen bekleyin",
+    "confirmExchangeOnDevice" : "Takas işlemini cihazınızda onaylayın",
+    "confirmSwapOnDevice" : "Takas işlemini cihazınızda onaylayın"
   },
   "SelectDevice" : {
     "title" : "Yeni cihaz eşleme",
@@ -4590,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}} cihazınızı {{version}} sürümüne güncelleyin",
-    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
+    "recoveryPhraseBackupInstructions" : "Önlem olarak, 24 kelimelik Gizli Kurtarma İfadenizi kurtarma Kâğıdına yazdığınızdan ve bu kâğıda kolayca erişebileceğinizden emin olun.\n\nCüzdan erişiminizi yedekleyip cüzdanınıza erişimi asla kaybetmeyeceğinizden emin olmak için Ledger Recover’ı kullanmayı düşünün.",
     "confirmRecoveryPhrase" : "Kurtarma ifadem var",
     "introDescription1" : "Cihazınızdaki tüm uygulamaların silineceğini lütfen unutmayın. Yazılım güncellemesinden sonra uygulamalarınızı yeniden yükleyebilirsiniz.",
     "introDescription2" : "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur.",
@@ -4614,7 +4721,8 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce (Br)"
+      "pt" : "Portekizce (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4638,7 +4746,8 @@
       "german" : "Almanca",
       "brazilian" : "Portekizce (Br)",
       "russian" : "Rusça",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -4665,7 +4774,7 @@
     "token" : "ASA (Varlıklar)",
     "claimRewards" : {
       "title" : "Ödüller",
-      "button" : "Ödüllerinizi toplayın",
+      "button" : "Ödülleri topla",
       "stepperHeader" : {
         "info" : "Ödüller kazanın",
         "starter" : "Ödüller",
@@ -4755,7 +4864,7 @@
       "poolId" : "Havuz Kimliği",
       "selectPool" : "Havuz seçin",
       "pools" : "Havuzlar",
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek ADA ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek ADA ödülleri kazanabilirsiniz.",
       "delegatingFrom" : "Yetkiyi devreden:",
       "delegatingTo" : "Yetkiyi devralan:",
       "info" : "Yetki Devri nasıl çalışır?",
@@ -4915,7 +5024,7 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
             "bullet" : {
               "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
               "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5082,12 +5191,12 @@
       }
     },
     "emptyState" : {
-      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "description" : "Varlıklarınızla yetki devrederek CELO ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "delegation" : "Ödüller kazanın"
     },
     "earnRewards" : {
-      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "description" : "CELO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
       "bullet" : {
         "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
         "1" : "Ledger cihazınızı kullanarak yetki devredin.",
@@ -5123,7 +5232,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek {{ticker}} ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek {{ticker}} ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "claimRewards" : "Ödüllerinizi alın",
       "claimAvailableRewards" : "{{amount}} topla",
@@ -5957,7 +6066,7 @@
         "activating" : "Etkinleştiriliyor",
         "deactivating" : "Devre dışı bırakılıyor"
       },
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "broadcastSuccessTitle" : "İşlem gönderildi",
       "broadcastSuccessDescription" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
@@ -5966,7 +6075,74 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
+      "transferFees" : {
+        "title" : "Transfer ücretleri",
+        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır (maks. {{maxFee}})",
+        "notice" : "Transfer ücreti: %{{fee}}",
+        "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi"
+      },
+      "nonTransferable" : {
+        "notice" : "Bu token transfer edilemez"
+      },
+      "interestRate" : {
+        "notice" : "Faiz oranı: %{{rate}}",
+        "tooltipHint" : "Sadece gösterim amaçlıdır, faiz sonucunda hiçbir yeni token oluşturulmamaktadır"
+      },
+      "permanentDelegate" : {
+        "notice" : "Kalıcı Yetkili otoritesi etkinleştirilmiş",
+        "initializationNotice" : "Kalıcı Yetkili otoritesi başlatılmış, ama etkinleştirilmemiş",
+        "initializedNoticeTooltipHint" : "Yetkili kişi, bu token'ı hesabınızdan transfer edebilir veya yakabilir",
+        "tooltipHint" : "{{delegateAddress}}<0></0>, bu token'ı hesabınızdan transfer edebilir veya yakabilir"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Transferlerde zorunlu memo etkinleştirilmiş",
+        "tooltipHint" : "Bu hesaba gelen tüm transferlerde memo olması gerekir"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Kancası etkinleştirilmiş",
+        "initializationNotice" : "Transfer Kancası başlatılmış, ama etkinleştirilmemiş",
+        "tooltipHint" : "Token, {{programAddress}}<0></0> tarafından gerçekleştirilen ekstra işlevlere sahip"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token uzantıları",
+        "commonInfo" : "Token uzantıları, Solana Token standardının yeni neslidir. Normal token işlevlerini gizli transferler, kalıcı yetkili, özel transfer mantığı, genişletilmiş meta veriler vb. gibi ek özelliklerle genişletmeyi sağlayan birtakım yöntemler sunarlar.",
+        "permanentDelegate" : {
+          "title" : "Kalıcı Yetkili (Permanent Delegate)",
+          "permanentDelegateAddress" : "Mevcut yetkili: {{address}}",
+          "permanentDelegateNotSetup" : "Mevcut yetkili belirlenmemiş.",
+          "description" : "Kalıcı Yetkili (Permanent Delegate), mevzubahis mint'leme için herhangi bir hesap üzerinde sınırsız yetki ayrıcalıklarına sahip olan bir yetkilidir. Yetkili, istediği miktarda token'ı, istediği zaman kendi takdirine bağlı olarak yakabilir veya transfer edebilir."
+        },
+        "nonTransferable" : {
+          "title" : "Transfer Edilemez Token'lar",
+          "description" : "Bu token'lar \"soul-bound\" olup sadece token'ı çıkartan kişi tarafından taşınabilir veya yakılabilir."
+        },
+        "transferHook" : {
+          "title" : "Transfer Kancası (Transfer Hook)",
+          "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
+          "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
+          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+        },
+        "transferFee" : {
+          "title" : "Transfer Ücreti",
+          "currentTransferFee" : "Güncel transfer ücreti: %{{feePercent}} ({{feeBps}} bps). Maks. {{maxFee}}.",
+          "description" : "Ücret her token transferinde alınır ve alıcının kullanamayacağı bir şekilde hesapta bloke edilir."
+        },
+        "interestBearing" : {
+          "title" : "Faiz İçeren Token'lar",
+          "currentInterestRate" : "Güncel faiz oranı: %{{rate}}.",
+          "accruedDelta" : "Tahakkuk eden: {{delta}}.",
+          "interestRateNotSetup" : "Güncel faiz oranı %0 olarak belirlenmiştir.",
+          "description" : "Faiz oranına bağlı olarak değeri sürekli artan veya azalan token'lar. Hiçbir zaman yeni token'lar oluşturulmaz, özellik tamamen gösterim amaçlıdır."
+        }
+      }
     }
+  },
+  "mina" : {
+    "memoPlaceholder" : "İsteğe Bağlı Memo"
   },
   "near" : {
     "info" : {
@@ -6293,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "Lütfen işlemi cihazınızdan onaylayın",
-      "accountName" : "Hesap adı"
+      "accountName" : "Hesap adı",
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
     }
   },
   "notificationCenter" : {
@@ -6476,7 +6654,12 @@
       "24h" : "24SA",
       "7d" : "7G",
       "30d" : "30G",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1D_label" : "1G",
+      "1H_label" : "1SA",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -6554,7 +6737,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "Bu destek makalesini inceleyerek",
-      "link" : "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+      "link" : "Bir Hedera hesabı nasıl oluşturulur?",
+      "title" : "Yeni bir Hedera hesabı oluşturamıyoruz",
+      "description" : "Hedera ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. Hedera hesabınız oluşturulduktan sonra o hesabı Ledger Live'da ekleyebilirsiniz."
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
@@ -6587,7 +6772,7 @@
     "commitRequested" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
     "confirmPicture" : "{{productName}} cihazında onaylayın",
     "landingPage" : {
-      "title" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nStax'iniz sizi yansıtsın.",
+      "title" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nCihazınız sizi yansıtsın.",
       "choosePicture" : "Bir resim seçin"
     },
     "confirmCrop" : "Kırpmayı onayla",
@@ -6611,7 +6796,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Sırada, {{productName}} ürününüz ile...",
-      "allDoneTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
+      "areAllPostOnboardingActionsCompletedTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
       "skip" : "Daha sonra yapacağım",
       "viewWallet" : "Portföyümü keşfet"
     },
@@ -6663,6 +6848,7 @@
         "hide" : "{{count}} koleksiyonu gizle",
         "hiddenCollections" : "Gizli koleksiyonlar",
         "hide_plural" : "{{count}} koleksiyonu gizle",
+        "empty" : "Gösterilecek hiçbir Gizli koleksiyon yok",
         "alertHide" : "1 koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz.",
         "alertHide_plural" : "{{count}} koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz."
       },
@@ -6782,7 +6968,7 @@
           "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
         },
         "restaking" : {
-          "name" : "Yeniden Stake Etme",
+          "name" : "Yeniden Stake Edin",
           "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
         }
       },
@@ -6872,7 +7058,7 @@
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
-            "accept" : "Tümünü kabul et"
+            "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
@@ -6940,6 +7126,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Sync'i etkinleştirin"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Bu telefon için Ledger Sync açılsın mı?",
@@ -6964,7 +7160,7 @@
     "success" : {
       "sync" : "Senkronizasyon başarılı",
       "syncDesc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Live uygulamalarında otomatik olarak görüntülenecektir.",
-      "activation" : "Ledger Sync bu telefon için kapatıldı",
+      "activation" : "Ledger Sync bu telefon için açıldı",
       "syncAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
       "close" : "Kapat"
     },
@@ -7043,9 +7239,10 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Sync'i aç</0> <1>></1> <0>Karekodu tara</0> adımlarını izleyin",
-              "step3" : "Karekodu okutun"
+              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
+              "step4" : "Karekodu okutun."
             }
           }
         },
@@ -7055,9 +7252,10 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
-              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Sync'i aç</0> <1>></1> <0>Karekodu Göster</0> adımlarını izleyin",
-              "step3" : "Karekodu okutun"
+              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
+              "step4" : "Karekodu okutun."
             }
           }
         },
@@ -7176,5 +7374,52 @@
       "detectedAccounts" : "{{count}} hesap (algılanan)",
       "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
     }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "Hiçbir hesap bulunamadı",
+      "subTitle" : "Henüz bir hesap eklememişsiniz gibi görünüyor. Hemen başlayın.",
+      "cta" : "Hesap ekleyin",
+      "link" : "Yardım mı gerekli? Ledger Live'a nasıl hesap ekleyeceğinizi öğrenin."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
+      "cta" : "Ledger modelimi yükselt"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "cta" : "Daha fazla bilgi"
+    }
+  },
+  "largeMover" : {
+    "info" : "Bilgi",
+    "marketCap" : "Piyasa değeri",
+    "volume" : "Hacim (24 sa.)",
+    "fdv" : "FDV",
+    "marketCap24h" : "Hacim/Piyasa Değ. (24 sa.)",
+    "circulatingSupply" : "Dolaşımdaki arz",
+    "totalSupply" : "Toplam arz",
+    "ath" : "Tüm zamanlar en yüksek",
+    "atl" : "Tüm zamanlar en düşük",
+    "timeAgo" : {
+      "years" : "({{count}} yıl önce)",
+      "years_plural" : "({{count}} yıl önce)",
+      "months" : "({{count}} ay önce)",
+      "months_plural" : "({{count}} ay önce)",
+      "days" : "({{count}} gün önce)",
+      "days_plural" : "({{count}} gün önce)",
+      "hours" : "({{count}} saat önce)",
+      "hours_plural" : "({{count}} saat önce)",
+      "minutes" : "({{count}} dakika önce)",
+      "minutes_plural" : "({{count}} dakika önce)",
+      "seconds" : "({{count}} saniye önce)",
+      "seconds_plural" : "({{count}} saniye önce)"
+    },
+    "performance" : "Performans",
+    "low" : "Düşük",
+    "high" : "Yüksek",
+    "title" : "Piyasa Hareketleri"
   }
 }

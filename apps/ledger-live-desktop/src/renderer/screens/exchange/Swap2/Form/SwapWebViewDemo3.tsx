@@ -17,13 +17,14 @@ import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
+import { reduce, firstValueFrom } from "rxjs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
@@ -41,7 +42,7 @@ import {
   developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
-  shareAnalyticsSelector,
+  lastSeenDeviceSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
@@ -123,9 +124,10 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -176,10 +178,27 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         }
         const fromParentAccount = getParentAccount(fromAccount, accounts);
 
-        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        let mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const bridge = getAccountBridge(fromAccount, fromParentAccount);
 
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+
+        // NOTE: we might sync all types of accounts here
+        if (mainAccount.currency.id === "bitcoin") {
+          try {
+            const syncedAccount = await firstValueFrom(
+              bridge
+                .sync(mainAccount, { paginationConfig: {} })
+                .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
+            );
+            if (syncedAccount) {
+              mainAccount = syncedAccount;
+            }
+          } catch (e) {
+            logger.error(e);
+          }
+        }
+
         const transaction = bridge.createTransaction(mainAccount);
 
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
@@ -208,8 +227,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           return newTransaction;
         };
 
-        // filters out the custom fee config for chains without drawer
-        const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
+        const hasDrawer =
+          ["evm", "bitcoin"].includes(transaction.family) &&
+          !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
         if (!params.openDrawer) {
           return {
             feesStrategy: finalTx.feesStrategy,
@@ -283,6 +303,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             },
           );
         });
+      },
+      "custom.isReady": async () => {
+        console.info("Swap Live App Loaded");
       },
       "custom.getTransactionByHash": async ({
         params,
@@ -381,7 +404,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }
             return {
               ...account,
-              subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
+              subAccounts: account.subAccounts?.map<TokenAccount>((a: TokenAccount) => {
                 const subAccount = {
                   ...a,
                   swapHistory: [...a.swapHistory, swapOperation],
@@ -483,7 +506,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
-            shareAnalytics,
+            lastSeenDevice: lastSeenDevice?.modelId,
+            currentVersion,
+            platform: "LLD",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

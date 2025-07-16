@@ -31,4 +31,7 @@ export type DerivationMode =
   | "internet_computer"
   | "stacks_wallet"
   | "icon"
-  | "ton";
+  | "ton"
+  | "sui"
+  | "aptos"
+  | "minabip44";

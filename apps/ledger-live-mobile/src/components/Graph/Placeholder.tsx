@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import graphPlaceholderSource from "../../../assets/images/graph/graphPlaceholder.png";
+import graphPlaceholderSource from "../../../assets/images/graph/graphPlaceholder.webp";
 
 export const GraphPlaceholder = () => {
   const { t } = useTranslation();

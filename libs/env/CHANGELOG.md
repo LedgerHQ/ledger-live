@@ -1,5 +1,49 @@
 # @ledgerhq/live-env
 
+## 2.8.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+## 2.8.0-next.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+## 2.7.0
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
+## 2.6.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
 ## 2.5.0
 
 ### Minor Changes

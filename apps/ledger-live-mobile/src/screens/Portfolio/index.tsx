@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { ListRenderItemInfo, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -38,9 +38,14 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
-
 export { default as PortfolioTabIcon } from "./TabIcon";
+import Animated, { useSharedValue } from "react-native-reanimated";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import AnimatedContainer from "./AnimatedContainer";
+import storage from "LLM/storage";
+import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -56,6 +61,17 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const accountListFF = useFeature("llmAccountListUI");
+  const isAccountListUIEnabled = accountListFF?.enabled;
+
+  const mmkvMigrationFF = useFeature("llmMmkvMigration");
+
+  useEffect(() => {
+    async function handleMigration() {
+      await storage.handleMigration(mmkvMigrationFF as Feature_LlmMmkvMigration);
+    }
+    handleMigration();
+  }, [mmkvMigrationFF]);
 
   const onBackFromUpdate = useCallback(
     (_updateState: UpdateStep) => {
@@ -90,6 +106,18 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     hasTokenAccountsWithPositiveBalance || // always show token accounts if they are not empty
     (!hideEmptyTokenAccount && hasTokenAccounts); // conditionally show empty token accounts
 
+  const animatedHeight = useSharedValue(0);
+
+  const handleHeightChange = useCallback(
+    (newHeight: number) => {
+      if (newHeight === 0) return;
+      animatedHeight.value = newHeight;
+    },
+    [animatedHeight],
+  );
+
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
+
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
@@ -97,22 +125,35 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
-        {showAssets ? (
+        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
+        {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
-            mt={7}
+            mt="20px"
           />
         ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
-        <Box background={colors.background.main} px={6} key="PortfolioAssets">
-          <RecoverBanner />
-          <PortfolioAssets
-            hideEmptyTokenAccount={hideEmptyTokenAccount}
-            openAddModal={openAddModal}
-          />
-        </Box>
+        isAccountListUIEnabled ? (
+          <AnimatedContainer onHeightChange={handleHeightChange}>
+            <Box background={colors.background.main} px={6} key="PortfolioAssets">
+              <RecoverBanner />
+              <PortfolioAssets
+                hideEmptyTokenAccount={hideEmptyTokenAccount}
+                openAddModal={openAddModal}
+              />
+            </Box>
+          </AnimatedContainer>
+        ) : (
+          <Box background={colors.background.main} px={6} key="PortfolioAssets">
+            <RecoverBanner />
+            <PortfolioAssets
+              hideEmptyTokenAccount={hideEmptyTokenAccount}
+              openAddModal={openAddModal}
+            />
+          </Box>
+        )
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
@@ -130,7 +171,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ...(showAssets
         ? [
             <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
-              <SectionTitle title={t("analytics.allocation.title")} />
+              <SectionTitle
+                title={t("analytics.allocation.title")}
+                testID="portfolio-allocation-section"
+              />
               <Flex minHeight={94}>
                 <AllocationsSection />
               </Flex>
@@ -151,10 +195,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
+      isAccountListUIEnabled,
+      handleHeightChange,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
+      isLNSUpsellBannerShown,
       t,
     ],
   );
@@ -163,20 +210,22 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     <ReactNavigationPerformanceView screenName={ScreenName.Portfolio} interactive>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
-      <RefreshableCollapsibleHeaderFlatList
-        data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) => {
-          return item as JSX.Element;
-        }}
-        keyExtractor={(_: unknown, index: number) => String(index)}
-        showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
-      />
-      <AddAccountDrawer
-        isOpened={isAddModalOpened}
-        onClose={closeAddModal}
-        doesNotHaveAccount={!showAssets}
-      />
+      <Animated.View style={{ flex: 1 }}>
+        <RefreshableCollapsibleHeaderFlatList
+          data={data}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => {
+            return item as JSX.Element;
+          }}
+          keyExtractor={(_: unknown, index: number) => String(index)}
+          showsVerticalScrollIndicator={false}
+          testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
+        />
+        <AddAccountDrawer
+          isOpened={isAddModalOpened}
+          onClose={closeAddModal}
+          doesNotHaveAccount={!showAssets}
+        />
+      </Animated.View>
     </ReactNavigationPerformanceView>
   );
 }

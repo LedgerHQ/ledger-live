@@ -17,10 +17,10 @@ import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
-    Intro: require("~/images/illustration/Light/_074.png"),
+    Intro: require("~/images/illustration/Light/_074.webp"),
   },
   dark: {
-    Intro: require("~/images/illustration/Dark/_074.png"),
+    Intro: require("~/images/illustration/Dark/_074.webp"),
   },
 };
 

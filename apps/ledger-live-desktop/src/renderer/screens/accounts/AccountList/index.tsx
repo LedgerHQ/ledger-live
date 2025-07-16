@@ -61,11 +61,7 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
     }
   }
   return (
-    <div
-      style={{
-        paddingBottom: 70,
-      }}
-    >
+    <div>
       <GenericBox horizontal p={0} alignItems="center">
         <SearchBox
           id={"accounts-search-input"}

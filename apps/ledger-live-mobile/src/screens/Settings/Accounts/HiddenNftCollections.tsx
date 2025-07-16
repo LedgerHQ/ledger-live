@@ -13,7 +13,10 @@ import Skeleton from "~/components/Skeleton";
 import { updateNftStatus } from "~/actions/settings";
 import { State } from "~/reducers/types";
 import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
-import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import { useTranslation } from "react-i18next";
+
+const keys: <T extends object>(obj: T) => (keyof T)[] = Object.keys;
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -80,9 +83,11 @@ const HiddenNftCollectionRow = ({
             </Text>
           </CollectionNameSkeleton>
         </Flex>
-        <TouchableOpacity onPress={onUnhide}>
-          <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
-        </TouchableOpacity>
+        {!loading && (
+          <TouchableOpacity onPress={onUnhide}>
+            <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
+          </TouchableOpacity>
+        )}
       </Flex>
     </Flex>
   );
@@ -90,13 +95,13 @@ const HiddenNftCollectionRow = ({
 
 const HiddenNftCollections = () => {
   const collections = useSelector(nftCollectionsStatusByNetworkSelector);
-
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
 
   const onUnhideCollection = useCallback(
-    (collectionId: string, blockchain: BlockchainsType) => {
+    (collectionId: string, blockchain: SupportedBlockchain) => {
       dispatch(
         updateNftStatus({ blockchain, collection: collectionId, status: NftStatus.whitelisted }),
       );
@@ -107,9 +112,8 @@ const HiddenNftCollections = () => {
   const renderItem = useCallback(
     ({ item }: { item: string }) => {
       const [accountId, contractAddress] = item.split("|");
-      const network = (Object.keys(collections).find(
-        key => collections[key as BlockchainEVM][item],
-      ) ?? BlockchainEVM.Ethereum) as BlockchainsType;
+      const network =
+        keys(collections).find(key => collections[key][item]) ?? SupportedBlockchain.Ethereum;
       return (
         <HiddenNftCollectionRow
           accountId={accountId}
@@ -151,6 +155,11 @@ const HiddenNftCollections = () => {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           onEndReached={onEndReached}
+          ListEmptyComponent={() => (
+            <Flex p={6} alignItems="center">
+              <Text variant="bodyLineHeight">{t("wallet.nftGallery.filters.empty")}</Text>
+            </Flex>
+          )}
         />
       </Flex>
     </Box>

@@ -11,8 +11,6 @@ type TrackPlatform = (
   mandatory: boolean | null,
 ) => void;
 
-export type TrackFunction = (manifest: LiveAppManifest) => void;
-
 /**
  * Obtain Event data from Platform App manifest
  *
@@ -28,7 +26,7 @@ function getEventData(manifest: LiveAppManifest) {
  * @param trackCall
  * @returns a dictionary of event to trigger.
  */
-export default function trackingWrapper(trackCall: TrackPlatform): Record<string, TrackFunction> {
+export default function trackingWrapper(trackCall: TrackPlatform) {
   const track = (event: string, properties: Record<string, any> | null) =>
     trackCall(event, properties, null);
 
@@ -158,5 +156,7 @@ export default function trackingWrapper(trackCall: TrackPlatform): Record<string
     platformSignMessageUserRefused: (manifest: LiveAppManifest) => {
       track("Platform sign message user refused", getEventData(manifest));
     },
-  };
+  } as const;
 }
+
+export type TrackingAPI = ReturnType<typeof trackingWrapper>;

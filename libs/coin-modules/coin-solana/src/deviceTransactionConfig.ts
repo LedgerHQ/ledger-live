@@ -1,21 +1,28 @@
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
   CommandDescriptor,
+  SolanaExtraDeviceTransactionField,
   StakeCreateAccountCommand,
   StakeDelegateCommand,
   StakeSplitCommand,
   StakeUndelegateCommand,
   StakeWithdrawCommand,
+  TokenCreateApproveCommand,
   TokenCreateATACommand,
+  TokenCreateRevokeCommand,
   TokenTransferCommand,
   Transaction,
   TransferCommand,
 } from "./types";
 
 // do not show fields like 'To', 'Recipient', etc., as per Ledger policy
+
+type DeviceTransactionField = CommonDeviceTransactionField | SolanaExtraDeviceTransactionField;
+
+export type SolanaExtraDeviceFields = SolanaExtraDeviceTransactionField["type"];
 
 function getDeviceTransactionConfig({
   account,
@@ -44,6 +51,10 @@ function fieldsForCommand(
       return fieldsForTokenTransfer(command);
     case "token.createATA":
       return fieldsForCreateATA(command);
+    case "token.approve":
+      return fieldsForCreateApprove(command);
+    case "token.revoke":
+      return fieldsForCreateRevoke(command);
     case "stake.createAccount":
       return fieldsForStakeCreateAccount(command, account);
     case "stake.delegate":
@@ -73,46 +84,27 @@ function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] 
 function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
-  if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
-    fields.push({
-      type: "address",
-      label: "Create token acct",
-      address: command.recipientDescriptor.tokenAccAddress,
-    });
-
-    fields.push({
-      type: "address",
-      label: "From mint",
-      address: command.mintAddress,
-    });
-    fields.push({
-      type: "address",
-      label: "Funded by",
-      address: command.ownerAddress,
-    });
-  }
-
   fields.push({
     type: "amount",
     label: "Transfer tokens",
   });
 
+  if (command.extensions?.transferFee && command.extensions.transferFee.feeBps > 0) {
+    fields.push({
+      type: "solana.token.transferFee",
+      label: "Transfer fee",
+    });
+  }
+
   fields.push({
-    type: "address",
-    address: command.ownerAssociatedTokenAccountAddress,
-    label: "From",
+    type: "text",
+    value: "Solana",
+    label: "Network",
   });
 
   fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Owner",
-  });
-
-  fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Fee payer",
+    type: "fees",
+    label: "Max network fees",
   });
 
   return fields;
@@ -153,6 +145,54 @@ function fieldsForCreateATA(command: TokenCreateATACommand): DeviceTransactionFi
 
   return fields;
 }
+
+function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Approve token account",
+    address: command.account,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Owned by",
+    address: command.owner,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Delegate to ",
+    address: command.recipientDescriptor.walletAddress,
+  });
+
+  fields.push({
+    type: "amount",
+    label: "Amount",
+  });
+
+  return fields;
+}
+
+function fieldsForCreateRevoke(command: TokenCreateRevokeCommand): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Revoke token account",
+    address: command.account,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Owned by",
+    address: command.owner,
+  });
+
+  return fields;
+}
+
 function fieldsForStakeCreateAccount(
   command: StakeCreateAccountCommand,
   account: AccountLike,

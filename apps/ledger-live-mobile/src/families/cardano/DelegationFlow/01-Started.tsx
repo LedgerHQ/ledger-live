@@ -8,8 +8,8 @@ import ExternalLink from "~/components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import Illustration from "~/images/illustration/Illustration";
-import EarnLight from "~/images/illustration/Light/_003.png";
-import EarnDark from "~/images/illustration/Dark/_003.png";
+import EarnLight from "~/images/illustration/Light/_003.webp";
+import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { urls } from "~/utils/urls";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -71,7 +71,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         </View>
       </NavigationScrollView>
       <View style={[styles.footer]}>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="cardano-delegation-start-button">
           <Trans i18nKey="cardano.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
-    "@types/node": "^20.8.10",
+    "@types/node": "^22.10.10",
     "@types/semver": "^7.3.9",
     "documentation": "14.0.2",
     "jest": "^29.7.0",
@@ -71,10 +71,10 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

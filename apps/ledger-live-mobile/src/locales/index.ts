@@ -31,3 +31,6 @@ export const pt = {
 export const ar = {
   common: require("./ar/common.json"),
 };
+export const th = {
+  common: require("./th/common.json"),
+};

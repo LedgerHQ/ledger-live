@@ -112,6 +112,7 @@ export type StellarOperationExtra = {
   ledgerOpType: OperationType;
   memo?: string;
   blockTime: Date;
+  index: string;
 };
 
 export type StellarAccount = Account;

@@ -1,5 +1,6 @@
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -23,12 +24,21 @@ import {
   memoTagBoxVisibilitySelector,
 } from "~/renderer/reducers/UI";
 import MemoTagSendInfo from "LLD/features/MemoTag/components/MemoTagSendInfo";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import CheckBox from "~/renderer/components/CheckBox";
 import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
+import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import Alert from "~/renderer/components/Alert";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
+
+const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
 const StepRecipient = ({
   t,
@@ -55,6 +65,8 @@ const StepRecipient = ({
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const extensions = getTokenExtensions(account);
+
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
@@ -88,6 +100,7 @@ const StepRecipient = ({
             <Box flow={1}>
               <Label>{t("send.steps.details.selectAccountDebit")}</Label>
               <SelectAccount
+                id="account-debit-placeholder"
                 withSubAccounts
                 enforceHideEmptySubAccounts
                 autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
@@ -96,6 +109,13 @@ const StepRecipient = ({
               />
             </Box>
           )}
+          {extensions && hasProblematicExtension(extensions) ? (
+            <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
+              <Trans i18nKey="send.steps.details.splExtensionsWarning">
+                <Link type="color" onClick={openSplTokenExtensionsArticle} />
+              </Trans>
+            </Alert>
+          ) : null}
           {stuckAccountAndOperation ? (
             <EditOperationPanel
               operation={stuckAccountAndOperation.operation}

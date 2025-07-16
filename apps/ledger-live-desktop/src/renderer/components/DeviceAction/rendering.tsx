@@ -14,11 +14,12 @@ import {
   FirmwareNotRecognized,
   LockedDeviceError,
   UpdateYourApp,
+  LatestFirmwareVersionRequired,
   WrongDeviceForAccount,
+  DisconnectedDevice,
 } from "@ledgerhq/errors";
 import {
   DeviceNotOnboarded,
-  LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
   TransactionRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
@@ -27,7 +28,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
-import Button from "~/renderer/components/Button";
+import Button, { Base as ButtonBase } from "~/renderer/components/Button";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
@@ -57,7 +58,6 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import { Account } from "@ledgerhq/types-live";
@@ -73,6 +73,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
+import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -199,10 +200,29 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-const ButtonContainer = styled(Box).attrs(() => ({
+const ButtonContainer = styled(Box).attrs(({ theme }) => ({
   mt: 25,
+  horizontal: false,
+  alignItems: "center",
+  justifyContent: "center",
+  gap: `${theme.space[4]}px`,
+}))<{ stretch?: boolean }>`
+  ${({ stretch }) => stretch && "align-self: stretch;"}
+`;
+
+const ButtonGroup = styled(Box).attrs(({ theme }) => ({
   horizontal: true,
-}))``;
+  alignItems: "stretch",
+  justifyContent: "center",
+  gap: `${theme.space[4]}px`,
+}))`
+  align-self: stretch;
+
+  ${ButtonBase} {
+    flex: 1 0 0;
+    justify-content: center;
+  }
+`;
 
 const TroubleshootingWrapper = styled.div`
   margin-top: auto;
@@ -642,7 +662,7 @@ export const renderLockedDeviceError = ({
   return (
     <Wrapper id="error-locked-device">
       <ErrorBody
-        Icon={LockAltMedium}
+        Icon={IconsLegacy.LockAltMedium}
         title={t("errors.LockedDeviceError.title")}
         description={
           productName
@@ -764,6 +784,7 @@ export const renderError = ({
   learnMoreLink,
   learnMoreTextKey,
   Icon,
+  stretch,
 }: {
   error: Error | ErrorConstructor;
   t: TFunction;
@@ -783,6 +804,7 @@ export const renderError = ({
   device?: Device | null;
   inlineRetry?: boolean;
   withDescription?: boolean;
+  stretch?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   let tmpError = error;
@@ -807,8 +829,9 @@ export const renderError = ({
         learnMoreTextKey={learnMoreTextKey}
       />
     );
+  } else if (isWebHidSendReportError(tmpError)) {
+    tmpError = new DisconnectedDevice();
   }
-
   // if no supportLink is provided, we fallback on the related url linked to
   // tmpError name, if any
   const supportLinkUrl = supportLink ?? urls.errors[error?.name];
@@ -828,7 +851,11 @@ export const renderError = ({
         title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
-            <TranslatedError error={tmpError as unknown as Error} field="description" />
+            <TranslatedError
+              dataTestId="error-description-deviceAction"
+              error={tmpError as unknown as Error}
+              field="description"
+            />
           )
         }
         list={
@@ -839,7 +866,7 @@ export const renderError = ({
           ) : undefined
         }
       />
-      <ButtonContainer>
+      <ButtonContainer stretch={stretch}>
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
@@ -848,31 +875,32 @@ export const renderError = ({
           />
         ) : (
           <>
+            <ButtonGroup>
+              {withExportLogs ? (
+                <ExportLogsButton
+                  title={t("settings.exportLogs.title")}
+                  small={false}
+                  primary={false}
+                  outlineGrey
+                />
+              ) : null}
+              {withOpenManager ? (
+                <OpenManagerButton mt={0} />
+              ) : onRetry && inlineRetry ? (
+                <Button primary onClick={onRetry}>
+                  {t("common.retry")}
+                </Button>
+              ) : null}
+              {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+              {buyLedger ? (
+                <LinkWithExternalIcon
+                  label={t("common.buyLedger")}
+                  onClick={() => openURL(buyLedger)}
+                />
+              ) : null}
+            </ButtonGroup>
             {supportLinkUrl ? (
               <ExternalLinkButton label={t("common.getSupport")} url={supportLinkUrl} />
-            ) : null}
-            {withExportLogs ? (
-              <ExportLogsButton
-                title={t("settings.exportLogs.title")}
-                small={false}
-                primary={false}
-                outlineGrey
-                mx={1}
-              />
-            ) : null}
-            {withOpenManager ? (
-              <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
-            ) : onRetry && inlineRetry ? (
-              <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
-                {t("common.retry")}
-              </Button>
-            ) : null}
-            {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
-            {buyLedger ? (
-              <LinkWithExternalIcon
-                label={t("common.buyLedger")}
-                onClick={() => openURL(buyLedger)}
-              />
             ) : null}
           </>
         )}
@@ -893,6 +921,7 @@ export const renderInWrongAppForAccount = ({
     error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
+    stretch: true,
   });
 
 export const renderConnectYourDevice = ({
@@ -911,13 +940,7 @@ export const renderConnectYourDevice = ({
   <Wrapper>
     <Header />
     <AnimationWrapper>
-      <Animation
-        animation={getDeviceAnimation(
-          modelId,
-          type,
-          unresponsive ? "enterPinCode" : "plugAndPinCode",
-        )}
-      />
+      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
     </AnimationWrapper>
     <Footer>
       <Title>
@@ -964,9 +987,11 @@ const OpenSwapBtn = () => {
 export const HardwareUpdate = ({
   i18nKeyTitle,
   i18nKeyDescription,
+  i18nKeyValues,
 }: {
   i18nKeyTitle: string;
   i18nKeyDescription: string;
+  i18nKeyValues?: Record<string, string>;
 }) => (
   <Wrapper>
     <Header>
@@ -974,10 +999,10 @@ export const HardwareUpdate = ({
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
-        <Trans i18nKey={i18nKeyTitle} />
+        <Trans i18nKey={i18nKeyTitle} values={i18nKeyValues} />
       </Title>
       <Text variant="body" color="palette.text.shade60" textAlign="center">
-        <Trans i18nKey={i18nKeyDescription} />
+        <Trans i18nKey={i18nKeyDescription} values={i18nKeyValues} />
       </Text>
     </Flex>
     <ButtonFooter>

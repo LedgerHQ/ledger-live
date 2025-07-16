@@ -1,5 +1,8 @@
-import { Observable } from "rxjs";
+import { Observable, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
+import { getAppAndVersion } from "./getAppAndVersion";
+import { switchMap } from "rxjs/operators";
+import { isDashboardName } from "../../hw/isDashboardName";
 
 /**
  * Force the device to quit the currently opened app.
@@ -17,15 +20,12 @@ import Transport from "@ledgerhq/hw-transport";
  * @param transport a Transport instance
  */
 export function quitApp(transport: Transport): Observable<void> {
-  return new Observable(observer => {
-    transport
-      .send(0xb0, 0xa7, 0x00, 0x00)
-      .then(() => {
-        observer.next();
-        observer.complete();
-      })
-      .catch(error => {
-        observer.error(error);
-      });
-  });
+  return from(getAppAndVersion(transport)).pipe(
+    switchMap(async result => {
+      if (isDashboardName(result.appAndVersion.name)) {
+        return;
+      }
+      await transport.send(0xb0, 0xa7, 0x00, 0x00);
+    }),
+  );
 }

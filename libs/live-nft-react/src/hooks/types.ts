@@ -4,7 +4,7 @@ import {
   SimpleHashSpamReportResponse,
   SimpleHashRefreshResponse,
 } from "@ledgerhq/live-nft/api/types";
-import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
+import { ProtoNFT, FloorPrice, Operation } from "@ledgerhq/types-live";
 import {
   UseInfiniteQueryResult,
   InfiniteData,
@@ -12,15 +12,12 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
-
 // SpamFilter
 export type HookProps = {
   addresses: string;
   nftsOwned: ProtoNFT[];
   chains: string[];
   threshold: number;
-  action?: (collection: string, blockchain: BlockchainsType) => void;
   enabled: boolean;
   staleTime?: number;
 };
@@ -111,3 +108,5 @@ export enum RareSatRarity {
   HISTORICAL_EVENT = "historical_event",
   NON_STANDARD_SCRIPT = "non_standard_script",
 }
+
+export type OrderedOperation = Operation & { order: number };

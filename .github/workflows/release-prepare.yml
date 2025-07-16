@@ -1,4 +1,4 @@
-name: "[Release] Prepare for releasing"
+name: "[Release] - Prepare & Publish Release - Manual"
 
 on:
   workflow_dispatch:
@@ -47,15 +47,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: commit
+      - name: git add
         run: |
           git add .
-          git commit -m "chore(release): :rocket: prepare release [skip ci]"
 
-      - name: push changes
+      - name: commit
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(release): :rocket: prepare release [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: pull commit
         run: |
-          git push origin ${{ inputs.ref }}
-          git fetch origin
+          git stash
+          git pull origin ${{ inputs.ref }}
 
       - name: fetch develop and main
         run: |
@@ -77,9 +85,35 @@ jobs:
           gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
 
   release-final:
-    name: "[Release] Publish packages and apps"
+    name: "Prepare Release > Publish packages and apps"
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
       ref: main
+      caller: release-prepare
     secrets: inherit
+
+  release-fail:
+    name: "Prepare Release > Failure Reporting"
+    needs: release-final
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JQKWS9KK"
+            text: "[Alert] Release Preparation failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Release Preparation failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

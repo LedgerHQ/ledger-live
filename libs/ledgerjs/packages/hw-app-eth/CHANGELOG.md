@@ -1,5 +1,287 @@
 # @ledgerhq/hw-app-eth
 
+## 6.45.4
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0
+  - @ledgerhq/domain-service@1.2.29
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a7ba19c`](https://github.com/LedgerHQ/ledger-live/commit/a7ba19cfa5a895572edfcf036a10d2af83efdf38), [`91fe526`](https://github.com/LedgerHQ/ledger-live/commit/91fe526be2710f0fb18b4d035a5d8de630b3d4b5)]:
+  - @ledgerhq/types-live@6.70.0-next.0
+  - @ledgerhq/domain-service@1.2.29-next.0
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.3
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-live@6.69.0
+  - @ledgerhq/domain-service@1.2.28
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`1d72da9`](https://github.com/LedgerHQ/ledger-live/commit/1d72da911a56d5b25fb6464e60ac236927823ce4)]:
+  - @ledgerhq/types-live@6.69.0-next.0
+  - @ledgerhq/domain-service@1.2.28-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.2
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0
+  - @ledgerhq/domain-service@1.2.27
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9a208c3`](https://github.com/LedgerHQ/ledger-live/commit/9a208c39aec129b3aff2105991ffc18be05fd3f5), [`9009235`](https://github.com/LedgerHQ/ledger-live/commit/9009235cf52e83c0626acaec0959bfb3837404aa), [`95dbd60`](https://github.com/LedgerHQ/ledger-live/commit/95dbd60c06b02fe6fd50bc2ec0883096858d1f23)]:
+  - @ledgerhq/types-live@6.68.0-next.0
+  - @ledgerhq/domain-service@1.2.27-next.0
+  - @ledgerhq/evm-tools@1.6.2
+
+## 6.45.1
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0
+  - @ledgerhq/domain-service@1.2.26
+  - @ledgerhq/evm-tools@1.6.2
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+
+## 6.45.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b), [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`4c6b682`](https://github.com/LedgerHQ/ledger-live/commit/4c6b682b9929334a7be13212a69f2c6a614f372c), [`bf3dec3`](https://github.com/LedgerHQ/ledger-live/commit/bf3dec3eb166f80e066f466e0e03291c9a141a81)]:
+  - @ledgerhq/types-live@6.67.0-next.0
+  - @ledgerhq/domain-service@1.2.26-next.0
+  - @ledgerhq/evm-tools@1.6.2
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+
+## 6.45.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0
+  - @ledgerhq/domain-service@1.2.25
+  - @ledgerhq/evm-tools@1.6.2
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+
+## 6.45.0-next.0
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/domain-service@1.2.25-next.0
+  - @ledgerhq/evm-tools@1.6.2-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6-next.0
+
+## 6.44.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+### Patch Changes
+
+- Updated dependencies [[`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/types-live@6.65.0
+  - @ledgerhq/domain-service@1.2.24
+  - @ledgerhq/evm-tools@1.6.1
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.5
+
+## 6.44.0-next.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+### Patch Changes
+
+- Updated dependencies [[`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/types-live@6.65.0-next.0
+  - @ledgerhq/domain-service@1.2.24-next.0
+  - @ledgerhq/evm-tools@1.6.1-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.5-next.0
+
+## 6.43.1
+
+### Patch Changes
+
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0
+  - @ledgerhq/domain-service@1.2.23
+  - @ledgerhq/evm-tools@1.6.0
+
+## 6.43.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0-next.0
+  - @ledgerhq/domain-service@1.2.23-next.0
+  - @ledgerhq/evm-tools@1.6.0
+
+## 6.43.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5)]:
+  - @ledgerhq/evm-tools@1.6.0
+  - @ledgerhq/types-live@6.63.0
+  - @ledgerhq/domain-service@1.2.22
+
+## 6.43.0-next.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5)]:
+  - @ledgerhq/evm-tools@1.6.0-next.0
+  - @ledgerhq/types-live@6.63.0-next.0
+  - @ledgerhq/domain-service@1.2.22-next.0
+
+## 6.42.9
+
+### Patch Changes
+
+- Updated dependencies [[`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0)]:
+  - @ledgerhq/evm-tools@1.5.0
+  - @ledgerhq/types-live@6.62.0
+  - @ledgerhq/domain-service@1.2.21
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.4
+
+## 6.42.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0)]:
+  - @ledgerhq/evm-tools@1.5.0-next.0
+  - @ledgerhq/types-live@6.62.0-next.0
+  - @ledgerhq/domain-service@1.2.21-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.4-next.0
+
+## 6.42.8
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/domain-service@1.2.20
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/domain-service@1.2.20-next.0
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.7
+
+### Patch Changes
+
+- Updated dependencies [[`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/domain-service@1.2.19
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/types-live@6.60.0-next.0
+  - @ledgerhq/domain-service@1.2.19-next.0
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.6
+
+### Patch Changes
+
+- Updated dependencies [[`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd)]:
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd)]:
+  - @ledgerhq/evm-tools@1.4.0-next.0
+
+## 6.42.5
+
+### Patch Changes
+
+- Updated dependencies [[`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/types-live@6.59.0
+  - @ledgerhq/domain-service@1.2.18
+  - @ledgerhq/evm-tools@1.3.1
+
+## 6.42.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/types-live@6.59.0-next.0
+  - @ledgerhq/domain-service@1.2.18-next.0
+  - @ledgerhq/evm-tools@1.3.1
+
+## 6.42.4
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.58.0
+  - @ledgerhq/domain-service@1.2.17
+  - @ledgerhq/evm-tools@1.3.1
+
+## 6.42.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.58.0-next.0
+  - @ledgerhq/domain-service@1.2.17-next.0
+  - @ledgerhq/evm-tools@1.3.1
+
 ## 6.42.3
 
 ### Patch Changes

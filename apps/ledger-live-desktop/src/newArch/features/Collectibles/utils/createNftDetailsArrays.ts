@@ -14,6 +14,7 @@ export function createDetails(
       key: "Description",
       title: "NFT.viewer.attributes.description",
       value: metadata?.description || "",
+      id: "description",
     },
     {
       key: "Contract",
@@ -21,6 +22,7 @@ export function createDetails(
       value: protoNft.contract,
       isCopyable: true,
       isHash: true,
+      id: "contract",
     },
     {
       key: "Token ID",
@@ -28,6 +30,7 @@ export function createDetails(
       value: protoNft.tokenId,
       isCopyable: true,
       isHash: protoNft.tokenId?.length >= 4 ? true : false,
+      id: "tokenId",
     },
     ...(amount
       ? [
@@ -35,6 +38,7 @@ export function createDetails(
             key: "Amount",
             title: "NFT.viewer.attributes.quantity",
             value: amount,
+            id: "amount",
           },
         ]
       : []),
@@ -44,6 +48,7 @@ export function createDetails(
             key: "Floor Price",
             title: "NFT.viewer.attributes.floorPrice",
             value: `${floorPrice} ${ticker}`,
+            id: "floorPrice",
           },
         ]
       : []),

@@ -3,7 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import { CosmosAPI } from "./api/Cosmos";
+import { CosmosAPI } from "./network/Cosmos";
 import { buildTransaction, txToMessages } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { getMaxEstimatedBalance } from "./logic";

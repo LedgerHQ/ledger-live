@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { track } from "~/renderer/analytics/segment";
 
@@ -7,7 +7,7 @@ export const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
   accounts: Account[],
 ) => {
-  const predicateFn = (account: SubAccount | Account) =>
+  const predicateFn = (account: TokenAccount | Account) =>
     getAccountCurrency(account).id === currency.id;
   if (currency.type === "TokenCurrency") {
     const tokenAccounts = accounts

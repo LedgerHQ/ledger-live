@@ -25,6 +25,6 @@ describe("getBalance", () => {
     // Then
     expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
     expect(mockGetAccountInfo.mock.lastCall[0]).toEqual(address);
-    expect(result).toEqual(balance);
+    expect(result).toEqual([{ value: balance, asset: { type: "native" } }]);
   });
 });

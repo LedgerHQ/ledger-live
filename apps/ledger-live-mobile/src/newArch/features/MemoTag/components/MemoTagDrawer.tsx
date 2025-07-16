@@ -26,7 +26,7 @@ export const MemoTagDrawer = memo(({ open, onClose, onNext }: Props) => {
         </Circle>
       </Flex>
 
-      <Text variant="h4" textAlign="center" mb={6}>
+      <Text variant="h4" textAlign="center" mb={6} testID="memo-tag-drawer-title">
         {t("transfer.memoTag.title")}
       </Text>
 
@@ -34,7 +34,13 @@ export const MemoTagDrawer = memo(({ open, onClose, onNext }: Props) => {
         {t("transfer.memoTag.description")}
       </Text>
 
-      <Button type="primary" title={t("transfer.memoTag.cta")} onPress={onClose} mb={3} />
+      <Button
+        type="primary"
+        title={t("transfer.memoTag.cta")}
+        onPress={onClose}
+        mb={3}
+        testID="memo-tag-add-button"
+      />
 
       <Button
         type="tertiary"
@@ -42,6 +48,7 @@ export const MemoTagDrawer = memo(({ open, onClose, onNext }: Props) => {
         onPress={onNext}
         outline
         mb={3}
+        testID="memo-tag-ignore-button"
       />
 
       <Button

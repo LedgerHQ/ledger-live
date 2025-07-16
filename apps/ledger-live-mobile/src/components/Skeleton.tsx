@@ -1,7 +1,8 @@
 import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
 import { Animated, StyleProp, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
+import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
+import styled from "styled-components/native";
 import { BorderProps } from "styled-system";
 import Config from "react-native-config";
 

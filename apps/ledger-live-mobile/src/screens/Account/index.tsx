@@ -26,7 +26,7 @@ import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { NavigatorName, ScreenName } from "~/const";
 import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import AccountHeader from "./AccountHeader";
-import { getListHeaderComponents } from "./ListHeaderComponent";
+import { useListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -140,7 +140,7 @@ const AccountScreenInner = ({
     console.warn(err);
   }
 
-  const { listHeaderComponents } = getListHeaderComponents({
+  const { listHeaderComponents } = useListHeaderComponents({
     account,
     parentAccount,
     currency,
@@ -164,14 +164,12 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer
-            key={"section-container-accounts"}
-            px={6}
-            isLast
-            testID={`operations-history-${account.id}`}
-          >
+          <SectionContainer key={"section-container-accounts"} px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
-            <OperationsHistorySection accounts={[account]} />
+            <OperationsHistorySection
+              accounts={[account]}
+              testID={`operations-history-${account.id}`}
+            />
           </SectionContainer>,
         ]
       : [

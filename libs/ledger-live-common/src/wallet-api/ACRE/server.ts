@@ -114,7 +114,7 @@ export const handlers = ({
     const parentAccount = getParentAccount(account, accounts);
 
     const accountFamily = isTokenAccount(account)
-      ? parentAccount?.currency.family
+      ? account.token.parentCurrency.family
       : account.currency.family;
 
     const mainAccount = getMainAccount(account, parentAccount);
@@ -123,7 +123,7 @@ export const handlers = ({
 
     const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
-      account: mainAccount,
+      account,
     });
 
     if (accountFamily !== liveTx.family) {

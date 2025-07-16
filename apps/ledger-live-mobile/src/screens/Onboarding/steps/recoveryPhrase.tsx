@@ -22,22 +22,22 @@ import { Step } from "./setupDevice/scenes/BaseStepperView";
 // @TODO Replace
 const images = {
   light: {
-    RestoreRecovery: require("~/images/illustration/Light/_067.png"),
-    RestoreRecoveryStep1: require("~/images/illustration/Light/_067.png"),
-    PinCode: require("~/images/illustration/Light/_062.png"),
-    PinCodeInstructions: require("~/images/illustration/Light/_062.png"),
-    ExistingRecovery: require("~/images/illustration/Light/_059.png"),
-    ExistingRecoveryStep1: require("~/images/illustration/Light/_061.png"),
-    ExistingRecoveryStep2: require("~/images/illustration/Light/_061.png"),
+    RestoreRecovery: require("~/images/illustration/Light/_067.webp"),
+    RestoreRecoveryStep1: require("~/images/illustration/Light/_067.webp"),
+    PinCode: require("~/images/illustration/Light/_062.webp"),
+    PinCodeInstructions: require("~/images/illustration/Light/_062.webp"),
+    ExistingRecovery: require("~/images/illustration/Light/_059.webp"),
+    ExistingRecoveryStep1: require("~/images/illustration/Light/_061.webp"),
+    ExistingRecoveryStep2: require("~/images/illustration/Light/_061.webp"),
   },
   dark: {
-    RestoreRecovery: require("~/images/illustration/Dark/_067.png"),
-    RestoreRecoveryStep1: require("~/images/illustration/Dark/_067.png"),
-    PinCode: require("~/images/illustration/Dark/_062.png"),
-    PinCodeInstructions: require("~/images/illustration/Dark/_062.png"),
-    ExistingRecovery: require("~/images/illustration/Dark/_059.png"),
-    ExistingRecoveryStep1: require("~/images/illustration/Dark/_061.png"),
-    ExistingRecoveryStep2: require("~/images/illustration/Dark/_061.png"),
+    RestoreRecovery: require("~/images/illustration/Dark/_067.webp"),
+    RestoreRecoveryStep1: require("~/images/illustration/Dark/_067.webp"),
+    PinCode: require("~/images/illustration/Dark/_062.webp"),
+    PinCodeInstructions: require("~/images/illustration/Dark/_062.webp"),
+    ExistingRecovery: require("~/images/illustration/Dark/_059.webp"),
+    ExistingRecoveryStep1: require("~/images/illustration/Dark/_061.webp"),
+    ExistingRecoveryStep2: require("~/images/illustration/Dark/_061.webp"),
   },
 };
 

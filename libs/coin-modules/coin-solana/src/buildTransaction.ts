@@ -3,45 +3,59 @@ import {
   buildTransferInstructions,
   buildTokenTransferInstructions,
   buildCreateAssociatedTokenAccountInstruction,
+  buildApproveTransactionInstructions,
+  buildRevokeTransactionInstructions,
   buildStakeCreateAccountInstructions,
   buildStakeDelegateInstructions,
   buildStakeUndelegateInstructions,
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
-} from "./api/chain/web3";
+} from "./network/chain/web3";
 import { assertUnreachable } from "./utils";
 import {
   PublicKey,
   VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
   TransactionMessage,
+  BlockhashWithExpiryBlockHeight,
+  VersionedTransaction,
 } from "@solana/web3.js";
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
+import { trace } from "@ledgerhq/logs";
 
 export const buildTransactionWithAPI = async (
   address: string,
   transaction: Transaction,
   api: ChainAPI,
-): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
-  const instructions = await buildInstructions(api, transaction);
-
+): Promise<
+  readonly [
+    OnChainTransaction,
+    BlockhashWithExpiryBlockHeight,
+    (signature: Buffer) => OnChainTransaction,
+  ]
+> => {
   const recentBlockhash = await api.getLatestBlockhash();
 
-  const feePayer = new PublicKey(address);
+  let web3SolanaTransaction: VersionedTransaction;
+  if (transaction.raw) {
+    web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
+  } else {
+    const instructions = await buildInstructions(api, transaction);
+    const transactionMessage = new TransactionMessage({
+      payerKey: new PublicKey(address),
+      recentBlockhash: recentBlockhash.blockhash,
+      instructions,
+    });
 
-  const tm = new TransactionMessage({
-    payerKey: feePayer,
-    recentBlockhash,
-    instructions,
-  });
-
-  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
+    web3SolanaTransaction = new OnChainTransaction(transactionMessage.compileToLegacyMessage());
+  }
 
   return [
-    tx,
+    web3SolanaTransaction,
+    recentBlockhash,
     (signature: Buffer) => {
-      tx.addSignature(new PublicKey(address), signature);
-      return tx;
+      web3SolanaTransaction.addSignature(new PublicKey(address), signature);
+      return web3SolanaTransaction;
     },
   ];
 };
@@ -54,7 +68,14 @@ async function buildInstructions(
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  if (Object.keys(commandDescriptor.errors).length > 0) {
+  const errorEntries = Object.entries(commandDescriptor.errors);
+  if (errorEntries.length > 0) {
+    trace({
+      type: "solana/buildTransaction",
+      message: "can not build invalid command",
+      data: Object.fromEntries(errorEntries.map(([key, value]) => [key, value.message])),
+      context: { commandKind: commandDescriptor.command.kind },
+    });
     throw new Error("can not build invalid command");
   }
   return buildInstructionsForCommand(api, commandDescriptor.command);
@@ -70,7 +91,11 @@ async function buildInstructionsForCommand(
     case "token.transfer":
       return buildTokenTransferInstructions(api, command);
     case "token.createATA":
-      return buildCreateAssociatedTokenAccountInstruction(command);
+      return buildCreateAssociatedTokenAccountInstruction(api, command);
+    case "token.approve":
+      return buildApproveTransactionInstructions(api, command);
+    case "token.revoke":
+      return buildRevokeTransactionInstructions(api, command);
     case "stake.createAccount":
       return buildStakeCreateAccountInstructions(api, command);
     case "stake.delegate":

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen } from "tests/testSetup";
 import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { WalletSyncTestApp, lldWalletSyncFeatureFlag, mockedSdk } from "./shared";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";

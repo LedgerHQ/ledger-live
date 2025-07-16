@@ -112,6 +112,9 @@ async function init() {
   const store = createStore({
     dbMiddleware,
   });
+  if (getEnv("PLAYWRIGHT_RUN")) {
+    (window as Window & { __STORE__?: ReturnType<typeof createStore> }).__STORE__ = store;
+  }
   sentry(() => sentryLogsSelector(store.getState()));
   let notifiedSentryLogs = false;
   store.subscribe(() => {

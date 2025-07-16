@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
 
 import * as ReactQuery from "@tanstack/react-query";

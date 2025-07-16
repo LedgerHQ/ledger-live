@@ -1,4 +1,4 @@
-name: "Build Mobile"
+name: "[Mobile] - Build - Called"
 
 on:
   workflow_call:
@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   build-mobile-app-android:
-    name: "Build LLM | Android"
+    name: "Android Build"
     runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -82,8 +82,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: [m1, ARM64]
-    name: "Build LLM | iOS"
+    runs-on: [ledger-live-4xlarge]
+    name: "iOS Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -99,7 +99,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          skip-pod-cache: "false"
+          skip-pod-cache: "true"
           skip-turbo-cache: "false"
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: nick-fields/retry@v3
@@ -122,9 +122,10 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/mobile.metafile.json
 
   report:
+    name: "Build Mobile > Report"
     runs-on: ubuntu-22.04
     needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) }}
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) && needs.build-mobile-app-android.result == 'success' && needs.build-mobile-app-ios.result == 'success' }}
     steps:
       - name: generate token
         id: generate-token
@@ -146,100 +147,3 @@ jobs:
           baseBranch: ${{ inputs.base_ref || 'develop' }}
           prNumber: ${{ github.event.number}}
           mode: mobile
-      - uses: actions/github-script@v7
-        name: get statuses of runs
-        id: status
-        with:
-          script: |
-            const fs = require("fs");
-            const statuses = [
-              "${{ needs.build-mobile-app-android.result }}",
-              "${{ needs.build-mobile-app-ios.result }}",
-            ];
-
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
-
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Build Ledger Live Mobile (${os})`)?.html_url;
-
-            const keys = {
-              ios: {
-                symbol: "🍏",
-                name: "iOS",
-                jobUrl: findJobUrl("Mac OS X")
-              },
-              android: {
-                symbol: "🤖",
-                name: "Android",
-                jobUrl: findJobUrl("Android")
-              },
-            };
-
-            const report = {
-              android: {
-                pass: ${{ needs.build-mobile-app-android.result == 'success' }},
-                status: "${{ needs.build-mobile-app-android.result }}",
-              },
-              ios: {
-                pass: ${{ needs.build-mobile-app-ios.result == 'success' }},
-                status: "${{ needs.build-mobile-app-ios.result }}",
-              },
-            };
-            const isFailed = statuses.some(e => e === "failure");
-            const isCancelled = statuses.some(e => e === "cancelled");
-
-            const iosSuccess = report.ios.pass;
-
-            let summary = ``;
-
-            summary += `|`
-
-            const reportKeys = Object.keys(report);
-
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
-
-            summary += `
-            |`;
-
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
-            }
-
-            summary += `
-            |`;
-
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
-            });
-
-            summary += `
-
-            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
-            `;
-
-            const output = {
-              summary,
-              actions: iosSuccess ? [] : [{
-                // 20 chars max
-                label: "Regen. Pods",
-                // 20 chars max
-                identifier: "regen_pods",
-                // 40 chars max
-                description: "Will regenerate cocoapods lockfile",
-              }],
-            }
-            fs.writeFileSync("summary-build-mobile.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v4
-        name: upload output
-        with:
-          path: ${{ github.workspace }}/summary-build-mobile.json
-          name: summary-build-mobile.json

@@ -22,12 +22,12 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";
 import { CeloAccount, CeloVote, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge, Operation, Account, SubAccount } from "@ledgerhq/types-live";
+import { AccountBridge, Operation, Account, TokenAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type Data = {
-  account: CeloAccount | SubAccount;
+  account: CeloAccount | TokenAccount;
   parentAccount: CeloAccount | undefined | null;
   vote: CeloVote;
 };

@@ -72,7 +72,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
           }
         />
       </Flex>
-      <Flex flexDirection="column" rowGap={16} flex={1} alignItems="flex-start">
+      <Flex flexDirection="column" rowGap={16} flex={1} alignItems="flex-start" maxWidth="100%">
         <InteractFlex alignItems="center" onClick={onShowMore}>
           <Text variant="bodyLineHeight" fontSize={13}>
             {t("errors.TransactionBroadcastError.needHelp")}
@@ -85,7 +85,7 @@ const NodeError: React.FC<Props> = ({ error }) => {
           )}
         </InteractFlex>
         {isShowMore && (
-          <Flex flexDirection="column" flex={1}>
+          <Flex flexDirection="column" flex={2} maxWidth="100%">
             <HelpSection onGetHelp={onGetHelp} />
             <TechnicalErrorSection error={error} onSaveLogs={onSaveLogs} />
           </Flex>

@@ -150,7 +150,6 @@ const Collection = () => {
         account={account}
         title={t("NFT.gallery.collection.operationList.header")}
         filterOperation={collectionAddress ? filterOperation : undefined}
-        t={t}
       />
     </>
   );

@@ -25,27 +25,27 @@ type NavigationProp = RootNavigationComposite<
 export const devices = {
   nanoX: {
     id: DeviceModelId.nanoX,
-    img: require("../../../../assets/images/devices/NanoX.png"),
+    img: require("../../../../assets/images/devices/NanoX.webp"),
     setupTime: 600000,
   },
   nanoS: {
     id: DeviceModelId.nanoS,
-    img: require("../../../../assets/images/devices/NanoS.png"),
+    img: require("../../../../assets/images/devices/NanoS.webp"),
     setupTime: 600000,
   },
   nanoSP: {
     id: DeviceModelId.nanoSP,
-    img: require("../../../../assets/images/devices/NanoSP.png"),
+    img: require("../../../../assets/images/devices/NanoSP.webp"),
     setupTime: 600000,
   },
   stax: {
     id: DeviceModelId.stax,
-    img: require("../../../../assets/images/devices/Stax.png"),
+    img: require("../../../../assets/images/devices/Stax.webp"),
     setupTime: 300000,
   },
   europa: {
     id: DeviceModelId.europa,
-    img: require("../../../../assets/images/devices/Europa.png"),
+    img: require("../../../../assets/images/devices/Europa.webp"),
     setupTime: 300000,
   },
 };

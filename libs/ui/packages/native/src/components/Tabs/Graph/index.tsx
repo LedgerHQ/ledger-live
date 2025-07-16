@@ -17,7 +17,7 @@ const TabText = styled(Text).attrs<TabItemProps>((p) => ({
   lineHeight: p.size === "medium" ? "40px" : "26px",
   textAlign: "center",
   height: p.size === "medium" ? "40px" : "26px",
-  width: 40,
+  width: 50,
 }))``;
 
 const StyledTabs = styled(TemplateTabs)`

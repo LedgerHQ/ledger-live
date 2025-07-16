@@ -56,6 +56,7 @@ export type GlobalModalData = {
   MODAL_LOTTIE_DEBUGGER: undefined;
   MODAL_WALLET_SYNC_DEBUGGER: undefined;
   MODAL_SIMPLEHASH_TOOLS: undefined;
+  MODAL_NFTS_TOOLS: undefined;
   MODAL_BRAZE_TOOLS: undefined;
   MODAL_CREATE_LOCAL_APP: {
     manifest?: LiveAppManifest;
@@ -67,7 +68,7 @@ export type GlobalModalData = {
   MODAL_SIGN_MESSAGE: SignMessageData;
   MODAL_TROUBLESHOOT_NETWORK: undefined;
   MODAL_NO_FUNDS_STAKE: {
-    account: AccountLike | undefined | null;
+    account: AccountLike;
     parentAccount?: Account | undefined | null;
     entryPoint?: "get-funds" | undefined;
   };

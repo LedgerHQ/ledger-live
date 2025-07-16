@@ -59,7 +59,7 @@ runs:
       shell: bash
 
     - name: Commit snapshots
-      uses: planetscale/ghcommit-action@v0.1.6
+      uses: planetscale/ghcommit-action@v0.2.9
       if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
       with:
         commit_message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"

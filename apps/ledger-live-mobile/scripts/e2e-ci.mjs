@@ -2,16 +2,23 @@
 import { basename } from "path";
 
 let platform, test, build, bundle;
-let speculos = "";
+let testType = "mock";
 let cache = true;
 let shard = "";
 let target = "release";
+let filter = "";
+
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
 
 const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--speculos] [--shard] [--production]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--testType] [--shard] [--production]`,
   );
   process.exit(exitCode);
 };
@@ -39,16 +46,17 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile e2e:test${speculos} \
+  await $`pnpm mobile ${testType}:test\
     -c ios.sim.release \
     --loglevel error \
-    --record-logs all \
-    --take-screenshots all \
+    --record-logs failing \
+    --take-screenshots failing \
     --forceExit \
     --headless \
     --retries 1 \
     --runInBand \
-    --cleanup`;
+    --cleanup \
+    ${filter.split(" ")}`;
 };
 
 const build_android = async () => {
@@ -56,17 +64,18 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile e2e:test${speculos} \\
+  await $`pnpm mobile ${testType}:test \\
     -c android.emu.${target} \\
     --loglevel error \\
-    --record-logs all \\
-    --take-screenshots all \\
+    --record-logs failing \\
+    --take-screenshots failing \\
     --forceExit \\
     --headless \\
     --retries 1 \\
     --runInBand \\
     --cleanup \\
-    --shard ${shard}`;
+    --shard ${shard} \\
+    ${filter.split(" ")}`;
 };
 
 const getTasksFrom = {
@@ -112,14 +121,17 @@ for (const argName in argv) {
       break;
     case "_":
       break;
-    case "speculos":
-      speculos = ":speculos";
+    case "e2e":
+      testType = "e2e";
       break;
     case "shard":
       shard = argv[argName];
       break;
     case "production":
       target = "prerelease";
+      break;
+    case "filter":
+      filter = argv[argName];
       break;
     default:
       usage(42);

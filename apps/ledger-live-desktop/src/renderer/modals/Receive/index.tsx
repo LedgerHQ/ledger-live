@@ -5,6 +5,10 @@ import Body, { StepId } from "./Body";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeModal } from "~/renderer/actions/modals";
+import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 type State = {
   stepId: StepId;
@@ -21,6 +25,15 @@ const ReceiveModal = () => {
   const [state, setState] = useState<State>(INITIAL_STATE);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
+
+  const device = useSelector(getCurrentDevice);
+
+  useTrackReceiveFlow({
+    location: HOOKS_TRACKING_LOCATIONS.receiveModal,
+    device,
+    verifyAddressError,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
 
   const setStepId = useCallback((newStepId: State["stepId"]) => {
     setState(prevState => ({ ...prevState, stepId: newStepId }));

@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Xrp.ts"]
+  "entry": ["src/Xrp.ts"],
+  "ignoreUnused": ["jest-sonar"]
 }

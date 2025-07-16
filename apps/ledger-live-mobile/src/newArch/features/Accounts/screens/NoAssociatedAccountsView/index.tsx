@@ -1,54 +1,36 @@
 import React from "react";
-import { Flex, Icons, rgba } from "@ledgerhq/native-ui";
-import { StyleSheet, View } from "react-native";
-import { useTheme } from "styled-components/native";
-import SafeAreaView from "~/components/SafeAreaView";
-import Circle from "~/components/Circle";
-import VerticalGradientBackground from "LLM/features/Accounts/components/VerticalGradientBackground";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
-import { ScreenName } from "~/const";
+import { StyleSheet } from "react-native";
+import { Flex, Icons, rgba } from "@ledgerhq/native-ui";
+import Circle from "~/components/Circle";
+import SafeAreaView from "~/components/SafeAreaView";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import VerticalGradientBackground from "LLM/features/Accounts/components/VerticalGradientBackground";
+import useNoAssociatedAccountsViewModel, { type Props } from "./useNoAssociatedAccountsViewModel";
 
-type Props = BaseComposite<
-  StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.NoAssociatedAccounts>
->;
-export default function NoAssociatedAccountsView({ route }: Props) {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
+type ViewProps = ReturnType<typeof useNoAssociatedAccountsViewModel>;
+
+function View({ statusColor, space, CustomNoAssociatedAccounts, onCloseNavigation }: ViewProps) {
   const { t } = useTranslation();
-  const { CustomNoAssociatedAccounts, onCloseNavigation } = route.params || {};
 
-  const statusColor = colors.primary.c70;
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex style={{ justifyContent: "center" }}>
+    <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
       <VerticalGradientBackground stopColor={statusColor} />
-      <View
-        style={[
-          styles.iconWrapper,
-          {
-            backgroundColor: rgba(statusColor, 0.1),
-            borderColor: colors.primary.c70,
-            alignSelf: "center",
-            marginTop: 150,
-          },
-        ]}
+      <Flex
+        bg={rgba(statusColor, 0.1)}
+        mt={space[13]}
+        borderColor="primary.c70"
+        alignSelf="center"
+        style={styles.iconWrapper}
       >
         <Circle size={24}>
           <Icons.InformationFill size="L" color={statusColor} />
         </Circle>
-      </View>
-      <Flex
-        alignItems="center"
-        justifyContent={"center"}
-        style={styles.famillyComponentContainer}
-        flex={1}
-      >
+      </Flex>
+      <Flex alignItems="center" justifyContent="center" px={20} flex={1}>
         {<CustomNoAssociatedAccounts />}
       </Flex>
-      <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
+      <Flex px={6} rowGap={6}>
         <CloseWithConfirmation
           showButton
           buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
@@ -60,17 +42,17 @@ export default function NoAssociatedAccountsView({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  famillyComponentContainer: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   iconWrapper: {
     height: 72,
     width: 72,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    display: "flex",
   },
 });
+
+const NoAssociatedAccountsView: React.FC<Props> = props => (
+  <View {...useNoAssociatedAccountsViewModel(props)} />
+);
+
+export default NoAssociatedAccountsView;

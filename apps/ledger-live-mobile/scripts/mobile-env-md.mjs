@@ -46,12 +46,12 @@ function gen() {
 
   md += "# Sentry projects\n";
   md += genTable(({ env, fastlaneEnv }) => {
-    const { SENTRY_PROJECT, SENTRY_ENVIRONMENT } = fastlaneEnv;
+    const { SENTRY_PROJECT, SENTRY_ENVIRONMENT, SENTRY_DISABLE_AUTO_UPLOAD } = fastlaneEnv;
     const { SENTRY_DSN } = env;
     if (!SENTRY_PROJECT) return "N/A";
     if (!SENTRY_ENVIRONMENT) return "❌ SENTRY_ENVIRONMENT missing";
     if (!SENTRY_DSN) return "❌ SENTRY_DSN missing";
-    return `[${SENTRY_PROJECT}](https://sentry.io/organizations/ledger/projects/${SENTRY_PROJECT})`;
+    return `[${SENTRY_PROJECT}](https://sentry.io/organizations/ledger/projects/${SENTRY_PROJECT}) - ${SENTRY_DISABLE_AUTO_UPLOAD ? "❌ auto upload disabled" : "✅ auto upload enabled"}`;
   });
 
   md += "# Google Service (feature flag)\n";

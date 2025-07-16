@@ -1,5 +1,85 @@
 # @ledgerhq/evm-tools
 
+## 1.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/live-env@2.8.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6
+
+## 1.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/live-env@2.8.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.6-next.0
+
+## 1.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
+  - @ledgerhq/live-env@2.7.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.5
+
+## 1.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
+  - @ledgerhq/live-env@2.7.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.5-next.0
+
+## 1.6.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+## 1.5.0
+
+### Minor Changes
+
+- [#9158](https://github.com/LedgerHQ/ledger-live/pull/9158) [`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a) Thanks [@Canestin](https://github.com/Canestin)! - change uniswap signmessage modal
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/live-env@2.6.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.4
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#9158](https://github.com/LedgerHQ/ledger-live/pull/9158) [`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a) Thanks [@Canestin](https://github.com/Canestin)! - change uniswap signmessage modal
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/live-env@2.6.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.4-next.0
+
+## 1.4.0
+
+### Minor Changes
+
+- [#9120](https://github.com/LedgerHQ/ledger-live/pull/9120) [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes Lido triggering blind message
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#9120](https://github.com/LedgerHQ/ledger-live/pull/9120) [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes Lido triggering blind message
+
 ## 1.3.1
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # actions-root
 
+## 0.3.0
+
+### Minor Changes
+
+- [#9955](https://github.com/LedgerHQ/ledger-live/pull/9955) [`d0aa534`](https://github.com/LedgerHQ/ledger-live/commit/d0aa5343fcaaa14c2336b47109eaecdce2d0b9aa) Thanks [@qperrot](https://github.com/qperrot)! - Coin tester actions
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#9955](https://github.com/LedgerHQ/ledger-live/pull/9955) [`d0aa534`](https://github.com/LedgerHQ/ledger-live/commit/d0aa5343fcaaa14c2336b47109eaecdce2d0b9aa) Thanks [@qperrot](https://github.com/qperrot)! - Coin tester actions
+
+## 0.2.0
+
+### Minor Changes
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
 ## 0.1.0
 
 ### Minor Changes

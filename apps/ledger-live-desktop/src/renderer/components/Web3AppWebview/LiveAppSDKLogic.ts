@@ -17,6 +17,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { openAssetAndAccountDrawerPromise } from "LLD/features/ModularDrawer";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -37,6 +38,7 @@ export const requestAccountLogic = async (
   walletState: WalletState,
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
+  modularDrawerVisible?: boolean,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
 
@@ -48,7 +50,12 @@ export const requestAccountLogic = async (
    */
   const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
 
-  const { account, parentAccount } = await selectAccountAndCurrency(safeCurrencies, includeTokens);
+  const { account, parentAccount } = modularDrawerVisible
+    ? await openAssetAndAccountDrawerPromise({
+        assetIds: safeCurrencies,
+        includeTokens,
+      })
+    : await selectAccountAndCurrency(safeCurrencies, includeTokens);
 
   return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));
 };

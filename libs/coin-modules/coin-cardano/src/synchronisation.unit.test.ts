@@ -146,4 +146,27 @@ describe("makeGetAccountShape", () => {
 
     // it("should return the sum of utxos minus ada minimum for tokens", async () => {});
   });
+
+  describe("delegation", () => {
+    it("should check dRepHex and rewards are available", async () => {
+      getTransactionsMock.mockReturnValue(
+        Promise.resolve({
+          blockHeight: 0,
+          transactions: [],
+          externalCredentials: [{ isUsed: false, key: "0", path: {} } as PaymentCredential],
+          internalCredentials: [],
+        }),
+      );
+      const getDelegationInfoMock = jest.mocked(getDelegationInfo);
+      getDelegationInfoMock.mockReturnValue(
+        Promise.resolve({
+          rewards: new BigNumber(10),
+          dRepHex: "dRepHex",
+        } as CardanoDelegation),
+      );
+      const result = await shape(accountShapeInfo, { paginationConfig: {} });
+      expect(result.cardanoResources?.delegation?.dRepHex).toEqual("dRepHex");
+      expect(result.cardanoResources?.delegation?.rewards).toEqual(new BigNumber(10));
+    });
+  });
 });

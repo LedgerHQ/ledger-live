@@ -1,9 +1,8 @@
-import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
-import { TokenAccount } from "@ledgerhq/types-live";
-import { StakeMeta } from "./api/chain/account/stake";
+import { StakeMeta } from "./network/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -34,22 +33,6 @@ export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccount
     accountId: accountIdWithTokenAccountAddress.slice(0, lastColonIndex),
     address: accountIdWithTokenAccountAddress.slice(lastColonIndex + 1),
   };
-}
-
-export function toTokenId(mint: string): string {
-  return `solana/spl/${mint}`;
-}
-
-export function toTokenMint(tokenId: string): string {
-  return tokenId.split("/")[2];
-}
-
-export function toSubAccMint(subAcc: TokenAccount): string {
-  return toTokenMint(subAcc.token.id);
-}
-
-export function tokenIsListedOnLedger(mint: string): boolean {
-  return findTokenById(toTokenId(mint))?.type === "TokenCurrency";
 }
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {
@@ -121,3 +104,30 @@ export function stakeActivePercent(stake: SolanaStake) {
   }
   return (stake.activation.active / amount) * 100;
 }
+
+/**
+ * Map of Crypto Asset List content hash per currency.
+ * Used to detect changes between syncs and trigger
+ * a full synchronization in order to detect
+ * freshly added token definitions
+ */
+const CALHashByChainIdMap = new Map<CryptoCurrency, string>();
+
+/**
+ * Getter for the CAL content hash
+ */
+export const getCALHash = (currency: CryptoCurrency): string => {
+  return CALHashByChainIdMap.get(currency) || "";
+};
+
+/**
+ * Setter for the CAL content hash
+ */
+export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
+  CALHashByChainIdMap.set(currency, hash);
+  return CALHashByChainIdMap.get(currency)!;
+};
+
+export const __resetCALHash = (): void => {
+  CALHashByChainIdMap.clear();
+};

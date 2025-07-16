@@ -1,10 +1,11 @@
 {
   "extends": "../../../../tsconfig.base",
   "compilerOptions": {
-    "module": "ESNext",
     "declaration": true,
     "declarationMap": true,
     "outDir": "./lib",
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "module": "esnext"
   }
 }

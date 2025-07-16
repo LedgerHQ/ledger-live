@@ -188,6 +188,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - MMKV (2.1.0):
+    - MMKVCore (~> 2.1.0)
+  - MMKVCore (2.1.1)
   - MultiplatformBleAdapter (0.2.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -1427,7 +1430,7 @@ PODS:
     - Yoga
   - react-native-biometrics (3.0.1):
     - React-Core
-  - react-native-ble-plx (3.2.1):
+  - react-native-ble-plx (3.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1466,6 +1469,28 @@ PODS:
     - React-Core
   - react-native-launch-arguments (4.0.2):
     - React
+  - react-native-mmkv (2.12.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - MMKV (>= 1.3.3)
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-netinfo (9.5.0):
     - React-Core
   - react-native-pager-view (6.5.1):
@@ -1983,11 +2008,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.24.3):
+  - RNSentry (6.9.1):
+    - DoubleConversion
+    - glog
     - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
     - React-hermes
-    - Sentry/HybridSDK (= 8.36.0)
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.45.0)
+    - Yoga
   - RNShare (10.1.0):
     - React-Core
   - RNSVG (13.14.0):
@@ -2022,7 +2065,7 @@ PODS:
   - segment-analytics-react-native (2.19.1):
     - React-Core
     - sovran-react-native
-  - Sentry/HybridSDK (8.36.0)
+  - Sentry/HybridSDK (8.45.0)
   - SocketRocket (0.7.0)
   - sovran-react-native (0.4.5):
     - React-Core
@@ -2098,6 +2141,7 @@ DEPENDENCIES:
   - react-native-image-crop-tools (from `../node_modules/react-native-image-crop-tools`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-launch-arguments (from `../node_modules/react-native-launch-arguments`)
+  - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
@@ -2182,6 +2226,8 @@ SPEC REPOS:
     - GoogleUtilities
     - libwebp
     - lottie-ios
+    - MMKV
+    - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
     - PromisesObjC
@@ -2309,6 +2355,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-launch-arguments:
     :path: "../node_modules/react-native-launch-arguments"
+  react-native-mmkv:
+    :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
@@ -2477,6 +2525,8 @@ SPEC CHECKSUMS:
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   lottie-ios: fcb5e73e17ba4c983140b7d21095c834b3087418
   lottie-react-native: 3f0e9dc322229ca99f4b35795bc3794d84ff04bc
+  MMKV: ce484c1ac40bf76d5f09a0195d2ec5b3d3840d55
+  MMKVCore: 1eb661c6c498ab88e3df9ce5d8ff94d05fcc0567
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -2510,7 +2560,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: b982d5bba94a8bc073bda48f0d27c9b28417fae3
   React-microtasksnativemodule: 2b73e68f0462f3175f98782db08896f8501afd20
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
-  react-native-ble-plx: 0a3f7bd84bd819bf1c32e003d083eaa3f2082ecb
+  react-native-ble-plx: f2aceed91cb75e91a858861810ac033a0be709d4
   react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-fast-pbkdf2: 44d6ffa0346863e14100294004a1595ec76b2e9f
@@ -2518,6 +2568,7 @@ SPEC CHECKSUMS:
   react-native-image-crop-tools: a751dae773f66ceac0bea7d894dc6bc219a69c03
   react-native-image-picker: 3269f75c251cdcd61ab51b911dd30d6fff8c6169
   react-native-launch-arguments: 5f41e0abf88a15e3c5309b8875d6fd5ac43df49d
+  react-native-mmkv: 7d0b6c2a79e73100b933f2947a9c8741d664e18b
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
   react-native-pager-view: 12284823fff3b85b4dd16456b04def6ba9422677
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
@@ -2576,14 +2627,14 @@ SPEC CHECKSUMS:
   RNReactNativeHapticFeedback: ec56a5f81c3941206fd85625fa669ffc7b4545f9
   RNReanimated: 82b558efb00a30a3b8ea1a3ca8975125e9400313
   RNScreens: 63500b789c1b5286972a55d4a7d73fc1123f51e4
-  RNSentry: e7e5d059d62d6c447d83e14800edc1812a594a5d
+  RNSentry: a29b60c1fd08d08ab2fbb4f43696d3ed279b824a
   RNShare: b674d9f1cb0dc11116983bebd8712908a226a3ee
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: 6382277afab3c54658e9d555ee0faa7a37827136
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 1c36d83c0a735795e304178241331e7701dc5d2a
-  Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
+  Sentry: f7c0c4b82e2f7e5909a660544dfaff84e35d5e03
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
   Storyly: 310297bcf4493d3d5b41e71834fba49502c8067a

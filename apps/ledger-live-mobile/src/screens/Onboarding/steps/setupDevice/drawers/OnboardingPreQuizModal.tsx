@@ -6,7 +6,7 @@ import { Image } from "react-native";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingPreQuizModalNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { ScreenName } from "~/const";
-import quizImage3 from "~/images/illustration/Light/_060.png";
+import quizImage3 from "~/images/illustration/Light/_060.webp";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingPreQuizModalNavigatorParamList,

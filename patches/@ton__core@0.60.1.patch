@@ -1,0 +1,303 @@
+diff --git a/dist/address/Address.js b/dist/address/Address.js
+index 6370d6bcb4f6cb24fed60c2d66097d4f886524ad..7cb416f5f7bdec06e9b7c7db24f7b3141b2b1951 100644
+--- a/dist/address/Address.js
++++ b/dist/address/Address.js
+@@ -133,42 +133,6 @@ class Address {
+         }
+     }
+     constructor(workChain, hash) {
+-        this.toRawString = () => {
+-            return this.workChain + ':' + this.hash.toString('hex');
+-        };
+-        this.toRaw = () => {
+-            const addressWithChecksum = Buffer.alloc(36);
+-            addressWithChecksum.set(this.hash);
+-            addressWithChecksum.set([this.workChain, this.workChain, this.workChain, this.workChain], 32);
+-            return addressWithChecksum;
+-        };
+-        this.toStringBuffer = (args) => {
+-            let testOnly = (args && args.testOnly !== undefined) ? args.testOnly : false;
+-            let bounceable = (args && args.bounceable !== undefined) ? args.bounceable : true;
+-            let tag = bounceable ? bounceable_tag : non_bounceable_tag;
+-            if (testOnly) {
+-                tag |= test_flag;
+-            }
+-            const addr = Buffer.alloc(34);
+-            addr[0] = tag;
+-            addr[1] = this.workChain;
+-            addr.set(this.hash, 2);
+-            const addressWithChecksum = Buffer.alloc(36);
+-            addressWithChecksum.set(addr);
+-            addressWithChecksum.set((0, crc16_1.crc16)(addr), 34);
+-            return addressWithChecksum;
+-        };
+-        this.toString = (args) => {
+-            let urlSafe = (args && args.urlSafe !== undefined) ? args.urlSafe : true;
+-            let buffer = this.toStringBuffer(args);
+-            if (urlSafe) {
+-                return buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
+-            }
+-            else {
+-                return buffer.toString('base64');
+-            }
+-        };
+-        this[_a] = () => this.toString();
+         if (hash.length !== 32) {
+             throw new Error('Invalid address hash length: ' + hash.length);
+         }
+@@ -176,12 +140,48 @@ class Address {
+         this.hash = hash;
+         Object.freeze(this);
+     }
++    toRawString() {
++        return this.workChain + ':' + this.hash.toString('hex');
++    };
+     equals(src) {
+         if (src.workChain !== this.workChain) {
+             return false;
+         }
+         return src.hash.equals(this.hash);
+     }
++    toRaw() {
++        const addressWithChecksum = Buffer.alloc(36);
++        addressWithChecksum.set(this.hash);
++        addressWithChecksum.set([this.workChain, this.workChain, this.workChain, this.workChain], 32);
++        return addressWithChecksum;
++    };
++    toStringBuffer(args) {
++        let testOnly = (args && args.testOnly !== undefined) ? args.testOnly : false;
++        let bounceable = (args && args.bounceable !== undefined) ? args.bounceable : true;
++        let tag = bounceable ? bounceable_tag : non_bounceable_tag;
++        if (testOnly) {
++            tag |= test_flag;
++        }
++        const addr = Buffer.alloc(34);
++        addr[0] = tag;
++        addr[1] = this.workChain;
++        addr.set(this.hash, 2);
++        const addressWithChecksum = Buffer.alloc(36);
++        addressWithChecksum.set(addr);
++        addressWithChecksum.set((0, crc16_1.crc16)(addr), 34);
++        return addressWithChecksum;
++    };
++    toString(args) {
++        let urlSafe = (args && args.urlSafe !== undefined) ? args.urlSafe : true;
++        let buffer = this.toStringBuffer(args);
++        if (urlSafe) {
++            return buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
++        }
++        else {
++            return buffer.toString('base64');
++        }
++    };
++    [_a](){ this.toString(); }
+ }
+ exports.Address = Address;
+ _a = symbol_inspect_1.default;
+diff --git a/dist/boc/Cell.js b/dist/boc/Cell.js
+index 16fa93634d7fc2a7a3614b1acb5c901416087723..66a23bed892f6b7f71dffe7f69a94907fa0c8446 100644
+--- a/dist/boc/Cell.js
++++ b/dist/boc/Cell.js
+@@ -59,48 +59,7 @@ class Cell {
+         // Level and depth information
+         this._hashes = [];
+         this._depths = [];
+-        /**
+-         * Beging cell parsing
+-         * @returns a new slice
+-         */
+-        this.beginParse = (allowExotic = false) => {
+-            if (this.isExotic && !allowExotic) {
+-                throw new Error("Exotic cells cannot be parsed");
+-            }
+-            return new Slice_1.Slice(new BitReader_1.BitReader(this.bits), this.refs);
+-        };
+-        /**
+-         * Get cell hash
+-         * @param level level
+-         * @returns cell hash
+-         */
+-        this.hash = (level = 3) => {
+-            return this._hashes[Math.min(this._hashes.length - 1, level)];
+-        };
+-        /**
+-         * Get cell depth
+-         * @param level level
+-         * @returns cell depth
+-         */
+-        this.depth = (level = 3) => {
+-            return this._depths[Math.min(this._depths.length - 1, level)];
+-        };
+-        /**
+-         * Get cell level
+-         * @returns cell level
+-         */
+-        this.level = () => {
+-            return this.mask.level;
+-        };
+-        /**
+-         * Checks cell to be euqal to another cell
+-         * @param other other cell
+-         * @returns true if cells are equal
+-         */
+-        this.equals = (other) => {
+-            return this.hash().equals(other.hash());
+-        };
+-        this[_a] = () => this.toString();
++
+         // Resolve bits
+         let bits = BitString_1.BitString.EMPTY;
+         if (opts && opts.bits) {
+@@ -212,6 +171,48 @@ class Cell {
+     asBuilder() {
+         return (0, Builder_1.beginCell)().storeSlice(this.asSlice());
+     }
++    /**
++     * Beging cell parsing
++     * @returns a new slice
++     */
++    beginParse(allowExotic = false) {
++        if (this.isExotic && !allowExotic) {
++            throw new Error("Exotic cells cannot be parsed");
++        }
++        return new Slice_1.Slice(new BitReader_1.BitReader(this.bits), this.refs);
++    };
++    /**
++     * Get cell hash
++     * @param level level
++     * @returns cell hash
++     */
++    hash(level = 3) {
++        return this._hashes[Math.min(this._hashes.length - 1, level)];
++    };
++    /**
++     * Get cell depth
++     * @param level level
++     * @returns cell depth
++     */
++    depth(level = 3) {
++        return this._depths[Math.min(this._depths.length - 1, level)];
++    };
++    /**
++     * Get cell level
++     * @returns cell level
++     */
++    level() {
++        return this.mask.level;
++    };
++    /**
++     * Checks cell to be euqal to another cell
++     * @param other other cell
++     * @returns true if cells are equal
++     */
++    equals(other) {
++        return this.hash().equals(other.hash());
++    };
++    [_a]() { this.toString(); }
+ }
+ exports.Cell = Cell;
+ _a = symbol_inspect_1.default;
+diff --git a/src/address/Address.ts b/src/address/Address.ts
+index 62f75e954a5ac8def9dc59697d64863e0d286e2d..c0ab9fabe3f5a167aaf4547341c9b259fa9fcb77 100644
+--- a/src/address/Address.ts
++++ b/src/address/Address.ts
+@@ -161,7 +161,7 @@ export class Address {
+         Object.freeze(this);
+     }
+ 
+-    toRawString = () => {
++    toRawString() {
+         return this.workChain + ':' + this.hash.toString('hex');
+     }
+ 
+@@ -172,14 +172,14 @@ export class Address {
+         return src.hash.equals(this.hash);
+     }
+ 
+-    toRaw = () => {
++    toRaw() {
+         const addressWithChecksum = Buffer.alloc(36);
+         addressWithChecksum.set(this.hash);
+         addressWithChecksum.set([this.workChain, this.workChain, this.workChain, this.workChain], 32);
+         return addressWithChecksum;
+     }
+ 
+-    toStringBuffer = (args?: { bounceable?: boolean, testOnly?: boolean }) => {
++    toStringBuffer(args?: { bounceable?: boolean, testOnly?: boolean }) {
+         let testOnly = (args && args.testOnly !== undefined) ? args.testOnly : false;
+         let bounceable = (args && args.bounceable !== undefined) ? args.bounceable : true;
+ 
+@@ -198,7 +198,7 @@ export class Address {
+         return addressWithChecksum;
+     }
+ 
+-    toString = (args?: { urlSafe?: boolean, bounceable?: boolean, testOnly?: boolean }) => {
++    toString(args?: { urlSafe?: boolean, bounceable?: boolean, testOnly?: boolean }) {
+         let urlSafe = (args && args.urlSafe !== undefined) ? args.urlSafe : true;
+         let buffer = this.toStringBuffer(args);
+         if (urlSafe) {
+@@ -208,7 +208,7 @@ export class Address {
+         }
+     }
+ 
+-    [inspectSymbol] = () => this.toString()
++    [inspectSymbol](){ this.toString() }
+ }
+ 
+ export function address(src: string) {
+diff --git a/src/boc/Cell.ts b/src/boc/Cell.ts
+index 88e7ce5f292c791599e8d92ff23fd3b195351d7f..9df566a449ebace3b2ed9dd06e5605ab9f7303b6 100644
+--- a/src/boc/Cell.ts
++++ b/src/boc/Cell.ts
+@@ -147,7 +147,7 @@ export class Cell {
+      * Beging cell parsing
+      * @returns a new slice
+      */
+-    beginParse = (allowExotic: boolean = false) => {
++    beginParse(allowExotic: boolean = false) {
+         if (this.isExotic && !allowExotic) {
+             throw new Error("Exotic cells cannot be parsed");
+         }
+@@ -159,7 +159,7 @@ export class Cell {
+      * @param level level
+      * @returns cell hash
+      */
+-    hash = (level: number = 3): Buffer => {
++    hash(level: number = 3): Buffer {
+         return this._hashes[Math.min(this._hashes.length - 1, level)];
+     }
+ 
+@@ -168,7 +168,7 @@ export class Cell {
+      * @param level level
+      * @returns cell depth
+      */
+-    depth = (level: number = 3): number => {
++    depth(level: number = 3): number {
+         return this._depths[Math.min(this._depths.length - 1, level)];
+     }
+ 
+@@ -176,7 +176,7 @@ export class Cell {
+      * Get cell level
+      * @returns cell level
+      */
+-    level = (): number => {
++    level(): number {
+         return this.mask.level;
+     }
+ 
+@@ -185,7 +185,7 @@ export class Cell {
+      * @param other other cell
+      * @returns true if cells are equal
+      */
+-    equals = (other: Cell): boolean => {
++    equals(other: Cell): boolean {
+         return this.hash().equals(other.hash());
+     }
+ 
+@@ -240,5 +240,5 @@ export class Cell {
+         return beginCell().storeSlice(this.asSlice());
+     }
+ 
+-    [inspectSymbol] = () => this.toString();
++    [inspectSymbol]() { this.toString(); }
+ }

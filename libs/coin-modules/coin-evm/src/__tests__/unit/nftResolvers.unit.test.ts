@@ -12,6 +12,7 @@ const metadata: NFTMetadata = {
     explorer: "explorer",
     opensea: "opensea",
     rarible: "rarible",
+    etherscan: null,
   },
   medias: {
     big: {
@@ -34,7 +35,7 @@ const metadata: NFTMetadata = {
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    mockedAxios.mockResolvedValue({ data: [{}] } as any);
+    mockedAxios.mockResolvedValue({ data: [{}] });
   });
 
   beforeEach(() => {
@@ -61,26 +62,8 @@ describe("EVM Family", () => {
           }
           expect(e).toBeInstanceOf(Error);
           expect((e as Error).message).toBe("Ethereum Bridge NFT Resolver: Unsupported currency");
+          expect(axios).not.toHaveBeenCalled();
         }
-      });
-
-      it("should not do any request if metadata are already provided", async () => {
-        const result = await nftMetadata({
-          contract: "0xWhatever",
-          currencyId: "ethereum",
-          tokenId: "1",
-          metadata,
-        });
-
-        expect(result).toEqual({
-          status: 200,
-          result: {
-            contract: "0xWhatever",
-            tokenId: "1",
-            ...metadata,
-          },
-        });
-        expect(axios).not.toHaveBeenCalled();
       });
 
       it("should return nft metadata", async () => {
@@ -95,7 +78,7 @@ describe("EVM Family", () => {
               },
             },
           ],
-        } as any);
+        });
 
         const result = await nftMetadata({
           contract: "0xWhatever",
@@ -128,24 +111,8 @@ describe("EVM Family", () => {
           }
           expect(e).toBeInstanceOf(Error);
           expect((e as Error).message).toBe("Ethereum Bridge NFT Resolver: Unsupported currency");
+          expect(axios).not.toHaveBeenCalled();
         }
-      });
-
-      it("should not do any request if metadata are already provided", async () => {
-        const result = await collectionMetadata({
-          contract: "0xWhatever",
-          currencyId: "ethereum",
-          metadata,
-        });
-
-        expect(result).toEqual({
-          status: 200,
-          result: {
-            contract: "0xWhatever",
-            ...metadata,
-          },
-        });
-        expect(axios).not.toHaveBeenCalled();
       });
 
       it("should return nft metadata", async () => {
@@ -159,7 +126,7 @@ describe("EVM Family", () => {
               },
             },
           ],
-        } as any);
+        });
 
         const result = await collectionMetadata({
           contract: "0xWhatever",

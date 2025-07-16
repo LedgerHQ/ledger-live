@@ -6,7 +6,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
-      lcd: "https://axelar-api.polkachu.com",
+      lcd: "https://lcd-axelar.imperator.co",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
@@ -28,7 +28,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_desmos: {
     type: "object",
     default: {
-      lcd: "https://api.mainnet.desmos.network/",
+      lcd: "https://api.mainnet.desmos.network",
       minGasPrice: 0.0025,
     },
   },
@@ -67,7 +67,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_osmo: {
     type: "object",
     default: {
-      lcd: "https://osmosis-api.polkachu.com",
+      lcd: "https://lcd.osmosis.zone",
       minGasPrice: 0.025,
       ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
       status: {
@@ -100,7 +100,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_secret_network: {
     type: "object",
     default: {
-      lcd: "https://lcd.secret.express",
+      lcd: "https://lcd.mainnet.secretsaturn.net",
       minGasPrice: 0.25,
       status: {
         type: "active",
@@ -150,7 +150,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_injective: {
     type: "object",
     default: {
-      lcd: "https://injective-api.polkachu.com",
+      lcd: "https://injective-rest.publicnode.com",
       minGasPrice: 900000000,
       ledgerValidator: "injvaloper1ntn4j2lsu3k60g8xj9pqshqvdj2q5tygyvczpy",
       status: {
@@ -172,7 +172,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_crypto_org: {
     type: "object",
     default: {
-      lcd: "https://cryptocom-api.polkachu.com",
+      lcd: "https://rest.cosmos.directory/cryptoorgchain",
       minGasPrice: 0.025,
       status: {
         type: "active",
@@ -198,6 +198,17 @@ export const cosmosConfig: CosmosConfig = {
       status: {
         type: "active",
       },
+    },
+  },
+  config_currency_babylon: {
+    type: "object",
+    default: {
+      lcd: "https://babylon.nodes.guru/api",
+      minGasPrice: 0.002, // source: https://www.mintscan.io/babylon/parameters
+      status: {
+        type: "active",
+      },
+      disableDelegation: true,
     },
   },
 };

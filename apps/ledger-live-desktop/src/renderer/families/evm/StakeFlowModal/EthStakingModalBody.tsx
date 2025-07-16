@@ -1,16 +1,17 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
 import { Flex } from "@ledgerhq/react-ui";
-import { EthStakingProvider } from "@ledgerhq/types-live";
+import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 type Props = {
-  account: WalletAPIAccount;
+  account: AccountLike;
   onClose?: () => void;
   source?: string;
   providers: EthStakingProvider[];
@@ -29,17 +30,25 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
       manifest,
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
-      const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
+      const trackProperties = getTrackProperties({
+        value,
+        modal: source,
+      });
       track("button_clicked2", {
         button: providerConfigID,
-        ...getTrackProperties({ value, modal: source }),
+        ...trackProperties,
       });
+      const customDappUrl = queryParams && appendQueryParamsToManifestURL(manifest, queryParams);
 
       history.push({
         pathname: value,
         ...(customDappUrl ? { customDappUrl } : {}),
         state: {
-          accountId: account.id,
+          accountId: deriveAccountIdForManifest(
+            account.id,
+            getWalletApiIdFromAccountId(account.id),
+            manifest,
+          ),
         },
       });
       onClose?.();

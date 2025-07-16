@@ -4,7 +4,7 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
-import headerAnalytics from "./illustrations/header_analytics.png";
+import headerAnalytics from "./illustrations/header_analytics.webp";
 import { Image } from "react-native";
 import useAnalyticsOptInPromptLogic from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantB";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

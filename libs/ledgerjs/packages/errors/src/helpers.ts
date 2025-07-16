@@ -39,7 +39,8 @@ export const createCustomErrorClass = <
           this[k] = fields[k];
         }
       }
-      if (options && isObject(options) && "cause" in options && !("cause" in this)) {
+
+      if (options && isObject(options) && "cause" in options && !this.cause) {
         // .cause was specified but the superconstructor
         // did not create an instance property.
         const cause = options.cause;

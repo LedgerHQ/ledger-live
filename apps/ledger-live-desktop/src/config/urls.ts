@@ -4,6 +4,7 @@ export const supportLinkByTokenType = {
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
   nfts: "https://support.ledger.com/article/4404389453841-zd",
+  spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 
 const errors: Record<string, string> = {
@@ -37,9 +38,8 @@ export const urls = {
   promoNanoX:
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
   // Ledger support
-  faq: "https://support.ledger.com/?redirect=false",
-  chatbot:
-    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
+  faq: "https://support.ledger.com",
+  chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   ledgerStatus: "https://status.ledger.com/",
   syncErrors: "https://support.ledger.com/article/360012207759-zd",
   terms:
@@ -98,7 +98,7 @@ export const urls = {
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
-  elrondStaking: "https://support.ledger.com/article/7228337345693-zd",
+  multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",
   ledgerValidator: "https://www.ledger.com/staking",
   // Banners
@@ -145,14 +145,17 @@ export const urls = {
   cryptoOrg: {
     website: "https://cronos-pos.org",
   },
-  elrond: {
-    website: "https://elrond.com",
+  multiversx: {
+    website: "https://multiversx.com",
   },
   figment: {
     website: "https://www.figment.io",
   },
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo:
+      "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
+    splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
     recipient_info: "https://support.ledger.com",
     ledgerByChorusOneTC: "https://chorus.one/tos",
     ledgerByFigmentTC:

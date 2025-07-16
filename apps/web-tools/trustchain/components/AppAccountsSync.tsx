@@ -552,7 +552,7 @@ function appForCurrency<T>(
   currency: CryptoCurrency,
   job: () => Observable<T>,
 ): Observable<T> {
-  return connectApp({
+  return connectApp()({
     deviceId,
     request: {
       appName: currency.managerAppName,

@@ -21,6 +21,7 @@ import {
   useSystemLanguageSelector,
 } from "~/renderer/reducers/settings";
 import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
+import { useSupportedLanguages } from "~/renderer/hooks/useSupportedLanguages";
 
 type ChangeLangArgs = { value: Language | null; label: string };
 
@@ -34,6 +35,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
+  const supportedLanguages = useSupportedLanguages().languages;
 
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
@@ -54,14 +56,14 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const languages = useMemo(
     () =>
       [{ value: null as Language | null, label: t(`language.system`) }].concat(
-        (Object.keys(Languages) as Array<keyof typeof Languages>).map(language => {
+        (Object.keys(supportedLanguages) as Array<keyof typeof Languages>).map(language => {
           return {
             value: language,
             label: Languages[language].label,
           };
         }),
       ),
-    [t],
+    [supportedLanguages, t],
   );
 
   const selectedLanguage = useMemo(

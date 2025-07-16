@@ -5,7 +5,6 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "module": "commonjs",
     "outDir": "lib"
   },
   "include": ["src/**/*"]

@@ -37,6 +37,7 @@ import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import CustomLiveAppProvider from "./CustomLiveAppProvider";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -63,6 +64,89 @@ type ExtraOptions = RenderOptions & {
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
 };
 
+enum RenderType {
+  DEFAULT = "default",
+  HOOK = "hook",
+}
+
+function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
+  return configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    preloadedState: overrideInitialState(initialState),
+    devTools: false,
+  });
+}
+
+/**
+ * Provides context providers for the application, conditionally including certain providers
+ * based on the render type and feature flags.
+ *
+ * @param {Object} props - The properties for the Providers component.
+ * @param {React.ReactNode} props.children - The child components to be wrapped by the providers.
+ * @param {ReturnType<typeof createStore>} props.store - The Redux store instance.
+ * @param {boolean} [props.withReactQuery=false] - Whether to include React Query's QueryClientProvider.
+ * @param {boolean} [props.withLiveApp=false] - Whether to include the CustomLiveAppProvider.
+ * @param {RenderType} [props.renderType=RenderType.DEFAULT] - The type of rendering context; determines which providers are included.
+ * @returns {JSX.Element} A JSX element containing the necessary providers.
+ */
+function Providers({
+  children,
+  store,
+  withReactQuery = false,
+  withLiveApp = false,
+  renderType = RenderType.DEFAULT,
+}: {
+  children: React.ReactNode;
+  store: ReturnType<typeof createStore>;
+  withReactQuery?: boolean;
+  withLiveApp?: boolean;
+  renderType?: RenderType;
+}): JSX.Element {
+  // Custom live app provider
+  const content = withLiveApp ? (
+    <CustomLiveAppProvider>
+      <NavigationContainer>{children}</NavigationContainer>
+    </CustomLiveAppProvider>
+  ) : (
+    <NavigationContainer>{children}</NavigationContainer>
+  );
+
+  // Conditionally wraps content with additional providers unless using hook-based rendering
+  const extraProviders =
+    renderType === RenderType.HOOK ? (
+      // For Hook-based rendering, add new providers here
+      content
+    ) : (
+      // For default rendering, add new providers here
+      <StyleProvider selectedPalette="dark">
+        <I18nextProvider i18n={i18n}>
+          <QueuedDrawersContextProvider>
+            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+          </QueuedDrawersContextProvider>
+        </I18nextProvider>
+      </StyleProvider>
+    );
+
+  // General Providers needed for all render types
+  let providers = (
+    <Provider store={store}>
+      <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+        {extraProviders}
+      </FirebaseFeatureFlagsProvider>
+    </Provider>
+  );
+
+  //if React Query is needed
+  if (withReactQuery) {
+    const queryClient = new QueryClient();
+    providers = <QueryClientProvider client={queryClient}>{providers}</QueryClientProvider>;
+  }
+
+  return providers;
+}
+
 const customRender = (
   ui: React.ReactElement,
   {
@@ -71,33 +155,43 @@ const customRender = (
     ...renderOptions
   }: ExtraOptions = {},
 ) => {
-  const store = configureStore({
-    reducer: reducers,
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-    preloadedState: overrideInitialState(initialState),
-    devTools: false,
+  const store = createStore({
+    overrideInitialState,
+  });
+
+  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    return <Providers store={store}>{children}</Providers>;
+  };
+
+  return {
+    store,
+    user: userEvent.setup(userEventOptions),
+    ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
+  };
+};
+
+const renderWithReactQuery = (
+  ui: React.ReactElement,
+  {
+    overrideInitialState: overrideInitialState = state => state,
+    userEventOptions = {},
+    ...renderOptions
+  }: ExtraOptions = {},
+) => {
+  const store = createStore({
+    overrideInitialState,
   });
 
   const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
-      <Provider store={store}>
-        <StyleProvider selectedPalette="dark">
-          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-            <AnalyticsContextProvider>
-              <QueuedDrawersContextProvider>
-                <I18nextProvider i18n={i18n}>
-                  <NavigationContainer>{children}</NavigationContainer>
-                </I18nextProvider>
-              </QueuedDrawersContextProvider>
-            </AnalyticsContextProvider>
-          </FirebaseFeatureFlagsProvider>
-        </StyleProvider>
-      </Provider>
+      <Providers store={store} withReactQuery>
+        {children}
+      </Providers>
     );
   };
 
   return {
+    store,
     user: userEvent.setup(userEventOptions),
     ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
   };
@@ -110,72 +204,40 @@ const customRenderHook = <Result,>(
     ...renderOptions
   }: ExtraOptions = {},
 ) => {
-  const store = configureStore({
-    reducer: reducers,
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-    preloadedState: overrideInitialState(initialState),
-    devTools: false,
+  const store = createStore({
+    overrideInitialState,
   });
-
   const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const queryClient = new QueryClient();
     return (
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-            <NavigationContainer>{children}</NavigationContainer>
-          </FirebaseFeatureFlagsProvider>
-        </Provider>
-      </QueryClientProvider>
+      <Providers store={store} renderType={RenderType.HOOK}>
+        {children}
+      </Providers>
     );
   };
 
   return { store, ...rntlRenderHook(hook, { wrapper: ProvidersWrapper, ...renderOptions }) };
 };
 
-const renderWithReactQuery = (
-  ui: React.ReactElement,
+const customRenderHookWithLiveAppProvider = <Result,>(
+  hook: () => Result,
   {
     overrideInitialState: overrideInitialState = state => state,
-    userEventOptions = {},
     ...renderOptions
   }: ExtraOptions = {},
 ) => {
-  const store = configureStore({
-    reducer: reducers,
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-    preloadedState: overrideInitialState(initialState),
-    devTools: false,
+  const store = createStore({
+    overrideInitialState,
   });
 
   const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const queryClient = new QueryClient();
     return (
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <StyleProvider selectedPalette="dark">
-            <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-              <AnalyticsContextProvider>
-                <QueuedDrawersContextProvider>
-                  <I18nextProvider i18n={i18n}>
-                    <NavigationContainer>{children}</NavigationContainer>
-                  </I18nextProvider>
-                </QueuedDrawersContextProvider>
-              </AnalyticsContextProvider>
-            </FirebaseFeatureFlagsProvider>
-          </StyleProvider>
-        </Provider>
-      </QueryClientProvider>
+      <Providers store={store} renderType={RenderType.HOOK} withLiveApp>
+        {children}
+      </Providers>
     );
   };
 
-  return {
-    user: userEvent.setup(userEventOptions),
-    QueryClient,
-    ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
-  };
+  return { store, ...rntlRenderHook(hook, { wrapper: ProvidersWrapper, ...renderOptions }) };
 };
 
 export const LONG_TIMEOUT = 30000;
@@ -184,4 +246,9 @@ export const LONG_TIMEOUT = 30000;
 export * from "@testing-library/react-native";
 
 // override render method
-export { customRender as render, customRenderHook as renderHook, renderWithReactQuery };
+export {
+  customRender as render,
+  customRenderHook as renderHook,
+  renderWithReactQuery,
+  customRenderHookWithLiveAppProvider,
+};

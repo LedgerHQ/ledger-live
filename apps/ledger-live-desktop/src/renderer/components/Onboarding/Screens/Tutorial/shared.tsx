@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { Box, Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
 import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box/index";
-import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/Switch";
-import { TextProps } from "@ledgerhq/react-ui/components/asorted/Text";
+import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/index";
+import { TextProps } from "@ledgerhq/react-ui/components/asorted/Text/index";
 
 export const WaveContainer: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Box).attrs({
   position: "absolute",

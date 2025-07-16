@@ -1,10 +1,10 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TonCommentInvalid } from "../../errors";
 import { fromTransactionRaw } from "../../transaction";
-import { Transaction } from "../../types";
+import { TonAccount, Transaction } from "../../types";
+import { findSubAccountById } from "../../utils";
 
 const PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060";
 const ADDRESS = "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4";
@@ -178,7 +178,7 @@ const ton: CurrenciesData<Transaction> = {
             subAccountId: SUBACCOUNT,
           }),
           expectedStatus: (account, tx) => {
-            const subAccount = findSubAccountById(account, tx.subAccountId ?? "");
+            const subAccount = findSubAccountById(account as TonAccount, tx.subAccountId ?? "");
             return {
               amount: subAccount?.spendableBalance,
               errors: {},

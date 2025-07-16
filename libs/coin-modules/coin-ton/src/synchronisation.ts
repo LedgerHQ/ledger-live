@@ -14,11 +14,11 @@ import {
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
   fetchAccountInfo,
+  fetchAdjacentTransactions,
   fetchJettonWallets,
   fetchLastBlockNumber,
 } from "./bridge/bridgeHelpers/api";
@@ -30,9 +30,14 @@ import {
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
 import { getSyncHash } from "./logic";
-import { TonOperation } from "./types";
+import { TonAccount, TonOperation, TonSubAccount } from "./types";
 
-export const getAccountShape: GetAccountShape<Account> = async (info, { blacklistedTokenIds }) => {
+const jettonTxMessageHashesMap = new Map<string, string>();
+
+export const getAccountShape: GetAccountShape<TonAccount> = async (
+  info,
+  { blacklistedTokenIds },
+) => {
   const { address, rest, currency, derivationMode, initialAccount } = info;
 
   const publicKey = reconciliatePubkey(rest?.publicKey, initialAccount);
@@ -79,12 +84,29 @@ export const getAccountShape: GetAccountShape<Account> = async (info, { blacklis
     }
   }
 
+  // Get origin hash_message for each jetton tranfer
+  for (const tx of newJettonTxs) {
+    const hash = tx.transaction_hash;
+    try {
+      if (!jettonTxMessageHashesMap.has(hash)) {
+        const res = await fetchAdjacentTransactions(hash);
+        const hash_message = res.transactions.at(0)?.in_msg?.hash;
+        if (hash_message) {
+          jettonTxMessageHashesMap.set(hash, hash_message);
+        }
+      }
+    } catch (error) {
+      console.error(`Error processing ton jetton hash ${hash}:`, error);
+    }
+  }
+
   const newOps = flatMap(newTxs.transactions, mapTxToOps(accountId, address, newTxs.address_book));
   const newJettonOps = flatMap(
     newJettonTxs,
-    mapJettonTxToOps(accountId, address, newTxs.address_book),
+    mapJettonTxToOps(accountId, address, newTxs.address_book, jettonTxMessageHashesMap),
   );
   const operations = shouldSyncFromScratch ? newOps : mergeOps(oldOps, newOps);
+
   const subAccounts = await getSubAccounts(
     info,
     accountId,
@@ -103,7 +125,7 @@ export const getAccountShape: GetAccountShape<Account> = async (info, { blacklis
     blockHeight,
     xpub: publicKey,
     lastSyncDate: new Date(),
-  } as Partial<Account>;
+  } as Partial<TonAccount>;
   return toReturn;
 };
 
@@ -113,14 +135,15 @@ const getSubAccountShape = async (
   token: TokenCurrency,
   ops: TonOperation[],
   shouldSyncFromScratch: boolean,
-): Promise<Partial<SubAccount>> => {
-  const tokenAccountId = encodeTokenAccountId(parentId, token);
+): Promise<Partial<TonSubAccount>> => {
   const walletsInfo = await fetchJettonWallets({
     address: info.address,
     jettonMaster: token.contractAddress,
   });
+
   if (walletsInfo.length !== 1) throw new Error("[ton] unexpected api response");
-  const { balance, address: jettonWalletAddress } = walletsInfo[0];
+  const { balance, address: jettonWallet } = walletsInfo[0];
+  const tokenAccountId = encodeTokenAccountId(parentId, token);
   const oldOps = info.initialAccount?.subAccounts?.find(a => a.id === tokenAccountId)?.operations;
   const operations = !oldOps || shouldSyncFromScratch ? ops : mergeOps(oldOps, ops);
   const maybeExistingSubAccount =
@@ -132,7 +155,7 @@ const getSubAccountShape = async (
     type: "TokenAccount",
     id: tokenAccountId,
     parentId,
-    token: { ...token, contractAddress: jettonWalletAddress }, // the contract address is replaced for the jetton wallet address, it will be use for the token transfer
+    token,
     balance: new BigNumber(balance),
     spendableBalance: new BigNumber(balance),
     operations,
@@ -140,7 +163,8 @@ const getSubAccountShape = async (
     pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-    swapHistory: [],
+    swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
+    jettonWallet, // Address of the jetton wallet contract that holds the token balance and handles transfers
   };
 };
 
@@ -150,7 +174,7 @@ async function getSubAccounts(
   newOps: TonOperation[],
   blacklistedTokenIds: string[] = [],
   shouldSyncFromScratch: boolean,
-): Promise<Partial<SubAccount>[]> {
+): Promise<Partial<TonSubAccount>[]> {
   const opsPerToken = newOps.reduce((acc, op) => {
     const { accountId: tokenAccountId } = decodeOperationId(op.id);
     const { token } = decodeTokenAccountId(tokenAccountId);
@@ -159,7 +183,7 @@ async function getSubAccounts(
     acc.get(token)?.push(op);
     return acc;
   }, new Map<TokenCurrency, TonOperation[]>());
-  const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
+  const subAccountsPromises: Promise<Partial<TonSubAccount>>[] = [];
   for (const [token, ops] of opsPerToken.entries()) {
     subAccountsPromises.push(
       getSubAccountShape(info, accountId, token, ops, shouldSyncFromScratch),
@@ -168,7 +192,7 @@ async function getSubAccounts(
   return Promise.all(subAccountsPromises);
 }
 
-const postSync = (initial: Account, synced: Account): Account => {
+const postSync = (initial: TonAccount, synced: TonAccount): TonAccount => {
   // Set of ids from the already existing subAccount from previous sync
   const initialSubAccountsIds = new Set();
   for (const subAccount of initial.subAccounts || []) {
@@ -206,7 +230,7 @@ const postSync = (initial: Account, synced: Account): Account => {
   };
 };
 
-function reconciliatePubkey(publicKey?: string, initialAccount?: Account): string {
+function reconciliatePubkey(publicKey?: string, initialAccount?: TonAccount): string {
   if (publicKey?.length === 64) return publicKey;
   if (initialAccount) {
     if (initialAccount.xpub?.length === 64) return initialAccount.xpub;

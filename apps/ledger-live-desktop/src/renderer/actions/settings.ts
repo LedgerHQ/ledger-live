@@ -26,13 +26,14 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
+  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
   UPDATE_NFT_COLLECTION_STATUS,
 } from "./constants";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
@@ -256,12 +257,16 @@ export const showToken = (tokenId: string) => ({
 });
 
 export const updateNftStatus = (
-  blockchain: BlockchainsType,
+  blockchain: SupportedBlockchain,
   collectionId: string,
   status: NftStatus,
 ) => ({
   type: UPDATE_NFT_COLLECTION_STATUS,
   payload: { blockchain, collectionId, status },
+});
+
+export const resetHiddenNftCollections = () => ({
+  type: RESET_HIDDEN_NFT_COLLECTIONS,
 });
 
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({
@@ -457,7 +462,7 @@ export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
 };
 
 export const updateAnonymousUserNotifications = (payload: {
-  notifications: Record<string, string | number>;
+  notifications: SettingsState["anonymousUserNotifications"];
   purgeState?: boolean;
 }) => {
   return {

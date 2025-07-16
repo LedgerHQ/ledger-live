@@ -1,22 +1,7 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "../types";
-import {
-  deviceActionFlow,
-  formatDeviceAmount,
-  SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { State } from "@ledgerhq/coin-framework/bot/types";
-
-const typeWording = {
-  send: "Send",
-  lock: "Lock",
-  unlock: "Unlock",
-  withdraw: "Withdraw",
-  vote: "Vote",
-  revoke: "Revoke",
-  activate: "Activate",
-  register: "Create Account",
-};
 
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
@@ -25,27 +10,71 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Type",
+      title: "Transaction Type",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => {
-        return typeWording[transaction.mode as keyof typeof typeWording];
-      },
+    },
+    {
+      title: "Function",
+      button: SpeculosButton.RIGHT,
     },
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, status }) =>
-        formatDeviceAmount(account.currency, status.amount, {
-          forceFloating: true,
-        }),
     },
     {
-      title: "Address",
+      title: "To (1/2)",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Accept",
+      title: "To (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Gas Fee",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Approve",
+      button: SpeculosButton.BOTH,
+    },
+  ],
+});
+
+export const acceptTokenTransaction: DeviceAction<
+  Transaction,
+  State<Transaction>
+> = deviceActionFlow({
+  steps: [
+    {
+      title: "Review",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Transaction Type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Function",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Amount",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Gas Fee",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Approve",
       button: SpeculosButton.BOTH,
     },
   ],

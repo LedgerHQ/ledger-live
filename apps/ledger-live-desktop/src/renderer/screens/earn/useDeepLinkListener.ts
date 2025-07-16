@@ -1,11 +1,12 @@
 import { openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import logger from "~/renderer/logger";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 /**
  * Valid URLs that this hook will listen for and handle:
@@ -16,7 +17,7 @@ export const useDeepLinkListener = () => {
   const startStakeFlow = useStakeFlow();
   const location = useLocation();
   const history = useHistory();
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,7 +30,10 @@ export const useDeepLinkListener = () => {
 
     switch (action) {
       case "stake":
-        startStakeFlow({ shouldRedirect: false, source: "Earn Dashboard" });
+        startStakeFlow({
+          shouldRedirect: false,
+          source: "Earn Dashboard",
+        });
         break;
       case "stake-account": {
         const accountId = queryParams.get("accountId");
@@ -40,7 +44,9 @@ export const useDeepLinkListener = () => {
             dispatch(
               openModal("MODAL_START_STAKE", {
                 account,
-                parentAccount: undefined,
+                parentAccount: isTokenAccount(account)
+                  ? getParentAccount(account, accounts)
+                  : undefined,
                 source: "Earn Dashboard",
               }),
             );

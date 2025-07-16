@@ -15,12 +15,12 @@ import {
 } from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeErrorStep from "./05-PinCodeError";
 import UnbackedErrorStep from "./05-UnbackedError";
-import { BackProps, BackRef } from "../router";
+import { Props, BackRef } from "../router";
 import AlreadyCreatedWithSameSeedStep from "./06-ActivationAlreadyCreatedSame";
 import AlreadyCreatedOtherSeedStep from "./07-ActivationAlreadyCreatedOther";
 import ActivationLoadingStep from "../Activation/04-LoadingStep";
 
-const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
+const SynchronizeWallet = forwardRef<BackRef, Props>(({ currentPage }, ref) => {
   const dispatch = useDispatch();
 
   useImperativeHandle(ref, () => ({
@@ -76,7 +76,7 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
           />
         );
       case Step.SynchronizeWithQRCode:
-        return <SynchWithQRCodeStep />;
+        return <SynchWithQRCodeStep sourcePage={currentPage} />;
       case Step.PinCode:
         return <PinCodeStep />;
 

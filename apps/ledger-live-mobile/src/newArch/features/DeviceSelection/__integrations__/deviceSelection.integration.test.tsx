@@ -5,6 +5,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
+import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 
 const MockUseRoute = useRoute as jest.Mock;
 const mockNavigate = jest.fn();
@@ -34,7 +35,7 @@ describe("Device Selection feature integration test", () => {
   beforeAll(() => {
     MockUseRoute.mockReturnValue({
       params: {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
         currency: {
           type: "CryptoCurrency",
           id: "bitcoin",

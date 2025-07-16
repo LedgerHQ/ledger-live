@@ -1,14 +1,12 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
-import { Application } from "../../page";
-
-const app = new Application();
-let deviceAction: DeviceAction;
-const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
-let first = true;
-const knownDevice = knownDevices.nanoX;
 
 describe("Receive Flow", () => {
+  let deviceAction: DeviceAction;
+  const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
+  let first = true;
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
     await app.init({
       userdata: "EthAccountXrpAccountReadOnlyFalse",
@@ -27,13 +25,15 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
-    await app.transfertMenu.open();
-    await app.transfertMenu.navigateToReceive();
+    await app.transferMenu.open();
+    await app.transferMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("Bitcoin 1");
+    await app.addAccount.addAccountAtIndex(Currency.BTC.name, Currency.BTC.id, 0);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.selectVerifyAddress();
     await deviceAction.openApp();
     await app.receive.expectAddressIsVerified(btcReceiveAddress);
@@ -47,22 +47,20 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
     await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
-    await app.receive.expectNumberOfAccountInListIsDisplayed("op mainnet", 1);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
 
   $TmsLink("B2CQA-1856");
   $TmsLink("B2CQA-1862");
   it("Should create an account on a network", async () => {
+    const currency = Currency.OP;
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.selectNetwork("op mainnet");
+    await app.receive.selectNetwork(currency.id);
     await app.receive.createAccount();
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("OP Mainnet 1");
-    await app.receive.selectAccount("OP Mainnet 2");
-    await app.receive.selectAccount("OP Mainnet 3");
-    await app.receive.continueCreateAccount();
+    await app.addAccount.addAccountAtIndex(Currency.OP.name, Currency.OP.id, 2);
     await app.receive.expectAccountIsCreated("OP Mainnet 3");
   });
 
@@ -71,10 +69,12 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.common.performSearch("Polygon");
     await app.receive.selectAsset("POL");
-    await app.receive.selectNetwork("binance smart chain");
+    await app.receive.selectNetwork("bsc");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("Binance Smart Chain 1");
+    await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });

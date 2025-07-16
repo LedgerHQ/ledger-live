@@ -4,6 +4,7 @@ import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning";
 export type StepProps = {
   t: TFunction;
@@ -34,5 +35,6 @@ export type StepProps = {
   manifestId?: string;
   manifestName?: string;
   isACRE?: boolean;
+  location?: HOOKS_TRACKING_LOCATIONS;
 };
 export type St = Step<StepId, StepProps>;

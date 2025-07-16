@@ -1,7 +1,6 @@
 export const urls = {
   faq: "https://support.ledger.com/",
-  chatbot:
-    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
+  chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
   terms: {
     en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",
@@ -106,7 +105,7 @@ export const urls = {
   cardanoStaking: "https://support.ledger.com/article/7880073204253-zd",
   algorandStaking: "https://support.ledger.com/article/360015897740-zd",
   polkadotStaking: "https://support.ledger.com/article/360018131260-zd",
-  elrondStaking: "https://support.ledger.com/article/360016750819-zd",
+  multiversxStaking: "https://support.ledger.com/article/360016750819-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   swap: {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
@@ -159,8 +158,8 @@ export const urls = {
   supportPage: "https://support.ledger.com/",
   maxSpendable: "https://support.ledger.com/article/360012960679-zd",
   receiveVerifyAddress: "https://support.ledger.com/?redirect=false",
-  elrond: {
-    website: "https://elrond.com",
+  multiversx: {
+    website: "https://multiversx.com",
   },
   cryptoOrg: {
     website: "https://cronos-pos.org",
@@ -168,11 +167,14 @@ export const urls = {
   solana: {
     supportPage: "https://support.ledger.com",
     stakingPage: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo:
+      "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
+    splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
   },
   resources: {
     gettingStarted:
       "https://www.ledger.com/start?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
-    helpCenter: "https://support.ledger.com/?redirect=false",
+    helpCenter: "https://support.ledger.com",
     ledgerAcademy:
       "https://www.ledger.com/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
     facebook: "https://facebook.com/Ledger",

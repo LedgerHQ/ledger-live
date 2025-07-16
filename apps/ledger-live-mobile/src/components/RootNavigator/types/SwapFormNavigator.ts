@@ -1,9 +1,9 @@
 import { ScreenName } from "~/const";
 import type {
-  DetailsSwapParamList,
   DefaultAccountSwapParamList,
-  SwapSelectCurrency,
+  DetailsSwapParamList,
   SwapPendingOperation,
+  SwapSelectCurrency,
 } from "../../../screens/Swap/types";
 
 export type SwapFormNavigatorParamList = {

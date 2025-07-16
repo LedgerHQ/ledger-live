@@ -6,6 +6,7 @@ const splTokens = [
   {
     id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
     blockchain_name: "solana",
+    network: "solana",
     chain_id: 101,
     contract_address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     decimals: 6,
@@ -33,7 +34,8 @@ describe("import Spl tokens", () => {
 
   it("should output the file in the correct format", async () => {
     const expectedFile = `export type SPLToken = [
-  number, // chainId
+  string, // CAL id
+  string, // network
   string, // name
   string, // ticker
   string, // address
@@ -57,7 +59,7 @@ export default tokens as SPLToken[];
         params: {
           blockchain_name: "solana",
           chain_id: undefined,
-          output: "chain_id,name,ticker,contract_address,decimals",
+          output: "id,network,name,ticker,contract_address,decimals",
           standard: undefined,
         },
       },
@@ -66,7 +68,14 @@ export default tokens as SPLToken[];
       1,
       "spl.json",
       JSON.stringify([
-        [101, "USD Coin", "USDC", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", 6],
+        [
+          "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+          "solana",
+          "USD Coin",
+          "USDC",
+          "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          6,
+        ],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "spl-hash.json", JSON.stringify("commitHash"));

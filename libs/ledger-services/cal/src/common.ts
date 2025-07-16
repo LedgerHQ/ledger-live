@@ -10,6 +10,7 @@ export const DEFAULT_OPTION: ServiceOption = {
   signatureKind: "prod",
   ref: undefined,
 };
+export const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 
 export function getCALDomain(env: "prod" | "test"): string {
   return env === "prod"

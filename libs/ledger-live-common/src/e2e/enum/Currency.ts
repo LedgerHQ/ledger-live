@@ -1,12 +1,17 @@
 import { AppInfos } from "./AppInfos";
 
+export type CurrencyType = Currency;
+
 export class Currency {
   constructor(
     public readonly name: string,
     public readonly ticker: string,
-    public readonly currencyId: string,
+    public readonly id: string,
     public readonly speculosApp: AppInfos,
+    public readonly contractAddress?: string,
   ) {}
+
+  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO);
 
   static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE);
 
@@ -21,7 +26,13 @@ export class Currency {
     AppInfos.BITCOIN_TESTNET,
   );
   static readonly DOGE = new Currency("Dogecoin", "DOGE", "dogecoin", AppInfos.DOGECOIN);
-  static readonly ETH = new Currency("Ethereum", "ETH", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH = new Currency(
+    "Ethereum",
+    "ETH",
+    "ethereum",
+    AppInfos.ETHEREUM,
+    "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  );
   static readonly tETH = new Currency(
     "Ethereum Holesky",
     "𝚝ETH",
@@ -30,7 +41,7 @@ export class Currency {
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
-    "𝚝ETH",
+    "ETH",
     "ethereum_sepolia",
     AppInfos.ETHEREUM_SEPOLIA,
   );
@@ -59,8 +70,20 @@ export class Currency {
     AppInfos.BINANCE_SMART_CHAIN,
   );
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON);
-  static readonly ETH_USDT = new Currency("Tether USD", "USDT", "ethereum", AppInfos.ETHEREUM);
-  static readonly ETH_USDC = new Currency("USD Coin", "USDC", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH_USDT = new Currency(
+    "Tether USD",
+    "USDT",
+    "ethereum/erc20/usd_tether__erc20_",
+    AppInfos.ETHEREUM,
+    "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  );
+  static readonly ETH_USDC = new Currency(
+    "USD Coin",
+    "USDC",
+    "ethereum/erc20/usd__coin",
+    AppInfos.ETHEREUM,
+    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  );
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
@@ -92,10 +115,21 @@ export class Currency {
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON);
   static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR);
   static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS);
-  static readonly MULTIVERS_X = new Currency(
-    "Multiverse X",
-    "EGLD",
-    "multiverse_x",
-    AppInfos.MULTIVERSE_X,
+  static readonly MULTIVERS_X = new Currency("MultiversX", "EGLD", "elrond", AppInfos.MULTIVERS_X);
+  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC);
+  static readonly SOL_GIGA = new Currency(
+    "GIGACHAD",
+    "GIGA",
+    "solana",
+    AppInfos.SOLANA,
+    "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
   );
+  static readonly SOL_WIF = new Currency(
+    "DOGWIFHAT",
+    "WIF",
+    "solana",
+    AppInfos.SOLANA,
+    "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+  );
+  static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM);
 }

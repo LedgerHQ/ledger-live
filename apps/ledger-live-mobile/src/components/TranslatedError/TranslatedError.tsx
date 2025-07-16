@@ -2,11 +2,13 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Platform, Text } from "react-native";
 import { useErrorLinks } from "./hooks/useErrorLinks";
+import { isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
   error: Error | null | undefined;
   field?: "title" | "description";
 };
+
 export function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
   const { t } = useTranslation();
   const links = useErrorLinks(error);
@@ -21,6 +23,16 @@ export function TranslatedError({ error, field = "title" }: Props): JSX.Element 
     }
 
     return null;
+  }
+
+  // Handling DMK errors
+  // Not translated for now
+  if (isDmkError(error)) {
+    if (field !== "title") {
+      return <Text>{(error?.originalError as Error)?.message ?? error.message ?? error._tag}</Text>;
+    }
+
+    return <Text>{error._tag}</Text>;
   }
 
   const arg: Error & { returnObjects: boolean; productName?: string[] } = {

@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -10,14 +10,12 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
-import Header from "./Header";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
@@ -33,9 +31,13 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
-import Alert from "~/components/Alert";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { urls } from "~/utils/urls";
+import WarningBannerStatus from "~/components/WarningBannerStatus";
+import ErrorWarning from "./ErrorWarning";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isNFTCollectionsDisplayable } from "./nftHelper";
+import NftEntryPoint from "LLM/features/NftEntryPoint";
+import { log } from "console";
 
 type Props = {
   account?: AccountLike;
@@ -66,7 +68,7 @@ type MaybeComponent =
     >
   | undefined;
 
-export function getListHeaderComponents({
+export function useListHeaderComponents({
   account,
   parentAccount,
   currency,
@@ -88,6 +90,8 @@ export function getListHeaderComponents({
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
+  const llmNftSupport = useFeature("llNftSupport");
+  const llmSolanaNfts = useFeature("llmSolanaNfts");
   if (!account) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -113,7 +117,11 @@ export function getListHeaderComponents({
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
-      account: account as Account & CosmosAccount & PolkadotAccount & ElrondAccount & NearAccount,
+      account: account as Account &
+        CosmosAccount &
+        PolkadotAccount &
+        MultiversXAccount &
+        NearAccount,
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
@@ -128,6 +136,17 @@ export function getListHeaderComponents({
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
 
+  const displayNftCollections = isNFTCollectionsDisplayable(account, empty, {
+    llmNftSupportEnabled: !!llmNftSupport?.enabled,
+    llmSolanaNftsEnabled: !!llmSolanaNfts?.enabled,
+  });
+
+  const disableDelegation =
+    currencyConfig &&
+    "disableDelegation" in currencyConfig &&
+    currencyConfig.disableDelegation === true;
+
+  log("disableDelegation:", disableDelegation);
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -143,25 +162,15 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
-      currencyConfig?.status.type === "will_be_deprecated" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="deprecated_banner"
-            type="warning"
-            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            {t("account.willBedeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            })}
-          </Alert>
-        </View>
-      ),
-      <Header key="Header" />,
+      <WarningBannerStatus
+        currencyConfig={currencyConfig}
+        currency={currency}
+        key="WarningBannerStatus"
+      />,
+      <ErrorWarning key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
-          <AccountSubHeader />
+          <AccountSubHeader account={account} parentAccount={parentAccount} />
         </Box>
       ),
       oldestEditableOperation ? (
@@ -178,9 +187,11 @@ export function getListHeaderComponents({
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       ...(!empty &&
+      !disableDelegation &&
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
             <SectionContainer key="AccountHeader">
+              <p>{disableDelegation}</p>
               <SectionTitle title={t("account.earn")} containerProps={{ mx: 6, mb: 6 }} />
               <Box>
                 {AccountHeaderRendered && (
@@ -211,13 +222,14 @@ export function getListHeaderComponents({
             </SectionContainer>,
           ]
         : []),
-      ...(!empty && account.type === "Account" && isNFTActive(account.currency)
+      ...(displayNftCollections && account.type === "Account"
         ? [
             <SectionContainer px={6} key="NftCollectionsList">
               <NftCollectionsList account={account} />
             </SectionContainer>,
           ]
         : []),
+      ...(account.type === "Account" ? [<NftEntryPoint account={account} key={account.id} />] : []),
     ],
     stickyHeaderIndices,
   };

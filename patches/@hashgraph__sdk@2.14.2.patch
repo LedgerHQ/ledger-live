@@ -1,10 +1,12 @@
 diff --git a/package.json b/package.json
-index af44c5f5b98e37b06817c31523b6d0c080a8bf89..9f565924451a0502cec7979424aa631f7838f74d 100644
+index af44c5f5b98e37b06817c31523b6d0c080a8bf89..c20cbb9ba2bf6c27c2c719715e162e99aa4a950e 100644
 --- a/package.json
 +++ b/package.json
-@@ -22,6 +22,7 @@
+@@ -21,7 +21,9 @@
+   "exports": {
      "./package.json": "./package.json",
      ".": {
++      "types": "./lib/index.d.ts",
        "import": "./src/index.js",
 +      "react-native": "./src/native.js",
        "require": "./lib/index.cjs"

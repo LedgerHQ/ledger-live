@@ -20,12 +20,12 @@ const KeyboardView = React.memo<Props>(
   }: Props) => {
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;
-    let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
     const keyboardVerticalOffset = isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0;
-
-    if (Platform.OS === "ios") {
-      behaviorParam = behavior || "height";
-    }
+    const behaviorParam = behavior ?? "height";
+    const behaviorProp = Platform.select({
+      ios: behaviorParam,
+      android: undefined,
+    });
 
     return (
       <KeyboardAvoidingView
@@ -33,7 +33,7 @@ const KeyboardView = React.memo<Props>(
         keyboardVerticalOffset={
           headerHeight + (StatusBar.currentHeight || 0) + keyboardVerticalOffset
         }
-        behavior={behaviorParam}
+        behavior={behaviorProp}
         enabled
       >
         {children}

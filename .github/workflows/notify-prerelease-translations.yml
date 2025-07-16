@@ -1,4 +1,4 @@
-name: "[Release] Check for translations"
+name: "[Release] - Check for translations - PR"
 on:
   pull_request:
     branches:

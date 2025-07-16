@@ -15,6 +15,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type State = {
   accounts: AccountsState;
@@ -46,4 +47,5 @@ export default combineReducers({
   wallet,
   walletSync,
   trustchain,
+  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_, action) => action }),
 });

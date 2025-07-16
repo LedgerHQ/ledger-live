@@ -50,9 +50,7 @@ import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import useDBSaveEffect from "~/components/DBSave";
-import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -81,7 +79,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
@@ -91,10 +89,17 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
-import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
+import { registerTransports } from "~/services/registerTransports";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
+import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
+}
+
+if (__DEV__) {
+  require("./ReactotronConfig");
 }
 
 checkLibs({
@@ -117,9 +122,22 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
+  const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (providerNumber && isLDMKEnabled) {
+      dmk?.setProvider(providerNumber);
+    }
+    // setting provider only at initialisation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLDMKEnabled, dmk]);
+
+  useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
   useEffect(() => {
     if (
@@ -139,13 +157,10 @@ function App() {
   ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
-  useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
-
-  useSyncNFTsWithAccounts();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -246,6 +261,9 @@ function App() {
       <PerformanceConsole />
       <DebugTheme />
       <Modals />
+      <FeatureToggle featureId="llmMmkvMigration">
+        <StoragePerformanceOverlay />
+      </FeatureToggle>
     </GestureHandlerRootView>
   );
 }
@@ -338,11 +356,11 @@ export default class Root extends Component {
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
                 <QueuedDrawersContextProvider>
-                  <I18nextProvider i18n={i18n}>
-                    <LocaleProvider>
-                      <PlatformAppProviderWrapper>
-                        <FirebaseRemoteConfigProvider>
-                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <FirebaseRemoteConfigProvider>
+                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                      <I18nextProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <PlatformAppProviderWrapper>
                             <SafeAreaProvider>
                               <PerformanceProvider>
                                 <StorylyProvider>
@@ -358,11 +376,11 @@ export default class Root extends Component {
                                 </StorylyProvider>
                               </PerformanceProvider>
                             </SafeAreaProvider>
-                          </FirebaseFeatureFlagsProvider>
-                        </FirebaseRemoteConfigProvider>
-                      </PlatformAppProviderWrapper>
-                    </LocaleProvider>
-                  </I18nextProvider>
+                          </PlatformAppProviderWrapper>
+                        </LocaleProvider>
+                      </I18nextProvider>
+                    </FirebaseFeatureFlagsProvider>
+                  </FirebaseRemoteConfigProvider>
                 </QueuedDrawersContextProvider>
               </>
             ) : (

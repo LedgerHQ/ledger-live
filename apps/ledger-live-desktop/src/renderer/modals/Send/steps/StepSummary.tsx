@@ -30,7 +30,7 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getMemoTagValueByTransactionFamily } from "~/newArch/features/MemoTag/utils";
+import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -84,6 +84,7 @@ const StepSummary = (props: StepProps) => {
 
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
+  const SpecificSummaryAdditionalRows = specific?.StepSummaryAdditionalRows;
 
   const memo = lldMemoTag?.enabled
     ? getMemoTagValueByTransactionFamily(transaction)
@@ -322,6 +323,15 @@ const StepSummary = (props: StepProps) => {
           </>
         )}
 
+        {!!SpecificSummaryAdditionalRows && (
+          <SpecificSummaryAdditionalRows
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            status={status}
+          />
+        )}
+
         {!totalSpent.eq(amount) ? (
           <>
             <Separator />
@@ -334,7 +344,7 @@ const StepSummary = (props: StepProps) => {
                 <FormattedVal
                   color={"palette.text.shade80"}
                   disableRounding
-                  unit={unit}
+                  unit={estimatedFees.eq(totalSpent) ? feesUnit : unit}
                   val={totalSpent}
                   fontSize={4}
                   inline

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React, { useState } from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen } from "tests/testSetup";
 import { CoinControlModal } from "../Ordinals/components/CoinControlModal";
 import { MockedbtcAccount, MockedTransaction, getMockedTxStatus } from "./shared";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";

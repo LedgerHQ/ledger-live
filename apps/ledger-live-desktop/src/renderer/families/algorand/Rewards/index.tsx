@@ -12,7 +12,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { AlgorandFamily } from "../types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type AccountBodyHeader = NonNullable<AlgorandFamily["AccountBodyHeader"]>;
@@ -21,7 +21,7 @@ const RewardsSection = ({
   account,
   parentAccount,
 }: {
-  account: AlgorandAccount | SubAccount;
+  account: AlgorandAccount | TokenAccount;
   parentAccount: AlgorandAccount | null | undefined;
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);

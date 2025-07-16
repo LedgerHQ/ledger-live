@@ -1,4 +1,4 @@
-name: "[Bot] Testing with 'Mooncake'"
+name: "[Coin] - Testing with 'Mooncake' - Manual"
 run-name: Test with 🤖 Mooncake by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:

@@ -15,6 +15,8 @@ import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index
 import { InViewContextProvider } from "LLM/contexts/InViewContext";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
+import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -24,30 +26,33 @@ type AppProvidersProps = {
 const queryClient = new QueryClient();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
+  const dmkEnabled = useLdmkFeatureFlagInitiallyEnabled();
   return (
     <QueryClientProvider client={queryClient}>
       <BridgeSyncProvider>
         <WalletSyncProvider>
-          <CountervaluesMarketcap>
-            <CounterValuesProvider initialState={initialCountervalues}>
-              <ButtonUseTouchableContext.Provider value={true}>
-                <AppDataStorageProvider>
-                  <OnboardingContextProvider>
-                    <PostOnboardingProviderWrapped>
-                      <ToastProvider>
-                        <NotificationsProvider>
-                          <SnackbarContainer />
-                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                            <InViewContextProvider>{children}</InViewContextProvider>
-                          </NftMetadataProvider>
-                        </NotificationsProvider>
-                      </ToastProvider>
-                    </PostOnboardingProviderWrapped>
-                  </OnboardingContextProvider>
-                </AppDataStorageProvider>
-              </ButtonUseTouchableContext.Provider>
-            </CounterValuesProvider>
-          </CountervaluesMarketcap>
+          <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
+            <CountervaluesMarketcap>
+              <CounterValuesProvider initialState={initialCountervalues}>
+                <ButtonUseTouchableContext.Provider value={true}>
+                  <AppDataStorageProvider>
+                    <OnboardingContextProvider>
+                      <PostOnboardingProviderWrapped>
+                        <ToastProvider>
+                          <NotificationsProvider>
+                            <SnackbarContainer />
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                              <InViewContextProvider>{children}</InViewContextProvider>
+                            </NftMetadataProvider>
+                          </NotificationsProvider>
+                        </ToastProvider>
+                      </PostOnboardingProviderWrapped>
+                    </OnboardingContextProvider>
+                  </AppDataStorageProvider>
+                </ButtonUseTouchableContext.Provider>
+              </CounterValuesProvider>
+            </CountervaluesMarketcap>
+          </DeviceManagementKitProvider>
         </WalletSyncProvider>
       </BridgeSyncProvider>
     </QueryClientProvider>

@@ -1,5 +1,8 @@
 {
-  "entry": ["src/index.ts"],
+  "entry": [
+    "src/index.ts"
+  ],
   "ignoreUnimported": [],
-  "ignoreUnresolved": []
+  "ignoreUnresolved": [],
+  "ignoreUnused": []
 }

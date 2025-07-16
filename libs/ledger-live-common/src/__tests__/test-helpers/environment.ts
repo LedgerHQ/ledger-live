@@ -24,7 +24,7 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polygon",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ripple",
   "bitcoin_cash",
   "litecoin",
@@ -107,7 +107,12 @@ setSupportedCurrencies([
   "aptos",
   "aptos_testnet",
   "xion",
+  "sui",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
+  "mina",
+  "babylon",
 ]);
 LiveConfig.setConfig(liveConfig);
 

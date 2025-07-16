@@ -8,6 +8,7 @@ import { TrackScreen } from "~/analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 export function Connect({
   setResult,
@@ -81,6 +82,7 @@ export function Connect({
         request={null}
         onSelectDeviceLink={() => setDevice(undefined)}
         analyticsPropertyFlow="swap"
+        location={HOOKS_TRACKING_LOCATIONS.swapFlow}
       />
     </Flex>
   );

@@ -8,50 +8,59 @@ import TransferButton from "~/components/TransferButton";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
+import { TrackScreen } from "~/analytics";
+import useAnalytics from "LLM/hooks/useAnalytics";
+import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 
 type AccountListDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  onBack: () => void;
-  account: Account | TokenAccount | null;
+  account: Account | TokenAccount;
   currency: CryptoOrTokenCurrency;
+  sourceScreenName?: string;
 };
 
 const AccountQuickActionsDrawer = ({
   isOpen,
   onClose,
-  onBack,
   account,
   currency,
+  sourceScreenName,
 }: AccountListDrawerProps) => {
   const { actions } = useAccountQuickActionDrawerViewModel({
-    accounts: account ? [account as Account] : [],
+    account,
     currency,
   });
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
+  const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-      onBack={onBack}
-      CustomHeader={() => (
-        <CustomHeader
-          account={account}
-          onClose={onClose}
-          backgroundColor={colors.opacityDefault.c10}
-          iconColor={colors.neutral.c100}
-        />
+    <>
+      {isOpen && (
+        <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       )}
-    >
-      <Flex width="100%" rowGap={6}>
-        {actions.map((button, index) => (
-          <Box mb={index === actions.length - 1 ? 0 : 8} key={button?.title as string}>
-            <TransferButton {...button} testID={button?.testID as string} />
-          </Box>
-        ))}
-      </Flex>
-    </QueuedDrawer>
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpen}
+        onClose={onClose}
+        CustomHeader={() => (
+          <CustomHeader
+            account={account}
+            onClose={onClose}
+            backgroundColor={colors.neutral.c30}
+            iconColor={colors.neutral.c100}
+          />
+        )}
+      >
+        <Flex width="100%" rowGap={space[8]} pb={space[8]}>
+          {actions.map(button => (
+            <Box key={button?.title}>
+              <TransferButton {...button} testID={button?.testID} />
+            </Box>
+          ))}
+        </Flex>
+      </QueuedDrawer>
+    </>
   );
 };
 

@@ -50,7 +50,7 @@ const TezosDelegateValidator = ({
   invariant(transaction.family === "tezos", "tezos transaction");
   return (
     <DataRow label="Validator">
-      <LText semiBold onPress={openBaker} style={styles.text}>
+      <LText semiBold onPress={openBaker} style={styles.text} testID="device-validation-provider">
         {baker ? baker.name : shortAddressPreview(transaction.recipient)}
       </LText>
     </DataRow>

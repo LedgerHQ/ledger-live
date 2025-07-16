@@ -3,7 +3,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
 import { Button, Icons } from "@ledgerhq/native-ui";
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 
 export default memo(CopyButton);
 

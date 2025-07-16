@@ -11,6 +11,7 @@ export type CryptoCurrencyId =
   | "atheios"
   | "avalanche_c_chain"
   | "axelar"
+  | "babylon"
   | "banano"
   | "binance_beacon_chain"
   | "bitcoin"
@@ -36,7 +37,6 @@ export type CryptoCurrencyId =
   | "digibyte"
   | "eos"
   | "elastos"
-  | "elrond"
   | "ethereum"
   | "ethereum_classic"
   | "ether1"
@@ -68,6 +68,8 @@ export type CryptoCurrencyId =
   | "mix"
   | "monero"
   | "moonriver"
+  // | "multiversx"
+  | "elrond"
   | "musicoin"
   | "nano"
   | "nem"
@@ -171,7 +173,11 @@ export type CryptoCurrencyId =
   | "zksync_sepolia"
   | "mantra"
   | "xion"
-  | "zenrock";
+  | "sui"
+  | "zenrock"
+  | "sonic"
+  | "sonic_blaze"
+  | "mina";
 
 export type LedgerExplorerId =
   | "btc"

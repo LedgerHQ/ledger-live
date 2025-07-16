@@ -1,4 +1,4 @@
-name: "[Push] Build and Test"
+name: "[All Platforms] - Build and Test - Push"
 on:
   push:
     branches:
@@ -47,7 +47,7 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 

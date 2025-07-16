@@ -29,7 +29,6 @@ function Slide({
   const handleClose = () => dismissCard(index);
   const handleClick = () => {
     logSlideClick(id);
-
     if (path) {
       history.push({ pathname: path, state: { source: "banner" } });
     } else if (url) {

@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, ProgressBar, Button, Text } from "../../../src/components";
+import { ProgressPoint } from "../../../src/components";
 import { IconsLegacy } from "../../../src/assets";
 
 const description = `
@@ -35,6 +36,7 @@ const [index, setIndex] = React.useState(0);
 export default {
   title: "ProgressBar",
   component: ProgressBar,
+  ProgressPoint,
   parameters: {
     docs: {
       title: "Default",
@@ -104,3 +106,13 @@ export const Custom = (): JSX.Element => {
 };
 
 Custom.storyName = "ProgressBar (custom style)";
+
+export const PointVariant = (): JSX.Element => {
+  return (
+    <Flex width={300} height={64} px={6} alignItems={"center"} justifyContent={"center"}>
+      <ProgressPoint start={0} end={100} current={50} />
+    </Flex>
+  );
+};
+
+PointVariant.storyName = "ProgressBar (Point Variant)";

@@ -30,6 +30,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
     },
     {
+      title: "Operation (0)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Operation (1)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Confirm",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
@@ -44,9 +52,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
           postfixCode: true,
         }),
     },
+    /**
+     * when revealing, fee are print twice on nano side.
+     * we ignore the assertion failure because we can't know if it's the first or second fee
+     * status.estimatedFees is the total fees, so we can't use it
+     */
     {
       title: "Fee",
       button: SpeculosButton.RIGHT,
+      ignoreAssertionFailure: true,
       expectedValue: ({ account, status }) =>
         formatDeviceAmount(account.currency, status.estimatedFees, {
           postfixCode: true,
@@ -63,9 +77,21 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Storage Limit",
+      title: "Public key",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.storageLimit?.toString() || "",
+    },
+    {
+      title: "Storage limit",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }, prevSteps) => {
+        if (
+          prevSteps.some(step => step.title === "Operation (0)" && step.value === "Reveal") &&
+          !prevSteps.some(step => step.title === "Operation (1)")
+        ) {
+          return "0";
+        }
+        return transaction.storageLimit?.toString() || "";
+      },
     },
     {
       title: "Reject",

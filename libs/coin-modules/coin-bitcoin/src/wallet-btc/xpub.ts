@@ -262,6 +262,7 @@ class Xpub {
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
         sequence,
+        block_height: utxo.block_height || null,
       };
     });
 

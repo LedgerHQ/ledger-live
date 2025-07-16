@@ -3,6 +3,12 @@ import "zx/globals";
 import fs from "fs";
 import path from "path";
 
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const basePath = path.join(__dirname, "..");
 const familiesPath = path.join(basePath, "src", "renderer", "families");
 const generatedFile = path.join(familiesPath, "generated.ts");

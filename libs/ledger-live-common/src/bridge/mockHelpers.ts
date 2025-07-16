@@ -132,6 +132,8 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
         const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
           operationsSize: isLast ? 0 : 100,
           currency,
+          subAccountsCount: isLast ? 0 : undefined,
+          bandwidth: !isLast,
         });
         account.index = i;
         account.operations = isLast

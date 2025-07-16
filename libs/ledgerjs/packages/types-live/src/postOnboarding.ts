@@ -27,6 +27,7 @@ export type WithNavigationParams = {
   getNavigationParams: (options: {
     deviceModelId: DeviceModelId;
     protectId: string;
+    referral?: string;
   }) => [screen: any] | [screen: any, navigationParams: any];
 };
 

@@ -1,6 +1,12 @@
 #!/usr/bin/env zx
 import "zx/globals";
 
+$.verbose = true; // everything works like in v7
+
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const src = path.join(__dirname, "..", "src");
 const subfolder = "commands";
 const p = path.join(src, subfolder);

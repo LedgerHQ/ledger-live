@@ -28,6 +28,7 @@ import {
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const connectDeviceHeaderOptions = (
@@ -162,6 +163,7 @@ export default function ConnectDevice({
         request={{ account: mainAccount, tokenCurrency }}
         onSelectDeviceLink={() => setDevice(undefined)}
         analyticsPropertyFlow="receive"
+        location={HOOKS_TRACKING_LOCATIONS.receiveFlow}
       />
     </>
   );

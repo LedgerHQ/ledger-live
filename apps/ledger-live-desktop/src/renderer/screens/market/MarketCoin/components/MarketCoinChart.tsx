@@ -5,7 +5,7 @@ import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTabl
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import styled from "styled-components";
-import Chart from "~/renderer/components/Chart";
+import Chart, { GraphTrackingScreenName } from "~/renderer/components/Chart";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ChartPlaceholder from "../../assets/ChartPlaceholder";
 import CountervalueSelect from "../../components/CountervalueSelect";
@@ -44,7 +44,9 @@ const FadeIn = styled.div.attrs<{ state: string }>(p => ({
   transition: opacity 1s ease-out;
 `;
 
-const ranges = Object.keys(rangeDataTable);
+const ranges = Object.keys(rangeDataTable)
+  .filter(k => k !== "1h")
+  .reverse();
 
 type TooltipProps = {
   data: { date: Date; value: number };
@@ -181,13 +183,11 @@ function MarkeCoinChartComponent({
             onTabChange={setRange}
             initialActiveIndex={activeRangeIndex}
           >
-            {ranges
-              .filter(k => k !== "1h")
-              .map(key => (
-                <Text color="inherit" variant="small" key={key}>
-                  {t(`market.range.${key}`)}
-                </Text>
-              ))}
+            {ranges.map(key => (
+              <Text color="inherit" variant="small" key={key}>
+                {t(`market.range.${rangeDataTable[key].label}`)}
+              </Text>
+            ))}
           </Bar>
         </Flex>
       </Flex>
@@ -222,6 +222,7 @@ function MarkeCoinChartComponent({
                   suggestedMin={suggestedMin}
                   suggestedMax={suggestedMax}
                   key={2}
+                  screenName={GraphTrackingScreenName.Market}
                 />
               )}
             </FadeIn>

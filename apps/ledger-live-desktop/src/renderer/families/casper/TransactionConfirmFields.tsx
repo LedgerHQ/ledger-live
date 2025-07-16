@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { CasperFieldComponentProps } from "./types";
-import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/casper/deviceTransactionConfig";
+import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/casper/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const CasperExtendedAmountField = ({

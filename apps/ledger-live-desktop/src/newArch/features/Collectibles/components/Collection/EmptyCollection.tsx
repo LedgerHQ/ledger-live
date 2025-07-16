@@ -32,9 +32,15 @@ type Props = {
   collectionType: CollectibleType;
   currencyName?: string;
   children?: ReactNode;
+  hideLearnMore?: boolean;
 };
 
-const EmptyCollection: React.FC<Props> = ({ collectionType, currencyName, children }) => {
+const EmptyCollection: React.FC<Props> = ({
+  collectionType,
+  currencyName,
+  children,
+  hideLearnMore,
+}) => {
   const { t } = useTranslation();
 
   const switchCollectionType = (collectionType: CollectibleType) => {
@@ -47,15 +53,17 @@ const EmptyCollection: React.FC<Props> = ({ collectionType, currencyName, childr
                 currency: currencyName,
               })}
               &nbsp;
-              <LabelWithExternalIcon
-                color="wallet"
-                ff="Inter|SemiBold"
-                onClick={() => {
-                  openURL(supportLinkByTokenType.nfts);
-                  track(`More info on Manage nfts tokens`);
-                }}
-                label={t("tokensList.link")}
-              />
+              {!hideLearnMore && (
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(supportLinkByTokenType.nfts);
+                    track(`More info on Manage nfts tokens`);
+                  }}
+                  label={t("tokensList.link")}
+                />
+              )}
             </Text>
           </Placeholder>
         );

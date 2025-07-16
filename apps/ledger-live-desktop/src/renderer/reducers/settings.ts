@@ -5,6 +5,7 @@ import {
   getCryptoCurrencyById,
   listSupportedFiats,
   getFiatCurrencyByTicker,
+  OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -19,10 +20,12 @@ import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
+  LanguageIdsNotFeatureFlagged,
   Languages,
   Language,
   Locale,
   DEFAULT_LANGUAGE,
+  OFAC_LOCALES,
   Locales,
 } from "~/config/languages";
 import { State } from ".";
@@ -37,8 +40,9 @@ import {
   TOGGLE_MEV,
   UPDATE_NFT_COLLECTION_STATUS,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
+  RESET_HIDDEN_NFT_COLLECTIONS,
 } from "../actions/constants";
-import { BlockchainsType, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 /* Initial state */
@@ -93,9 +97,7 @@ export type SettingsState = {
   discreetMode: boolean;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
-  hiddenNftCollections: string[];
-  whitelistedNftCollections: string[];
-  nftCollectionsStatusByNetwork: Record<BlockchainsType, Record<string, NftStatus>>;
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -135,14 +137,14 @@ export type SettingsState = {
   onboardingUseCase: OnboardingUseCase | null;
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
-  anonymousUserNotifications: Record<string, number>;
+  anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
   const systemLocal = getAppLocale();
 
   // Find language from system locale (i.e., en, fr, es ...)
-  const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
+  const languageId = LanguageIdsNotFeatureFlagged.find(lang => systemLocal.startsWith(lang));
 
   // If language found, try to find corresponding locale
   if (languageId) {
@@ -203,9 +205,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   latestFirmware: null,
   blacklistedTokenIds: [],
-  hiddenNftCollections: [],
-  whitelistedNftCollections: [],
-  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchainsType, Record<string, NftStatus>>,
+  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -258,10 +258,11 @@ type HandlersPayloads = {
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
   [UPDATE_NFT_COLLECTION_STATUS]: {
-    blockchain: SupportedBlockchainsType;
+    blockchain: SupportedBlockchain;
     collectionId: string;
     status: NftStatus;
   };
+  [RESET_HIDDEN_NFT_COLLECTIONS]: void;
   UNHIDE_ORDINALS_ASSET: string;
   HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
@@ -382,6 +383,11 @@ const handlers: SettingsHandlers = {
       },
     };
   },
+
+  [RESET_HIDDEN_NFT_COLLECTIONS]: state => ({
+    ...state,
+    nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
+  }),
 
   UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
     const ids = state.hiddenOrdinalsAsset;
@@ -563,13 +569,14 @@ const handlers: SettingsHandlers = {
     ...state,
     alwaysShowMemoTagInfo: payload,
   }),
-  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => ({
-    ...state,
-    anonymousUserNotifications: {
-      ...(!payload.purgeState && state.anonymousUserNotifications),
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => {
+    const { anonymousUserNotifications: prev } = state;
+    const next = {
+      ...(payload.purgeState ? { LNSUpsell: prev.LNSUpsell } : prev),
       ...payload.notifications,
-    },
-  }),
+    } as SettingsState["anonymousUserNotifications"];
+    return { ...state, anonymousUserNotifications: next };
+  },
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -668,8 +675,13 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const getCounterValueCode = (state: State) => state.settings.counterValue;
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
-export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
+  if (OFAC_CURRENCIES.includes(state.counterValue)) {
+    return getFiatCurrencyByTicker("USD");
+  }
+  return findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+};
+
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
@@ -717,7 +729,8 @@ const localeFallbackToLanguageSelector = (
   locale: string;
 } => {
   const { language, locale, region } = state.settings;
-  if (!locale && language) {
+  const localeWithoutOFAC = locale && OFAC_LOCALES.includes(locale) ? "en-US" : locale;
+  if (!localeWithoutOFAC && language) {
     /*
       Handle settings data saved with the old logic, where the region settings'
         entire locale was not being saved (the locale was split in 2 strings on
@@ -729,9 +742,9 @@ const localeFallbackToLanguageSelector = (
       return {
         locale: potentialLocale,
       };
-  } else if (locale && isValidRegionLocale(locale))
+  } else if (localeWithoutOFAC && isValidRegionLocale(localeWithoutOFAC))
     return {
-      locale,
+      locale: localeWithoutOFAC,
     };
   return {
     locale: language || DEFAULT_LANGUAGE.locales.default,

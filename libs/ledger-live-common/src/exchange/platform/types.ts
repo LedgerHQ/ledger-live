@@ -1,9 +1,9 @@
-import { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike, AccountRaw, AccountRawLike } from "@ledgerhq/types-live";
+import type { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import type { Transaction } from "../../generated/types";
-import { Device } from "../../hw/actions/types";
-import { ExchangeSwap } from "../swap/types";
+import type { ExchangeSwap } from "../swap/types";
+import type { Device } from "../../hw/actions/types";
 
 export type CompleteExchangeRequestEvent =
   | { type: "complete-exchange" }

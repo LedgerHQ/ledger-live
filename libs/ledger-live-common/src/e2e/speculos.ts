@@ -16,6 +16,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
 import { Account } from "./enum/Account";
+import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
@@ -30,6 +31,8 @@ import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
+import { delegateTezos } from "./families/tezos";
+import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
@@ -59,6 +62,19 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
   specs["Exchange"].dependencies = Array.from(map.values());
 }
 
+export function getSpeculosModel() {
+  const speculosDevice = process.env.SPECULOS_DEVICE;
+  switch (speculosDevice) {
+    case CryptoWallet.LNS:
+      return DeviceModelId.nanoS;
+    case CryptoWallet.LNX:
+      return DeviceModelId.nanoX;
+    case CryptoWallet.LNSP:
+    default:
+      return DeviceModelId.nanoSP;
+  }
+}
+
 type Specs = {
   [key: string]: Spec;
 };
@@ -73,7 +89,7 @@ export const specs: Specs = {
   Bitcoin: {
     currency: getCryptoCurrencyById("bitcoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin",
     },
     dependency: "",
@@ -81,21 +97,21 @@ export const specs: Specs = {
   Aptos: {
     currency: getCryptoCurrencyById("aptos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Aptos",
     },
     dependency: "",
   },
   Exchange: {
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Exchange",
     },
     dependencies: [],
   },
   LedgerSync: {
     appQuery: {
-      model: DeviceModelId.nanoX,
+      model: getSpeculosModel(),
       appName: "Ledger Sync",
     },
     dependency: "",
@@ -103,7 +119,7 @@ export const specs: Specs = {
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Dogecoin",
     },
     dependency: "",
@@ -111,7 +127,7 @@ export const specs: Specs = {
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -119,7 +135,7 @@ export const specs: Specs = {
   Ethereum_Holesky: {
     currency: getCryptoCurrencyById("ethereum_holesky"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -127,7 +143,7 @@ export const specs: Specs = {
   Ethereum_Sepolia: {
     currency: getCryptoCurrencyById("ethereum_sepolia"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum",
     },
     dependency: "",
@@ -135,7 +151,7 @@ export const specs: Specs = {
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
@@ -143,7 +159,7 @@ export const specs: Specs = {
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Test",
     },
     dependency: "",
@@ -151,7 +167,7 @@ export const specs: Specs = {
   Solana: {
     currency: getCryptoCurrencyById("solana"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Solana",
     },
     dependency: "",
@@ -159,7 +175,7 @@ export const specs: Specs = {
   Cardano: {
     currency: getCryptoCurrencyById("cardano"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "CardanoADA",
     },
     dependency: "",
@@ -167,7 +183,7 @@ export const specs: Specs = {
   Polkadot: {
     currency: getCryptoCurrencyById("polkadot"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Polkadot",
     },
     dependency: "",
@@ -175,15 +191,15 @@ export const specs: Specs = {
   Tron: {
     currency: getCryptoCurrencyById("tron"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Tron",
     },
     dependency: "",
   },
-  Ripple: {
+  XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "XRP",
     },
     dependency: "",
@@ -191,7 +207,7 @@ export const specs: Specs = {
   Stellar: {
     currency: getCryptoCurrencyById("stellar"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Stellar",
     },
     dependency: "",
@@ -199,7 +215,7 @@ export const specs: Specs = {
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Bitcoin Cash",
     },
     dependency: "",
@@ -207,7 +223,7 @@ export const specs: Specs = {
   Algorand: {
     currency: getCryptoCurrencyById("algorand"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Algorand",
     },
     dependency: "",
@@ -215,7 +231,7 @@ export const specs: Specs = {
   Cosmos: {
     currency: getCryptoCurrencyById("cosmos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -223,7 +239,7 @@ export const specs: Specs = {
   Tezos: {
     currency: getCryptoCurrencyById("tezos"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TezosWallet",
     },
     dependency: "",
@@ -231,23 +247,23 @@ export const specs: Specs = {
   Polygon: {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
-      appName: "Polygon",
+      model: getSpeculosModel(),
+      appName: "Ethereum",
     },
     dependency: "",
   },
   Binance_Smart_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
-      appName: "Binance Smart Chain",
+      model: getSpeculosModel(),
+      appName: "Ethereum",
     },
     dependency: "",
   },
   Ton: {
     currency: getCryptoCurrencyById("ton"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "TON",
     },
     dependency: "",
@@ -255,15 +271,15 @@ export const specs: Specs = {
   Near: {
     currency: getCryptoCurrencyById("near"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "NEAR",
     },
     dependency: "",
   },
-  Multiverse_X: {
+  Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "MultiversX",
     },
     dependency: "",
@@ -271,7 +287,7 @@ export const specs: Specs = {
   Osmosis: {
     currency: getCryptoCurrencyById("osmo"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
     },
     dependency: "",
@@ -279,8 +295,25 @@ export const specs: Specs = {
   Injective: {
     currency: getCryptoCurrencyById("injective"),
     appQuery: {
-      model: DeviceModelId.nanoSP,
+      model: getSpeculosModel(),
       appName: "Cosmos",
+    },
+    dependency: "",
+  },
+
+  Celo: {
+    currency: getCryptoCurrencyById("celo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Celo",
+    },
+    dependency: "",
+  },
+  Litecoin: {
+    currency: getCryptoCurrencyById("litecoin"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Litecoin",
     },
     dependency: "",
   },
@@ -352,10 +385,10 @@ export async function startSpeculos(
   }
 }
 
-export async function stopSpeculos(device: Device | undefined) {
-  if (device) {
-    log("engine", `test ${device.id} finished`);
-    await releaseSpeculosDevice(device.id);
+export async function stopSpeculos(deviceId: string | undefined) {
+  if (deviceId) {
+    log("engine", `test ${deviceId} finished`);
+    await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -408,7 +441,7 @@ export async function pressUntilTextFound(
       return await fetchAllEvents(speculosApiPort);
     }
 
-    await pressRightButton(speculosApiPort);
+    await pressRightButton();
     await waitForTimeOut(200);
   }
 
@@ -431,7 +464,8 @@ async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
   return response.data.events.map(event => event.text);
 }
 
-async function pressRightButton(speculosApiPort: number): Promise<void> {
+export async function pressRightButton(): Promise<void> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
   await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
@@ -451,8 +485,8 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
-export async function takeScreenshot() {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
     const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
@@ -460,12 +494,26 @@ export async function takeScreenshot() {
     return response.data;
   } catch (error) {
     console.error("Error downloading speculos screenshot:", error);
-    throw error;
   }
 }
 
 export async function waitForTimeOut(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function removeMemberLedgerSync() {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
+  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await pressBoth();
+  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressUntilTextFound(DeviceLabels.AFTER_REMOVING);
+  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await pressBoth();
+  await waitFor(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressBoth();
 }
 
 export async function activateLedgerSync() {
@@ -481,6 +529,13 @@ export async function activateLedgerSync() {
 
 export async function activateExpertMode() {
   await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
+  await pressBoth();
+}
+
+export async function activateContractData() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+  await waitFor(DeviceLabels.CONTRACT_DATA);
   await pressBoth();
 }
 
@@ -526,6 +581,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendAlgorand(tx);
       break;
     case Currency.SOL:
+    case Currency.SOL_GIGA:
       await sendSolana(tx);
       break;
     case Currency.TRX:
@@ -547,7 +603,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendAptos();
       break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName}`);
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
@@ -558,7 +614,7 @@ export async function signSendNFTTransaction(tx: NFTTransaction) {
       await sendEvmNFT(tx);
       break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName}`);
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
@@ -582,25 +638,31 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
     case Account.ADA_1.currency.name:
       await delegateCardano();
       break;
+    case Account.XTZ_1.currency.name:
+      await delegateTezos();
+      break;
+    case Account.CELO_1.currency.name:
+      await delegateCelo(delegatingAccount);
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
   }
 }
 
-export async function verifyAmountsAndAcceptSwap(swap: Swap) {
+export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-  await verifySwapData(swap, events);
+  await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
-export async function verifyAmountsAndRejectSwap(swap: Swap) {
+export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
-  await verifySwapData(swap, events);
+  await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
-async function verifySwapData(swap: Swap, events: string[]) {
-  const sendAmountScreen = containsSubstringInEvent(swap.amount, events);
+async function verifySwapData(swap: Swap, events: string[], amount: string) {
+  const sendAmountScreen = containsSubstringInEvent(amount, events);
   expect(sendAmountScreen).toBeTruthy();
   verifySwapGetAmountScreen(swap, events);
   verifySwapFeesAmountScreen(swap, events);

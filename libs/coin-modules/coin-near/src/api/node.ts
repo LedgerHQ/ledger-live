@@ -289,7 +289,7 @@ export const getValidators = makeLRUCache(
     const currencyConfig = getCoinConfig();
     const { data } = await network({
       method: "POST",
-      url: currencyConfig.infra.API_NEAR_PUBLIC_NODE,
+      url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
       data: {
         jsonrpc: "2.0",
         id: "id",
@@ -309,7 +309,7 @@ export const getCommission = makeLRUCache(
     const currencyConfig = getCoinConfig();
     const { data } = await network({
       method: "POST",
-      url: currencyConfig.infra.API_NEAR_PUBLIC_NODE,
+      url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
       data: {
         jsonrpc: "2.0",
         id: "id",

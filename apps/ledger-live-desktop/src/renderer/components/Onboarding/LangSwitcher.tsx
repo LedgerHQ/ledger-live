@@ -5,13 +5,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown } from "@ledgerhq/react-ui";
 import { Languages } from "~/config/languages";
-
-const options = (Object.keys(Languages) as Array<keyof typeof Languages>).map(language => {
-  return {
-    value: language,
-    label: Languages[language].label,
-  };
-});
+import { useSupportedLanguages } from "~/renderer/hooks/useSupportedLanguages";
 
 const styles = {
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the MENU right aligned
@@ -34,6 +28,7 @@ const LangSwitcher = () => {
   const language = useSelector(languageSelector);
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
+  const supportedLanguages = useSupportedLanguages().languages;
 
   useEffect(() => {
     i18n.changeLanguage(language);
@@ -48,9 +43,18 @@ const LangSwitcher = () => {
     [dispatch],
   );
 
+  const options = useMemo(() => {
+    return (Object.keys(supportedLanguages) as Array<keyof typeof Languages>).map(language => {
+      return {
+        value: language,
+        label: Languages[language].label,
+      };
+    });
+  }, [supportedLanguages]);
+
   const currentLanguage = useMemo(
     () => options.find(({ value }) => value === language) || options[0],
-    [language],
+    [language, options],
   );
 
   return (

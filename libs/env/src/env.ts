@@ -82,6 +82,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Indexer endpoint for Aptos",
   },
+  APTOS_ENABLE_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable tokens on Aptos",
+  },
   API_CASPER_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://casper.coin.ledger.com/indexer",
@@ -142,15 +147,15 @@ const envDefinitions = {
     def: "https://polkadot-fullnodes.api.live.ledger.com",
     desc: "Polkadot Node",
   },
-  ELROND_API_ENDPOINT: {
+  MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
-    desc: "Elrond API url",
+    desc: "MultiversX API url",
   },
-  ELROND_DELEGATION_API_ENDPOINT: {
+  MULTIVERSX_DELEGATION_API_ENDPOINT: {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
-    desc: "Elrond DELEGATION API url",
+    desc: "MultiversX DELEGATION API url",
   },
   API_KASPA_ENDPOINT: {
     parser: stringParser,
@@ -166,6 +171,11 @@ const envDefinitions = {
     parser: intParser,
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
+  },
+  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
+    parser: intParser,
+    def: 1000,
+    desc: "Limit of operation that Horizon will fetch on initial sync",
   },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
@@ -201,6 +211,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
+  },
+  API_SUI_NODE_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com",
+    desc: "reverse proxy url for sui node",
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
@@ -572,11 +587,11 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon"],
+    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon", "solana"],
     parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
-  NFT_ETH_METADATA_SERVICE: {
+  NFT_METADATA_SERVICE: {
     def: "https://nft.api.live.ledger.com",
     parser: stringParser,
     desc: "service uri used to get the metadata of an nft",
@@ -842,6 +857,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  STORAGE_PERFORMANCE_OVERLAY: {
+    def: false,
+    parser: boolParser,
+    desc: "Show a performance overlay on the app storage",
   },
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
     def: 5 * 60 * 1000,

@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Скопированный адрес не совпадает с адресом в буфере обмена.",
     "experimentalFeature" : "Экспериментальный режим",
     "featureFlags" : "Фича-флаг",
+    "ldmkEnabled" : "Перемещение LDMK",
     "information" : "Информация",
     "search" : "Поиск...",
     "searchWithoutEllipsis" : "Поиск",
@@ -200,7 +201,8 @@
       "STAKE" : "В стейкинге",
       "UNSTAKE" : "Выведено из стейкинга",
       "WITHDRAW_UNSTAKED" : "Вывод",
-      "SENDING" : "Отправка"
+      "SENDING" : "Отправка",
+      "BURN" : "Сожжено"
     },
     "edit" : {
       "title" : "Ускорение или отмена",
@@ -373,7 +375,7 @@
       "disclaimer" : "Транзакции могут не отображаться в истории обменов, однако они всё равно обрабатываются. Просмотрите «Последние операции» внутри счёта для просмотра всех транзакций.",
       "empty" : {
         "title" : "Здесь будет показана история обменов",
-        "description" : "Вы ещё ничего не меняли, либо приложение Ledger Live было сброшено."
+        "description" : "Вы ещё ничего не меняли, либо недавно сбрасывали приложение Ledger Live."
       },
       "export" : "Экспорт истории транзакций",
       "exporting" : "Экспортируем…",
@@ -418,7 +420,7 @@
       "disclaimer" : "Ваши обмены в настольном приложении не синхронизированы с мобильным приложением Ledger Live",
       "empty" : {
         "title" : "Здесь будет показана история обменов",
-        "description" : "Вы ещё ничего не меняли, либо приложение Ledger Live было сброшено."
+        "description" : "Вы ещё ничего не меняли, либо недавно сбрасывали приложение Ledger Live."
       }
     },
     "landing" : {
@@ -437,18 +439,34 @@
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает THORChain.",
-      "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
     "incompatibility" : {
       "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ton_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Ton",
+      "ton_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Ton. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
+      "sui_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "near_title" : "Ledger Nano S™ не поддерживает обмен Near",
+      "near_description" : "Для обмена Near используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
-      "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "apt_title" : "Ledger Nano S™ не поддерживает обмен Aptos",
+      "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
+      "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
+      "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
+      "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
+      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -759,6 +777,26 @@
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} становится {{to}}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
+      "contactSupport" : "Написать в Поддержку"
+    },
+    "featureUnavailable" : {
+      "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
+      "feature" : {
+        "history" : "История",
+        "swap" : "Обменять",
+        "token_history" : "История токенов",
+        "send_and_receive" : "Отправка и получение",
+        "send" : "Отправить",
+        "receive" : "Получить",
+        "sending_tokens" : "Отправка токенов",
+        "receiving_tokens" : "Получение токенов",
+        "staking" : "Стейкинг",
+        "claiming_staking_rewards" : "Запрос вознаграждения за стейкинг"
+      },
+      "support" : "Поддержку"
     },
     "willBeDeprecatedBanner" : {
       "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}} для оптимизации работы. При этом устройства Ledger по-прежнему смогут взаимодействовать с этим криптоактивом. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
@@ -1220,10 +1258,10 @@
         "title" : "Секретная фраза восстановления",
         "titleCompleted" : "Фраза восстановления подтверждена",
         "recoverSeed" : "Заглушка: Ledger Recover",
-        "restoreSeed" : "Для максимальной безопасности криптоактивов используйте секретную фразу восстановления, которая была создана устройством Ledger.\n\nНет секретной комбинации? Воспользуйтесь {{productName}} для создания новой фразы.",
+        "restoreSeed" : "Для максимальной безопасности криптоактивов используйте секретную фразу восстановления, которая была создана устройством Ledger.\n\nНет секретной комбинации? Настройте {{productName}} для создания новой фразы.",
         "selection" : "Выберите подходящий вариант настройки:",
         "selectionNewLedger" : "<0>Настройка устройства как нового</0> позволяет создать новый кошелёк. Этот шаг сгенерирует новую фразу восстановления.",
-        "selectionRestore" : "<0>Восстановление</0> открывает доступ к уже существующим счетам с помощью секретной сид-фразы или посредством Ledger Recover.",
+        "selectionRestore" : "<0>Восстановление</0> открывает доступ к уже существующим счетам за счёт секретной сид-фразы или посредством Ledger Recover.",
         "selectionContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
         "newSeedDescription1" : "Ваш {{productName}} сгенерирует секретную фразу восстановления в виде уникальной комбинации из 24 слов. Эта фраза — единственный ключ к вашим криптоактивам в случае потери или кражи устройства Ledger, а также если вы забудете ПИН-код.",
         "newSeedDescription2" : "<0>Храните её в безопасности:</0>\nсекретная фраза обеспечивает доступ к криптоактивам, причём её нельзя восстановить. Любой человек с вашей фразой восстановления может распоряжаться вашими монетами. А если комбинация потеряется, Ledger ничем не сможет вам помочь.",
@@ -1232,9 +1270,9 @@
         "newSeedDescription5" : "Не делитесь ей ни с кем. И не теряйте свою комбинацию.",
         "newSeedContinueOnDevice" : "Ознакомьтесь и запишите вашу секретную фразу восстановления, созданную на {{productName}}",
         "restoreChoiceContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
-        "restoreChoiceSRPTitle" : "Восстановление с помощью секретной фразы",
+        "restoreChoiceSRPTitle" : "Восстановить из секретной сид-фразы",
         "restoreChoiceSRPDescription" : "Для безопасности криптоактивов используйте секретную фразу восстановления, которая была создана устройством Ledger.",
-        "restoreChoiceRecoverTitle" : "Восстановить с Ledger Recover",
+        "restoreChoiceRecoverTitle" : "Восстановить из Ledger Recover",
         "restoreChoiceRecoverDescription" : "Пользователям Ledger Recover для восстановления резервной копии секретной фразы необходимо авторизоваться на платформе.",
         "followInstructions" : "Следуйте руководству на {{productName}}."
       },
@@ -1281,7 +1319,7 @@
             "description" : "Устройство {{productName}} небезопасно для использования\nОбратитесь в Поддержку Ledger"
           }
         },
-        "whyPerformChecksLink" : "Подробнее о проверке подлинности",
+        "whyPerformChecksLink" : "Подробнее об этой проверке",
         "startChecksCTA" : "Проверка {{modelName}}",
         "continueCTA" : "Продолжить настройку",
         "genuineCheck" : {
@@ -1291,19 +1329,19 @@
             "cancelled" : "Проверка подлинности отменена"
           },
           "subtitle" : {
-            "active" : "Она позволяет убедиться в оригинальности {{modelName}}.",
+            "active" : "Она поможет подтвердить, что у вас оригинальный {{modelName}}.",
             "cancelled" : "Проверка подлинности обязательна для настройки {{modelName}} с помощью приложения Ledger Live."
           },
           "resumeCTA" : "Продолжить проверку подлинности"
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "Проверка обновления прошивки",
+            "active" : "Проверка версии ОС",
             "completed" : "ОС {{modelName}} актуальна.",
             "updateAvailable" : "Доступно обновление прошивки {{firmwareVersion}}"
           },
           "subtitle" : {
-            "active" : "Проверка нужна для гарантии, что устройство {{modelName}} актуальное.",
+            "active" : "Она нужна для гарантии, что ОС на {{modelName}} актуальна.",
             "completed" : "Нажмите «Переустановить приложения», чтобы восстановить их на {{modelName}}.",
             "updateAvailable" : "Обновление обеспечивает оптимальную защиту криптоактивов и доступ к последним функциям."
           },
@@ -1327,7 +1365,7 @@
         "titleCompleted" : "Устройство {{deviceName}} готово"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Нажмите «Разрешить», чтобы начать проверку подлинности"
+        "title" : "Одобрите проверку подлинности на устройстве"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Разблокируйте устройство"
@@ -1369,7 +1407,7 @@
     },
     "actions" : {
       "buyCrypto" : {
-        "title" : "Покупка криптовалюты",
+        "title" : "Покупки криптовалюты",
         "description" : "Выберите подходящие криптоактивы из 500+ монет по лучшим курсам от операторов.",
         "actionCompletedPopupLabel" : "Криптовалюта куплена"
       },
@@ -1380,7 +1418,7 @@
       },
       "recover" : {
         "title" : "Подписки на Ledger Recover",
-        "description" : "Восстановите доступ к кошельку без фразы восстановления.",
+        "description" : "Так вы сможете восстановить доступ к кошельку без секретной фразы восстановления.",
         "actionCompletedPopupLabel" : "Подписка на Ledger Recover оформлена"
       }
     }
@@ -1499,21 +1537,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Завершите добавление платёжной карты",
-        "description" : "Надёжное восстановление с Ledger Recover.",
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности осталось всего два шага!",
         "primaryCta" : "Добавить карту",
         "secondaryCta" : "Не сейчас"
       },
       "verifyIdentity" : {
-        "title" : "Завершите подтверждение личности",
-        "description" : "Надёжное восстановление с Ledger Recover.",
-        "primaryCta" : "Подтвердить",
+        "title" : "Вы ещё не настроили запасной доступ к кошельку",
+        "description" : "Подтвердите свою личность, чтобы гарантировать сохранность кошелька",
+        "primaryCta" : "Подтвердить личность",
         "secondaryCta" : "Не сейчас"
       },
       "connectDevice" : {
-        "title" : "Подключение устройства Ledger",
-        "description" : "Ledger Recover всего в одном шаге от вас.",
-        "primaryCta" : "Подключить",
+        "title" : "Вы ещё не настроили запасной доступ к кошельку",
+        "description" : "Подключите ваше устройство, чтобы гарантировать сохранность кошелька",
+        "primaryCta" : "Подключить устройство",
         "secondaryCta" : "Не сейчас"
       }
     },
@@ -1708,7 +1746,7 @@
     "seeTokens" : "Показать токены ({{tokenCount}})",
     "hideTokens" : "Скрыть токены ({{tokenCount}})",
     "countTooltip" : "1 токен",
-    "countTooltip_plural" : "{{count}} токена(ов)",
+    "countTooltip_other" : "Токенов: {{nbCount}}",
     "algorand" : {
       "title" : "ASA (Активы)",
       "cta" : "Добавить ASA",
@@ -1731,7 +1769,7 @@
     "seeSubAccounts" : "Показать субсчета ({{tokenCount}})",
     "hideSubAccounts" : "Скрыть субсчета ({{tokenCount}})",
     "countTooltip" : "1 субсчёт",
-    "countTooltip_plural" : "Субсчетов: {{count}}"
+    "countTooltip_other" : "Субсчетов: {{nbCount}}"
   },
   "addAccounts" : {
     "title" : "Добавить счёт",
@@ -1843,7 +1881,8 @@
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
-      "version" : "Версия приложения"
+      "version" : "Версия приложения",
+      "accountCreationFee" : "Комиссия за создание счёта"
     }
   },
   "operationList" : {
@@ -1939,7 +1978,7 @@
         "all" : "Все",
         "supported" : "Поддерживается в Ledger Live",
         "installed" : "Установлено",
-        "not_installed" : "Не установлено"
+        "not_installed" : "Не установленные"
       },
       "sort" : {
         "title" : "Сортировка",
@@ -2025,15 +2064,16 @@
         "version" : "Версия {{latestFirmware}}",
         "cta" : "Перейти в «Мой Ledger»",
         "old" : {
-          "warning" : "Прошивка устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
+          "warning" : "ОС устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
           "cta" : "Связаться с Поддержкой"
         },
         "cta2" : "Обновить ОС"
       },
-      "latest" : "Доступна новая прошивка ({{version}})",
+      "latest" : "Доступна новая ОС ({{version}})",
       "contactSupport" : "Связаться с Поддержкой",
-      "deprecated" : "Прошивка устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
+      "deprecated" : "ОС устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
       "prepareSeed" : "Запишите фразу восстановления из 24 слов на специальный лист. Убедитесь, что в случае необходимости к нему будет доступ.",
+      "prepareSeedRecover" : "Также используйте услугу Ledger Recover для сохранения доступа к криптокошельку, который всегда будет под рукой.",
       "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {{version}}</1>.",
       "cancelUpdate" : "Отменить обновление",
       "continueUpdate" : "Продолжить",
@@ -2354,7 +2394,7 @@
         "ethereumPriorityFee" : "Макс. комиссия за приоритет ({{unitName}})",
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
-        "unitPerByte" : "{{unit}} за байт",
+        "unitVByte" : "{{unit}}/вБайт",
         "nft" : "NFT",
         "nftQuantity" : "Количество"
       },
@@ -2387,8 +2427,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Не использовать тег примечания/Memo?",
-        "description" : "Если не указать тег примечания/Memo при отправке криптовалюты на централизованную биржу или кастодиальный кошелёк, монеты будут потеряны.",
+        "title" : "Нужен тег примечания/Memo?",
+        "description" : "Если не указать тег примечания/Memo при отправке криптовалюты на централизованную биржу, риск потери монет возрастёт.",
         "cta.addTag" : "Указать Memo",
         "cta.not.addTag" : "Не указывать",
         "checkbox.label" : "Больше не показывать."
@@ -3634,7 +3674,7 @@
       "delegatedInfoTooltip" : "Всего делегировано валидаторам.",
       "withdrawableInfoTooltip" : "Общая сумма, которую можно вывести из делегированной.",
       "withdrawableTitle" : "Доступно для вывода",
-      "statusUpdateNotice" : "Статус делегирования обновится, когда транзакция будет подтверждена.",
+      "statusUpdateNotice" : "Статус делегирования обновится после подтверждения транзакции в сети.",
       "ledgerByFigmentTC" : "Положения и условия Ledger by Figment",
       "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
       "emptyState" : {
@@ -3726,6 +3766,69 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™.",
+      "transferFees" : {
+        "feesPercentHint" : "Комиссия за перевод этого токена составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+        "notice" : "Комиссия за перевод — {{fee}}%",
+        "tooltipHint" : "Процент от суммы перевода, который получает создатель токена",
+        "transferFeesLabel" : "Комиссии за перевод"
+      },
+      "nonTransferable" : {
+        "notice" : "Токен непередаваемый"
+      },
+      "interestRate" : {
+        "notice" : "Процентная ставка — {{rate}}%",
+        "tooltipHint" : "Новые монеты не создаются с учётом ставки, то есть происходящее носит исключительно косметический характер"
+      },
+      "permanentDelegate" : {
+        "notice" : "Постоянные полномочия делегата активированы",
+        "initializationNotice" : "Постоянные полномочия делегата запущены, но не активированы",
+        "tooltipHint" : "Делегат может перемещать этот токен с вашего счёта или сжигать его"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Обязательное memo для переводов активировано",
+        "tooltipHint" : "Все входящие переводы на этот счёт должны содержать memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Hook активирована",
+        "initializationNotice" : "Transfer Hook запущена, но не активирована",
+        "tooltipHint" : "У токена есть дополнительная функциональность, которая управляется программой {{programAddress}}"
+      },
+      "extensionsInfo" : {
+        "title" : "Расширения токенов Solana",
+        "commonInfo" : "Расширения токенов — новое поколение стандарта токенов в сети Solana. Они наделяют привычную функциональность токена дополнительными возможностями. Например, это могут быть конфиденциальные переводы, постоянные делегаты, нестандартная логика перемещения, расширенные метаданные и многое другое.",
+        "permanentDelegate" : {
+          "title" : "Постоянный делегат",
+          "permanentDelegateAddress" : "Сейчас полномочия делегата принадлежат {{address}}",
+          "permanentDelegateNotSetup" : "Актуальные полномочия делегата не указаны.",
+          "description" : "Постоянный делегат — это сторона с неограниченными полномочиями на любой счёт в пределах конкретного минтинга. Делегат может сжигать или перемещать любое количество токенов в любое время на своё усмотрение."
+        },
+        "nonTransferable" : {
+          "title" : "Неперемещаемые токены",
+          "description" : "Такие криптоактивы называются Soulbound-токенами, и их нельзя перемещать или сжигать. Сделать это может только их эмитент."
+        },
+        "transferHook" : {
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "Актуальная программа для Transfer Hook — {{address}}",
+          "transferHookNotSetup" : "Актуальная программа для Transfer Hook не указана.",
+          "description" : "Transfer Hook позволяет эмитенту токена определять условия взаимодействия пользователей с токенами. Вместо обычного перевода эмитент может добавить произвольную логику в программу, которая будет использоваться с расширением Transfer Hook."
+        },
+        "transferFee" : {
+          "title" : "Комиссия за перевод",
+          "currentTransferFee" : "Актуальная комиссия за перевод составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+          "description" : "Комиссии взимаются за каждый перевод токена и удерживаются на счету получателя. Причём последний не может их использовать."
+        },
+        "interestBearing" : {
+          "title" : "Процентные токены",
+          "currentInterestRate" : "Актуальная процентная ставка составляет {{rate}}%.",
+          "accruedDelta" : "Начислено {{delta}}.",
+          "interestRateNotSetup" : "Актуальная процентная ставка составляет 0%.",
+          "description" : "Токены, чья стоимость растёт или снижается в соответствии с процентной ставкой. Новые монеты здесь не создаются, то есть эта функция носит исключительно косметический характер."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -3766,7 +3869,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
         },
         "liquid" : {
           "name" : "Ликвидный",
@@ -3774,7 +3877,7 @@
         },
         "protocol" : {
           "name" : "Протокол",
-          "description" : "Застейкайте партию в 32 ETH и получайте вознаграждения для полной ноды в эфирах."
+          "description" : "Застейкайте от 32 ETH и получайте вознаграждения за полную ноду в эфирах."
         },
         "pooling" : {
           "name" : "Пул",
@@ -3820,7 +3923,7 @@
       "readAbout" : "Узнайте больше о стейкинге ETH и актуальных стратегиях",
       "requiredMinimum" : "От {{min}} ETH",
       "rewardsStrategy" : {
-        "auto-compounded" : "Автоматическая капитализация вознаграждения",
+        "auto-compounded" : "Автоматическая капитализация",
         "basic" : "Вознаграждение",
         "daily" : "Ежедневное вознаграждение",
         "eigenlayer_points" : "Поинты EigenLayer",
@@ -4106,8 +4209,9 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета в Ledger Live между разными смартфонами и компьютерами.",
       "mevProtection" : "Защита от MEV",
-      "mevProtectionDesc" : "Активируйте защиту от MEV для комфортного проведения транзакций в Эфириуме",
-      "marketPerformanceWidget" : "Виджет поведения рынка",
+      "mevProtectionDesc" : "Активируйте защиту от MEV для комфортных транзакций в Эфириуме.",
+      "mevProtectionLearnMore" : "Уведомление о конфиденциальности",
+      "marketPerformanceWidget" : "Виджет динамики рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
     "developer" : {
@@ -4126,6 +4230,11 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "debugReactQuery" : "Разрешить отладку ReactQuery",
       "debugReactQueryDesc" : "Показывать и одобрять запуск консоли отладки ReactQuery.",
+      "nfts" : {
+        "title" : "Скрытые коллекции NFT",
+        "description" : "Сбросить список скрытых коллекций",
+        "reset" : "Сбросить ({{count}})"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
@@ -4232,6 +4341,32 @@
             "nft" : "Отдельный NFT",
             "contract" : "Контракт"
           }
+        },
+        "back" : "Назад"
+      },
+      "debugNfts" : {
+        "title" : "Инструменты NFT",
+        "description" : "Возможность использовать важные функции для управления NFT в Ledger Live.",
+        "cta" : "Открыть",
+        "tabs" : {
+          "config" : "Настройка",
+          "generatorAndDestructor" : "Генераторы и уничтожители"
+        },
+        "configuration" : {
+          "supported" : "Поддерживаемая сеть с NFT",
+          "supported_other" : "Поддерживаемые сети с NFT",
+          "nms" : {
+            "title" : "Служба метаданных NFT (NMS)",
+            "env" : "Среда: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Сгенерировать счета",
+          "genAccDesc" : "Сгенерировать счета с NFT",
+          "cta" : "Сгенерировать",
+          "deleteAcc" : "Удалить счета",
+          "deleteAccDesc" : "Удалить все счета",
+          "delete" : "Удалить"
         },
         "back" : "Назад"
       },
@@ -4682,7 +4817,7 @@
         "continueCTA" : "Продолжить",
         "title" : "Проверьте содержимое упаковки",
         "description" : "Если {{device}} при включении запрашивает ПИН-код и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой Ledger.",
-        "alert" : "Используйте только ту фразу восстановления, которое устройство сгенерировало при первичной настройке."
+        "alert" : "Используйте фразу восстановления, которая была сгенерирована вашим устройством Ledger."
       }
     },
     "alerts" : {
@@ -4693,7 +4828,7 @@
       },
       "useLedgerSeeds" : {
         "title" : "Используйте фразы восстановления только от Ledger",
-        "descr" : "Ledger не гарантирует защиту, если использовать фразы восстановления из сторонних источников. Рекомендуем настроить Nano как новое устройство, если ваша фраза восстановления была сгенерирована не в Ledger.",
+        "descr" : "Ledger не гарантирует защиту при использовании сид-фразы из сторонних источников. Рекомендуем настроить это устройство как новое, если ваша фраза была сгенерирована не в Ledger.",
         "gotIt" : "Понятно"
       }
     },
@@ -4703,7 +4838,7 @@
         "description" : "Безопасно управляйте, покупайте и приумножайте криптовалюты и NFT прямо в Ledger Live.",
         "nextButton" : "Приступить",
         "noDevice" : "Нет устройства Ledger?",
-        "buyLink" : "Ещё нет кошелька? Приобретите Ledger Nano X",
+        "buyLink" : "Нет устройства? Купите Ledger",
         "byTapping" : "Нажимая «Приступить», вы принимаете наши",
         "termsAndConditions" : "Условия использования",
         "and" : "и",
@@ -4752,8 +4887,8 @@
             "description" : "Воспользуйтесь мнемонической фразой, чтобы восстановить приватные ключи на новом Nano."
           },
           "4" : {
-            "title" : "Восстановить с Ledger Recover",
-            "description" : "Требуется подписка на Ledger Recover."
+            "title" : "Восстановить из Ledger Recover",
+            "description" : "Если у вас есть подписка на Ledger Recover."
           }
         }
       },
@@ -4768,7 +4903,7 @@
         "screens" : {
           "importYourRecoveryPhrase" : {
             "title" : "Используем фразу восстановления",
-            "paragraph1" : "Восстановите Nano с помощью секретной фразы, замените или выполните резервное копирование аппаратного кошелька Ledger.",
+            "paragraph1" : "Позволяет восстановить Ledger из секретной сид-фразы. Например, если нужно заменить устройство и сделать запасную копию кошелька.",
             "paragraph2" : "Устройство Nano восстановит ваши приватные ключи, и у вас вновь будет доступ к криптовалюте.",
             "buttons" : {
               "next" : "Можно приступать!",
@@ -4803,7 +4938,7 @@
             },
             "select" : {
               "title" : "Настраиваем как новое устройство",
-              "descr" : "Выберите пункт «Set up as a new device» (Настроить как новое устройство). Для подтверждения выбора нажмите обе кнопки одновременно."
+              "descr" : "Для подтверждения выбора нажмите обе кнопки одновременно."
             },
             "follow" : {
               "title" : "Следуйте инструкциям",
@@ -4831,7 +4966,7 @@
             },
             "select" : {
               "title" : "Выберите «Использовать фразу восстановления»",
-              "descr" : "Выберите пункт «Set up as a new device» (Настроить как новое устройство). Для подтверждения выбора нажмите обе кнопки одновременно."
+              "descr" : "Для подтверждения выбора нажмите обе кнопки одновременно."
             },
             "follow" : {
               "title" : "Следуйте инструкциям",
@@ -4849,7 +4984,7 @@
           },
           "pinCode" : {
             "title" : "ПИН-код",
-            "paragraph" : "ПИН-код — это первый этап защиты. Он физически защищает доступ к устройству Nano и ваши приватные ключи. ПИН-код должен содержать от 4 до 8 символов.",
+            "paragraph" : "ПИН-код — это первый этап защиты. Он физически защищает доступ к устройству Ledger и ваши приватные ключи. ПИН-код должен содержать от 4 до 8 символов.",
             "disclaimer" : "Я понимаю, что ПИН-код необходимо придумать самостоятельно, и хранить его в секрете.",
             "buttons" : {
               "next" : "Настроить ПИН-код",
@@ -4902,13 +5037,13 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "Выберите «Restore using Ledger Recover» (Восстановить с Ledger Recover)",
+            "title" : "Выберите «Restore using Ledger Recover» (Восстановить из Ledger Recover)",
             "1" : {
               "title" : "Выберите «Restore» (Восстановить)",
               "descr" : "Для подтверждения нажмите обе кнопки одновременно."
             },
             "2" : {
-              "title" : "Выберите «Restore using Ledger Recover» (Восстановить с Ledger Recover)"
+              "title" : "Выберите «Restore using Ledger Recover» (Восстановить из Ledger Recover)"
             },
             "help" : {
               "iDontSee" : "Если нет «Restore using Ledger Recover»",
@@ -5275,8 +5410,8 @@
         "repair" : {
           "title" : "Исправьте работу Nano S",
           "desc" : "Какое сообщение отображается на вашем устройстве?",
-          "mcuOutdated" : "Прошивка микроконтроллера (MCU) устарела",
-          "mcuNotGenuine" : "Прошивка микроконтроллера (MCU) оказалась не подлинной",
+          "mcuOutdated" : "Прошивка микроконтроллера устарела",
+          "mcuNotGenuine" : "Прошивка микроконтроллера оказалась не подлинной",
           "repairInstructions" : "Используйте инструкцию по ремонту устройства",
           "updateInstructions" : "Следуйте инструкциям по обновлению устройства",
           "somethingElse" : "Дополнительно"
@@ -5288,7 +5423,9 @@
     "stringHash" : "Хэш сообщения",
     "domainHash" : "Хэш домена",
     "messageHash" : "Хэш сообщения",
-    "message" : "Сообщение"
+    "message" : "Сообщение",
+    "title" : "Продолжите на устройстве Ledger {{wording}}",
+    "description" : "Следуйте руководству на защищённом сенсорном экране."
   },
   "TransactionConfirm" : {
     "title" : "Подтвердите операцию на устройстве для её завершения",
@@ -5408,7 +5545,11 @@
     },
     "solana" : {
       "memo" : "Тег примечания/Memo",
-      "memoPlaceholder" : "Опционально"
+      "memoPlaceholder" : "Опционально",
+      "requiredMemoPlaceholder" : "Обязательное поле"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Опциональное примечание/memo"
     }
   },
   "errors" : {
@@ -5692,17 +5833,17 @@
       "title" : "К сожалению, счета не найдены",
       "description" : "При вычислении адреса что-то пошло не так. Повторите попытку или обратитесь в Поддержку"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
@@ -5893,11 +6034,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Что-то пошло не так",
-      "description" : "Счёт для получения не относится к вашему устройству. Попробуйте использовать другое устройство."
+      "description" : "Счёт для возврата не привязан к подключенному устройству. Попробуйте использовать другой кошелёк."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Что-то пошло не так",
-      "description" : "Счёт для возврата не относится к вашему устройству. Попробуйте использовать другое устройство."
+      "description" : "Счёт отправки не привязан к подключенному устройству. Попробуйте использовать другой кошелёк."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Необходимо обновить приложение",
@@ -6181,6 +6322,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "На связанном с этим токеном счёте есть другой токен"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Это не адрес кошелька, а адрес токена, связанного с кошельком. Продолжайте только в том случае, если понимаете суть происходящего."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Это счёт токена. Введите обычный адрес кошелька."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Это адрес токена. Введите обычный адрес кошелька."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Счёт не был использован"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Адрес получателя совпадает с адресом отправителя токена"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Слишком длинное Memo. Макс. длина {{maxLength}}"
     },
@@ -6195,6 +6360,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Требуется примечание/memo для адреса получателя"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Токен непередаваемый",
+      "description" : "Такие криптоактивы называются Soulbound-токенами и не могут быть перемещены"
     },
     "NotEnoughNftOwned" : {
       "title" : "Это больше доступного баланса"
@@ -6408,6 +6580,15 @@
         "swap" : "Обменяйте",
         "deposit" : "Пополните"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6436,7 +6617,8 @@
       "title" : "выберите актив"
     },
     "selectAccount" : {
-      "title" : "выберите счёт"
+      "title" : "выберите счёт",
+      "addAccount" : "Добавить ещё один счёт"
     }
   },
   "customImage" : {
@@ -6470,8 +6652,8 @@
       "transfer" : {
         "stepLabel" : "Загрузка",
         "useAnotherPicture" : "Загрузить другое изображение",
-        "allowPreview" : "Нажмите «Загрузить картинку» для\nнастройки экрана блокировки",
-        "allowConfirmPreview" : "Нажмите «Загрузить картинку», чтобы\nвосстановить картинку экрана блокировки",
+        "allowPreview" : "Нажмите «Загрузить» на экране\nустройства для подтверждения",
+        "allowConfirmPreview" : "Нажмите «Загрузить» на экране\nустройства для восстановления",
         "loadingPicture" : "Устанавливаем...",
         "voila" : "Вот и всё!",
         "imageLoaded" : "Изображение загружено в {{productName}}",
@@ -6612,6 +6794,24 @@
       "alreadySync" : "Уже включено",
       "learnMore" : "Как работает Ledger Sync?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Активировать Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Синхронизировать с другим приложением Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Настроить",
       "synchronize" : {
@@ -6709,17 +6909,19 @@
         "mobile" : {
           "description" : "Синхронизировать с Ledger Live на другом смартфоне",
           "steps" : {
-            "step1" : "Откройте Ledger Live, с которым хотите синхронизироваться",
-            "step2" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Включить Ledger Sync</0> > <0>Показать QR»</0>",
-            "step3" : "Сканируйте QR-код"
+            "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>Через QR-код»</0>",
+            "step4" : "Сканируйте QR-код."
           }
         },
         "desktop" : {
           "description" : "Синхронизируйте ваши счета с другим приложением Ledger Live",
           "steps" : {
-            "step1" : "Откройте Ledger Live, с которым хотите синхронизироваться",
-            "step2" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Включить Ledger Sync</0> > <0>С помощью Ledger»</0>",
-            "step3" : "Подключение устройства Ledger"
+            "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>С помощью Ledger»</0>",
+            "step4" : "Подключите устройство Ledger."
           }
         }
       },
@@ -6837,7 +7039,23 @@
       "transactionId" : "ID транзакции"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "С LDMK-транспортом"
+  "lnsUpsell" : {
+    "opted_in" : {
+      "title" : "Ограниченная память — ограниченные впечатления",
+      "description" : "Перейдите с вашего Ledger Nano S на новое устройство – например, Ledger Flex. Вы получите бóльший объём памяти, актуальные улучшения безопасности, самые новые функции и <0>эксклюзивную скидку {{discount}}%</>.",
+      "cta" : "Обновиться"
+    },
+    "opted_out" : {
+      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
+      "cta" : "Подробнее..."
+    }
+  },
+  "modularAssetDrawer" : {
+    "searchPlaceholder" : "Поиск...",
+    "assetFlow" : {
+      "selectTemplate" : "Выберите {{dynamic}}",
+      "asset" : "актив",
+      "network" : "сеть"
+    }
   }
 }

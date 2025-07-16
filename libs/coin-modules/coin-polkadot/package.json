@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "1.6.0",
+  "version": "6.1.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -108,7 +108,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage || true",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",
@@ -118,9 +119,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported",
-    "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
@@ -147,7 +146,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
-    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
@@ -161,6 +160,7 @@
     "msw": "^2.2.13",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "jest-sonar": "0.2.16"
   }
 }

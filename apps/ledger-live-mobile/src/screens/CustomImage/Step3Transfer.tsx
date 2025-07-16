@@ -47,7 +47,14 @@ export const step3TransferHeaderOptions: ReactNavigationHeaderOptions = {
  */
 const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const dispatch = useDispatch();
-  const { rawData, device: deviceFromRoute, deviceModelId, previewData, imageType } = route.params;
+  const {
+    rawData,
+    device: deviceFromRoute,
+    deviceModelId,
+    previewData,
+    imageType,
+    referral,
+  } = route.params;
 
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -118,6 +125,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             source={{ uri: previewData.imageBase64DataUri }}
             onResult={handleResult}
             onSkip={handleExit}
+            referral={referral}
           />
         ) : (
           <Flex flex={1} alignSelf="stretch">

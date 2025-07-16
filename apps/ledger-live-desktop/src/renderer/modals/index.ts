@@ -34,6 +34,7 @@ import MODAL_HIDE_INSCRIPTION from "LLD/features/Collectibles/Ordinals/component
 
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
 import MODAL_SIMPLEHASH_TOOLS from "./SimpleHashTools";
+import MODAL_NFTS_TOOLS from "./NftsTools";
 import MODAL_BRAZE_TOOLS from "../screens/settings/sections/Developer/BrazeTools/Modal";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
@@ -65,6 +66,7 @@ const globalModals: GlobalModals = {
   MODAL_CREATE_LOCAL_APP,
   MODAL_WALLET_SYNC_DEBUGGER,
   MODAL_SIMPLEHASH_TOOLS,
+  MODAL_NFTS_TOOLS,
   MODAL_HIDE_INSCRIPTION,
   MODAL_BRAZE_TOOLS,
 

@@ -1,8 +1,10 @@
 import * as preloadedData from "@ledgerhq/coin-solana/preload-data";
 import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "@ledgerhq/coin-solana/types";
-import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
+import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 import { getAccountBannerState } from "./banner";
 import * as helpers from "../../account/helpers";
+
+jest.mock("@ledgerhq/coin-solana/preload-data");
 
 import { BigNumber } from "bignumber.js";
 
@@ -107,6 +109,7 @@ const validatorsMap = {
   version: "1",
   validatorsWithMeta: [],
   validators,
+  splTokens: null,
 } as SolanaPreloadDataV1;
 
 describe("solana/banner", () => {

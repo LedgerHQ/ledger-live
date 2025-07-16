@@ -1,5 +1,5 @@
 import React from "react";
-import { Skeleton } from "../../Skeleton";
+import { Skeleton } from "../../../components";
 import { Flex, Text } from "@ledgerhq/react-ui";
 
 type Props = {

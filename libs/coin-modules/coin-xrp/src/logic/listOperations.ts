@@ -1,41 +1,38 @@
-import { getServerInfos, getTransactions } from "../network";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { XrpMemo, XrpOperation } from "../types";
+import { ListOperationsOptions, XrpAsset, XrpMemo } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
 /**
  * Returns list of "Payment" Operations associated to an account.
  * @param address Account address
- * @param blockHeight Height to start searching for operations
- * @returns
+ * @param minHeight retrieve operations from a specific block height until top most (inclusive)
+ *  if not provided, it will start from the oldest possible history.
+ * The result is not guaranteed to contain all operations until top height (it depends of the underlying explorer),
+ * so you might need to call this function multiple times to get all operations.
+ * @param order whether to return operations from the top block or from the oldest block
+ *   it defaults to "desc" (newest first)
+ *   it doesn't control the order of the operations in the result list.
+ *   this parameter is added as a workaround for the issue LIVE-16705
+ * @returns a list of operations is descending order and a token to be used for pagination
  */
 export async function listOperations(
   address: string,
-  {
-    limit,
-    maxHeight,
-    minHeight,
-  }: {
-    limit?: number;
-    maxHeight?: number | undefined; // used for pagination
-    minHeight?: number; // used to retrieve operations from a specific block height until top most
-  },
-): Promise<[XrpOperation[], number]> {
+  { limit, minHeight, token, order }: ListOperationsOptions,
+): Promise<[Operation<XrpAsset>[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
-  const maxLedgerVersion = Number(ledgers[1]);
 
-  type Options = {
-    ledger_index_min?: number;
-    ledger_index_max?: number;
-    limit?: number;
-    tx_type?: string;
-  };
+  // by default the explorer queries the transactions in descending order (newest first)
+  let forward = false;
+  if (order && order === "asc") {
+    forward = true;
+  }
 
-  let options: Options = {
-    ledger_index_max: maxHeight ?? maxLedgerVersion,
-    tx_type: "Payment",
+  let options: GetTransactionsOptions = {
+    forward: forward,
   };
 
   if (limit) {
@@ -44,7 +41,15 @@ export async function listOperations(
       limit,
     };
   }
-  if (minHeight) {
+
+  if (token) {
+    options = {
+      ...options,
+      marker: JSON.parse(token),
+    };
+  }
+
+  if (minHeight !== undefined) {
     options = {
       ...options,
       // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
@@ -54,25 +59,23 @@ export async function listOperations(
 
   async function getPaymentTransactions(
     address: string,
-    options: Options,
-  ): Promise<[boolean, Options, XrplOperation[]]> {
-    const txs = await getTransactions(address, options);
+    options: GetTransactionsOptions,
+  ): Promise<[boolean, GetTransactionsOptions, XrplOperation[]]> {
+    const response = await getTransactions(address, options);
+    const txs = response.transactions;
+    const responseMarker = response.marker;
     // Filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC is not working as expected.
     const paymentTxs = txs.filter(tx => tx.tx_json.TransactionType === "Payment");
     const shortage = (options.limit && txs.length < options.limit) || false;
-    const lastTransaction = txs.slice(-1)[0];
-    const nextOptions = { ...options };
-    if (lastTransaction) {
-      nextOptions.ledger_index_max = lastTransaction.tx_json.ledger_index - 1;
+    const { marker, ...nextOptions } = options;
+
+    if (responseMarker) {
+      (nextOptions as GetTransactionsOptions).marker = responseMarker;
       if (nextOptions.limit) nextOptions.limit -= paymentTxs.length;
     }
     return [shortage, nextOptions, paymentTxs];
   }
 
-  // TODO BUG: given the number of txs belonging to the SAME block > limit
-  //           when user loop over pages using the provided token
-  //           then user misses some txs that doesn't fit the page size limit
-  //           because the "next token" is a block height (solution is to use an opaque token instead)
   let [txShortage, nextOptions, transactions] = await getPaymentTransactions(address, options);
   const isEnough = () => txShortage || (limit && transactions.length >= limit);
   // We need to call the node RPC multiple times to get the desired number of transactions by the limiter.
@@ -86,18 +89,17 @@ export async function listOperations(
     transactions = transactions.concat(newTransactions);
   }
 
-  const lastTransaction = transactions.slice(-1)[0];
-  // the next index to start the pagination from
-  const nextIndex = lastTransaction
-    ? Math.max(lastTransaction.tx_json.ledger_index - 1, minLedgerVersion)
-    : minLedgerVersion;
+  // the order is reversed so that the results are always sorted by newest tx first element of the list
+  if (order === "asc") transactions.reverse();
 
-  return [transactions.map(convertToCoreOperation(address)), nextIndex];
+  // the next index to start the pagination from
+  const next = nextOptions.marker ? JSON.stringify(nextOptions.marker) : "";
+  return [transactions.map(convertToCoreOperation(address)), next];
 }
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: XrplOperation): XrpOperation => {
+  (operation: XrplOperation): Operation<XrpAsset> => {
     const {
       ledger_hash,
       hash,
@@ -110,9 +112,10 @@ const convertToCoreOperation =
         Account,
         Destination,
         DestinationTag,
-        Sequence,
         Memos,
         ledger_index,
+        Sequence,
+        SigningPubKey,
       },
     } = operation;
 
@@ -155,20 +158,30 @@ const convertToCoreOperation =
       };
     }
 
-    let op: XrpOperation = {
-      blockTime: new Date(close_time_iso),
-      blockHash: ledger_hash,
-      hash,
-      address,
-      type: TransactionType,
-      simpleType: type,
+    details = {
+      ...details,
+      xrpTxType: TransactionType,
+      sequence: Sequence,
+      signingPubKey: SigningPubKey,
+    };
+
+    let op: Operation<XrpAsset> = {
+      id: hash,
+      asset: { type: "native" },
+      tx: {
+        hash: hash,
+        fees: fee,
+        date: new Date(toEpochDate),
+        block: {
+          time: new Date(close_time_iso),
+          hash: ledger_hash,
+          height: ledger_index,
+        },
+      },
+      type: type,
       value,
-      fee,
-      blockHeight: ledger_index,
       senders: [Account],
       recipients: [Destination],
-      date: new Date(toEpochDate),
-      transactionSequenceNumber: Sequence,
     };
 
     if (Object.keys(details).length != 0) {

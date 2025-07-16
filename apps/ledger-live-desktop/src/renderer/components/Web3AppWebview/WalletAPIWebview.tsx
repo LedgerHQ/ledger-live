@@ -2,7 +2,6 @@
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 import {
   ExchangeType,
   UiHook,
@@ -44,37 +43,62 @@ import { NoAccountOverlay } from "./NoAccountOverlay";
 import { useWebviewState } from "./helpers";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import {
+  useModularDrawerVisibility,
+  ModularDrawerLocation,
+  openAssetAndAccountDrawer,
+} from "LLD/features/ModularDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction>): UiHook {
+function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const { isModularDrawerVisible } = useModularDrawerVisibility();
+
+  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
   return useMemo(
     () => ({
       "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
-        setDrawer(
-          SelectAccountAndCurrencyDrawer,
-          {
-            currencies,
-            onAccountSelected: (account, parentAccount) => {
-              setDrawer();
-              onSuccess(account, parentAccount);
-            },
-            accounts$,
-          },
-          {
-            onRequestClose: () => {
-              setDrawer();
-              onCancel();
-            },
-          },
-        );
+
+        modularDrawerVisible
+          ? openAssetAndAccountDrawer({
+              accounts$,
+              currencies,
+              onSuccess,
+              onCancel,
+            })
+          : setDrawer(
+              SelectAccountAndCurrencyDrawer,
+              {
+                currencies,
+                onAccountSelected: (account, parentAccount) => {
+                  setDrawer();
+                  onSuccess(account, parentAccount);
+                },
+                accounts$,
+              },
+              {
+                onRequestClose: () => {
+                  setDrawer();
+                  onCancel();
+                },
+              },
+            );
       },
-      "account.receive": ({ account, parentAccount, accountAddress, onSuccess, onError }) => {
+      "account.receive": ({
+        account,
+        parentAccount,
+        accountAddress,
+        onSuccess,
+        onError,
+        onCancel,
+      }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
@@ -84,16 +108,19 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
               onSuccess(accountAddress);
             },
             onCancel: onError,
+            onClose: onCancel,
             verifyAddress: true,
           }),
         );
       },
-      "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+      "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
             message,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
             onConfirmationHandler: onSuccess,
             onFailHandler: onError,
             onClose: onCancel,
@@ -128,6 +155,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
             onCancel: onError,
             manifestId: manifest.id,
             manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
           }),
         );
       },
@@ -205,7 +233,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
     }),
-    [dispatch, manifest, pushToast, t, tracking],
+    [dispatch, manifest, modularDrawerVisible, pushToast, t, tracking],
   );
 }
 

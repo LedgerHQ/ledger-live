@@ -1,58 +1,50 @@
 import type { StellarOperation } from "../types/bridge";
 import { fetchOperations } from "../network";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { StellarAsset } from "../types";
 
-export type Operation = {
-  hash: string;
-  address: string;
-  type: string;
-  value: bigint;
-  fee: bigint;
-  block: {
-    hash?: string;
-    time?: Date;
-    height: number;
-  };
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
+export type ListOperationsOptions = {
+  limit?: number;
+  cursor?: string;
+  order: "asc" | "desc";
+  minHeight: number;
 };
 
 export async function listOperations(
   address: string,
-  { limit, cursor }: { limit: number; cursor?: number | undefined },
-): Promise<[Operation[], number]> {
+  { limit, cursor, order, minHeight }: ListOperationsOptions,
+): Promise<[Operation<StellarAsset>[], string]> {
   // Fake accountId
   const accountId = "";
-  const operations = await fetchOperations({
+  const [operations, nextCursor] = await fetchOperations({
     accountId,
     addr: address,
-    order: "asc",
+    minHeight,
+    order: order,
     limit,
-    cursor: cursor?.toString(),
+    cursor: cursor,
   });
 
-  return [
-    operations.map(convertToCoreOperation(address)),
-    parseInt(operations.slice(-1)[0].extra.pagingToken ?? "0"),
-  ];
+  return [operations.map(op => convertToCoreOperation(op)), nextCursor];
 }
 
-const convertToCoreOperation = (address: string) => (operation: StellarOperation) => {
+const convertToCoreOperation = (operation: StellarOperation): Operation<StellarAsset> => {
   return {
-    hash: operation.hash,
-    address,
+    id: `${operation.hash}-${operation.extra.index}`,
+    asset: { type: "native" },
+    tx: {
+      hash: operation.hash,
+      block: {
+        hash: operation.blockHash!,
+        time: operation.extra.blockTime,
+        height: operation.blockHeight!,
+      },
+      fees: BigInt(operation.fee.toString()),
+      date: operation.date,
+    },
     type: operation.type,
     value: BigInt(operation.value.toString()),
-    fee: BigInt(operation.fee.toString()),
-    block: {
-      hash: operation.blockHash!,
-      time: operation.extra.blockTime,
-      height: operation.blockHeight!,
-    },
     senders: operation.senders,
     recipients: operation.recipients,
-    date: operation.date,
-    transactionSequenceNumber: operation.transactionSequenceNumber ?? 0,
   };
 };

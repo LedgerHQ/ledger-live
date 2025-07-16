@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.8.1",
+  "version": "2.22.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -45,18 +45,17 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-evm.json",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "unimported": "unimported",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/__tests__/coin-tester/.env pnpm jest --runTestsByPath src/__tests__/coin-tester/*.test.ts --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
@@ -82,7 +81,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -101,6 +100,7 @@
     "jest-expect-message": "^1.1.3",
     "msw": "^2.2.12",
     "prando": "^6.0.1",
-    "ts-jest": "^29.1.1"
+    "ts-jest": "^29.1.1",
+    "jest-sonar": "0.2.16"
   }
 }

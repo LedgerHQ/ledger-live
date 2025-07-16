@@ -216,8 +216,8 @@ type Props = BoxProps & {
   learnMoreUrl?: string | null;
   // if bannerId is provided, the banner is dismissable
   bannerId?: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
+  leftContent?: React.ReactNode;
+  rightContent?: React.ReactNode;
   title?: React.ReactNode;
   horizontal?: boolean;
   noIcon?: boolean;
@@ -235,11 +235,10 @@ export default function Alert({
   bannerId,
   noIcon = false,
   type = "primary",
-  right,
-  left,
+  rightContent,
+  leftContent,
   title,
   small,
-  // eslint-disable-next-line
   color,
   ...rest
 }: Props) {
@@ -278,7 +277,7 @@ export default function Alert({
    */
   return (
     <Container type={type} small={small} {...rest}>
-      {left || (!noIcon && icon) ? <LeftContent>{left || icon}</LeftContent> : null}
+      {leftContent || (!noIcon && icon) ? <LeftContent>{leftContent || icon}</LeftContent> : null}
       <Content>
         {title && <TitleContent>{title}</TitleContent>}
         <div>
@@ -291,8 +290,10 @@ export default function Alert({
           <IconCross size={14} />
         </CloseContainer>
       ) : null}
-      {!right && learnMoreOnRight && hasLearnMore ? <RightContent>{learnMore}</RightContent> : null}
-      {!!right && <RightContent>{right}</RightContent>}
+      {!rightContent && learnMoreOnRight && hasLearnMore ? (
+        <RightContent>{learnMore}</RightContent>
+      ) : null}
+      {!!rightContent && <RightContent>{rightContent}</RightContent>}
     </Container>
   );
 }

@@ -3,14 +3,12 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { StepProps } from "../Body";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-env";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
+
 export default function StepConnectDevice({
   account,
   parentAccount,
@@ -19,6 +17,8 @@ export default function StepConnectDevice({
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
+  const action = useConnectAppAction();
+
   const request = useMemo(
     () => ({
       account: mainAccount || undefined,
@@ -34,6 +34,7 @@ export default function StepConnectDevice({
         request={request}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"
+        location={HOOKS_TRACKING_LOCATIONS.receiveModal}
       />
     </>
   );

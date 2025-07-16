@@ -84,8 +84,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
-            lightSource={require("~/images/illustration/Light/_003.png")}
-            darkSource={require("~/images/illustration/Dark/_003.png")}
+            lightSource={require("~/images/illustration/Light/_003.webp")}
+            darkSource={require("~/images/illustration/Dark/_003.webp")}
           />
         </Flex>
         <LText semiBold style={styles.description}>

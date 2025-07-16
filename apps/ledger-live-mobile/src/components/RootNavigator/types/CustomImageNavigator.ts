@@ -16,6 +16,7 @@ type WithMandatoryDeviceModelId = {
 type WithOptionalDeviceModelId = {
   // in some cases (deeplink, navigation from an NFT, etc), the deviceModelId is undetermined
   deviceModelId: CLSSupportedDeviceModelId | null;
+  referral?: string;
 };
 
 type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
@@ -54,5 +55,6 @@ export type CustomImageNavigatorParamList = {
       imageType: ImageType;
       rawData: ProcessorRawResult;
       previewData: ProcessorPreviewResult;
+      referral?: string;
     };
 };

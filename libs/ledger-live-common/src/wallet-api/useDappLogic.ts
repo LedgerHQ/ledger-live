@@ -1,20 +1,22 @@
 import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
-import { AppManifest, WalletAPITransaction } from "./types";
+import { AppManifest, DAppTrackingData, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
+import { DeviceTransactionField, getDeviceTransactionConfig } from "../transaction";
+import type { Transaction } from "../generated/types";
 
 type MessageId = number | string | null;
 
@@ -107,9 +109,15 @@ function useDappAccountLogic({
   }, [currentAccount, accounts]);
 
   const firstAccountAvailable = useMemo(() => {
+    // Return an account for manifests with wildcard currencyIds
+    if (currencyIds.includes("**") && accounts.length)
+      return getParentAccount(accounts[0], accounts);
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;
+      }
+      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
+        return getParentAccount(account, accounts);
       }
     });
     // might not even need to set parent here
@@ -162,10 +170,8 @@ function useDappAccountLogic({
     }
 
     if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      // if there is no current account
-      // OR if there is a current account but it is not permitted
-      // set it to the first permitted account
-      setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
+      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
+      setCurrentAccount(firstAccountAvailable ?? null);
     }
   }, [
     currentAccount,
@@ -199,6 +205,16 @@ function isParentAccountPresent(
   return true;
 }
 
+function getTransactionType(fields: Array<DeviceTransactionField>): string {
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    if (field.type === "text" && field.label === "Type") {
+      return field.value;
+    }
+  }
+  return "";
+}
+
 export function useDappLogic({
   manifest,
   accounts,
@@ -229,17 +245,24 @@ export function useDappLogic({
       initialAccountId,
     });
 
+  /** Current network is needed for recognising the current chain id.
+   * If a token account is selected, this depends on the parent currency. */
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
       return undefined;
     }
+    // If the current account is a token account, and the chain id is not specified for that specific token, we can also use the network of the parent currency to determine the correct chain id.
     return manifest.dapp?.networks.find(network => {
-      return (
-        network.currency ===
-        (currentAccount.type === "TokenAccount"
+      const accountCurrencyId =
+        currentAccount.type === "TokenAccount"
           ? currentAccount.token.id
-          : currentAccount.currency.id)
-      );
+          : currentAccount.currency.id;
+      const accountNetworkCurrency =
+        currentAccount.type === "TokenAccount"
+          ? currentAccount.token.parentCurrency.id
+          : currentAccount.currency.id;
+
+      return network.currency === accountCurrencyId || network.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
@@ -460,16 +483,50 @@ export function useDappLogic({
               : currentParentAccount.freshAddress;
 
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
+            let trackingData: DAppTrackingData | undefined;
             try {
-              const options = nanoApp
-                ? { hwAppId: nanoApp, dependencies: dependencies }
-                : undefined;
-              tracking.dappSendTransactionRequested(manifest);
-
               const signFlowInfos = getWalletAPITransactionSignFlowInfos({
                 walletApiTransaction: tx,
                 account: currentAccount,
               });
+
+              const fields = getDeviceTransactionConfig({
+                account: currentAccount,
+                parentAccount: currentParentAccount,
+                transaction: signFlowInfos.liveTx as Transaction,
+                status: {
+                  errors: {},
+                  warnings: {},
+                  estimatedFees: new BigNumber(0),
+                  amount: new BigNumber(0),
+                  totalSpent: new BigNumber(0),
+                },
+              });
+
+              const transactionType = getTransactionType(fields);
+
+              const token = findTokenByAddress(tx.recipient);
+
+              const accountCurrencyName =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.name
+                  : currentAccount.currency.name;
+
+              const accountNetwork =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.parentCurrency.id
+                  : currentAccount.currency.id;
+
+              trackingData = {
+                type: transactionType === "Approve" ? "approve" : "transfer",
+                currency: token ? token.name : accountCurrencyName,
+                network: token ? token.parentCurrency.id : accountNetwork,
+              };
+
+              const options = nanoApp
+                ? { hwAppId: nanoApp, dependencies: dependencies }
+                : undefined;
+              tracking.dappSendTransactionRequested(manifest, trackingData);
 
               const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
                 uiHook["transaction.sign"]({
@@ -506,7 +563,7 @@ export function useDappLogic({
                 optimisticOperation,
               );
 
-              tracking.dappSendTransactionSuccess(manifest);
+              tracking.dappSendTransactionSuccess(manifest, trackingData);
 
               postMessage(
                 JSON.stringify({
@@ -516,7 +573,7 @@ export function useDappLogic({
                 }),
               );
             } catch (error) {
-              tracking.dappSendTransactionFail(manifest);
+              tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
                   id: data.id,
@@ -547,10 +604,12 @@ export function useDappLogic({
               message,
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {
@@ -592,10 +651,12 @@ export function useDappLogic({
               Buffer.from(message).toString("hex"),
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {
@@ -647,6 +708,7 @@ export function useDappLogic({
       currentParentAccount,
       dependencies,
       manifest,
+      mevProtected,
       nanoApp,
       postMessage,
       setCurrentAccount,

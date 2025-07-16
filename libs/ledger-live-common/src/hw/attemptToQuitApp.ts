@@ -10,7 +10,8 @@ export type AttemptToQuitAppEvent =
     }
   | {
       type: "appDetected";
-    };
+    }
+  | { type: "appQuitted" };
 
 const attemptToQuitApp = (
   transport,
@@ -20,7 +21,7 @@ const attemptToQuitApp = (
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
           of(<AttemptToQuitAppEvent>{
-            type: "unresponsiveDevice",
+            type: "appQuitted",
           }),
         ),
         catchError(e => throwError(() => e)),

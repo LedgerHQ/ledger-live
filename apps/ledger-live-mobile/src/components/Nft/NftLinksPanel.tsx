@@ -172,24 +172,19 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
     ];
 
     const bottomSection = [
-      [
-        <NftLink
-          key="nftLinkHide"
-          primary
-          leftIcon={
-            <View
-              style={[
-                styles.roundIconContainer,
-                { backgroundColor: rgba(colors.primary.c90, 0.1) },
-              ]}
-            >
-              <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
-            </View>
-          }
-          title={t("nft.viewerModal.hide")}
-          onPress={hide}
-        />,
-      ],
+      <NftLink
+        key="nftLinkHide"
+        primary
+        leftIcon={
+          <View
+            style={[styles.roundIconContainer, { backgroundColor: rgba(colors.primary.c90, 0.1) }]}
+          >
+            <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
+          </View>
+        }
+        title={t("nft.viewerModal.hide")}
+        onPress={hide}
+      />,
       ...(links?.explorer
         ? [
             <NftLink

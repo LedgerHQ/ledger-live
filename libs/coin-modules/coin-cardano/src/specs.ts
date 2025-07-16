@@ -9,7 +9,7 @@ import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { CARDANO_MAX_SUPPLY } from "./constants";
 
@@ -45,7 +45,7 @@ const cardano: AppSpec<Transaction> = {
 
         const subAccount = account.subAccounts?.find(subAccount =>
           subAccount.balance.gt(1),
-        ) as SubAccount;
+        ) as TokenAccount;
         invariant(subAccount, "No token account with balance");
 
         const updates = [

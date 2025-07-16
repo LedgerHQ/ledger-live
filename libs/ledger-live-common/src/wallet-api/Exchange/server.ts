@@ -51,6 +51,7 @@ type Handlers = {
   >;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
   "custom.exchange.error": RPCHandler<void, SwapLiveError>;
+  "custom.isReady": RPCHandler<void, void>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -97,6 +98,7 @@ type ExchangeUiHooks = {
     onSuccess: () => void;
     onCancel: () => void;
   }) => void;
+  "custom.isReady": (params: { onSuccess: () => void; onCancel: () => void }) => void;
 };
 
 export const handlers = ({
@@ -107,6 +109,7 @@ export const handlers = ({
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
     "custom.exchange.error": uiError,
+    "custom.isReady": uiIsReady,
   },
 }: {
   accounts: AccountLike[];
@@ -243,7 +246,7 @@ export const handlers = ({
 
         const { liveTx } = getWalletAPITransactionSignFlowInfos({
           walletApiTransaction: transaction,
-          account: mainFromAccount,
+          account: fromAccount,
         });
 
         if (liveTx.family !== mainFromAccountFamily) {
@@ -263,7 +266,7 @@ export const handlers = ({
         const subAccountId =
           fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
 
-        const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+        const bridgeTx = accountBridge.createTransaction(fromAccount);
         /**
          * We append the `recipient` to the tx created from `createTransaction`
          * to avoid having userGasLimit reset to null for ETH txs
@@ -323,6 +326,18 @@ export const handlers = ({
       return new Promise((resolve, reject) =>
         uiError({
           error: params,
+          onSuccess: () => {
+            resolve();
+          },
+          onCancel: () => {
+            reject();
+          },
+        }),
+      );
+    }),
+    "custom.isReady": customWrapper<void, void>(async () => {
+      return new Promise((resolve, reject) =>
+        uiIsReady({
           onSuccess: () => {
             resolve();
           },

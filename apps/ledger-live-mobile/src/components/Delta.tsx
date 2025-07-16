@@ -19,6 +19,8 @@ type Props = {
   /** whether to show a placeholder in case the percent value is not valid */
   fallbackToPercentPlaceholder?: boolean;
   textProperties?: Partial<BaseTextProps>;
+  isPercentSignDisplayed?: boolean;
+  isArrowDisplayed?: boolean;
 };
 
 function Delta({
@@ -30,24 +32,35 @@ function Delta({
   show0Delta,
   fallbackToPercentPlaceholder,
   textProperties,
+  isPercentSignDisplayed = false,
+  isArrowDisplayed = true,
 }: Props) {
   const { t } = useTranslation();
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
-    <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"} {...textProperties}>
-      -
+    // eslint-disable-next-line i18next/no-literal-string
+    <Text variant="large" color="neutral.c60" fontWeight="semiBold" {...textProperties}>
+      &minus;
     </Text>
   ) : null;
 
   const delta =
-    percent && valueChange.percentage ? valueChange.percentage * 100 : valueChange.value;
+    (percent || isPercentSignDisplayed) && valueChange.percentage
+      ? valueChange.percentage * 100
+      : valueChange.value;
+
+  const roundedDelta = parseFloat(delta.toFixed(0));
+
+  if (roundedDelta === 0) {
+    return percentPlaceholder;
+  }
 
   const [color, ArrowIcon, sign] =
-    delta !== 0
-      ? delta > 0
-        ? ["success.c50", ArrowEvolutionUpMedium, "+"]
-        : ["error.c50", ArrowEvolutionDownMedium, "-"]
-      : ["neutral.c70", () => null, ""];
+    roundedDelta > 0
+      ? [isPercentSignDisplayed ? "success.c70" : "success.c50", ArrowEvolutionUpMedium, "+"]
+      : roundedDelta < 0
+        ? ["error.c50", ArrowEvolutionDownMedium, "-"]
+        : ["neutral.c70", () => null, "-"];
 
   if (
     percent &&
@@ -56,7 +69,7 @@ function Delta({
       valueChange.percentage === undefined)
   ) {
     if (fallbackToPercentPlaceholder) return percentPlaceholder;
-    if (percent) return <ArrowIcon size={20} color={color} />;
+    if (percent && isArrowDisplayed) return <ArrowIcon size={20} color={color} />;
     return null;
   }
 
@@ -69,15 +82,26 @@ function Delta({
 
   return (
     <View style={[styles.root, style]}>
-      {percent ? <ArrowIcon size={20} color={color} /> : null}
+      {percent && isArrowDisplayed ? <ArrowIcon size={20} color={color} /> : null}
       <View style={percent ? styles.content : null}>
-        <Text fontWeight={"semiBold"} variant={"large"} color={color} {...textProperties}>
+        <Text
+          fontWeight={isPercentSignDisplayed ? undefined : "semiBold"}
+          variant={"large"}
+          color={color}
+          {...textProperties}
+        >
           {unit && absDelta !== 0 ? (
-            <CurrencyUnitValue before={`(${sign}`} after={")"} unit={unit} value={absDelta} />
+            <CurrencyUnitValue
+              before={isPercentSignDisplayed ? sign : `(${sign}`}
+              after={isPercentSignDisplayed ? "" : ")"}
+              unit={unit}
+              value={absDelta}
+            />
           ) : percent ? (
             `${absDelta.toFixed(0)}%`
           ) : null}
           {range && ` (${t(`time.${range}`)})`}
+          {isPercentSignDisplayed ? "%" : ""}
         </Text>
       </View>
     </View>

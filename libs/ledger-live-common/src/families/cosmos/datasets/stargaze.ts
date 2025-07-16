@@ -38,8 +38,8 @@ const dataset: CurrenciesData<Transaction> = {
         pendingOperations: [],
         currencyId: "stargaze",
         lastSyncDate: "2023-06-12T13:27:26.351Z",
-        balance: "2000000",
-        spendableBalance: "2000000",
+        balance: "2000004",
+        spendableBalance: "2000004",
         balanceHistoryCache: {
           HOUR: { balances: [0], latestDate: 1686574800000 },
           DAY: { balances: [0], latestDate: 1686520800000 },

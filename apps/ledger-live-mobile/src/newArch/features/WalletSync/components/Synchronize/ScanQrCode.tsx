@@ -36,8 +36,15 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
     {
       description: (
         <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
+          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step2")}
+        </Text>
+      ),
+    },
+    {
+      description: (
+        <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
           <Trans
-            i18nKey="walletSync.synchronize.qrCode.scan.explanation.steps.step2"
+            i18nKey="walletSync.synchronize.qrCode.scan.explanation.steps.step3"
             components={[
               <Italic key={0} color={colors.opacityDefault.c70} />,
               <Text key={1} flex={1} color={colors.opacityDefault.c30} />,
@@ -49,7 +56,7 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
     {
       description: (
         <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
-          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step3")}
+          {t("walletSync.synchronize.qrCode.scan.explanation.steps.step4")}
         </Text>
       ),
     },

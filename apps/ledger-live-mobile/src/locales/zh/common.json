@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "取消",
+    "copy" : "复制",
+    "copied" : "已复制",
     "apply" : "应用",
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
@@ -99,7 +101,9 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "报价"
+    "quote" : "报价",
+    "tryAgain" : "请重试",
+    "ldmkEnabled" : "已启用 LDMK 传输"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -476,17 +480,17 @@
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "已达到小数位数限制",
       "description" : "请确保所提供的数额有 18 位小数。"
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "已委托数额必须至少为 {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "未委托数额必须至少为 {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "剩余委托不能少于 {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
@@ -790,6 +794,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "该关联代币账户持有另一种代币"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "这不是普通钱包地址，而是关联代币账户。继续之前，请务必清楚您在做什么"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "这是一个代币账户。请输入普通钱包地址"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "这是一个代币地址。请输入普通钱包地址"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "接收者地址与发送者代币地址相同"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "地址关闭 ed25519 曲线"
     },
@@ -804,6 +832,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "接收方地址需附加备忘标签"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "代币不可转让",
+      "description" : "此类代币为“灵魂绑定”代币，不可转让"
     },
     "CardanoMinAmountError" : {
       "title" : "最小可发送数额为 {{amount}} ADA"
@@ -1028,6 +1063,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "无法加载 Swap Live 应用程序"
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "crash" : {
@@ -1058,6 +1102,32 @@
     "openSettings" : "打开定位设置选项",
     "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
+  },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "选择协议时，请记住以下几点：",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "协议",
+            "description" : " 是一个平台，可让您通过将存入的加密货币用于借贷、提供流动性或权益质押来获得奖励。"
+          },
+          "apy" : {
+            "highlighted" : "APY（年收益率）",
+            "description" : " 是指您一年可以赚取的利息。APY 越高，收益越高。"
+          },
+          "tvl" : {
+            "highlighted" : "TVL（总锁定价值）",
+            "description" : " 是其他用户存入协议的总金额。TVL 越高，说明信任该协议的人越多。"
+          },
+          "strategy" : {
+            "highlighted" : "策略",
+            "description0" : " 是指协议如何产生奖励。",
+            "description1" : "例如，如果协议采用借贷作为策略，就会将你存入的稳定币借给借款人。然后您将获得利息，利息会根据需求而变化。"
+          }
+        }
+      }
+    }
   },
   "permissions" : {
     "open" : "打开应用程序权限",
@@ -1094,6 +1164,11 @@
       "fast" : "快",
       "custom" : "自定义",
       "blockCount" : "{{blockCount}}个区块"
+    },
+    "estimatedTime" : {
+      "slow" : "约 2-3 分钟",
+      "medium" : "约 30 秒",
+      "fast" : "约 15 秒"
     }
   },
   "signout" : {
@@ -2374,16 +2449,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "完成添加支付卡",
-        "description" : "使用 Ledger Recover 可靠地恢复。"
+        "title" : "提醒：完成订阅 Ledger Recover 服务"
       },
       "verifyIdentity" : {
-        "title" : "完成身份验证",
-        "description" : "使用 Ledger Recover 可靠地恢复。"
+        "title" : "您尚未备份钱包访问权限"
       },
       "connectDevice" : {
-        "title" : "最后一步：连接 Ledger 设备",
-        "description" : "还差一步即可使用 Ledger Recover。"
+        "title" : "您尚未备份钱包访问权限"
       }
     }
   },
@@ -2556,7 +2628,8 @@
       "gasLimit" : "矿工费限值",
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
-      "stakedAmount" : "权益质押数额"
+      "stakedAmount" : "权益质押数额",
+      "accountCreationFee" : "账户创建费"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -2588,6 +2661,10 @@
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
         "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
+      "contactSupport" : "联系客服"
     },
     "willBedeprecatedBanner" : {
       "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
@@ -2884,7 +2961,8 @@
       "analytics" : "数据分析",
       "analyticsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
       "mevProtection" : "MEV 保护",
-      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
+      "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
+      "mevProtectionLearnMore" : "隐私声明",
       "personalizedRecommendations" : "个性化体验",
       "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {
@@ -3103,7 +3181,7 @@
       "title" : "开发者",
       "desc" : "尝试一下开发者功能，让我们知道您的想法。",
       "customManifest" : {
-        "title" : "加载自定义平台清单"
+        "title" : "加载清单"
       },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
@@ -3226,7 +3304,7 @@
       },
       "verifyAddress" : {
         "title" : "核实地址",
-        "subtitle" : "核实设备上显示的地址是否与以下地址一致。确定一致后，可以在您的设备上点击 Approve（批准）。",
+        "subtitle" : "核实设备上显示的地址是否与以下地址一致。确定一致后，您可以在设备上确认。",
         "cancel" : {
           "title" : "您刚刚否认了此地址",
           "subtitle" : "如果是误操作，请点击下方按钮重试。",
@@ -3332,7 +3410,7 @@
       },
       "form" : {
         "validate" : "确认互换交易",
-        "tab" : "兑换",
+        "tab" : "互换",
         "button" : "继续",
         "from" : "来自",
         "to" : "到",
@@ -3423,6 +3501,7 @@
         "CTAButton" : "添加账户"
       },
       "history" : {
+        "button" : "前往“历史记录”",
         "tab" : "历史记录",
         "disclaimer" : "您的互换手机交易没有与 Ledger Live 桌面应用程序同步",
         "exportButton" : "导出操作",
@@ -3441,8 +3520,8 @@
           "receive" : "接收"
         },
         "placeholder" : "选择",
-        "title" : "兑换",
-        "cta" : "兑换",
+        "title" : "互换",
+        "cta" : "互换",
         "from" : "从",
         "to" : "到",
         "loading" : "正在加载……",
@@ -3488,8 +3567,20 @@
         "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
         "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "near_title" : "Ledger Nano S™ 不支持互换 Near",
+        "near_description" : "要互换 Near，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
-        "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+        "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "apt_title" : "Ledger Nano S™ 不支持互换 Aptos",
+        "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
+        "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
+        "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
+        "dydx_description" : "要互换 dYdX，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "sui_title" : "Ledger Nano S™ 不支持互换 Sui",
+        "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -3992,7 +4083,13 @@
     },
     "quitConfirmation" : {
       "title" : "取消添加账户",
-      "desc" : "您确定要取消添加账户？"
+      "desc" : "您确定要取消添加账户？",
+      "v2" : {
+        "title" : "取消添加账户？",
+        "desc" : "账户不会添加至 Ledger Live。",
+        "continue" : "继续添加",
+        "cancel" : "取消"
+      }
     },
     "imported" : "资产添加成功",
     "added" : "账户已添加到您的资产组合",
@@ -4059,6 +4156,7 @@
       "ctaStopScan" : "停止扫描",
       "confirm" : "确认",
       "scanningTitle" : "正在查找区块链上的现有账户……",
+      "whichAddressType" : "了解如何选择地址类型",
       "sections" : {
         "importable" : {
           "title" : "我们找到了 {{count}} 个账户",
@@ -4067,19 +4165,26 @@
         "creatable" : {
           "title" : "新账户"
         },
-        "imported" : {
-          "title" : "已经在资产组合中的账户 ({{length}})",
-          "title_plural" : "已经在资产组合中的账户 ({{length}})"
-        },
         "migrate" : {
           "title" : "待更新账户"
         }
-      }
+      },
+      "retryScanning" : "请重试"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "向我的账户添加资金",
       "ctaClose" : "关闭"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "我们无法添加新账户",
+        "body" : "首先需要用您的 {{accountName}} 账户接收资产，然后才能添加新账户。"
+      },
+      "noAccountToCreate" : {
+        "title" : "我们无法添加新的 {{currency}} 账户"
+      }
+    },
+    "chooseAccountToFund" : "选择账户用于添加资金"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
@@ -4145,7 +4250,9 @@
     "installApp" : "{{appName}} 应用程序安装 {{percentage}}",
     "installAppDescription" : "请耐心等待，直至安装完成",
     "listApps" : "正在检查应用程序依存关系",
-    "listAppsDescription" : "请等待，正在确认您是否安装了所有必需的应用程序"
+    "listAppsDescription" : "请等待，正在确认您是否安装了所有必需的应用程序",
+    "confirmExchangeOnDevice" : "在设备上确认兑换",
+    "confirmSwapOnDevice" : "在设备上确认互换"
   },
   "SelectDevice" : {
     "title" : "配对新设备",
@@ -4590,7 +4697,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
-    "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
+    "recoveryPhraseBackupInstructions" : "请确保将您的 24 词秘密恢复短语写在恢复表中并妥善保管，以备不时之需。\n\n建议使用 Ledger Recover 备份您的钱包访问权限，确保其始终触手可及。",
     "confirmRecoveryPhrase" : "我有自己的恢复短语",
     "introDescription1" : "请注意，您设备上的所有应用程序都会被删除。您可以在固件更新后重新安装这些应用程序。",
     "introDescription2" : "该操作不会影响您的加密资产。",
@@ -4614,7 +4721,8 @@
       "tr" : "Türk",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4638,7 +4746,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -5966,7 +6075,74 @@
         "description" : "您可以将 SOL 资产委托给验证者，从而赚取奖励。"
       },
       "reserveWarning" : "请确保您的钱包中至少保留 {{amount}} SOL，用来支付未来停用和撤回权益质押所需的网络费用"
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>",
+      "transferFees" : {
+        "title" : "转账费用",
+        "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）（最高为 {{maxFee}}）",
+        "notice" : "转账费用 {{fee}}%",
+        "tooltipHint" : "归属代币创建者的转账百分比"
+      },
+      "nonTransferable" : {
+        "notice" : "代币不可转让"
+      },
+      "interestRate" : {
+        "notice" : "利率为 {{rate}}%",
+        "tooltipHint" : "仅用作视觉效果展示，利息不会产生新代币"
+      },
+      "permanentDelegate" : {
+        "notice" : "永久委托权限已启用",
+        "initializationNotice" : "永久委托权限已初始化但未启用",
+        "initializedNoticeTooltipHint" : "委托方可从您的账户转移或销毁该代币",
+        "tooltipHint" : "{{delegateAddress}}<0></0> 可从您的账户转移或销毁该代币"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "转账必需备忘标签已启用",
+        "tooltipHint" : "所有转入该账户的交易均需附加备忘标签"
+      },
+      "transferHook" : {
+        "notice" : "转账钩子已启用",
+        "initializationNotice" : "转账钩子已初始化但未启用",
+        "tooltipHint" : "代币具备由 {{programAddress}} 程序处理的额外功能<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana 代币扩展",
+        "commonInfo" : "代币扩展是新一代的 Solana 代币标准。它采用一系列新方法来扩展常规的代币功能，包括机密转账、永久委托、自定义转账逻辑、扩展元数据等额外功能。",
+        "permanentDelegate" : {
+          "title" : "永久委托",
+          "permanentDelegateAddress" : "当前委托权限为 {{address}}",
+          "permanentDelegateNotSetup" : "当前委托权限未设置。",
+          "description" : "永久委托是指对该铸币下所有账户拥有不受限制的委托权限。委托方可随时自行销毁或转移任意数额的代币。"
+        },
+        "nonTransferable" : {
+          "title" : "不可转让代币",
+          "description" : "此类代币为“灵魂绑定”代币，仅可由代币发行者进行转移或销毁。"
+        },
+        "transferHook" : {
+          "title" : "转账钩子",
+          "transferHookAddress" : "当前转账钩子程序为 {{address}}",
+          "transferHookNotSetup" : "当前转账钩子程序未设置。",
+          "description" : "转账钩子可让代币发行者决定用户与代币的交互方式。与常规转账不同，发行者可将自定义逻辑插入到与转账钩子扩展程序结合使用的程序中。"
+        },
+        "transferFee" : {
+          "title" : "转账费用",
+          "currentTransferFee" : "当前转账费用为 {{feePercent}}%（{{feeBps}} 个基点）。最高为 {{maxFee}}。",
+          "description" : "每笔代币转账均需收取费用，并由接收方账户代为保管，接收方不可动用该部分代币。"
+        },
+        "interestBearing" : {
+          "title" : "计息代币",
+          "currentInterestRate" : "当前利率为 {{rate}}%。",
+          "accruedDelta" : "应计 {{delta}}。",
+          "interestRateNotSetup" : "当前利率设置为 0%。",
+          "description" : "代币价值根据利率持续增减。此功能仅为效果展示，不会实际产生新代币。"
+        }
+      }
     }
+  },
+  "mina" : {
+    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -6293,7 +6469,9 @@
     },
     "stepVerification" : {
       "action" : "请在您的设备上确认该操作",
-      "accountName" : "账户名"
+      "accountName" : "账户名",
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照安全触摸屏上的指示进行操作。"
     }
   },
   "notificationCenter" : {
@@ -6476,7 +6654,12 @@
       "24h" : "24 小时",
       "7d" : "7 天",
       "30d" : "30 天",
-      "1y" : "1 年"
+      "1y" : "1 年",
+      "1D_label" : "1 天",
+      "1H_label" : "1 小时",
+      "1W_label" : "1 周",
+      "1M_label" : "1 月",
+      "1Y_label" : "1 年"
     },
     "warnings" : {
       "connectionError" : "连接错误",
@@ -6554,7 +6737,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "要了解如何创建 Hedera 账户，",
-      "link" : "请参考此支持文章"
+      "link" : "如何创建 Hedera 账户？",
+      "title" : "我们无法创建新的 Hedera 账户",
+      "description" : "在 Hedera 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 Hedera 账户后，就可以将其添加到 Ledger Live 中。"
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
@@ -6611,7 +6796,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "接下来，使用您的 {{productName}}...",
-      "allDoneTitle" : "一切准备就绪！继续探索您的资产组合",
+      "areAllPostOnboardingActionsCompletedTitle" : "一切准备就绪！继续探索您的资产组合",
       "skip" : "以后再说",
       "viewWallet" : "探索我的资产组合"
     },
@@ -6663,6 +6848,7 @@
         "hide" : "隐藏 {{count}} 件藏品",
         "hiddenCollections" : "隐藏藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
+        "empty" : "没有可显示的隐藏藏品",
         "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
         "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
       },
@@ -6940,6 +7126,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "为该手机开启 Ledger Sync？",
@@ -7043,9 +7239,10 @@
           "explanation" : {
             "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
             "steps" : {
-              "step1" : "打开您要同步的 Ledger Live 应用程序",
-              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>扫描二维码</0>",
-              "step3" : "扫描二维码"
+              "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+              "step2" : "打开您要同步的 Ledger Live 应用程序。",
+              "step3" : "前往<0>“设置”</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>我已打开</0> <1>></1> <0>扫描二维码</0>",
+              "step4" : "扫描二维码。"
             }
           }
         },
@@ -7055,9 +7252,10 @@
           "explanation" : {
             "title" : "如需与另一部手机或电脑上的 Ledger Live 同步……",
             "steps" : {
-              "step1" : "打开您要同步的 Ledger Live。",
-              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>显示二维码</0>",
-              "step3" : "扫描二维码"
+              "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+              "step2" : "打开您要同步的 Ledger Live。",
+              "step3" : "前往<0>“设置”</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>我已打开</0> <1>></1> <0>显示二维码</0>",
+              "step4" : "扫描二维码。"
             }
           }
         },
@@ -7176,5 +7374,52 @@
       "detectedAccounts" : "{{count}} 个账户（已检测到）",
       "detectedAccounts_plural" : "{{count}} 个账户（已检测到）"
     }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "未找到账户",
+      "subTitle" : "您似乎还没有添加账户。立即开始。",
+      "cta" : "添加账户",
+      "link" : "需要帮助？了解如何向 Ledger Live 添加账户。"
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受 20% 专属折扣，解锁更多内存、全新功能和最新增强安全保护。 ",
+      "cta" : "升级 Ledger 设备"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
+      "cta" : "了解更多"
+    }
+  },
+  "largeMover" : {
+    "info" : "信息",
+    "marketCap" : "市值",
+    "volume" : "交易量（24 小时）",
+    "fdv" : "完全稀释估值",
+    "marketCap24h" : "交易量/市值（24 小时）",
+    "circulatingSupply" : "流通供应量",
+    "totalSupply" : "总供应量",
+    "ath" : "历史最高",
+    "atl" : "历史最低",
+    "timeAgo" : {
+      "years" : "（{{count}} 年前）",
+      "years_plural" : "（{{count}} 年前）",
+      "months" : "（{{count}} 个月前）",
+      "months_plural" : "（{{count}} 个月前）",
+      "days" : "（{{count}} 天前）",
+      "days_plural" : "（{{count}} 天前）",
+      "hours" : "（{{count}} 小时前）",
+      "hours_plural" : "（{{count}} 小时前）",
+      "minutes" : "（{{count}} 分钟前）",
+      "minutes_plural" : "（{{count}} 分钟前）",
+      "seconds" : "（{{count}} 秒前）",
+      "seconds_plural" : "（{{count}} 秒前）"
+    },
+    "performance" : "表现",
+    "low" : "低",
+    "high" : "高",
+    "title" : "市场走势"
   }
 }

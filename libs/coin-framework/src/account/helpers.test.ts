@@ -159,36 +159,6 @@ describe(isAccountEmpty.name, () => {
         expect(isAccountEmpty(mockAccount)).toEqual(false);
       });
     });
-    describe("when account has subaccounts", () => {
-      beforeEach(() => {
-        mockAccount.subAccounts = [{} as TokenAccount];
-      });
-
-      it("should return false", () => {
-        expect(isAccountEmpty(mockAccount)).toEqual(false);
-      });
-    });
-  });
-  describe("given an solana account", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-      mockAccount.currency = { family: "solana" } as CryptoCurrency;
-    });
-    it("Account has balance and spendableBalance is zero ", () => {
-      mockAccount.balance = new BigNumber(10);
-      mockAccount.spendableBalance = new BigNumber(0);
-      expect(isAccountEmpty(mockAccount)).toEqual(true);
-    });
-    it("Account has spendableBalance and balance is zero", () => {
-      mockAccount.balance = new BigNumber(0);
-      mockAccount.spendableBalance = new BigNumber(10);
-      expect(isAccountEmpty(mockAccount)).toEqual(true);
-    });
-    it("Account has spendableBalance and has balance", () => {
-      mockAccount.balance = new BigNumber(10);
-      mockAccount.spendableBalance = new BigNumber(10);
-      expect(isAccountEmpty(mockAccount)).toEqual(false);
-    });
   });
 });
 

@@ -7,7 +7,6 @@ import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 const getMainActions = ({
   account,
@@ -18,7 +17,8 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  const delegationDisabled = isAccountEmpty(account);
+  const delegationDisabled =
+    account.balance.isZero() || account.spendableBalance.isZero() ? true : false;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = delegationDisabled
