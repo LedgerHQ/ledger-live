@@ -2,11 +2,11 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { MemoNotSupported, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { getNodeApi } from "../network/node";
-import { EvmAsset, FeeData, isNative, Transaction } from "../types";
+import { FeeData, isNative, Transaction } from "../types";
 
 export async function estimateFees(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
+  transactionIntent: TransactionIntent<MemoNotSupported>,
 ): Promise<bigint> {
   const { amount, asset, recipient, sender } = transactionIntent;
 
@@ -19,11 +19,19 @@ export async function estimateFees(
     },
   );
 
+  let recipientAddress: string;
+
+  if (isNative(asset)) {
+    recipientAddress = recipient;
+  } else {
+    recipientAddress = asset.assetReference as string;
+  }
+
   const tx: Transaction = {
     family: "evm",
     mode: "send",
     amount: new BigNumber(amount.toString()),
-    recipient: isNative(asset) ? recipient : asset.contractAddress,
+    recipient: recipientAddress,
     gasPrice: new BigNumber(0),
     gasLimit,
     nonce: 0,
