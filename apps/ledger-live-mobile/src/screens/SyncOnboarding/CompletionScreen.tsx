@@ -3,9 +3,9 @@ import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
-import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxCompletionView from "./StaxCompletionView";
@@ -17,17 +17,18 @@ import {
   setOnboardingHasDevice,
 } from "~/actions/settings";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useIsFocused } from "@react-navigation/core";
+import { useOpenRecoverUpsellPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverUpsellPostOnboarding";
 
 type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
 const CompletionScreen = ({ route }: Props) => {
-  const navigation = useNavigation<RootNavigation>();
   const { device } = route.params;
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const handleRedirect = useOpenRecoverUpsellPostOnboarding();
 
   useEffect(() => {
     if (!hasCompletedOnboarding) {
@@ -42,22 +43,8 @@ const CompletionScreen = ({ route }: Props) => {
 
   const redirectToMainScreen = useCallback(() => {
     if (!isFocused) return;
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: NavigatorName.Base,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.Main,
-              },
-            ],
-          },
-        },
-      ],
-    });
-  }, [isFocused, navigation]);
+    handleRedirect();
+  }, [isFocused, handleRedirect]);
 
   return (
     <TouchableWithoutFeedback onPress={redirectToMainScreen}>
