@@ -41,6 +41,8 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
       ...options.headers,
       "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
     };
+
+    options.signal = AbortSignal.timeout(60000);
   }
   if (retry === 1) return fetch(url, options);
 
