@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
-import { VTHO_ADDRESS } from "../contracts/constants";
-import { VIP180 } from "../contracts/abis/VIP180";
 import { VechainSDKTransactionClause } from "../types";
+import { ABIContract, VIP180_ABI, VTHO_ADDRESS } from "@vechain/sdk-core";
 
 export const calculateClausesVtho = async (
   recipient: string,
@@ -15,7 +14,9 @@ export const calculateClausesVtho = async (
     value: 0,
     data: "0x",
   };
-  updatedClause.data = VIP180.transfer.encodeData([recipient, amount.toFixed()]).toString();
+  updatedClause.data = ABIContract.ofAbi(VIP180_ABI)
+    .encodeFunctionInput("transfer", [recipient, amount.toFixed()])
+    .toString();
 
   clauses.push(updatedClause);
   return clauses;

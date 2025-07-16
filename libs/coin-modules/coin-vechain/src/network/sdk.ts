@@ -16,7 +16,6 @@ import {
   mapTokenTransfersToOperations,
   padAddress,
 } from "../common-logic";
-import { TransferEventSignature } from "../contracts/constants";
 import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
@@ -86,6 +85,9 @@ export const getTokenOperations = async (
   startAt: number,
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
+
+  const TransferEventSignature =
+    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
   const query: TokenTxsQuery = {
     range: {

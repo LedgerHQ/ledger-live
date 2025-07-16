@@ -1,10 +1,9 @@
 import BigNumber from "bignumber.js";
-import { VIP180 } from "../contracts/abis/VIP180";
 import { Operation } from "@ledgerhq/types-live";
 import { EventLog, TransferLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getFees } from "../network";
-import { Hex } from "@vechain/sdk-core";
+import { ABIEvent, Hex, VIP180_ABI } from "@vechain/sdk-core";
 
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],
@@ -37,33 +36,40 @@ export const mapVetTransfersToOperations = async (
 };
 
 export const mapTokenTransfersToOperations = async (
-  evnts: EventLog[],
+  events: EventLog[],
   accountId: string,
   addr: string,
 ): Promise<Operation[]> => {
   return Promise.all(
-    evnts.map(async evnt => {
-      const decoded = VIP180.TransferEvent.decodeEventLog({
-        topics: evnt.topics.map(topic => Hex.of(topic)),
-        data: Hex.of(evnt.data),
-      });
-      const from = decoded.args?.[0];
-      const to = decoded.args?.[1];
-      const value = decoded.args?.[2];
+    events.map(async event => {
+      const decoded = ABIEvent.parseLog(VIP180_ABI, {
+        data: Hex.of(event.data),
+        topics: event.topics.map(topic => Hex.of(topic)),
+      }) as {
+        eventName: "Transfer";
+        args: {
+          from: string;
+          to: string;
+          value: bigint;
+        };
+      };
+      const from = decoded.args.from;
+      const to = decoded.args.to;
+      const value = decoded.args.value;
       const type = to === addr.toLowerCase() ? "IN" : "OUT";
-      const fees = await getFees(evnt.meta.txID);
+      const fees = await getFees(event.meta.txID);
       return {
-        id: encodeOperationId(accountId, evnt.meta.txID, type),
-        hash: evnt.meta.txID,
+        id: encodeOperationId(accountId, event.meta.txID, type),
+        hash: event.meta.txID,
         type,
-        value: new BigNumber(value as string),
+        value: new BigNumber(value.toString()),
         fee: fees,
-        senders: [from as string],
-        recipients: [to as string],
-        blockHeight: evnt.meta.blockNumber,
-        blockHash: evnt.meta.blockID,
+        senders: [from],
+        recipients: [to],
+        blockHeight: event.meta.blockNumber,
+        blockHash: event.meta.blockID,
         accountId,
-        date: new Date(evnt.meta.blockTimestamp * 1000),
+        date: new Date(event.meta.blockTimestamp * 1000),
         extra: {},
       };
     }),
