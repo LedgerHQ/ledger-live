@@ -48,7 +48,7 @@ export function genericGetAccountShape(network: string, kind: "local" | "remote"
       return {
         id: accountId,
         xpub: address,
-        blockHeight: blockInfo.height || initialAccount?.blockHeight,
+        blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
         balance,
         spendableBalance,
         operations,

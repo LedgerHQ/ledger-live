@@ -890,10 +890,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
 test.describe("Swap history", () => {
   const swapHistory = {
-    swap: new Swap(Account.ETH_1, Account.XLM_1, "0.008"),
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
     xrayTicket: "B2CQA-604",
-    provider: Provider.CHANGELLY,
-    swapId: "fmwnt4mc0tiz75kz",
+    provider: Provider.EXODUS,
+    swapId: "wQ90NrWdvJz5dA4",
   };
 
   setupEnv(true);
