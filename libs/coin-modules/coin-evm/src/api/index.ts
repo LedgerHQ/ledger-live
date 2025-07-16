@@ -19,7 +19,7 @@ import {
   estimateFees,
   lastBlock,
   listOperations,
-  getBalance
+  getBalance,
 } from "../logic/";
 import { EvmAsset } from "../types";
 
