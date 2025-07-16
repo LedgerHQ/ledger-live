@@ -57,7 +57,9 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
     fetch: fetcher,
   });
 
-  apiMap[url] ??= new SuiClient({ transport });
+  if (!apiMap[url]) {
+    apiMap[url] = new SuiClient({ transport });
+  }
 
   const result = await execute(apiMap[url]);
   return result;
