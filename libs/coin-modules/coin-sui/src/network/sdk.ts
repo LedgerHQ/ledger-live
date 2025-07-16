@@ -1,9 +1,10 @@
 import {
-  PaginatedTransactionResponse,
-  SuiClient,
   ExecuteTransactionBlockParams,
-  TransactionEffects,
+  PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  SuiClient,
+  SuiHTTPTransport,
+  TransactionEffects,
 } from "@mysten/sui/client";
 import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
@@ -19,6 +20,7 @@ import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { SuiAsset } from "../api/types";
+import { getEnv } from "@ledgerhq/live-env";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -30,6 +32,21 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
+type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
+type Inputs = GenericInput<typeof fetch>;
+
+const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
+  if (options) {
+    options.headers = {
+      ...options.headers,
+      "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
+    };
+  }
+  if (retry === 1) return fetch(url, options);
+
+  return fetch(url, options).catch(() => fetcher(url, options, retry - 1));
+};
+
 /**
  * Connects to Sui Api
  */
@@ -37,7 +54,11 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
 
   if (!apiMap[url]) {
-    apiMap[url] = new SuiClient({ url });
+    const transport = new SuiHTTPTransport({
+      url,
+      fetch: fetcher,
+    });
+    apiMap[url] = new SuiClient({ transport });
   }
 
   const result = await execute(apiMap[url]);
