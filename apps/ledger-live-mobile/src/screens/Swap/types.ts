@@ -1,4 +1,4 @@
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SwapOperation } from "@ledgerhq/types-live";
@@ -56,6 +56,11 @@ export interface DetailsSwapParamList extends SwapLiveAppNavigationParams {
 export type SwapSelectCurrency = {
   currencies: Currency[];
   provider?: string;
+};
+
+export type SwapOperationDetails = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
+  fromAccountId: string;
+  toAccountId: string;
 };
 
 export type SwapPendingOperation = { swapOperation: SwapOperation };
