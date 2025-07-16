@@ -3136,8 +3136,8 @@
         "desc": "Receive important Ledger Live updates"
       },
       "largeMover": {
-        "title": "Large Mover",
-        "desc": "You’ll be notified of important price movements if you own BTC, ETH, SOL, ADA or XRP"
+        "title": "Price Alerts",
+        "desc": "You’ll be notified of important price movements for popular tokens you own"
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
