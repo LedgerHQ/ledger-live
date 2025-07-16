@@ -52,12 +52,12 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
  */
 export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
-  const transport = new SuiHTTPTransport({
-    url,
-    fetch: fetcher,
-  });
 
   if (!apiMap[url]) {
+    const transport = new SuiHTTPTransport({
+      url,
+      fetch: fetcher,
+    });
     apiMap[url] = new SuiClient({ transport });
   }
 
