@@ -570,6 +570,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               ...bridge.createTransaction(account),
               feePerByte: new BigNumber(0.0001),
             };
+            console.log({ accountPending: account.pendingOperations });
             const s = await bridge.getTransactionStatus(account, t);
             expect(s).toBeDefined();
             expect(s.errors).toHaveProperty("recipient");

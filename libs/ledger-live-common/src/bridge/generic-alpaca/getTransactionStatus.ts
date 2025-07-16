@@ -65,8 +65,10 @@ export function genericGetTransactionStatus(
 
     if (alpacaApi.getChainSpecificRules) {
       const chainSpecificValidation = alpacaApi.getChainSpecificRules();
-      if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation && true) {
-        throw new AccountAwaitingSendPendingOperations();
+      if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation) {
+        if (account.pendingOperations.length > 0) {
+          throw new AccountAwaitingSendPendingOperations();
+        }
       }
     }
 

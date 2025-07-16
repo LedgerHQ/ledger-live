@@ -86,7 +86,6 @@ export const getTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  console.log({ errors });
   return {
     errors,
     warnings,
