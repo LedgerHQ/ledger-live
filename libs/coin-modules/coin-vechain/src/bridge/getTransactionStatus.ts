@@ -8,7 +8,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { calculateTransactionInfo, isValid } from "../common-logic";
+import { calculateTransactionInfo, parseAddress } from "../common-logic";
 import type { Transaction } from "../types";
 import { NotEnoughVTHO } from "../errors";
 
@@ -26,6 +26,8 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     {
       estimatedGas: body.gas as number,
       estimatedGasFees: new BigNumber(transaction.estimatedFees),
+      maxFeePerGas: body.maxFeePerGas as number,
+      maxPriorityFeePerGas: body.maxPriorityFeePerGas as number,
     },
   );
 
@@ -37,7 +39,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     errors.recipient = new RecipientRequired();
   } else if (freshAddress.toLowerCase() === recipient.toLowerCase()) {
     warnings.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isValid(recipient)) {
+  } else if (!parseAddress(recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: currency.name,
     });

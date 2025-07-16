@@ -1,6 +1,6 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Vet from "../src/Vet";
-import { Transaction as ThorTransaction } from "thor-devkit";
+import { Transaction as VechainSDKTransaction } from "@vechain/sdk-core";
 
 test("getAppConfiguration", async () => {
   const transport = await openTransportReplayer(
@@ -36,7 +36,7 @@ test("signMessage", async () => {
     `),
   );
 
-  const unsigned = new ThorTransaction({
+  const unsigned = VechainSDKTransaction.of({
     chainTag: 39,
     blockRef: "0x0000000000000000",
     expiration: 18,
@@ -47,14 +47,16 @@ test("signMessage", async () => {
         data: "0x",
       },
     ],
-    gasPriceCoef: 0,
     gas: "0",
     dependsOn: null,
     nonce: 0,
   });
 
   const vet = new Vet(transport);
-  const res = await vet.signTransaction("44'/818'/0'/0/0", unsigned.encode().toString("hex"));
+  const res = await vet.signTransaction(
+    "44'/818'/0'/0/0",
+    Buffer.from(unsigned.encoded).toString("hex"),
+  );
 
   expect(res.toString("hex")).toEqual(
     "dd0ad907f6cfdd068226999eee0d20789732905270a7c4ed385872599f40978e043a5d7a15e396e59e9c9e921be5f4e02e3b6284b8cf835443f4123ca20b5b3500",
