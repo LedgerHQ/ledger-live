@@ -8,13 +8,20 @@ import {
   TransactionBlockData,
   SuiHTTPTransport,
   TransactionEffects,
+  BalanceChange,
   QueryTransactionBlocksParams,
   BalanceChange,
   SuiTransactionBlockResponseOptions,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
-import type { Block, BlockInfo, Operation as Op } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Block,
+  BlockInfo,
+  BlockTransaction,
+  BlockOperation,
+  Operation as Op,
+} from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -270,6 +277,83 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
     type,
     value: BigInt(getOperationAmount(address, transaction, coinType).toString()),
   };
+}
+
+/**
+ * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
+ *
+ * @param checkpoint SUI RPC checkpoint info
+ */
+export function suiCheckpointToBlockInfo(checkpoint: Checkpoint): BlockInfo {
+  const info: BlockInfo = {
+    height: Number(checkpoint.sequenceNumber),
+    hash: checkpoint.digest,
+    time: new Date(parseInt(checkpoint.timestampMs)),
+  };
+
+  if (typeof checkpoint.previousDigest == "string")
+    return {
+      ...info,
+      parent: {
+        height: Number(checkpoint.sequenceNumber) - 1,
+        hash: checkpoint.previousDigest,
+      },
+    };
+
+  return info;
+}
+
+/**
+ * Convert a SUI RPC transaction block response to a {@link BlockTransaction}.
+ *
+ * Notes:
+ *  - transfers are generated from balance changes rather than effects,
+ * therefore the peer is not populated.
+ *  - all other operation types are ignored
+ *
+ * @param transaction SUI RPC transaction block response
+ */
+export function suiTransactionBlockToBlockTransaction(
+  transaction: SuiTransactionBlockResponse,
+): BlockTransaction<SuiAsset> {
+  return {
+    hash: transaction.digest,
+    failed: transaction.effects?.status.status != "success",
+    operations: transaction.balanceChanges?.flatMap(balanceChangeToBlockOperation) || [],
+    fees: BigInt(getOperationFee(transaction).toString()),
+    feesPayer: transaction.transaction?.data.sender || "",
+  };
+}
+
+/**
+ * Convert a SUI RPC transaction balance change to a {@link BlockOperation}.
+ *
+ * @param change balance change
+ */
+export function balanceChangeToBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
+  if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
+  return [
+    {
+      type: "transfer",
+      address: change.owner.AddressOwner,
+      asset: suiCoinTypeToAsset(change.coinType),
+      amount: BigInt(change.amount),
+    },
+  ];
+}
+
+/**
+ * Convert a SUI coin type to a {@link SuiAsset}.
+ *
+ * @param coinType coin type, as returned from SUI RPC
+ */
+export function suiCoinTypeToAsset(coinType: string): SuiAsset {
+  switch (coinType) {
+    case DEFAULT_COIN_TYPE:
+      return { type: "native" };
+    default:
+      return { type: "token", coinType };
+  }
 }
 
 export const getLastBlock = () =>
@@ -560,11 +644,7 @@ export const queryTransactions = async (params: {
     filter,
     cursor,
     order,
-    options: {
-      showInput: true,
-      showBalanceChanges: true,
-      showEffects: true, // To get transaction status and gas fee details
-    },
+    options: TRANSACTIONS_QUERY_OPTIONS,
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
   });
 };
