@@ -151,8 +151,8 @@ const swaps = [
   },
   {
     fromAccount: Account.HEDERA_1,
-    toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "XXXXX-XXXX",
+    toAccount: Account.XRP_1,
+    xrayTicket: "B2CQA-3710",
     tag: ["@NanoSP", "@NanoX"],
   },
 ];
