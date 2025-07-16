@@ -10,6 +10,7 @@ function computeMetaHash(paths, inputHash) {
     const statInfo = statSync(path);
     if (statInfo.isDirectory()) {
       const directoryEntries = readdirSync(path, { withFileTypes: true });
+      console.log(directoryEntries);
       const fullPaths = directoryEntries.map(e => join(path, e.name));
       // recursively walk sub-folders
       computeMetaHash(fullPaths, hash);

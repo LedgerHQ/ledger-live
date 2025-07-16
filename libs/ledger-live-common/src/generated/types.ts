@@ -71,6 +71,12 @@ import type {
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
 import type {
+  Transaction as kaspaTransaction,
+  TransactionRaw as kaspaTransactionRaw,
+  TransactionStatus as kaspaTransactionStatus,
+  TransactionStatusRaw as kaspaTransactionStatusRaw,
+} from "@ledgerhq/coin-kaspa/types/index";
+import type {
   Transaction as minaTransaction,
   TransactionRaw as minaTransactionRaw,
   TransactionStatus as minaTransactionStatus,
@@ -82,12 +88,6 @@ import type {
   TransactionStatus as multiversxTransactionStatus,
   TransactionStatusRaw as multiversxTransactionStatusRaw,
 } from "@ledgerhq/coin-multiversx/types";
-import type {
-  Transaction as kaspaTransaction,
-  TransactionRaw as kaspaTransactionRaw,
-  TransactionStatus as kaspaTransactionStatus,
-  TransactionStatusRaw as kaspaTransactionStatusRaw,
-} from "@ledgerhq/coin-kaspa/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -252,9 +252,9 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | kaspaTransactionStatusRaw
   | minaTransactionStatusRaw
   | multiversxTransactionStatusRaw
-  | kaspaTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
