@@ -48,7 +48,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     getBlock(_height): Promise<Block<EvmAsset>> {
       throw new Error("getBlock is not supported");
     },
-      getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
   };
