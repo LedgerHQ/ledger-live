@@ -68,7 +68,6 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

@@ -1,6 +1,6 @@
 {
-  "name": "@ledgerhq/live-dmk-speculos",
-  "version": "0.1.0",
+  "name": "@ledgerhq/live-dmk-proxy",
+  "version": "0.0.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -40,12 +40,10 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118",
-    "@ledgerhq/device-transport-kit-speculos": "0.0.1",
-    "@ledgerhq/errors": "6.22.0",
+    "@ledgerhq/device-transport-kit-proxy": "0.0.0-proxy-transport-20250724091920",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "axios": "1.10.0"
+    "@ledgerhq/logs": "workspace:^"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",

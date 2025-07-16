@@ -5,7 +5,6 @@ import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
-import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
@@ -14,6 +13,7 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
+import TransportHttp from "@ledgerhq/hw-transport-http";
 
 /* eslint-disable guard-for-in */
 for (const k in process.env) {

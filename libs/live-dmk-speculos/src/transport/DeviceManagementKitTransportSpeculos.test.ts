@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import * as speculosTransportFactoryModule from "@ledgerhq/device-transport-kit-speculos";
 import { EventEmitter } from "events";
-import { Subject, of } from "rxjs";
+import { Subject } from "rxjs";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 
 const flushPromises = () => new Promise(setImmediate);
@@ -59,7 +59,7 @@ beforeAll(() => {
   vi.spyOn(DeviceManagementKitBuilder.prototype, "build").mockReturnValue(fakeDmk);
 
   vi.spyOn(speculosTransportFactoryModule, "speculosTransportFactory").mockReturnValue(
-    // @ts-ignore
+    //@ts-expect-error mock
     "fake-transport",
   );
 

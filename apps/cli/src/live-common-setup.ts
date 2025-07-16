@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
 import {
   registerTransportModule,
@@ -21,6 +20,7 @@ import {
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { createStaticProxyTransport } from "@ledgerhq/live-dmk-proxy";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -65,7 +65,7 @@ const {
 } = process.env;
 
 if (DEVICE_PROXY_URL) {
-  const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
+  const Tr = createStaticProxyTransport(DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () =>
