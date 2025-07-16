@@ -10,6 +10,7 @@ type StartPostOnboardingOptions = {
   mock?: boolean;
   fallbackIfNoAction?: () => void;
   resetNavigationStack?: boolean;
+  disableNavigation?: boolean;
 };
 
 /**
@@ -30,7 +31,13 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
 
   return useCallback(
     (options: StartPostOnboardingOptions) => {
-      const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
+      const {
+        deviceModelId,
+        mock = false,
+        fallbackIfNoAction,
+        resetNavigationStack,
+        disableNavigation,
+      } = options;
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
         actionWithState =>
           !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
@@ -47,7 +54,7 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
         if (fallbackIfNoAction) fallbackIfNoAction();
         return;
       }
-      navigateToPostOnboardingHub(resetNavigationStack);
+      if (!disableNavigation) navigateToPostOnboardingHub(resetNavigationStack);
     },
     [dispatch, getFeature, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub],
   );

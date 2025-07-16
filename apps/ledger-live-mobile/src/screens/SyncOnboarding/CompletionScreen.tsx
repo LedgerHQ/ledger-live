@@ -3,7 +3,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
 import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -31,6 +31,7 @@ import {
 } from "react-i18next";
 import { TrackScreen, track } from "~/analytics";
 // import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
+import { useOpenRecoverUpsellPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverUpsellPostOnboarding";
 
 const CTAWrapper = styled(Box)`
   position: absolute;
@@ -51,6 +52,8 @@ type Props = BaseComposite<
 const CompletionScreen = ({ route }: Props) => {
   // const { dark } = useTheme();
   // const { t } = useTranslation();
+  const handleRedirect = useOpenRecoverUpsellPostOnboarding();
+
   const isFocused = useIsFocused();
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
@@ -62,26 +65,11 @@ const CompletionScreen = ({ route }: Props) => {
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const redirectToMainScreen = useCallback(() => {
+  const handleRedirectToMainScreen = useCallback(() => {
     if (!isFocused) return;
     preventNavigation.current = false;
-
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: NavigatorName.Base,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.Main,
-              },
-            ],
-          },
-        },
-      ],
-    });
-  }, [isFocused, navigation]);
+    handleRedirect();
+  }, [isFocused, handleRedirect]);
 
   useEffect(() => {
     if (!hasCompletedOnboarding) {
@@ -163,7 +151,7 @@ const CompletionScreen = ({ route }: Props) => {
                 flow: "onboarding",
                 seedConfiguration,
               });
-              redirectToMainScreen();
+              handleRedirectToMainScreen();
             }}
           />
         </CTAWrapper>
@@ -172,14 +160,14 @@ const CompletionScreen = ({ route }: Props) => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={redirectToMainScreen}>
+    <TouchableWithoutFeedback onPress={handleRedirectToMainScreen}>
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
         <TrackScreen
           category="End of onboarding"
           flow="onboarding"
           seedConfiguration={seedConfiguration}
         />
-        {onboardingSuccessView(false, redirectToMainScreen)}
+        {onboardingSuccessView(false, handleRedirectToMainScreen)}
       </Flex>
     </TouchableWithoutFeedback>
   );
