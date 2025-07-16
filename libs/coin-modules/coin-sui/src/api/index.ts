@@ -6,6 +6,8 @@ import {
   getBalance,
   listOperations,
   lastBlock,
+  getBlock,
+  getBlockInfo,
   craftTransaction,
 } from "../logic";
 import type { SuiAsset } from "./types";
@@ -27,6 +29,8 @@ export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
     estimateFees: estimate,
     getBalance,
     lastBlock,
+    getBlock,
+    getBlockInfo,
     listOperations: list,
   };
 }

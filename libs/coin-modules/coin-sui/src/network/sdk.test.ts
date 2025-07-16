@@ -1307,4 +1307,125 @@ describe("filterOperations", () => {
       expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT + 2);
     });
   });
+
+  describe("conversions methods", () => {
+
+
+    test("balanceChangeToBlockOperation should map native transfers correctly", () => {
+      expect(
+        sdk.balanceChangeToBlockOperation({
+          owner: {
+            AddressOwner: "0x65449f57946938c84c5127",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([
+        {
+          type: "transfer",
+          address: "0x65449f57946938c84c5127",
+          amount: -10000000000n,
+          asset: { type: "native" },
+        },
+      ]);
+    });
+
+    test("balanceChangeToBlockOperation should map token transfers correctly", () => {
+      expect(
+        sdk.balanceChangeToBlockOperation({
+          owner: {
+            AddressOwner: "0x65449f57946938c84c5127",
+          },
+          coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+          amount: "8824",
+        }),
+      ).toEqual([
+        {
+          type: "transfer",
+          address: "0x65449f57946938c84c5127",
+          amount: 8824n,
+          asset: {
+            type: "token",
+            coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+          },
+        },
+      ]);
+    });
+
+    test("suiCheckpointToBlockInfo should map checkpoints correctly", () => {
+      expect(
+        sdk.suiCheckpointToBlockInfo({
+          checkpointCommitments: [],
+          digest: "0xaaaaaaaaa",
+          previousDigest: "0xbbbbbbbbbb",
+          epoch: "",
+          epochRollingGasCostSummary: {
+            computationCost: "",
+            nonRefundableStorageFee: "",
+            storageCost: "",
+            storageRebate: "",
+          },
+          networkTotalTransactions: "",
+          sequenceNumber: "42",
+          timestampMs: "1751696298663",
+          transactions: [],
+          validatorSignature: "",
+        }),
+      ).toEqual({
+        height: 42,
+        hash: "0xaaaaaaaaa",
+        time: new Date(1751696298663),
+        parent: {
+          height: 41,
+          hash: "0xbbbbbbbbbb",
+        },
+      });
+    });
+
+    test("suiTransactionBlockToBlockTransaction should map transactions correctly", () => {
+      expect(
+        sdk.suiTransactionBlockToBlockTransaction(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          mockTransaction as unknown as SuiTransactionBlockResponse,
+        ),
+      ).toEqual({
+        hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
+        failed: false,
+        fees: 1009880n,
+        feesPayer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+        operations: [
+          {
+            address: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+            amount: -10000000000n,
+            asset: { type: "native" },
+            type: "transfer",
+          },
+          {
+            address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            amount: 9998990120n,
+            asset: { type: "native" },
+            type: "transfer",
+          },
+          {
+            address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            amount: 500000n,
+            asset: { type: "token", coinType: "0x123::test::TOKEN" },
+            type: "transfer",
+          },
+        ],
+      });
+    });
+
+    test("suiCoinTypeToAsset should map native coin correctly", () => {
+      expect(sdk.suiCoinTypeToAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
+    });
+
+    test("suiCoinTypeToAsset should map tokens correctly", () => {
+      expect(sdk.suiCoinTypeToAsset("0x123::test::TOKEN")).toEqual({
+        type: "token",
+        coinType: "0x123::test::TOKEN",
+      });
+    });
+
+  });
 });

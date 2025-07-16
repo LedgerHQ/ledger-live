@@ -1,5 +1,6 @@
 import {
   Checkpoint,
+  ExecuteTransactionBlockParams,
   PaginatedTransactionResponse,
   SuiCallArg,
   SuiClient,
@@ -8,10 +9,18 @@ import {
   SuiHTTPTransport,
   TransactionEffects,
   QueryTransactionBlocksParams,
+  BalanceChange,
+  SuiTransactionBlockResponseOptions,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
-import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Block,
+  BlockInfo,
+  BlockTransaction,
+  BlockOperation,
+  Operation as Op,
+} from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -33,6 +42,13 @@ export const TRANSACTIONS_LIMIT = 300;
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
+
+/** Default options for querying transactions. */
+const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
+  showInput: true,
+  showBalanceChanges: true,
+  showEffects: true, // To get transaction status and gas fee details
+};
 
 type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
 type Inputs = GenericInput<typeof fetch>;
@@ -365,23 +381,31 @@ export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
   withApi(async api => api.getCheckpoint({ id }));
 
 /**
+ * Get a checkpoint (a.k.a, a block) metadata only.
+ *
+ * @param id the checkpoint digest or sequence number (as a string)
+ * @see {@link getBlock}
+ */
+export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
+  withApi(async api => {
+    const checkpoint = await api.getCheckpoint({ id });
+    return suiCheckpointToBlockInfo(checkpoint);
+  });
+
+/**
  * Get a checkpoint (a.k.a, a block) metadata with all transactions.
  *
  * @param id the checkpoint digest or sequence number (as a string)
+ * @see {@link getBlockInfo}
  */
-export const getCheckpointWithTransactions = async (
-  id: string,
-): Promise<{ checkpoint: Checkpoint; transactions: Operation[] }> => // FIXME type
+export const getBlock = async (id: string): Promise<Block<SuiAsset>> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
-    const rawTransactions = await queryTransactionsByDigest({
-      api,
-      digests: checkpoint.transactions,
-    });
-    const transactions = rawTransactions.map(
-      transaction => transactionToOperation("accountId", "addr", transaction), // FIXME
-    );
-    return { checkpoint, transactions };
+    const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
+    return {
+      info: suiCheckpointToBlockInfo(checkpoint),
+      transactions: rawTxs.map(suiTransactionBlockToBlockTransaction),
+    };
   });
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
@@ -552,20 +576,26 @@ export const queryTransactions = async (params: {
 };
 
 /**
- * Query transactions by digest.
+ * Query transactions by digest from the RPC.
+ *
+ * Note that transaction limit per query applies (usually {@link TRANSACTIONS_LIMIT_PER_QUERY}, but can vary
+ * depending on the RPC settings).
  */
 export const queryTransactionsByDigest = async (params: {
   api: SuiClient;
   digests: string[];
 }): Promise<SuiTransactionBlockResponse[]> => {
   const { api, digests } = params;
+  const chunkSize = TRANSACTIONS_LIMIT_PER_QUERY;
+  const responses: SuiTransactionBlockResponse[] = [];
 
-  return await api.multiGetTransactionBlocks({
-    digests,
-    options: {
-      showInput: true,
-      showBalanceChanges: true,
-      showEffects: true, // To get transaction status and gas fee details
-    },
-  });
+  for (let i = 0; i < digests.length; i += chunkSize) {
+    const chunk = await api.multiGetTransactionBlocks({
+      digests: digests.slice(i, i + chunkSize),
+      options: TRANSACTIONS_QUERY_OPTIONS,
+    });
+    responses.push(...chunk);
+  }
+
+  return responses;
 };

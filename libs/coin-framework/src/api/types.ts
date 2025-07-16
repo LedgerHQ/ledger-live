@@ -59,33 +59,83 @@ export type Transaction = {
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 /**
- * A block along with its upstream transactions.
+ * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
  */
 export type Block<AssetType extends Asset<TokenInfoCommon>> = {
+  /** The block metadata. */
   info: BlockInfo;
+
+  /**
+   * The block transactions.
+   *
+   * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
+   * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
+   */
   transactions: BlockTransaction<AssetType>[];
 };
 
+/**
+ * A transaction belonging to a {@link Block}, not specific to a particular account/address.
+ */
 export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+  /** The transaction hash/digest (globally unique identifier). */
   hash: string;
-  value: bigint;
+
+  /** If the transaction has been failed, fees have been paid but other balance changes are not effective.*/
   failed: boolean;
+
+  /**
+   * The operations/instructions included in this transaction.
+   *
+   * It should include at least all operations where an EOA is involved, however it is OK to ignore other types of
+   * operations that cannot cause balance changes (eg: validator vote instructions on Solana).
+   *
+   * Note that fees are accounted for separately, so operations must not represent fees.
+   */
   operations: BlockOperation<AssetType>[];
+
+  /** Network specific details for this transaction. */
   details?: Record<string, unknown>;
+
+  /** The fee amount paid for this transaction, in base unit of the network native coin, always positive or zero.  */
   fees: bigint;
+
+  /** The address that paid for this transaction's fees. */
   feesPayer: string;
 };
 
-export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> = Transfer<AssetType> | Other;
+/** An operation belonging to a {@link BlockTransaction}. */
+export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> =
+  | TransferBlockOperation<AssetType>
+  | OtherBlockOperation;
 
-export type Transfer<AssetType extends Asset<TokenInfoCommon>> = {
+/** A asset transfer that occurred in a {@link BlockTransaction}. */
+export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
+  /** Operation type discriminator. */
   type: "transfer";
-  from: string;
-  to: string;
+
+  /** The impacted address (can be sender or recipient based on signum of <code>amount</code>}. */
+  address: string;
+
+  /** The peer participant in the transfer (optional as it may be not known). */
+  peer?: string;
+
+  /** The transferred asset. */
   asset: AssetType;
+
+  /**
+   * The signed amount of the transfer, i.e. impact of the transfer on <code>address</code> balance (positive for
+   * incoming, negative for outgoing).
+   */
+  amount: bigint;
 };
 
-export type Other = {
+/**
+ * An unclassified type of operation that occurred in a {@link BlockTransaction}.
+ *
+ * Implementations are free to partially/completely omit this kind of operations.
+ */
+export type OtherBlockOperation = {
   type: "other";
 } & Record<string, unknown>;
 

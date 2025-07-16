@@ -216,4 +216,31 @@ describe("sdk integration test", () => {
 //       expect(checkpointByIdTransactions).toEqual(checkpointBySequenceNumberTransactions);
 //     });
 //   });
+
+//  describe("getBlockInfo", () => {
+//    test("getBlockInfo should get block info by id or sequence number", async () => {
+//      const blockById = await getBlockInfo("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      const blockBySequenceNumber = await getBlockInfo("164167623");
+//      expect(blockById.height).toEqual(164167623);
+//      expect(blockById.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      expect(blockById.time).toEqual(new Date(1751696298663));
+//      expect(blockById.parent?.height).toEqual(164167622);
+//      expect(blockById.parent?.hash).toEqual("TODO");
+//      expect(blockById).toEqual(blockBySequenceNumber);
+//    });
+//  });
+
+//  describe("getBlock", () => {
+//    test("getBlock should get block by id or sequence number", async () => {
+//      const blockById = await getBlock("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      const blockBySequenceNumber = await getBlock("164167623");
+//      expect(blockById.info.height).toEqual(164167623);
+//      expect(blockById.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      expect(blockById.info.time).toEqual(new Date(1751696298663));
+//      expect(blockById.info.parent?.height).toEqual(164167622);
+//      expect(blockById.info.parent?.hash).toEqual("TODO");
+//      expect(blockById.transactions.length).toEqual(19);
+//      expect(blockById).toEqual(blockBySequenceNumber);
+//    });
+//  });
 // });

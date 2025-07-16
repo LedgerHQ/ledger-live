@@ -1,5 +1,7 @@
 import {
   type Balance,
+  Block,
+  BlockInfo,
   IncorrectTypeError,
   type Operation,
   type Pagination,
@@ -32,6 +34,12 @@ export function createApi(config: TezosConfig): TezosApi {
     getBalance: balance,
     lastBlock,
     listOperations: operations,
+    getBlock(_height): Promise<Block<TezosAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 
