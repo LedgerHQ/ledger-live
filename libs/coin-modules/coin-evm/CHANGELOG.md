@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.23.0-nightly.6
+
+### Minor Changes
+
+- [#10955](https://github.com/LedgerHQ/ledger-live/pull/10955) [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - deps: remove unused dependencies
+
+- [#10931](https://github.com/LedgerHQ/ledger-live/pull/10931) [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): add list operations
+
+### Patch Changes
+
+- Updated dependencies [[`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80)]:
+  - @ledgerhq/cryptoassets@13.22.0-nightly.2
+  - @ledgerhq/coin-framework@5.6.0-nightly.6
+
 ## 2.23.0-nightly.5
 
 ### Patch Changes

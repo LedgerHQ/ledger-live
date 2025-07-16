@@ -1,5 +1,19 @@
 # @ledgerhq/coin-polkadot
 
+## 6.4.0-nightly.6
+
+### Minor Changes
+
+- [#10955](https://github.com/LedgerHQ/ledger-live/pull/10955) [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - deps: remove unused dependencies
+
+- [#10934](https://github.com/LedgerHQ/ledger-live/pull/10934) [`5bba610`](https://github.com/LedgerHQ/ledger-live/commit/5bba610a62cb0872b4eb7d1c3b432cb40aa3d328) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test: add `no-restricted-matchers`
+
+### Patch Changes
+
+- Updated dependencies [[`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80)]:
+  - @ledgerhq/cryptoassets@13.22.0-nightly.2
+  - @ledgerhq/coin-framework@5.6.0-nightly.6
+
 ## 6.3.1-nightly.5
 
 ### Patch Changes

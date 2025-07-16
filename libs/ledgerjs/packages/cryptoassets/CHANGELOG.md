@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.22.0-nightly.2
+
+### Minor Changes
+
+- [#10951](https://github.com/LedgerHQ/ledger-live/pull/10951) [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - sync Cardano tokens list with nano app
+
 ## 13.22.0-nightly.1
 
 ### Minor Changes

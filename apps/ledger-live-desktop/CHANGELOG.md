@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.121.0-nightly.7
+
+### Minor Changes
+
+- [#10874](https://github.com/LedgerHQ/ledger-live/pull/10874) [`24b8c31`](https://github.com/LedgerHQ/ledger-live/commit/24b8c3189d98f0c02717548fa399814f298b9956) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - LLD - fixed truncated address in transaction details
+
+### Patch Changes
+
+- [#10893](https://github.com/LedgerHQ/ledger-live/pull/10893) [`8ea4053`](https://github.com/LedgerHQ/ledger-live/commit/8ea405351fe25c52ea83af6d2b666280e5f209e2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - send kyc banner feature flag to swap live app
+
+- Updated dependencies [[`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604), [`96fab35`](https://github.com/LedgerHQ/ledger-live/commit/96fab3530589225719814280ab47d26ffbd88a5e)]:
+  - @ledgerhq/live-common@34.41.0-nightly.7
+  - @ledgerhq/cryptoassets@13.22.0-nightly.2
+  - @ledgerhq/coin-evm@2.23.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.6
+  - @ledgerhq/coin-framework@5.6.0-nightly.6
+  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.7
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.6
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.6
+  - @ledgerhq/live-countervalues@0.5.13-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.6
+  - @ledgerhq/live-nft@0.8.13-nightly.6
+  - @ledgerhq/live-nft-react@0.9.13-nightly.6
+  - @ledgerhq/live-wallet@0.11.4-nightly.6
+
 ## 2.121.0-nightly.6
 
 ### Patch Changes

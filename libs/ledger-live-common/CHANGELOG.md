@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.41.0-nightly.7
+
+### Minor Changes
+
+- [#10902](https://github.com/LedgerHQ/ledger-live/pull/10902) [`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c) Thanks [@may01](https://github.com/may01)! - Add support of deshielded transaction in TrustedInput
+
+- [#10904](https://github.com/LedgerHQ/ledger-live/pull/10904) [`96fab35`](https://github.com/LedgerHQ/ledger-live/commit/96fab3530589225719814280ab47d26ffbd88a5e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: generic adapter, getaccountshape sets blockheight to zero if no operations
+
+### Patch Changes
+
+- Updated dependencies [[`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604), [`5bba610`](https://github.com/LedgerHQ/ledger-live/commit/5bba610a62cb0872b4eb7d1c3b432cb40aa3d328)]:
+  - @ledgerhq/hw-app-btc@10.10.0-nightly.1
+  - @ledgerhq/cryptoassets@13.22.0-nightly.2
+  - @ledgerhq/coin-polkadot@6.4.0-nightly.6
+  - @ledgerhq/coin-evm@2.23.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.6
+  - @ledgerhq/coin-cardano@0.9.0-nightly.6
+  - @ledgerhq/coin-framework@5.6.0-nightly.6
+  - @ledgerhq/coin-hedera@1.9.0-nightly.6
+  - @ledgerhq/coin-solana@0.28.0-nightly.6
+  - @ledgerhq/coin-algorand@0.9.13-nightly.6
+  - @ledgerhq/coin-aptos@2.6.0-nightly.6
+  - @ledgerhq/coin-casper@2.0.4-nightly.6
+  - @ledgerhq/coin-celo@1.1.11-nightly.6
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.6
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.6
+  - @ledgerhq/coin-icon@0.10.13-nightly.6
+  - @ledgerhq/coin-internet_computer@1.7.13-nightly.6
+  - @ledgerhq/coin-mina@1.1.12-nightly.6
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.6
+  - @ledgerhq/coin-near@0.11.13-nightly.6
+  - @ledgerhq/coin-stacks@0.8.13-nightly.6
+  - @ledgerhq/coin-stellar@5.3.1-nightly.6
+  - @ledgerhq/coin-sui@0.7.0-nightly.7
+  - @ledgerhq/coin-tezos@5.6.0-nightly.6
+  - @ledgerhq/coin-ton@0.13.2-nightly.6
+  - @ledgerhq/coin-tron@4.4.1-nightly.6
+  - @ledgerhq/coin-vechain@2.7.13-nightly.6
+  - @ledgerhq/coin-xrp@6.3.1-nightly.6
+  - @ledgerhq/hw-app-vet@0.5.10-nightly.2
+  - @ledgerhq/live-countervalues@0.5.13-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.6
+  - @ledgerhq/live-nft@0.8.13-nightly.6
+  - @ledgerhq/live-wallet@0.11.4-nightly.6
+  - @ledgerhq/live-signer-evm@0.6.0-nightly.6
+  - @ledgerhq/live-signer-solana@0.4.1-nightly.6
+
 ## 34.41.0-nightly.6
 
 ### Patch Changes

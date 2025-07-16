@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.10.0-nightly.1
+
+### Minor Changes
+
+- [#10902](https://github.com/LedgerHQ/ledger-live/pull/10902) [`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c) Thanks [@may01](https://github.com/may01)! - Add support of deshielded transaction in TrustedInput
+
 ## 10.9.4-nightly.0
 
 ### Patch Changes

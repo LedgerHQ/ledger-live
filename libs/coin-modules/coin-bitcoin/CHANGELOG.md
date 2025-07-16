@@ -1,5 +1,17 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.17.0-nightly.6
+
+### Minor Changes
+
+- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
+
+### Patch Changes
+
+- Updated dependencies [[`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80)]:
+  - @ledgerhq/cryptoassets@13.22.0-nightly.2
+  - @ledgerhq/coin-framework@5.6.0-nightly.6
+
 ## 0.17.0-nightly.5
 
 ### Patch Changes
