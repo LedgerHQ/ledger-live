@@ -9,6 +9,7 @@ import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 export type Props = {
   /**
@@ -38,7 +39,7 @@ export type Props = {
   /**
    * Error instance coming from the genuine check hook - if null, a default message is displayed.
    */
-  error: Error | null;
+  error: Error | DmkError | null;
 };
 
 /**
@@ -63,7 +64,8 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   // Depending from where the device was not recognized we can a FirmwareNotRecognized or a simple Error
   const isNotFoundEntity =
     error &&
-    (error instanceof FirmwareNotRecognized || (error as Error).message === "not found entity");
+    (error instanceof FirmwareNotRecognized ||
+      (error as unknown as Error).message === "not found entity");
 
   const onGoToSettings = useCallback(() => {
     track("button_clicked", {
@@ -83,7 +85,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const screenName = isNotFoundEntity
     ? "Error: Device OS version not recognized"
     : error
-      ? "`Error: ${(error as unknown as Error).name}`"
+      ? `Error: ${isDmkError(error) ? error._tag : (error as Error).name}`
       : "Error: unknown error";
 
   const handleRetry = () => {
