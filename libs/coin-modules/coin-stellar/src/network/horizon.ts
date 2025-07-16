@@ -33,8 +33,6 @@ import {
 } from "./serialization";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
-import { getAssetIdFromAsset } from "../logic/tokens";
-import { findTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;

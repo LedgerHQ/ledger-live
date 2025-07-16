@@ -1,6 +1,6 @@
 import { BroadcastConfig } from "@ledgerhq/types-live";
-import { TokenAccount } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+// import { TokenAccount } from "@ledgerhq/types-live";
+// import BigNumber from "bignumber.js";
 // import { Unit } from "@ledgerhq/types-cryptoassets";
 // NOTE: are we ok importing, do we also want to be separated from those
 

@@ -5,7 +5,6 @@ import type {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
-import { fetchAccount } from "../network";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,

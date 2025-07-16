@@ -6,7 +6,6 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurr
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { BalanceAsset, StellarOperation } from "../types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];

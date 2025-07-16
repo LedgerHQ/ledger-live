@@ -31,7 +31,7 @@ import {
 } from "../types";
 import BigNumber from "bignumber.js";
 import { getBalance } from "./getBalance";
-import { fetchAccount, fetchSellingLiabilities } from "../network/horizon";
+import { fetchAccount } from "../network/horizon";
 
 export const getTransactionStatus = async (
   transactionIntent: TransactionIntent<StellarMemo>,
@@ -121,7 +121,6 @@ export const getTransactionStatus = async (
     if (!transactionIntent.recipient) {
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(transactionIntent.recipient)) {
-      debugger;
       errors.recipient = new InvalidAddress("", {
         currencyName: transactionIntent.asset.name ?? "", // NOTE: before account.currencyName,
       });
