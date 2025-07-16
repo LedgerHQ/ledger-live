@@ -182,7 +182,7 @@ export function useListHeaderComponents({
           key="EditOperationCard"
         />
       ) : null,
-      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions">
+      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions" isFirst>
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
