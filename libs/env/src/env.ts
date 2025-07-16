@@ -199,7 +199,7 @@ const envDefinitions = {
   },
   API_SUI_NODE_PROXY: {
     parser: stringParser,
-    def: "https://sui.coin.ledger.com",
+    def: "https://sui.coin.ledger-test.com",
     desc: "reverse proxy url for sui node",
   },
   SUI_ENABLE_TOKENS: {
