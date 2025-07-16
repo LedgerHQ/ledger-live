@@ -517,9 +517,29 @@
       "title" : "EGLD insuficientes para pagar las tarifas de transacción",
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
+    "NotEnoughToStake" : {
+      "title" : "Necesitas un mínimo de {{minStake}} {{currency}} para activar tu puesta en participación",
+      "description" : "Necesitas un mínimo de {{minStake}} {{currency}} para activar tu puesta en participación"
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}",
+      "description" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}",
+      "description" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "No puedes volver a poner en participación menos de {{minAmount}}",
+      "description" : "No puedes volver a poner en participación menos de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}",
+      "description" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fondos insuficientes para cubrir las tarifas",
@@ -1084,6 +1104,10 @@
     },
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Queremos garantizar tu seguridad",
+      "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3424,13 @@
         "verify" : "No se ha verificado la dirección de {{accountType}}. Verifica las direcciones en el dispositivo para mayor seguridad."
       },
       "noResultsFound" : "No se encontraron activos cripto",
-      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo"
+      "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo",
+      "sanctionedAddress" : {
+        "title" : "Queremos garantizar tu seguridad",
+        "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Cerrar",
+        "learnMore" : "Más información"
+      }
     },
     "buy" : {
       "title" : "Comprar",
@@ -6317,6 +6347,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos disponibles",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Saldo en participación",
+        "description" : "Esta cantidad está en participación con validadores."
+      },
+      "pending" : {
+        "title" : "Saldo pendiente",
+        "description" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad."
+      },
+      "withdrawable" : {
+        "title" : "Saldo retirable",
+        "description" : "Esta cantidad se ha quitado de participación y se puede retirar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Puesta en participación no disponible",
+        "description" : "No tienes en tu cuenta saldo suficiente para poner en participación, quitar de participación y retirar."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Cantidad en participación",
+        "unstakedAmount" : "Cantidad retirada de la puesta en participación",
+        "withdrawnAmount" : "Importe retirado"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe de la cancelación de la puesta en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Cantidad que volver a poner en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has vuelto a poner en participación tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones en participación",
+      "info" : "Cómo funciona la participación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes conseguir recompensas de Aptos al poner tus activos en participación.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "comm" : "Com.",
+      "timeToUnlock" : "Unlock en",
+      "iStake" : "Pongo en participación",
+      "actions" : {
+        "unstake" : "Cancelar la puesta en participación",
+        "withdraw" : "Retirar",
+        "restake" : "Volver a poner en participación"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a poner en participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Pon en participación tus Aptos para recibir recompensas de forma segura sin perder el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos puestos en participación siguen siendo tuyos.",
+              "1" : "Deberás esperar aproximadamente 2 horas para que el proceso de cancelar la puesta en participación finalice.",
+              "2" : "Pon en participación de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Sobredelegado",
     "delegationSendWarnDesc" : "El importe a enviar se deducirá de tu cuenta delegada.",
@@ -6717,8 +6882,8 @@
       "7d" : "7D",
       "30d" : "30D",
       "1y" : "1 A",
-      "1D_label" : "1D",
       "1H_label" : "1H",
+      "1D_label" : "1D",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7505,5 +7670,88 @@
     "title" : "Es necesario actualizar Ledger Live",
     "description" : "Esta versión de Ledger Live no es compatible con la versión más reciente del sistema operativo del dispositivo. Actualiza ya para disfrutar de una conectividad mejorada.",
     "openStore" : "Actualizar"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "Seleccionar activo",
+    "selectNetwork" : "Seleccionar red",
+    "selectAccount" : "Seleccionar cuenta"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Datos de comando incorrectos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "deserializationFailed" : {
+      "title" : "La deserialización de la carga útil ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transacción incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidAddress" : {
+      "title" : "Dirección inválida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta emisora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "userRefused" : {
+      "title" : "Operación denegada en el dispositivo",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "internalError" : {
+      "title" : "Error interno",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensión de P2 incorrecta",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Extensión de P2 no válida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Instrucción inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Clase no admitida"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrucción no válida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "malformedApdu" : {
+      "title" : "La cabecera de APDU tiene un formato incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidDataLength" : {
+      "title" : "Longitud de los datos no válida",
+      "description" : "Este comando no acepta datos de esa longitud"
+    },
+    "signatureVerificationFail" : {
+      "title" : "La verificación de la firma ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "default" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    }
   }
 }
