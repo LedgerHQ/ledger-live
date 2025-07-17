@@ -4,6 +4,9 @@ import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
+import { getAssetIdFromAsset } from "./buildSubAccounts";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+
 // import { getEnv } from "@ledgerhq/live-env";
 // import { Pagination } from "@ledgerhq/coin-framework/lib-es/api/types";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
@@ -53,8 +56,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const blockInfo = await alpacaApi.lastBlock();
     const balanceRes = await alpacaApi.getBalance(address);
     const nativeAsset = balanceRes.find(b => b.asset.type === "native");
-    const assetsBalance = balanceRes.filter(b => b.asset.type === "token");
+    const assetsBalance = balanceRes
+      .filter(b => b.asset.type === "token")
+      .filter(b => findTokenById(`stellar/asset/${getAssetIdFromAsset(b.asset)}`));
+    // before we did:
+    // const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`)!;
+    // const formattedBalance = parseCurrencyUnit(token.units[0], asset.balance || "0");
+
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
+
     const spendableBalance = BigInt(nativeAsset?.spendableBalance ?? "0");
 
     const oldOps = (initialAccount?.operations || []) as OperationCommon[];

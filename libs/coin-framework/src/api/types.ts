@@ -82,28 +82,6 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
   };
 };
 
-export type Transaction = {
-  type: string;
-  recipient: string;
-  amount: bigint;
-  fee: bigint;
-  // baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
-  // networkInfo?: {
-  //   baseFee?: bigint;
-  //   fees?: bigint;
-  // };
-} & Record<string, unknown>; // Field containing dedicated value for each blockchain
-
-// Other coins take differents parameters What do we want to do ?
-export type Account = {
-  currencyName: string;
-  address: string;
-  balance: bigint;
-  currencyUnit: Unit;
-  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
-  // subAccount?: TokenAccount;
-};
-
 export type Balance = {
   value: bigint;
   locked?: bigint;
