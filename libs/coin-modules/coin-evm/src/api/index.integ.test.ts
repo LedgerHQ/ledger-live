@@ -73,6 +73,19 @@ describe.each([
     });
   });
 
+  describe("getBalance", () => {
+    it("returns balance for an address", async () => {
+      const result = await module.getBalance("0x9bcd841436ef4f85dacefb1aec772af71619024e");
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0]).toMatchObject({
+        value: expect.any(BigInt),
+        asset: { type: "native" },
+      });
+    });
+  });
+
   describe("listOperations", () => {
     it("list operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {

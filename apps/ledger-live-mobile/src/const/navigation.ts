@@ -557,6 +557,7 @@ export enum ScreenName {
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
+  MockedModularDrawer = "MockedModularDrawer",
   MockedWalletScreen = "MockedWalletScreen",
   GenericLandingPage = "GenericLandingPage",
 

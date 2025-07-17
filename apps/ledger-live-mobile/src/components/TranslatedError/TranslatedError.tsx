@@ -2,10 +2,10 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Platform, Text } from "react-native";
 import { useErrorLinks } from "./hooks/useErrorLinks";
-import { isDmkError } from "@ledgerhq/live-dmk-mobile";
+import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
-  error: Error | null | undefined;
+  error: Error | DmkError | null | undefined;
   field?: "title" | "description";
 };
 

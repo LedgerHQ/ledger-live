@@ -10,6 +10,11 @@ import {
   isCorrespondingCurrency,
 } from "@ledgerhq/live-common/modularDrawer/utils/index";
 
+import { NavigatorName, ScreenName } from "~/const";
+import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
+import { useNavigation } from "@react-navigation/core";
+import { AssetSelectionNavigationProps } from "../../AssetSelection/types";
+
 type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
@@ -27,31 +32,68 @@ export function useModularDrawerState({
   currencyIds,
   currenciesByProvider,
 }: ModularDrawerStateProps) {
+  const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+
+  //To be handled incr2
+  const isAddAccountFlow = true;
+
   const [asset, setAsset] = useState<CryptoOrTokenCurrency | null>(null);
   const [network, setNetwork] = useState<CryptoOrTokenCurrency | null>(null);
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
   const { providers, setProviders, getNetworksFromProvider } = useProviders();
 
+  const navigateToDevice = useCallback(
+    (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency: selectedAsset,
+          createTokenAccount,
+          context: AddAccountContexts.AddAccounts,
+        },
+      });
+    },
+    [navigation],
+  );
+
+  const processNetworkSelection = useCallback(
+    (selectedCurrency: CryptoOrTokenCurrency) => {
+      const isToken = selectedCurrency.type === "TokenCurrency";
+      const asset = isToken ? selectedCurrency.parentCurrency : selectedCurrency;
+      const createTokenAccount = isToken;
+
+      navigateToDevice(asset, createTokenAccount);
+    },
+    [navigateToDevice],
+  );
+
   const selectAsset = useCallback(
     (selected: CryptoOrTokenCurrency, networks?: CryptoCurrency[]) => {
       setAsset(selected);
-      if ((networks ?? []).length > 1) {
-        setAvailableNetworks(uniqWith(networks ?? [], (a, b) => a.id === b.id));
+
+      const availableNetworksList = networks ?? [];
+
+      if (availableNetworksList.length > 1) {
+        const uniqueNetworks = uniqWith(availableNetworksList, (a, b) => a.id === b.id);
+        setAvailableNetworks(uniqueNetworks);
         goToStep?.(ModularDrawerStep.Network);
       } else {
-        goToStep?.(ModularDrawerStep.Account);
+        if (isAddAccountFlow) {
+          processNetworkSelection(selected);
+        } else {
+          goToStep?.(ModularDrawerStep.Account);
+        }
       }
     },
-    [goToStep],
+    [goToStep, isAddAccountFlow, processNetworkSelection],
   );
 
   const selectNetwork = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       setAsset(selectedAsset);
       setNetwork(selectedNetwork);
-      goToStep?.(ModularDrawerStep.Account);
     },
-    [goToStep],
+    [],
   );
 
   const reset = useCallback(() => {
@@ -104,8 +146,15 @@ export function useModularDrawerState({
   const goToAccount = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       selectNetwork(selectedAsset, selectedNetwork);
+
+      if (isAddAccountFlow) {
+        processNetworkSelection(selectedAsset);
+      } else {
+        // TODO in incr2
+        goToStep?.(ModularDrawerStep.Account);
+      }
     },
-    [selectNetwork],
+    [goToStep, isAddAccountFlow, processNetworkSelection, selectNetwork],
   );
 
   const handleAsset = useCallback(

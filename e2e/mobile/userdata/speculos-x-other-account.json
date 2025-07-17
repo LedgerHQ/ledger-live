@@ -29,6 +29,7 @@
       "collectiblesViewMode": "list",
       "showAccountsHelperBanner": true,
       "hideEmptyTokenAccounts": false,
+      "readOnlyModeEnabled": false,
       "filterTokenOperationsZeroAmount": true,
       "sidebarCollapsed": false,
       "discreetMode": false,

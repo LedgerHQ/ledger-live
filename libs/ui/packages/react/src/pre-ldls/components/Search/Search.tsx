@@ -15,17 +15,12 @@ export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...pro
   const initialValue = props.value ?? props.defaultValue ?? "";
   const prevValue = useRef(String(initialValue));
 
-  const handleDebouncedChange = useDebouncedCallback(
-    useMemo(() => {
-      if (!onDebouncedChange) return;
-      return (event: ChangeEvent<HTMLInputElement>) => {
-        const current = event.target.value;
-        onDebouncedChange(current, prevValue.current);
-        prevValue.current = current;
-      };
-    }, [onDebouncedChange]),
-    debounceTime,
-  );
+  const handleDebouncedChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
+    if (!onDebouncedChange) return;
+    const current = event.target.value;
+    onDebouncedChange(current, prevValue.current);
+    prevValue.current = current;
+  }, debounceTime);
 
   const handleChange = useMemo(() => {
     if (!handleDebouncedChange && !onChange) return;

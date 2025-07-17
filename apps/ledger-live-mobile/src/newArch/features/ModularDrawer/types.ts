@@ -3,3 +3,5 @@ export enum ModularDrawerStep {
   Network = "Network",
   Account = "Account",
 }
+
+export const MODULAR_DRAWER_KEY = "modularDrawer";

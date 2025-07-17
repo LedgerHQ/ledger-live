@@ -1,16 +1,18 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { useAssets } from "../useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  mockArbitrumCryptoCurrency,
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+} from "../../__mocks__/currencies.mock";
 
-const mockCurrencies: CryptoOrTokenCurrency[] = [
-  { id: "bitcoin", name: "Bitcoin", ticker: "BTC" } as CryptoOrTokenCurrency,
-  { id: "ethereum", name: "Ethereum", ticker: "ETH" } as CryptoOrTokenCurrency,
-];
+const mockCurrencies: CryptoOrTokenCurrency[] = [mockBtcCryptoCurrency, mockEthCryptoCurrency];
 
 const mockSortedCryptoCurrencies: CryptoOrTokenCurrency[] = [
-  { id: "bitcoin", name: "Bitcoin", ticker: "BTC" } as CryptoOrTokenCurrency,
-  { id: "ethereum", name: "Ethereum", ticker: "ETH" } as CryptoOrTokenCurrency,
-  { id: "litecoin", name: "Litecoin", ticker: "LTC" } as CryptoOrTokenCurrency,
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+  mockArbitrumCryptoCurrency,
 ];
 
 describe("useAssets", () => {

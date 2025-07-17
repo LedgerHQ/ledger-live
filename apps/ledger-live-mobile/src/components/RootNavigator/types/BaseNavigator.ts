@@ -312,6 +312,7 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
+  [ScreenName.MockedModularDrawer]: undefined;
   [ScreenName.MockedWalletScreen]: undefined;
 
   // WALLET SYNC

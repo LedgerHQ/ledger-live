@@ -1,39 +1,44 @@
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import {
-  arbitrumCurrency,
   arbitrumToken,
-  baseCurrency,
-  bitcoinCurrency,
-  ethereumCurrency,
-  injectiveCurrency,
-  scrollCurrency,
+  mockArbitrumCryptoCurrency,
+  mockBaseCryptoCurrency,
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+  mockInjectiveCryptoCurrency,
+  mockScrollCryptoCurrency,
   usdcToken,
 } from "./currencies.mock";
 
 export const providers = [
   {
     providerId: "bitcoin",
-    currenciesByNetwork: [bitcoinCurrency],
+    currenciesByNetwork: [mockBtcCryptoCurrency],
   },
   {
     providerId: "ethereum",
-    currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
+    currenciesByNetwork: [
+      mockEthCryptoCurrency,
+      mockArbitrumCryptoCurrency,
+      mockBaseCryptoCurrency,
+      mockScrollCryptoCurrency,
+    ],
   },
   { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
   { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
-  { providerId: "injective-protocol", currenciesByNetwork: [injectiveCurrency] },
+  { providerId: "injective-protocol", currenciesByNetwork: [mockInjectiveCryptoCurrency] },
 ];
 
 export const res = {
   result: {
     currenciesByProvider: providers,
     sortedCryptoCurrencies: [
-      bitcoinCurrency,
-      ethereumCurrency,
-      arbitrumToken,
-      baseCurrency,
-      scrollCurrency,
-      injectiveCurrency,
+      mockBtcCryptoCurrency,
+      mockEthCryptoCurrency,
+      mockArbitrumCryptoCurrency,
+      mockBaseCryptoCurrency,
+      mockScrollCryptoCurrency,
+      mockInjectiveCryptoCurrency,
     ],
   },
 };

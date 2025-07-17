@@ -19,6 +19,7 @@ import {
   estimateFees,
   lastBlock,
   listOperations,
+  getBalance,
 } from "../logic/";
 import { EvmAsset } from "../types";
 
@@ -36,9 +37,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     estimateFees: (
       transactionIntent: TransactionIntent<EvmAsset, MemoNotSupported>,
     ): Promise<FeeEstimation> => estimate(currency, transactionIntent),
-    getBalance: (_address: string): Promise<Balance<EvmAsset>[]> => {
-      throw new Error("UnsupportedMethod");
-    },
+    getBalance: (address: string): Promise<Balance<EvmAsset>[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
