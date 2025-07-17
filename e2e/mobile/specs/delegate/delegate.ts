@@ -139,7 +139,8 @@ export async function runDelegateTezos(delegation: DelegateType, tmsLinks: strin
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
-      await app.speculos.activateContractData();
+      await app.speculos.goToSettings();
+      await app.speculos.activateExpertMode();
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
