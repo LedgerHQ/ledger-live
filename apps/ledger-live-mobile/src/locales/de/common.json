@@ -1086,7 +1086,7 @@
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     },
     "AddressesSanctionedError" : {
-      "title" : "Sorge für deine Sicherheit",
+      "title" : "Wir sorgen für deine Sicherheit",
       "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
     }
   },
