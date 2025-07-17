@@ -1,5 +1,22 @@
 # @ledgerhq/live-signer-evm
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add context-module gating
+
+- [#10884](https://github.com/LedgerHQ/ledger-live/pull/10884) [`769b0ed`](https://github.com/LedgerHQ/ledger-live/commit/769b0ed64b3a4c0388546ec00966d1185f3aea68) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Remove hardcoded list of ethereum plugins
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't try to clearsign Exchange flows in signer-eth
+
+### Patch Changes
+
+- Updated dependencies [[`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2), [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604), [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713)]:
+  - @ledgerhq/coin-evm@2.24.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.12-next.0
+
 ## 0.5.6
 
 ### Patch Changes

@@ -1,5 +1,31 @@
 # @ledgerhq/coin-evm
 
+## 2.24.0-next.0
+
+### Minor Changes
+
+- [#10845](https://github.com/LedgerHQ/ledger-live/pull/10845) [`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): add craft transaction
+
+- [#10957](https://github.com/LedgerHQ/ledger-live/pull/10957) [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-evm): add getBalance (Alpaca)
+
+- [#10955](https://github.com/LedgerHQ/ledger-live/pull/10955) [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - deps: remove unused dependencies
+
+- [#10931](https://github.com/LedgerHQ/ledger-live/pull/10931) [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): add list operations
+
+- [#10846](https://github.com/LedgerHQ/ledger-live/pull/10846) [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): add alpaca combine method
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/cryptoassets@13.22.0-next.0
+  - @ledgerhq/coin-framework@5.7.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/evm-tools@1.7.1-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+  - @ledgerhq/domain-service@1.2.37-next.0
+  - @ledgerhq/devices@8.4.8-next.0
+
 ## 2.23.0
 
 ### Minor Changes

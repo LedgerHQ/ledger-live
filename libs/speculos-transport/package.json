@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/speculos-transport",
-  "version": "0.2.5",
+  "version": "0.2.6-next.0",
   "description": "Ledger Live speculos transport test helper",
   "keywords": [
     "Ledger"

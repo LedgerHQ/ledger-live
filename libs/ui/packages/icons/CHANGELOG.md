@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#10885](https://github.com/LedgerHQ/ledger-live/pull/10885) [`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add recovery key icon. Add icons to onboarding backup flow for LLD and LLM
+
 ## 0.12.0
 
 ### Minor Changes
