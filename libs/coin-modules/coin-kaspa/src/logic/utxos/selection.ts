@@ -5,6 +5,7 @@ import { calcMaxSpendableAmount, sumUtxoAmounts } from "./lib";
 
 const MASS_LIMIT_PER_TX = 100_000; // TX mass must not exceed 100k gram.
 const MASS_PER_INPUT: number = 1118; // Per selected utxo as input, mass increases by this value.
+const MASS_PER_OUTPUT: number = 412; // Per selected utxo as input, mass increases by this value.
 const MAX_UTXOS_PER_TX: number = 88; // 88 is the maximum of utxo inputs in one TX.
 const MAX_DISCARD: number = 2000_0000; // Throw error, if discarded value is higher than this.
 
@@ -28,39 +29,47 @@ export const selectUtxos = (
   for (let i = 0; i < utxos.length; i++) {
     const selectedUtxos = utxos.slice(0, i + 1);
     const selectedUtxoAmount = sumUtxoAmounts(selectedUtxos);
-    // calculate fee for regular TX with 2 outputs and the given feerate
-    const mass = calcComputeMass(i + 1, true, isEcdsaRecipient);
-    const calcFee = mass * feerate;
+    // calculate absolute min fee for regular TX with 1 outputs and the given feerate.
+    const minMass = calcComputeMass(i + 1, false, isEcdsaRecipient);
+    const minFee = minMass * feerate;
 
     // Continue if utxo amount is not enough for transfering amount and fee for miners.
-    if (selectedUtxoAmount.isLessThan(amount.plus(calcFee))) {
+    if (selectedUtxoAmount.isLessThan(amount.plus(minFee))) {
       continue;
     }
 
     // Here there might be enough UTXOs for the amount + fee.
     // Now the storage mass could be exceeding the TX limit, with having a low change amount value.
     // If yes, add another UTXO.
+
+    // Assuming first, it is a valid TX with change ( 2 outputs )
+    const calcFee = feerate * calcComputeMass(i + 1, true, isEcdsaRecipient);
     let changeAmount = selectedUtxoAmount.minus(amount).minus(calcFee);
 
-    const storageMass = calcStorageMass(
-      selectedUtxos.map(u => u.utxoEntry.amount),
-      [amount, changeAmount],
-    );
+    const storageMass = changeAmount.isGreaterThan(0)
+      ? calcStorageMass(
+          selectedUtxos.map(u => u.utxoEntry.amount),
+          [amount, changeAmount],
+        )
+      : 0;
 
-    // storage mass exceeds the limit. Need to pick another UTXO or discard the change.
-    if (storageMass > MASS_LIMIT_PER_TX) {
-      // Picking a further UTXO means a higher mass and a higher fee.
+    // If storage mass exceeds the limit or the change amount is negative ( 2 outputs not possible )
+    // Need to pick another UTXO or discard the change.
+    if (changeAmount.isLessThan(0) || storageMass > MASS_LIMIT_PER_TX) {
+      // Picking a further UTXO means a higher mass (one input and output) and thus a higher fee.
       // Check if the fee is not higher, than just discarding the change.
       const isWorthPickingAnotherUtxo = changeAmount.isGreaterThan(
-        BigNumber(MASS_PER_INPUT * feerate),
+        BigNumber((MASS_PER_INPUT + MASS_PER_OUTPUT) * feerate),
       );
       if (i + 1 < utxos.length && isWorthPickingAnotherUtxo) {
-        // there is one more utxo and it is cheaper to pick than discard the change
+        // There is one more utxo and it is cheaper to pick than discard the change.
         continue;
       } else {
-        // change needs to be discarded as fee to keep mass low enough
+        // Change needs to be discarded as fee to keep mass low enough.
         if (changeAmount.isGreaterThan(MAX_DISCARD)) {
-          throw new Error(`Change ${changeAmount} Sompis is too high to be discarded.`);
+          throw new Error(
+            `Unable to select UTXOs. Change ${changeAmount} Sompis is too high to be discarded.`,
+          );
         }
         changeAmount = BigNumber(0);
       }
@@ -72,6 +81,6 @@ export const selectUtxos = (
       fee: selectedUtxoAmount.minus(amount).minus(changeAmount),
     };
   }
-  // throw error UTXOs can't be determined if no UTXOs are found to fulfill the requirement
+  // Throw an error, if UTXOs can't be determined to fulfill the requirement.
   throw new Error("UTXOs can't be determined to fulfill the specified amount");
 };

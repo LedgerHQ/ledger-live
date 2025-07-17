@@ -228,12 +228,27 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     const selectedUtxos = selectUtxos(
       utxos,
       false,
-      BigNumber(5_0000_0000 - (5 * 1118 + 506) - 2),
+      BigNumber(5_0000_0000 - (5 * 1118 + 506)),
       feerate,
     );
 
     expect(selectedUtxos.utxos.length).toBe(5);
     expect(selectedUtxos.fee.toNumber()).toBe(5 * 1118 + 506);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
+  });
+
+  test("send almost all", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
+    const feerate = 1;
+    const selectedUtxos = selectUtxos(
+      utxos,
+      false,
+      BigNumber(5_0000_0000 - (5 * 1118 + 506) - 2),
+      feerate,
+    );
+
+    expect(selectedUtxos.utxos.length).toBe(5);
+    expect(selectedUtxos.fee.toNumber()).toBe(5 * 1118 + 506 + 2);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 });
