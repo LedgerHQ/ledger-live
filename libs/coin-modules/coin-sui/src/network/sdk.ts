@@ -219,6 +219,10 @@ export function transactionToOperation(
 function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
+  const asset =
+    coinType === DEFAULT_COIN_TYPE
+      ? { type: "native" as const }
+      : { type: "token" as const, coinType };
   const hash = transaction.digest;
   return {
     id: hash,
@@ -231,7 +235,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
         height: BigInt(transaction.checkpoint || "") as unknown as number,
       },
     },
-    asset: { type: "native" },
+    asset,
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
