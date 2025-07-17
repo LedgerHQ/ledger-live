@@ -108,6 +108,7 @@ export const UnexpectedError = createCustomErrorClass("UnexpectedError");
 export const NotImplementedError = createCustomErrorClass("NotImplementedError");
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
+export const DeviceDeprecationError = createCustomErrorClass("DeviceDeprecationError");
 
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
 

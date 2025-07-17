@@ -19,6 +19,7 @@ import {
   DisconnectedDevice,
 } from "@ledgerhq/errors";
 import {
+  DeviceDeprecationError,
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   TransactionRefusedOnDevice,
@@ -76,7 +77,6 @@ import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorCompone
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
 import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
-import { DeviceNotSupportedError } from "@ledgerhq/live-common/hw/connectApp";
 import { rgba } from "~/renderer/styles/helpers";
 
 export const AnimationWrapper = styled.div`
@@ -838,7 +838,7 @@ export const renderError = ({
     if (tmpError.message === "User refused") {
       tmpError = new TransactionRefusedOnDevice();
     }
-  } else if (tmpError instanceof DeviceNotSupportedError) {
+  } else if (tmpError instanceof DeviceDeprecationError) {
     return <DeprecationDeviceError />;
   } else if (tmpError instanceof NoSuchAppOnProvider) {
     return (

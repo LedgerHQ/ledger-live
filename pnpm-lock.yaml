@@ -7747,7 +7747,7 @@ importers:
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 1.0.0
-        version: 1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250527074701(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        version: 1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -34965,7 +34965,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.25.9':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
@@ -35096,17 +35096,17 @@ snapshots:
 
   '@babel/helper-function-name@7.23.0':
     dependencies:
-      '@babel/template': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.27.6
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@babel/helper-member-expression-to-functions@7.25.9':
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
@@ -35174,7 +35174,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.25.9':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
@@ -35249,14 +35249,14 @@ snapshots:
   '@babel/helper-simple-access@7.25.9':
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-skip-transparent-expression-wrappers@7.25.9':
     dependencies:
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
@@ -35269,7 +35269,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@babel/helper-string-parser@7.24.1': {}
 
@@ -35287,9 +35287,9 @@ snapshots:
 
   '@babel/helper-wrap-function@7.25.9':
     dependencies:
-      '@babel/template': 7.27.0
+      '@babel/template': 7.27.2
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
@@ -35303,9 +35303,9 @@ snapshots:
 
   '@babel/helpers@7.24.1':
     dependencies:
-      '@babel/template': 7.27.0
+      '@babel/template': 7.27.2
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
@@ -36642,9 +36642,9 @@ snapshots:
 
   '@babel/template@7.24.0':
     dependencies:
-      '@babel/code-frame': 7.26.2
-      '@babel/parser': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/code-frame': 7.27.1
+      '@babel/parser': 7.27.5
+      '@babel/types': 7.27.6
 
   '@babel/template@7.27.0':
     dependencies:
@@ -41113,7 +41113,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250527074701(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.0.0(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
@@ -43235,7 +43235,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-typescript': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-unicode-regex': 7.25.9(@babel/core@7.27.1)
-      '@babel/template': 7.27.0
+      '@babel/template': 7.27.2
       '@react-native/babel-plugin-codegen': 0.76.9(@babel/preset-env@7.27.1(@babel/core@7.27.1))
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.27.1)
@@ -43397,7 +43397,7 @@ snapshots:
 
   '@react-native/codegen@0.76.9(@babel/preset-env@7.27.1(@babel/core@7.27.1))':
     dependencies:
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
       glob: 7.2.3
       hermes-parser: 0.23.1
@@ -46561,7 +46561,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -46789,9 +46789,9 @@ snapshots:
   '@storybook/csf-tools@7.6.20':
     dependencies:
       '@babel/generator': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
       '@storybook/csf': 0.1.3
       '@storybook/types': 7.6.20
       fs-extra: 11.2.0
@@ -48014,16 +48014,16 @@ snapshots:
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/parser': 7.27.5
+      '@babel/types': 7.27.6
 
   '@types/babel__traverse@7.20.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -49511,7 +49511,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -49526,7 +49526,7 @@ snapshots:
 
   '@vue/compiler-sfc@2.7.16':
     dependencies:
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       postcss: 8.5.1
       source-map: 0.6.1
     optionalDependencies:
@@ -50740,22 +50740,22 @@ snapshots:
 
   babel-plugin-jest-hoist@27.5.1:
     dependencies:
-      '@babel/template': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.27.6
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@28.1.3:
     dependencies:
-      '@babel/template': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.27.6
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@29.6.3:
     dependencies:
-      '@babel/template': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/template': 7.27.2
+      '@babel/types': 7.27.6
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
@@ -55934,7 +55934,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(webpack@5.94.0(@swc/core@1.4.11)):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -55955,7 +55955,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.0)(typescript@5.4.3)(webpack@5.94.0):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -55975,7 +55975,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       chalk: 4.1.2
       chokidar: 3.6.0
       cosmiconfig: 7.1.0
@@ -55992,7 +55992,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5)):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       chalk: 4.1.2
       chokidar: 3.6.0
       cosmiconfig: 7.1.0
@@ -57579,7 +57579,7 @@ snapshots:
   istanbul-lib-instrument@5.2.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 6.3.1
@@ -59017,7 +59017,7 @@ snapshots:
 
   jest-message-util@28.1.3:
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       '@jest/types': 28.1.3
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -59357,7 +59357,7 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.27.1)
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
       '@types/babel__traverse': 7.20.5
@@ -59385,7 +59385,7 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.27.1)
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/types': 7.27.6
       '@jest/expect-utils': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
@@ -59847,7 +59847,7 @@ snapshots:
   jscodeshift@0.14.0(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.27.1)
@@ -59872,7 +59872,7 @@ snapshots:
   jscodeshift@0.15.2(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-modules-commonjs': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.27.1)
@@ -59899,7 +59899,7 @@ snapshots:
   jscodeshift@17.3.0:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-modules-commonjs': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.27.1)
@@ -59922,7 +59922,7 @@ snapshots:
   jscodeshift@17.3.0(@babel/preset-env@7.27.1(@babel/core@7.27.1)):
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.27.0
+      '@babel/parser': 7.27.5
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-modules-commonjs': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.27.1)
@@ -66167,7 +66167,7 @@ snapshots:
 
   rollup-plugin-terser@7.0.2(rollup@2.79.2):
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       jest-worker: 26.6.2
       rollup: 2.79.2
       serialize-javascript: 4.0.0

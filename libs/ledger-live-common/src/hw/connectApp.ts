@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
@@ -41,6 +42,16 @@ import {
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+// import { findCryptoCurrencyByManagerAppName } from "@ledgerhq/cryptoassets/currencies";
+// import { getCurrencyConfiguration } from "../config";
+import { DeviceDeprecationError } from "../errors";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+
+type DeviceDeprecationErrorType = Error & {
+  modelId: DeviceModelId;
+  date: string;
+  tokenExceptions?: string[];
+};
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -67,6 +78,7 @@ export type DeviceDeprecation = {
   modelId: DeviceModelId;
   date: string;
   coin: CryptoCurrencyId;
+  tokenExceptions: string[];
 };
 
 export type AppAndVersion = {
@@ -527,33 +539,61 @@ const appNameToDependency = (appName: string): ApplicationDependency => {
   };
 };
 
-export class DeviceNotSupportedError extends Error {
-  constructor(modelId: string) {
-    super(modelId);
-    this.name = "DeviceNotSupportedError";
-  }
-}
-
-const throwErrorWhenLns = (
+const throwErrorWhenDeviceDeprecated = (
   dmk: DeviceManagementKit,
   sessionId: DeviceSessionId,
   passDeprecation: boolean,
+  appName: string,
+  dependencies?: string[],
 ): void => {
   if (passDeprecation) {
     return;
   }
-  const deadline = new Date("2025-08-01");
-  // If the device is a Nano S, and
-  const today = new Date();
-  const isPast = today > deadline;
-  const canClearSign = false;
+  const config =
+    appName === "Exchange" && dependencies && dependencies.length > 0
+      ? LiveConfig.getValueByKey(
+          `config_nanoapp_${dependencies[0].toLowerCase().replace(/ /g, "_")}`,
+        )
+      : LiveConfig.getValueByKey(`config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`);
+  if (!config || !config.deviceDeprecated) {
+    return;
+  }
   const { modelId } = dmk.getConnectedDevice({ sessionId });
-  if (modelId === DeviceModelId.NANO_S && isPast && !canClearSign) {
-    throw new DeviceNotSupportedError(modelId);
-  } else if (modelId === DeviceModelId.NANO_S && isPast && canClearSign) {
-    throw new DeviceNotSupportedError("warning");
-  } else if (modelId === DeviceModelId.NANO_S && !isPast) {
-    throw new DeviceNotSupportedError("info");
+  const today = new Date();
+  for (const deviceDeprecated of config.deviceDeprecated) {
+    if (deviceDeprecated.deviceModelId !== modelId) {
+      continue;
+    }
+
+    if (deviceDeprecated.errorScreen) {
+      const errorDate = new Date(deviceDeprecated.errorScreen.date);
+      if (errorDate < today) {
+        throw new DeviceDeprecationError("error", {
+          modelId,
+          date: errorDate.toISOString(),
+        });
+      }
+    }
+    if (deviceDeprecated.warningClearSigningScreen) {
+      console.log(deviceDeprecated);
+      const warningDate = new Date(deviceDeprecated.warningClearSigningScreen.date);
+      if (warningDate < today) {
+        throw new DeviceDeprecationError("warning", {
+          modelId,
+          date: warningDate.toISOString(),
+          tokenExceptions: deviceDeprecated.warningClearSigningScreen.tokenExceptions,
+        });
+      }
+    }
+    if (deviceDeprecated.infoScreen) {
+      const infoDate = new Date(deviceDeprecated.infoScreen.date);
+      if (infoDate < today) {
+        throw new DeviceDeprecationError("info", {
+          modelId,
+          date: infoDate.toISOString(),
+        });
+      }
+    }
   }
 };
 
@@ -564,7 +604,6 @@ export default function connectAppFactory(
     isLdmkConnectAppEnabled: boolean;
   } = { isLdmkConnectAppEnabled: false },
 ) {
-  // console.log("connectAppFactory");
   if (!isLdmkConnectAppEnabled) {
     return ({ deviceId, request }: Input): Observable<ConnectAppEvent> =>
       withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
@@ -612,11 +651,13 @@ export default function connectAppFactory(
 
         return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
       };
+      console.log("request dmk", { request });
       try {
-        throwErrorWhenLns(dmk, sessionId, passDeprecation);
+        throwErrorWhenDeviceDeprecated(dmk, sessionId, passDeprecation, appName, dependencies);
       } catch (error) {
-        if (error instanceof DeviceNotSupportedError) {
-          if (error.message === "warning") {
+        if (error instanceof DeviceDeprecationError) {
+          const deviceError = error as DeviceDeprecationErrorType;
+          if (deviceError.message === "warning") {
             return new Observable<ConnectAppEvent>(subscriber => {
               const continueOnce = () => {
                 if (hasContinued) return;
@@ -624,16 +665,16 @@ export default function connectAppFactory(
 
                 connectAppFlow().subscribe(subscriber);
               };
-
               const deprecationEvent: ConnectAppEvent = {
                 type: "deprecation",
                 deprecate: {
                   warningClearSigning: true,
-                  date: "06.01.2002",
-                  modelId: DeviceModelId.NANO_S,
-                  coin: "polkadot",
+                  date: deviceError.date,
+                  modelId: deviceError.modelId,
+                  coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
+                  tokenExceptions: deviceError.tokenExceptions || [],
                 },
-                onContinue: continueOnce, // Injecté ici
+                onContinue: continueOnce,
               };
 
               subscriber.next(deprecationEvent);
@@ -651,11 +692,12 @@ export default function connectAppFactory(
                 type: "deprecation",
                 deprecate: {
                   warningClearSigning: false,
-                  date: "06.01.2002",
-                  modelId: DeviceModelId.NANO_S,
-                  coin: "polkadot",
+                  date: deviceError.date,
+                  modelId: deviceError.modelId,
+                  coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
+                  tokenExceptions: [],
                 },
-                onContinue: continueOnce, // Injecté ici
+                onContinue: continueOnce,
               };
 
               subscriber.next(deprecationEvent);

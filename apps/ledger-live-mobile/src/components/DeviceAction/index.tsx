@@ -13,13 +13,13 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { AppAndVersion, DeviceDeprecation } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
@@ -60,6 +60,8 @@ import {
   renderRequiresAppInstallation,
   renderWarningOutdated,
   RequiredFirmwareUpdate,
+  DeprecationClearSigningWarning,
+  DeprecationWarning,
 } from "./rendering";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
@@ -118,6 +120,10 @@ type Status = PartialNullable<{
   imageCommitRequested: boolean;
   transactionChecksOptInTriggered: boolean;
   transactionChecksOptIn: boolean;
+  deprecate?: boolean;
+  deprecateData?: DeviceDeprecation;
+  onContinue?: () => void;
+  displayDeprecateWarning: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -221,7 +227,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     listingApps,
     transactionChecksOptInTriggered,
     transactionChecksOptIn,
+    deprecate,
+    deprecateData,
+    onContinue,
+    displayDeprecateWarning,
   } = status;
+
+  const [hasDisplayDeprecateWarning, setDeprecated] = useState(false);
 
   useTrackMyLedgerSectionEvents({
     location: location === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard ? location : undefined,
@@ -305,6 +317,28 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   const walletState = useSelector(walletSelector);
   const settingsState = useSelector(settingsStoreSelector);
+
+  return <DeprecationWarning coinName={"coin"} date={"date"} onContinue={() => {}} />;
+  if (deprecate && deprecateData && onContinue) {
+    if (!hasDisplayDeprecateWarning) {
+      const handleContinue = () => {
+        setDeprecated(true);
+        onContinue();
+      };
+      if (deprecateData.warningClearSigning)
+        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
+      else
+        return (
+          <DeprecationWarning
+            coinName={deprecateData.coin}
+            date={deprecateData.date}
+            onContinue={handleContinue}
+          />
+        );
+    } else {
+      onContinue();
+    }
+  }
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({

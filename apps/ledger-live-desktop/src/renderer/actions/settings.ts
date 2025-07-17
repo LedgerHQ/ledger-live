@@ -39,6 +39,7 @@ export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
 };
+
 export const saveSettings: SaveSettings = payload => ({
   type: "DB:SAVE_SETTINGS",
   payload,
@@ -296,6 +297,8 @@ export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
   payload: pairs,
 });
+
+// disclaimer type
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
   payload: bannerKey,
