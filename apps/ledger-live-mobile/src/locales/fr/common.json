@@ -287,20 +287,120 @@
       "description" : "Veuillez réessayer."
     },
     "DisconnectedDevice" : {
-      "title" : "Appareil déconnecté",
-      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Appareil déconnecté",
-      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "Appareil déconnecté",
-      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "Appareil déconnecté",
-      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError" : {
+      "title" : "Device locked",
+      "description" : "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Not enough memory",
+      "description" : "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OS is unsupported",
+      "description" : "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Battery error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Battery error",
+      "description" : "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "CasperInvalidTransferId" : {
       "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
@@ -517,9 +617,29 @@
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
     },
+    "NotEnoughToStake" : {
+      "title" : "Montant minimum pour activer le staking : {{minStake}} {{currency}}",
+      "description" : "Vous devez avoir au moins {{minStake}} {{currency}} pour activer le montant staké."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Déstaker plus de {{maxAmount}} entraîne un déstaking intégral ({{totalAmount}})",
+      "description" : "Si vous déstakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera déstaké."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Restaker plus de {{maxAmount}} entraîne un restaking intégral ({{totalAmount}})",
+      "description" : "Si vous restakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera restaké."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Montant minimum à restaker : {{minAmount}}",
+      "description" : "Vous ne pouvez pas restaker moins de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Montant minimum à déstaker : {{minAmount}}",
+      "description" : "Vous ne pouvez pas déstaker moins de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Solde insuffisant pour couvrir les frais",
@@ -3116,8 +3236,8 @@
         "desc" : "Recevez les dernières nouveautés sur Ledger Live."
       },
       "largeMover" : {
-        "title" : "Variations importantes",
-        "desc" : "Vous serez notifié(e) en cas de fortes fluctuations des cours si vous possédez des BTC, ETH, SOL, ADA ou XRP."
+        "title" : "Alertes sur les prix",
+        "desc" : "Restez informé(e) des mouvements de prix majeurs des tokens populaires dans votre portefeuille."
       },
       "transactionsAlerts" : {
         "title" : "Alertes transactionnelles (Bêta)",
@@ -6327,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos disponible",
+        "description" : "Ce montant est disponible."
+      },
+      "storageUsage" : {
+        "title" : "Solde minimum",
+        "description" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif."
+      },
+      "staked" : {
+        "title" : "Solde de staking",
+        "description" : "Montant actuellement staké auprès de validateurs."
+      },
+      "pending" : {
+        "title" : "Solde en attente",
+        "description" : "Montant des actifs déstakés qui seront bientôt disponibles."
+      },
+      "withdrawable" : {
+        "title" : "Solde disponible au retrait",
+        "description" : "Montant des actifs déstakés qui peuvent actuellement être retirés."
+      },
+      "stakingUnavailable" : {
+        "title" : "Staking non disponible",
+        "description" : "Le solde de votre compte est insuffisant pour effectuer une opération de staking, déstaking ou retrait."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Montant staké",
+        "unstakedAmount" : "Montant déstaké",
+        "withdrawnAmount" : "Montant retiré"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à déstaker"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien déstakés"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à retirer"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Retrait des actifs effectué"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à restaker"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien restakés"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Position(s) de staking",
+      "info" : "Fonctionnement du staking",
+      "add" : "Ajouter",
+      "stakingEarn" : "Vous pouvez gagner des récompenses Aptos en stakant vos actifs.",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "comm" : "Comm.",
+      "timeToUnlock" : "Disponible dans",
+      "iStake" : "Je stake",
+      "actions" : {
+        "unstake" : "Déstaker",
+        "withdraw" : "Retirer",
+        "restake" : "Restaker"
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "pending" : "En attente",
+        "available" : "Disponible au retrait"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à staker",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Stakez vos Aptos pour gagner des récompenses en toute sécurité et en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "0" : "Vous conservez la propriété de vos actifs stakés.",
+              "1" : "Vous devrez attendre environ 2h pour que le déstaking soit finalisé.",
+              "2" : "Stakez en toute sécurité avec votre appareil Ledger."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "assetsRemaining" : "Actifs restants : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "minAmount" : "Montant minimal : <0>{{min}}</0>",
+            "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Surdélégué",
     "delegationSendWarnDesc" : "Le montant à envoyer sera déduit de votre compte délégué.",
@@ -6727,8 +6982,8 @@
       "7d" : "7J",
       "30d" : "30J",
       "1y" : "1A",
-      "1D_label" : "1J",
       "1H_label" : "1H",
+      "1D_label" : "1J",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7519,6 +7774,7 @@
   "modularDrawer" : {
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
-    "selectAccount" : "Sélectionner un compte"
+    "selectAccount" : "Sélectionner un compte",
+    "searchPlaceholder" : "Rechercher"
   }
 }
