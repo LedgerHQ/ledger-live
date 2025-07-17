@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerStep } from "./types";
@@ -8,6 +8,7 @@ import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
 import { useAssets } from "./hooks/useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/haveOneCommonProvider";
 
 /**
  * Props for the ModularDrawer component.
@@ -16,11 +17,11 @@ type ModularDrawerProps = {
   /**
    * The current step to display in the drawer navigation flow.
    */
-  selectedStep: ModularDrawerStep;
+  selectedStep?: ModularDrawerStep;
   /**
    * Whether the drawer is open.
    */
-  isOpen?: boolean;
+  isOpen: boolean;
   /**
    * Callback fired when the drawer is closed.
    */
@@ -36,7 +37,12 @@ type ModularDrawerProps = {
  *
  * @param {ModularDrawerProps} props - The props for the ModularDrawer component.
  */
-export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
+export function ModularDrawer({
+  isOpen,
+  onClose,
+  currencies,
+  selectedStep = ModularDrawerStep.Asset,
+}: ModularDrawerProps) {
   const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
   const [defaultSearchValue, setDefaultSearchValue] = useState("");
   const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
@@ -51,6 +57,7 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
       goToStep: navigationStepManager.goToStep,
       currenciesByProvider,
       currencyIds: currencyIdsArray,
+      isDrawerOpen: isOpen,
     });
 
   /**
@@ -67,9 +74,13 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
     reset();
   };
 
+  const hasOneCurrency = useMemo(() => {
+    return haveOneCommonProvider(currencyIdsArray, currenciesByProvider);
+  }, [currencyIdsArray, currenciesByProvider]);
+
   return (
     <QueuedDrawer
-      isRequestingToBeOpened={isOpen}
+      isRequestingToBeOpened={!hasOneCurrency && isOpen}
       onClose={handleCloseButton}
       hasBackButton={navigationStepManager.hasBackButton}
       onBack={handleBackButton}

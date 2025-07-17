@@ -9,24 +9,25 @@ type ViewProps = {
   isWalletSyncEnabled: boolean | undefined;
   isReadOnlyModeEnabled: boolean;
   doesNotHaveAccount?: boolean;
-  onClickAdd: () => void;
-  onClickImport: () => void;
-  onClickImportLedgerSync?: () => void;
+  handleAddAccount: () => void;
+  handleImportAccounts: () => void;
+  handleWalletSync?: () => void;
 };
 
 type AddAccountScreenProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
   onClose?: () => void;
-  setWalletSyncDrawerVisible?: () => void;
+  onShowWalletSyncDrawer?: () => void;
+  onShowModularDrawer?: () => void;
 };
 
 function View({
   isWalletSyncEnabled,
   isReadOnlyModeEnabled,
-  onClickAdd,
-  onClickImport,
-  onClickImportLedgerSync,
+  handleAddAccount,
+  handleImportAccounts,
+  handleWalletSync,
   doesNotHaveAccount,
 }: ViewProps) {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ function View({
     rows.push({
       titleKey: "addAccountsModal.drawer.add.title",
       descriptionKey: "addAccountsModal.drawer.add.description",
-      onPress: onClickAdd,
+      onPress: handleAddAccount,
       icon: <Icons.LedgerDevices color={"primary.c80"} />,
       testID: "add-accounts-modal-add-button",
     });
@@ -44,7 +45,7 @@ function View({
   if (isWalletSyncEnabled) {
     rows.push({
       titleKey: "addAccountsModal.drawer.walletSync.title",
-      onPress: onClickImportLedgerSync,
+      onPress: handleWalletSync,
       icon: <Icons.Refresh color={"primary.c80"} />,
       testID: "add-accounts-modal-wallet-sync-button",
     });
@@ -52,7 +53,7 @@ function View({
     rows.push({
       titleKey: "addAccountsModal.drawer.import.title",
       descriptionKey: "addAccountsModal.drawer.import.description",
-      onPress: onClickImport,
+      onPress: handleImportAccounts,
       icon: <Icons.QrCode color={"primary.c80"} />,
       testID: "add-accounts-modal-import-button",
     });
