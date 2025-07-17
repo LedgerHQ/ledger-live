@@ -476,6 +476,12 @@ export enum ScreenName {
   CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
+  HederaAssociateTokenSelectToken = "HederaAssociateTokenSelectToken",
+  HederaAssociateTokenSummary = "HederaAssociateTokenSummary",
+  HederaAssociateTokenSelectDevice = "HederaAssociateTokenSelectDevice",
+  HederaAssociateTokenConnectDevice = "HederaAssociateTokenConnectDevice",
+  HederaAssociateTokenValidationError = "HederaAssociateTokenValidationError",
+  HederaAssociateTokenValidationSuccess = "HederaAssociateTokenValidationSuccess",
   // near
   NearStakingValidator = "NearStakingValidator",
   NearStakingValidatorSelect = "NearStakingValidatorSelect",
@@ -643,6 +649,8 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+  // Hedera
+  HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
 
   // Tab
   Main = "Main",
