@@ -8,6 +8,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { HEDERA_TRANSACTION_KINDS } from "../constants";
 
 export type NetworkInfo = {
   family: "hedera";
@@ -18,7 +19,7 @@ export type NetworkInfoRaw = {
 };
 
 export type TokenAssociateProperties = {
-  name: "tokenAssociate";
+  name: typeof HEDERA_TRANSACTION_KINDS.TokenAssociate.name;
   token: TokenCurrency;
 };
 
@@ -61,7 +62,5 @@ export type HederaOperationExtra = {
   transactionId?: string;
   associatedTokenId?: string;
 };
-
-export type HederaOperationType = "CryptoTransfer" | "TokenTransfer" | "TokenAssociate";
 
 export type HederaOperation = Operation<HederaOperationExtra>;

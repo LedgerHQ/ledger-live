@@ -13,6 +13,7 @@ import { getMockedTokenCurrency } from "../test/fixtures/currency";
 import { getMockedTransaction } from "../test/fixtures/transaction";
 import { getTransactionStatus } from "./getTransactionStatus";
 import * as utils from "./utils";
+import { HEDERA_TRANSACTION_KINDS } from "../constants";
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee = new BigNumber(1);
@@ -66,7 +67,7 @@ describe("getTransactionStatus", () => {
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
       properties: {
-        name: "tokenAssociate",
+        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedTokenCurrency,
       },
     });
@@ -117,7 +118,7 @@ describe("getTransactionStatus", () => {
     const mockedAccount = getMockedAccount({ balance: new BigNumber(0) });
     const mockedTransaction = getMockedTransaction({
       properties: {
-        name: "tokenAssociate",
+        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedTokenCurrency,
       },
     });

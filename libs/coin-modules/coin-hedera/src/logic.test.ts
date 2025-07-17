@@ -10,6 +10,7 @@ import {
 import { getMockedAccount, getMockedTokenAccount } from "./test/fixtures/account";
 import { getMockedOperation } from "./test/fixtures/operation";
 import { getMockedTokenCurrency } from "./test/fixtures/currency";
+import { HEDERA_TRANSACTION_KINDS } from "./constants";
 
 describe("logic", () => {
   describe("getTransactionExplorer", () => {
@@ -46,10 +47,18 @@ describe("logic", () => {
 
   describe("isTokenAssociateTransaction", () => {
     test("returns correct value based on tx.properties", () => {
-      expect(isTokenAssociateTransaction({ properties: { name: "tokenAssociate" } } as any)).toBe(
-        true,
-      );
-      expect(isTokenAssociateTransaction({ properties: { name: "transfer" } } as any)).toBe(false);
+      expect(
+        isTokenAssociateTransaction({
+          properties: { name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name },
+        } as any),
+      ).toBe(true);
+
+      expect(
+        isTokenAssociateTransaction({
+          properties: { name: "transfer" },
+        } as any),
+      ).toBe(false);
+
       expect(isTokenAssociateTransaction({} as any)).toBe(false);
     });
   });

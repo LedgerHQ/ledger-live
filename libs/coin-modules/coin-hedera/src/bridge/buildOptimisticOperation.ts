@@ -6,6 +6,7 @@ import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/acc
 import type { HederaOperationExtra, Transaction } from "../types";
 import { getEstimatedFees } from "./utils";
 import { isTokenAssociateTransaction } from "../logic";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 
 const buildOptimisticTokenAssociateOperation = async ({
   account,
@@ -16,7 +17,7 @@ const buildOptimisticTokenAssociateOperation = async ({
 }): Promise<Operation> => {
   invariant(isTokenAssociateTransaction(transaction), "invalid transaction properties");
 
-  const estimatedFee = await getEstimatedFees(account, "TokenAssociate");
+  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenAssociate);
   const value = transaction.amount;
   const type: OperationType = "ASSOCIATE_TOKEN";
 
@@ -49,7 +50,7 @@ const buildOptimisticCoinOperation = async ({
   transaction: Transaction;
   transactionType?: OperationType;
 }): Promise<Operation> => {
-  const estimatedFee = await getEstimatedFees(account, "CryptoTransfer");
+  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
 
@@ -80,7 +81,7 @@ const buildOptimisticTokenOperation = async ({
   tokenAccount: TokenAccount;
   transaction: Transaction;
 }): Promise<Operation> => {
-  const estimatedFee = await getEstimatedFees(account, "TokenTransfer");
+  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenTransfer);
   const value = transaction.amount;
   const type: OperationType = "OUT";
 

@@ -14,13 +14,14 @@ import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
 import { isTokenAssociateTransaction, isTokenAssociationRequired } from "../logic";
-import type { HederaOperationType, Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "../types";
 import {
   calculateAmount,
   checkAccountTokenAssociationStatus,
   getCurrencyToUSDRate,
   getEstimatedFees,
 } from "./utils";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -33,7 +34,7 @@ export const getTransactionStatus: AccountBridge<
   if (isTokenAssociateTransaction(transaction)) {
     const [usdRate, estimatedFees] = await Promise.all([
       getCurrencyToUSDRate(account.currency),
-      getEstimatedFees(account, "TokenAssociate"),
+      getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenAssociate),
     ]);
 
     const amount = BigNumber(0);
@@ -60,9 +61,9 @@ export const getTransactionStatus: AccountBridge<
 
   const subAccount = findSubAccountById(account, transaction?.subAccountId || "");
   const isTokenTransaction = isTokenAccount(subAccount);
-  const operationType: HederaOperationType = isTokenTransaction
-    ? "TokenTransfer"
-    : "CryptoTransfer";
+  const operationType: HEDERA_OPERATION_TYPES = isTokenTransaction
+    ? HEDERA_OPERATION_TYPES.TokenTransfer
+    : HEDERA_OPERATION_TYPES.CryptoTransfer;
 
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired();
@@ -85,10 +86,6 @@ export const getTransactionStatus: AccountBridge<
     getEstimatedFees(account, operationType),
   ]);
 
-  if (transaction.amount.eq(0) && !transaction.useAllAmount) {
-    errors.amount = new AmountRequired();
-  }
-
   if (isTokenTransaction) {
     if (!errors.recipient) {
       try {
@@ -103,6 +100,10 @@ export const getTransactionStatus: AccountBridge<
       } catch {
         warnings.unverifiedAssociation = new HederaRecipientTokenAssociationUnverified();
       }
+    }
+
+    if (transaction.amount.eq(0)) {
+      errors.amount = new AmountRequired();
     }
 
     if (subAccount.balance.isLessThan(calculatedAmount.totalSpent)) {

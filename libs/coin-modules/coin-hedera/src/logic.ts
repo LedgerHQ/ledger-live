@@ -1,5 +1,6 @@
 import type { ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import { HEDERA_TRANSACTION_KINDS } from "./constants";
 import type {
   HederaAccount,
   HederaOperationExtra,
@@ -23,7 +24,7 @@ const getTransactionExplorer = (
 const isTokenAssociateTransaction = (
   tx: Transaction,
 ): tx is Extract<Required<Transaction>, { properties: TokenAssociateProperties }> => {
-  return tx.properties?.name === "tokenAssociate";
+  return tx.properties?.name === HEDERA_TRANSACTION_KINDS.TokenAssociate.name;
 };
 
 const isAutoTokenAssociationEnabled = (account: AccountLike) => {
@@ -46,6 +47,9 @@ const isValidExtra = (extra: unknown): extra is HederaOperationExtra => {
   return !!extra && typeof extra === "object" && !Array.isArray(extra);
 };
 
+// disables the "Continue" button in the Send modal's Recipient step during token transfers if:
+// - the recipient is not associated with the token
+// - the association status can't be verified
 const sendRecipientCanNext = (status: TransactionStatus) => {
   const { missingAssociation, unverifiedAssociation } = status.warnings;
 

@@ -3,6 +3,7 @@ import { createBridges } from ".";
 import { getEstimatedFees } from "./utils";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account";
 import { getMockedTokenCurrency } from "../test/fixtures/currency";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 
 describe("js-estimateMaxSpendable", () => {
   let bridge: ReturnType<typeof createBridges>;
@@ -13,7 +14,7 @@ describe("js-estimateMaxSpendable", () => {
     bridge = createBridges(signer);
 
     const mockedAccount = getMockedAccount();
-    const crypto = await getEstimatedFees(mockedAccount, "CryptoTransfer");
+    const crypto = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
 
     estimatedFees = { crypto };
   });
