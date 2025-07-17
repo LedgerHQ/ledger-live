@@ -6,10 +6,60 @@ import {
   mockCurrenciesByProvider,
   mockCurrencyIds,
   mockEthCryptoCurrency,
-} from "../../__mocks__/currencies.mock";
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { NavigatorName, ScreenName } from "~/const/navigation";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+
+const mockNavigate = jest.fn();
+const mockNavigation = {
+  navigate: mockNavigate,
+  goBack: jest.fn(),
+  addListener: jest.fn(),
+  removeListener: jest.fn(),
+  setParams: jest.fn(),
+  dispatch: jest.fn(),
+  canGoBack: jest.fn(),
+  isFocused: jest.fn(),
+  getParent: jest.fn(),
+  replace: jest.fn(),
+  push: jest.fn(),
+  pop: jest.fn(),
+  popToTop: jest.fn(),
+  reset: jest.fn(),
+  getId: jest.fn(),
+  getState: jest.fn(),
+  setOptions: jest.fn(),
+};
+
+jest.mock("@react-navigation/native", () => ({
+  useNavigation: () => mockNavigation,
+  NavigationContainer: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+// Mock the useProviders hook
+const mockSetProviders = jest.fn();
+const mockGetNetworksFromProvider = jest.fn();
+jest.mock("../useProviders", () => ({
+  useProviders: () => ({
+    providers: null,
+    setProviders: mockSetProviders,
+    getNetworksFromProvider: mockGetNetworksFromProvider,
+  }),
+  getProvider: jest.fn(() => null),
+}));
+
+// Mock the modularDrawer utils
+jest.mock("@ledgerhq/live-common/modularDrawer/utils/index", () => ({
+  getEffectiveCurrency: jest.fn(currency => currency),
+  isCorrespondingCurrency: jest.fn(() => true),
+}));
 
 describe("useModularDrawerState", () => {
   const mockCurrency = mockBtcCryptoCurrency;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should initialize state correctly", () => {
     const { result } = renderHook(() =>
@@ -134,5 +184,30 @@ describe("useModularDrawerState", () => {
       result.current.handleBack(ModularDrawerStep.Account);
     });
     expect(goToStep).toHaveBeenCalledWith(ModularDrawerStep.Asset);
+  });
+
+  // test handleSingleCurrencyFlow
+  it("should handle single currency flow", () => {
+    const goToStep = jest.fn();
+    const { result } = renderHook(() =>
+      useModularDrawerState({
+        goToStep,
+        currencyIds: [mockCurrency.id],
+        currenciesByProvider: mockCurrenciesByProvider,
+      }),
+    );
+    act(() => {
+      result.current.selectAsset(mockCurrency);
+    });
+    expect(result.current.asset).toEqual(mockCurrency);
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency: mockCurrency,
+        createTokenAccount: false,
+        context: AddAccountContexts.AddAccounts,
+      },
+    });
   });
 });

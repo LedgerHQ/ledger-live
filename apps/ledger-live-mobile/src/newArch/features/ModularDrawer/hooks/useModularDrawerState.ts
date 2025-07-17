@@ -12,14 +12,14 @@ import {
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import { AssetSelectionNavigationProps } from "../../AssetSelection/types";
 
 type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
   currenciesByProvider: CurrenciesByProviderId[];
-  isDrawerOpen: boolean;
+  isDrawerOpen?: boolean;
 };
 
 /**
@@ -79,12 +79,10 @@ export function useModularDrawerState({
         const uniqueNetworks = uniqWith(availableNetworksList, (a, b) => a.id === b.id);
         setAvailableNetworks(uniqueNetworks);
         goToStep?.(ModularDrawerStep.Network);
+      } else if (isAddAccountFlow) {
+        processNetworkSelection(selected);
       } else {
-        if (isAddAccountFlow) {
-          processNetworkSelection(selected);
-        } else {
-          goToStep?.(ModularDrawerStep.Account);
-        }
+        goToStep?.(ModularDrawerStep.Account);
       }
     },
     [goToStep, isAddAccountFlow, processNetworkSelection],
@@ -152,7 +150,6 @@ export function useModularDrawerState({
       if (isAddAccountFlow) {
         processNetworkSelection(selectedAsset);
       } else {
-        // TODO in incr2
         goToStep?.(ModularDrawerStep.Account);
       }
     },

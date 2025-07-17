@@ -5,7 +5,7 @@ import { mockOnAssetSelected, mockDomMeasurements } from "./shared";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import {
   arbitrumCurrency,
   baseCurrency,
