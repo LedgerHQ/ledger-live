@@ -1086,7 +1086,7 @@
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     },
     "AddressesSanctionedError" : {
-      "title" : "Garantiza tu seguridad",
+      "title" : "Queremos garantizar tu seguridad",
       "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
     }
   },
