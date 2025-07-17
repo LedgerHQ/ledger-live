@@ -101,6 +101,7 @@ const AccountsSection = ({
           sourceScreenName={ScreenName.Asset}
           disabled={isAddAccountCtaDisabled}
           onClick={onAddAccount}
+          currency={currencyId}
         />
       </FeatureToggle>
       {accounts.length > NB_MAX_ACCOUNTS_TO_DISPLAY ? (

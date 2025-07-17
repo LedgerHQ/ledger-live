@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import uniqWith from "lodash/uniqWith";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProvider, useProviders } from "./useProviders";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -19,6 +19,7 @@ type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
   currenciesByProvider: CurrenciesByProviderId[];
+  isDrawerOpen: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export function useModularDrawerState({
   goToStep,
   currencyIds,
   currenciesByProvider,
+  isDrawerOpen,
 }: ModularDrawerStateProps) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -190,6 +192,40 @@ export function useModularDrawerState({
     [goToAccount, providers],
   );
 
+  const handleSingleCurrencyFlow = useCallback(
+    (currency: CryptoOrTokenCurrency) => {
+      const provider = getProvider(currency, currenciesByProvider);
+
+      setProviders(provider);
+      if (!provider) {
+        selectAsset(currency);
+        return;
+      }
+      const networks = getNetworksFromProvider(provider, currencyIds);
+
+      const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
+
+      goToNetwork(effectiveCurrency, networks);
+    },
+    [
+      currenciesByProvider,
+      setProviders,
+      getNetworksFromProvider,
+      currencyIds,
+      goToNetwork,
+      selectAsset,
+    ],
+  );
+
+  useEffect(() => {
+    if (isDrawerOpen && currencyIds.length === 1 && !asset) {
+      const currency = findCryptoCurrencyById(currencyIds[0]);
+      if (currency) {
+        handleSingleCurrencyFlow(currency);
+      }
+    }
+  }, [asset, currencyIds, handleSingleCurrencyFlow, isDrawerOpen]);
+
   return {
     asset,
     network,
@@ -202,5 +238,6 @@ export function useModularDrawerState({
     handleBack,
     handleAsset,
     handleNetwork,
+    handleSingleCurrencyFlow,
   };
 }
