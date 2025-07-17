@@ -3844,6 +3844,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Solde de staking",
+      "stakedBalanceTooltip" : "Montant actuellement staké auprès de validateurs.",
+      "withdrawableBalance" : "Solde disponible au retrait",
+      "withdrawableBalanceTooltip" : "Montant des actifs déstakés qui peuvent actuellement être retirés.",
+      "pendingBalance" : "Solde en attente",
+      "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles."
+    },
+    "common" : {
+      "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+      "viewDetails" : "Voir les détails",
+      "connectDevice" : {
+        "title" : "Appareil"
+      },
+      "confirmation" : {
+        "title" : "Confirmation"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Montant staké",
+        "unstakedAmount" : "Montant déstaké",
+        "withdrawnAmount" : "Montant retiré"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses Aptos en stakant vos actifs.",
+        "info" : "Fonctionnement du staking",
+        "earnRewards" : "Gagnez des récompenses"
+      },
+      "table" : {
+        "header" : "Position(s) de staking",
+        "stake" : "Ajouter",
+        "active" : "Staké",
+        "pendingInactive" : "En attente de libération",
+        "inactive" : "Disponible au retrait",
+        "nextUnlock" : "Disponibilité"
+      },
+      "nextUnlockIn" : "Disponible dans",
+      "unstake" : "Déstaker",
+      "withdraw" : "Retirer",
+      "restake" : "Réactiver",
+      "activeTooltip" : "Les montants stakés génèrent des récompenses.",
+      "inactiveTooltip" : "Les montants déstakés ne génèrent plus de récompenses.",
+      "commission" : "Commission",
+      "totalStake" : "Stake total",
+      "minSafeWarning" : "Solde insuffisant",
+      "reserveWarning" : "Conservez au minimum {{amount}} APT dans votre compte pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées",
+      "flow" : {
+        "title" : "Staker",
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en stakant vos Aptos auprès d’un validateur.",
+            "bullet" : ["Vous gardez la propriété de vos actifs stakés.", "Stakez avec votre appareil Ledger.", "Les actifs seront disponibles entre 0 et 14 jours après avoir été déstakés."],
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            }
+          },
+          "amount" : {
+            "title" : "Montant"
+          },
+          "validator" : {
+            "title" : "Validateurs",
+            "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "CG de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur la blockchain.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Réactiver le staking",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "subtitle" : "Le processus de restaking placera à nouveau en staking votre solde disponible au retrait.",
+            "warning" : "Le solde disponible sera restaké dans son intégralité. Vous pourrez retirer le montant restaké après avoir déstaké et à la fin de la période d’immobilisation.",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à restaker"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien restakés.",
+              "description" : "Vous avez restaké {{amount}} avec {{validator}}.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Solde d’actifs stakés insuffisant pour déstaker.",
+      "flow" : {
+        "title" : "Déstaker",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "subtitle" : "Le processus de déstaking va durer {{timeToUnlock}}.",
+            "subtitle2" : "Le processus de déstaking peut durer jusqu’à 30 jours.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant déstaké sera disponible pour retrait après une période d’immobilisation.",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à déstaker"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien déstakés",
+              "description" : "Vous avez déstaké {{amount}} de {{validator}}.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Solde d’actifs insuffisant pour effectuer un retrait.",
+      "flow" : {
+        "title" : "Retirer",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à retirer"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Retrait des actifs effectué",
+              "description" : "Vous avez retiré {{amount}} de {{validator}}.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Faites fructifier vos ETH",
@@ -3951,7 +4120,7 @@
     "account" : {
       "stakedBalance" : "Solde de staking",
       "stakedBalanceTooltip" : "Montant actuellement staké auprès de validateurs.",
-      "availableBalance" : "Solde pouvant être retiré",
+      "availableBalance" : "Solde disponible au retrait",
       "availableBalanceTooltip" : "Montant des actifs déstakés qui peuvent actuellement être retirés.",
       "pendingBalance" : "Solde en attente",
       "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
@@ -5884,9 +6053,29 @@
       "title" : "Échec de l’estimation des frais",
       "description" : "Échec de l’estimation des frais sur le réseau. Vérifiez les entrées, la transaction risque de ne pas aboutir."
     },
+    "NotEnoughToStake" : {
+      "title" : "Vous ne pouvez pas staker moins de {{minStake}} {{currency}}.",
+      "description" : "Vous devez allouer au moins {{minStake}} {{currency}} pour staker."
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a un solde suffisant."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Déstaker plus de {{maxAmount}} entraîne un déstaking intégral ({{totalAmount}})",
+      "description" : "Si vous déstakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera déstaké."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Restaker plus de {{maxAmount}} entraîne un restaking intégral ({{totalAmount}})",
+      "description" : "Si vous restakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera restaké."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Montant minimum à restaker : {{minAmount}}",
+      "description" : "Vous ne pouvez pas restaker moins de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Montant minimum à déstaker : {{minAmount}}",
+      "description" : "Vous ne pouvez pas déstaker moins de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Solde insuffisant pour couvrir les frais",
