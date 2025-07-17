@@ -1,9 +1,27 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
-import { CryptoAssetsStore } from "./type";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 describe("Testing CryptoAssetStore", () => {
+  it("should return the default methods from cryptoassets libs when feature flag does not exists", () => {
+    LiveConfig.setConfig({
+      some_other_feature: {
+        type: "boolean",
+        default: true,
+      },
+    });
+
+    const store = getCryptoAssetsStore();
+    expect(store).toEqual({
+      findTokenByAddress: legacy.findTokenByAddress,
+      getTokenById: legacy.getTokenById,
+      findTokenById: legacy.findTokenById,
+      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
+      findTokenByTicker: legacy.findTokenByTicker,
+    });
+  });
+
   it("should return the default methods from cryptoassets libs when feature flag is disabled", () => {
     LiveConfig.setConfig({
       feature_cal_lazy_loading: {

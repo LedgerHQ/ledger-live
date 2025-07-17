@@ -1,11 +1,11 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CryptoAssetsStore } from "./type";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 
-let cryptoAssetsStoreRef: CryptoAssetsStore | undefined = undefined;
+let cryptoAssetsStore: CryptoAssetsStore | undefined = undefined;
 
 export function setCryptoAssetsStore(store: CryptoAssetsStore) {
-  cryptoAssetsStoreRef = store;
+  cryptoAssetsStore = store;
 }
 
 const legacyStore: CryptoAssetsStore = {
@@ -16,15 +16,15 @@ const legacyStore: CryptoAssetsStore = {
   findTokenByTicker: legacy.findTokenByTicker,
 };
 
-export function getCryptoAssetsStore(): CryptoAssetsStore | undefined {
+export function getCryptoAssetsStore(): CryptoAssetsStore {
   const featureEnabled = LiveConfig.getValueByKey("feature_cal_lazy_loading");
   if (!featureEnabled) {
     return legacyStore;
   }
 
-  if (!cryptoAssetsStoreRef) {
+  if (!cryptoAssetsStore) {
     throw new Error("CryptoAssetsStore is not set. Please call setCryptoAssetsStore first.");
   }
 
-  return cryptoAssetsStoreRef;
+  return cryptoAssetsStore;
 }
