@@ -16,6 +16,7 @@ import { lastConnectedDeviceSelector, onboardingTypeSelector } from "~/reducers/
 import { OnboardingType } from "~/reducers/types";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 /**
  * Returns a callback to set the navigation state for the Ledger Recover upsell post onboarding
@@ -35,6 +36,7 @@ export function useOpenRecoverUpsellPostOnboarding() {
   const dispatch = useDispatch();
   const [redirectionStarted, setRedirectionStarted] = useState(false);
   const isFocused = useIsFocused();
+  const startPostOnboarding = useStartPostOnboardingCallback();
 
   useEffect(() => {
     if (redirectionStarted && !isFocused) {
@@ -46,9 +48,18 @@ export function useOpenRecoverUpsellPostOnboarding() {
     const internetConnected = await internetReachable();
     if (internetConnected && recoverFeature?.enabled) {
       const redirect = (url?: string) => {
+        // Set correct post onboarding state
+        startPostOnboarding({
+          deviceModelId: lastConnectedDevice.modelId,
+          disableNavigation: true,
+        });
+
         const routes: PartialRoute<Route<string, object | undefined>>[] = [
           {
-            name: NavigatorName.Main,
+            name: NavigatorName.PostOnboarding,
+            state: {
+              routes: [{ name: ScreenName.PostOnboardingHub }],
+            },
           },
         ];
 
@@ -98,5 +109,6 @@ export function useOpenRecoverUpsellPostOnboarding() {
     recoverPostOnboardingURI,
     touchScreenURI,
     navigation,
+    startPostOnboarding,
   ]);
 }
