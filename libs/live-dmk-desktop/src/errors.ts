@@ -1,5 +1,6 @@
 import {
   DeviceBusyError,
+  DmkError,
   DeviceDisconnectedBeforeSendingApdu,
   DeviceDisconnectedWhileSendingError,
 } from "@ledgerhq/device-management-kit";
@@ -27,3 +28,12 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
 
   return false;
 };
+
+export const isWebHidSendReportError = (error: unknown): boolean => {
+  if (error) {
+    return error instanceof WebHidSendReportError;
+  }
+  return false;
+};
+
+export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
