@@ -1,5 +1,5 @@
 import { LiveConfig } from "@ledgerhq/live-config/lib/LiveConfig";
-import { convertERC20, convertSplTokens, getCryptoAssetsStore, setCryptoAssetsStore } from ".";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { CryptoAssetsStore } from "./type";
 
@@ -16,12 +16,9 @@ describe("Testing CryptoAssetStore", () => {
     expect(store).toEqual({
       findTokenByAddress: legacy.findTokenByAddress,
       getTokenById: legacy.getTokenById,
-      addTokens: legacy.addTokens,
-      convertERC20: convertERC20,
       findTokenById: legacy.findTokenById,
       findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
       findTokenByTicker: legacy.findTokenByTicker,
-      convertSplTokens: convertSplTokens,
     });
   });
 
