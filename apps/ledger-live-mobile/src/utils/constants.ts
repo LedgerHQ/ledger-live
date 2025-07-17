@@ -80,3 +80,7 @@ export const EXCLUDED_ERROR_DESCRIPTION = [
   "Missing or invalid topic field", // wallet connect issue
   "Bad status on response: 503", // cryptoorg node
 ];
+
+export const FIRST_PARTY_MAIN_HOST_DOMAIN = "ledger.com";
+export const PORTFOLIO_VIEW_ID = "Portfolio";
+export const MARKET_LIST_VIEW_ID = "MarketList";
