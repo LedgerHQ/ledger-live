@@ -45,14 +45,16 @@ export function useOpenRecoverUpsellPostOnboarding() {
   }, [redirectionStarted, isFocused, dispatch]);
 
   return useCallback(async () => {
-    const internetConnected = await internetReachable();
+    const internetConnected = (await internetReachable()) ?? false;
     if (internetConnected && recoverFeature?.enabled) {
       const redirect = (url?: string) => {
-        // Set correct post onboarding state
-        startPostOnboarding({
-          deviceModelId: lastConnectedDevice.modelId,
-          disableNavigation: true,
-        });
+        if (lastConnectedDevice !== null) {
+          // Set correct post onboarding state
+          startPostOnboarding({
+            deviceModelId: lastConnectedDevice.modelId,
+            disableNavigation: true,
+          });
+        }
 
         const routes: PartialRoute<Route<string, object | undefined>>[] = [
           {
