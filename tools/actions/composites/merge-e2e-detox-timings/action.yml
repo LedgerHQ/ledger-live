@@ -1,0 +1,88 @@
+name: Merge Timing Files
+
+description: Merge and cache E2E timing files for a given platform
+
+inputs:
+  platform:
+    description: "Platform (ios or android)"
+    required: true
+  artifacts_dir:
+    description: "Directory containing timing artifacts"
+    required: false
+    default: "e2e/mobile/artifacts"
+  aws_access_key_id:
+    description: "AWS access key ID"
+    required: true
+  aws_secret_access_key:
+    description: "AWS secret access key"
+    required: true
+  aws_session_token:
+    description: "AWS session token"
+    required: true
+  aws_region:
+    description: "AWS region"
+    required: true
+  cache_bucket:
+    description: "S3 cache bucket name"
+    required: true
+  github_ref:
+    description: "GitHub ref for cache key"
+    required: true
+  github_run_id:
+    description: "GitHub run ID for cache key"
+    required: true
+  roleName:
+    description: "AWS IAM role name for cache access"
+    required: false
+  accountId:
+    description: "AWS account ID for cache access"
+    required: false
+  key:
+    description: "Cache key prefix for timing files"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Download timing files
+      uses: actions/download-artifact@v4
+      with:
+        pattern: "${{ inputs.key }}-*"
+        merge-multiple: true
+
+    - name: List timing files in artifacts_dir
+      shell: bash
+      run: |
+        echo "Contents of ${{ inputs.artifacts_dir }}:"
+        ls -l "${{ inputs.artifacts_dir }}" || echo "No such directory"
+
+    - name: Merge timing files
+      shell: bash
+      run: |
+        pattern="e2e-test-results-${{ inputs.platform }}-shard-*.json"
+        if compgen -G "$pattern" > /dev/null; then
+          jq -s 'map(select(type == "object")) | reduce .[] as $item ({}; . * $item)' $pattern > "./e2e-test-results-${{ inputs.platform }}.json"
+          echo "Merged timing files into ./e2e-test-results-${{ inputs.platform }}.json"
+        else
+          echo "No timing files found for pattern $pattern, skipping merge."
+          echo '{}' > "./e2e-test-results-${{ inputs.platform }}.json"
+        fi
+
+    - name: Copy merged timing file to artifacts dir
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.artifacts_dir }}
+        cp ./e2e-test-results-${{ inputs.platform }}.json ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+
+    - name: Save merged timing file to cache
+      uses: tespkg/actions-cache/save@v1
+      with:
+        path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+        key: "${{ inputs.key }}"
+        accessKey: ${{ inputs.aws_access_key_id }}
+        secretKey: ${{ inputs.aws_secret_access_key }}
+        sessionToken: ${{ inputs.aws_session_token }}
+        bucket: ${{ inputs.cache_bucket }}
+        region: ${{ inputs.aws_region }}
+        use-fallback: false

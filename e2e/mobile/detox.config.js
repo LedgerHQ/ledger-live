@@ -41,7 +41,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: !!process.env.CI,
+      shutdownDevice: false,
     },
   },
   apps: {
@@ -90,12 +90,15 @@ module.exports = {
       device: {
         name: "iOS Simulator",
       },
+      reuse: true,
+      headless: !!process.env.CI,
     },
     emulator: {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator",
       },
+      reuse: true,
       gpuMode: "swiftshader_indirect",
       headless: !!process.env.CI,
     },

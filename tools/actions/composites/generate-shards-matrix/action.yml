@@ -1,0 +1,53 @@
+name: "Generate Shards Matrix"
+description: "Generates iOS and Android test file lists and sharding matrices for E2E tests"
+inputs:
+  test_filter:
+    description: "Test name filter (space-separated, optional)"
+    required: false
+    default: ""
+  event_name:
+    description: "GitHub event name (workflow_dispatch or schedule)"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Get test files
+      id: test-files
+      shell: bash
+      run: |
+        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.js "${{ inputs.test_filter }}" "" e2e/mobile)
+        echo "test_files_for_sharding<<EOF" >> $GITHUB_OUTPUT
+        echo "$TEST_FILES"                 >> $GITHUB_OUTPUT
+        echo "EOF"                         >> $GITHUB_OUTPUT
+
+    - name: Total shards
+      id: shard-counts
+      shell: bash
+      run: |
+        TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | tr '\\n' '\n' | grep -c .)
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
+          SHARD_COUNT=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
+        else
+          SHARD_COUNT=$(( (TEST_COUNT + 12) / 13 ))
+          SHARD_COUNT=$(( SHARD_COUNT > 12 ? 12 : SHARD_COUNT ))
+          SHARD_COUNT=$(( SHARD_COUNT < 2 ? 2 : SHARD_COUNT ))
+        fi
+        echo "SHARD_COUNT=$SHARD_COUNT" >> "$GITHUB_ENV"
+        echo "Calculated SHARD_COUNT=$SHARD_COUNT for event ${{ github.event_name }}"
+
+    - name: Generate shards matrix JSON
+      id: set-matrix
+      shell: bash
+      run: |
+        jq -cn --argjson count "${{ env.SHARD_COUNT }}" '[range(1; $count + 1) | { "shard": ., "total": $count }]' > matrix.json
+        echo "matrix=$(cat matrix.json)" >> "$GITHUB_OUTPUT"
+        echo "Generated matrix: $(cat matrix.json)"
+
+outputs:
+  matrix:
+    description: "Shards matrix JSON"
+    value: ${{ steps.set-matrix.outputs.matrix }}
+  test_files_for_sharding:
+    description: "All test files for sharding (multi-line, both platforms)"
+    value: ${{ steps.test-files.outputs.test_files_for_sharding }}
