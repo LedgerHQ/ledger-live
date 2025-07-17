@@ -556,6 +556,11 @@ export async function activateContractData() {
   await pressBoth();
 }
 
+export async function goToSettings() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+}
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   let deviceLabels: string[];
 
