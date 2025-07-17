@@ -314,7 +314,10 @@ export const getBalances = async (addr: string) => {
   const frozenBalance = new BigNumber(balanceInfo.frozen || "0");
 
   const frozenMinusReserved = frozenBalance.minus(reservedBalance);
-  const spendableBalance = balance.minus(BigNumber.max(frozenMinusReserved, EXISTENTIAL_DEPOSIT));
+  const spendableBalance = BigNumber.max(
+    balance.minus(BigNumber.max(frozenMinusReserved, EXISTENTIAL_DEPOSIT)),
+    new BigNumber(0),
+  );
 
   return {
     blockHeight: Number(balanceInfo.at.height),
