@@ -18,6 +18,10 @@ import {
   UtxoStrategy,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
+import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 
 type CoinControlRowProps = {
   utxo: BitcoinOutput;
@@ -56,15 +60,17 @@ const Container = styled(Box).attrs<{
       p.disabled ? p.theme.colors.palette.text.shade20 : p.theme.colors.palette.primary.main};
   }
 `;
+
 export const CoinControlRow = ({
   utxo,
   utxoStrategy,
   status,
   account,
   totalExcludedUTXOS,
+  highlight = false,
   updateTransaction,
   bridge,
-}: CoinControlRowProps) => {
+}: CoinControlRowProps & { highlight?: boolean }) => {
   const unit = useAccountUnit(account);
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.excluded ? s.reason || "" : "";
@@ -92,8 +98,23 @@ export const CoinControlRow = ({
     };
     updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
   };
+
+  const explorerView = getDefaultExplorerView(account.currency);
+  const txUrl = getTransactionExplorer(explorerView, utxo.hash);
+
+  console.log({ explorerView, txUrl });
   return (
-    <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>
+    <Container
+      disabled={unconfirmed}
+      flow={2}
+      horizontal
+      alignItems="center"
+      onClick={onClick}
+      style={{
+        backgroundColor: highlight ? "rgba(255, 210, 0, 0.08)" : "transparent",
+        borderLeft: highlight ? "2px solid orange" : "none",
+      }}
+    >
       {unconfirmed ? (
         <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.pending"} />}>
           <InfoCircle size={16} />
@@ -156,30 +177,18 @@ export const CoinControlRow = ({
           <SplitAddress value={utxo.address || ""} />
         </Text>
 
-        <Box horizontal justifyContent="flex-start">
+        <Box horizontal alignItems="center" justifyContent="flex-start" style={{ gap: 4 }}>
           <Text
-            style={{
-              whiteSpace: "nowrap",
-            }}
+            style={{ whiteSpace: "nowrap" }}
             color="palette.text.shade50"
             ff="Inter|Medium"
             fontSize={3}
           >
             #{utxo.outputIndex} of
           </Text>
-          <Cell
-            grow
-            shrink
-            style={{
-              display: "block",
-              marginLeft: 4,
-            }}
-            px={0}
-          >
+          <Cell grow shrink px={0}>
             <Text
-              style={{
-                whiteSpace: "nowrap",
-              }}
+              style={{ whiteSpace: "nowrap" }}
               color="palette.text.shade50"
               ff="Inter|Medium"
               fontSize={3}
@@ -187,6 +196,26 @@ export const CoinControlRow = ({
               <SplitAddress value={utxo.hash} />
             </Text>
           </Cell>
+
+          <Box
+            horizontal
+            alignItems="center"
+            style={{ opacity: 0.3 }}
+            className="utxo-hover-actions"
+          >
+            {txUrl ? (
+              <Box ml={2}>
+                <LinkWithExternalIcon
+                  label=""
+                  onClick={() =>
+                    openURL(txUrl, "openTransactionInExplorer", {
+                      currencyId: account.currency.id,
+                    })
+                  }
+                />
+              </Box>
+            ) : null}
+          </Box>
         </Box>
       </Box>
     </Container>

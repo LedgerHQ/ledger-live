@@ -1,4 +1,4 @@
-import { Address, Block, TX } from "../storage/types";
+import { Address, Block, Output, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
 import { IExplorer } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -211,6 +211,38 @@ class BitcoinLikeExplorer implements IExplorer {
     });
 
     return { txs: hydratedTxs, nextPageToken };
+  }
+
+  mapExplorerUtxoToOutput(utxo: {
+    height: number;
+    outputIndex: number;
+    txId: string;
+    value: string;
+    owner: string;
+  }): Output {
+    return {
+      value: utxo.value,
+      address: utxo.owner,
+      output_hash: utxo.txId,
+      output_index: utxo.outputIndex,
+      block_height: utxo.height,
+      rbf: false, // FIXME:  no info from backend => assume false or enhance later
+    };
+  }
+
+  async getAddressUtxos(address: string): Promise<Output[]> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/address/${address}/utxos`,
+      params: {
+        batch_size: 500,
+        order: "ascending",
+      },
+    });
+    const utxos = data.data || [];
+    console.log({ utxos });
+
+    return utxos.map(this.mapExplorerUtxoToOutput);
   }
 }
 

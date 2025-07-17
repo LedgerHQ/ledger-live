@@ -376,6 +376,15 @@ class BitcoinLikeWallet {
       },
     };
   }
+
+  async getAccountExplorerUtxos(account: Account): Promise<Output[]> {
+    const addresses = await account.xpub.getXpubAddresses();
+    return flatten(
+      await Promise.all(
+        addresses.map(({ address }) => account.xpub.explorer.getAddressUtxos(address)),
+      ),
+    );
+  }
 }
 
 export default BitcoinLikeWallet;

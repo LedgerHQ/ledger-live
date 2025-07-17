@@ -231,8 +231,24 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const _operations = mergeOps(oldOperations, newUniqueOperations);
     const operations = removeReplaced(_operations as BtcOperation[]);
 
+    // const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+    // Attempt to fetch new explorer-based UTXOs
+    let rawUtxosExplorer: WalletOutput[] = [];
+    try {
+      rawUtxosExplorer = await wallet.getAccountExplorerUtxos(walletAccount);
+      console.log({ rawUtxosExplorer });
+    } catch (e) {
+      log("bitcoin/sync", "fallback to wallet-reconstructed UTXOs", e);
+      console.error("failed to get explorer UTXOs");
+    }
+
+    // Always compute legacy way for now
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+
+    // Convert both to BitcoinOutput
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    const utxosExplorer = rawUtxosExplorer.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    console.log({ rawUtxos, rawUtxosExplorer, utxos, utxosExplorer });
 
     return {
       id: accountId,
@@ -246,6 +262,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       blockHeight,
       bitcoinResources: {
         utxos,
+        utxosExplorer,
         walletAccount,
       },
     };

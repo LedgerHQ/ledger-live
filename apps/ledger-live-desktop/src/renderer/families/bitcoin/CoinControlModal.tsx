@@ -20,6 +20,12 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+// import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+// import { openURL } from "~/renderer/linking";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import { useMemo } from "react";
 
 type Props = {
   isOpened?: boolean;
@@ -48,6 +54,7 @@ const CoinControlModal = ({
   const onClickLink = useCallback(() => openURL(urls.coinControl), []);
 
   const unit = useAccountUnit(account);
+  const explorerView = getDefaultExplorerView(account.currency);
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
   const { utxoStrategy } = transaction;
@@ -58,8 +65,16 @@ const CoinControlModal = ({
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
   const returning = (status.txOutputs || []).find(output => !!output.isChange);
+  const legacyUtxoKeys = new Set(
+    bitcoinResources.utxos.map(utxo => `${utxo.hash}:${utxo.outputIndex}`),
+  );
+
+  const explorerUtxoKeys = new Set(
+    (bitcoinResources.utxosExplorer || []).map(utxo => `${utxo.hash}:${utxo.outputIndex}`),
+  );
+
   return (
-    <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
+    <Modal width={1200} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
       <ModalBody
         title={<Trans i18nKey="bitcoin.modalTitle" />}
@@ -69,6 +84,7 @@ const CoinControlModal = ({
             <PickingStrategy transaction={transaction} account={account} onChange={onChange} />
 
             <Separator />
+
             <Box mt={0} mb={4} horizontal justifyContent="space-between">
               <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
                 <Trans i18nKey="bitcoin.selected" />
@@ -78,9 +94,7 @@ const CoinControlModal = ({
                   color="palette.text.shade50"
                   ff="Inter|Medium"
                   fontSize={13}
-                  style={{
-                    paddingRight: 5,
-                  }}
+                  style={{ paddingRight: 5 }}
                 >
                   <Trans i18nKey="bitcoin.amount" />
                 </Text>
@@ -96,20 +110,52 @@ const CoinControlModal = ({
                 </Text>
               </Box>
             </Box>
+            <Box flow={2} horizontal>
+              <Box flex={1} pr={2}>
+                <Text ff="Inter|Bold" fontSize={3}>
+                  Legacy UTXOs
+                </Text>
+                {bitcoinResources.utxos.map(utxo => {
+                  const key = `${utxo.hash}:${utxo.outputIndex}`;
+                  const highlight = !explorerUtxoKeys.has(key); // ❗️unique to legacy
+                  return (
+                    <CoinControlRow
+                      key={`legacy-${key}`}
+                      utxo={utxo}
+                      highlight={highlight}
+                      utxoStrategy={utxoStrategy}
+                      totalExcludedUTXOS={totalExcludedUTXOS}
+                      updateTransaction={updateTransaction}
+                      bridge={bridge}
+                      status={status}
+                      account={account}
+                    />
+                  );
+                })}
+              </Box>
 
-            <Box flow={2}>
-              {bitcoinResources.utxos.map(utxo => (
-                <CoinControlRow
-                  key={utxo.hash}
-                  utxoStrategy={utxoStrategy}
-                  totalExcludedUTXOS={totalExcludedUTXOS}
-                  utxo={utxo}
-                  updateTransaction={updateTransaction}
-                  bridge={bridge}
-                  status={status}
-                  account={account}
-                />
-              ))}
+              <Box flex={1} pl={2}>
+                <Text ff="Inter|Bold" fontSize={3}>
+                  Explorer UTXOs
+                </Text>
+                {(bitcoinResources.utxosExplorer || []).map(utxo => {
+                  const key = `${utxo.hash}:${utxo.outputIndex}`;
+                  const highlight = !legacyUtxoKeys.has(key); // ❗️unique to explorer
+                  return (
+                    <CoinControlRow
+                      key={`explorer-${key}`}
+                      utxo={utxo}
+                      highlight={highlight}
+                      utxoStrategy={utxoStrategy}
+                      totalExcludedUTXOS={totalExcludedUTXOS}
+                      updateTransaction={updateTransaction}
+                      bridge={bridge}
+                      status={status}
+                      account={account}
+                    />
+                  );
+                })}
+              </Box>
             </Box>
           </Box>
         )}
