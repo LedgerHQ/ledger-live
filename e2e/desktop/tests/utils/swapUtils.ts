@@ -48,23 +48,23 @@ async function modularDrawerFullFlow(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  await app.modularAssetDrawer.selectAssetByTicker(swap.accountToDebit.currency);
-  await app.modularNetworkDrawer.selectNetwork(swap.accountToDebit.currency);
-  await app.modularAccountDrawer.selectAccountByName(swap.accountToDebit);
+  await app.modularDrawer.selectAssetByTicker(swap.accountToDebit.currency);
+  await app.modularDrawer.selectNetwork(swap.accountToDebit.currency);
+  await app.modularDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
 
   await app.swap.selectToAccountCoinSelector(electronApp);
-  await modularDrawerToOnlyFlow(app, electronApp, swap);
+  await modularDrawerSelectToAssetOnlyFlow(app, electronApp, swap);
 }
 
-async function modularDrawerToOnlyFlow(
+async function modularDrawerSelectToAssetOnlyFlow(
   app: Application,
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  await app.modularAssetDrawer.selectAssetByTicker(swap.accountToCredit.currency);
-  await app.modularNetworkDrawer.selectNetwork(swap.accountToCredit.currency);
-  await app.modularAccountDrawer.selectAccountByName(swap.accountToCredit);
+  await app.modularDrawer.selectAssetByTicker(swap.accountToCredit.currency);
+  await app.modularDrawer.selectNetwork(swap.accountToCredit.currency);
+  await app.modularDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
 }
 
@@ -74,7 +74,7 @@ async function handleAssetFromNotSelected(
   swap: Swap,
 ) {
   await app.swap.selectFromAccountCoinSelector(electronApp);
-  const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
+  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
   if (isModularDrawer) {
     await modularDrawerFullFlow(app, electronApp, swap);
   } else {
@@ -90,9 +90,9 @@ async function handleAssetFromSelected(
   swap: Swap,
 ) {
   await app.swap.selectToAccountCoinSelector(electronApp);
-  const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
+  const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
   if (isModularDrawer) {
-    await modularDrawerToOnlyFlow(app, electronApp, swap);
+    await modularDrawerSelectToAssetOnlyFlow(app, electronApp, swap);
   } else {
     await legacyDrawerFlow(app, electronApp, swap);
   }

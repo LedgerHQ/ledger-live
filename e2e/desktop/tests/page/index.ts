@@ -13,7 +13,7 @@ import { LiveApp } from "./liveApp.page";
 import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
 import { Modal } from "../component/modal.component";
-import { ModularAssetDrawer } from "./drawer/modular.asset.drawer";
+import { ModularDrawer } from "./drawer/modular.drawer";
 import { NFTDrawer } from "./drawer/nft.drawer";
 import { NftGallery } from "./nftGallery.page";
 import { OnboardingPage } from "./onboarding.page";
@@ -30,8 +30,6 @@ import { SettingsPage } from "./settings.page";
 import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
-import { ModularNetworkDrawer } from "./drawer/modular.network.drawer";
-import { ModularAccountDrawer } from "./drawer/modular.account.drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -41,10 +39,6 @@ export class Application extends PageHolder {
   public assetPage = new AssetPage(this.page);
   public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public delegate = new DelegateModal(this.page);
-  public settings = new SettingsPage(this.page);
-  public ledgerSync = new LedgerSyncDrawer(this.page);
-  public swap = new SwapPage(this.page);
-  public swapDrawer = new SwapConfirmationDrawer(this.page);
   public delegateDrawer = new DelegateDrawer(this.page);
   public drawer = new Drawer(this.page);
   public layout = new Layout(this.page);
@@ -53,9 +47,7 @@ export class Application extends PageHolder {
   public LockscreenPage = new LockscreenPage(this.page);
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
-  public modularAssetDrawer = new ModularAssetDrawer(this.page);
-  public modularNetworkDrawer = new ModularNetworkDrawer(this.page);
-  public modularAccountDrawer = new ModularAccountDrawer(this.page);
+  public modularDrawer = new ModularDrawer(this.page);
   public nftDrawer = new NFTDrawer(this.page);
   public nftGallery = new NftGallery(this.page);
   public onboarding = new OnboardingPage(this.page);

@@ -236,17 +236,14 @@ const ModularDrawerFlowManager = ({
     }
   };
 
-  const getTestId = (step: ModularDrawerStep): string | undefined => {
-    switch (step) {
-      case MODULAR_DRAWER_STEP.ASSET_SELECTION:
-        return "modular-asset-selection-container";
-      case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
-        return "modular-network-selection-container";
-      case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
-        return "modular-account-selection-container";
-      default:
-        return undefined;
-    }
+  const testIdMap: Record<ModularDrawerStep, string> = {
+    [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modular-asset-selection-container",
+    [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modular-network-selection-container",
+    [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modular-account-selection-container",
+  };
+
+  const getTestId = (step: ModularDrawerStep): string => {
+    return testIdMap[step];
   };
 
   return (

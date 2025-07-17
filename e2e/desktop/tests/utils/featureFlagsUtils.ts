@@ -2,7 +2,7 @@ import { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 export const defaultFeatureFlags: OptionalFeatureMap = {
   lldModularDrawer: {
-    enabled: false,
+    enabled: true,
     params: {
       add_account: true,
       earn_flow: true,

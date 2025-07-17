@@ -57,11 +57,11 @@ for (const token of subAccounts) {
 
         await app.portfolio.openAddAccountModal();
 
-        const isModularDrawer = await app.modularAssetDrawer.isModularDrawerVisible();
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
         if (isModularDrawer) {
-          await app.modularAssetDrawer.validateDrawerItems();
-          await app.modularAssetDrawer.selectAssetByTicker(token.account.currency);
-          await app.modularNetworkDrawer.selectNetwork(token.account.currency);
+          await app.modularDrawer.validateAssetsDrawerItems();
+          await app.modularDrawer.selectAssetByTicker(token.account.currency);
+          await app.modularDrawer.selectNetwork(token.account.currency);
           await app.addAccount.expectAccountModalToBeVisible();
         } else {
           await app.addAccount.expectModalVisibility();

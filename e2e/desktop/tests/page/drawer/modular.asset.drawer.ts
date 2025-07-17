@@ -1,8 +1,8 @@
 import { step } from "../../misc/reporters/step";
-import { Component } from "../abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Drawer } from "../../component/drawer.component";
 
-export class ModularAssetDrawer extends Component {
+export class ModularAssetDrawer extends Drawer {
   private searchInputTestId = "modular-asset-drawer-search-input";
   private modularAssetSelectorContainer = this.page.getByTestId(
     "modular-asset-selection-container",

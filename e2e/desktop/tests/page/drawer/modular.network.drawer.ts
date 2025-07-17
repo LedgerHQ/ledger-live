@@ -1,8 +1,8 @@
 import { step } from "../../misc/reporters/step";
-import { Component } from "../abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Drawer } from "../../component/drawer.component";
 
-export class ModularNetworkDrawer extends Component {
+export class ModularNetworkDrawer extends Drawer {
   private networkSelectorListContainer = this.page
     .getByTestId("modular-network-selection-container")
     .first();

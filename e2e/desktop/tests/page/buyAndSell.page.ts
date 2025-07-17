@@ -9,9 +9,7 @@ import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
-import { ModularAssetDrawer } from "./drawer/modular.asset.drawer";
-import { ModularNetworkDrawer } from "./drawer/modular.network.drawer";
-import { ModularAccountDrawer } from "./drawer/modular.account.drawer";
+import { ModularDrawer } from "./drawer/modular.drawer";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -41,9 +39,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularAssetDrawer = new ModularAssetDrawer(this.page);
-  private modularNetworkDrawer = new ModularNetworkDrawer(this.page);
-  private modularAccountDrawer = new ModularAccountDrawer(this.page);
+  private modularDrawer = new ModularDrawer(this.page);
 
   private providerConfigs: Record<string, ProviderConfig> = {
     [Provider.MOONPAY.uiName]: {
@@ -121,8 +117,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInDrawer(account: AccountType) {
-    const isModularDrawer = await this.modularAssetDrawer.isModularDrawerVisible();
-
+    const isModularDrawer = await this.modularDrawer.isModularAssetsDrawerVisible();
     if (isModularDrawer) {
       await this.selectAssetInModularDrawer(account);
     } else {
@@ -131,10 +126,10 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInModularDrawer(account: AccountType) {
-    await this.modularAssetDrawer.validateDrawerItems();
-    await this.modularAssetDrawer.selectAssetByTicker(account.currency);
-    await this.modularNetworkDrawer.selectNetwork(account.currency);
-    await this.modularAccountDrawer.selectAccountByName(account);
+    await this.modularDrawer.validateAssetsDrawerItems();
+    await this.modularDrawer.selectAssetByTicker(account.currency);
+    await this.modularDrawer.selectNetwork(account.currency);
+    await this.modularDrawer.selectAccountByName(account);
   }
 
   private async selectAssetInLegacyDrawer(account: AccountType) {

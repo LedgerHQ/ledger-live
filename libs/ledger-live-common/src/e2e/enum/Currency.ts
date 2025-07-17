@@ -1,4 +1,5 @@
 import { AppInfos } from "./AppInfos";
+import { Network } from "./Network";
 
 export type CurrencyType = Currency;
 
@@ -8,30 +9,32 @@ export class Currency {
     public readonly ticker: string,
     public readonly id: string,
     public readonly speculosApp: AppInfos,
-    public readonly networks: string[],
+    public readonly networks: Network[],
     public readonly contractAddress?: string,
   ) {}
 
-  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, ["Celo"]);
+  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, [Network.CELO]);
 
   static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE, [
-    "Injective",
+    Network.INJECTIVE,
   ]);
 
-  static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN, ["Bitcoin"]);
+  static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN, [
+    Network.BITCOIN,
+  ]);
 
-  static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, ["Aptos"]);
+  static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, [Network.APTOS]);
 
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
     "bitcoin_testnet",
     AppInfos.BITCOIN_TESTNET,
-    ["Bitcoin Testnet"],
+    [Network.BITCOIN_TESTNET],
   );
 
   static readonly DOGE = new Currency("Dogecoin", "DOGE", "dogecoin", AppInfos.DOGECOIN, [
-    "Dogecoin",
+    Network.DOGECOIN,
   ]);
 
   static readonly ETH = new Currency(
@@ -39,7 +42,7 @@ export class Currency {
     "ETH",
     "ethereum",
     AppInfos.ETHEREUM,
-    ["Ethereum"],
+    [Network.ETHEREUM],
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
   );
 
@@ -48,7 +51,7 @@ export class Currency {
     "𝚝ETH",
     "ethereum_holesky",
     AppInfos.ETHEREUM_HOLESKY,
-    ["Ethereum Holesky"],
+    [Network.ETHEREUM_HOLESKY],
   );
 
   static readonly sepETH = new Currency(
@@ -56,7 +59,7 @@ export class Currency {
     "ETH",
     "ethereum_sepolia",
     AppInfos.ETHEREUM_SEPOLIA,
-    ["Ethereum Sepolia"],
+    [Network.ETHEREUM_SEPOLIA],
   );
 
   static readonly ETC = new Currency(
@@ -64,53 +67,68 @@ export class Currency {
     "ETC",
     "ethereum_classic",
     AppInfos.ETHEREUM_CLASSIC,
-    ["Ethereum Classic"],
+    [Network.ETHEREUM_CLASSIC],
   );
 
-  static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, ["Solana"]);
+  static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, [Network.SOLANA]);
 
   static readonly DOT = new Currency("Polkadot", "DOT", "polkadot", AppInfos.POLKADOT, [
-    "Polkadot",
+    Network.POLKADOT,
   ]);
 
-  static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, ["Tron"]);
+  static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
 
-  static readonly XRP = new Currency("XRP", "XRP", "ripple", AppInfos.RIPPLE, ["XRP"]);
+  static readonly XRP = new Currency("XRP", "XRP", "ripple", AppInfos.RIPPLE, [Network.XRP]);
 
-  static readonly ADA = new Currency("Cardano", "ADA", "cardano", AppInfos.CARDANO, ["Cardano"]);
+  static readonly ADA = new Currency("Cardano", "ADA", "cardano", AppInfos.CARDANO, [
+    Network.CARDANO,
+  ]);
 
-  static readonly XLM = new Currency("Stellar", "XLM", "stellar", AppInfos.STELLAR, ["Stellar"]);
+  static readonly XLM = new Currency("Stellar", "XLM", "stellar", AppInfos.STELLAR, [
+    Network.STELLAR,
+  ]);
 
   static readonly BCH = new Currency("Bitcoin Cash", "BCH", "bitcoin_cash", AppInfos.BITCOIN_CASH, [
-    "Bitcoin Cash",
+    Network.BITCOIN_CASH,
   ]);
 
   static readonly ALGO = new Currency("Algorand", "ALGO", "algorand", AppInfos.ALGORAND, [
-    "Algorand",
+    Network.ALGORAND,
   ]);
 
-  static readonly ATOM = new Currency("Cosmos", "ATOM", "cosmos", AppInfos.COSMOS, ["Cosmos"]);
+  static readonly ATOM = new Currency("Cosmos", "ATOM", "cosmos", AppInfos.COSMOS, [
+    Network.COSMOS,
+  ]);
 
-  static readonly XTZ = new Currency("Tezos", "XTZ", "tezos", AppInfos.TEZOS, ["Tezos"]);
+  static readonly XTZ = new Currency("Tezos", "XTZ", "tezos", AppInfos.TEZOS, [Network.TEZOS]);
 
-  static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, ["Polygon"]);
+  static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
+    Network.POLYGON,
+  ]);
 
   static readonly BSC = new Currency(
     "Binance Smart Chain",
     "BNB",
     "bsc",
     AppInfos.BINANCE_SMART_CHAIN,
-    ["Binance Smart Chain"],
+    [Network.BINANCE_SMART_CHAIN],
   );
 
-  static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON, ["TON"]);
+  static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON, [Network.TON]);
 
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",
     "ethereum/erc20/usd_tether__erc20_",
     AppInfos.ETHEREUM,
-    ["Ethereum", "Arbitrum", "Polygon", "Optimism", "Base", "Scroll"],
+    [
+      Network.ETHEREUM,
+      Network.ARBITRUM,
+      Network.POLYGON,
+      Network.OPTIMISM,
+      Network.BASE,
+      Network.SCROLL,
+    ],
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
   );
 
@@ -119,7 +137,14 @@ export class Currency {
     "USDC",
     "ethereum/erc20/usd__coin",
     AppInfos.ETHEREUM,
-    ["Ethereum", "Arbitrum", "Polygon", "Optimism", "Base", "Scroll"],
+    [
+      Network.ETHEREUM,
+      Network.ARBITRUM,
+      Network.POLYGON,
+      Network.OPTIMISM,
+      Network.BASE,
+      Network.SCROLL,
+    ],
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   );
 
@@ -128,25 +153,31 @@ export class Currency {
     "STETH",
     "ethereum",
     AppInfos.ETHEREUM,
-    ["Ethereum"],
+    [Network.ETHEREUM],
   );
 
-  static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, ["Stellar"]);
-
-  static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
-    "Algorand",
+  static readonly XLM_USCD = new Currency("USDC", "USDC", "stellar", AppInfos.STELLAR, [
+    Network.STELLAR,
   ]);
 
-  static readonly TRX_USDT = new Currency("Tether USD", "USDT", "tron", AppInfos.TRON, ["Tron"]);
+  static readonly ALGO_USDT = new Currency("Tether USDt", "USDT", "algorand", AppInfos.ALGORAND, [
+    Network.ALGORAND,
+  ]);
 
-  static readonly TRX_BTT = new Currency("BitTorrent", "BTT", "tron", AppInfos.TRON, ["Tron"]);
+  static readonly TRX_USDT = new Currency("Tether USD", "USDT", "tron", AppInfos.TRON, [
+    Network.TRON,
+  ]);
+
+  static readonly TRX_BTT = new Currency("BitTorrent", "BTT", "tron", AppInfos.TRON, [
+    Network.TRON,
+  ]);
 
   static readonly BSC_BUSD = new Currency(
     "Binance-Peg BUSD Token",
     "BUSD",
     "bsc",
     AppInfos.BINANCE_SMART_CHAIN,
-    ["Binance Smart Chain", "Polygon"],
+    [Network.BINANCE_SMART_CHAIN, Network.POLYGON],
   );
 
   static readonly BSC_SHIBA = new Currency(
@@ -154,7 +185,7 @@ export class Currency {
     "SHIB",
     "bsc",
     AppInfos.BINANCE_SMART_CHAIN,
-    ["Binance Smart Chain", "Ethereum"],
+    [Network.BINANCE_SMART_CHAIN, Network.ETHEREUM],
   );
 
   static readonly POL_DAI = new Currency(
@@ -162,29 +193,33 @@ export class Currency {
     "DAI",
     "polygon",
     AppInfos.POLYGON,
-    ["Polygon"],
+    [Network.POLYGON],
   );
 
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON, [
-    "Polygon",
+    Network.POLYGON,
   ]);
 
-  static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR, ["NEAR"]);
+  static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR, [Network.NEAR]);
 
-  static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS, ["Osmosis"]);
+  static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS, [
+    Network.OSMOSIS,
+  ]);
 
   static readonly MULTIVERS_X = new Currency("MultiversX", "EGLD", "elrond", AppInfos.MULTIVERS_X, [
-    "MultiversX",
+    Network.MULTIVERS_X,
   ]);
 
-  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC, ["Litecoin"]);
+  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC, [
+    Network.LITECOIN,
+  ]);
 
   static readonly SOL_GIGA = new Currency(
     "GIGACHAD",
     "GIGA",
     "solana",
     AppInfos.SOLANA,
-    ["Solana"],
+    [Network.SOLANA],
     "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
   );
 
@@ -193,11 +228,11 @@ export class Currency {
     "WIF",
     "solana",
     AppInfos.SOLANA,
-    ["Solana"],
+    [Network.SOLANA],
     "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
   );
 
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
-    "Optimism",
+    Network.OPTIMISM,
   ]);
 }
