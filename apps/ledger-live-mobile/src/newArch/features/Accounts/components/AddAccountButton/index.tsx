@@ -1,5 +1,5 @@
 import { Icons, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
@@ -11,8 +11,9 @@ import {
   useModularDrawer,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 const StyledPressable = styled(Pressable)`
   border-width: 1px;
@@ -32,13 +33,17 @@ type Props = {
   sourceScreenName: string;
   onClick?: () => void;
   disabled?: boolean;
-  currency?: string;
+  currency?: CryptoOrTokenCurrency | string;
 };
 
-const AddAccountButton: React.FC<Props> = ({ sourceScreenName, disabled, currency, onClick }) => {
+const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onClick }) => {
   const { t } = useTranslation();
 
-  const cryptoCurrency = currency && findCryptoCurrencyById(currency);
+  const cryptoCurrency = useMemo(() => {
+    if (!currency) return undefined;
+    if (typeof currency === "string") return findCryptoCurrencyById(currency) || undefined;
+    return currency;
+  }, [currency]);
 
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState<boolean>(false);
 

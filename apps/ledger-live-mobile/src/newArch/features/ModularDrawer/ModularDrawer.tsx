@@ -8,7 +8,7 @@ import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
 import { useAssets } from "./hooks/useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
-import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/haveOneCommonProvider";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 
 /**
  * Props for the ModularDrawer component.
@@ -17,19 +17,19 @@ type ModularDrawerProps = {
   /**
    * The current step to display in the drawer navigation flow.
    */
-  selectedStep?: ModularDrawerStep;
+  readonly selectedStep?: ModularDrawerStep;
   /**
    * Whether the drawer is open.
    */
-  isOpen: boolean;
+  readonly isOpen: boolean;
   /**
    * Callback fired when the drawer is closed.
    */
-  onClose?: () => void;
+  readonly onClose?: () => void;
   /**
    * List of currencies to display in the drawer.
    */
-  currencies: CryptoOrTokenCurrency[];
+  readonly currencies: CryptoOrTokenCurrency[];
 };
 /**
  * ModularDrawer is a generic drawer component for asset/network selection flows.
@@ -88,7 +88,6 @@ export function ModularDrawer({
         maxHeight: "90%",
       }}
     >
-      {/* TODO: Drawer Transitions & animations will be implemented here. */}
       <ModularDrawerFlowManager
         navigationStepViewModel={navigationStepManager}
         assetsViewModel={{

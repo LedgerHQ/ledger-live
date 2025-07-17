@@ -10,7 +10,7 @@ import {
   mockBaseCryptoCurrency,
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
-} from "../__mocks__/currencies.mock";
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { useModularDrawer } from "../hooks/useModularDrawer";
 import { ModularDrawerStep } from "../types";
 
