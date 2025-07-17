@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@tests/test-renderer";
+import { render, waitFor } from "@tests/test-renderer";
 import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
 import { ModularDrawerSharedNavigator } from "./shared";
 
@@ -42,5 +42,27 @@ describe("ModularDrawer integration", () => {
     await user.press(getByText(/bitcoin/i));
 
     expect(getByText(/Connect Device/i)).toBeVisible();
+  });
+
+  it("should allow searching for assets", async () => {
+    const { getByText, queryByText, getByPlaceholderText, user } = render(
+      <ModularDrawerSharedNavigator />,
+    );
+
+    await user.press(getByText(/open drawer/i));
+
+    expect(getByText(/select asset/i)).toBeVisible();
+    expect(getByText(/bitcoin/i)).toBeVisible();
+
+    const searchInput = getByPlaceholderText(/search/i);
+    expect(searchInput).toBeVisible();
+
+    await user.type(searchInput, "arb");
+
+    await waitFor(() => {
+      expect(queryByText(/ethereum/i)).not.toBeVisible();
+    });
+
+    expect(getByText(/arbitrum/i)).toBeVisible();
   });
 });

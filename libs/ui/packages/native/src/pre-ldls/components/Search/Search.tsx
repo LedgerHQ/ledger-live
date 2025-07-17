@@ -18,8 +18,7 @@ export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...pro
   const handleDebouncedChange = useDebouncedCallback(
     useMemo(() => {
       if (!onDebouncedChange) return;
-      return (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        const current = e.nativeEvent.text;
+      return (current: string) => {
         onDebouncedChange(current, prevValue.current);
         prevValue.current = current;
       };
@@ -30,8 +29,9 @@ export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...pro
   const handleChange = useMemo(() => {
     if (!handleDebouncedChange && !onChange) return;
     return (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+      const current = e.nativeEvent.text;
       onChange?.(e);
-      handleDebouncedChange?.(e);
+      handleDebouncedChange?.(current);
     };
   }, [handleDebouncedChange, onChange]);
 

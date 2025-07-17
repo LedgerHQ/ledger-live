@@ -1,43 +1,29 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { FlatList } from "react-native";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { NetworkList } from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import { Flex } from "@ledgerhq/native-ui";
 
 export type NetworkSelectionStepProps = {
-  availableNetworks?: CryptoOrTokenCurrency[];
+  availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
-};
-
-// TODO: This component will be replaced with NetworkList from pre-ldls
-
-const NetworkList: React.FC<{
-  networks?: CryptoOrTokenCurrency[];
-  onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
-}> = ({ networks, onNetworkSelected }) => {
-  return (
-    <FlatList
-      data={networks}
-      keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <Flex height={40} alignItems="center" justifyContent="center">
-          <TouchableOpacity onPress={() => onNetworkSelected?.(item)}>
-            <Text color="neutral.c100">
-              {"Network =>"} {item.name} ({item.ticker})
-            </Text>
-          </TouchableOpacity>
-        </Flex>
-      )}
-      ItemSeparatorComponent={() => <Box height={1} bg="neutral.c50" mx={2} />}
-    />
-  );
 };
 
 const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
 }: Readonly<NetworkSelectionStepProps>) => {
-  return <NetworkList networks={availableNetworks} onNetworkSelected={onNetworkSelected} />;
+  const handleNetworkClick = (networkId: string) => {
+    const originalNetwork = availableNetworks.find(n => n.id === networkId);
+    if (originalNetwork) {
+      onNetworkSelected(originalNetwork);
+    }
+  };
+
+  return (
+    <Flex>
+      <NetworkList networks={availableNetworks} onClick={handleNetworkClick} />
+    </Flex>
+  );
 };
 
 export default React.memo(NetworkSelection);
