@@ -1,5 +1,5 @@
 import React from "react";
-import { CryptoIcon as Icon } from "@ledgerhq/crypto-icons";
+import Icon from "@ledgerhq/crypto-icons/native";
 
 export function CryptoIcon(props: Parameters<typeof Icon>[0]) {
   return <Icon {...props} />;

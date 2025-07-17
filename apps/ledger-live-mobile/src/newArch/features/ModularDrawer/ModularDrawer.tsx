@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerStep } from "./types";
@@ -38,6 +38,8 @@ type ModularDrawerProps = {
  */
 export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
   const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
+  const [defaultSearchValue, setDefaultSearchValue] = useState("");
+  const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
 
   const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
     useInitModularDrawer();
@@ -81,6 +83,10 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
         assetsViewModel={{
           availableAssets,
           onAssetSelected: handleAsset,
+          defaultSearchValue,
+          setDefaultSearchValue,
+          itemsToDisplay,
+          setItemsToDisplay,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,
