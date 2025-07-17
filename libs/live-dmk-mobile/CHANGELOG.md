@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04)]:
+  - @ledgerhq/live-dmk-shared@0.11.0
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04)]:
+  - @ledgerhq/live-dmk-shared@0.11.0-next.0
+
 ## 0.8.0
 
 ### Minor Changes

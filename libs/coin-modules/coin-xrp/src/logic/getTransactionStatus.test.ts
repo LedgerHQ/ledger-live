@@ -1,14 +1,13 @@
 import { getTransactionStatus } from "./getTransactionStatus";
-import * as logic from "./index";
+import * as utils from "./utils";
 
 const mockGetServerInfos = jest.fn();
-const mockCachedRecipientIsNew = jest.fn();
 
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
 }));
 
-jest.spyOn(logic, "cachedRecipientIsNew").mockImplementation(addr => {
+jest.spyOn(utils, "cachedRecipientIsNew").mockImplementation(addr => {
   if (addr === RECIPIENT_NEW) {
     return Promise.resolve(true);
   }
@@ -36,7 +35,6 @@ const account = {
 describe("getTransactionStatus", () => {
   afterEach(() => {
     mockGetServerInfos.mockReset();
-    mockCachedRecipientIsNew.mockReset();
   });
 
   it("returns no errors on valid transaction", async () => {
@@ -47,8 +45,6 @@ describe("getTransactionStatus", () => {
         },
       },
     });
-
-    mockCachedRecipientIsNew.mockResolvedValue(false);
 
     const result = await getTransactionStatus(
       account as any,
@@ -135,8 +131,6 @@ describe("getTransactionStatus", () => {
         },
       },
     });
-
-    mockCachedRecipientIsNew.mockResolvedValue(true);
 
     const result = await getTransactionStatus(
       account as any,

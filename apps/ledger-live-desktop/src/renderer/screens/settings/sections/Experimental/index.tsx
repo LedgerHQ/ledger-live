@@ -47,6 +47,7 @@ const BaseExperimentalFeatureRow = ({
         isDefault={isDefault}
         onChange={onChange}
         {...rest}
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         value={envValue as number}
       />
     </Row>

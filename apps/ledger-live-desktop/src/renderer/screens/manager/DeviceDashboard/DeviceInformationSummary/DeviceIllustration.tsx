@@ -43,6 +43,7 @@ export const DeviceIllustration = styled.img.attrs<{
   deviceModel: DeviceModel;
 }>(p => ({
   src: illustrations[
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (process.env.OVERRIDE_MODEL_ID || p.deviceModel.id) as keyof typeof illustrations
   ][p.theme.colors.palette.type || "light"],
 }))<{

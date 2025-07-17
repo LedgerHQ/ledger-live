@@ -260,6 +260,11 @@ function SummaryWords({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
+  invariant((account as CardanoAccount).cardanoResources.delegation, "delegation must be defined");
+  const depositRefundAmount = new BigNumber(
+    (account as CardanoAccount).cardanoResources.delegation!.deposit,
+  );
+
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -295,7 +300,7 @@ function SummaryWords({
           label={t("cardano.delegation.stakeKeyRegistrationDepositRefund")}
           Component={
             <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, new BigNumber(2000000), formatConfig)}
+              {formatCurrencyUnit(unit, depositRefundAmount, formatConfig)}
             </LText>
           }
         />
