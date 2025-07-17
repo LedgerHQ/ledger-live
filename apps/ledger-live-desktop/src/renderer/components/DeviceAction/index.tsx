@@ -91,7 +91,6 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
-import { DeviceNotSupportedError } from "@ledgerhq/live-common/hw/connectApp";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -374,9 +373,28 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
+  // if (request && typeof request === "object" && "account" in request) {
+  //   console.log("request in DeviceActionDefaultRendering", request);
+  // } else {
+  //   console.log("Request does not have an account property", request);
+  // }
+  // console.log("payload in DeviceActionDefaultRendering", payload);
+  // console.log("hookState in DeviceActionDefaultRendering", hookState);
+  // console.log(
+  //   "appAndVersion in DeviceActionDefaultRendering",
+  //   analyticsPropertyFlow,
+  //   appAndVersion,
+  // );
+  // console.log("location in DeviceActionDefaultRendering", location);
 
   if (deprecate && deprecateData && onContinue) {
-    if (!hasDisplayDeprecateWarning) {
+    const currentToken =
+      request && typeof request === "object" && "tokenCurrency" in request && request.tokenCurrency
+        ? (request.tokenCurrency as TokenCurrency).name
+        : "undefined";
+    console.log("currentToken", currentToken);
+    console.log("deprecateData", deprecateData);
+    if (!hasDisplayDeprecateWarning && !deprecateData.tokenExceptions.includes(currentToken)) {
       const handleContinue = () => {
         setDeprecated(true);
         onContinue();
@@ -629,8 +647,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       (error as unknown) instanceof UserRefusedOnDevice ||
       (error as unknown) instanceof UserRefusedAddress ||
       (error as unknown) instanceof UserRefusedDeviceNameChange ||
-      (error as unknown) instanceof LanguageInstallRefusedOnDevice ||
-      (error as unknown) instanceof DeviceNotSupportedError
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice
     ) {
       withExportLogs = false;
       warning = true;
@@ -639,8 +656,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
       withDescription = false;
     }
-    console.log("test");
-    console.log(passWarning);
     return renderError({
       t,
       error,

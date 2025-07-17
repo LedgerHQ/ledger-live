@@ -186,7 +186,7 @@ export const DeprecationClearSigningWarning = ({ onContinue }: { onContinue: () 
         size="large"
         onPressIn={(e: { preventDefault: () => void }) => {
           e.preventDefault();
-          openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+          Linking.openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
         }}
       >
         <Trans i18nKey={`lnsDeprecation.update`} />
@@ -201,7 +201,9 @@ export const DeprecationClearSigningWarning = ({ onContinue }: { onContinue: () 
         <Trans i18nKey={`lnsDeprecation.warning.continue`} />
       </ButtonV3>
       <Link
-        onPress={() => openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations")}
+        onPress={() =>
+          Linking.openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations")
+        }
         style={{ color: "palette.text.shade60" } as TextStyle}
       >
         <Trans i18nKey={`lnsDeprecation.learnMore`} />
@@ -248,7 +250,7 @@ export const DeprecationWarning = ({
       </ButtonV3>
       <ButtonV3
         size="large"
-        type="shade"
+        type="default"
         onPress={() => {
           onContinue();
         }}
