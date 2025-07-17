@@ -287,20 +287,120 @@
       "description" : "请再次尝试。"
     },
     "DisconnectedDevice" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError" : {
+      "title" : "Device locked",
+      "description" : "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Not enough memory",
+      "description" : "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OS is unsupported",
+      "description" : "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Battery error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Battery error",
+      "description" : "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "CasperInvalidTransferId" : {
       "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
@@ -517,9 +617,29 @@
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
+    "NotEnoughToStake" : {
+      "title" : "您至少需要 {{minStake}} {{currency}} 才能激活质押",
+      "description" : "您至少需要 {{minStake}} {{currency}} 才能激活质押"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
+      "description" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押",
+      "description" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "您再质押的数额不能少于 {{minAmount}}",
+      "description" : "您再质押的数额不能少于 {{minAmount}}。"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "您解除质押的数额不能少于 {{minAmount}}",
+      "description" : "您解除质押的数额不能少于 {{minAmount}}。"
     },
     "NotEnoughBalanceFees" : {
       "title" : "抱歉，资金不够支付费用",
@@ -3116,8 +3236,8 @@
         "desc" : "接收重要 Ledger Live 更新"
       },
       "largeMover" : {
-        "title" : "大幅波动工具",
-        "desc" : "如果您拥有比特币、以太币、SOL、ADA 或瑞波币，您会在价格出现重要波动时收到通知"
+        "title" : "Price Alerts",
+        "desc" : "You’ll be notified of important price movements for popular tokens you own"
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
@@ -6327,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "可用 Aptos",
+        "description" : "该数额可自由支配。"
+      },
+      "storageUsage" : {
+        "title" : "最低余额",
+        "description" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。"
+      },
+      "staked" : {
+        "title" : "已质押余额",
+        "description" : "此数额目前已质押给验证者。"
+      },
+      "pending" : {
+        "title" : "待处理余额",
+        "description" : "此数额已解除质押，目前正在等待成为可用余额。"
+      },
+      "withdrawable" : {
+        "title" : "可提取余额",
+        "description" : "此数额已解除权益质押，现已可以提取。"
+      },
+      "stakingUnavailable" : {
+        "title" : "权益质押不可用",
+        "description" : "您账户中的可用余额不足，无法权益质押、解除权益质押和提取。"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "已质押数额",
+        "unstakedAmount" : "已解除质押的数额",
+        "withdrawnAmount" : "已提取数额"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要取消权益质押的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功取消权益质押资产"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要提取的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功提取资产"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "再质押的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功再质押资产"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "权益质押持仓",
+      "info" : "权益质押的运作方式",
+      "add" : "添加",
+      "stakingEarn" : "您可以通过质押资产来赚取 Aptos 奖励。",
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "comm" : "佣金",
+      "timeToUnlock" : "解锁剩余时间",
+      "iStake" : "我权益质押",
+      "actions" : {
+        "unstake" : "解除质押",
+        "withdraw" : "提取",
+        "restake" : "再次质押"
+      },
+      "drawer" : {
+        "status" : "状态",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "pending" : "待处理",
+        "available" : "可提取"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "要权益质押的数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "通过质押 Aptos 安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "权益质押的资产仍然属于您。",
+              "1" : "您需要等待大约 2 小时才能完成解除质押。",
+              "2" : "使用您的 Ledger 设备安全权益质押。"
+            },
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
+            },
+            "cta" : "继续"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功质押资产",
+              "text" : "交易一经网络确认，您的账户余额就会更新。"
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "过度委托",
     "delegationSendWarnDesc" : "发送的数额会从您的委托账户中扣除。",
@@ -6727,8 +6982,8 @@
       "7d" : "7 天",
       "30d" : "30 天",
       "1y" : "1 年",
-      "1D_label" : "1 天",
       "1H_label" : "1 小时",
+      "1D_label" : "1 天",
       "1W_label" : "1 周",
       "1M_label" : "1 月",
       "1Y_label" : "1 年"
@@ -7519,6 +7774,7 @@
   "modularDrawer" : {
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
-    "selectAccount" : "选择账户"
+    "selectAccount" : "选择账户",
+    "searchPlaceholder" : "Search"
   }
 }
