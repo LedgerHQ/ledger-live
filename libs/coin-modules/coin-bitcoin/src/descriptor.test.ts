@@ -5,6 +5,11 @@ import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/index";
 import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./descriptor";
 import bitcoinDatasets from "./datasets/bitcoin";
 import { assignFromAccountRaw } from "./serialization";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
 
 setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {

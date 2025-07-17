@@ -1,10 +1,16 @@
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   decodeTokenAccountId,
   encodeTokenAccountId,
   safeDecodeTokenId,
   safeEncodeTokenId,
 } from "./accountId";
+import tokenData from "./__fixtures__/binance-peg_dai_token.json";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import * as cryptoAssets from "../crypto-assets";
+import { CryptoAssetsStore } from "../crypto-assets/type";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const TOKEN = tokenData as unknown as TokenCurrency;
 
 describe("coin-framework", () => {
   describe("accountId", () => {
@@ -42,9 +48,8 @@ describe("coin-framework", () => {
     describe("encodeTokenAccountId", () => {
       it("should return an URI and splitting safe tokenAccountId (no + - _ % \\ /)", () => {
         const accountId = "js:2:0xkvn:";
-        const token = getTokenById("bsc/bep20/binance-peg_dai_token");
 
-        const tokenAccountId = encodeTokenAccountId(accountId, token);
+        const tokenAccountId = encodeTokenAccountId(accountId, TOKEN);
         expect(tokenAccountId).toBe(
           "js:2:0xkvn:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~dai~!underscore!~token",
         );
@@ -59,13 +64,20 @@ describe("coin-framework", () => {
 
     describe("decodeTokenAccountId", () => {
       it("should return an accountId and a token", () => {
+        jest
+          .spyOn(cryptoAssets, "getCryptoAssetsStore")
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          .mockReturnValue({
+            findTokenById: (_: unknown) => TOKEN,
+          } as unknown as CryptoAssetsStore);
+
         expect(
           decodeTokenAccountId(
             "js:2:0xkvn:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~dai~!underscore!~token",
           ),
         ).toEqual({
           accountId: "js:2:0xkvn:",
-          token: getTokenById("bsc/bep20/binance-peg_dai_token"),
+          token: TOKEN,
         });
       });
     });

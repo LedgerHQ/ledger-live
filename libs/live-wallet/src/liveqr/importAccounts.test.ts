@@ -7,6 +7,8 @@ import {
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { AccountData, accountDataToAccount } from "./cross";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 setSupportedCurrencies(["ethereum"]);
 describe("importAccountsMakeItems", () => {
@@ -76,6 +78,8 @@ describe("importAccountsMakeItems", () => {
         developerModeEnabled: false,
       },
     };
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
     const accounts = [
       <AccountRaw>{
         id: "js:1:ethereum:0x01:",

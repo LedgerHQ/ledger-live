@@ -9,6 +9,8 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -41,6 +43,8 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
 const mockEthereumAccount = fromAccountRaw(raw);
 const mockTronAccount = fromAccountRaw(rawTron);
 

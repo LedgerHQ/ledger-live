@@ -3,6 +3,10 @@ import { hashes as localTokensHashesByChainId } from "@ledgerhq/cryptoassets/dat
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import usdtTokenData from "../../__fixtures__/scroll_sepolia-erc20-mock_usdt.json";
+import newTokenData from "../../__fixtures__/scroll_sepolia-erc20-new_token_mock.json";
 import { makeOperation } from "./common.fixtures";
 
 export const currency = getCryptoCurrencyById("scroll_sepolia");
@@ -29,6 +33,21 @@ export const getAccountShapeParameters: AccountShapeInfo = {
   derivationPath: "44'/60'/0'/0/0",
   index: 0,
 };
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({
+  findTokenById: (id: string) => {
+    if (id === "scroll_sepolia/erc20/mock_usdt") {
+      return usdtTokenData;
+    } else if (id === "scroll_sepolia/erc20/new_token_mock") {
+      return newTokenData;
+    }
+
+    return undefined;
+  },
+  findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
+} as unknown as CryptoAssetsStore);
+
 export const TMUSDTTransaction = makeOperation({
   hash: "anyHash",
   accountId:

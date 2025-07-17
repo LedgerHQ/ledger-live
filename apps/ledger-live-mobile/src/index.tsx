@@ -12,6 +12,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
+import "./config/bridge-setup";
 import Config from "react-native-config";
 import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";

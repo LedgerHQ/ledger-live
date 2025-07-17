@@ -3,6 +3,8 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
@@ -30,6 +32,7 @@ import {
   Transaction as EvmTransaction,
 } from "../../types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -634,6 +637,17 @@ describe("EVM Family", () => {
 
     describe("attachOperations", () => {
       it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        setCryptoAssetsStore({
+          findTokenById: (id: string) => {
+            if (id === "ethereum/erc20/usd__coin") {
+              return usdCoinTokenData;
+            }
+
+            return undefined;
+          },
+          findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+        } as unknown as CryptoAssetsStore);
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
