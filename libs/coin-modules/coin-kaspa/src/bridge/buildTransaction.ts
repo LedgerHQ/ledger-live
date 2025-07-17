@@ -7,7 +7,7 @@ import {
   KaspaHwTransactionOutput,
   Transaction,
 } from "../types";
-import { selectUtxos, UtxoStrategy } from "../logic/utxoSelection";
+import { selectUtxos } from "../logic/utxos/selection";
 import { addressToScriptPublicKey, getFeeRate, parseExtendedPublicKey, scanUtxos } from "../logic";
 
 /**
@@ -38,13 +38,7 @@ export const buildTransaction = async (
 
   const { utxos, accountAddresses } = await scanUtxos(compressedPublicKey, chainCode);
   const recipientIsTypeECDSA: boolean = recipient.length > 67;
-  const result = selectUtxos(
-    utxos,
-    UtxoStrategy.FIFO,
-    recipientIsTypeECDSA,
-    amount,
-    getFeeRate(t).toNumber(),
-  );
+  const result = selectUtxos(utxos, recipientIsTypeECDSA, amount, getFeeRate(t).toNumber());
 
   const selectedUtxos = result.utxos;
 

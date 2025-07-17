@@ -1,7 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import { sumBigNumber } from "./utxoSelection/lib";
+import { sumBigNumber } from "./utxos/lib";
 
 const C: BigNumber = BigNumber(10 ** 12);
+
+// if one output is ECDSA, scriptPubKey is one byte longer
+// which ends up in 11g mass ( 1 byte + 10g MASS_PER_SCRIPT_PUB_KEY_BYTE )
+const ADDTIONAL_MASS_FOR_ECDSA_OUTPUT = 11;
 
 // note: this is an easy version of computeMass for Ledger only.
 // it has usual inputs with regular Script and one or two outputs
@@ -10,12 +14,15 @@ export function calcComputeMass(
   isChangeAddress: boolean,
   recipientIsECDSA: boolean = false,
 ): number {
-  let mass: number = isChangeAddress ? 918 : 506; // 506 for one output, 918 for two outputs
-  mass += inputCount * 1118; // per used utxo mass increases by 1118
+  // 506 for one output, 918 for two outputs
+  let mass: number = isChangeAddress ? 918 : 506;
+
+  // per used utxo mass increases by 1118
+  mass += inputCount * 1118;
 
   // is output address is ECDSA, the mass is 11g higher
   if (recipientIsECDSA) {
-    mass += 11;
+    mass += ADDTIONAL_MASS_FOR_ECDSA_OUTPUT;
   }
 
   return mass;

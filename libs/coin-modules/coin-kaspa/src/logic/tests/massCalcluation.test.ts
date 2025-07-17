@@ -31,6 +31,7 @@ describe("Check storage mass calculation", () => {
       expect(calcComputeMass(2, false)).toBe(506 + 2 * 1118);
       expect(calcComputeMass(5, false)).toBe(506 + 5 * 1118);
       expect(calcComputeMass(5, false, true)).toBe(506 + 5 * 1118 + 11);
+      expect(calcComputeMass(88, true, true)).toBe(99313);
     });
   });
 });

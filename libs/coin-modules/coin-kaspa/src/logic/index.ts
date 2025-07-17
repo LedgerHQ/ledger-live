@@ -5,6 +5,6 @@ export * from "./kaspaAddresses";
 export * from "./massCalcluation";
 export * from "./base32";
 export * from "./bip32";
-export * from "./utxoSelection/lib";
-export * from "./utxoSelection/index";
+export * from "./utxos/lib";
+export * from "./utxos/selection";
 export * from "./getFeeRate";

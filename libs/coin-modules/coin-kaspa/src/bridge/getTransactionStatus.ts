@@ -15,7 +15,6 @@ import {
   parseExtendedPublicKey,
   scanUtxos,
   selectUtxos,
-  UtxoStrategy,
 } from "../logic";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types";
 import { makeLRUCache } from "@ledgerhq/live-network/lib/cache";
@@ -91,7 +90,6 @@ const getTransactionStatus = async (
     if (Object.keys(errors).length === 0) {
       const result = selectUtxos(
         utxos,
-        UtxoStrategy.FIFO,
         transaction.recipient.length > 67,
         transaction.amount,
         getFeeRate(transaction).toNumber() || 1,
