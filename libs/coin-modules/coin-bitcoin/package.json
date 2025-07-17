@@ -44,6 +44,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@bitcoinerlab/secp256k1": "1.2.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -68,7 +69,6 @@
     "lodash": "^4.17.21",
     "ripemd160": "^2.0.2",
     "rxjs": "^7.8.1",
-    "secp256k1": "^4.0.3",
     "sha.js": "^2.4.11",
     "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2"
