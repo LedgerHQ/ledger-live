@@ -14,6 +14,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import "./config/configInit";
+import "./config/bridge-setup";
 import isEqual from "lodash/isEqual";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";

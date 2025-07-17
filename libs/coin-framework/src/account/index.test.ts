@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
@@ -11,6 +11,10 @@ import {
 import { setSupportedCurrencies } from "../currencies";
 import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
+import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+const TOKEN = tokenData as unknown as TokenCurrency;
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 
@@ -151,10 +155,8 @@ test("accountWithMandatoryTokens ethereum", () => {
     currency,
     subAccountsCount: 5,
   });
-  const enhance = accountWithMandatoryTokens(account, [getTokenById("ethereum/erc20/0x_project")]);
-  const doubleEnhance = accountWithMandatoryTokens(enhance, [
-    getTokenById("ethereum/erc20/0x_project"),
-  ]);
+  const enhance = accountWithMandatoryTokens(account, [TOKEN]);
+  const doubleEnhance = accountWithMandatoryTokens(enhance, [TOKEN]);
   expect(doubleEnhance).toEqual(enhance);
   expect({ ...enhance, subAccounts: [] }).toMatchObject({
     ...account,
