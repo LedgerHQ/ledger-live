@@ -116,5 +116,20 @@ describe("shouldForceFirmwareUpdate", () => {
         deviceModelId: DeviceModelId.nanoX,
       }),
     ).toBe(false);
+
+    expect(
+      shouldForceFirmwareUpdate({ currentVersion: "0.0.0", deviceModelId: DeviceModelId.apex }),
+    ).toBe(false);
+
+    expect(
+      shouldForceFirmwareUpdate({
+        currentVersion: "0.0.0-whatever",
+        deviceModelId: DeviceModelId.apex,
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldForceFirmwareUpdate({ currentVersion: "1.3.0", deviceModelId: DeviceModelId.apex }),
+    ).toBe(false);
   });
 });

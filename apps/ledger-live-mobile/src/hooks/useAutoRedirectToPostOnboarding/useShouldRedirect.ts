@@ -21,6 +21,11 @@ export function useShouldRedirect(): {
     hasBeenUpsoldRecover,
     hasRedirectedToPostOnboarding,
     lastConnectedDevice,
-    supportedDeviceModels: [DeviceModelId.nanoX, DeviceModelId.stax, DeviceModelId.europa],
+    supportedDeviceModels: [
+      DeviceModelId.nanoX,
+      DeviceModelId.stax,
+      DeviceModelId.europa,
+      DeviceModelId.apex,
+    ],
   });
 }

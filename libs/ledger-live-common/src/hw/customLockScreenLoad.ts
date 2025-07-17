@@ -19,7 +19,7 @@ import customLockScreenFetchSize from "./customLockScreenFetchSize";
 import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import { gzip } from "pako";
 import { CLSSupportedDeviceModelId } from "../device/use-cases/isCustomLockScreenSupported";
-import { getScreenSpecs } from "../device/use-cases/screenSpecs";
+import { getScreenSpecs, type ScreenSpecs } from "../device/use-cases/screenSpecs";
 import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
 import { withTransport } from "../deviceSDK/transports/core";
 
@@ -58,15 +58,6 @@ const isDmkDeviceDisconnectedError = (err: unknown): err is DeviceDisconnectedWh
 export type LoadimageResult = {
   imageHash: string;
   imageSize: number;
-};
-
-type ScreenSpecs = {
-  width: number;
-  height: number;
-  paddingTop: number;
-  paddingBottom: number;
-  paddingLeft: number;
-  paddingRight: number;
 };
 
 export type LoadImageRequest = {
@@ -268,6 +259,11 @@ function padHexImage(hexImage: string, screenSpecs: ScreenSpecs): string {
   return result;
 }
 
+const bitsPerPixelToBppIndicator: Record<ScreenSpecs["bitsPerPixel"], number> = {
+  1: 0,
+  4: 2,
+};
+
 export async function generateCustomLockScreenImageFormat(
   hexImage: string,
   compressImage: boolean,
@@ -276,7 +272,7 @@ export async function generateCustomLockScreenImageFormat(
 ) {
   const width = screenSpecs.width;
   const height = screenSpecs.height;
-  const bpp = 2; // value for 4 bits per pixel
+  const bpp = bitsPerPixelToBppIndicator[screenSpecs.bitsPerPixel];
   const compression = compressImage ? 1 : 0;
 
   const header = Buffer.alloc(8);
