@@ -152,7 +152,7 @@ const swaps = [
   {
     fromAccount: Account.HEDERA_1,
     toAccount: Account.XRP_1,
-    xrayTicket: "B2CQA-3710",
+    xrayTicket: "B2CQA-3753",
     tag: ["@NanoSP", "@NanoX"],
   },
 ];
