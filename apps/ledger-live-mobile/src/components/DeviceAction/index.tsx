@@ -65,6 +65,7 @@ import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
+import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -284,6 +285,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     transactionChecksOptInTriggered,
     transactionChecksOptIn,
   });
+
+  useTrackDmkErrorsEvents({ error });
 
   useEffect(() => {
     if (deviceInfo && device) {

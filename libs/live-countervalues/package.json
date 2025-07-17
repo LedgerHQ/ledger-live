@@ -47,6 +47,7 @@
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "coverage": "jest --coverage"
   },
   "typesVersions": {
