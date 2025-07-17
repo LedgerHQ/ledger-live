@@ -9,6 +9,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/logic";
+import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -193,7 +194,7 @@ const Body = ({
       }
 
       return {
-        name: "tokenAssociate",
+        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token,
       };
     },

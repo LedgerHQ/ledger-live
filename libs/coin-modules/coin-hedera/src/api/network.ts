@@ -21,6 +21,9 @@ export function broadcastTransaction(transaction: HederaTransaction): Promise<Tr
   return transaction.execute(getClient());
 }
 
+// https://github.com/LedgerHQ/ledger-live/pull/72/commits/1e942687d4301660e43e0c4b5419fcfa2733b290
+const nodeAccountIds: AccountId[] = [new AccountId(3)];
+
 async function buildUnsignedCoinTransaction({
   account,
   transaction,
@@ -32,7 +35,7 @@ async function buildUnsignedCoinTransaction({
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
   return new TransferTransaction()
-    .setNodeAccountIds([new AccountId(3)])
+    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
@@ -53,7 +56,7 @@ async function buildUnsignedTokenTransaction({
   const tokenId = tokenAccount.token.contractAddress;
 
   return new TransferTransaction()
-    .setNodeAccountIds([new AccountId(3)])
+    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
@@ -73,7 +76,7 @@ async function buildTokenAssociateTransaction({
   const accountId = account.freshAddress;
 
   return new TokenAssociateTransaction()
-    .setNodeAccountIds([new AccountId(3)])
+    .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId)

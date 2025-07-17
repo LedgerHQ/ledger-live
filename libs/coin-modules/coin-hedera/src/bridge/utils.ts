@@ -20,18 +20,13 @@ import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cr
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import type { HederaOperationType, HederaOperationExtra, Transaction } from "../types";
+import type { HederaOperationExtra, Transaction } from "../types";
 import { getAccount } from "../api/mirror";
 import type { HederaMirrorToken } from "../api/types";
 import { isTokenAssociateTransaction, isValidExtra } from "../logic";
+import { BASE_USD_FEE_BY_OPERATION_TYPE, HEDERA_OPERATION_TYPES } from "../constants";
 
 const ESTIMATED_FEE_SAFETY_RATE = 2;
-const TINYBAR_SCALE = 8;
-const BASE_USD_FEE_BY_OPERATION_TYPE: Record<HederaOperationType, number> = {
-  CryptoTransfer: 0.0001 * 10 ** TINYBAR_SCALE,
-  TokenTransfer: 0.001 * 10 ** TINYBAR_SCALE,
-  TokenAssociate: 0.05 * 10 ** TINYBAR_SCALE,
-} as const;
 
 // note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
 export const getCurrencyToUSDRate = makeLRUCache(
@@ -58,7 +53,7 @@ export const getCurrencyToUSDRate = makeLRUCache(
 
 export const getEstimatedFees = async (
   account: Account,
-  operationType: HederaOperationType,
+  operationType: HEDERA_OPERATION_TYPES,
 ): Promise<BigNumber> => {
   try {
     const usdRate = await getCurrencyToUSDRate(account.currency);
@@ -89,7 +84,7 @@ const calculateCoinAmount = async ({
 }: {
   account: Account;
   transaction: Transaction;
-  operationType: HederaOperationType;
+  operationType: HEDERA_OPERATION_TYPES;
 }): Promise<CalculateAmountResult> => {
   const estimatedFees = await getEstimatedFees(account, operationType);
   const amount = transaction.useAllAmount
@@ -135,9 +130,9 @@ export const calculateAmount = ({
     return calculateTokenAmount({ account, tokenAccount: subAccount, transaction });
   }
 
-  const operationType: HederaOperationType = isTokenAssociateTransaction(transaction)
-    ? "TokenAssociate"
-    : "CryptoTransfer";
+  const operationType: HEDERA_OPERATION_TYPES = isTokenAssociateTransaction(transaction)
+    ? HEDERA_OPERATION_TYPES.TokenAssociate
+    : HEDERA_OPERATION_TYPES.CryptoTransfer;
 
   return calculateCoinAmount({ account, transaction, operationType });
 };

@@ -25,6 +25,7 @@ import { HederaOperationExtra } from "../types";
 import { getAccount } from "../api/mirror";
 import { isValidExtra } from "../logic";
 import { getMockedMirrorToken } from "../test/fixtures/mirror";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
 
 jest.mock("../api/mirror");
 jest.mock("@ledgerhq/live-countervalues/api/index");
@@ -39,8 +40,8 @@ describe("utils", () => {
     beforeAll(async () => {
       const mockedAccount = getMockedAccount();
       const [crypto, associate] = await Promise.all([
-        getEstimatedFees(mockedAccount, "CryptoTransfer"),
-        getEstimatedFees(mockedAccount, "TokenAssociate"),
+        getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer),
+        getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate),
       ]);
 
       estimatedFees = { crypto, associate };
@@ -128,7 +129,7 @@ describe("utils", () => {
         useAllAmount: false,
         amount: new BigNumber(1),
         properties: {
-          name: "tokenAssociate",
+          name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
           token: mockedTokenCurrency,
         },
       });
@@ -159,7 +160,7 @@ describe("utils", () => {
       const usdRate = 1;
       mockedFetchLatest.mockResolvedValueOnce([usdRate]);
 
-      const result = await getEstimatedFees(mockedAccount, "CryptoTransfer");
+      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
 
       const baseFeeTinybar = 0.0001 * 10 ** 8;
       const expectedFee = new BigNumber(baseFeeTinybar)
@@ -175,7 +176,7 @@ describe("utils", () => {
       const usdRate = 0.5;
       mockedFetchLatest.mockResolvedValueOnce([usdRate]);
 
-      const result = await getEstimatedFees(mockedAccount, "TokenTransfer");
+      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenTransfer);
 
       const baseFeeTinybar = 0.001 * 10 ** 8;
       const expectedFee = new BigNumber(baseFeeTinybar)
@@ -191,7 +192,7 @@ describe("utils", () => {
       const usdRate = 2;
       mockedFetchLatest.mockResolvedValueOnce([usdRate]);
 
-      const result = await getEstimatedFees(mockedAccount, "TokenAssociate");
+      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate);
 
       const baseFeeTinybar = 0.05 * 10 ** 8;
       const expectedFee = new BigNumber(baseFeeTinybar)
@@ -206,7 +207,7 @@ describe("utils", () => {
       const usdRate = null;
       mockedFetchLatest.mockResolvedValueOnce([usdRate]);
 
-      const result = await getEstimatedFees(mockedAccount, "CryptoTransfer");
+      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
 
       const expected = new BigNumber("150200").multipliedBy(2);
       expect(result.toFixed()).toBe(expected.toFixed());
@@ -215,7 +216,7 @@ describe("utils", () => {
     test("falls back to default estimate on cvs api failure", async () => {
       mockedFetchLatest.mockRejectedValueOnce(new Error("Network error"));
 
-      const result = await getEstimatedFees(mockedAccount, "CryptoTransfer");
+      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
 
       const expected = new BigNumber("150200").multipliedBy(2);
       expect(result.toFixed()).toBe(expected.toFixed());

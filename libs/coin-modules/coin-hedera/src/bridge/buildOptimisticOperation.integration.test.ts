@@ -4,6 +4,7 @@ import { getMockedTokenCurrency } from "../test/fixtures/currency";
 import { getMockedTransaction } from "../test/fixtures/transaction";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getEstimatedFees } from "./utils";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
 
 describe("buildOptimisticOperation", () => {
   let estimatedFees: Record<"crypto" | "associate", BigNumber>;
@@ -11,8 +12,8 @@ describe("buildOptimisticOperation", () => {
   beforeAll(async () => {
     const mockedAccount = getMockedAccount();
     const [crypto, associate] = await Promise.all([
-      getEstimatedFees(mockedAccount, "CryptoTransfer"),
-      getEstimatedFees(mockedAccount, "TokenAssociate"),
+      getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer),
+      getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate),
     ]);
 
     estimatedFees = { crypto, associate };
@@ -25,7 +26,7 @@ describe("buildOptimisticOperation", () => {
       amount: new BigNumber(0),
       recipient: "0.0.1234",
       properties: {
-        name: "tokenAssociate",
+        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedToken,
       },
     });

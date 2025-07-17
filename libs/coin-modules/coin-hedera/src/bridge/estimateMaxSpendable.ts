@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import type { Transaction } from "../types";
 import { getEstimatedFees } from "./utils";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -17,7 +18,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     return Promise.resolve(balance);
   }
 
-  const estimatedFees = await getEstimatedFees(mainAccount, "CryptoTransfer");
+  const estimatedFees = await getEstimatedFees(mainAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
   let maxSpendable = balance.minus(estimatedFees);
 
   // set max spendable to 0 if negative
