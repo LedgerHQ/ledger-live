@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Ради вашей безопасности",
+      "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "Подтвердить"
       },
-      "newAccount" : "Новый счёт"
+      "newAccount" : "Новый счёт",
+      "addAccountSelection" : "Выберите счёт для пополнения",
+      "addAccountSelectionPtxFlow" : "Выберите счёт"
     },
     "fundAccount" : {
       "receive" : "Получить",

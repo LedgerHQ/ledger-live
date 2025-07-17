@@ -1,5 +1,155 @@
 # @ledgerhq/live-common
 
+## 34.41.0
+
+### Minor Changes
+
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
+
+- [#10789](https://github.com/LedgerHQ/ledger-live/pull/10789) [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - track swap-live-app version in api calls headers
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
+- [#10842](https://github.com/LedgerHQ/ledger-live/pull/10842) [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Charon onboarding status parser should ignore update status
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+- [#10797](https://github.com/LedgerHQ/ledger-live/pull/10797) [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-evm): move files to meet architecture
+
+### Patch Changes
+
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04), [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`c91510b`](https://github.com/LedgerHQ/ledger-live/commit/c91510b67fa598f7fbe7b4495415c737171ae41a), [`80b27f4`](https://github.com/LedgerHQ/ledger-live/commit/80b27f4b28d79b1c8fad184d47730eeee082be90), [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004), [`288b552`](https://github.com/LedgerHQ/ledger-live/commit/288b552eb72b9e85c52c842f067df2952ea60bbd), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/live-dmk-shared@0.11.0
+  - @ledgerhq/coin-evm@2.23.0
+  - @ledgerhq/coin-tezos@5.6.0
+  - @ledgerhq/coin-xrp@6.4.0
+  - @ledgerhq/wallet-api-exchange-module@0.14.0
+  - @ledgerhq/crypto-icons-ui@1.16.0
+  - @ledgerhq/coin-bitcoin@0.17.0
+  - @ledgerhq/coin-cardano@0.9.0
+  - @ledgerhq/coin-framework@5.6.0
+  - @ledgerhq/coin-icon@0.11.0
+  - @ledgerhq/coin-celo@1.1.11
+  - @ledgerhq/live-signer-evm@0.5.6
+  - @ledgerhq/coin-algorand@0.9.13
+  - @ledgerhq/coin-aptos@2.5.1
+  - @ledgerhq/coin-casper@2.0.4
+  - @ledgerhq/coin-cosmos@0.16.2
+  - @ledgerhq/coin-filecoin@1.9.13
+  - @ledgerhq/coin-hedera@1.8.2
+  - @ledgerhq/coin-internet_computer@1.7.13
+  - @ledgerhq/coin-mina@1.1.12
+  - @ledgerhq/coin-multiversx@0.4.13
+  - @ledgerhq/coin-near@0.11.13
+  - @ledgerhq/coin-polkadot@6.3.1
+  - @ledgerhq/coin-solana@0.27.2
+  - @ledgerhq/coin-stacks@0.8.13
+  - @ledgerhq/coin-stellar@5.3.1
+  - @ledgerhq/coin-sui@0.6.1
+  - @ledgerhq/coin-ton@0.13.2
+  - @ledgerhq/coin-tron@4.4.1
+  - @ledgerhq/coin-vechain@2.7.13
+  - @ledgerhq/device-core@0.5.2
+  - @ledgerhq/hw-app-eth@6.45.11
+  - @ledgerhq/live-countervalues@0.5.13
+  - @ledgerhq/live-countervalues-react@0.2.42
+  - @ledgerhq/live-nft@0.8.13
+  - @ledgerhq/live-signer-solana@0.4.1
+  - @ledgerhq/live-wallet@0.11.4
+  - @ledgerhq/hw-app-celo@6.33.9
+
+## 34.41.0-next.0
+
+### Minor Changes
+
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
+
+- [#10789](https://github.com/LedgerHQ/ledger-live/pull/10789) [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - track swap-live-app version in api calls headers
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
+- [#10842](https://github.com/LedgerHQ/ledger-live/pull/10842) [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Charon onboarding status parser should ignore update status
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+- [#10797](https://github.com/LedgerHQ/ledger-live/pull/10797) [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-evm): move files to meet architecture
+
+### Patch Changes
+
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04), [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`c91510b`](https://github.com/LedgerHQ/ledger-live/commit/c91510b67fa598f7fbe7b4495415c737171ae41a), [`80b27f4`](https://github.com/LedgerHQ/ledger-live/commit/80b27f4b28d79b1c8fad184d47730eeee082be90), [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004), [`288b552`](https://github.com/LedgerHQ/ledger-live/commit/288b552eb72b9e85c52c842f067df2952ea60bbd), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/live-dmk-shared@0.11.0-next.0
+  - @ledgerhq/coin-evm@2.23.0-next.0
+  - @ledgerhq/coin-tezos@5.6.0-next.0
+  - @ledgerhq/coin-xrp@6.4.0-next.0
+  - @ledgerhq/wallet-api-exchange-module@0.14.0-next.0
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
+  - @ledgerhq/coin-bitcoin@0.17.0-next.0
+  - @ledgerhq/coin-cardano@0.9.0-next.0
+  - @ledgerhq/coin-framework@5.6.0-next.0
+  - @ledgerhq/coin-icon@0.11.0-next.0
+  - @ledgerhq/coin-celo@1.1.11-next.0
+  - @ledgerhq/live-signer-evm@0.5.6-next.0
+  - @ledgerhq/coin-algorand@0.9.13-next.0
+  - @ledgerhq/coin-aptos@2.5.1-next.0
+  - @ledgerhq/coin-casper@2.0.4-next.0
+  - @ledgerhq/coin-cosmos@0.16.2-next.0
+  - @ledgerhq/coin-filecoin@1.9.13-next.0
+  - @ledgerhq/coin-hedera@1.8.2-next.0
+  - @ledgerhq/coin-internet_computer@1.7.13-next.0
+  - @ledgerhq/coin-mina@1.1.12-next.0
+  - @ledgerhq/coin-multiversx@0.4.13-next.0
+  - @ledgerhq/coin-near@0.11.13-next.0
+  - @ledgerhq/coin-polkadot@6.3.1-next.0
+  - @ledgerhq/coin-solana@0.27.2-next.0
+  - @ledgerhq/coin-stacks@0.8.13-next.0
+  - @ledgerhq/coin-stellar@5.3.1-next.0
+  - @ledgerhq/coin-sui@0.6.1-next.0
+  - @ledgerhq/coin-ton@0.13.2-next.0
+  - @ledgerhq/coin-tron@4.4.1-next.0
+  - @ledgerhq/coin-vechain@2.7.13-next.0
+  - @ledgerhq/device-core@0.5.2-next.0
+  - @ledgerhq/hw-app-eth@6.45.11-next.0
+  - @ledgerhq/live-countervalues@0.5.13-next.0
+  - @ledgerhq/live-countervalues-react@0.2.42-next.0
+  - @ledgerhq/live-nft@0.8.13-next.0
+  - @ledgerhq/live-signer-solana@0.4.1-next.0
+  - @ledgerhq/live-wallet@0.11.4-next.0
+  - @ledgerhq/hw-app-celo@6.33.9-next.0
+
+## 34.40.1
+
+### Patch Changes
+
+- [#10911](https://github.com/LedgerHQ/ledger-live/pull/10911) [`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix current app detection for old firmwares
+
+- Updated dependencies [[`d4a6f38`](https://github.com/LedgerHQ/ledger-live/commit/d4a6f382183922f78cecf00c276ebea99504871a)]:
+  - @ledgerhq/coin-sui@0.6.1
+
+## 34.40.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`d4a6f38`](https://github.com/LedgerHQ/ledger-live/commit/d4a6f382183922f78cecf00c276ebea99504871a)]:
+  - @ledgerhq/coin-sui@0.6.1-hotfix.0
+
+## 34.40.1-hotfix.0
+
+### Patch Changes
+
+- [#10911](https://github.com/LedgerHQ/ledger-live/pull/10911) [`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix current app detection for old firmwares
+
 ## 34.40.0
 
 ### Minor Changes

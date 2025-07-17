@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "تأكيد"
       },
-      "newAccount" : "حساب جديد"
+      "newAccount" : "حساب جديد",
+      "addAccountSelection" : "اختر الحساب لإضافة الأموال",
+      "addAccountSelectionPtxFlow" : "اختر حساب"
     },
     "fundAccount" : {
       "receive" : "تلقي",

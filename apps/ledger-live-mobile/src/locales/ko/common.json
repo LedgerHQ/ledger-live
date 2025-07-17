@@ -1084,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "사용자 보호 조치 실행 중",
+      "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3404,13 @@
         "verify" : "{{accountType}}의 주소가 확인되지 않았습니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요."
       },
       "noResultsFound" : "암호화폐가 없습니다",
-      "noResultsDesc" : "철자를 확인하고 재시도하세요"
+      "noResultsDesc" : "철자를 확인하고 재시도하세요",
+      "sanctionedAddress" : {
+        "title" : "사용자 보호 조치 실행 중",
+        "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "닫기",
+        "learnMore" : "자세히 알아보기"
+      }
     },
     "buy" : {
       "title" : "구매",
@@ -7505,5 +7515,10 @@
     "title" : "Ledger Live 업데이트 필요",
     "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
     "openStore" : "업데이트"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "자산 선택",
+    "selectNetwork" : "네트워크 선택",
+    "selectAccount" : "계정 선택"
   }
 }
