@@ -1,4 +1,4 @@
-import { DeviceBusyError } from "@ledgerhq/device-management-kit";
+import { DeviceBusyError, DmkError } from "@ledgerhq/device-management-kit";
 import { WebHidSendReportError } from "@ledgerhq/device-transport-kit-web-hid";
 
 export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean => {
@@ -19,3 +19,5 @@ export const isWebHidSendReportError = (error: unknown): boolean => {
   }
   return false;
 };
+
+export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
