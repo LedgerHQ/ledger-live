@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.39.0
+
+### Minor Changes
+
+- [#10698](https://github.com/LedgerHQ/ledger-live/pull/10698) [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add cryptoIcon in storybook native pre-ldls
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0
+
 ## 0.39.0-next.0
 
 ### Minor Changes

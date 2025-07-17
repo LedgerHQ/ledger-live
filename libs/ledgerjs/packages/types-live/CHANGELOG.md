@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.77.0
+
+### Minor Changes
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
 ## 6.77.0-next.0
 
 ### Minor Changes

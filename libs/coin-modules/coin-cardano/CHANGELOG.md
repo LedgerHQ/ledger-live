@@ -1,5 +1,19 @@
 # @ledgerhq/coin-cardano
 
+## 0.9.0
+
+### Minor Changes
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.77.0
+  - @ledgerhq/coin-framework@5.6.0
+
 ## 0.9.0-next.0
 
 ### Minor Changes
