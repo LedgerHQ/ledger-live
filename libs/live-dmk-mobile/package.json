@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250709140053",
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-apex-support-20250709140053",
+    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250717124506",
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-apex-support-20250717124506",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
