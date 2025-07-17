@@ -1086,7 +1086,7 @@
       "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     },
     "AddressesSanctionedError" : {
-      "title" : "Mantém você em segurança",
+      "title" : "Mantendo você em segurança",
       "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.\n-- {{addresses}}"
     }
   },
