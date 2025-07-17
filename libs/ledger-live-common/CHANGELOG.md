@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.41.0-nightly.8
+
+### Patch Changes
+
+- Updated dependencies [[`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e), [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2), [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e)]:
+  - @ledgerhq/live-signer-evm@0.6.0-nightly.7
+  - @ledgerhq/coin-sui@0.7.0-nightly.8
+  - @ledgerhq/live-env@2.12.0-nightly.1
+  - @ledgerhq/coin-evm@2.23.0-nightly.7
+  - @ledgerhq/coin-framework@5.6.0-nightly.7
+  - @ledgerhq/coin-algorand@0.9.13-nightly.7
+  - @ledgerhq/coin-aptos@2.6.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.7
+  - @ledgerhq/coin-cardano@0.9.0-nightly.7
+  - @ledgerhq/coin-celo@1.1.11-nightly.7
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.7
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.7
+  - @ledgerhq/coin-hedera@1.9.0-nightly.7
+  - @ledgerhq/coin-icon@0.10.13-nightly.7
+  - @ledgerhq/coin-internet_computer@1.7.13-nightly.7
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.7
+  - @ledgerhq/coin-polkadot@6.4.0-nightly.7
+  - @ledgerhq/coin-solana@0.28.0-nightly.7
+  - @ledgerhq/coin-stacks@0.8.13-nightly.7
+  - @ledgerhq/coin-stellar@5.3.1-nightly.7
+  - @ledgerhq/coin-ton@0.13.2-nightly.7
+  - @ledgerhq/coin-vechain@2.7.13-nightly.7
+  - @ledgerhq/ledger-cal-service@1.2.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.0-nightly.3
+  - @ledgerhq/live-countervalues@0.5.13-nightly.7
+  - @ledgerhq/live-network@2.0.13-nightly.1
+  - @ledgerhq/live-nft@0.8.13-nightly.7
+  - @ledgerhq/live-wallet@0.11.4-nightly.7
+  - @ledgerhq/speculos-transport@0.2.6-nightly.1
+  - @ledgerhq/coin-casper@2.0.4-nightly.7
+  - @ledgerhq/coin-mina@1.1.12-nightly.7
+  - @ledgerhq/coin-near@0.11.13-nightly.7
+  - @ledgerhq/coin-tezos@5.6.0-nightly.7
+  - @ledgerhq/coin-tron@4.4.1-nightly.7
+  - @ledgerhq/coin-xrp@6.3.1-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.7
+  - @ledgerhq/live-signer-solana@0.4.1-nightly.7
+  - @ledgerhq/hw-app-eth@6.45.11-nightly.3
+  - @ledgerhq/hw-app-vet@0.5.10-nightly.3
+  - @ledgerhq/device-core@0.5.2-nightly.3
+  - @ledgerhq/hw-app-celo@6.33.9-nightly.3
+
 ## 34.41.0-nightly.7
 
 ### Minor Changes

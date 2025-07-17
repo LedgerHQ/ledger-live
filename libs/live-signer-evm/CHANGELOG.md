@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-evm
 
+## 0.6.0-nightly.7
+
+### Minor Changes
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add context-module gating
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't try to clearsign Exchange flows in signer-eth
+
+### Patch Changes
+
+- Updated dependencies [[`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2)]:
+  - @ledgerhq/coin-evm@2.23.0-nightly.7
+  - @ledgerhq/hw-app-eth@6.45.11-nightly.3
+
 ## 0.6.0-nightly.6
 
 ### Patch Changes

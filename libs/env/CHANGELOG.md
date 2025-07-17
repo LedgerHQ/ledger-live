@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.12.0-nightly.1
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
 ## 2.12.0-nightly.0
 
 ### Minor Changes

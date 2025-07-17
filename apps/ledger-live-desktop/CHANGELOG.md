@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.121.0-nightly.8
+
+### Minor Changes
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add context-module gating
+
+- [#10871](https://github.com/LedgerHQ/ledger-live/pull/10871) [`559a47a`](https://github.com/LedgerHQ/ledger-live/commit/559a47a50fc2b0b326eeb77190bc9fc2dde91c4f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix - Hard reset didn't remove encryption key of LS
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't try to clearsign Exchange flows in signer-eth
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2)]:
+  - @ledgerhq/live-env@2.12.0-nightly.1
+  - @ledgerhq/coin-evm@2.23.0-nightly.7
+  - @ledgerhq/live-common@34.41.0-nightly.8
+  - @ledgerhq/coin-framework@5.6.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.17.0-nightly.7
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.7
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.7
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.1
+  - @ledgerhq/cryptoassets@13.22.0-nightly.3
+  - @ledgerhq/live-countervalues@0.5.13-nightly.7
+  - @ledgerhq/live-network@2.0.13-nightly.1
+  - @ledgerhq/live-nft@0.8.13-nightly.7
+  - @ledgerhq/live-wallet@0.11.4-nightly.7
+  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.8
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.7
+  - @ledgerhq/live-nft-react@0.9.13-nightly.7
+
 ## 2.121.0-nightly.7
 
 ### Minor Changes

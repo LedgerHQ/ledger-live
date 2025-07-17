@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.39.0-nightly.3
+
+### Minor Changes
+
+- [#10950](https://github.com/LedgerHQ/ledger-live/pull/10950) [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add search Input to LLM ui pre ldls
+
 ## 0.39.0-nightly.2
 
 ### Minor Changes

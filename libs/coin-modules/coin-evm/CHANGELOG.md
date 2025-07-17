@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 2.23.0-nightly.7
+
+### Minor Changes
+
+- [#10957](https://github.com/LedgerHQ/ledger-live/pull/10957) [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-evm): add getBalance (Alpaca)
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b)]:
+  - @ledgerhq/live-env@2.12.0-nightly.1
+  - @ledgerhq/coin-framework@5.6.0-nightly.7
+  - @ledgerhq/evm-tools@1.7.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.0-nightly.3
+  - @ledgerhq/live-network@2.0.13-nightly.1
+
 ## 2.23.0-nightly.6
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-nightly.8
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b)]:
+  - @ledgerhq/live-env@2.12.0-nightly.1
+  - @ledgerhq/coin-framework@5.6.0-nightly.7
+  - @ledgerhq/cryptoassets@13.22.0-nightly.3
+  - @ledgerhq/live-network@2.0.13-nightly.1
+
 ## 0.7.0-nightly.7
 
 ### Patch Changes

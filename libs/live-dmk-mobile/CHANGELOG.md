@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.9.0-nightly.1
+
+### Minor Changes
+
+- [#10946](https://github.com/LedgerHQ/ledger-live/pull/10946) [`2182150`](https://github.com/LedgerHQ/ledger-live/commit/2182150e6847c3766bed2144b7620513dfb28373) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add dmk errors event tracking
+
 ## 0.8.1-nightly.0
 
 ### Patch Changes

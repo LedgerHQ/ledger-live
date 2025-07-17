@@ -1,5 +1,42 @@
 # live-mobile
 
+## 3.86.0-nightly.7
+
+### Minor Changes
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add context-module gating
+
+- [#10962](https://github.com/LedgerHQ/ledger-live/pull/10962) [`0041332`](https://github.com/LedgerHQ/ledger-live/commit/0041332bea90ca7bbda62f1d9111dee91533b5f4) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Price Alerts - adding 6 more tokens
+
+- [#10956](https://github.com/LedgerHQ/ledger-live/pull/10956) [`d9200a9`](https://github.com/LedgerHQ/ledger-live/commit/d9200a9544a35e2821e97e96e8794fcd8f8de888) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Plug MAD to AddAccount flow
+
+- [#10896](https://github.com/LedgerHQ/ledger-live/pull/10896) [`453c699`](https://github.com/LedgerHQ/ledger-live/commit/453c6993cbb15b20ef27629933cc5a583e01cb75) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Skeleton for ModularDrawer
+
+- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't try to clearsign Exchange flows in signer-eth
+
+- [#10946](https://github.com/LedgerHQ/ledger-live/pull/10946) [`2182150`](https://github.com/LedgerHQ/ledger-live/commit/2182150e6847c3766bed2144b7620513dfb28373) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add dmk errors event tracking
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2), [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1), [`2182150`](https://github.com/LedgerHQ/ledger-live/commit/2182150e6847c3766bed2144b7620513dfb28373)]:
+  - @ledgerhq/live-env@2.12.0-nightly.1
+  - @ledgerhq/coin-evm@2.23.0-nightly.7
+  - @ledgerhq/native-ui@0.39.0-nightly.3
+  - @ledgerhq/live-dmk-mobile@0.9.0-nightly.1
+  - @ledgerhq/coin-framework@5.6.0-nightly.7
+  - @ledgerhq/coin-cosmos@0.16.2-nightly.7
+  - @ledgerhq/coin-filecoin@1.9.13-nightly.7
+  - @ledgerhq/coin-multiversx@0.4.13-nightly.7
+  - @ledgerhq/coin-stacks@0.8.13-nightly.7
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.1
+  - @ledgerhq/live-countervalues@0.5.13-nightly.7
+  - @ledgerhq/live-network@2.0.13-nightly.1
+  - @ledgerhq/live-nft@0.8.13-nightly.7
+  - @ledgerhq/live-wallet@0.11.4-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.42-nightly.7
+  - @ledgerhq/live-nft-react@0.9.13-nightly.7
+
 ## 3.86.0-nightly.6
 
 ### Patch Changes
