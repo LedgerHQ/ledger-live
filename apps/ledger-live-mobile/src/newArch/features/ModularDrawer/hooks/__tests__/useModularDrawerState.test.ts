@@ -6,7 +6,7 @@ import {
   mockCurrenciesByProvider,
   mockCurrencyIds,
   mockEthCryptoCurrency,
-} from "../../__mocks__/currencies.mock";
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 describe("useModularDrawerState", () => {
   const mockCurrency = mockBtcCryptoCurrency;

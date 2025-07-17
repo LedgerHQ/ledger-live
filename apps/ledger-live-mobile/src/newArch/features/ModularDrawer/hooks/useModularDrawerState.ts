@@ -19,7 +19,7 @@ type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
   currenciesByProvider: CurrenciesByProviderId[];
-  isDrawerOpen: boolean;
+  isDrawerOpen?: boolean;
 };
 
 /**
