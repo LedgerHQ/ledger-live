@@ -1,10 +1,8 @@
 import { selectUtxos } from "../utxos/selection";
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
-import expect from "expect";
 
 const TX_MASS_PER_INPUT = 1118;
-const TX_MASS_FOR_ONE_OUTPUT = 506;
 const TX_MASS_FOR_TWO_OUTPUTS = 918;
 const TX_MASS_FOR_ECDSA = 11;
 
@@ -62,41 +60,34 @@ export class KaspaUtxoGenerator {
   }
 }
 
-describe("selectUtxos - check fee, change amount and discarding of dust change", () => {
-  test("2 input, 2 outputs, feerate = 1", () => {
+describe("2 outputs - no discard", () => {
+  test("2/5 inputs, 2 outputs", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(1_5000_0000), 1);
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_5000_0000), feeRate);
 
-    // 2x 1_0000_0000 UTXO
     expect(utxos.length).toBe(5);
-
+    // Selected 2 times 1_0000_0000 UTXO
     expect(selectedUtxos.utxos.length).toBe(2);
     expect(selectedUtxos.utxos[0].utxoEntry.blockDaaScore).toBe("12345");
     expect(selectedUtxos.utxos[1].utxoEntry.blockDaaScore).toBe("12346");
 
-    // TX should be: 2 in + 2 out
+    // TX should have: 2 inputs and 2 outputs
     // compute mass = 3154
     // storage mass = 6668
+
+    // fee only depends on compute mass
     expect(selectedUtxos.fee.toNumber()).toBe(3154);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(2_0000_0000 - 1_5000_0000 - 3154);
   });
-  test("2 input, 2 outputs, feerate = 1, ECDSA", () => {
-    const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
-    const selectedUtxos = selectUtxos(utxos, true, BigNumber(1_5000_0000), 1);
 
-    const expectedFee = TX_MASS_FOR_TWO_OUTPUTS + TX_MASS_PER_INPUT * 2 + TX_MASS_FOR_ECDSA;
-
-    expect(utxos.length).toBe(5);
-    expect(selectedUtxos.utxos.length).toBe(2);
-    // TX should be: 2 in + 2 out
-    // compute mass = 3165 (ECDSA)
-    // storage mass = 6668
-    expect(selectedUtxos.fee.toNumber()).toBe(3165);
-    expect(selectedUtxos.changeAmount.toNumber()).toBe(2_0000_0000 - 1_5000_0000 - 3165);
-  });
-  test("1 input, 2 outputs, feerate = 1", () => {
+  test("1/5 inputs, 2 outputs", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(2_0000_0000), "12345");
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(1_5000_0000), 1);
+    const isEcdsaRecipient = false;
+    const feeRate = 1;
+    const sendAmount = BigNumber(1_5000_0000);
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, sendAmount, feeRate);
 
     expect(selectedUtxos.utxos.length).toBe(1);
     expect(selectedUtxos.utxos[0].utxoEntry.blockDaaScore).toBe("12345");
@@ -107,32 +98,40 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     expect(selectedUtxos.fee.toNumber()).toBe(2036);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(2_0000_0000 - 1_5000_0000 - 2036);
   });
-  test("5 inputs, 2 outputs, feerate = 1", () => {
-    const utxos = KaspaUtxoGenerator.generateUtxoSet(10, BigNumber(1_0000_0000), "12345");
-    const feerate = 1;
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate);
 
-    const expectedInputCnt = 5;
-    const computeMass = TX_MASS_FOR_TWO_OUTPUTS + TX_MASS_PER_INPUT * expectedInputCnt;
-    const expectedFee = computeMass * feerate;
+  it.each([1, 10, 20, 80, 5000])("5 inputs, 2 outputs, feeRate = %i", feeRate => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(15, BigNumber(1_0000_0000), "12345");
+    const isEcdsaRecipient = false;
+    const sendAmount = BigNumber(4_5000_0000);
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, sendAmount, feeRate);
 
-    expect(selectedUtxos.utxos.length).toBe(expectedInputCnt);
+    expect(selectedUtxos.utxos.length).toBe(5);
     // TX should be: 1 in + 2 out
     // compute mass = 1118 * 5 + 918 = 6508
     // storage mass = 0 ( 5 in and 2 out.. )
-    expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
-    expect(selectedUtxos.changeAmount.toNumber()).toBe(5_0000_0000 - 4_5000_0000 - expectedFee);
+    expect(selectedUtxos.fee.toNumber()).toBe(6508 * feeRate);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(5_0000_0000 - 4_5000_0000 - 6508 * feeRate);
   });
 
-  test("5 inputs, 2 outputs, feerate = 1, ECDSA", () => {
+  test("5 inputs, 2 outputs, feerate = 8203 => not possible!", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
+    const feerate = 8203;
+
+    expect(selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate - 1)).toBeDefined();
+    expect(() => selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate)).toThrow(
+      "UTXO total amount is not sufficient for sending amount 450000000",
+    );
+  });
+});
+describe("ECDSA mass", () => {
+  it.each([1, 2, 5])("5 inputs, 2 outputs, feerate = %i, ECDSA", feeRate => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(10, BigNumber(1_0000_0000), "12345");
-    const feerate = 1;
-    const selectedUtxos = selectUtxos(utxos, true, BigNumber(4_5000_0000), feerate);
+    const selectedUtxos = selectUtxos(utxos, true, BigNumber(4_5000_0000), feeRate);
 
     const expectedInputCnt = 5;
     const computeMass =
       TX_MASS_FOR_TWO_OUTPUTS + TX_MASS_PER_INPUT * expectedInputCnt + TX_MASS_FOR_ECDSA;
-    const expectedFee = computeMass * feerate;
+    const expectedFee = computeMass * feeRate;
 
     expect(selectedUtxos.utxos.length).toBe(expectedInputCnt);
     // TX should be: 1 in + 2 out
@@ -142,49 +141,48 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(5_0000_0000 - 4_5000_0000 - expectedFee);
   });
-
-  test("5 inputs, 2 outputs, feerate = 5", () => {
+  test("2/2 input, 2 outputs, feerate = 1, ECDSA", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
-    const feerate = 5;
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate);
+    const selectedUtxos = selectUtxos(utxos, true, BigNumber(1_5000_0000), 1);
 
-    const expectedInputCnt = 5;
-    const computeMass = TX_MASS_FOR_TWO_OUTPUTS + TX_MASS_PER_INPUT * expectedInputCnt;
-    const expectedFee = computeMass * feerate;
-
-    expect(selectedUtxos.utxos.length).toBe(expectedInputCnt);
-    // TX should be: 1 in + 2 out
-    // compute mass = 1118 * 5 + 918 = 6508
-    // storage mass = 0 ( 5 in and 2 out.. )
-    expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
-    expect(selectedUtxos.changeAmount.toNumber()).toBe(5_0000_0000 - 4_5000_0000 - expectedFee);
+    expect(utxos.length).toBe(5);
+    expect(selectedUtxos.utxos.length).toBe(2);
+    // TX should be: 2 in + 2 out
+    // compute mass = 3165 (ECDSA)
+    // storage mass = 6668
+    expect(selectedUtxos.fee.toNumber()).toBe(3165);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(2_0000_0000 - 1_5000_0000 - 3165);
   });
+});
+describe("2 outputs - no discard", () => {});
 
-  test("5 inputs, 2 outputs, feerate = 5000", () => {
+describe("1 output with discard", () => {
+  test("check sweetspot - discard up to 1530 sompis change", () => {
+    const feeRate = 1;
     const utxos = KaspaUtxoGenerator.generateUtxoSet(6, BigNumber(1_0000_0000), "12345");
-    const feerate = 5000;
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(4_5000_0000), 5000);
+    const isEcdsaRecipient = false;
+    const sendAmount = BigNumber(5_0000_0000 - 5 * 1118 - 918 - 1530);
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, sendAmount, feeRate);
 
-    const expectedInputCnt = 5;
-    const computeMass = TX_MASS_FOR_TWO_OUTPUTS + TX_MASS_PER_INPUT * expectedInputCnt;
-    const expectedFee = computeMass * feerate;
+    expect(selectedUtxos.utxos.length).toBe(5);
+    expect(selectedUtxos.fee.toNumber()).toBe(5 * 1118 + 918 + 1530);
+    expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
 
-    expect(selectedUtxos.utxos.length).toBe(expectedInputCnt);
-    // TX should be: 1 in + 2 out
-    // compute mass = 1118 * 5 + 918 = 6508
-    // storage mass = 0 ( 5 in and 2 out.. )
-    expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
-    expect(selectedUtxos.changeAmount.toNumber()).toBe(5_0000_0000 - 4_5000_0000 - expectedFee);
+    const selectedUtxos2 = selectUtxos(utxos, isEcdsaRecipient, sendAmount.minus(1), feeRate);
+    expect(selectedUtxos2.utxos.length).toBe(6);
+    expect(selectedUtxos2.fee.toNumber()).toBe(6 * 1118 + 918);
+    expect(selectedUtxos2.changeAmount.toNumber()).toBe(100000413);
   });
 
-  test("5 inputs, 2 outputs, feerate = 7682 => discard change!", () => {
-    const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
-    const feerate = 7682;
-    const selectedUtxos = selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate);
-    // in this case the change has to be discarded, as it's only 5544 sompis
-    // and the storage mass explodes to an inacceptable value of 180327402g
+  test("check sweetspot with feeRate", () => {
+    const feeRate = 2;
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(6, BigNumber(1_0000_0000), "12345");
+    const isEcdsaRecipient = false;
+    const sendAmount = BigNumber(5_0000_0000 - (5 * 1118 + 506) * 2);
+    const selectedUtxos = selectUtxos(utxos, isEcdsaRecipient, sendAmount, feeRate);
+
     expect(selectedUtxos.utxos.length).toBe(5);
-    expect(selectedUtxos.fee.toNumber()).toBe(5000_0000);
+    expect(selectedUtxos.fee.toNumber()).toBe((5 * 1118 + 506) * 2);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 
@@ -197,15 +195,6 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     expect(selectedUtxos.utxos.length).toBe(5);
     expect(selectedUtxos.fee.toNumber()).toBe(50000000);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
-  });
-
-  test("5 inputs, 2 outputs, feerate = 8203 => not possible!", () => {
-    const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
-    const feerate = 8203;
-
-    expect(() => selectUtxos(utxos, false, BigNumber(4_5000_0000), feerate)).toThrow(
-      "UTXO total amount is not sufficient for sending amount 450000000",
-    );
   });
 
   test("6 inputs, 2 outputs, feerate = 8203 => need 6 inputs now.!", () => {
@@ -221,8 +210,10 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     expect(selectedUtxos.fee.toNumber()).toBe(expectedFee);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(1_5000_0000 - expectedFee);
   });
+});
 
-  test("send all", () => {
+describe("1 output without discard", () => {
+  test("send exact UTXO sum for all UTXOs with no change", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
     const feerate = 1;
     const selectedUtxos = selectUtxos(
@@ -237,18 +228,18 @@ describe("selectUtxos - check fee, change amount and discarding of dust change",
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 
-  test("send almost all", () => {
+  test("send exact UTXO sum for 2 UTXOs with no change", () => {
     const utxos = KaspaUtxoGenerator.generateUtxoSet(5, BigNumber(1_0000_0000), "12345");
     const feerate = 1;
     const selectedUtxos = selectUtxos(
       utxos,
       false,
-      BigNumber(5_0000_0000 - (5 * 1118 + 506) - 2),
+      BigNumber(2_0000_0000 - (2 * 1118 + 506)),
       feerate,
     );
 
-    expect(selectedUtxos.utxos.length).toBe(5);
-    expect(selectedUtxos.fee.toNumber()).toBe(5 * 1118 + 506 + 2);
+    expect(selectedUtxos.utxos.length).toBe(2);
+    expect(selectedUtxos.fee.toNumber()).toBe(2 * 1118 + 506);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
   });
 });

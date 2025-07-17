@@ -62,7 +62,7 @@ export const selectUtxos = (
         BigNumber((MASS_PER_INPUT + MASS_PER_OUTPUT) * feerate),
       );
       if (i + 1 < utxos.length && isWorthPickingAnotherUtxo) {
-        // There is one more utxo and it is cheaper to pick than discard the change.
+        // There is one more UTXO and it is cheaper to pick than discard the change.
         continue;
       } else {
         // Change needs to be discarded as fee to keep mass low enough.
