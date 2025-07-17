@@ -287,20 +287,120 @@
       "description" : "Пожалуйста, попробуйте ещё раз."
     },
     "DisconnectedDevice" : {
-      "title" : "Устройство отключено",
-      "description" : "Ledger Live не удалось подключиться к устройству. Повторите попытку."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Устройство отключено",
-      "description" : "Ledger Live не удалось подключиться к устройству. Повторите попытку."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "Устройство отключено",
-      "description" : "Ledger Live не смогло подключиться к устройству. Повторите попытку."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "Устройство отключено",
-      "description" : "Ledger Live не смогло подключиться к устройству. Повторите попытку."
+      "title" : "Device connection lost",
+      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Connection method error",
+      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Device not onboarded",
+      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError" : {
+      "title" : "Device locked",
+      "description" : "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Not enough memory",
+      "description" : "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OS is unsupported",
+      "description" : "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Battery error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Battery error",
+      "description" : "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError" : {
+      "title" : "Device connection error",
+      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Device not recognised",
+      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Communication error",
+      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "CasperInvalidTransferId" : {
       "title" : "ID перевода должен быть положительным числом до {{maxTransferId}}"
@@ -517,9 +617,29 @@
       "title" : "Недостаточно EGLD для оплаты комиссии за транзакцию",
       "description" : "Пожалуйста, пополните счёт EGLD для оплаты транзакций."
     },
+    "NotEnoughToStake" : {
+      "title" : "Для активации стейка требуется минимум {{minStake}} {{currency}}",
+      "description" : "Для активации стейка требуется минимум {{minStake}} {{currency}}"
+    },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Если вывести из стейкинга больше {{maxAmount}}, будет выведен весь стейк на {{totalAmount}}.",
+      "description" : "Если вывести из стейкинга больше {{maxAmount}}, будет выведен весь стейк на {{totalAmount}}."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Если рестейкать больше {{maxAmount}}, повторно застейканы будут все {{totalAmount}}.",
+      "description" : "Если рестейкать больше {{maxAmount}}, повторно застейканы будут все {{totalAmount}}."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Невозможно рестейкать меньше {{minAmount}}",
+      "description" : "Невозможно рестейкать меньше {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Невозможно вывести из стейкинга меньше {{minAmount}}",
+      "description" : "Невозможно вывести из стейкинга меньше {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Кажется, у вас недостаточно средств для покрытия комиссии",
@@ -757,7 +877,7 @@
       "description" : "Операция обмена не завершена. Пожалуйста, повторите попытку или обратитесь в Поддержку."
     },
     "SwapTimeoutError" : {
-      "title" : "Не удалось получить курс обмена из-за технической проблемы.  Попробуйте ещё раз позже."
+      "title" : "Не удалось получить котировку из-за технической проблемы.  Попробуйте ещё раз позже."
     },
     "PolkadotElectionClosed" : {
       "title" : "Выбор валидаторов должен быть закрыт"
@@ -3116,8 +3236,8 @@
         "desc" : "Не пропускайте важные новости о приложении Ledger Live."
       },
       "largeMover" : {
-        "title" : "Значительное изменение цены",
-        "desc" : "Регулярные уведомления о значительных перепадах курсов BTC, ETH, SOL, ADA и XRP."
+        "title" : "Ценовые алерты",
+        "desc" : "You’ll be notified of important price movements for popular tokens you own"
       },
       "transactionsAlerts" : {
         "title" : "Уведомления о транзакциях (бета)",
@@ -3614,7 +3734,7 @@
           }
         },
         "providers" : {
-          "noProviders" : "Ничего не найдено. По текущему фильтру нет подходящих курсов."
+          "noProviders" : "Ничего не нашли. По этому фильтру нет подходящих котировок."
         }
       },
       "quotesList" : {
@@ -6327,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Поддержка Aptos уже здесь",
+        "description" : "Сумма токенов в вашем распоряжении."
+      },
+      "storageUsage" : {
+        "title" : "Минимальный баланс",
+        "description" : "Данная сумма зарезервирована для хранения и транзакций. Она также является минимальным балансом для сохранения активности счёта."
+      },
+      "staked" : {
+        "title" : "Стейкается",
+        "description" : "Актуальная сумма в стейкинге у валидаторов."
+      },
+      "pending" : {
+        "title" : "Неподтверждённый баланс",
+        "description" : "Эта сумма криптоактивов была выведена из стейкинга и скоро будет доступна."
+      },
+      "withdrawable" : {
+        "title" : "Можно вывести",
+        "description" : "Эта сумма криптоактивов была выведена из стейкинга и уже доступна."
+      },
+      "stakingUnavailable" : {
+        "title" : "Стейкинг недоступен",
+        "description" : "Доступных средств на счету недостаточно для стейкинга, отмены стейкинга и вывода."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "В стейкинге",
+        "unstakedAmount" : "Выведено из стейкинга",
+        "withdrawnAmount" : "Выведенная сумма"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Сумма вывода из стейкинга"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно вывели активы из стейкинга"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Сумма вывода"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно вывели средства"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Сумма для рестейкинга"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно повторно застейкали активы"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Позиции в стейкинге",
+      "info" : "Как работает стейкинг",
+      "add" : "Дополнить",
+      "stakingEarn" : "Вы можете получать вознаграждения в Aptos за стейкинг криптоактивов.",
+      "totalStake" : "Общий пул",
+      "commission" : "Комиссия",
+      "comm" : "Комиссия",
+      "timeToUnlock" : "Разлок через",
+      "iStake" : "Я стейкаю",
+      "actions" : {
+        "unstake" : "Разблокировать",
+        "withdraw" : "Вывод средств",
+        "restake" : "Застейкать повторно"
+      },
+      "drawer" : {
+        "status" : "Состояние",
+        "active" : "Активно",
+        "inactive" : "Неактивно",
+        "pending" : "В ожидании",
+        "available" : "Доступно для вывода"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Сумма для стейкинга",
+        "selectDevice" : "Выбор устройства",
+        "connectDevice" : "Подключить устройство",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Стейкайте Aptos, чтобы безопасно получать вознаграждения, не теряя контроль над активами.",
+            "steps" : {
+              "0" : "Застейканные активы остаются в вашей собственности.",
+              "1" : "Вывод из стейкинга занимает около 2 часов.",
+              "2" : "Безопасно стейкайте криптоактивы с устройством Ledger."
+            },
+            "warning" : {
+              "description" : "Выбирайте валидатора с умом. Часть застейканных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно."
+            },
+            "cta" : "Продолжить"
+          },
+          "amount" : {
+            "assetsRemaining" : "Осталось активов: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Использованы все активы",
+            "minAmount" : "Мин. сумма: <0>{{min}}</0>",
+            "incorrectAmount" : "Макс. сумма: <0>{{max}}</0>",
+            "cta" : "Продолжить"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Вы успешно застейкали активы",
+              "text" : "Баланс обновится после подтверждения транзакции в сети."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Превышен лимит делегирования",
     "delegationSendWarnDesc" : "Отправляемая сумма будет вычтена из делегированного счета.",
@@ -6727,8 +6982,8 @@
       "7d" : "7Д",
       "30d" : "30Д",
       "1y" : "1Г",
-      "1D_label" : "1Д",
       "1H_label" : "1Ч",
+      "1D_label" : "1Д",
       "1W_label" : "1Н",
       "1M_label" : "1М",
       "1Y_label" : "1Г"
