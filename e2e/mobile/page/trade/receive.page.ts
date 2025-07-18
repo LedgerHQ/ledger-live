@@ -51,6 +51,9 @@ export default class ReceivePage {
   @Step("Select currency in receive list")
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
+    if (!(await IsIdVisible(id))) {
+      await scrollToId(id);
+    }
     await tapById(id);
   }
 

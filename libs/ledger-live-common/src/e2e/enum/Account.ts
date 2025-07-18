@@ -519,11 +519,11 @@ export class TokenAccount extends Account {
 
   static readonly ETH_LIDO = new TokenAccount(
     Currency.ETH_LIDO,
-    "LIDO Staked ETH 1",
-    Account.ETH_1.address,
+    "LIDO Staked ETH 2",
+    Account.ETH_2.address,
     0,
     TokenType.ERC20,
-    Account.ETH_1,
+    Account.ETH_2,
   );
 
   static readonly ETH_USDC_1 = new TokenAccount(
@@ -548,7 +548,7 @@ export class TokenAccount extends Account {
     Currency.ETH_USDT,
     "Tether USD 2",
     Account.ETH_2.address,
-    1,
+    0,
     TokenType.ERC20,
     Account.ETH_2,
   );
