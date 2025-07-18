@@ -3,7 +3,7 @@ import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/
 import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { TrackAddAccountScreen } from "LLD/features/ModularDrawer/analytics/TrackAddAccountScreen";
-import { default as React } from "react";
+import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components";
@@ -11,6 +11,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { ScrollContainer } from "../../components/ScrollContainer";
+import { useFormatAccount } from "../../hooks/useFormatAccount";
 import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
@@ -35,48 +36,52 @@ const ScanAccounts = ({
   const { t } = useTranslation();
 
   const {
+    allImportableAccountsSelected,
+    creatableAccounts,
+    error,
+    handleConfirm,
+    handleDeselectAll,
+    handleSelectAll,
+    handleToggle,
+    importableAccounts,
     newAccountSchemes,
     scanning,
-    error,
-    importableAccounts,
-    creatableAccounts,
     selectedIds,
     showAllCreatedAccounts,
     stopSubscription,
-    handleToggle,
-    handleSelectAll,
-    handleDeselectAll,
-    handleConfirm,
     toggleShowAllCreatedAccounts,
-    allImportableAccountsSelected,
-    formatAccount,
   } = useScanAccounts({
-    navigateToWarningScreen,
     currency,
     deviceId,
+    navigateToWarningScreen,
     onComplete,
   });
 
-  const renderAccount = (account: Account) => {
-    const accountFormatted = formatAccount(account);
-    return (
-      <Box mb={16} key={account.id}>
-        <AccountItem
-          account={accountFormatted}
-          rightElement={{
-            type: "checkbox",
-            checkbox: {
-              name: "checked",
-              isChecked: selectedIds.includes(accountFormatted.id),
-              onChange: () => {},
-            },
-          }}
-          onClick={() => handleToggle(accountFormatted.id)}
-          backgroundColor={colors.opacityDefault.c05}
-        />
-      </Box>
-    );
-  };
+  const formatAccount = useFormatAccount(currency);
+
+  const renderAccount = useCallback(
+    (account: Account) => {
+      const accountFormatted = formatAccount(account);
+      return (
+        <Box mb={16} key={account.id}>
+          <AccountItem
+            account={accountFormatted}
+            backgroundColor={colors.opacityDefault.c05}
+            rightElement={{
+              type: "checkbox",
+              checkbox: {
+                name: "checked",
+                isChecked: selectedIds.includes(accountFormatted.id),
+                onChange: () => {},
+              },
+            }}
+            onClick={() => handleToggle(accountFormatted.id)}
+          />
+        </Box>
+      );
+    },
+    [colors.opacityDefault.c05, formatAccount, handleToggle, selectedIds],
+  );
 
   if (error) {
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
@@ -92,13 +97,13 @@ const ScanAccounts = ({
       {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
       <Flex marginBottom={24}>
         <Text
-          fontSize={24}
-          flex={1}
-          textAlign="left"
-          width="100%"
-          lineHeight="32.4px"
           color="palette.text.shade100"
           data-testid="scan-accounts-title"
+          flex={1}
+          fontSize={24}
+          lineHeight="32.4px"
+          textAlign="left"
+          width="100%"
         >
           {scanning
             ? t("modularAssetDrawer.scanAccounts.title")
@@ -109,22 +114,22 @@ const ScanAccounts = ({
       <ScrollContainer>
         {importableAccounts.length > 0 ? (
           <ImportableAccountsList
-            scanning={scanning}
-            importableAccounts={importableAccounts}
             allImportableAccountsSelected={allImportableAccountsSelected}
-            handleSelectAll={handleSelectAll}
             handleDeselectAll={handleDeselectAll}
+            handleSelectAll={handleSelectAll}
+            importableAccounts={importableAccounts}
             renderAccount={renderAccount}
+            scanning={scanning}
           />
         ) : null}
         {!scanning && creatableAccounts.length > 0 ? (
           <CreatableAccountsList
+            creatableAccounts={creatableAccounts}
             currency={currency}
             newAccountSchemes={newAccountSchemes}
-            creatableAccounts={creatableAccounts}
+            renderAccount={renderAccount}
             showAllCreatedAccounts={showAllCreatedAccounts}
             toggleShowAllCreatedAccounts={toggleShowAllCreatedAccounts}
-            renderAccount={renderAccount}
           />
         ) : null}
       </ScrollContainer>

@@ -36,23 +36,25 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   }),
 }));
 
-let triggerNext: (account: Account) => void = () => null;
+let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
   getCurrencyBridge: () => ({
     scanAccounts: () => ({
-      subscribe: ({
-        next,
-        complete,
-      }: {
-        next: ({ account }: { account: Account }) => void;
-        complete: () => void;
-      }) => {
-        triggerNext = account => next({ account });
-        triggerComplete = () => complete();
-      },
+      pipe: () => ({
+        subscribe: ({
+          next,
+          complete,
+        }: {
+          next: (accounts: Account[]) => void;
+          complete: () => void;
+        }) => {
+          triggerNext = accounts => next(accounts);
+          triggerComplete = () => complete();
+        },
+      }),
     }),
     preload: () => true,
     hydrate: () => true,
@@ -60,7 +62,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map(account => act(() => triggerNext(account))));
+  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
   await act(() => triggerComplete());
 };
 
@@ -253,9 +255,6 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
 
     const confirm = screen.getByRole("button", { name: "Confirm" });
-    expect(confirm).toBeDisabled();
-
-    await userEvent.click(screen.getByRole("checkbox"));
     expect(confirm).not.toBeDisabled();
 
     await userEvent.click(confirm);
