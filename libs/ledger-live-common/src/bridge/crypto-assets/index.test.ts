@@ -1,4 +1,4 @@
-import { LiveConfig } from "@ledgerhq/live-config/lib/LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { CryptoAssetsStore } from "./type";
