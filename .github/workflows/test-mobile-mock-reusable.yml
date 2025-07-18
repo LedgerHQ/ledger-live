@@ -63,7 +63,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
-    runs-on: ledger-live-medium
+    runs-on: ledger-live-linux-8CPU-32RAM
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
