@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/cryptoassets": major
+"@ledgerhq/cryptoassets": minor
 ---
 
 Added Celo tokens
