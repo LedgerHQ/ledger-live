@@ -44,10 +44,12 @@ runs:
 
     - name: Un-Compress files
       shell: bash
+      if: steps.download-cache.outcome == 'success'
       run: |
         gtar -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
 
     - name: Cleanup
       shell: bash
+      if: steps.download-cache.outcome == 'success'
       run: |
           rm -f /tmp/cache.tzst
