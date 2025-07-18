@@ -2619,6 +2619,9 @@ importers:
       '@celo/wallet-ledger':
         specifier: ^6.0.3
         version: 6.0.3
+      '@faker-js/faker':
+        specifier: ^9.9.0
+        version: 9.9.0
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-evm
@@ -13200,6 +13203,10 @@ packages:
 
   '@faker-js/faker@9.6.0':
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+
+  '@faker-js/faker@9.9.0':
+    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2':
@@ -41264,6 +41271,8 @@ snapshots:
   '@faker-js/faker@9.4.0': {}
 
   '@faker-js/faker@9.6.0': {}
+
+  '@faker-js/faker@9.9.0': {}
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2': {}
 
