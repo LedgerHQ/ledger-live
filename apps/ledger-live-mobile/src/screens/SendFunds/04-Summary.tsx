@@ -172,8 +172,9 @@ function SendSummary({ navigation, route }: Props) {
 
   const displayedError = mergeErrors();
 
-  // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
+  const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+
+  if (!account || !transaction || !currencyOrToken) {
     return null;
   }
 
@@ -211,7 +212,9 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
+        {transaction.recipient ? (
+          <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
+        ) : null}
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange" testID="send-summary-warning">
             <TranslatedError error={status.warnings.recipient} />
@@ -234,14 +237,14 @@ function SendSummary({ navigation, route }: Props) {
         <SectionSeparator lineColor={colors.lightFog} />
         {isNFTSend ? (
           <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
-        ) : (
+        ) : !isSolanaRawTransaction ? (
           <SummaryAmountSection
             account={account}
             parentAccount={parentAccount}
             amount={amount}
             overrideAmountLabel={overrideAmountLabel}
           />
-        )}
+        ) : null}
         {displayedError ? (
           <NativeUiAlert type="error">
             <Flex width={"90%"}>
@@ -266,7 +269,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {!amount.eq(totalSpent) && !hideTotal ? (
+        {!amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
             <SummaryTotalSection
@@ -275,6 +278,25 @@ function SendSummary({ navigation, route }: Props) {
               amount={totalSpent}
             />
           </>
+        ) : null}
+
+        {isSolanaRawTransaction ? (
+          <NativeUiAlert type="warning">
+            <Flex>
+              <Text
+                color="neutral.c100"
+                flexShrink={1}
+                variant="bodyLineHeight"
+                fontWeight="semiBold"
+              >
+                <Trans i18nKey="send.summary.solanaRawTransaction.title" />{" "}
+              </Text>
+
+              <Text paddingTop={2}>
+                <Trans i18nKey="send.summary.solanaRawTransaction.description" />
+              </Text>
+            </Flex>
+          </NativeUiAlert>
         ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
