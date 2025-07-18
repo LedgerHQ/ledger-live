@@ -287,20 +287,120 @@
       "description" : "다시 시도해 주세요."
     },
     "DisconnectedDevice" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DisconnectError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceLockedError" : {
+      "title" : "장치 잠김",
+      "description" : "장치가 잠겨 있습니다. 잠금을 해제한 후 다시 시도해 주세요."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "메모리 부족",
+      "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "지원되지 않는 운영체제",
+      "description" : "이 장치의 운영체제는 현재 지원되지 않습니다. Ledger Live를 통해 업데이트해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "배터리 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "배터리 오류",
+      "description" : "배터리 상태에 문제가 발생했습니다. Ledger 지원팀에 문의하세요"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDAError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "ReceiverApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "FramerApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "CasperInvalidTransferId" : {
       "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
@@ -517,9 +617,29 @@
       "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
     },
+    "NotEnoughToStake" : {
+      "title" : "스테이킹을 활성화하려면 {{minStake}} {{currency}} 이상이 필요합니다.",
+      "description" : "스테이킹을 활성화하려면 {{minStake}} {{currency}} 이상이 필요합니다."
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다."
     },
     "NotEnoughBalanceFees" : {
       "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
@@ -3116,8 +3236,8 @@
         "desc" : "중요한 Ledger Live 업데이트 받아 보기"
       },
       "largeMover" : {
-        "title" : "가격 변동폭이 큰 자산",
-        "desc" : "BTC, ETH, SOL, ADA, XRP를 보유하고 있다면 중요한 가격 변동에 대한 알림을 보내드립니다."
+        "title" : "가격 알림",
+        "desc" : "보유하신 인기 토큰에 큰 폭의 가격 변동이 있을 경우 알림을 발송합니다."
       },
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
@@ -6327,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos 이용 가능",
+        "description" : "가처분 금액입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 잔액",
+        "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
+      },
+      "staked" : {
+        "title" : "스테이킹 잔액",
+        "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
+      },
+      "pending" : {
+        "title" : "승인 대기 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+      },
+      "withdrawable" : {
+        "title" : "출금 가능 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다."
+      },
+      "stakingUnavailable" : {
+        "title" : "스테이킹 불가",
+        "description" : "계정에 스테이킹, 언스테이킹 및 인출에 필요한 가용 잔액이 충분하지 않습니다."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "스테이킹 금액",
+        "unstakedAmount" : "언스테이킹된 금액",
+        "withdrawnAmount" : "출금된 금액"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "언스테이킹할 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "리스테이킹 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산 리스테이킹을 성공적으로 완료했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "스테이킹 포지션",
+      "info" : "스테이킹 작동 방식",
+      "add" : "추가",
+      "stakingEarn" : "자산을 스테이킹하여 Aptos 보상을 받을 수 있습니다.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "커미션",
+      "comm" : "수수료",
+      "timeToUnlock" : "잠금 해제까지 남은 시간:",
+      "iStake" : "스테이킹하기",
+      "actions" : {
+        "unstake" : "언스테이킹",
+        "withdraw" : "출금",
+        "restake" : "리스테이킹"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "스테이킹할 금액",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos를 안전하게 스테이킹하고 보상을 받으면서, 자산에 대한 통제 권한까지 유지하세요.",
+            "steps" : {
+              "0" : "스테이킹된 자산은 귀하의 소유입니다.",
+              "1" : "언스테이킹 완료까지 약 2시간 남았습니다.",
+              "2" : "Ledger 장치로 안전하게 스테이킹하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "과다 위임됨",
     "delegationSendWarnDesc" : "전송할 금액은 위임된 계정에서 공제됩니다.",
@@ -6727,8 +6982,8 @@
       "7d" : "7일",
       "30d" : "30일",
       "1y" : "1년",
-      "1D_label" : "1일",
       "1H_label" : "1시간",
+      "1D_label" : "1일",
       "1W_label" : "1주",
       "1M_label" : "1달",
       "1Y_label" : "1년"
@@ -7519,6 +7774,85 @@
   "modularDrawer" : {
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
-    "selectAccount" : "계정 선택"
+    "selectAccount" : "계정 선택",
+    "searchPlaceholder" : "검색"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "잘못된 명령 데이터",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "deserializationFailed" : {
+      "title" : "페이로드 역직렬화 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongTransactionId" : {
+      "title" : "잘못된 트랜잭션 ID",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidAddress" : {
+      "title" : "유효하지 않은 주소",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 수령 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 전송 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "userRefused" : {
+      "title" : "장치에서 거부되었습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "internalError" : {
+      "title" : "내부 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP1" : {
+      "title" : "잘못된 P1",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2" : {
+      "title" : "잘못된 P2",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2Extension" : {
+      "title" : "잘못된 P2 확장 값",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidP2Extension" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "유효하지 않은 P2 확장 값"
+    },
+    "unexpectedInstruction" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "예기치 않은 명령어"
+    },
+    "classNotSupported" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "지원되지 않는 클래스"
+    },
+    "invalidInstruction" : {
+      "title" : "유효하지 않은 명령어",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "malformedApdu" : {
+      "title" : "APDU 헤더 형식 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidDataLength" : {
+      "title" : "유효하지 않은 데이터 길이",
+      "description" : "이 명령은 해당 길이의 데이터를 허용하지 않습니다"
+    },
+    "signatureVerificationFail" : {
+      "title" : "서명 검증 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "default" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    }
   }
 }
