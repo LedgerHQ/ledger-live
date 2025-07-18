@@ -1,5 +1,7 @@
-import type {
+import {
   AlpacaApi,
+  Block,
+  BlockInfo,
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
@@ -28,6 +30,12 @@ export function createApi(config: BoilerplateConfig): AlpacaApi<BoilerplateAsset
     getBalance,
     lastBlock,
     listOperations,
+    getBlock(_height): Promise<Block<BoilerplateAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 

@@ -1,4 +1,4 @@
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi, Block, BlockInfo } from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
@@ -24,5 +24,11 @@ export function createApi(config: AptosConfigApi): AlpacaApi<AptosAsset> {
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, pagination: Pagination) =>
       client.listOperations(address, pagination),
+    getBlock(_height): Promise<Block<AptosAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }

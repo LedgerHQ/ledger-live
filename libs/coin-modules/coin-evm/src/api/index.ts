@@ -1,5 +1,6 @@
 import {
   Balance,
+  Block,
   BlockInfo,
   FeeEstimation,
   MemoNotSupported,
@@ -44,6 +45,12 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       pagination: Pagination,
     ): Promise<[Operation<EvmAsset, MemoNotSupported>[], string]> =>
       listOperations(currency, address, pagination),
+    getBlock(_height): Promise<Block<EvmAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 

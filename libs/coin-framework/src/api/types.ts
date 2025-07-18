@@ -8,6 +8,7 @@ export type BlockInfo = {
   // transaction could be created at a particular moment, but depending on network conditions
   // mining time, and block intervals, it might not get included in the blockchain until later
   time?: Date;
+  parent?: BlockInfo;
 };
 
 type TokenInfoCommon = Record<string, unknown>;
@@ -57,7 +58,88 @@ export type Transaction = {
   fee: bigint;
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-// Other coins take differents parameters What do we want to do ?
+/**
+ * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
+ */
+export type Block<AssetType extends Asset<TokenInfoCommon>> = {
+  /** The block metadata. */
+  info: BlockInfo;
+
+  /**
+   * The block transactions.
+   *
+   * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
+   * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
+   */
+  transactions: BlockTransaction<AssetType>[];
+};
+
+/**
+ * A transaction belonging to a {@link Block}, not specific to a particular account/address.
+ */
+export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+  /** The transaction hash/digest (globally unique identifier). */
+  hash: string;
+
+  /** If the transaction has been failed, fees have been paid but other balance changes are not effective.*/
+  failed: boolean;
+
+  /**
+   * The operations/instructions included in this transaction.
+   *
+   * It should include at least all operations where an EOA is involved, however it is OK to ignore other types of
+   * operations that cannot cause balance changes (eg: validator vote instructions on Solana).
+   *
+   * Note that fees are accounted for separately, so operations must not represent fees.
+   */
+  operations: BlockOperation<AssetType>[];
+
+  /** Network specific details for this transaction. */
+  details?: Record<string, unknown>;
+
+  /** The fee amount paid for this transaction, in base unit of the network native coin, always positive or zero.  */
+  fees: bigint;
+
+  /** The address that paid for this transaction's fees. */
+  feesPayer: string;
+};
+
+/** An operation belonging to a {@link BlockTransaction}. */
+export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> =
+  | TransferBlockOperation<AssetType>
+  | OtherBlockOperation;
+
+/** A asset transfer that occurred in a {@link BlockTransaction}. */
+export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
+  /** Operation type discriminator. */
+  type: "transfer";
+
+  /** The impacted address (can be sender or recipient based on signum of <code>amount</code>}. */
+  address: string;
+
+  /** The peer participant in the transfer (optional as it may be not known). */
+  peer?: string;
+
+  /** The transferred asset. */
+  asset: AssetType;
+
+  /**
+   * The signed amount of the transfer, i.e. impact of the transfer on <code>address</code> balance (positive for
+   * incoming, negative for outgoing).
+   */
+  amount: bigint;
+};
+
+/**
+ * An unclassified type of operation that occurred in a {@link BlockTransaction}.
+ *
+ * Implementations are free to partially/completely omit this kind of operations.
+ */
+export type OtherBlockOperation = {
+  type: "other";
+} & Record<string, unknown>;
+
+// Other coins take different parameters What do we want to do ?
 export type Account = {
   currencyName: string;
   address: string;
@@ -163,6 +245,8 @@ export type AlpacaApi<
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
+  getBlockInfo: (height: number) => Promise<BlockInfo>;
+  getBlock: (height: number) => Promise<Block<AssetInfo>>;
   listOperations: (
     address: string,
     pagination: Pagination,

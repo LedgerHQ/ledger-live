@@ -1,5 +1,7 @@
-import type {
+import {
   AlpacaApi,
+  Block,
+  BlockInfo,
   FeeEstimation,
   Operation,
   Pagination,
@@ -31,6 +33,12 @@ export function createApi(config: PolkadotConfig): AlpacaApi<PolkadotAsset> {
     getBalance,
     lastBlock,
     listOperations: operations,
+    getBlock(_height): Promise<Block<PolkadotAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 
