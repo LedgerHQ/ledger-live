@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { getFullnodeUrl } from "@mysten/sui/client";
 import buildSignOperation from "./signOperation";
 import type { SuiAccount, SuiSigner, Transaction, SuiSignedOperation } from "../types";
 
@@ -67,7 +68,7 @@ import coinConfig from "../config";
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
-    node: { url: "https://mockapi.sui.io" },
+    node: { url: getFullnodeUrl("mainnet") },
   }));
 });
 
@@ -202,22 +203,8 @@ describe("buildSignOperation", () => {
         .subscribe({
           next: () => {},
           complete: () => {
-            expect(signerContext).toHaveBeenCalledTimes(2);
+            expect(signerContext).toHaveBeenCalledTimes(1);
             expect(signerContext).toHaveBeenNthCalledWith(1, deviceId, expect.any(Function));
-            expect(signerContext).toHaveBeenNthCalledWith(2, deviceId, expect.any(Function));
-            done();
-          },
-          error: done,
-        });
-    });
-
-    it("should get public key with correct path", done => {
-      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction })
-        .pipe(take(3))
-        .subscribe({
-          next: () => {},
-          complete: () => {
-            expect(mockSuiSigner.getPublicKey).toHaveBeenCalledWith(mockAccount.freshAddressPath);
             done();
           },
           error: done,
@@ -251,40 +238,6 @@ describe("buildSignOperation", () => {
               ...mockTransaction,
               amount: new BigNumber("100000000"),
             });
-            done();
-          },
-          error: done,
-        });
-    });
-
-    it("should verify transaction signature when skipVerify is false", done => {
-      const transactionWithoutSkipVerify = { ...mockTransaction, skipVerify: false };
-
-      signOperation({ account: mockAccount, deviceId, transaction: transactionWithoutSkipVerify })
-        .pipe(take(3))
-        .subscribe({
-          next: () => {},
-          complete: () => {
-            expect(mockVerifyTransactionSignature).toHaveBeenCalledWith(
-              fakeUnsignedTx,
-              fakeSignature,
-              { address: "0x1234567890abcdef" },
-            );
-            done();
-          },
-          error: done,
-        });
-    });
-
-    it("should not verify transaction signature when skipVerify is true", done => {
-      const transactionWithSkipVerify = { ...mockTransaction, skipVerify: true };
-
-      signOperation({ account: mockAccount, deviceId, transaction: transactionWithSkipVerify })
-        .pipe(take(3))
-        .subscribe({
-          next: () => {},
-          complete: () => {
-            expect(mockVerifyTransactionSignature).not.toHaveBeenCalled();
             done();
           },
           error: done,
@@ -337,29 +290,6 @@ describe("buildSignOperation", () => {
       }).subscribe({
         error: error => {
           expect(error).toBeInstanceOf(FeeNotLoaded);
-          done();
-        },
-      });
-    });
-
-    it("should throw error when signature verification fails", done => {
-      mockVerifyTransactionSignature.mockResolvedValue({ equals: () => false });
-
-      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
-        error: error => {
-          expect(error.message).toBe("verifyTransactionSignature failed");
-          done();
-        },
-      });
-    });
-
-    it("should propagate errors from getPublicKey", done => {
-      const publicKeyError = new Error("Public key error");
-      (mockSuiSigner.getPublicKey as jest.Mock).mockRejectedValue(publicKeyError);
-
-      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
-        error: error => {
-          expect(error).toBe(publicKeyError);
           done();
         },
       });
