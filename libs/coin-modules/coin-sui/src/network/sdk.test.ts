@@ -1308,9 +1308,7 @@ describe("filterOperations", () => {
     });
   });
 
-  describe("conversions methods", () => {
-
-
+  describe("conversion methods", () => {
     test("balanceChangeToBlockOperation should map native transfers correctly", () => {
       expect(
         sdk.balanceChangeToBlockOperation({
@@ -1426,6 +1424,5 @@ describe("filterOperations", () => {
         coinType: "0x123::test::TOKEN",
       });
     });
-
   });
 });
