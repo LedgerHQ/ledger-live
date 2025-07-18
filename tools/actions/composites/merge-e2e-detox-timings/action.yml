@@ -51,11 +51,11 @@ runs:
         pattern: "${{ inputs.key }}-*"
         merge-multiple: true
 
-    - name: List timing files in artifacts_dir
+    - name: List timing files in artifacts
       shell: bash
       run: |
-        echo "Contents of ${{ inputs.artifacts_dir }}:"
-        ls -l "${{ inputs.artifacts_dir }}" || echo "No such directory"
+        echo "Contents of artifacts:"
+        ls -l "artifacts" || echo "No such directory"
 
     - name: Merge timing files
       shell: bash
