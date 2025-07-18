@@ -1,21 +1,26 @@
 # @ledgerhq/react-ui
 
-## 0.33.0-nightly.1
+## 0.33.0
 
 ### Minor Changes
 
-- [#10883](https://github.com/LedgerHQ/ledger-live/pull/10883) [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds new TextInput component and stories
+- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
 
 ### Patch Changes
 
-- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
-  - @ledgerhq/icons-ui@0.13.0-nightly.0
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0
 
-## 0.33.0-nightly.0
+## 0.33.0-next.0
 
 ### Minor Changes
 
-- [#10860](https://github.com/LedgerHQ/ledger-live/pull/10860) [`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add checkbox to pre-LDLS with correct purple
+- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
 
 ## 0.32.0
 

@@ -1,230 +1,148 @@
 # ledger-live-desktop
 
-## 2.121.0-nightly.8
+## 2.121.0
 
 ### Minor Changes
 
-- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Add context-module gating
+- [#10781](https://github.com/LedgerHQ/ledger-live/pull/10781) [`e28c3ab`](https://github.com/LedgerHQ/ledger-live/commit/e28c3ab39d6920878105a3b5b5b9e1f7cd2f8828) Thanks [@Canestin](https://github.com/Canestin)! - fix: changing debit account no longer disables continue button
 
-- [#10871](https://github.com/LedgerHQ/ledger-live/pull/10871) [`559a47a`](https://github.com/LedgerHQ/ledger-live/commit/559a47a50fc2b0b326eeb77190bc9fc2dde91c4f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix - Hard reset didn't remove encryption key of LS
+- [#10818](https://github.com/LedgerHQ/ledger-live/pull/10818) [`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - ConnectApp don't need to go to dashboard when there is no app dependency
 
-- [#10958](https://github.com/LedgerHQ/ledger-live/pull/10958) [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Don't try to clearsign Exchange flows in signer-eth
+- [#10808](https://github.com/LedgerHQ/ledger-live/pull/10808) [`335ba5e`](https://github.com/LedgerHQ/ledger-live/commit/335ba5e5461f500bbb0178e1e5c7f339532e607d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Reset button in settings wasn't reseting app state
 
-### Patch Changes
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
 
-- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2)]:
-  - @ledgerhq/live-env@2.12.0-nightly.1
-  - @ledgerhq/coin-evm@2.23.0-nightly.7
-  - @ledgerhq/live-common@34.41.0-nightly.8
-  - @ledgerhq/coin-framework@5.6.0-nightly.7
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.7
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.7
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.7
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10-nightly.1
-  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.1
-  - @ledgerhq/cryptoassets@13.22.0-nightly.3
-  - @ledgerhq/live-countervalues@0.5.13-nightly.7
-  - @ledgerhq/live-network@2.0.13-nightly.1
-  - @ledgerhq/live-nft@0.8.13-nightly.7
-  - @ledgerhq/live-wallet@0.11.4-nightly.7
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.8
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.7
-  - @ledgerhq/live-nft-react@0.9.13-nightly.7
-
-## 2.121.0-nightly.7
-
-### Minor Changes
-
-- [#10874](https://github.com/LedgerHQ/ledger-live/pull/10874) [`24b8c31`](https://github.com/LedgerHQ/ledger-live/commit/24b8c3189d98f0c02717548fa399814f298b9956) Thanks [@md-blockydevs](https://github.com/md-blockydevs)! - LLD - fixed truncated address in transaction details
-
-### Patch Changes
-
-- [#10893](https://github.com/LedgerHQ/ledger-live/pull/10893) [`8ea4053`](https://github.com/LedgerHQ/ledger-live/commit/8ea405351fe25c52ea83af6d2b666280e5f209e2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - send kyc banner feature flag to swap live app
-
-- Updated dependencies [[`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604), [`96fab35`](https://github.com/LedgerHQ/ledger-live/commit/96fab3530589225719814280ab47d26ffbd88a5e)]:
-  - @ledgerhq/live-common@34.41.0-nightly.7
-  - @ledgerhq/cryptoassets@13.22.0-nightly.2
-  - @ledgerhq/coin-evm@2.23.0-nightly.6
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.6
-  - @ledgerhq/coin-framework@5.6.0-nightly.6
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.7
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.6
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.6
-  - @ledgerhq/live-countervalues@0.5.13-nightly.6
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.6
-  - @ledgerhq/live-nft@0.8.13-nightly.6
-  - @ledgerhq/live-nft-react@0.9.13-nightly.6
-  - @ledgerhq/live-wallet@0.11.4-nightly.6
-
-## 2.121.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.1
-  - @ledgerhq/coin-framework@5.6.0-nightly.5
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.5
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.5
-  - @ledgerhq/coin-evm@2.23.0-nightly.5
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.5
-  - @ledgerhq/live-common@34.41.0-nightly.6
-  - @ledgerhq/live-countervalues@0.5.13-nightly.5
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.5
-  - @ledgerhq/live-nft@0.8.13-nightly.5
-  - @ledgerhq/live-nft-react@0.9.13-nightly.5
-  - @ledgerhq/live-wallet@0.11.4-nightly.5
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.6
-
-## 2.121.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@34.41.0-nightly.5
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.5
-
-## 2.121.0-nightly.4
-
-### Minor Changes
-
-- [#10885](https://github.com/LedgerHQ/ledger-live/pull/10885) [`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add recovery key icon. Add icons to onboarding backup flow for LLD and LLM
-
-- [#10852](https://github.com/LedgerHQ/ledger-live/pull/10852) [`ab7a830`](https://github.com/LedgerHQ/ledger-live/commit/ab7a830184359ca1a4eb11ac36f1ce8c5f22dae8) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a track bug in onboarding
-
-- [#10750](https://github.com/LedgerHQ/ledger-live/pull/10750) [`8f24b01`](https://github.com/LedgerHQ/ledger-live/commit/8f24b018fa1152d5b702d6c0bb455f784a0444f4) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - remove seed phrase warning in disclaimer when onboarding
-
-- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
-
-- [#10873](https://github.com/LedgerHQ/ledger-live/pull/10873) [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle Asset/network selection
-
-### Patch Changes
-
-- Updated dependencies [[`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789)]:
-  - @ledgerhq/react-ui@0.33.0-nightly.1
-  - @ledgerhq/errors@6.23.0-nightly.0
-  - @ledgerhq/live-common@34.41.0-nightly.4
-  - @ledgerhq/live-env@2.12.0-nightly.0
-  - @ledgerhq/coin-framework@5.6.0-nightly.4
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.4
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.4
-  - @ledgerhq/coin-evm@2.23.0-nightly.4
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.4
-  - @ledgerhq/domain-service@1.2.36-nightly.2
-  - @ledgerhq/ledger-key-ring-protocol@0.5.12-nightly.0
-  - @ledgerhq/devices@8.4.8-nightly.0
-  - @ledgerhq/hw-transport@6.31.8-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.8-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.31.9-nightly.0
-  - @ledgerhq/hw-transport-node-speculos-http@6.29.8-nightly.0
-  - @ledgerhq/hw-transport-vault@1.3.8-nightly.0
-  - @ledgerhq/live-network@2.0.13-nightly.0
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.4
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10-nightly.0
-  - @ledgerhq/cryptoassets@13.21.1-nightly.0
-  - @ledgerhq/live-countervalues@0.5.13-nightly.4
-  - @ledgerhq/live-nft@0.8.13-nightly.4
-  - @ledgerhq/live-wallet@0.11.4-nightly.4
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.4
-  - @ledgerhq/live-nft-react@0.9.13-nightly.4
-
-## 2.121.0-nightly.3
-
-### Minor Changes
-
-- [#10853](https://github.com/LedgerHQ/ledger-live/pull/10853) [`9d452ec`](https://github.com/LedgerHQ/ledger-live/commit/9d452ec4599ad37f97fcf9af0d6f4fd2381eb4b5) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add account storybook mocks
-
-### Patch Changes
-
-- Updated dependencies [[`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a), [`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3), [`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
-  - @ledgerhq/react-ui@0.33.0-nightly.0
-  - @ledgerhq/live-common@34.41.0-nightly.3
-  - @ledgerhq/coin-evm@2.23.0-nightly.3
-  - @ledgerhq/coin-framework@5.6.0-nightly.3
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.3
-  - @ledgerhq/coin-aptos@2.5.1-nightly.3
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.3
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.3
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.3
-  - @ledgerhq/live-countervalues@0.5.13-nightly.3
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.3
-  - @ledgerhq/live-nft@0.8.13-nightly.3
-  - @ledgerhq/live-nft-react@0.9.13-nightly.3
-  - @ledgerhq/live-wallet@0.11.4-nightly.3
-
-## 2.121.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a)]:
-  - @ledgerhq/types-live@6.77.0-nightly.1
-  - @ledgerhq/live-common@34.41.0-nightly.2
-  - @ledgerhq/coin-framework@5.6.0-nightly.2
-  - @ledgerhq/coin-aptos@2.5.1-nightly.2
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.2
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.2
-  - @ledgerhq/coin-evm@2.23.0-nightly.2
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.2
-  - @ledgerhq/domain-service@1.2.36-nightly.1
-  - @ledgerhq/live-countervalues@0.5.13-nightly.2
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.2
-  - @ledgerhq/live-nft@0.8.13-nightly.2
-  - @ledgerhq/live-nft-react@0.9.13-nightly.2
-  - @ledgerhq/live-wallet@0.11.4-nightly.2
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.2
-
-## 2.121.0-nightly.1
-
-### Minor Changes
-
-- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
-
-- [#10841](https://github.com/LedgerHQ/ledger-live/pull/10841) [`670665e`](https://github.com/LedgerHQ/ledger-live/commit/670665ebbda2f021931901b479604159f5cdf31d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - AA - Missing entry points for onboarding, market, swap, manager
-
-### Patch Changes
-
-- Updated dependencies [[`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713)]:
-  - @ledgerhq/coin-bitcoin@0.17.0-nightly.1
-  - @ledgerhq/live-common@34.41.0-nightly.1
-  - @ledgerhq/coin-framework@5.6.0-nightly.1
-  - @ledgerhq/coin-evm@2.23.0-nightly.1
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.1
-  - @ledgerhq/coin-aptos@2.5.1-nightly.1
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.1
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.1
-  - @ledgerhq/live-countervalues@0.5.13-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.1
-  - @ledgerhq/live-nft@0.8.13-nightly.1
-  - @ledgerhq/live-nft-react@0.9.13-nightly.1
-  - @ledgerhq/live-wallet@0.11.4-nightly.1
-
-## 2.121.0-nightly.0
-
-### Minor Changes
+- [#10795](https://github.com/LedgerHQ/ledger-live/pull/10795) [`2313643`](https://github.com/LedgerHQ/ledger-live/commit/2313643a15e9cb1b337f1b082fdaad701d905ab6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - AA - MAD - Missing tracker
 
 - [#10825](https://github.com/LedgerHQ/ledger-live/pull/10825) [`49c5ef8`](https://github.com/LedgerHQ/ledger-live/commit/49c5ef888890270c34426cd30fb260ec52d4401e) Thanks [@Canestin](https://github.com/Canestin)! - Fix: ETH ENS Resolution
 
 - [#10800](https://github.com/LedgerHQ/ledger-live/pull/10800) [`9cbee5f`](https://github.com/LedgerHQ/ledger-live/commit/9cbee5fbdc4614a0ac78379dee9d3899139bfff7) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Removed new from the earn nav item
 
+- [#10780](https://github.com/LedgerHQ/ledger-live/pull/10780) [`f9ff4f2`](https://github.com/LedgerHQ/ledger-live/commit/f9ff4f24c4e4dc1c2fa2cbf68f4abde3c4ad5468) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Added eslint rule '@typescript-eslint/consistent-type-assertions' to warn against dangerous practices. Fixes some instances in code and disabled warnings for existing cases
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
+- [#10777](https://github.com/LedgerHQ/ledger-live/pull/10777) [`dac52a2`](https://github.com/LedgerHQ/ledger-live/commit/dac52a294282045751ca722747108435303085b8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD & AA quick wins
+
 - [#10809](https://github.com/LedgerHQ/ledger-live/pull/10809) [`365a399`](https://github.com/LedgerHQ/ledger-live/commit/365a39918d92f39ba00262f83bb70f451e7df661) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - integration test for add account
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+- [#10841](https://github.com/LedgerHQ/ledger-live/pull/10841) [`670665e`](https://github.com/LedgerHQ/ledger-live/commit/670665ebbda2f021931901b479604159f5cdf31d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - AA - Missing entry points for onboarding, market, swap, manager
+
+- [#10797](https://github.com/LedgerHQ/ledger-live/pull/10797) [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-evm): move files to meet architecture
+
+- [#10768](https://github.com/LedgerHQ/ledger-live/pull/10768) [`88f7f93`](https://github.com/LedgerHQ/ledger-live/commit/88f7f93c4e152a1799bfc09f475b27d925b856dd) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Account list selection refinements
 
 ### Patch Changes
 
-- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4)]:
-  - @ledgerhq/types-live@6.77.0-nightly.0
-  - @ledgerhq/live-common@34.41.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.1-nightly.0
-  - @ledgerhq/coin-aptos@2.5.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.16.4-nightly.0
-  - @ledgerhq/coin-cosmos@0.16.2-nightly.0
-  - @ledgerhq/coin-evm@2.22.7-nightly.0
-  - @ledgerhq/coin-filecoin@1.9.13-nightly.0
-  - @ledgerhq/domain-service@1.2.36-nightly.0
-  - @ledgerhq/live-countervalues@0.5.13-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.42-nightly.0
-  - @ledgerhq/live-nft@0.8.13-nightly.0
-  - @ledgerhq/live-nft-react@0.9.13-nightly.0
-  - @ledgerhq/live-wallet@0.11.4-nightly.0
-  - @ledgerhq/live-dmk-desktop@0.7.1-nightly.0
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375), [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004), [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0
+  - @ledgerhq/live-common@34.41.0
+  - @ledgerhq/react-ui@0.33.0
+  - @ledgerhq/types-live@6.77.0
+  - @ledgerhq/coin-bitcoin@0.17.0
+  - @ledgerhq/coin-framework@5.6.0
+  - @ledgerhq/live-dmk-desktop@0.7.1
+  - @ledgerhq/coin-aptos@2.5.1
+  - @ledgerhq/coin-cosmos@0.16.2
+  - @ledgerhq/coin-filecoin@1.9.13
+  - @ledgerhq/domain-service@1.2.36
+  - @ledgerhq/live-countervalues@0.5.13
+  - @ledgerhq/live-countervalues-react@0.2.42
+  - @ledgerhq/live-nft@0.8.13
+  - @ledgerhq/live-nft-react@0.9.13
+  - @ledgerhq/live-wallet@0.11.4
+
+## 2.121.0-next.0
+
+### Minor Changes
+
+- [#10781](https://github.com/LedgerHQ/ledger-live/pull/10781) [`e28c3ab`](https://github.com/LedgerHQ/ledger-live/commit/e28c3ab39d6920878105a3b5b5b9e1f7cd2f8828) Thanks [@Canestin](https://github.com/Canestin)! - fix: changing debit account no longer disables continue button
+
+- [#10818](https://github.com/LedgerHQ/ledger-live/pull/10818) [`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - ConnectApp don't need to go to dashboard when there is no app dependency
+
+- [#10808](https://github.com/LedgerHQ/ledger-live/pull/10808) [`335ba5e`](https://github.com/LedgerHQ/ledger-live/commit/335ba5e5461f500bbb0178e1e5c7f339532e607d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Reset button in settings wasn't reseting app state
+
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
+
+- [#10795](https://github.com/LedgerHQ/ledger-live/pull/10795) [`2313643`](https://github.com/LedgerHQ/ledger-live/commit/2313643a15e9cb1b337f1b082fdaad701d905ab6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - AA - MAD - Missing tracker
+
+- [#10825](https://github.com/LedgerHQ/ledger-live/pull/10825) [`49c5ef8`](https://github.com/LedgerHQ/ledger-live/commit/49c5ef888890270c34426cd30fb260ec52d4401e) Thanks [@Canestin](https://github.com/Canestin)! - Fix: ETH ENS Resolution
+
+- [#10800](https://github.com/LedgerHQ/ledger-live/pull/10800) [`9cbee5f`](https://github.com/LedgerHQ/ledger-live/commit/9cbee5fbdc4614a0ac78379dee9d3899139bfff7) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Removed new from the earn nav item
+
+- [#10780](https://github.com/LedgerHQ/ledger-live/pull/10780) [`f9ff4f2`](https://github.com/LedgerHQ/ledger-live/commit/f9ff4f24c4e4dc1c2fa2cbf68f4abde3c4ad5468) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Added eslint rule '@typescript-eslint/consistent-type-assertions' to warn against dangerous practices. Fixes some instances in code and disabled warnings for existing cases
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10813](https://github.com/LedgerHQ/ledger-live/pull/10813) [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - This change uses the new Conway certificates for Cardano stake key registration and deregistration, as the current certificates will be deprecated in the upcoming hard fork.
+
+- [#10777](https://github.com/LedgerHQ/ledger-live/pull/10777) [`dac52a2`](https://github.com/LedgerHQ/ledger-live/commit/dac52a294282045751ca722747108435303085b8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD & AA quick wins
+
+- [#10809](https://github.com/LedgerHQ/ledger-live/pull/10809) [`365a399`](https://github.com/LedgerHQ/ledger-live/commit/365a39918d92f39ba00262f83bb70f451e7df661) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - integration test for add account
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+- [#10841](https://github.com/LedgerHQ/ledger-live/pull/10841) [`670665e`](https://github.com/LedgerHQ/ledger-live/commit/670665ebbda2f021931901b479604159f5cdf31d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - AA - Missing entry points for onboarding, market, swap, manager
+
+- [#10797](https://github.com/LedgerHQ/ledger-live/pull/10797) [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-evm): move files to meet architecture
+
+- [#10768](https://github.com/LedgerHQ/ledger-live/pull/10768) [`88f7f93`](https://github.com/LedgerHQ/ledger-live/commit/88f7f93c4e152a1799bfc09f475b27d925b856dd) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Account list selection refinements
+
+### Patch Changes
+
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375), [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b), [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`92c74a2`](https://github.com/LedgerHQ/ledger-live/commit/92c74a210cc127c5b580b1ebcc70f9e6a00f7004), [`73cc72c`](https://github.com/LedgerHQ/ledger-live/commit/73cc72cb8782998f81419f74a77e2b7a65c1b5f4), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0-next.0
+  - @ledgerhq/live-common@34.41.0-next.0
+  - @ledgerhq/react-ui@0.33.0-next.0
+  - @ledgerhq/types-live@6.77.0-next.0
+  - @ledgerhq/coin-bitcoin@0.17.0-next.0
+  - @ledgerhq/coin-framework@5.6.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.7.1-next.0
+  - @ledgerhq/coin-aptos@2.5.1-next.0
+  - @ledgerhq/coin-cosmos@0.16.2-next.0
+  - @ledgerhq/coin-filecoin@1.9.13-next.0
+  - @ledgerhq/domain-service@1.2.36-next.0
+  - @ledgerhq/live-countervalues@0.5.13-next.0
+  - @ledgerhq/live-countervalues-react@0.2.42-next.0
+  - @ledgerhq/live-nft@0.8.13-next.0
+  - @ledgerhq/live-nft-react@0.9.13-next.0
+  - @ledgerhq/live-wallet@0.11.4-next.0
+
+## 2.120.1
+
+### Patch Changes
+
+- [#10911](https://github.com/LedgerHQ/ledger-live/pull/10911) [`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix current app detection for old firmwares
+
+- Updated dependencies [[`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933)]:
+  - @ledgerhq/live-common@34.40.1
+  - @ledgerhq/live-dmk-desktop@0.7.1
+
+## 2.120.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.40.1-hotfix.1
+  - @ledgerhq/live-dmk-desktop@0.7.1-hotfix.1
+
+## 2.120.1-hotfix.0
+
+### Patch Changes
+
+- [#10911](https://github.com/LedgerHQ/ledger-live/pull/10911) [`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix current app detection for old firmwares
+
+- Updated dependencies [[`8585d6c`](https://github.com/LedgerHQ/ledger-live/commit/8585d6c79b8d6eb57de9edb19accac3957857933)]:
+  - @ledgerhq/live-common@34.40.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.7.1-hotfix.0
 
 ## 2.120.0
 

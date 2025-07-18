@@ -1,20 +1,18 @@
 # @ledgerhq/live-dmk-mobile
 
-## 0.9.0-nightly.1
-
-### Minor Changes
-
-- [#10946](https://github.com/LedgerHQ/ledger-live/pull/10946) [`2182150`](https://github.com/LedgerHQ/ledger-live/commit/2182150e6847c3766bed2144b7620513dfb28373) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Add dmk errors event tracking
-
-## 0.8.1-nightly.0
+## 0.8.1
 
 ### Patch Changes
 
-- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
-  - @ledgerhq/errors@6.23.0-nightly.0
-  - @ledgerhq/devices@8.4.8-nightly.0
-  - @ledgerhq/hw-transport@6.31.8-nightly.0
-  - @ledgerhq/live-dmk-shared@0.10.1-nightly.0
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04)]:
+  - @ledgerhq/live-dmk-shared@0.11.0
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b1fb335`](https://github.com/LedgerHQ/ledger-live/commit/b1fb3352afbedda4605ec5c61c0361db9223cc04)]:
+  - @ledgerhq/live-dmk-shared@0.11.0-next.0
 
 ## 0.8.0
 

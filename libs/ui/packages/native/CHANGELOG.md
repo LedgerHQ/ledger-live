@@ -1,33 +1,26 @@
 # @ledgerhq/native-ui
 
-## 0.39.0-nightly.3
-
-### Minor Changes
-
-- [#10950](https://github.com/LedgerHQ/ledger-live/pull/10950) [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add search Input to LLM ui pre ldls
-
-## 0.39.0-nightly.2
-
-### Minor Changes
-
-- [#10858](https://github.com/LedgerHQ/ledger-live/pull/10858) [`7883393`](https://github.com/LedgerHQ/ledger-live/commit/788339359ad9b7fafbf74c0788b1e2d8f7e3bc19) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD NetworkList Component
-
-### Patch Changes
-
-- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
-  - @ledgerhq/icons-ui@0.13.0-nightly.0
-
-## 0.39.0-nightly.1
-
-### Minor Changes
-
-- [#10835](https://github.com/LedgerHQ/ledger-live/pull/10835) [`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Add AssetList component in LLM ldls
-
-## 0.39.0-nightly.0
+## 0.39.0
 
 ### Minor Changes
 
 - [#10698](https://github.com/LedgerHQ/ledger-live/pull/10698) [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add cryptoIcon in storybook native pre-ldls
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0
+
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#10698](https://github.com/LedgerHQ/ledger-live/pull/10698) [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add cryptoIcon in storybook native pre-ldls
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
 
 ## 0.38.0
 

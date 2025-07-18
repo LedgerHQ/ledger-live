@@ -33,7 +33,6 @@ export function ModularDrawerFlowView({
       {isReadyToBeDisplayed ? (
         <>
           <Title step={currentStep} />
-
           {renderStepContent()}
         </>
       ) : (

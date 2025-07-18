@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Wir sorgen für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "Bestätigen"
       },
-      "newAccount" : "Neues Konto"
+      "newAccount" : "Neues Konto",
+      "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
+      "addAccountSelectionPtxFlow" : "Konto auswählen"
     },
     "fundAccount" : {
       "receive" : "Empfangen",

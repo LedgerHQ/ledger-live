@@ -20,6 +20,8 @@ import {
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CryptoAssetsStore } from "./crypto-assets/type";
+import { setCryptoAssetsStore } from "./crypto-assets";
 
 const alpacaized = {
   xrp: true,
@@ -98,6 +100,10 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
     throw new CurrencyNotSupported("account bridge not found " + family);
   }
   return wrapAccountBridge(jsBridge.accountBridge);
+}
+
+export function setup(store: CryptoAssetsStore) {
+  setCryptoAssetsStore(store);
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(

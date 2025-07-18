@@ -402,7 +402,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger");
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
     userdata: "skip-onboarding",
     speculosApp: delegateAccount.account.currency.speculosApp,

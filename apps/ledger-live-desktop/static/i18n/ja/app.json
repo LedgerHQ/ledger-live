@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "お客様の安全を確保",
+      "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "確認"
       },
-      "newAccount" : "新しいアカウント"
+      "newAccount" : "新しいアカウント",
+      "addAccountSelection" : "資金を追加するアカウントを選択",
+      "addAccountSelectionPtxFlow" : "アカウントを選択"
     },
     "fundAccount" : {
       "receive" : "受け取る",

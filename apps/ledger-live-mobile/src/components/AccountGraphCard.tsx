@@ -164,7 +164,7 @@ function AccountGraphCard({
               <Transitions.Fade duration={400} status="entering">
                 <Graph
                   isInteractive
-                  height={120}
+                  height={110}
                   width={width}
                   color={graphColor}
                   data={history}
@@ -178,7 +178,7 @@ function AccountGraphCard({
               <InfiniteLoader size={32} />
             )}
           </Flex>
-          <Flex bg="background.main">
+          <Flex paddingTop={8} bg="background.main">
             <GraphTabs
               activeIndex={activeRangeIndex}
               onChange={updateRange}

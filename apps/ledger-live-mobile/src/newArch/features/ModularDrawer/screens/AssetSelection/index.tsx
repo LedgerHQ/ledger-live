@@ -1,43 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { FlatList } from "react-native";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { AssetList, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
+import { Flex } from "@ledgerhq/native-ui";
+import SearchInputContainer from "./components/SearchInputContainer";
 
 export type AssetSelectionStepProps = {
   availableAssets: CryptoOrTokenCurrency[];
+  defaultSearchValue: string;
+  setDefaultSearchValue: (value: string) => void;
+  itemsToDisplay: CryptoOrTokenCurrency[];
+  setItemsToDisplay: (items: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-};
-
-// TODO: This component will be replaced with AssetList from pre-ldls
-
-const AssetList: React.FC<{
-  assets: CryptoOrTokenCurrency[];
-  onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-}> = ({ assets, onAssetSelected }) => {
-  return (
-    <FlatList
-      data={assets}
-      keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <Flex height={40} alignItems="center" justifyContent="center">
-          <TouchableOpacity onPress={() => onAssetSelected?.(item)}>
-            <Text color="neutral.c100">
-              {item.name} ({item.ticker})
-            </Text>
-          </TouchableOpacity>
-        </Flex>
-      )}
-      ItemSeparatorComponent={() => <Box height={1} bg="neutral.c50" mx={2} />}
-    />
-  );
 };
 
 const AssetSelection = ({
   availableAssets,
+  defaultSearchValue,
+  setDefaultSearchValue,
+  itemsToDisplay,
+  setItemsToDisplay,
   onAssetSelected,
 }: Readonly<AssetSelectionStepProps>) => {
-  return <AssetList assets={availableAssets} onAssetSelected={onAssetSelected} />;
+  const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
+
+  const handleAssetClick = (asset: AssetType) => {
+    const originalAsset = availableAssets.find(a => a.id === asset.id);
+    if (originalAsset) {
+      onAssetSelected(originalAsset);
+    }
+  };
+
+  useEffect(() => {
+    if (defaultSearchValue === undefined) {
+      return;
+    }
+
+    setItemsToDisplay(
+      availableAssets.filter(asset =>
+        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
+      ),
+    );
+
+    const timeout = setTimeout(() => {
+      setShouldScrollToTop(false);
+    }, 100);
+
+    setShouldScrollToTop(true);
+    return () => clearTimeout(timeout);
+  }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
+
+  return (
+    <Flex>
+      <SearchInputContainer
+        source="modular-drawer"
+        flow="asset-selection"
+        items={availableAssets}
+        setItemsToDisplay={setItemsToDisplay}
+        assetsToDisplay={itemsToDisplay}
+        originalAssets={availableAssets}
+        setSearchedValue={setDefaultSearchValue}
+        defaultValue={defaultSearchValue}
+      />
+      <AssetList
+        assets={itemsToDisplay}
+        onClick={handleAssetClick}
+        scrollToTop={shouldScrollToTop}
+      />
+    </Flex>
+  );
 };
 
 export default React.memo(AssetSelection);

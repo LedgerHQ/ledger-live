@@ -1,57 +1,6 @@
 # @ledgerhq/coin-framework
 
-## 5.6.0-nightly.7
-
-### Patch Changes
-
-- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b)]:
-  - @ledgerhq/live-env@2.12.0-nightly.1
-  - @ledgerhq/cryptoassets@13.22.0-nightly.3
-  - @ledgerhq/live-network@2.0.13-nightly.1
-
-## 5.6.0-nightly.6
-
-### Minor Changes
-
-- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
-
-### Patch Changes
-
-- Updated dependencies [[`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.2
-
-## 5.6.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.1
-
-## 5.6.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
-  - @ledgerhq/errors@6.23.0-nightly.0
-  - @ledgerhq/live-env@2.12.0-nightly.0
-  - @ledgerhq/devices@8.4.8-nightly.0
-  - @ledgerhq/live-network@2.0.13-nightly.0
-  - @ledgerhq/cryptoassets@13.21.1-nightly.0
-
-## 5.6.0-nightly.3
-
-### Minor Changes
-
-- [#10856](https://github.com/LedgerHQ/ledger-live/pull/10856) [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab) Thanks [@qperrot](https://github.com/qperrot)! - Fix sequencer number too high
-
-## 5.6.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a)]:
-  - @ledgerhq/types-live@6.77.0-nightly.1
-
-## 5.6.0-nightly.1
+## 5.6.0
 
 ### Minor Changes
 
@@ -59,12 +8,23 @@
 
 - [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
 
-## 5.5.1-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.77.0
+
+## 5.6.0-next.0
+
+### Minor Changes
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
 
 ### Patch Changes
 
-- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32)]:
-  - @ledgerhq/types-live@6.77.0-nightly.0
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.77.0-next.0
 
 ## 5.5.0
 

@@ -20,6 +20,16 @@ import {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { track } from "~/analytics";
+import { ScreenName } from "~/const/navigation";
+
+export enum MobileViewState {
+  AmountInputScreen = "amount",
+  SelectProviderScreen = "providers",
+  ApproveScreen = "approve",
+  DepositCompleteScreen = "confirmation",
+  DepositFailedScreen = "failed",
+}
 
 type Props = {
   manifest: LiveAppManifest;
@@ -33,31 +43,37 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
-  const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
+  const handleHardwareBackPress = useCallback(
+    (currentView: MobileViewState | null) => {
+      const webview = safeGetRefValue(webviewAPIRef);
 
-    if (webviewState.canGoBack) {
-      webview.goBack();
-      return true; // prevent default behavior (native navigation)
-    }
+      if (webviewState.canGoBack) {
+        track("button_clicked", {
+          button: "EarnWebviewBack",
+          page: ScreenName.Earn,
+          webviewPage: currentView,
+        });
+        webview.goBack();
+        return true; // prevent default behavior (native navigation)
+      }
 
-    return false;
-  }, [webviewState.canGoBack, webviewAPIRef]);
+      return false;
+    },
+    [webviewState.canGoBack],
+  );
 
   useEffect(() => {
-    if (Platform.OS === "android") {
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
+    const url = safeUrl(webviewState.url);
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const currentView = url?.searchParams.get("view") as unknown as MobileViewState | null;
 
-      const url = safeUrl(webviewState.url);
-      const isInitialWebviewStep = url?.searchParams.get("view") === "amount";
-      const isFinalWebviewStep = url?.searchParams.get("view") === "confirmation";
-      if (isInitialWebviewStep || isFinalWebviewStep) {
-        // re-enable the default Android back behavior for initial and final steps to avoid form re-submission.
-        subscription.remove();
-      }
+    const isInitialWebviewStep = currentView === MobileViewState.AmountInputScreen;
+    const isFinalWebviewStep = currentView === MobileViewState.DepositCompleteScreen;
+
+    const webviewBackHandler = () => handleHardwareBackPress(currentView);
+
+    if (Platform.OS === "android" && !isInitialWebviewStep && !isFinalWebviewStep) {
+      const subscription = BackHandler.addEventListener("hardwareBackPress", webviewBackHandler);
 
       return () => {
         subscription.remove();
@@ -69,6 +85,12 @@ export const EarnWebview = ({ manifest, inputs }: Props) => {
     const backHandler = (e: { preventDefault: () => void }) => {
       const webviewAPI = safeGetRefValue(webviewAPIRef);
       if (webviewState.canGoBack) {
+        track("button_clicked", {
+          button: "EarnWebviewBack",
+          page: ScreenName.Earn,
+          webviewPage: safeUrl(webviewState.url)?.searchParams.get("view"),
+        });
+        // go back in webview
         webviewAPI.goBack();
         e.preventDefault();
       }

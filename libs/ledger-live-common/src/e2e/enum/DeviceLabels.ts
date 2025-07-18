@@ -37,7 +37,7 @@ export enum DeviceLabels {
   CONNECT_WITH = "Connect with",
   MAKE_SURE_TO_USE = "Make sure to use",
   YOUR_CRYPTO_ACCOUNTS = "Your crypto accounts",
-  TURN_ON_SYNC = "Turn on sync?",
+  TURN_ON_SYNC = "Turn on sync",
   NEW_ORDINARY = "New ordinary",
   SEND_TO_ADDRESS_2 = "Send to address (2/2)",
   REVIEW_OPERATION = "Review",

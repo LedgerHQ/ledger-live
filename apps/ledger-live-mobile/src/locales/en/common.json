@@ -7780,6 +7780,7 @@
   "modularDrawer": {
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "selectAccount": "Select account"
+    "selectAccount": "Select account",
+    "searchPlaceholder": "Search"
   }
 }

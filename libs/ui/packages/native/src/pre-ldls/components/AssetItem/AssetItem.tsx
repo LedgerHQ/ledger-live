@@ -30,6 +30,7 @@ const InfoWrapper = styled(View)`
   overflow: hidden;
   flex: 1;
   gap: 4px;
+  margin-left: 16px;
 `;
 
 const LeftElementWrapper = styled(View)`
@@ -67,12 +68,8 @@ export const AssetItem = ({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
-      <InfoWrapper
-        style={{
-          marginLeft: Number(tokens["margin-s"]),
-        }}
-      >
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
+      <InfoWrapper>
         <Text
           fontSize="14px"
           variant="largeLineHeight"

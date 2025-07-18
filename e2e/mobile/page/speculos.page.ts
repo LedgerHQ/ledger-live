@@ -1,5 +1,6 @@
 import {
   activateContractData,
+  goToSettings,
   activateExpertMode,
   expectValidAddressDevice,
   setExchangeDependencies,
@@ -33,6 +34,11 @@ export default class SpeculosPage {
   @Step("Activate contract data on Speculos")
   async activateContractData() {
     await activateContractData();
+  }
+
+  @Step("Go to settings on Speculos")
+  async goToSettings() {
+    await goToSettings();
   }
 
   @Step("Activate export mode on Speculos")

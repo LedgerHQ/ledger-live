@@ -1,85 +1,34 @@
 # @ledgerhq/coin-tester-evm
 
-## 1.2.1-nightly.7
+## 1.3.0
+
+### Minor Changes
+
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
 
 ### Patch Changes
 
-- Updated dependencies [[`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e), [`bf0607b`](https://github.com/LedgerHQ/ledger-live/commit/bf0607b191eb0c0ad30568dcf643a529be677da2), [`49f233a`](https://github.com/LedgerHQ/ledger-live/commit/49f233ad988568d7db8780fc5ab7762ec5cef92e)]:
-  - @ledgerhq/live-signer-evm@0.6.0-nightly.7
-  - @ledgerhq/coin-evm@2.23.0-nightly.7
-  - @ledgerhq/coin-framework@5.6.0-nightly.7
-  - @ledgerhq/cryptoassets@13.22.0-nightly.3
-
-## 1.2.1-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`582a016`](https://github.com/LedgerHQ/ledger-live/commit/582a016c79d80936e3ec5a22b16c79071d788ffe), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`4a2c078`](https://github.com/LedgerHQ/ledger-live/commit/4a2c0785883c025859a4b5ef8ac2083ddfd0d604)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.2
-  - @ledgerhq/coin-evm@2.23.0-nightly.6
-  - @ledgerhq/coin-framework@5.6.0-nightly.6
-  - @ledgerhq/live-signer-evm@0.6.0-nightly.6
-
-## 1.2.1-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.1
-  - @ledgerhq/coin-framework@5.6.0-nightly.5
-  - @ledgerhq/coin-evm@2.23.0-nightly.5
-  - @ledgerhq/live-signer-evm@0.6.0-nightly.5
-
-## 1.2.1-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`769b0ed`](https://github.com/LedgerHQ/ledger-live/commit/769b0ed64b3a4c0388546ec00966d1185f3aea68)]:
-  - @ledgerhq/live-signer-evm@0.6.0-nightly.4
-  - @ledgerhq/coin-framework@5.6.0-nightly.4
-  - @ledgerhq/coin-evm@2.23.0-nightly.4
-  - @ledgerhq/cryptoassets@13.21.1-nightly.0
-  - @ledgerhq/coin-tester@0.7.1-nightly.0
-
-## 1.2.1-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`2f95ad0`](https://github.com/LedgerHQ/ledger-live/commit/2f95ad048a482a8627a3cc511c94db4845152c9b), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab)]:
-  - @ledgerhq/coin-evm@2.23.0-nightly.3
-  - @ledgerhq/coin-framework@5.6.0-nightly.3
-  - @ledgerhq/live-signer-evm@0.5.6-nightly.3
-
-## 1.2.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a)]:
-  - @ledgerhq/types-live@6.77.0-nightly.1
-  - @ledgerhq/coin-framework@5.6.0-nightly.2
-  - @ledgerhq/coin-evm@2.23.0-nightly.2
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0
+  - @ledgerhq/types-live@6.77.0
+  - @ledgerhq/coin-framework@5.6.0
+  - @ledgerhq/live-signer-evm@0.5.6
   - @ledgerhq/coin-tester@0.7.0
-  - @ledgerhq/live-signer-evm@0.5.6-nightly.2
 
-## 1.2.1-nightly.1
+## 1.3.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`9c11b2c`](https://github.com/LedgerHQ/ledger-live/commit/9c11b2c7a9165fad82f9d15deecd2b77fdb00713)]:
-  - @ledgerhq/coin-framework@5.6.0-nightly.1
-  - @ledgerhq/coin-evm@2.23.0-nightly.1
-  - @ledgerhq/live-signer-evm@0.5.6-nightly.1
-
-## 1.2.1-nightly.0
+- [#10811](https://github.com/LedgerHQ/ledger-live/pull/10811) [`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm): remove cyclic imports
 
 ### Patch Changes
 
-- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32)]:
-  - @ledgerhq/types-live@6.77.0-nightly.0
-  - @ledgerhq/coin-framework@5.5.1-nightly.0
-  - @ledgerhq/coin-evm@2.22.7-nightly.0
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0-next.0
+  - @ledgerhq/types-live@6.77.0-next.0
+  - @ledgerhq/coin-framework@5.6.0-next.0
+  - @ledgerhq/live-signer-evm@0.5.6-next.0
   - @ledgerhq/coin-tester@0.7.0
-  - @ledgerhq/live-signer-evm@0.5.6-nightly.0
 
 ## 1.2.0
 

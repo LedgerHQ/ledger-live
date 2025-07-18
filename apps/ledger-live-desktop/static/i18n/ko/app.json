@@ -6612,6 +6612,10 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "사용자 보호 조치 실행 중",
+      "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7087,9 @@
       "cta" : {
         "confirm" : "확인"
       },
-      "newAccount" : "새 계정"
+      "newAccount" : "새 계정",
+      "addAccountSelection" : "자산을 추가할 계정을 선택하세요",
+      "addAccountSelectionPtxFlow" : "계정 선택"
     },
     "fundAccount" : {
       "receive" : "수령",
