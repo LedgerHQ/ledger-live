@@ -52,6 +52,18 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
+  // If output file is specified and retries are enabled, use timestamped files
+  let finalTestFilesArg = testFilesArg;
+  if (outputFile) {
+    // Check if retries are enabled in detox config (you might need to read the config file)
+    // For now, we'll use timestamped files when outputFile is specified
+    const timestamp = Date.now();
+    const baseOutputFile = outputFile.replace(".json", "");
+    finalTestFilesArg = testFilesArg.map(arg =>
+      arg.startsWith("--outputFile=") ? `--outputFile=${baseOutputFile}-${timestamp}.json` : arg,
+    );
+  }
+
   await $`pnpm mobile ${testType}:test\
     -c ios.sim.${target} \
     --loglevel error \
@@ -63,7 +75,7 @@ const test_ios = async () => {
     --runInBand \
     --cleanup \
     ${filter.split(" ")} \
-    ${testFilesArg}`;
+    ${finalTestFilesArg}`;
 };
 
 const build_android = async () => {
@@ -71,6 +83,18 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
+  // If output file is specified and retries are enabled, use timestamped files
+  let finalTestFilesArg = testFilesArg;
+  if (outputFile) {
+    // Check if retries are enabled in detox config (you might need to read the config file)
+    // For now, we'll use timestamped files when outputFile is specified
+    const timestamp = Date.now();
+    const baseOutputFile = outputFile.replace(".json", "");
+    finalTestFilesArg = testFilesArg.map(arg =>
+      arg.startsWith("--outputFile=") ? `--outputFile=${baseOutputFile}-${timestamp}.json` : arg,
+    );
+  }
+
   await $`pnpm mobile ${testType}:test \
     -c android.emu.${target} \
     --loglevel error \
@@ -82,7 +106,7 @@ const test_android = async () => {
     --runInBand \
     --cleanup \
     ${filter.split(" ")} \
-    ${testFilesArg}`;
+    ${finalTestFilesArg}`;
 };
 
 const getTasksFrom = {

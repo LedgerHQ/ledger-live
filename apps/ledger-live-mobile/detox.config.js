@@ -13,6 +13,7 @@ module.exports = {
       setupTimeout: 500000,
     },
     retries: 0,
+    // noRetryArgs: ["outputFile"],
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -25,7 +26,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: process.env.CI ? true : false,
+      shutdownDevice: !!process.env.CI,
     },
   },
   apps: {
@@ -82,7 +83,7 @@ module.exports = {
         avdName: "Android_Emulator",
       },
       gpuMode: "swiftshader_indirect",
-      headless: process.env.CI ? true : false,
+      headless: !!process.env.CI,
     },
   },
   configurations: {

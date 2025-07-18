@@ -75,6 +75,17 @@ runs:
         mkdir -p ${{ inputs.artifacts_dir }}
         cp ./e2e-test-results-${{ inputs.platform }}.json ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
 
+    - name: Show merged file summary
+      shell: bash
+      run: |
+        echo "=== Merged ${{ inputs.platform }} Timing File Summary ==="
+        echo "File size: $(wc -c < ./e2e-test-results-${{ inputs.platform }}.json) bytes"
+        echo "Number of test results: $(jq '.testResults | length' ./e2e-test-results-${{ inputs.platform }}.json)"
+        echo "Total tests: $(jq '.numTotalTests' ./e2e-test-results-${{ inputs.platform }}.json)"
+        echo "Passed tests: $(jq '.numPassedTests' ./e2e-test-results-${{ inputs.platform }}.json)"
+        echo "Failed tests: $(jq '.numFailedTests' ./e2e-test-results-${{ inputs.platform }}.json)"
+        echo "Success: $(jq '.success' ./e2e-test-results-${{ inputs.platform }}.json)"
+
     - name: Save merged timing file to cache
       uses: tespkg/actions-cache/save@v1
       with:
@@ -86,3 +97,10 @@ runs:
         bucket: ${{ inputs.cache_bucket }}
         region: ${{ inputs.aws_region }}
         use-fallback: false
+
+    - name: Upload merged timing file as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: merged-${{ inputs.platform }}-timing-results
+        path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+        retention-days: 30
