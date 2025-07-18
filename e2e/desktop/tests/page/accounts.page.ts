@@ -80,6 +80,11 @@ export class AccountsPage extends AppPage {
     expect(await this.countAccounts()).toBe(count);
   }
 
+  @step("Expect number of accounts to be not null")
+  async expectAccountsCountToBeNotNull() {
+    expect(await this.countAccounts()).not.toBeNull();
+  }
+
   async getAccountsName() {
     const accountElements = await this.accountListNumber.all();
     const accountNames = [];
