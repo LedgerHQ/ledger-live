@@ -36,7 +36,7 @@ runs:
       run: |
         echo "Compressing files in ${{ inputs.path }}"
         while IFS= read -r line; do
-          find $line -type f >> /tmp/cache-path.txt
+          find "$line" -type f >> /tmp/cache-path.txt
         done < ${{ inputs.path }}
         /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
