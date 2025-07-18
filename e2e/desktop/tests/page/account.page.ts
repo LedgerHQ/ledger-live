@@ -67,6 +67,11 @@ export class AccountPage extends AppPage {
     await this.sendButton.click();
   }
 
+  @step("Verify `Send` button is visible")
+  async verifySendButtonVisibility() {
+    await expect(this.sendButton).toBeVisible();
+  }
+
   @step("Click `Buy` button")
   async clickBuy() {
     await this.buyButton.click();
