@@ -20,8 +20,9 @@ import {
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
-import { CryptoAssetsStore } from "./crypto-assets/type";
-import { setCryptoAssetsStore } from "./crypto-assets";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
 
 const alpacaized = {
   xrp: true,
@@ -104,6 +105,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
 export function setup(store: CryptoAssetsStore) {
   setCryptoAssetsStore(store);
+  setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(

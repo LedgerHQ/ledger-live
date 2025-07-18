@@ -25,6 +25,8 @@
   ],
   "ignoreUnimported": [
     "src/config.ts",
+    "src/crypto-assets/index.ts",
+    "src/crypto-assets/type.ts",
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts"
   ],
