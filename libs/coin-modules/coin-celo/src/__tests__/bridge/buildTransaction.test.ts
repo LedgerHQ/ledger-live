@@ -462,7 +462,7 @@ describe("buildTransaction", () => {
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "erc20_token_address",
+      to: "recipient",
       value: "10",
       gas: 3,
     });
