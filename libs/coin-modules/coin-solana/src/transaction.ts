@@ -88,6 +88,8 @@ function formatCommand(mainAccount: Account, tx: Transaction, command: Command) 
       return formatStakeWithdraw(mainAccount, tx, command);
     case "stake.split":
       return formatStakeSplit(mainAccount, tx, command);
+    case "raw":
+      return formatRaw(tx);
     default:
       return assertUnreachable(command);
   }
@@ -242,6 +244,13 @@ function formatStakeSplit(mainAccount: Account, tx: Transaction, command: StakeS
     `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
     `  TO: ${command.splitStakeAccAddr}`,
   ]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatRaw(tx: Transaction) {
+  const str = [`  SEND RAW: ${tx.useAllAmount ? " (ALL)" : ""}`, `  TO: ${tx.recipient}`]
     .filter(Boolean)
     .join("\n");
   return "\n" + str;
