@@ -2395,6 +2395,7 @@
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },

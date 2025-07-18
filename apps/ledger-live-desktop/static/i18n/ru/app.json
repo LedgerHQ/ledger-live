@@ -2395,6 +2395,7 @@
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
         "unitVByte" : "{{unit}}/вБайт",
+        "unitPerByte" : "{{unit}}/Байт",
         "nft" : "NFT",
         "nftQuantity" : "Количество"
       },

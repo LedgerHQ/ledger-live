@@ -15,6 +15,8 @@ export const selectUtxos = (
   amount: BigNumber,
   feerate: number = 1,
 ): { changeAmount: BigNumber; fee: BigNumber; utxos: KaspaUtxo[] } => {
+  // always sort utxos
+  sortUtxos(utxos);
   // Max UTXO count is 88. More don't fit into a regular TX
   if (utxos.length > MAX_UTXOS_PER_TX) {
     throw new Error(`UTXO count exceeds the limit of ${MAX_UTXOS_PER_TX} for a TX.`);
@@ -83,4 +85,16 @@ export const selectUtxos = (
   }
   // Throw an error, if UTXOs can't be determined to fulfill the requirement.
   throw new Error("UTXOs can't be determined to fulfill the specified amount");
+};
+
+const sortUtxos = (utxos: KaspaUtxo[]) => {
+  utxos.sort((a, b) => {
+    const transactionComparison = a.utxoEntry.blockDaaScore.localeCompare(
+      b.utxoEntry.blockDaaScore,
+    );
+    if (transactionComparison !== 0) {
+      return transactionComparison;
+    }
+    return a.utxoEntry.amount.minus(b.utxoEntry.amount).toNumber();
+  });
 };

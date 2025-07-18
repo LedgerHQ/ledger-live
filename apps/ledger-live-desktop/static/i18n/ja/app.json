@@ -2395,6 +2395,7 @@
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "数量"
       },

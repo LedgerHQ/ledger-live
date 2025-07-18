@@ -2395,6 +2395,7 @@
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
+        "unitPerByte" : "{{unit}}/بايت (byte)",
         "nft" : "NFT",
         "nftQuantity" : "الكمية"
       },
