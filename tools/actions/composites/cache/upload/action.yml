@@ -27,8 +27,6 @@ inputs:
   region:
     type: string
     required: true
-env:
-  tar_application: ${{ runner.os == 'macOS' && 'gtar' || 'tar' }}
 runs:
   using: "composite"
   steps:
