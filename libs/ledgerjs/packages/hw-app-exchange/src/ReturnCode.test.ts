@@ -6,7 +6,7 @@ describe("getExchageErrorMessage", () => {
     const result = getExchangeErrorMessage(0x6a80);
 
     // Then
-    expect(result).toBe({
+    expect(result).toStrictEqual({
       errorMessage: "Incorrect command data",
       errorName: "incorrectCommandData",
     });
@@ -16,6 +16,6 @@ describe("getExchageErrorMessage", () => {
     const result = getExchangeErrorMessage(0x6a77);
 
     // Then
-    expect(result).toBe({ errorMessage: undefined, errorName: undefined });
+    expect(result).toStrictEqual({ errorMessage: undefined, errorName: undefined });
   });
 });
