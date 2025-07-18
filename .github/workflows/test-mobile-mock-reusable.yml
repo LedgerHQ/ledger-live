@@ -480,7 +480,7 @@ jobs:
 
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
-        if: steps.detox-avd.outputs.cache-hit != 'false'
+        if: steps.detox-avd.outputs.cache-hit != 'true'
         with:
           path: ~/.android/avd/*
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}

@@ -29,7 +29,7 @@ outputs:
     description: "Indicates if the cache was successfully downloaded"
     value: ${{ steps.download-cache.outcome == 'success' }}
 env:
-  tar_application: ${{ github.environment == 'macos' && 'gtar' || 'tar' }}
+  tar_application: ${{ runner.os == 'macOS' && 'gtar' || 'tar' }}
 runs:
   using: "composite"
   steps:

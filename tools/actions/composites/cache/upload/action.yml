@@ -28,7 +28,7 @@ inputs:
     type: string
     required: true
 env:
-  tar_application: ${{ github.environment == 'macos' && 'gtar' || 'tar' }}
+  tar_application: ${{ runner.os == 'macOS' && 'gtar' || 'tar' }}
 runs:
   using: "composite"
   steps:
