@@ -74,27 +74,18 @@ jobs:
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
     steps:
-      - name: Upload Tester
-        run: |
-          mkdir test-folder
-          echo "1" > test-folder/file1.txt
-          echo "2" > test-folder/file2.txt
-          echo "3" > test-folder/file3.txt
-          echo "4" > test-folder/file4.txt
       - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
         with:
-          path: |
-            test-folder/file1.txt
-            test-folder/file2.txt
-            test-folder/file3.txt
-            test-folder/file4.txt
           key: test-key-${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+      - name: Set up environment variables
+        run: |
+          ls test-folder
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
