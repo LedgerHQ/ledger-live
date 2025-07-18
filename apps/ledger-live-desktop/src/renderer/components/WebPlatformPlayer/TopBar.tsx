@@ -24,6 +24,10 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { Icons } from "@ledgerhq/react-ui/assets/index";
+import Switch from "~/renderer/components/Switch";
+import { MobileView } from "~/renderer/hooks/useMobileView";
+import Input from "~/renderer/components/Input";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -132,6 +136,8 @@ export type Props = {
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
   currentAccountHistDb?: CurrentAccountHistDB;
+  mobileView: MobileView;
+  setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
 };
 
 export const TopBar = ({
@@ -141,6 +147,8 @@ export const TopBar = ({
   config = {},
   webviewAPIRef,
   webviewState,
+  mobileView,
+  setMobileView,
 }: Props) => {
   const walletState = useSelector(walletSelector);
 
@@ -186,6 +194,17 @@ export const TopBar = ({
 
     webview.goForward();
   }, [webviewAPIRef]);
+
+  const toggleMobileView = useCallback(async () => {
+    setMobileView?.(prev => ({ ...prev, display: !prev.display }));
+  }, [setMobileView]);
+
+  const updateMobileWidth = useCallback(
+    async (width: number) => {
+      setMobileView?.(prev => ({ ...prev, width: width > 0 ? width : 355 }));
+    },
+    [setMobileView],
+  );
 
   const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
   const currentAccountName =
@@ -237,6 +256,33 @@ export const TopBar = ({
           </ItemContainer>
         </>
       ) : null}
+      <Separator />
+      <ItemContainer isInteractive onClick={toggleMobileView} style={{ marginRight: 0 }}>
+        <Icons.Desktop size="S" />
+        <ItemContent>
+          <Switch isChecked={mobileView.display}></Switch>
+        </ItemContent>
+        <Icons.Mobile size="S" />
+      </ItemContainer>
+      {mobileView.display && (
+        <Box style={{ marginRight: 16 }}>
+          <Input
+            small
+            value={`${mobileView.width}` || ""}
+            onChange={(e: string) => {
+              const value = parseInt(e, 10) || 0;
+              updateMobileWidth?.(value);
+            }}
+            onBlur={() => {
+              if (!mobileView.width) {
+                updateMobileWidth?.(355);
+              }
+            }}
+            style={{ width: 30, textAlign: "center" }}
+            maxLength={4}
+          />
+        </Box>
+      )}
       <RightContainer>
         <ItemContainer hidden={!isLoading}>
           <Spinner
@@ -245,6 +291,7 @@ export const TopBar = ({
             data-testid="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
+
         {shouldDisplaySelectAccount ? (
           <>
             <ItemContainer
