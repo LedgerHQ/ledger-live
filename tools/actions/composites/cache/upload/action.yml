@@ -35,6 +35,7 @@ runs:
       if: runner.os == 'Linux'
       run: |
         echo "Compressing files in ${{ inputs.path }}"
+        touch /tmp/cache-path.txt
         echo "${{ inputs.path }}" | tr -d '\n' | while IFS= read -r path; do
           find "$path" -type f >> /tmp/cache-path.txt
         done

@@ -89,6 +89,7 @@ jobs:
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
