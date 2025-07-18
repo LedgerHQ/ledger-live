@@ -2,7 +2,7 @@ name: "Cache upload"
 description: "Compress and upload cache files to S3"
 inputs:
   endpoint:
-    description: true if you want the runner to be paused, preserving state for investigation
+    description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
     type: string
     required: false
     default: 's3.amazonaws.com'
@@ -20,7 +20,7 @@ inputs:
     required: true
   sessionToken:
     type: string
-    required: true
+    required: false
   bucket:
     type: string
     required: true

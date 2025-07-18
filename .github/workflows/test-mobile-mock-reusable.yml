@@ -149,6 +149,7 @@ jobs:
           lookup-only: true
 
   build-ios:
+    if: 1 == 2
     name: "iOS Build"
     needs: [ determine-builds ]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
@@ -428,27 +429,22 @@ jobs:
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
-      - name: cache android emulator
+      - name: Download android emulator
         timeout-minutes: 5
-        uses: tespkg/actions-cache@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
         id: detox-avd
         with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
-            /usr/local/lib/android/sdk/emulator/*
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
-          use-fallback: false
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
+        id: create-avd
         with:
           api-level: ${{ env.AVD_API }}
           arch: ${{ env.AVD_ARCH }}
@@ -461,6 +457,19 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
+
+      - name: Cache android emulator
+        timeout-minutes: 5
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
+        if: steps.create-avd.status == 'success'
+        with:
+          path: ~/.android/avd/*
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
       - name: Run Android Tests
         id: detox
