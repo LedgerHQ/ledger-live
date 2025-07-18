@@ -36,7 +36,7 @@ runs:
       run: |
         echo "Compressing files in ${{ inputs.path }}"
         echo "${{ inputs.path }}" > /tmp/cache-path.txt
-        tar --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
+        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
