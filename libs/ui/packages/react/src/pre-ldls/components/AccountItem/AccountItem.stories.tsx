@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { AccountItem, AccountItemProps } from "./AccountItem";
 import { expect, fn, within } from "@storybook/test";
+import { AccountItem } from "./AccountItem";
 
 const onClick = fn();
 
@@ -11,15 +11,15 @@ const meta: Meta<typeof AccountItem> = {
   args: {
     onClick: onClick,
     account: {
-      id: "12345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 ETH",
-      fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
+      balance: "0.118 ETH",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
       ticker: "btc",
     },
-  } satisfies AccountItemProps,
+  },
 };
 export default meta;
 
@@ -31,16 +31,16 @@ export const TestAccount: Story = {
   args: {
     onClick: onClick,
     account: {
-      id: "12345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 BTC",
-      fiatValue: "$5,969.83",
-      protocol: "Native Segwit",
       address: "n4A9...Zgty",
+      balance: "0.118 BTC",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      protocol: "Native Segwit",
       ticker: "btc",
     },
-  } satisfies AccountItemProps,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -65,15 +65,15 @@ export const TestWithoutProtocol: Story = {
   args: {
     onClick: onClick,
     account: {
-      id: "21345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 BTC",
-      fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
+      balance: "0.118 BTC",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "21345",
+      name: "Main BTC",
       ticker: "btc",
     },
-  } satisfies AccountItemProps,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -87,14 +87,14 @@ export const TestWithoutAddressIcon: Story = {
   args: {
     onClick: onClick,
     account: {
-      id: "bitcoin",
-      name: "Main BTC",
+      address: "n4A9...Zgty",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
-      address: "n4A9...Zgty",
+      id: "bitcoin",
+      name: "Main BTC",
     },
     showIcon: false,
-  } satisfies AccountItemProps,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -106,7 +106,6 @@ export const TestWithoutAddressIcon: Story = {
 
 export const TestWithCheckbox: Story = {
   args: {
-    onClick: onClick,
     account: {
       address: "n4A9...Zgty",
       balance: "0.118",
@@ -116,15 +115,16 @@ export const TestWithCheckbox: Story = {
       name: "Main BTC",
       ticker: "btc",
     },
+    onClick,
     rightElement: {
       type: "checkbox",
       checkbox: {
         isChecked: false,
-        onChange: () => {},
         name: "checkbox",
+        onChange: () => {},
       },
     },
-  } satisfies AccountItemProps,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -136,7 +136,6 @@ export const TestWithCheckbox: Story = {
 
 export const TestWithArrow: Story = {
   args: {
-    onClick: onClick,
     account: {
       address: "n4A9...Zgty",
       cryptoId: "bitcoin",
@@ -148,11 +147,36 @@ export const TestWithArrow: Story = {
     rightElement: {
       type: "arrow",
     },
-  } satisfies AccountItemProps,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const arrowIcon = canvas.getByTestId("right-element-arrow-icon");
+
+    await expect(arrowIcon).toBeInTheDocument();
+  },
+};
+
+export const TestWithEdit: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    onClick: undefined,
+    rightElement: {
+      type: "edit",
+      onClick,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-edit-icon");
 
     await expect(arrowIcon).toBeInTheDocument();
   },

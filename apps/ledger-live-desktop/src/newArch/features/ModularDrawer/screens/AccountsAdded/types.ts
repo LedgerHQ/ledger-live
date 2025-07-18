@@ -14,12 +14,14 @@ export interface FormattedAccount {
 export interface AccountListProps {
   accounts: Account[];
   formatAccount: (account: Account) => FormattedAccount;
+  navigateToEditAccountName: (account: Account) => void;
 }
 
 export interface AccountsAddedProps {
   accounts: Account[];
-  onFundAccount: (account: Account) => void;
-  navigateToSelectAccount: () => void;
   isAccountSelectionFlow: boolean;
+  navigateToEditAccountName: (account: Account) => void;
+  navigateToFundAccount: (account: Account) => void;
+  navigateToSelectAccount: () => void;
   source: string;
 }
