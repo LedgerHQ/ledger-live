@@ -14,6 +14,7 @@ import { importTRC10Tokens } from "./importers/trc10";
 import { importTRC20Tokens } from "./importers/trc20";
 import { importVip180Tokens } from "./importers/vip180";
 import { importAptosTokens } from "./importers/apt";
+import { importStacksSip010Tokens } from "./importers/stacks";
 
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importCoinsExchange } from "./exchange/coins";
@@ -41,6 +42,7 @@ const importTokens = async () => {
     importVip180Tokens(outputFolder),
     importAptosTokens(outputFolder, "coin"),
     importAptosTokens(outputFolder, "fungible_asset"),
+    importStacksSip010Tokens(outputFolder),
   ];
 
   await Promise.allSettled(promises);
