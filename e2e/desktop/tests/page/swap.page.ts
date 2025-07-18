@@ -25,6 +25,7 @@ export class SwapPage extends AppPage {
   private feesValue = this.page.getByTestId("fees-value");
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
+  private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -50,7 +51,7 @@ export class SwapPage extends AppPage {
     this.page.getByTestId(`swap-history-from-amount-${swapId}`);
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
-
+  private drawerContent = this.page.locator('[data-testid="drawer-content"]');
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
   async sendMax() {
@@ -167,6 +168,26 @@ export class SwapPage extends AppPage {
       }
     }
     throw new Error("No valid providers found");
+  }
+
+  @step("Tap quote infos fees selector")
+  async tapQuoteInfosFeesSelector(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.quoteInfosFeesSelector).first().click();
+  }
+
+  @step("Check drawer error message")
+  async checkDrawerErrorMessageAndContinueCTA(
+    electronApp: ElectronApplication,
+    errorMessage: string | RegExp,
+  ) {
+    const [, webview] = electronApp.windows();
+    const elem = webview.getByTestId(`amount-error-alert`);
+    expect(elem).toBeVisible();
+    await expect(elem).toContainText(errorMessage);
+    const continueButton = webview.getByRole("button", { name: "Continue" });
+    await expect(continueButton).toBeVisible();
+    await expect(continueButton).toBeDisabled();
   }
 
   @step("Get all swap providers available")

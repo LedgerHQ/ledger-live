@@ -155,7 +155,7 @@ export default function FeesDrawerLiveApp({
         />
         {amountError && !gasPriceError && (
           <Flex>
-            <Alert type="warning">
+            <Alert type="warning" data-testid="amount-error-alert">
               <TranslatedError error={amountError} />
             </Alert>
           </Flex>

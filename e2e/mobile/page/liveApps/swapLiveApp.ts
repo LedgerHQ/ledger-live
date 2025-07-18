@@ -23,6 +23,10 @@ export default class SwapLiveAppPage {
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
   liveAppTitle = "live-app-title";
+  quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
+
+  feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
+  quoteContainerId = (provider: string) => `quote-container-${provider}`;
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
@@ -44,6 +48,16 @@ export default class SwapLiveAppPage {
   @Step("Tap to currency")
   async tapToCurrency() {
     await tapWebElementByTestId(this.toSelector);
+  }
+
+  @Step("Tap quote infos fees selector $0")
+  async tapQuoteInfosFeesSelector(index: number) {
+    await tapWebElementByTestId(this.quoteInfosFeesSelector, index);
+  }
+
+  @Step("Tap fee container $0")
+  async tapFeeContainer(strategy: "slow" | "medium" | "fast") {
+    await tapById(this.feeContainerId(strategy));
   }
 
   @Step("Input amount")
@@ -81,7 +95,7 @@ export default class SwapLiveAppPage {
         if (provider && !provider.kyc && provider.isNative) {
           await getWebElementByTestId(this.quoteProviderName, index).tap();
           await allure.attachment("Selected provider: ", providerName, "text/plain");
-          return providerName;
+          return { providerName, index };
         }
 
         index++;
