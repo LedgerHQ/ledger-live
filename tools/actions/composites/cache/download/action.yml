@@ -28,6 +28,8 @@ outputs:
   cache-hit:
     description: "Indicates if the cache was successfully downloaded"
     value: ${{ steps.download-cache.outcome == 'success' }}
+env:
+  tar_application: ${{ github.environment == 'macos' && 'gtar' || 'tar' }}
 runs:
   using: "composite"
   steps:
@@ -46,7 +48,7 @@ runs:
       shell: bash
       if: steps.download-cache.outcome == 'success'
       run: |
-        gtar -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
+        ${{ env.tar_application }} -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
 
     - name: Cleanup
       shell: bash
