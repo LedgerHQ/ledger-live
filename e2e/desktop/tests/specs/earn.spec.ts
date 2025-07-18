@@ -1,7 +1,7 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
-import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
@@ -93,15 +93,10 @@ test.describe("Inline Add Account", () => {
           type: "TMS",
           description: "B2CQA-3001",
         },
-        {
-          type: "BUG",
-          description: "LIVE-20002",
-        },
       ],
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
       await app.delegateDrawer.clickOnAddAccountButton();
@@ -109,7 +104,8 @@ test.describe("Inline Add Account", () => {
       await app.addAccount.done();
       await app.delegateDrawer.selectAccountByName(account);
       await app.addAccount.close();
-      await app.earnDashboard.expectLiveAppToBeVisible();
+      await app.layout.goToAccounts();
+      await app.accounts.expectAccountsCountToBeNotNull();
     },
   );
 });
