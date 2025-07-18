@@ -58,6 +58,7 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyTokenRevokeTx(address);
     case "stake.split":
     case "token.createATA":
+    case "raw":
       throw new Error(`not implemented for <${kind}>`);
     default:
       return assertUnreachable(kind);
