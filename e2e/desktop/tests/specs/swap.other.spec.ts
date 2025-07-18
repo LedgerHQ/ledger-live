@@ -17,6 +17,7 @@ import {
   performSwapUntilDeviceVerificationStep,
 } from "../utils/swapUtils";
 import { getEnv } from "@ledgerhq/live-env";
+import { overrideNetworkPayload } from "../utils/networkUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -955,7 +956,7 @@ test.describe("Swap history", () => {
   );
 });
 
-test.describe("Swap - Block blacklisted addresses", () => {
+test.describe.only("Swap - Block blacklisted addresses", () => {
   const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
   const toAccount = Account.ETH_1;
   setupEnv(true);
@@ -999,7 +1000,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
-      await app.overrideNetworkCallPayload(sanctionedAddressUrl, (json: any) => {
+      await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
         json.bannedAddresses = [toAccount.address];
         return json;
       });

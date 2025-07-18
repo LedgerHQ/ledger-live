@@ -63,13 +63,4 @@ export class Application extends PageHolder {
   public liveApp = new LiveApp(this.page);
   public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public redux = new Redux(this.page);
-
-  public async overrideNetworkCallPayload(url: string, payloadHandler: (json: any) => any) {
-    await this.page.route(url, async route => {
-      const response = await route.fetch();
-      const payload = await response.json();
-      const updatedPayload = payloadHandler(payload);
-      await route.fulfill({ response, json: updatedPayload });
-    });
-  }
 }
