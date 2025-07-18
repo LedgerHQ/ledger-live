@@ -78,6 +78,7 @@ jobs:
         run: |
           mkdir test-files
           echo "This is a test file" > test-files/test.txt
+
       - name: Cache Test
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
         with:

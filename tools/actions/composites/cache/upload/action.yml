@@ -40,7 +40,7 @@ runs:
           find "$path" -type f >> /tmp/cache-path.txt
         done
         cat /tmp/cache-path.txt
-        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
+#        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
