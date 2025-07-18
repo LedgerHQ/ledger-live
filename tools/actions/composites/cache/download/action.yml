@@ -28,8 +28,6 @@ outputs:
   cache-hit:
     description: "Indicates if the cache was successfully downloaded"
     value: ${{ steps.download-cache.outcome == 'success' }}
-env:
-  tar_application: ${{ runner.os == 'macOS' && 'gtar' || 'tar' }}
 runs:
   using: "composite"
   steps:
@@ -44,11 +42,17 @@ runs:
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
 
-    - name: Un-Compress files
+    - name: Un-Compress files (Linux)
+      if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
       shell: bash
-      if: steps.download-cache.outcome == 'success'
       run: |
-        ${{ env.tar_application }} -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
+        tar -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
+
+    - name: Un-Compress files (macOS)
+      if: runner.os == 'macOS' && steps.download-cache.outcome == 'success'
+      shell: bash
+      run: |
+        gtar -xf /tmp/cache.tzst -P -C {{ github.workspace }} --use-compress-program unzstd
 
     - name: Cleanup
       shell: bash

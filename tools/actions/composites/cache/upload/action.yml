@@ -32,6 +32,23 @@ env:
 runs:
   using: "composite"
   steps:
+    - name: Compressing files (Linux)
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        echo "Compressing files in ${{ inputs.path }}"
+        echo "${{ inputs.path }}" > /tmp/cache-path.txt
+        tar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
+
+    - name: Compressing files (macOS)
+      shell: bash
+      if: runner.os == 'macOS'
+      run: |
+        echo "Compressing files in ${{ inputs.path }}"
+        echo "${{ inputs.path }}" > /tmp/cache-path.txt
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
+
+
     - name: Compressing files
       shell: bash
       run: |
