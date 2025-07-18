@@ -55,7 +55,7 @@ on:
         required: true
       SLACK_BOT_TOKEN:
         description: The Slack bot token to use
-        required: true
+        required: false
 
 permissions:
   actions: read
