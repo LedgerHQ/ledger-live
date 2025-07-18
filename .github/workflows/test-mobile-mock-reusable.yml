@@ -77,13 +77,18 @@ jobs:
       - name: Test Create
         run: |
           mkdir test-files
+          mkdir test-files2
           echo "This is a test file" > test-files/test.txt
+          echo "This is a test file" > test-files/test2.txt
+          echo "This is a test file" > test-files2/test.txt
+          echo "This is a test file" > test-files2/test2.txt
 
       - name: Cache Test
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
         with:
           path: |
             test-files/*
+            test-files2/*
           key: test-files${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
