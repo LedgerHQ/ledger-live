@@ -21,6 +21,8 @@ import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/us
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { ArrowUp } from "@ldls/ui-react/symbols";
+import { Button as LdlsButton } from "@ldls/ui-react";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -188,6 +190,11 @@ export function Welcome() {
           <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
             {t("onboarding.screens.welcome.description")}
           </Description>
+          <LdlsButton appearance="accent" icon={ArrowUp}>Click me</LdlsButton>
+          <div className="text-warning flex items-center justify-between gap-2">
+            <div>Some text</div>
+            <ArrowUp size={40} />
+          </div>
         </Presentation>
         <ProductHighlight>
           {isFeatureFlagsSettingsButtonDisplayed && (

@@ -17,6 +17,8 @@
   "dependencies": {
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/view": "^6.28.2",
+    "@ldls/design-core": "0.0.8",
+    "@ldls/ui-react": "0.0.11",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
@@ -39,6 +41,8 @@
     "@uiw/react-codemirror": "^4.22.2",
     "bignumber.js": "^9.1.2",
     "bufferutil": "^4.0.7",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
     "encoding": "^0.1.13",
     "eslint-config-next": "13.5.6",
     "invariant": "^2.2.4",
@@ -57,6 +61,7 @@
     "rxjs": "^7.8.1",
     "semver": "^7.5.4",
     "styled-components": "^6.0.7",
+    "tailwind-merge": "3.3.1",
     "typescript": "5.2.2",
     "utf-8-validate": "^6.0.3"
   },
@@ -69,6 +74,9 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-inspector": "^4.0.2",
     "@types/react-table": "^7.7.15",
-    "@types/semver": "^7.3.9"
+    "@types/semver": "^7.3.9",
+    "autoprefixer": "10.4.21",
+    "postcss": "8.5.6",
+    "tailwindcss": "^3"
   }
 }

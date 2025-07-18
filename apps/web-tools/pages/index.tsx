@@ -1,10 +1,17 @@
 import Link from "next/link";
+import { ArrowDown, ArrowRight } from "@ldls/ui-react/symbols";
+import { Button } from "@ldls/ui-react";
 
 export const getStaticProps = async () => ({ props: {} });
 
 export default function Home() {
   return (
     <main>
+      <div className="flex flex-col gap-4">
+        <div className="bg-accent w-20 h-20" />
+        <ArrowDown size={40} className="text-accent" />
+        <Button appearance="accent" icon={ArrowRight}>Click me</Button>
+      </div>
       <ul>
         <li>
           <Link href="/domain-tlv-parser">Domain TLV Parser</Link>
