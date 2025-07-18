@@ -8,7 +8,6 @@ import {
   TransactionBlockData,
   SuiHTTPTransport,
   TransactionEffects,
-  BalanceChange,
   QueryTransactionBlocksParams,
   BalanceChange,
   SuiTransactionBlockResponseOptions,
