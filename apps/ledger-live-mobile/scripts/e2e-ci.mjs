@@ -7,6 +7,8 @@ let cache = true;
 let shard = "";
 let target = "release";
 let filter = "";
+let testFilesArg = [];
+let outputFile = "";
 
 $.verbose = true; // everything works like in v7
 
@@ -44,25 +46,36 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`;
     await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
 
 const test_ios = async () => {
+  // If output file is specified and retries are enabled, use timestamped files
+  let finalTestFilesArg = testFilesArg;
+  if (outputFile) {
+    // Check if retries are enabled in detox config (you might need to read the config file)
+    // For now, we'll use timestamped files when outputFile is specified
+    const timestamp = Date.now();
+    const baseOutputFile = outputFile.replace(".json", "");
+    finalTestFilesArg = testFilesArg.map(arg =>
+      arg.startsWith("--outputFile=") ? `--outputFile=${baseOutputFile}-${timestamp}.json` : arg,
+    );
+  }
+
   await $`pnpm mobile ${testType}:test\
     -c ios.sim.${target} \
     --loglevel error \
     --record-logs failing \
-    --record-videos failing \
     --take-screenshots failing \
     --forceExit \
     --headless \
     --retries 2 \
     --runInBand \
     --cleanup \
-    --shard ${shard} \
-    ${filter.split(" ")}`;
+    ${filter.split(" ")} \
+    ${finalTestFilesArg}`;
 };
 
 const build_android = async () => {
@@ -70,18 +83,30 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile ${testType}:test \\
-    -c android.emu.${target} \\
-    --loglevel error \\
-    --record-logs failing \\
-    --take-screenshots failing \\
-    --forceExit \\
-    --headless \\
-    --retries 1 \\
-    --runInBand \\
-    --cleanup \\
-    --shard ${shard} \\
-    ${filter.split(" ")}`;
+  // If output file is specified and retries are enabled, use timestamped files
+  let finalTestFilesArg = testFilesArg;
+  if (outputFile) {
+    // Check if retries are enabled in detox config (you might need to read the config file)
+    // For now, we'll use timestamped files when outputFile is specified
+    const timestamp = Date.now();
+    const baseOutputFile = outputFile.replace(".json", "");
+    finalTestFilesArg = testFilesArg.map(arg =>
+      arg.startsWith("--outputFile=") ? `--outputFile=${baseOutputFile}-${timestamp}.json` : arg,
+    );
+  }
+
+  await $`pnpm mobile ${testType}:test \
+    -c android.emu.${target} \
+    --loglevel error \
+    --record-logs failing \
+    --take-screenshots failing \
+    --forceExit \
+    --headless \
+    --retries 2 \
+    --runInBand \
+    --cleanup \
+    ${filter.split(" ")} \
+    ${finalTestFilesArg}`;
 };
 
 const getTasksFrom = {
@@ -92,7 +117,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: async () =>  await bundle_android(),
+    bundle: async () => await bundle_android(),
     test: test_android,
   },
 };
@@ -125,6 +150,10 @@ for (const argName in argv) {
     case "cache":
       cache = argv[argName];
       break;
+    case "outputFile":
+    case "o":
+      outputFile = argv[argName];
+      break;
     case "_":
       break;
     case "e2e":
@@ -143,6 +172,24 @@ for (const argName in argv) {
       usage(42);
       break;
   }
+}
+
+const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
+const filteredArgs = extraArgs.filter(arg => {
+  return (
+    arg !== "./scripts/e2e-ci.mjs" && arg !== "ios" && arg !== "android" && !arg.match(/^\d+\/\d+$/)
+  );
+});
+if (filteredArgs.length > 0) {
+  if (filteredArgs.length === 1 && filteredArgs[0].includes(" ")) {
+    testFilesArg = filteredArgs[0].split(" ");
+  } else {
+    testFilesArg = filteredArgs;
+  }
+}
+if (outputFile) {
+  testFilesArg.push("--json");
+  testFilesArg.push(`--outputFile=${outputFile}`);
 }
 
 within(async () => {
