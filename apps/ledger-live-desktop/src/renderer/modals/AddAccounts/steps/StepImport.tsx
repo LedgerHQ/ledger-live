@@ -1,9 +1,9 @@
-import React, { useEffect, PureComponent } from "react";
+import React, { PureComponent, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { concat, from, Subscription } from "rxjs";
-import { ignoreElements, filter, map, retry } from "rxjs/operators";
+import { Subscription } from "rxjs";
+import { filter, map, retry } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
@@ -12,7 +12,6 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";
 import { urls } from "~/config/urls";
 import logger from "~/renderer/logger";
-import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import RetryButton from "~/renderer/components/RetryButton";
 import Box from "~/renderer/components/Box";
@@ -69,6 +68,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   }, []);
   return <AccountsList {...rest} />;
 };
+
 class StepImport extends PureComponent<
   StepProps,
   {
@@ -131,14 +131,12 @@ class StepImport extends PureComponent<
         },
         blacklistedTokenIds,
       };
-      this.scanSubscription = concat(
-        from(prepareCurrency(mainCurrency)).pipe(ignoreElements()),
-        bridge.scanAccounts({
+      this.scanSubscription = bridge
+        .scanAccounts({
           currency: mainCurrency,
           deviceId: device.deviceId,
           syncConfig,
-        }),
-      )
+        })
         .pipe(
           filter(e => e.type === "discovered"),
           map(e => e.account),
@@ -372,6 +370,7 @@ class StepImport extends PureComponent<
     );
   }
 }
+
 export default StepImport;
 export const StepImportFooter = ({
   transitionTo,
