@@ -28,6 +28,7 @@ import { sendStellar } from "./families/stellar";
 import { sendCardano, delegateCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
 import { sendAptos } from "./families/aptos";
+import { sendHedera } from "./families/hedera";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
@@ -321,6 +322,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Litecoin",
+    },
+    dependency: "",
+  },
+  Hedera: {
+    currency: getCryptoCurrencyById("hedera"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Hedera",
     },
     dependency: "",
   },
@@ -630,6 +639,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.APT:
       await sendAptos();
+      break;
+    case Currency.HBAR:
+      await sendHedera();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);

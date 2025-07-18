@@ -51,12 +51,16 @@ const transaction: Transaction = {
   family: "hedera",
   amount: new BigNumber(1),
   recipient: "0.0.3",
+  memo: "test",
+  maxFee: new BigNumber(1000000),
 };
 
 const transactionRaw: TransactionRaw = {
   family: "hedera",
   amount: "1",
   recipient: "0.0.3",
+  memo: "test",
+  maxFee: "1000000",
 };
 
 describe("transaction", () => {
