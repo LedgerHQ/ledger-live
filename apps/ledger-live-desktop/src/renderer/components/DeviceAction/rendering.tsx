@@ -817,7 +817,7 @@ export const renderError = ({
   } else if (tmpError instanceof FirmwareNotRecognized) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   } else if (tmpError instanceof CompleteExchangeError) {
-    if (tmpError.message === "User refused") {
+    if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
   } else if (tmpError instanceof NoSuchAppOnProvider) {

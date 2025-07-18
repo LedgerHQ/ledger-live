@@ -42,6 +42,10 @@ export type OperationDetailsParamList = StackScreenProps<
   SwapNavigatorParamList,
   ScreenName.SwapOperationDetails
 >;
+export type SwapCustomErrorProps = StackScreenProps<
+  SwapNavigatorParamList,
+  ScreenName.SwapCustomError
+>;
 
 export type Target = "from" | "to";
 

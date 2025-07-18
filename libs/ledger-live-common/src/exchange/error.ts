@@ -13,10 +13,12 @@ export type CompleteExchangeStep =
 
 export class CompleteExchangeError extends Error {
   step: CompleteExchangeStep;
+  title?: string;
 
-  constructor(step: CompleteExchangeStep, message?: string) {
+  constructor(step: CompleteExchangeStep, title?: string, message?: string) {
     super(message);
     this.name = "CompleteExchangeError";
+    this.title = title;
     this.step = step;
   }
 }
@@ -26,8 +28,8 @@ export function convertTransportError(
   err: unknown,
 ): CompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
-    const errorMessage = getExchangeErrorMessage(err.statusCode, step);
-    return new CompleteExchangeError(step, errorMessage);
+    const { errorName, errorMessage } = getExchangeErrorMessage(err.statusCode, step);
+    return new CompleteExchangeError(step, errorName, errorMessage);
   }
   return err;
 }
