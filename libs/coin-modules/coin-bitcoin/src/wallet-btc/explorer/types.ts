@@ -18,4 +18,5 @@ export interface IExplorer {
     token: string | null,
   ): Promise<{ txs: TX[]; nextPageToken: string | null }>;
   getAddressUtxos(address: string): Promise<Output[]>;
+  getAddressBalance(address: string): Promise<number>;
 }

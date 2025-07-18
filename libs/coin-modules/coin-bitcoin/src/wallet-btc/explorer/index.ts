@@ -244,6 +244,15 @@ class BitcoinLikeExplorer implements IExplorer {
 
     return utxos.map(this.mapExplorerUtxoToOutput);
   }
+
+  async getAddressBalance(address: string): Promise<number> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/address/${address}/balance`,
+    });
+
+    return data.balance || 0;
+  }
 }
 
 export default BitcoinLikeExplorer;

@@ -162,6 +162,12 @@ class BitcoinLikeWallet {
     return balance;
   }
 
+  async getAccountBalanceExplorer(account: Account): Promise<BigNumber> {
+    const balanceExplorer = await account.xpub.getXpubBalanceExplorer();
+    console.log({ balanceExplorer });
+    return balanceExplorer;
+  }
+
   async getAccountPendings(account: Account): Promise<TX[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(

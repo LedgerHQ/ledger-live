@@ -61,6 +61,7 @@ export default function AccountBalanceSummaryHeader({
             <Swap />
           </SwapButton>
         )}
+        ({account.bitcoinResources?.balanceExplorer?.dividedBy(100_000_000)?.toString()})
         <BalanceTotal
           account={account}
           withTransactionsPendingConfirmationWarning

@@ -142,6 +142,11 @@ class Xpub {
     return this.getAddressesBalance(addresses);
   }
 
+  async getXpubBalanceExplorer(): Promise<BigNumber> {
+    const addresses = await this.getXpubAddresses();
+    return this.getAddressesBalanceExplorer(addresses);
+  }
+
   async getAccountBalance(account: number): Promise<BigNumber> {
     const addresses = await this.getAccountAddresses(account);
     return this.getAddressesBalance(addresses);
@@ -150,6 +155,12 @@ class Xpub {
   async getAddressBalance(address: Address): Promise<BigNumber> {
     const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
     return unspentUtxos.reduce((total, { value }) => total.plus(value), new BigNumber(0));
+  }
+
+  async getAddressBalanceExplorer(address: Address): Promise<BigNumber> {
+    const balance = await this.explorer.getAddressBalance(address.address);
+    console.log({ balance });
+    return new BigNumber(balance);
   }
 
   async getXpubAddresses(): Promise<Address[]> {
@@ -311,6 +322,14 @@ class Xpub {
   // internal
   async getAddressesBalance(addresses: Address[]): Promise<BigNumber> {
     const balances = await Promise.all(addresses.map(address => this.getAddressBalance(address)));
+
+    return balances.reduce((total, balance) => total.plus(balance), new BigNumber(0));
+  }
+
+  async getAddressesBalanceExplorer(addresses: Address[]): Promise<BigNumber> {
+    const balances = await Promise.all(
+      addresses.map(address => this.getAddressBalanceExplorer(address)),
+    );
 
     return balances.reduce((total, balance) => total.plus(balance), new BigNumber(0));
   }

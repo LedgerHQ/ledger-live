@@ -207,9 +207,12 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
+    console.log(`Will sync account ${walletAccount.xpub}`, { walletAccount, blockHeight });
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
+    const balanceExplorer = await wallet.getAccountBalanceExplorer(walletAccount);
+    console.log({balance, balanceExplorer});
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
     const accountAddresses: Set<string> = new Set<string>();
@@ -264,6 +267,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
         utxos,
         utxosExplorer,
         walletAccount,
+        balanceExplorer,
       },
     };
   };

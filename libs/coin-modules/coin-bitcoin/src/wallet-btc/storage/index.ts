@@ -103,6 +103,7 @@ class BitcoinLikeStorage implements IStorage {
     txs.forEach(tx => {
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
+      console.log(`-------- APPENDTXS ${tx.address}-${tx.id} -------`);
 
       // We reject previously seen transactions, unless they are confirmed
       if (this.txs[this.primaryIndex[index]]) {
