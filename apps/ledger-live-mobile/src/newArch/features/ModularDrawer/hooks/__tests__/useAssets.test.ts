@@ -5,7 +5,7 @@ import {
   mockArbitrumCryptoCurrency,
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
-} from "../../__mocks__/currencies.mock";
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 const mockCurrencies: CryptoOrTokenCurrency[] = [mockBtcCryptoCurrency, mockEthCryptoCurrency];
 

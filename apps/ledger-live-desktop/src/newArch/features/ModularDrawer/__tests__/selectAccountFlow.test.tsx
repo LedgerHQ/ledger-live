@@ -9,7 +9,7 @@ import {
   baseCurrency,
   scrollCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,

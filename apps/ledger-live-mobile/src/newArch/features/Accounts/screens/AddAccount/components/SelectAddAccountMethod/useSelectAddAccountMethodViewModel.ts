@@ -9,17 +9,19 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "../../enums";
 
-type AddAccountScreenProps = {
+type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   onClose?: () => void;
-  setWalletSyncDrawerVisible?: () => void;
+  onShowWalletSyncDrawer?: () => void;
+  onShowModularDrawer?: () => void;
 };
 
 const useSelectAddAccountMethodViewModel = ({
   currency,
   onClose,
-  setWalletSyncDrawerVisible,
-}: AddAccountScreenProps) => {
+  onShowWalletSyncDrawer,
+  onShowModularDrawer,
+}: AddAccountMethodViewModelProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -54,32 +56,36 @@ const useSelectAddAccountMethodViewModel = ({
     });
   }, []);
 
-  const onClickImport = useCallback(() => {
+  const handleImportAccounts = useCallback(() => {
     trackButtonClick("Import via another Ledger Live app");
     onClose?.();
     navigation.navigate(NavigatorName.ImportAccounts);
   }, [navigation, trackButtonClick, onClose]);
 
-  const onClickImportLedgerSync = useCallback(() => {
+  const handleWalletSync = useCallback(() => {
     trackButtonClick("Account Use Ledger Sync");
-    setWalletSyncDrawerVisible?.();
-  }, [trackButtonClick, setWalletSyncDrawerVisible]);
+    onShowWalletSyncDrawer?.();
+  }, [trackButtonClick, onShowWalletSyncDrawer]);
 
-  const onClickAdd = useCallback(() => {
+  const handleAddAccount = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose?.();
-    const EntryNavigatorName = NavigatorName.AssetSelection;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    navigation.navigate(EntryNavigatorName, navigationParams);
-  }, [navigation, navigationParams, trackButtonClick, onClose]);
+    if (onShowModularDrawer) {
+      onShowModularDrawer();
+    } else {
+      const entryNavigatorName = NavigatorName.AssetSelection;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      navigation.navigate(entryNavigatorName, navigationParams);
+    }
+  }, [trackButtonClick, onClose, onShowModularDrawer, navigation, navigationParams]);
 
   return {
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
-    onClickAdd,
-    onClickImport,
-    onClickImportLedgerSync,
+    handleAddAccount,
+    handleImportAccounts,
+    handleWalletSync,
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerStep } from "./types";
@@ -8,6 +8,7 @@ import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
 import { useAssets } from "./hooks/useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 
 /**
  * Props for the ModularDrawer component.
@@ -16,19 +17,19 @@ type ModularDrawerProps = {
   /**
    * The current step to display in the drawer navigation flow.
    */
-  selectedStep: ModularDrawerStep;
+  readonly selectedStep?: ModularDrawerStep;
   /**
    * Whether the drawer is open.
    */
-  isOpen?: boolean;
+  readonly isOpen: boolean;
   /**
    * Callback fired when the drawer is closed.
    */
-  onClose?: () => void;
+  readonly onClose?: () => void;
   /**
    * List of currencies to display in the drawer.
    */
-  currencies: CryptoOrTokenCurrency[];
+  readonly currencies: CryptoOrTokenCurrency[];
 };
 /**
  * ModularDrawer is a generic drawer component for asset/network selection flows.
@@ -36,7 +37,12 @@ type ModularDrawerProps = {
  *
  * @param {ModularDrawerProps} props - The props for the ModularDrawer component.
  */
-export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: ModularDrawerProps) {
+export function ModularDrawer({
+  isOpen,
+  onClose,
+  currencies,
+  selectedStep = ModularDrawerStep.Asset,
+}: ModularDrawerProps) {
   const navigationStepManager = useModularDrawerFlowStepManager({ selectedStep });
   const [defaultSearchValue, setDefaultSearchValue] = useState("");
   const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
@@ -51,6 +57,7 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
       goToStep: navigationStepManager.goToStep,
       currenciesByProvider,
       currencyIds: currencyIdsArray,
+      isDrawerOpen: isOpen,
     });
 
   /**
@@ -67,9 +74,13 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
     reset();
   };
 
+  const hasOneCurrency = useMemo(() => {
+    return haveOneCommonProvider(currencyIdsArray, currenciesByProvider);
+  }, [currencyIdsArray, currenciesByProvider]);
+
   return (
     <QueuedDrawer
-      isRequestingToBeOpened={isOpen}
+      isRequestingToBeOpened={!hasOneCurrency && isOpen}
       onClose={handleCloseButton}
       hasBackButton={navigationStepManager.hasBackButton}
       onBack={handleBackButton}
@@ -77,7 +88,6 @@ export function ModularDrawer({ isOpen, onClose, selectedStep, currencies }: Mod
         maxHeight: "90%",
       }}
     >
-      {/* TODO: Drawer Transitions & animations will be implemented here. */}
       <ModularDrawerFlowManager
         navigationStepViewModel={navigationStepManager}
         assetsViewModel={{

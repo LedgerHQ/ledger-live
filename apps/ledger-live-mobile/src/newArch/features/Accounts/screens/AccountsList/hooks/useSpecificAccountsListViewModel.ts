@@ -94,6 +94,7 @@ export default function useSpecificAccountsListViewModel({ route, specificAccoun
     isAddAccountCtaDisabled,
     pageTrackingEvent,
     currencyToTrack,
+    currency,
     ticker,
     syncPending,
     sourceScreenName,
