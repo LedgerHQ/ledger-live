@@ -957,8 +957,8 @@ test.describe("Swap history", () => {
 });
 
 test.describe.only("Swap - Block blacklisted addresses", () => {
-  const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
-  const toAccount = Account.ETH_1;
+  const fromAccount = Account.ETH_1;
+  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
 
   test.beforeEach(async () => {
@@ -972,19 +972,7 @@ test.describe.only("Swap - Block blacklisted addresses", () => {
     userdata: "speculos-sanctioned-eth",
     speculosApp: app,
 
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
-        },
-      ],
-      { scope: "test" },
-    ],
+    cliCommandsOnApp: [[], { scope: "test" }],
   });
 
   test(
@@ -1001,7 +989,7 @@ test.describe.only("Swap - Block blacklisted addresses", () => {
 
       const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
       await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
-        json.bannedAddresses = [toAccount.address];
+        json.bannedAddresses = [fromAccount.address];
         return json;
       });
 
@@ -1013,7 +1001,7 @@ test.describe.only("Swap - Block blacklisted addresses", () => {
       await app.swap.clickExchangeButton(electronApp, selectedProvider);
 
       await app.swapDrawer.checkErrorMessage(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${toAccount.address}`,
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
       );
     },
   );
