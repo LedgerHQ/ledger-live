@@ -68,6 +68,7 @@ export const NetworkItem = ({
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          data-testid={`network-item-name-${name}`}
           variant="largeLineHeight"
           fontWeight="semiBold"
           color="var(--colors-content-default-default)"

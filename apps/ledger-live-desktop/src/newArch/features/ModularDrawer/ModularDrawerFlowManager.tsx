@@ -236,6 +236,16 @@ const ModularDrawerFlowManager = ({
     }
   };
 
+  const testIdMap: Record<ModularDrawerStep, string> = {
+    [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modular-asset-selection-container",
+    [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modular-network-selection-container",
+    [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modular-account-selection-container",
+  };
+
+  const getTestId = (step: ModularDrawerStep): string => {
+    return testIdMap[step];
+  };
+
   return (
     <>
       {handleBack && <BackButtonArrow onBackClick={handleBack} />}
@@ -244,6 +254,7 @@ const ModularDrawerFlowManager = ({
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
+          data-testid={getTestId(currentStep)}
         >
           {isReadyToBeDisplayed ? (
             <>
