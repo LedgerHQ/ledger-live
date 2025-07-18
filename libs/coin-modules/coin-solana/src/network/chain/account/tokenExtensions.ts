@@ -14,6 +14,7 @@ import {
   string,
   optional,
   any,
+  object,
 } from "superstruct";
 import { PublicKeyFromString } from "../validators/pubkey";
 
@@ -131,6 +132,7 @@ export const TokenAccountExtensions = array(
     NonTransferableAccountExt,
     ConfidentialTransferFeeAmountExt,
     TransferHookAccountExt,
+    object(),
   ]),
 );
 
