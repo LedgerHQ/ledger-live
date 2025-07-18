@@ -40,7 +40,7 @@ runs:
           find "$path" -type f >> /tmp/cache-path.txt
         done
         cat /tmp/cache-path.txt
-#        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
+        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
@@ -50,21 +50,21 @@ runs:
         echo "${{ inputs.path }}" > /tmp/cache-path.txt
         gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
 
-    - name: Uploading to S3
-      shell: bash
-      run: |
-        echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
-        aws configure set default.s3.max_concurrent_requests 240
-        aws configure set default.s3.multipart_chunksize 2MB
-        aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
-        AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
-
-    - name: Cleanup
-      shell: bash
-      run: |
-          echo "Cleaning up temporary files"
-          rm -f /tmp/cache.tzst
-          rm -f /tmp/cache-path.txt
+#    - name: Uploading to S3
+#      shell: bash
+#      run: |
+#        echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
+#        aws configure set default.s3.max_concurrent_requests 240
+#        aws configure set default.s3.multipart_chunksize 2MB
+#        aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}
+#      env:
+#        AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
+#        AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
+#        AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+#
+#    - name: Cleanup
+#      shell: bash
+#      run: |
+#          echo "Cleaning up temporary files"
+#          rm -f /tmp/cache.tzst
+#          rm -f /tmp/cache-path.txt
