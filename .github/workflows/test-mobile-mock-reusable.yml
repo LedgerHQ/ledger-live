@@ -80,7 +80,7 @@ jobs:
           mkdir test-files2
           echo "This is a test file" > test-files/test.txt
           echo "This is a test file" > test-files/test2.txt
-          echo "This is a test file" > test-files2/test.txt
+          echo "Another String here" > test-files2/test.txt
           echo "This is a test file" > test-files2/test2.txt
 
       - name: Cache Test
