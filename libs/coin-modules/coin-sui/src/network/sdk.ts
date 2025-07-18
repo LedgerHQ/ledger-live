@@ -305,15 +305,19 @@ export const filterOperations = (
 
   // When restoring state (no cursor provided) and we've reached the limit for either sent or received operations,
   // we filter out extra operations to maintain correct chronological order
-  if (
-    !cursor &&
-    operationList1.length &&
-    operationList2.length &&
-    (operationList1.length === TRANSACTIONS_LIMIT || operationList2.length === TRANSACTIONS_LIMIT)
-  ) {
-    const aTime = operationList1[operationList1.length - 1].timestampMs ?? 0;
-    const bTime = operationList2[operationList2.length - 1].timestampMs ?? 0;
-    filterTimestamp = Math.max(Number(aTime), Number(bTime));
+  if (!cursor) {
+    if (operationList1.length === TRANSACTIONS_LIMIT) {
+      filterTimestamp = Math.max(
+        filterTimestamp,
+        Number(operationList1[operationList1.length - 1].timestampMs),
+      );
+    }
+    if (operationList2.length === TRANSACTIONS_LIMIT) {
+      filterTimestamp = Math.max(
+        filterTimestamp,
+        Number(operationList2[operationList2.length - 1].timestampMs),
+      );
+    }
   }
   const result = [...operationList1, ...operationList2]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
