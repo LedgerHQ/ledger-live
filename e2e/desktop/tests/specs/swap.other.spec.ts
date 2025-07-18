@@ -16,6 +16,8 @@ import {
   performSwapUntilQuoteSelectionStep,
   performSwapUntilDeviceVerificationStep,
 } from "../utils/swapUtils";
+import { getEnv } from "@ledgerhq/live-env";
+import { overrideNetworkPayload } from "../utils/networkUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -955,31 +957,30 @@ test.describe("Swap history", () => {
 });
 
 test.describe("Swap - Block blacklisted addresses", () => {
+  const fromAccount = Account.ETH_1;
+  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
 
-  const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
-  const toAccount = Account.SANCTIONED_ETH;
-
-  const accPair: string[] = [fromAccount, toAccount].map(acc =>
-    acc.currency.speculosApp.name.replace(/ /g, "_"),
-  );
-
   test.beforeEach(async () => {
-    setExchangeDependencies(
-      accPair.map(appName => ({
-        name: appName,
-      })),
+    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
   });
 
   test.use({
-    userdata: "speculos-sanctioned-eth",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
           app: fromAccount.currency.speculosApp,
           cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+        },
+        {
+          app: toAccount.currency.speculosApp,
+          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
         },
       ],
       { scope: "test" },
@@ -998,14 +999,21 @@ test.describe("Swap - Block blacklisted addresses", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
+      const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
+      await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
+        json.bannedAddresses = [fromAccount.address];
+        return json;
+      });
+
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
       await app.swap.clickExchangeButton(electronApp, selectedProvider);
+
       await app.swapDrawer.checkErrorMessage(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${toAccount.address} Learn more`,
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
       );
     },
   );
