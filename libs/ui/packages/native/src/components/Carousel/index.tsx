@@ -40,7 +40,7 @@ export type Props = React.PropsWithChildren<{
    */
   autoDelay?: number;
   /**
-   * When the delay is elasped, if the Carousel is at the last item, it will scroll back to the beginning.
+   * When the delay is elapsed, if the Carousel is at the last item, it will scroll back to the beginning.
    */
   restartAfterEnd?: boolean;
   /**

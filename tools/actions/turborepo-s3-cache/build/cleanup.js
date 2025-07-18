@@ -7246,7 +7246,7 @@ var require_client = __commonJS({
           throw new InvalidArgumentError("allowH2 must be a valid boolean value");
         }
         if (maxConcurrentStreams != null && (typeof maxConcurrentStreams !== "number" || maxConcurrentStreams < 1)) {
-          throw new InvalidArgumentError("maxConcurrentStreams must be a possitive integer, greater than 0");
+          throw new InvalidArgumentError("maxConcurrentStreams must be a positive integer, greater than 0");
         }
         if (typeof connect2 !== "function") {
           connect2 = buildConnector({
@@ -7287,7 +7287,7 @@ var require_client = __commonJS({
         this[kHTTP2SessionState] = !allowH2 ? null : {
           // streams: null, // Fixed queue of streams - For future support of `push`
           openStreams: 0,
-          // Keep track of them to decide wether or not unref the session
+          // Keep track of them to decide whether or not unref the session
           maxConcurrentStreams: maxConcurrentStreams != null ? maxConcurrentStreams : 100
           // Max peerConcurrentStreams for a Node h2 server
         };
@@ -18507,7 +18507,7 @@ var require_summary = __commonJS({
         return this.addRaw(element).addEOL();
       }
       /**
-       * Adds a collapsable HTML details element to the summary buffer
+       * Adds a collapsible HTML details element to the summary buffer
        *
        * @param {string} label text for the closed state
        * @param {string} content collapsable content

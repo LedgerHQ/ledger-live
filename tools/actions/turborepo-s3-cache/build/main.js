@@ -7246,7 +7246,7 @@ var require_client = __commonJS({
           throw new InvalidArgumentError("allowH2 must be a valid boolean value");
         }
         if (maxConcurrentStreams != null && (typeof maxConcurrentStreams !== "number" || maxConcurrentStreams < 1)) {
-          throw new InvalidArgumentError("maxConcurrentStreams must be a possitive integer, greater than 0");
+          throw new InvalidArgumentError("maxConcurrentStreams must be a positive integer, greater than 0");
         }
         if (typeof connect2 !== "function") {
           connect2 = buildConnector({
