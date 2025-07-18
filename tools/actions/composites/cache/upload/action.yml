@@ -46,14 +46,6 @@ runs:
         echo "${{ inputs.path }}" > /tmp/cache-path.txt
         gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
 
-
-    - name: Compressing files
-      shell: bash
-      run: |
-        echo "Compressing files in ${{ inputs.path }}"
-        echo "${{ inputs.path }}" > /tmp/cache-path.txt
-        ${{ env.tar_application }} --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
-
     - name: Uploading to S3
       shell: bash
       run: |
