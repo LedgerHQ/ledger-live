@@ -32,26 +32,24 @@ export const prepareTransaction: AccountBridge<
   const amount =
     transaction.useAllAmount && isTokenTransaction ? tokenAccount.balance : transaction.amount;
 
-  let data;
-
+  let token;
   if (isTokenTransaction) {
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      const stableToken = await kit.contracts.getStableToken();
-      data = stableToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+      token = await kit.contracts.getStableToken();
     } else {
-      const token = await kit.contracts.getErc20(transaction.recipient);
-      data = token.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+      token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
     }
   } else {
-    const celoToken = await kit.contracts.getGoldToken();
-    data = celoToken.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+    token = await kit.contracts.getGoldToken();
   }
+
+  const data = token.transfer(token.address, amount.toFixed()).txo.encodeABI();
 
   return {
     ...transaction,
     fees,
     amount,
-    ...(data !== undefined && { data: Buffer.from(data.slice(2), "hex") }),
+    data: Buffer.from(data.slice(2), "hex"),
   };
 };
 
