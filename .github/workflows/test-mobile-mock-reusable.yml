@@ -459,9 +459,8 @@ jobs:
           script: ./tools/scripts/wait_emulator_idle.sh
 
       - name: Cache android emulator
-        timeout-minutes: 5
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
-        if: steps.create-avd.status == 'success'
+        if: steps.detox-avd.outputs.cache-hit != 'false'
         with:
           path: ~/.android/avd/*
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}

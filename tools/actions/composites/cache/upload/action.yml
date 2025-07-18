@@ -35,7 +35,8 @@ runs:
       shell: bash
       run: |
         echo "Compressing files in ${{ inputs.path }}"
-        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst ${{ inputs.path }}
+        echo "${{ inputs.path }}" > /tmp/cache-path.txt
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
 
     - name: Uploading to S3
       shell: bash
@@ -48,3 +49,10 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+
+    - name: Cleanup
+      shell: bash
+      run: |
+          echo "Cleaning up temporary files"
+          rm -f /tmp/cache.tzst
+          rm -f /tmp/cache-path.txt
