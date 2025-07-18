@@ -3,6 +3,7 @@ import {
   DustLimit,
   FeeNotLoaded,
   FeeRequired,
+  FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
@@ -37,6 +38,7 @@ const getTransactionStatus = async (
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
 
   let estimateFee: BigNumber = BigNumber(0);
 
@@ -95,12 +97,16 @@ const getTransactionStatus = async (
         getFeeRate(transaction).toNumber() || 1,
       );
       estimateFee = result.fee;
+
+      if (estimateFee.div(transaction.amount).gt(0.1)) {
+        warnings.feeTooHigh = new FeeTooHigh();
+      }
     }
   }
 
   return {
     errors,
-    warnings: {},
+    warnings,
     estimatedFees: estimateFee,
     amount: transaction.amount,
     totalSpent: transaction.amount.plus(estimateFee),
