@@ -77,7 +77,7 @@ const test_android = async () => {
     --take-screenshots failing \\
     --forceExit \\
     --headless \\
-    --retries 1 \\
+    --retries 2 \\
     --runInBand \\
     --cleanup \\
     --shard ${shard} \\

@@ -1,5 +1,5 @@
 import { addDelayBeforeInteractingWithDevice, openDeeplink } from "../../helpers/commonHelpers";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Swap, SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";

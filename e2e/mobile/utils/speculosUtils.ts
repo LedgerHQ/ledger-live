@@ -9,12 +9,14 @@ import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
 import { closeProxy, startProxy } from "../bridge/proxy";
 import { device, log } from "detox";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import { isRemoteIos } from "../helpers/commonHelpers";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
 
-export async function launchSpeculos(appName: string) {
+export async function launchSpeculos(appName: string, runId?: string) {
   // Ensure the portCounter stays within the valid port range
   if (portCounter > MAX_PORT) {
     portCounter = BASE_PORT;
@@ -25,13 +27,13 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
-  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
+  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")], runId);
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
   speculosDevices.set(device.port, device.id);
   log.warn(`Speculos ${device.id} started on ${device.port}`);
-  return device.port;
+  return device;
 }
 
 export async function launchProxy(
@@ -43,10 +45,39 @@ export async function launchProxy(
   await startProxy(proxyPort, speculosAddress, speculosPort);
 }
 
-export async function deleteSpeculos(apiPort?: number) {
-  if (!apiPort) {
+async function findPortByRunId(
+  runId: string,
+  maxAttempts = 3,
+  delay = 1000,
+): Promise<number | undefined> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    for (const [port, deviceId] of speculosDevices.entries()) {
+      if (deviceId === runId) {
+        return port;
+      }
+    }
+
+    if (attempt < maxAttempts) {
+      log.info(
+        "e2e",
+        `RunId ${runId} not found in map, retrying in ${delay}ms (attempt ${attempt}/${maxAttempts})`,
+      );
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  return undefined;
+}
+
+export async function deleteSpeculos(apiPortOrRunId?: number | string) {
+  if (!apiPortOrRunId) {
     if (!speculosDevices.size) {
       log.info("e2e", "[E2E Teardown] No active Speculos instances to stop.");
+    } else {
+      log.info("e2e", `[E2E Teardown] Stopping ${speculosDevices.size} Speculos instances:`);
+      for (const [port, deviceId] of speculosDevices.entries()) {
+        log.info("e2e", `  Port ${port} -> DeviceId ${deviceId}`);
+      }
     }
     const ports = Array.from(speculosDevices.keys());
     await Promise.all(
@@ -61,6 +92,28 @@ export async function deleteSpeculos(apiPort?: number) {
     return;
   }
 
+  if (typeof apiPortOrRunId === "string") {
+    const runId = apiPortOrRunId;
+    const foundPort = await findPortByRunId(runId);
+
+    if (foundPort) {
+      await stopSpeculos(runId);
+      speculosDevices.delete(foundPort);
+      log.info("e2e", `Remote Speculos successfully stopped with runId ${runId}`);
+      return closeProxy(foundPort);
+    } else {
+      log.warn("e2e", `Remote Speculos not found with runId ${runId}. Available devices:`);
+      try {
+        await stopSpeculos(runId);
+        log.info("e2e", `Attempted direct cleanup of remote Speculos with runId ${runId}`);
+      } catch (err) {
+        log.warn("e2e", `Direct cleanup failed for runId ${runId}:`, err);
+      }
+      return;
+    }
+  }
+
+  const apiPort = apiPortOrRunId as number;
   if (speculosDevices.has(apiPort)) {
     const speculosId = speculosDevices.get(apiPort);
     if (speculosId) await stopSpeculos(speculosId);
@@ -75,10 +128,29 @@ export async function deleteSpeculos(apiPort?: number) {
 }
 
 export async function takeSpeculosScreenshot() {
-  for (const [apiPort] of speculosDevices) {
-    const speculosScreenshot = await takeScreenshot(apiPort);
-    if (speculosScreenshot) {
-      await allure.attachment(`Speculos Screenshot - ${apiPort}`, speculosScreenshot, "image/png");
+  for (const apiPort of speculosDevices.keys()) {
+    if (isRemoteIos()) {
+      try {
+        await waitForSpeculosReady(
+          process.env.SPECULOS_ADDRESS!,
+          `Skipping screenshot: Speculos ${process.env.SPECULOS_ADDRESS} unreachable`,
+          {
+            interval: 5_000,
+            timeout: 10_000,
+          },
+        );
+      } catch {
+        log.warn(
+          "e2e",
+          `Skipping screenshot: Speculos ${process.env.SPECULOS_ADDRESS} unreachable.`,
+        );
+        continue;
+      }
+    }
+
+    const screenshot = await takeScreenshot(apiPort);
+    if (screenshot) {
+      await allure.attachment(`Speculos Screenshot – port ${apiPort}`, screenshot, "image/png");
     }
   }
 }
