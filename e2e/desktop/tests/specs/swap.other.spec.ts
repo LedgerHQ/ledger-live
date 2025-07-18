@@ -956,7 +956,7 @@ test.describe("Swap history", () => {
   );
 });
 
-test.describe.only("Swap - Block blacklisted addresses", () => {
+test.describe("Swap - Block blacklisted addresses", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -969,10 +969,22 @@ test.describe.only("Swap - Block blacklisted addresses", () => {
   });
 
   test.use({
-    userdata: "speculos-sanctioned-eth",
+    userdata: "skip-onboarding",
     speculosApp: app,
 
-    cliCommandsOnApp: [[], { scope: "test" }],
+    cliCommandsOnApp: [
+      [
+        {
+          app: fromAccount.currency.speculosApp,
+          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+        },
+        {
+          app: toAccount.currency.speculosApp,
+          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+        },
+      ],
+      { scope: "test" },
+    ],
   });
 
   test(
