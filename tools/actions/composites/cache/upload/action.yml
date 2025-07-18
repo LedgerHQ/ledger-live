@@ -35,8 +35,10 @@ runs:
       if: runner.os == 'Linux'
       run: |
         echo "Compressing files in ${{ inputs.path }}"
-        echo "${{ inputs.path }}" > /tmp/cache-path.txt
-        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --use-compress-program zstdmt ${{ inputs.path }}
+        while IFS= read -r line; do
+          find $line -type f >> /tmp/cache-path.txt
+        done < ${{ inputs.path }}
+        /usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
