@@ -13,7 +13,7 @@ module.exports = {
       setupTimeout: 500000,
     },
     retries: 0,
-    // noRetryArgs: ["outputFile"],
+    noRetryArgs: ["outputFile"],
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
