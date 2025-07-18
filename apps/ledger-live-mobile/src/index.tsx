@@ -99,6 +99,8 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
 import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
 import { exportLargeMoverSelector } from "./reducers/largeMover";
+import StartupPerformanceMonitor from "./components/StartupPerformanceMonitor";
+import LazyComponent from "./components/LazyComponent";
 import {
   TrackingConsent,
   DatadogProvider,
@@ -222,6 +224,8 @@ function App() {
   }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
+  // Note: These hooks make network requests that could block first render
+  // Consider moving them to a background task or deferring them
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
@@ -336,12 +340,21 @@ function App() {
         <RootNavigator />
       )}
 
-      <AnalyticsConsole />
-      <PerformanceConsole />
-      <DebugTheme />
+      {/* Defer heavy components to improve startup time */}
+      <LazyComponent delay={2000}>
+        <AnalyticsConsole />
+      </LazyComponent>
+      <LazyComponent delay={1500}>
+        <PerformanceConsole />
+      </LazyComponent>
+      <LazyComponent delay={1000}>
+        <DebugTheme />
+      </LazyComponent>
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
-        <StoragePerformanceOverlay />
+        <LazyComponent delay={3000}>
+          <StoragePerformanceOverlay />
+        </LazyComponent>
       </FeatureToggle>
     </GestureHandlerRootView>
   );
@@ -451,6 +464,7 @@ export default class Root extends Component {
                                       <AppProviders initialCountervalues={initialCountervalues}>
                                         <AppGeoBlocker>
                                           <AppVersionBlocker>
+                                            <StartupPerformanceMonitor />
                                             <App />
                                           </AppVersionBlocker>
                                         </AppGeoBlocker>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -10,9 +10,7 @@ export const FirebaseRemoteConfigProvider = ({
   children,
 }: {
   children: React.ReactElement;
-}): JSX.Element | null => {
-  const [loaded, setLoaded] = useState<boolean>(false);
-
+}): JSX.Element => {
   useEffect(() => {
     let unmounted = false;
 
@@ -33,13 +31,10 @@ export const FirebaseRemoteConfigProvider = ({
         if (!unmounted) {
           console.error(`Failed to fetch Firebase remote config with error:`, error);
         }
-      } finally {
-        if (!unmounted) {
-          setLoaded(true);
-        }
       }
     };
 
+    // Don't block initial render - fetch config in background
     fetchConfig();
 
     const intervalId = setInterval(fetchConfig, FETCH_INTERVAL);
@@ -50,9 +45,6 @@ export const FirebaseRemoteConfigProvider = ({
     };
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
-
+  // Always render children immediately, don't block on config loading
   return <>{children}</>;
 };

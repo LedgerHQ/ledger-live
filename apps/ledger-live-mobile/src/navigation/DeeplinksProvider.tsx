@@ -697,7 +697,8 @@ export const DeeplinksProvider = ({
       ref={navigationRef}
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+        // Hide splash screen immediately instead of waiting 300ms
+        SplashScreen.hide();
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
       }}

@@ -58,51 +58,15 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   const init = useCallback(async () => {
     try {
-      const [
-        bleData,
-        settingsData,
-        cachedCurrencyIds,
-        supportedFiats,
-        accountsData,
-        postOnboardingState,
-        marketState,
-        trustchainStore,
-        walletStore,
-        protect,
-        initialCountervalues,
-        largeMoverState,
-      ] = await Promise.all([
-        retry(getBle, MAX_RETRIES, RETRY_DELAY),
+      // Phase 1: Load critical data first (blocking)
+      const [settingsData, accountsData, cachedCurrencyIds, supportedFiats] = await Promise.all([
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
+        retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(listCachedCurrencyIds, MAX_RETRIES, RETRY_DELAY),
         retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY),
-        retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
-        retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
-        retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
-        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
-        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
-        retry(getProtect, MAX_RETRIES, RETRY_DELAY),
-        retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
-        retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
-      store.dispatch(importBle(bleData));
-
-      // hydrate the store with the bridge/cache
-      // Promise.allSettled doesn't exist in RN
-      await Promise.all(
-        cachedCurrencyIds
-          .map(id => {
-            const currency = findCryptoCurrencyById?.(id);
-            return currency ? hydrateCurrency(currency) : Promise.reject();
-          })
-          .map(promise =>
-            promise
-              .then((value: unknown) => ({ status: "fulfilled", value }))
-              .catch((reason: unknown) => ({ status: "rejected", reason })),
-          ),
-      );
-
+      // Phase 2: Initialize store with critical data
       const bitcoin = getCryptoCurrencyById("bitcoin");
       const ethereum = getCryptoCurrencyById("ethereum");
       const possibleIntermediaries = [bitcoin, ethereum];
@@ -129,40 +93,87 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       store.dispatch(importSettings(settingsData));
       store.dispatch(importAccountsRaw(accountsData));
 
-      if (postOnboardingState) {
-        store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
-      }
-
-      if (marketState) {
-        store.dispatch(importMarket(marketState));
-      }
-
-      if (trustchainStore) {
-        store.dispatch(importTrustchainStoreState(trustchainStore));
-      }
-
-      if (walletStore) {
-        store.dispatch(importWalletState(walletStore));
-      }
-
-      if (protect) {
-        store.dispatch(updateProtectData(protect.data));
-        store.dispatch(updateProtectStatus(protect.protectStatus));
-      }
-
-      if (largeMoverState) {
-        store.dispatch(importLargeMoverState(largeMoverState));
-      }
-
-      setInitialCountervalues(initialCountervalues);
+      // Mark as ready for initial render
       setReady(true);
       onInitFinished();
+
+      // Phase 3: Load non-critical data in background (non-blocking)
+      Promise.all([
+        retry(getBle, MAX_RETRIES, RETRY_DELAY),
+        retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
+        retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
+        retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
+        retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
+        retry(getProtect, MAX_RETRIES, RETRY_DELAY),
+        retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
+        retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+      ]).then(
+        ([
+          bleData,
+          postOnboardingState,
+          marketState,
+          trustchainStore,
+          walletStore,
+          protect,
+          initialCountervalues,
+          largeMoverState,
+        ]) => {
+          // Update store with background data
+          store.dispatch(importBle(bleData));
+
+          if (postOnboardingState) {
+            store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+          }
+
+          if (marketState) {
+            store.dispatch(importMarket(marketState));
+          }
+
+          if (trustchainStore) {
+            store.dispatch(importTrustchainStoreState(trustchainStore));
+          }
+
+          if (walletStore) {
+            store.dispatch(importWalletState(walletStore));
+          }
+
+          if (protect) {
+            store.dispatch(updateProtectData(protect.data));
+            store.dispatch(updateProtectStatus(protect.protectStatus));
+          }
+
+          if (largeMoverState) {
+            store.dispatch(importLargeMoverState(largeMoverState));
+          }
+
+          setInitialCountervalues(initialCountervalues);
+        },
+      );
+
+      // Phase 4: Hydrate currencies in background (non-blocking)
+      Promise.all(
+        cachedCurrencyIds
+          .map(id => {
+            const currency = findCryptoCurrencyById?.(id);
+            return currency ? hydrateCurrency(currency) : Promise.reject();
+          })
+          .map(promise =>
+            promise
+              .then((value: unknown) => ({ status: "fulfilled", value }))
+              .catch((reason: unknown) => ({ status: "rejected", reason })),
+          ),
+      ).catch(() => {
+        // Silently handle currency hydration errors
+      });
     } catch (error) {
       console.error(
         error instanceof Error
           ? error.message
           : "An unknown error occurred during the StoreProvider initialization",
       );
+      // Still mark as ready even if there's an error
+      setReady(true);
+      onInitFinished();
     }
   }, [store, onInitFinished]);
 

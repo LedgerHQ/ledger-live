@@ -71,8 +71,16 @@ const metroConfig = {
     minifierConfig: {
       compress: {
         drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ["console.log", "console.info", "console.debug"],
+        passes: 2,
+      },
+      mangle: {
+        toplevel: true,
       },
     },
+    // Enable Hermes optimizations
+    unstable_allowRequireContext: true,
   },
   resolver: {
     unstable_enableSymlinks: true,
@@ -102,6 +110,9 @@ const metroConfig = {
       return context.resolveRequest(context, moduleName, platform);
     },
   },
+  // Optimize bundle generation
+  maxWorkers: 2, // Limit workers for better memory usage
+  resetCache: false, // Keep cache for faster rebuilds
 };
 
 module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig));

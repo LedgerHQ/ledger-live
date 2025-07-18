@@ -1,30 +1,9 @@
 /* eslint-disable no-console */
 
-// Intl polyfill for Hermes. Could be useless in future react-native versions. See https://hermesengine.dev/docs/intl/
-
+// Essential polyfills only - load immediately
 import "@formatjs/intl-locale/polyfill";
-
 import "@formatjs/intl-pluralrules/polyfill";
-import "@formatjs/intl-pluralrules/locale-data/en";
-import "@formatjs/intl-pluralrules/locale-data/fr";
-import "@formatjs/intl-pluralrules/locale-data/es";
-import "@formatjs/intl-pluralrules/locale-data/ru";
-import "@formatjs/intl-pluralrules/locale-data/zh";
-import "@formatjs/intl-pluralrules/locale-data/de";
-import "@formatjs/intl-pluralrules/locale-data/tr";
-import "@formatjs/intl-pluralrules/locale-data/ja";
-import "@formatjs/intl-pluralrules/locale-data/ko";
-
-import "@formatjs/intl-relativetimeformat/polyfill";
-import "@formatjs/intl-relativetimeformat/locale-data/en";
-import "@formatjs/intl-relativetimeformat/locale-data/fr";
-import "@formatjs/intl-relativetimeformat/locale-data/es";
-import "@formatjs/intl-relativetimeformat/locale-data/ru";
-import "@formatjs/intl-relativetimeformat/locale-data/zh";
-import "@formatjs/intl-relativetimeformat/locale-data/de";
-import "@formatjs/intl-relativetimeformat/locale-data/tr";
-import "@formatjs/intl-relativetimeformat/locale-data/ja";
-import "@formatjs/intl-relativetimeformat/locale-data/ko";
+import "@formatjs/intl-pluralrules/locale-data/en"; // Only load English by default
 
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";
@@ -65,6 +44,36 @@ if (isAndroid && typeof AbortSignal !== "undefined" && !AbortSignal.prototype.th
       throw new DOMException("The operation was aborted.", "AbortError");
     }
   };
+}
+
+// Defer loading additional locale data
+const loadAdditionalLocales = () => {
+  import("@formatjs/intl-pluralrules/locale-data/fr");
+  import("@formatjs/intl-pluralrules/locale-data/es");
+  import("@formatjs/intl-pluralrules/locale-data/ru");
+  import("@formatjs/intl-pluralrules/locale-data/zh");
+  import("@formatjs/intl-pluralrules/locale-data/de");
+  import("@formatjs/intl-pluralrules/locale-data/tr");
+  import("@formatjs/intl-pluralrules/locale-data/ja");
+  import("@formatjs/intl-pluralrules/locale-data/ko");
+
+  import("@formatjs/intl-relativetimeformat/polyfill");
+  import("@formatjs/intl-relativetimeformat/locale-data/en");
+  import("@formatjs/intl-relativetimeformat/locale-data/fr");
+  import("@formatjs/intl-relativetimeformat/locale-data/es");
+  import("@formatjs/intl-relativetimeformat/locale-data/ru");
+  import("@formatjs/intl-relativetimeformat/locale-data/zh");
+  import("@formatjs/intl-relativetimeformat/locale-data/de");
+  import("@formatjs/intl-relativetimeformat/locale-data/tr");
+  import("@formatjs/intl-relativetimeformat/locale-data/ja");
+  import("@formatjs/intl-relativetimeformat/locale-data/ko");
+};
+
+// Load additional locales after initial render
+if (typeof requestIdleCallback !== "undefined") {
+  requestIdleCallback(loadAdditionalLocales);
+} else {
+  setTimeout(loadAdditionalLocales, 1000);
 }
 
 // FIXME shim want to set it to false tho...
