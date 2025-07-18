@@ -117,15 +117,15 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       celoTransaction = {
         from: account.freshAddress,
         to: stableToken.address,
-        data: stableToken.transfer(stableToken.address, value.toFixed()).txo.encodeABI(),
+        data: stableToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
         value: value.toFixed(),
       };
     } else {
       const token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
       celoTransaction = {
         from: account.freshAddress,
-        to: transaction.recipient,
-        data: token.transfer(token.address, value.toFixed()).txo.encodeABI(),
+        to: token.address,
+        data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
         value: value.toFixed(),
       };
     }
@@ -134,6 +134,16 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     celoTransaction = {
       from: account.freshAddress,
       to: transaction.recipient,
+      value: value.toFixed(),
+    };
+
+    // TESTING PURPOSES ONLY. DELETE
+    const tetherContractAddress = "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e";
+    const token = await kit.contracts.getErc20(tetherContractAddress);
+    celoTransaction = {
+      from: account.freshAddress,
+      to: tetherContractAddress,
+      data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
       value: value.toFixed(),
     };
   }

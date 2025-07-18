@@ -43,7 +43,12 @@ export const prepareTransaction: AccountBridge<
     token = await kit.contracts.getGoldToken();
   }
 
-  const data = token.transfer(token.address, amount.toFixed()).txo.encodeABI();
+  let data = token.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
+
+  // TESTING PURPOSES ONLY. DELETE
+  const tetherContractAddress = "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e";
+  const _token = await kit.contracts.getErc20(tetherContractAddress);
+  data = _token.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI();
 
   return {
     ...transaction,
