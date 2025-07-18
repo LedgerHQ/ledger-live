@@ -3860,6 +3860,179 @@
       }
     }
   },
+  "aptos": {
+    "account": {
+      "stakedBalance": "Staked balance",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "withdrawableBalance": "Withdrawable balance",
+      "withdrawableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability."
+    },
+    "common": {
+      "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+      "viewDetails": "View details",
+      "connectDevice": {
+        "title": "Device"
+      },
+      "confirmation": {
+        "title": "Confirmation"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount",
+        "unstakedAmount": "Unstaked amount",
+        "withdrawnAmount": "Withdrawn amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn Aptos rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "active": "Staked",
+        "pendingInactive": "Pending release",
+        "inactive": "Withdrawable",
+        "nextUnlock": "Next unlock"
+      },
+      "nextUnlockIn": "Next unlock in",
+      "unstake": "Unstake",
+      "withdraw": "Withdraw",
+      "restake": "Reactivate",
+      "activeTooltip": "Staked amounts generate rewards",
+      "inactiveTooltip": "Unstaked amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "minSafeWarning": "Not enough funds",
+      "reserveWarning": "Please ensure you reserve at least {{amount}} APT in your wallet to cover future network fees to deactivate and withdraw your stake",
+      "flow": {
+        "title": "Stake",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by staking your Aptos assets to a validator.",
+            "bullet": [
+              "You keep ownership of staked assets",
+              "Stake using your Ledger device",
+              "Assets will be available 0-14 days after unstaking"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "restake": {
+      "flow": {
+        "title": "Reactivate stake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The restake process will stake your withdrawable balance again.",
+            "warning": "All the available balance will be restaked. The restaked amount will be available for withdrawal after the unstake operation and the unlock time.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to restake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully restaked your assets.",
+              "description": "{{amount}} were restaked from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process will take {{timeToUnlock}} to finalize.",
+            "subtitle2": "The unstaking process could take up to 30 days to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the unlock time.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to unstake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets.",
+              "description": "{{amount}} were unstaked from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "disabledTooltip": "There aren't enough assets to withdraw",
+      "flow": {
+        "title": "Withdraw",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to withdraw"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "description": "{{amount}} were withdrawn from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "ethereum": {
     "stake_deprecated": {
       "title": "Grow your ETH holdings",
@@ -3967,7 +4140,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "availableBalance": "Withdawable balance",
+      "availableBalance": "Withdrawable balance",
       "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
@@ -5907,9 +6080,29 @@
       "title": "Sorry, fee estimation failed",
       "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
     },
+    "NotEnoughToStake": {
+      "title": "You can't stake less than {{minStake}} {{currency}}",
+      "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft": {
+      "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
+      "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
+    },
+    "RestakeNotEnoughStakedBalanceLeft": {
+      "title": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked",
+      "description": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked"
+    },
+    "NotEnoughToRestake": {
+      "title": "You can't restake less than {{minAmount}}",
+      "description": "You can't restake less than {{minAmount}}."
+    },
+    "NotEnoughToUnstake": {
+      "title": "You can't unstake less than {{minAmount}}",
+      "description": "You can't unstake less than {{minAmount}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",

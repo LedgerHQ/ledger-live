@@ -8,6 +8,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
+import { waitFor } from "../utils/waitFor";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -188,7 +189,15 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Verify provider URL for $0")
   async verifyProviderUrl(providerName: string, buySell: BuySell, userdataDestinationPath: string) {
-    const rawUrl = await this.getUrl();
+    await waitFor(
+      async () => this.webviewUrlHistory.some(url => url.toLowerCase().includes("gotourl")),
+      2_00,
+      10_000,
+    );
+    const rawUrl = this.webviewUrlHistory.find(url => url.toLowerCase().includes("gotourl"));
+    if (!rawUrl) {
+      throw new Error("No URL with 'gotourl' found in webviewUrlHistory after waiting.");
+    }
     const normalizedUrl = rawUrl.toLowerCase();
 
     this.verifyBasicUrlIncludes(normalizedUrl, providerName, buySell.operation);

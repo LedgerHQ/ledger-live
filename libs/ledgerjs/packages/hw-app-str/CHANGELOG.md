@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-str
 
+## 7.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/hw-transport@6.31.8-next.0
+
 ## 7.2.3
 
 ### Patch Changes

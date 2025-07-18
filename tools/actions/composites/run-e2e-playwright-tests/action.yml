@@ -22,29 +22,36 @@ runs:
   steps:
     - name: Set up environment variables
       run: |
-        export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-        export COINAPPS=$PWD/coin-apps
+        export SPECULOS_IMAGE_TAG="${{ env.SPECULOS_IMAGE_TAG }}"
+        export COINAPPS="$PWD/coin-apps"
         export MOCK=0
 
         case "${{ inputs.speculos_device }}" in
           nanoS)    device_tag='@LNS' ;;
-          nanoSP)   device_tag='@nanoSP' ;;
-          nanoX)    device_tag='@nanoX' ;;
-          *)        echo "Unknown SPECULOS_DEVICE: ${SPECULOS_DEVICE}"; exit 1 ;;
+          nanoSP)   device_tag='@NanoSP' ;;
+          nanoX)    device_tag='@NanoX' ;;
+          *)        echo "Unknown SPECULOS_DEVICE: ${{ inputs.speculos_device }}"; exit 1 ;;
         esac
 
-        grep_filter="$device_tag"
         if [ -n "${{ inputs.test_filter }}" ]; then
-          grep_filter="(${grep_filter}|${{ inputs.test_filter }})"
+          # If test_filter contains a space but not a pipe, treat as OR by replacing spaces with pipes
+          if [[ "${{ inputs.test_filter }}" == *' '* && "${{ inputs.test_filter }}" != *'|'* ]]; then
+            or_filter=$(echo "${{ inputs.test_filter }}" | sed 's/ /|/g')
+            grep_filter="(?=.*$device_tag)(${or_filter})"
+          else
+            grep_filter="(?=.*$device_tag)(${{ inputs.test_filter }})"
+          fi
+        else
+          grep_filter="$device_tag"
         fi
 
-        if [ "${{ inputs.invert_filter }}" = true ]; then
+        if [ "${{ inputs.invert_filter }}" = "true" ]; then
           grep_option="--grep-invert"
         else
           grep_option="--grep"
         fi
 
-        echo "Running tests with filter: $grep_option \"$grep_filter\""
+        echo "Running tests with filter: $grep_option $grep_filter"
 
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
           -- pnpm e2e:desktop test:playwright \

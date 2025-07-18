@@ -54,9 +54,7 @@ describe("Polkadot Api", () => {
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
       tx.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(address) || operation.recipients.includes(address);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(operation.senders.concat(operation.recipients)).toContainEqual(address);
       });
     }, 20000);
 
@@ -76,8 +74,8 @@ describe("Polkadot Api", () => {
       const result = await module.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });

@@ -12,9 +12,10 @@ type Props = {
   size: number;
   color?: string;
   sizeRatio?: number;
+  testID?: string;
 };
 
-function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5 }: Props) {
+function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5, testID }: Props) {
   const { colors } = useTheme();
   const isToken = currency.type === "TokenCurrency";
   const backgroundColorContrast = ensureContrast(
@@ -41,6 +42,7 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5 }: Props) {
           height: size,
         },
       ]}
+      testID={testID}
     >
       {MaybeIconComponent ? (
         <MaybeIconComponent size={size * sizeRatio} color={c} />

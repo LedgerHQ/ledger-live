@@ -4,6 +4,7 @@ import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
+import { EXISTENTIAL_DEPOSIT } from "../bridge/utils";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -307,24 +308,23 @@ export const getAccount = async (addr: string) => {
  */
 export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
-  // Locked is the highest value among locks
-  const totalLocked = balanceInfo.locks.reduce((total, lock) => {
-    const amount = new BigNumber(lock.amount);
 
-    if (amount.gt(total)) {
-      return amount;
-    }
-
-    return total;
-  }, new BigNumber(0));
   const balance = new BigNumber(balanceInfo.free);
-  const spendableBalance = totalLocked.gt(balance) ? new BigNumber(0) : balance.minus(totalLocked);
+  const reservedBalance = new BigNumber(balanceInfo.reserved || "0");
+  const frozenBalance = new BigNumber(balanceInfo.frozen || "0");
+
+  const frozenMinusReserved = frozenBalance.minus(reservedBalance);
+  const spendableBalance = BigNumber.max(
+    balance.minus(BigNumber.max(frozenMinusReserved, EXISTENTIAL_DEPOSIT)),
+    new BigNumber(0),
+  );
+
   return {
     blockHeight: Number(balanceInfo.at.height),
     balance,
     spendableBalance,
     nonce: Number(balanceInfo.nonce),
-    lockedBalance: new BigNumber(totalLocked),
+    lockedBalance: reservedBalance,
   };
 };
 

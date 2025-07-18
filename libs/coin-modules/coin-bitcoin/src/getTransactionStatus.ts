@@ -20,6 +20,8 @@ import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
+export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
+
 export const getTransactionStatus: AccountBridge<
   Transaction,
   Account,
@@ -46,7 +48,7 @@ export const getTransactionStatus: AccountBridge<
     transaction.recipient &&
     !errors.recipient &&
     account.currency.id === "bitcoin" &&
-    account.blockHeight <= 709632
+    account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT
   ) {
     const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
     if (isTaproot) {

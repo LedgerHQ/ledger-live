@@ -22,7 +22,7 @@ export const DmkBleDevicePairing = ({
 }) => {
   const { isPaired, pairingError } = useBleDevicePairing({ device });
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
-  let content = null;
+  let content;
 
   if (isPaired) {
     content = <BleDevicePaired device={device} productName={productName} />;
@@ -50,10 +50,6 @@ export const DmkBleDevicePairing = ({
   return (
     <Flex flex={1} width="100%">
       {content}
-
-      {/*{deviceLocked ? (*/}
-      {/*  <UnlockDeviceDrawer isOpen={true} device={deviceLocked} onClose={onRetry} />*/}
-      {/*) : null}*/}
     </Flex>
   );
 };

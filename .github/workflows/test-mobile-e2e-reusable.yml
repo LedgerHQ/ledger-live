@@ -76,7 +76,7 @@ on:
           - nanoS
           - nanoSP
           - nanoX
-        default: nanoSP
+        default: nanoX
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -92,7 +92,7 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
-  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
+  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
 
 jobs:
   detox-tests-ios:
@@ -634,7 +634,7 @@ jobs:
                   "type": "plain_text",
                   "text": process.env.E2E_RUN == 'false'
                     ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }}",
+                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
                   "emoji": true
                 }
               },

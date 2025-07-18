@@ -60,7 +60,7 @@ describe("Testing signOperation", () => {
         expect(data.type).toEqual(expectedEventTypeOrder[index]);
 
         const validateFunction = validationByEventType.get(data.type);
-        expect(validateFunction).toBeDefined();
+        expect(validateFunction).toBeInstanceOf(Function);
         expect(validateFunction!(data, kind)).toEqual(true);
 
         index++;

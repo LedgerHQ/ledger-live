@@ -57,7 +57,7 @@ export default class StakePage {
 
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
-    jestExpect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
+    jestExpect(await this.delegationSummaryValidator(currencyId)).toContain(provider);
   }
 
   @Step("Select new provider")

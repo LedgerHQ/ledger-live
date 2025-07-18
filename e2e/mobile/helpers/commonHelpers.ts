@@ -46,10 +46,10 @@ export function isSpeculosRemote() {
 
 export async function addDelayBeforeInteractingWithDevice(
   // TODO: QAA-683
-  delayIos: number = 10_000,
-  ms: number = 0,
+  ciDelay: number = 10_000,
+  localDelay: number = 0,
 ) {
-  await delay(isSpeculosRemote() && isIos() ? delayIos : ms);
+  await delay(process.env.CI ? ciDelay : localDelay);
 }
 
 export async function launchApp() {
@@ -81,7 +81,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNSP;
+  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

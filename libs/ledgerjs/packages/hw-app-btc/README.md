@@ -113,9 +113,14 @@ For a smooth and quick integration:
     *   [Examples](#examples-9)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
+*   [splitSaplingPart](#splitsaplingpart)
+    *   [Parameters](#parameters-32)
+*   [splitOrchardPart](#splitorchardpart)
+    *   [Parameters](#parameters-33)
 *   [TransactionInput](#transactioninput)
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
+*   [SaplingData](#saplingdata)
 
 ### bippath
 
@@ -815,8 +820,32 @@ Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Referen
 *   `segwit` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `transactionVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
+### splitSaplingPart
+
+Splits the Sapling part of a Zcash v5 transaction buffer according to <https://zips.z.cash/zip-0225>
+
+#### Parameters
+
+*   `transaction` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `offset` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **{sapling: [SaplingData](#saplingdata)?, offset: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}**&#x20;
+
+### splitOrchardPart
+
+Splits the Orchard part of a Zcash v5 transaction buffer according to <https://zips.z.cash/zip-0225>
+
+#### Parameters
+
+*   `transaction` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `offset` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **{orchard: OrchardData?, offset: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}**&#x20;
+
 ### TransactionInput
 
 ### TransactionOutput
 
 ### Transaction
+
+### SaplingData

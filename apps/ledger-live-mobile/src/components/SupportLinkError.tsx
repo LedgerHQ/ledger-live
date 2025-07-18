@@ -4,14 +4,16 @@ import { Trans } from "react-i18next";
 import { urls } from "~/utils/urls";
 import ExternalLink from "./ExternalLink";
 import { LearnMoreLink } from "./Alert";
+import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
-  error: Error | null | undefined;
+  error: Error | DmkError | null | undefined;
   type?: "alert";
 };
 
 const SupportLinkError = ({ error, type }: Props) => {
-  const maybeLink = error ? urls.errors[error.name as keyof typeof urls.errors] : null;
+  const maybeLink =
+    error && !isDmkError(error) ? urls.errors[error.name as keyof typeof urls.errors] : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
   }, [maybeLink]);
