@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.40.0-nightly.0
+
+### Minor Changes
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
 ## 0.39.0
 
 ### Minor Changes

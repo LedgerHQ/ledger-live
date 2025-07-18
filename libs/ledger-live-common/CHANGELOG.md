@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.42.0-nightly.0
+
+### Minor Changes
+
+- [#10954](https://github.com/LedgerHQ/ledger-live/pull/10954) [`3e32d52`](https://github.com/LedgerHQ/ledger-live/commit/3e32d522e0589a8356d222e0dbd3a87551d26e79) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add Bridge setup function
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.11.5-nightly.0
+
 ## 34.41.0
 
 ### Minor Changes

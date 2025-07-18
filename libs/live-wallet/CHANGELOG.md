@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.11.5-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee)]:
+  - @ledgerhq/ledger-key-ring-protocol@0.6.0-nightly.2
+
 ## 0.11.4
 
 ### Patch Changes

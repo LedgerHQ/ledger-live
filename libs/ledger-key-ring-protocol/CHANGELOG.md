@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0-nightly.2
+
+### Minor Changes
+
+- [#10820](https://github.com/LedgerHQ/ledger-live/pull/10820) [`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔍✨ Improve detection of legacy import base64 strings and invalid address scans
+
+  - Better handling of legacy `Qrcode` base64 imports using stricter format and header checks
+  - Improved error resilience when scanning addresses (ETH, BTC, etc.) instead of base64
+  - Ignores invalid or malformed input early, reducing false positives
+
 ## 0.5.12-nightly.1
 
 ### Patch Changes

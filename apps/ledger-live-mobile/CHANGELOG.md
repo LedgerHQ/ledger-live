@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.87.0-nightly.0
+
+### Minor Changes
+
+- [#10969](https://github.com/LedgerHQ/ledger-live/pull/10969) [`f5c9f61`](https://github.com/LedgerHQ/ledger-live/commit/f5c9f6158e55816480b92243bf9aac66e5c54e0e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: LLM - Display is not great on Account Page
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+- [#10964](https://github.com/LedgerHQ/ledger-live/pull/10964) [`e6b4ade`](https://github.com/LedgerHQ/ledger-live/commit/e6b4ade70c5c916ab1c7e0732e9cf752fe289c0e) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add tracking of webview back button - in-line with swap live app
+
+### Patch Changes
+
+- Updated dependencies [[`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee), [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5)]:
+  - @ledgerhq/ledger-key-ring-protocol@0.6.0-nightly.2
+  - @ledgerhq/native-ui@0.40.0-nightly.0
+  - @ledgerhq/live-wallet@0.11.5-nightly.0
+
 ## 3.86.0
 
 ### Minor Changes
