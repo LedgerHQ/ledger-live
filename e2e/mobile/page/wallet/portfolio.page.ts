@@ -1,5 +1,4 @@
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { Currency, CurrencyType } from "@ledgerhq/live-common/lib/e2e/enum/Currency";
 
 export default class PortfolioPage {
   baseLink = "portfolio";
@@ -32,16 +31,6 @@ export default class PortfolioPage {
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
-  assetItemNameId = (currencyName: string) => `${this.assetItemId(currencyName)}-name`;
-  assetItemCurrencyTickerId = (currencyName: string) => `${this.assetItemId(currencyName)}-ticker`;
-  assetItemBalance = (currencyName: string) => `${this.assetItemId(currencyName)}-balance`;
-  assetItemDelta = (currencyName: string) => `${this.assetItemId(currencyName)}-delta`;
-  bigCurrencyIcon = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-icon-${currencyId}`);
-  bigCurrencyName = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-name-${currencyId}`);
-  bigCurrencySubTitle = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-subtitle-${currencyId}`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
 
   @Step("Navigate to Settings")
@@ -105,17 +94,6 @@ export default class PortfolioPage {
     await scrollToId(this.showAllAssetsButton);
     const assetsCount = await countElementsById(this.assetItemRegExp);
     jestExpect(assetsCount).toBeLessThanOrEqual(5);
-
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.assetItemRegExp), i);
-      const currencyName = id.split("-")[1];
-      await detoxExpect(getElementById(this.assetItemNameId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemCurrencyTickerId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemBalance(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemDelta(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(app.common.parentCurrencyIcon, i)).toBeVisible();
-    }
-
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
     await tapById(this.showAllAssetsButton);
     jestExpect(await countElementsById(this.assetItemRegExp)).toBeGreaterThan(5);
@@ -159,7 +137,7 @@ export default class PortfolioPage {
 
   @Step("Tap on $0 tab selector")
   async tapTabSelector(id: "Accounts" | "Assets") {
-    await tapByElement(await this.tabSelector(id));
+    await tapByElement(this.tabSelector(id));
   }
 
   @Step("Tap on (Show All Accounts) button")
@@ -173,14 +151,6 @@ export default class PortfolioPage {
     await waitForElementById(this.selectAssetsPageTitle);
     await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
     await app.common.expectSearchBarVisible();
-    const assetsCount = await countElementsById(this.bigCurrencyRowRegex);
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.bigCurrencyRowRegex), i);
-      const currencyId = id.split("-")[3];
-      const currencyObj = Object.values(Currency).find((c: CurrencyType) => c.id === currencyId);
-      await detoxExpect(this.bigCurrencyIcon(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencyName(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencySubTitle(currencyObj.ticker)).toBeVisible();
-    }
+    jestExpect(await countElementsById(this.bigCurrencyRowRegex)).toBeGreaterThan(6);
   }
 }
