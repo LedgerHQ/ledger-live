@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.4.0-next.1
+
+### Minor Changes
+
+- [#11000](https://github.com/LedgerHQ/ledger-live/pull/11000) [`f71877a`](https://github.com/LedgerHQ/ledger-live/commit/f71877a68b90f56fc809d19c4d8a196fe1b31c84) Thanks [@Justkant](https://github.com/Justkant)! - unbonding blocked due to empty locks array, now using reserved field for locked and spendable balance calculations
+
 ## 6.4.0-next.0
 
 ### Minor Changes
