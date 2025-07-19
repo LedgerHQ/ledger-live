@@ -1,5 +1,12 @@
 # dummy-wallet-app
 
+## 0.6.12-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.0-nightly.1
+
 ## 0.6.12-nightly.0
 
 ### Patch Changes

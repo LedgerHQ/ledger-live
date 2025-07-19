@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.87.0-nightly.1
+
+### Minor Changes
+
+- [#10993](https://github.com/LedgerHQ/ledger-live/pull/10993) [`126baf0`](https://github.com/LedgerHQ/ledger-live/commit/126baf0a18b122f132d8ea6995ceb2bac8885ca9) Thanks [@themooneer](https://github.com/themooneer)! - fix: add MarketList loadingTime + improve session tracking
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.6.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.3-nightly.0
+  - @ledgerhq/coin-evm@2.23.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.14-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.14-nightly.0
+  - @ledgerhq/coin-stacks@0.8.14-nightly.0
+  - @ledgerhq/live-countervalues@0.5.14-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.43-nightly.0
+  - @ledgerhq/live-nft@0.8.14-nightly.0
+  - @ledgerhq/live-nft-react@0.9.14-nightly.0
+  - @ledgerhq/live-wallet@0.11.5-nightly.1
+
 ## 3.87.0-nightly.0
 
 ### Minor Changes

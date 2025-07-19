@@ -1,5 +1,21 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-nightly.0
+
+### Minor Changes
+
+- [#11002](https://github.com/LedgerHQ/ledger-live/pull/11002) [`7e092b1`](https://github.com/LedgerHQ/ledger-live/commit/7e092b187406dc30a0e205c2ed5de4aab5880a95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Fix sui swap device disconnected error
+
+### Patch Changes
+
+- [#10933](https://github.com/LedgerHQ/ledger-live/pull/10933) [`16f057e`](https://github.com/LedgerHQ/ledger-live/commit/16f057ea9cd1332856f74dafecf0a175fb2eb300) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: sui pending operation sync
+
+- [#10932](https://github.com/LedgerHQ/ledger-live/pull/10932) [`72baa62`](https://github.com/LedgerHQ/ledger-live/commit/72baa62633401447dd1e9414defa8d1a69eb0b78) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: alpaca operation sync and time
+
+- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf)]:
+  - @ledgerhq/cryptoassets@13.22.0-nightly.4
+  - @ledgerhq/coin-framework@5.6.1-nightly.0
+
 ## 0.6.1
 
 ### Patch Changes

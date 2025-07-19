@@ -1,5 +1,45 @@
 # @ledgerhq/live-common
 
+## 34.42.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`7e092b1`](https://github.com/LedgerHQ/ledger-live/commit/7e092b187406dc30a0e205c2ed5de4aab5880a95), [`16f057e`](https://github.com/LedgerHQ/ledger-live/commit/16f057ea9cd1332856f74dafecf0a175fb2eb300), [`72baa62`](https://github.com/LedgerHQ/ledger-live/commit/72baa62633401447dd1e9414defa8d1a69eb0b78)]:
+  - @ledgerhq/cryptoassets@13.22.0-nightly.4
+  - @ledgerhq/coin-sui@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@5.6.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.14-nightly.0
+  - @ledgerhq/coin-aptos@2.5.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.17.1-nightly.0
+  - @ledgerhq/coin-cardano@0.9.1-nightly.0
+  - @ledgerhq/coin-casper@2.0.5-nightly.0
+  - @ledgerhq/coin-celo@1.1.12-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.3-nightly.0
+  - @ledgerhq/coin-evm@2.23.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.14-nightly.0
+  - @ledgerhq/coin-hedera@1.8.3-nightly.0
+  - @ledgerhq/coin-icon@0.11.1-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.14-nightly.0
+  - @ledgerhq/coin-mina@1.1.13-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.14-nightly.0
+  - @ledgerhq/coin-near@0.11.14-nightly.0
+  - @ledgerhq/coin-polkadot@6.3.2-nightly.0
+  - @ledgerhq/coin-solana@0.27.3-nightly.0
+  - @ledgerhq/coin-stacks@0.8.14-nightly.0
+  - @ledgerhq/coin-stellar@5.3.2-nightly.0
+  - @ledgerhq/coin-tezos@5.6.1-nightly.0
+  - @ledgerhq/coin-ton@0.13.3-nightly.0
+  - @ledgerhq/coin-tron@4.4.2-nightly.0
+  - @ledgerhq/coin-vechain@2.7.14-nightly.0
+  - @ledgerhq/coin-xrp@6.4.1-nightly.0
+  - @ledgerhq/hw-app-vet@0.5.10-nightly.4
+  - @ledgerhq/live-countervalues@0.5.14-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.43-nightly.0
+  - @ledgerhq/live-nft@0.8.14-nightly.0
+  - @ledgerhq/live-wallet@0.11.5-nightly.1
+  - @ledgerhq/live-signer-evm@0.5.7-nightly.0
+  - @ledgerhq/live-signer-solana@0.4.2-nightly.0
+
 ## 34.42.0-nightly.0
 
 ### Minor Changes
