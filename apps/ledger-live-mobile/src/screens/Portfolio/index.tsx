@@ -49,7 +49,7 @@ import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { PORTFOLIO_VIEW_ID } from "~/datadog";
+import { PORTFOLIO_VIEW_ID } from "~/utils/constants";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>

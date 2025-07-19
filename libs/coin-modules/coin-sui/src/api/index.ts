@@ -71,7 +71,7 @@ async function operationsFromHeight(
       ? { minHeight: minHeight, cursor: state.apiNextCursor }
       : { minHeight: minHeight };
     const [operations, nextCursor] = await listOperations(address, option);
-    const opsFromHeight = operations.filter(op => op.tx.block.height >= minHeight);
+    const opsFromHeight = operations.filter(op => op.tx.block.height > minHeight);
     state.accumulator.push(...opsFromHeight);
     state.apiNextCursor = nextCursor;
     // The API makes 2 calls "IN" and "OUT" so even if we started filtering a few elements, we may still have more txs to fetch on one of the two calls.

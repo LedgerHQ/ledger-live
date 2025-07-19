@@ -57,7 +57,9 @@ outputs:
   performance-report:
     description: "Performance test report in JSON format"
   comparison-report:
-    description: "Performance comparison report in JSON format (only when enable-comparison is true)"
+    description: "Performance comparison report in JSON format (only when enable-comparison is enabled)"
+  slack-report:
+    description: "Formatted performance report for Slack (includes current metrics and comparison if enabled)"
 
 runs:
   using: node20

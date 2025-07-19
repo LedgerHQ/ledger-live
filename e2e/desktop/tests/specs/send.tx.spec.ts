@@ -27,7 +27,7 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2571",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1"),
     expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
     xrayTicket: "B2CQA-2567",
   },

@@ -8,6 +8,8 @@ const scriptPath = __dirname + "/../../../../apps/cli/bin/index.js";
  * @returns {Promise<string>} - Resolves with the output of the command or rejects on failure.
  */
 export function runCliCommand(command: string): Promise<string> {
+  console.log(`[CLI] Executing: ledger-live ${command.replace(/\+/g, " ")}`);
+
   return new Promise((resolve, reject) => {
     const args = command.split("+");
     const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env: process.env });
