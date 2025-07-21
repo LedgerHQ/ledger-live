@@ -81,9 +81,9 @@ export class LegacySignerSolana implements SolanaSigner {
         throw new Error("Resolution provided without a deviceModelId");
       }
 
-      await this.checkAppVersion(MIN_VERSION, { throwOnOutdated: true });
-
       if (resolution.deviceModelId !== DeviceModelId.nanoS) {
+        await this.checkAppVersion(MIN_VERSION, { throwOnOutdated: true });
+
         const { descriptor, signature } = await calService.getCertificate(
           resolution.deviceModelId,
           "trusted_name",
