@@ -1,13 +1,14 @@
 export const ADD_ACCOUNT_EVENTS_NAME = {
-  ADD_ACCOUNT_BUTTON_CLICKED: "button_clicked",
-  ADD_ACCOUNT_ACCOUNT_CLICKED: "account_clicked",
   ACCOUNT_ADDED: "account_added",
-  LOOKING_FOR_ACCOUNTS: "looking for accounts",
+  ADD_ACCOUNT_ACCOUNT_CLICKED: "account_clicked",
+  ADD_ACCOUNT_BUTTON_CLICKED: "button_clicked",
   ADD_ACCOUNTS_SUCCESS: "add account success",
-  FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
-  FUNDING_ACTIONS: "add account funding actions",
   CANT_ADD_NEW_ACCOUNT: "cant add new account",
   DEVICE_CONNECTION: "device connection",
+  EDIT_NAME_ACTIONS: "add account edit name actions",
+  FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
+  FUNDING_ACTIONS: "add account funding actions",
+  LOOKING_FOR_ACCOUNTS: "looking for accounts",
 } as const;
 
 export type AddAccountEventName =
@@ -44,6 +45,10 @@ export type AddAccountEventParams = {
     source: string;
     flow: string;
   };
+  [ADD_ACCOUNT_EVENTS_NAME.EDIT_NAME_ACTIONS]: {
+    source: string;
+    flow: string;
+  };
   [ADD_ACCOUNT_EVENTS_NAME.CANT_ADD_NEW_ACCOUNT]: {
     source: string;
     reason: string;
@@ -55,12 +60,13 @@ export type AddAccountEventParams = {
 };
 
 export const ADD_ACCOUNT_PAGE_NAME = {
-  LOOKING_FOR_ACCOUNTS: "looking for accounts",
   ADD_ACCOUNTS_SUCCESS: "add account success",
-  FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
-  FUNDING_ACTIONS: "add account funding actions",
   CANT_ADD_NEW_ACCOUNT: "cant add new account",
   DEVICE_CONNECTION: "device connection",
+  EDIT_ACCOUNT_NAME_ACTIONS: "add account edit name actions",
+  FUND_ACCOUNT_DRAWER_LIST: "fund account drawer list",
+  FUNDING_ACTIONS: "add account funding actions",
+  LOOKING_FOR_ACCOUNTS: "looking for accounts",
 } as const;
 
 export type AddAccountPageName = (typeof ADD_ACCOUNT_PAGE_NAME)[keyof typeof ADD_ACCOUNT_PAGE_NAME];

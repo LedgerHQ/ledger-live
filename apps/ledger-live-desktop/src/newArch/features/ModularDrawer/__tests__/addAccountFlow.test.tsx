@@ -1,22 +1,22 @@
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import React from "react";
+import { act } from "react-dom/test-utils";
+import { Provider } from "react-redux";
+import { render, screen, userEvent } from "tests/testSetup";
+import { formatAddress } from "~/newArch/utils/formatAddress";
+import { openModal } from "~/renderer/actions/modals";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import createStore from "~/renderer/createStore";
+import { State } from "~/renderer/reducers";
+import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
   hederaCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
-import BigNumber from "bignumber.js";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
-import { Provider } from "react-redux";
-import createStore from "~/renderer/createStore";
-import { userEvent, render, screen } from "tests/testSetup";
-import { Account } from "@ledgerhq/types-live";
-import { act } from "react-dom/test-utils";
-import { State } from "~/renderer/reducers";
-import { openModal } from "~/renderer/actions/modals";
-import { track, trackPage } from "~/renderer/analytics/segment";
 import { mockDomMeasurements } from "./shared";
-import { formatAddress } from "~/newArch/utils/formatAddress";
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -280,6 +280,39 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     await userEvent.click(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress)));
     expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
+  });
+
+  it("should show both existing and new accounts and flow to edit account name", async () => {
+    const OLD_NAME = "Arbitrum 2";
+    const NEW_NAME = "My Edited Account";
+
+    setup(arbitrumCurrency);
+
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+
+    expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("checkbox", { checked: false }));
+    const confirm = screen.getByRole("button", { name: "Confirm" });
+    await userEvent.click(confirm);
+    expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
+
+    expect(screen.getAllByText(OLD_NAME).length).toEqual(2);
+
+    await userEvent.click(screen.getAllByRole("button", { name: /Edit account item/i })[0]);
+
+    expect(screen.getByText(/Edit account name/i)).toBeInTheDocument();
+
+    const input = screen.getByRole("textbox", { name: "account name" });
+    expect(input).toHaveValue(OLD_NAME);
+    await userEvent.clear(input);
+    await userEvent.type(input, NEW_NAME);
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
+    expect(screen.getAllByText(OLD_NAME).length).toEqual(1);
   });
 
   it("should error on already imported empty account", async () => {
