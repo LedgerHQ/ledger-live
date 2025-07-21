@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetList, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
-import { Flex } from "@ledgerhq/native-ui";
+import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -10,6 +9,12 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
+import { FlatList } from "react-native";
+import {
+  BottomSheetVirtualizedList,
+  useBottomSheetInternal,
+  useBottomSheet,
+} from "@gorhom/bottom-sheet";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -24,8 +29,12 @@ export type AssetSelectionStepProps = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
 };
 
+const HEADER_HEIGHT = 64;
+const SEARCH_HEIGHT = 48;
+const ROW_HEIGHT = 64;
+const MARGIN_BOTTOM = HEADER_HEIGHT + SEARCH_HEIGHT + ROW_HEIGHT;
+
 const AssetSelection = ({
-  isOpen,
   availableAssets,
   defaultSearchValue,
   setDefaultSearchValue,
@@ -36,29 +45,42 @@ const AssetSelection = ({
   source,
   assetsConfiguration,
 }: Readonly<AssetSelectionStepProps>) => {
-  const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
+  const { collapse } = useBottomSheet();
+  const listRef = useRef<FlatList>(null);
 
-  const handleAssetClick = (asset: AssetType) => {
-    const originalAsset = availableAssets.find(a => a.id === asset.id);
-    if (originalAsset) {
-      trackModularDrawerEvent(
-        EVENTS_NAME.ASSET_CLICKED,
-        {
-          flow,
-          source,
-          asset: originalAsset.name,
-          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-        },
-        {
-          formatAssetConfig: !!assetsConfiguration,
-          assetsConfig: assetsConfiguration,
-        },
-      );
-
-      onAssetSelected(originalAsset);
-    }
-  };
+  const handleAssetClick = useCallback(
+    (asset: AssetType) => {
+      const originalAsset = availableAssets.find(a => a.id === asset.id);
+      if (originalAsset) {
+        collapse();
+        trackModularDrawerEvent(
+          EVENTS_NAME.ASSET_CLICKED,
+          {
+            flow,
+            source,
+            asset: originalAsset.name,
+            page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+          },
+          {
+            formatAssetConfig: !!assetsConfiguration,
+            assetsConfig: assetsConfiguration,
+          },
+        );
+        onAssetSelected(originalAsset);
+      }
+    },
+    [
+      availableAssets,
+      onAssetSelected,
+      collapse,
+      assetsConfiguration,
+      flow,
+      source,
+      trackModularDrawerEvent,
+    ],
+  );
 
   useEffect(() => {
     if (defaultSearchValue === undefined) {
@@ -70,46 +92,61 @@ const AssetSelection = ({
         asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
       ),
     );
-
-    const timeout = setTimeout(() => {
-      setShouldScrollToTop(false);
-    }, 100);
-
-    setShouldScrollToTop(true);
-    return () => clearTimeout(timeout);
   }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
+
+  const handleSearchPressIn = () => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
+  const handleSearchFocus = () => {
+    shouldHandleKeyboardEvents.value = true;
+  };
+
+  const handleSearchBlur = () => {
+    shouldHandleKeyboardEvents.value = false;
+  };
+
+  const renderItem = useCallback(
+    ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
+    [handleAssetClick],
+  );
 
   return (
     <>
-      {isOpen && (
-        <TrackDrawerScreen
-          page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
-          flow={flow}
-          source={source}
-          assetsConfig={assetsConfiguration}
-          formatAssetConfig
-        />
-      )}
-
-      <Flex>
-        <SearchInputContainer
-          source={source}
-          flow={flow}
-          items={availableAssets}
-          setItemsToDisplay={setItemsToDisplay}
-          assetsToDisplay={itemsToDisplay}
-          originalAssets={availableAssets}
-          setSearchedValue={setDefaultSearchValue}
-          defaultValue={defaultSearchValue}
-          assetsConfiguration={assetsConfiguration}
-          formatAssetConfig={!!assetsConfiguration}
-        />
-        <AssetList
-          assets={itemsToDisplay}
-          onClick={handleAssetClick}
-          scrollToTop={shouldScrollToTop}
-        />
-      </Flex>
+      <TrackDrawerScreen
+        page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
+        flow={flow}
+        source={source}
+        assetsConfig={assetsConfiguration}
+        formatAssetConfig
+      />
+      <SearchInputContainer
+        source="modular-drawer"
+        flow="asset-selection"
+        items={availableAssets}
+        setItemsToDisplay={setItemsToDisplay}
+        assetsToDisplay={itemsToDisplay}
+        originalAssets={availableAssets}
+        setSearchedValue={setDefaultSearchValue}
+        defaultValue={defaultSearchValue}
+        onFocus={handleSearchFocus}
+        onBlur={handleSearchBlur}
+        onPressIn={handleSearchPressIn}
+      />
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled={true}
+        data={itemsToDisplay}
+        keyExtractor={item => item.id}
+        getItemCount={itemsToDisplay => itemsToDisplay.length}
+        getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+      />
     </>
   );
 };
