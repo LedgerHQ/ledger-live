@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import uniqWith from "lodash/uniqWith";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getProvider, useProviders } from "./useProviders";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -214,14 +214,15 @@ export function useModularDrawerState({
     ],
   );
 
+  const singleCurrency = useMemo(() => {
+    return currencyIds.length === 1 ? findCryptoCurrencyById(currencyIds[0]) : undefined;
+  }, [currencyIds]);
+
   useEffect(() => {
-    if (isDrawerOpen && currencyIds.length === 1 && !asset) {
-      const currency = findCryptoCurrencyById(currencyIds[0]);
-      if (currency) {
-        handleSingleCurrencyFlow(currency);
-      }
+    if (isDrawerOpen && singleCurrency && !asset) {
+      handleSingleCurrencyFlow(singleCurrency);
     }
-  }, [asset, currencyIds, handleSingleCurrencyFlow, isDrawerOpen]);
+  }, [isDrawerOpen, singleCurrency, asset, handleSingleCurrencyFlow]);
 
   return {
     asset,

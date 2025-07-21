@@ -58,6 +58,8 @@ import {
 } from "~/newArch/features/ModularDrawer";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
+const currencies = listAndFilterCurrencies({ includeTokens: true });
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -98,8 +100,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   usePortfolioAnalyticsOptInPrompt();
 
   const { isDrawerOpen, openDrawer, closeDrawer } = useModularDrawer();
-
-  const currencies = listAndFilterCurrencies({ includeTokens: true });
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",

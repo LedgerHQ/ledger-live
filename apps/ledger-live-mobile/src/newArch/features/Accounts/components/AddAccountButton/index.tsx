@@ -36,6 +36,8 @@ type Props = {
   currency?: CryptoOrTokenCurrency | string;
 };
 
+const currencies = listAndFilterCurrencies({ includeTokens: true });
+
 const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onClick }) => {
   const { t } = useTranslation();
 
@@ -55,8 +57,6 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
     }
     setIsAddAccountModalOpen(true);
   };
-
-  const currencies = listAndFilterCurrencies({ includeTokens: true });
 
   const handleCloseAddAccountModal = () => setIsAddAccountModalOpen(false);
 

@@ -210,4 +210,53 @@ describe("useModularDrawerState", () => {
       },
     });
   });
+
+  it("should automatically handle single currency flow when drawer opens", () => {
+    const goToStep = jest.fn();
+    const { result: _result } = renderHook(() =>
+      useModularDrawerState({
+        goToStep,
+        currencyIds: [mockCurrency.id],
+        currenciesByProvider: mockCurrenciesByProvider,
+        isDrawerOpen: true,
+      }),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency: mockCurrency,
+        createTokenAccount: false,
+        context: AddAccountContexts.AddAccounts,
+      },
+    });
+  });
+
+  it("should not trigger single currency flow when multiple currencies are provided", () => {
+    const goToStep = jest.fn();
+    const { result: _result } = renderHook(() =>
+      useModularDrawerState({
+        goToStep,
+        currencyIds: [mockCurrency.id, mockEthCryptoCurrency.id],
+        currenciesByProvider: mockCurrenciesByProvider,
+        isDrawerOpen: true,
+      }),
+    );
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should not trigger single currency flow when drawer is closed", () => {
+    const goToStep = jest.fn();
+    const { result: _result } = renderHook(() =>
+      useModularDrawerState({
+        goToStep,
+        currencyIds: [mockCurrency.id],
+        currenciesByProvider: mockCurrenciesByProvider,
+        isDrawerOpen: false,
+      }),
+    );
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
 });
