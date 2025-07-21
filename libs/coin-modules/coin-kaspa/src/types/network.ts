@@ -19,6 +19,7 @@ export type ApiResponseBlockDagInfo = {
 export type ApiResponseAddressActive = {
   address: string;
   active: boolean;
+  lastTxBlockTime: number;
 };
 
 export type ApiResponseBalance = {

@@ -30,8 +30,22 @@ export async function scanAddresses(
   const accountAddresses: AccountAddresses = {
     usedReceiveAddresses: [],
     usedChangeAddresses: [],
-    nextChangeAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
-    nextReceiveAddress: { type: 0, index: 0, address: "", balance: INITIAL_BALANCE, active: false },
+    nextChangeAddress: {
+      type: 0,
+      index: 0,
+      address: "",
+      balance: INITIAL_BALANCE,
+      active: false,
+      timestamp: null,
+    },
+    nextReceiveAddress: {
+      type: 0,
+      index: 0,
+      address: "",
+      balance: INITIAL_BALANCE,
+      active: false,
+      timestamp: null,
+    },
     totalBalance: BigNumber(0),
     spendableBalance: BigNumber(0),
   };
@@ -155,6 +169,7 @@ async function updateAddressesActive(addresses: AccountAddress[]) {
     const addressIndex = addresses.findIndex(addr => addr.address === addressActive.address);
     if (addressActive.active) {
       addresses[addressIndex].active = true;
+      addresses[addressIndex].timestamp = addressActive.lastTxBlockTime;
     }
   }
 }

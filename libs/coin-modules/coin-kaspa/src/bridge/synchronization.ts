@@ -25,20 +25,25 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   const accountAddresses: AccountAddresses = await scanAddresses(compressedPublicKey, chainCode, 0);
 
   const oldOperations = initialAccount?.operations || [];
-  //
-  // // Merge new operations with the previously synced ones
-  const usedAddresses: string[] = [
-    ...accountAddresses.usedReceiveAddresses.map(addr => addr.address),
-    ...accountAddresses.usedChangeAddresses.map(addr => addr.address),
-  ];
 
+  // Fetch new operations
+  // Timestamp with 60s buffer to make sure there's no gap
   let scanOperationsAfter: number = 1; // begin with after=1 for correct TX fetching
   if (initialAccount?.lastSyncTimestamp) {
     // as older blocks with valid transactions can be added into the BlockDAG up to an hour later,
     // we have to set the rescan timestamp to around 2 hours earlier than the last tip's timestamp.
-    scanOperationsAfter = Number(initialAccount.lastSyncTimestamp) - 60 * 60 * 2 * 1000; // milliseconds timestamp
+    scanOperationsAfter = initialAccount.lastSyncTimestamp - 60 * 60 * 2 * 1000; // milliseconds timestamp
     scanOperationsAfter = Math.max(scanOperationsAfter, 1); // actually it can't really be lower than 1.
   }
+
+  const usedAddresses: string[] = [
+    ...accountAddresses.usedReceiveAddresses
+      .filter(addr => addr.timestamp! > scanOperationsAfter)
+      .map(addr => addr.address),
+    ...accountAddresses.usedChangeAddresses
+      .filter(addr => addr.timestamp! > scanOperationsAfter)
+      .map(addr => addr.address),
+  ];
 
   const allOperations: Operation[] = await scanOperations(
     usedAddresses,
@@ -54,7 +59,7 @@ export const getAccountShape: GetAccountShape<KaspaAccount> = async info => {
   return {
     id: accountId,
     xpub: xpub,
-    lastSyncTimestamp: (await getBlockDagInfo()).pastMedianTime || "1",
+    lastSyncTimestamp: Number.parseInt((await getBlockDagInfo()).pastMedianTime || "1"),
     index,
     blockHeight: await getVirtualChainBlueScore(),
     balance: accountAddresses.totalBalance,

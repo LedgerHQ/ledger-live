@@ -6,6 +6,7 @@ export type AccountAddress = {
   address: string;
   balance: BigNumber;
   active: boolean;
+  timestamp: number | null;
 };
 
 export type AccountAddresses = {

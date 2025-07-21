@@ -10,7 +10,7 @@ import { BigNumber } from "bignumber.js";
 
 export type KaspaAccount = Account & {
   xpub: string;
-  lastSyncTimestamp: string;
+  lastSyncTimestamp: number;
   activeAddressCount: number; // good to approximate the fee
   nextChangeAddress: string;
   nextChangeAddressType: number;
