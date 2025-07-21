@@ -18,7 +18,7 @@ import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageToDeviceProcessor";
 import Button from "~/components/wrappedUi/Button";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "~/components/CustomImage/ContrastChoice";

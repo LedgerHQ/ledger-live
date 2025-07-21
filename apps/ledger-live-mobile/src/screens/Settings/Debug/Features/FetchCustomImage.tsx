@@ -11,8 +11,8 @@ import { setCustomImageBackup } from "~/actions/settings";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import CustomImageDeviceAction from "~/components/CustomLockScreenDeviceAction";
-import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
+import ImageHexProcessor from "~/components/CustomImage/ImageFromDeviceProcessor";
+import { ProcessorPreviewResult } from "~/components/CustomImage/ImageToDeviceProcessor";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
@@ -104,6 +104,21 @@ export default function DebugFetchCustomImage() {
     },
     [navigation],
   );
+
+  // log whole state
+  console.log("DebugFetchCustomImage", {
+    device,
+    action,
+    imageSource,
+    hash,
+    hex,
+    deviceModelId,
+    status,
+    progress,
+    fetchingImage,
+    imageAlreadyBackedUp,
+    imageFetched,
+  });
 
   return (
     <NavigationScrollView>

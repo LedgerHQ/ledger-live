@@ -2,9 +2,9 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
-import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
+import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageToDeviceProcessor";
 import { fitImageContain } from "./imageUtils";
-import ImageHexProcessor from "./ImageHexProcessor";
+import ImageHexProcessor from "./ImageFromDeviceProcessor";
 
 type Props = {
   rawData: ProcessorRawResult;
