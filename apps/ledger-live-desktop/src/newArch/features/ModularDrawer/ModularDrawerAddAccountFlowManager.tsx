@@ -142,6 +142,7 @@ const ModularDrawerAddAccountFlowManager = ({
               warningReason={warningReason}
               currency={cryptoCurrency}
               emptyAccount={emptyAccount}
+              navigateToEditAccountName={navigateToEditAccountName}
               navigateToFundAccount={navigateToFundAccount}
               source={source}
             />
