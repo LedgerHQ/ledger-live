@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
@@ -41,15 +40,14 @@ import {
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-// import { findCryptoCurrencyByManagerAppName } from "@ledgerhq/cryptoassets/currencies";
-// import { getCurrencyConfiguration } from "../config";
 import { DeviceDeprecationError } from "../errors";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { throwErrorWhenDeviceDeprecated } from "./deviceDeprecation";
 
 type DeviceDeprecationErrorType = Error & {
   modelId: DeviceModelId;
   date: string;
   tokenExceptions?: string[];
+  deprecatedFlowExceptions?: string[];
 };
 
 export type RequiresDerivation = {
@@ -78,6 +76,7 @@ export type DeviceDeprecation = {
   date: string;
   coin: CryptoCurrencyId;
   tokenExceptions: string[];
+  deprecatedFlowExceptions: string[];
 };
 
 export type AppAndVersion = {
@@ -546,64 +545,6 @@ const appNameToDependency = (appName: string): ApplicationDependency => {
   };
 };
 
-const throwErrorWhenDeviceDeprecated = (
-  dmk: DeviceManagementKit,
-  sessionId: DeviceSessionId,
-  passDeprecation: boolean,
-  appName: string,
-  dependencies?: string[],
-): void => {
-  if (passDeprecation) {
-    return;
-  }
-  const config =
-    appName === "Exchange" && dependencies && dependencies.length > 0
-      ? LiveConfig.getValueByKey(
-          `config_nanoapp_${dependencies[0].toLowerCase().replace(/ /g, "_")}`,
-        )
-      : LiveConfig.getValueByKey(`config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`);
-  if (!config || !config.deviceDeprecated) {
-    return;
-  }
-  const { modelId } = dmk.getConnectedDevice({ sessionId });
-  const today = new Date();
-  for (const deviceDeprecated of config.deviceDeprecated) {
-    if (deviceDeprecated.deviceModelId !== modelId) {
-      continue;
-    }
-
-    if (deviceDeprecated.errorScreen) {
-      const errorDate = new Date(deviceDeprecated.errorScreen.date);
-      if (errorDate < today) {
-        throw new DeviceDeprecationError("error", {
-          modelId,
-          date: errorDate.toISOString(),
-        });
-      }
-    }
-    if (deviceDeprecated.warningClearSigningScreen) {
-      console.log(deviceDeprecated);
-      const warningDate = new Date(deviceDeprecated.warningClearSigningScreen.date);
-      if (warningDate < today) {
-        throw new DeviceDeprecationError("warning", {
-          modelId,
-          date: warningDate.toISOString(),
-          tokenExceptions: deviceDeprecated.warningClearSigningScreen.tokenExceptions,
-        });
-      }
-    }
-    if (deviceDeprecated.infoScreen) {
-      const infoDate = new Date(deviceDeprecated.infoScreen.date);
-      if (infoDate < today) {
-        throw new DeviceDeprecationError("info", {
-          modelId,
-          date: infoDate.toISOString(),
-        });
-      }
-    }
-  }
-};
-
 export default function connectAppFactory(
   {
     isLdmkConnectAppEnabled,
@@ -658,7 +599,6 @@ export default function connectAppFactory(
 
         return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
       };
-      console.log("request dmk", { request });
       try {
         throwErrorWhenDeviceDeprecated(dmk, sessionId, passDeprecation, appName, dependencies);
       } catch (error) {
@@ -680,6 +620,7 @@ export default function connectAppFactory(
                   modelId: deviceError.modelId,
                   coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
                   tokenExceptions: deviceError.tokenExceptions || [],
+                  deprecatedFlowExceptions: deviceError.tokenExceptions || [],
                 },
                 onContinue: continueOnce,
               };
@@ -703,6 +644,7 @@ export default function connectAppFactory(
                   modelId: deviceError.modelId,
                   coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
                   tokenExceptions: [],
+                  deprecatedFlowExceptions: [],
                 },
                 onContinue: continueOnce,
               };

@@ -373,45 +373,48 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
-  // if (request && typeof request === "object" && "account" in request) {
-  //   console.log("request in DeviceActionDefaultRendering", request);
-  // } else {
-  //   console.log("Request does not have an account property", request);
-  // }
-  // console.log("payload in DeviceActionDefaultRendering", payload);
-  // console.log("hookState in DeviceActionDefaultRendering", hookState);
-  // console.log(
-  //   "appAndVersion in DeviceActionDefaultRendering",
-  //   analyticsPropertyFlow,
-  //   appAndVersion,
-  // );
-  // console.log("location in DeviceActionDefaultRendering", location);
 
   if (deprecate && deprecateData && onContinue) {
+    const { deprecatedFlowExceptions, tokenExceptions, coin, date } = deprecateData;
+    const currentFlow = (() => {
+      switch (location) {
+        case HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend:
+          return "stake";
+        case HOOKS_TRACKING_LOCATIONS.sendModal:
+          return "send";
+        case HOOKS_TRACKING_LOCATIONS.receiveModal:
+          return "receive";
+        case HOOKS_TRACKING_LOCATIONS.exchange:
+          return "swap";
+        default:
+          return "other";
+      }
+    })();
+    const skippedDeprecations = stateSettings.deprecationDoNotRemind;
+    const alreadyDismissed = skippedDeprecations.includes(coin);
     const currentToken =
       request && typeof request === "object" && "tokenCurrency" in request && request.tokenCurrency
         ? (request.tokenCurrency as TokenCurrency).name
         : "undefined";
-    console.log("currentToken", currentToken);
-    console.log("deprecateData", deprecateData);
-    if (!hasDisplayDeprecateWarning && !deprecateData.tokenExceptions.includes(currentToken)) {
-      const handleContinue = () => {
-        setDeprecated(true);
-        onContinue();
-      };
-      if (deprecateData.warningClearSigning)
-        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
-      else
-        return (
-          <DeprecationWarning
-            coinName={deprecateData.coin}
-            date={deprecateData.date}
-            onContinue={handleContinue}
-          />
-        );
-    } else {
+    const skipDeprecation =
+      tokenExceptions.includes(currentToken) ||
+      deprecatedFlowExceptions.includes(currentFlow) ||
+      currentFlow === "other";
+
+    const handleContinue = () => {
+      setDeprecated(true);
       onContinue();
+    };
+
+    if (!hasDisplayDeprecateWarning && !skipDeprecation) {
+      if (deprecateData.warningClearSigning) {
+        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
+      } else if (!alreadyDismissed) {
+        return <DeprecationWarning coinName={coin} date={date} onContinue={handleContinue} />;
+      }
     }
+    onContinue();
+    return null;
   }
 
   if (displayDeprecateWarning && displayUpgradeWarning && appAndVersion && passWarning) {
@@ -776,7 +779,6 @@ export default function DeviceAction<R, H extends States, P>({
   action: Action<R, H, P>;
   request: R;
 }): JSX.Element {
-  console.log(action, request);
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);

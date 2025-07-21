@@ -137,6 +137,7 @@ export type SettingsState = {
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
+  deprecationDoNotRemind: string[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -244,6 +245,7 @@ export const INITIAL_STATE: SettingsState = {
   lastOnboardedDevice: null,
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
+  deprecationDoNotRemind: [],
 };
 
 /* Handlers */
@@ -308,6 +310,7 @@ type HandlersPayloads = {
   MARKET_REMOVE_STARRED_COINS: string;
   SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: boolean;
   SET_HAS_PROTECTED_ORDINALS_ASSETS: boolean;
+  DEPRECATION_DO_NOT_REMIND: string;
 
   SET_HAS_BEEN_UPSOLD_RECOVER: boolean;
   SET_ONBOARDING_USE_CASE: OnboardingUseCase;
@@ -349,6 +352,7 @@ const handlers: SettingsHandlers = {
       ...payload,
     };
   },
+
   FETCH_SETTINGS: (state, { payload: settings }) => {
     return {
       ...state,
@@ -501,6 +505,12 @@ const handlers: SettingsHandlers = {
       ...state,
       supportedCounterValues: payload,
       counterValue: activeCounterValue,
+    };
+  },
+  DEPRECATION_DO_NOT_REMIND: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload],
     };
   },
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: (state: SettingsState, { payload }) => ({

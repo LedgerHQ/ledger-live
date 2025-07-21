@@ -231,7 +231,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     deprecate,
     deprecateData,
     onContinue,
-    displayDeprecateWarning,
   } = status;
 
   const [hasDisplayDeprecateWarning, setDeprecated] = useState(false);
@@ -321,26 +320,45 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const walletState = useSelector(walletSelector);
   const settingsState = useSelector(settingsStoreSelector);
 
-  return <DeprecationWarning coinName={"coin"} date={"date"} onContinue={() => {}} />;
   if (deprecate && deprecateData && onContinue) {
-    if (!hasDisplayDeprecateWarning) {
-      const handleContinue = () => {
-        setDeprecated(true);
-        onContinue();
-      };
-      if (deprecateData.warningClearSigning)
-        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
-      else
-        return (
-          <DeprecationWarning
-            coinName={deprecateData.coin}
-            date={deprecateData.date}
-            onContinue={handleContinue}
-          />
-        );
-    } else {
+    const { deprecatedFlowExceptions, tokenExceptions, coin, date } = deprecateData;
+    const currentFlow = (() => {
+      switch (location) {
+        case HOOKS_TRACKING_LOCATIONS.sendFlow:
+          return "send";
+        case HOOKS_TRACKING_LOCATIONS.receiveFlow:
+          return "receive";
+        case HOOKS_TRACKING_LOCATIONS.swapFlow:
+          return "swap";
+        default:
+          return "other";
+      }
+    })();
+    const skippedDeprecations = settingsState.deprecationDoNotRemind;
+    const alreadyDismissed = skippedDeprecations.includes(coin);
+    const currentToken =
+      request && typeof request === "object" && "tokenCurrency" in request && request.tokenCurrency
+        ? (request.tokenCurrency as TokenCurrency).name
+        : "undefined";
+    const skipDeprecation =
+      tokenExceptions.includes(currentToken) ||
+      deprecatedFlowExceptions.includes(currentFlow) ||
+      currentFlow === "other";
+
+    const handleContinue = () => {
+      setDeprecated(true);
       onContinue();
+    };
+
+    if (!hasDisplayDeprecateWarning && !skipDeprecation) {
+      if (deprecateData.warningClearSigning) {
+        return <DeprecationClearSigningWarning onContinue={handleContinue} />;
+      } else if (!alreadyDismissed) {
+        return <DeprecationWarning coinName={coin} date={date} onContinue={handleContinue} />;
+      }
     }
+    onContinue();
+    return null;
   }
 
   if (displayUpgradeWarning && appAndVersion) {

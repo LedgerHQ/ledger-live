@@ -34,7 +34,7 @@ const appConfig: Record<string, ConfigInfo> = {
             date: "2025-10-31",
           },
           warningClearSigningScreen: {
-            date: "2025-01-01",
+            date: "2025-10-01",
             features: ["swap"],
             tokenExceptions: ["WINK"],
           },
@@ -122,6 +122,7 @@ const appConfig: Record<string, ConfigInfo> = {
             date: "2025-01-01",
             features: ["swap"],
             tokenExceptions: ["WINK"],
+            warningClearSigningScreen: ["send", "swap", "stake", "receive"],
           },
         },
       ],

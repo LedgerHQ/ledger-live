@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useContext, useEffect } from "react";
+import React, { Fragment, useCallback, useContext, useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
 import { Trans, useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import {
   WrongDeviceForAccount,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
+import CheckBox from "~/renderer/components/CheckBox";
 import {
   DeviceDeprecationError,
   DeviceNotOnboarded,
@@ -78,6 +79,7 @@ import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
 import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
 import { rgba } from "~/renderer/styles/helpers";
+import { deprecateWarningReminder } from "~/renderer/actions/settings";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -1036,6 +1038,20 @@ export const DeprecationWarning = ({
   date: string;
   onContinue: () => void;
 }) => {
+  const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(false);
+
+  const toggleCheck = useCallback(() => {
+    setIsChecked(prev => !prev);
+  }, []);
+
+  const handleContinue = () => {
+    if (isChecked) {
+      dispatch(deprecateWarningReminder(coinName));
+    }
+    onContinue();
+  };
+
   return (
     <Box flow={4} mx={40}>
       <CircleIcon>
@@ -1063,13 +1079,7 @@ export const DeprecationWarning = ({
       >
         <Trans i18nKey={`lnsDeprecation.update`} />
       </ButtonV3>
-      <ButtonV3
-        size="large"
-        variant="shade"
-        onClick={() => {
-          onContinue();
-        }}
-      >
+      <ButtonV3 size="large" variant="shade" onClick={handleContinue}>
         <Trans i18nKey={`lnsDeprecation.continue`} />
       </ButtonV3>
       <Link
@@ -1082,6 +1092,28 @@ export const DeprecationWarning = ({
       >
         <Trans i18nKey={`lnsDeprecation.learnMore`} />
       </Link>
+      <Box
+        horizontal
+        alignItems="flex-start"
+        onClick={toggleCheck}
+        style={{
+          flex: 1,
+          cursor: "pointer",
+        }}
+      >
+        <CheckBox isChecked={isChecked} data-testid="dismiss-disclaimer" />
+        <Text
+          ff="Inter|SemiBold"
+          fontSize={4}
+          style={{
+            marginLeft: 8,
+            overflowWrap: "break-word",
+            flex: 1,
+          }}
+        >
+          <Trans i18nKey={`lnsDeprecation.info.reminder`} />
+        </Text>
+      </Box>
     </Box>
   );
 };

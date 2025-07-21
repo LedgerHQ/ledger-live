@@ -9,7 +9,12 @@ const testPathIgnorePatterns = [
   "test-helpers/",
 ];
 
-const esmDeps = ["ky"];
+const esmDeps = [
+  "ky",
+  "@ledgerhq/live-dmk-shared",
+  "@ledgerhq/device-management-kit", // l’autre paquet Ledger est aussi ESM‑only
+  "@babel/runtime/helpers/esm",
+];
 
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
@@ -62,16 +67,12 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
-    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
+    "^.+\\.tsx?$": "ts-jest",
+
+    "^.+\\.jsx?$": ["@swc/jest", { jsc: { target: "es2019" } }],
   },
-  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
+
+  transformIgnorePatterns: [`/node_modules/(?!(${esmDeps.join("|")})/)`],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   /**
    * Added because of this error happening when using toMatchInlineSnapshot:
