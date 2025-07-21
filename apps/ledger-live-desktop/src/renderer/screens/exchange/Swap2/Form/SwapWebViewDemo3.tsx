@@ -4,15 +4,6 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
-import {
-  convertToAtomicUnit,
-  convertToNonAtomicUnit,
-  getCustomFeesPerFamily,
-} from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
@@ -24,9 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import styled from "styled-components";
-import { reduce, firstValueFrom } from "rxjs";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { track } from "~/renderer/analytics/segment";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
@@ -49,14 +38,14 @@ import {
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
 import {
-  transformToBigNumbers,
   useGetSwapTrackingProperties,
   useRedirectToSwapHistory,
 } from "../utils/index";
-import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { convertToAtomicUnit } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
+import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -112,7 +101,6 @@ function simplifyFromPath(path: string): string {
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
-const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({ manifest }: SwapWebProps) => {
   const {
@@ -156,209 +144,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     () => ({
       ...loggerHandlers,
       ...customPTXHandlers,
-      "custom.getFee": async ({
-        params,
-      }: {
-        params: {
-          fromAccountId: string;
-          fromAmount: string;
-          feeStrategy: string;
-          openDrawer: boolean;
-          customFeeConfig: object;
-          SWAP_VERSION: string;
-          gasLimit?: string;
-        };
-      }): Promise<{
-        feesStrategy: string;
-        estimatedFees: BigNumber | undefined;
-        errors: object;
-        warnings: object;
-        customFeeConfig: object;
-        gasLimit?: string;
-        hasDrawer: boolean;
-      }> => {
-        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-        if (!realFromAccountId) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-
-        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-        if (!fromAccount) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-        const fromParentAccount = getParentAccount(fromAccount, accounts);
-
-        let mainAccount = getMainAccount(fromAccount, fromParentAccount);
-        const bridge = getAccountBridge(fromAccount, fromParentAccount);
-
-        const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
-
-        // NOTE: we might sync all types of accounts here
-        if (mainAccount.currency.id === "bitcoin") {
-          try {
-            const syncedAccount = await firstValueFrom(
-              bridge
-                .sync(mainAccount, { paginationConfig: {} })
-                .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
-            );
-            if (syncedAccount) {
-              mainAccount = syncedAccount;
-            }
-          } catch (e) {
-            logger.error(e);
-          }
-        }
-
-        const transaction = bridge.createTransaction(mainAccount);
-
-        const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
-          ...transaction,
-          subAccountId,
-          recipient:
-            mainAccount.currency.id === "bitcoin"
-              ? getSegWitAbandonSeedAddress()
-              : getAbandonSeedAddress(mainAccount.currency.id),
-          amount: convertToAtomicUnit({
-            amount: new BigNumber(params.fromAmount),
-            account: fromAccount,
-          }),
-          feesStrategy: params.feeStrategy || "medium",
-          customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
-          ...transformToBigNumbers(params.customFeeConfig),
-        });
-        let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-        const statusInit = status;
-        let finalTx = preparedTransaction;
-        let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
-        const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
-          finalTx = newTransaction;
-          return newTransaction;
-        };
-
-        const hasDrawer =
-          ["evm", "bitcoin"].includes(transaction.family) &&
-          !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
-        if (!params.openDrawer) {
-          return {
-            feesStrategy: finalTx.feesStrategy,
-            estimatedFees: convertToNonAtomicUnit({
-              amount: status.estimatedFees,
-              account: mainAccount,
-            }),
-            errors: status.errors,
-            warnings: status.warnings,
-            customFeeConfig,
-            hasDrawer,
-            gasLimit: finalTx.gasLimit,
-          };
-        }
-
-        return new Promise(resolve => {
-          const performClose = (save: boolean) => {
-            track("button_clicked2", {
-              button: save ? "continueNetworkFees" : "closeNetworkFees",
-              page: "quoteSwap",
-              ...swapDefaultTrack,
-              swapVersion: params.SWAP_VERSION,
-              value: finalTx.feesStrategy || "custom",
-            });
-            setDrawer(undefined);
-            if (!save) {
-              resolve({
-                feesStrategy: params.feeStrategy,
-                estimatedFees: convertToNonAtomicUnit({
-                  amount: statusInit.estimatedFees,
-                  account: mainAccount,
-                }),
-                errors: statusInit.errors,
-                warnings: statusInit.warnings,
-                customFeeConfig: params.customFeeConfig,
-                hasDrawer,
-                gasLimit: finalTx.gasLimit,
-              });
-            }
-            resolve({
-              // little hack to make sure we do not return null (for bitcoin for instance)
-              feesStrategy: finalTx.feesStrategy || "custom",
-              estimatedFees: convertToNonAtomicUnit({
-                amount: status.estimatedFees,
-                account: mainAccount,
-              }),
-              errors: status.errors,
-              warnings: status.warnings,
-              customFeeConfig,
-              hasDrawer,
-              gasLimit: finalTx.gasLimit,
-            });
-          };
-
-          setDrawer(
-            FeesDrawerLiveApp,
-            {
-              setTransaction,
-              account: fromAccount,
-              parentAccount: fromParentAccount,
-              status: status,
-              provider: undefined,
-              disableSlowStrategy: true,
-              transaction: preparedTransaction,
-              onRequestClose: (save: boolean) => performClose(save),
-            },
-            {
-              title: t("swap2.form.details.label.fees"),
-              forceDisableFocusTrap: true,
-              onRequestClose: () => performClose(false),
-            },
-          );
-        });
-      },
       "custom.isReady": async () => {
         console.info("Swap Live App Loaded");
-      },
-      "custom.getTransactionByHash": async ({
-        params,
-      }: {
-        params: {
-          transactionHash: string;
-          fromAccountId: string;
-          SWAP_VERSION: string;
-        };
-      }): Promise<
-        | {
-            hash: string;
-            blockHeight: number | undefined;
-            blockHash: string | undefined;
-            nonce: number;
-            gasUsed: string;
-            gasPrice: string;
-            value: string;
-          }
-        | {}
-      > => {
-        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-        if (!realFromAccountId) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-
-        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-        if (!fromAccount) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-
-        const fromParentAccount = getParentAccount(fromAccount, accounts);
-        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-
-        const nodeAPI = getNodeApi(mainAccount.currency);
-
-        try {
-          const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
-          return Promise.resolve(tx);
-        } catch (error) {
-          // not a real error, the node just didn't find the transaction yet
-          return Promise.resolve({});
-        }
       },
       "custom.swapRedirectToHistory": async () => {
         redirectToHistory();
