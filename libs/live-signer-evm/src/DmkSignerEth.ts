@@ -130,7 +130,11 @@ export class DmkSignerEth implements EvmSigner {
       chainCode: result.chainCode,
     };
   }
-  signTransaction(path: string, rawTxHex: string, _resolution?: any): Observable<EvmSignerEvent> {
+  signTransaction(
+    path: string,
+    rawTxHex: string,
+    resolution?: ResolutionConfig,
+  ): Observable<EvmSignerEvent> {
     const buffer = hexaStringToBuffer(rawTxHex);
 
     if (!buffer) {
@@ -138,43 +142,48 @@ export class DmkSignerEth implements EvmSigner {
     }
 
     return new Observable(observer => {
-      this.signer.signTransaction(path, buffer, { skipOpenApp: true }).observable.subscribe({
-        next: result => {
-          if (result.status === DeviceActionStatus.Error) {
-            observer.error(this._mapError<SignTransactionDAError>(result.error));
-          }
-          if (result.status === DeviceActionStatus.Pending) {
-            if (result.intermediateValue.step === SignTransactionDAStep.SIGN_TRANSACTION) {
-              observer.next({ type: "signer.evm.signing" });
+      this.signer
+        .signTransaction(path, buffer, {
+          skipOpenApp: true,
+          domain: resolution?.domains?.[0]?.domain,
+        })
+        .observable.subscribe({
+          next: result => {
+            if (result.status === DeviceActionStatus.Error) {
+              observer.error(this._mapError<SignTransactionDAError>(result.error));
             }
-            if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
-              observer.next({ type: "signer.evm.loading-context" });
+            if (result.status === DeviceActionStatus.Pending) {
+              if (result.intermediateValue.step === SignTransactionDAStep.SIGN_TRANSACTION) {
+                observer.next({ type: "signer.evm.signing" });
+              }
+              if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
+                observer.next({ type: "signer.evm.loading-context" });
+              }
+              if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
+                observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
+              }
+              if (
+                result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
+                result.intermediateValue.result === true
+              ) {
+                observer.next({ type: "signer.evm.transaction-checks-opt-in" });
+              }
+              if (
+                result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
+                result.intermediateValue.result === false
+              ) {
+                observer.next({ type: "signer.evm.transaction-checks-opt-out" });
+              }
+            } else if (result.status === DeviceActionStatus.Completed) {
+              observer.next({
+                type: "signer.evm.signed",
+                value: this._formatSignature(result.output),
+              });
             }
-            if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
-              observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
-            }
-            if (
-              result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
-              result.intermediateValue.result === true
-            ) {
-              observer.next({ type: "signer.evm.transaction-checks-opt-in" });
-            }
-            if (
-              result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN_RESULT &&
-              result.intermediateValue.result === false
-            ) {
-              observer.next({ type: "signer.evm.transaction-checks-opt-out" });
-            }
-          } else if (result.status === DeviceActionStatus.Completed) {
-            observer.next({
-              type: "signer.evm.signed",
-              value: this._formatSignature(result.output),
-            });
-          }
-        },
-        error: error => observer.error(error),
-        complete: () => observer.complete(),
-      });
+          },
+          error: error => observer.error(error),
+          complete: () => observer.complete(),
+        });
     });
   }
 
@@ -219,10 +228,10 @@ export class DmkSignerEth implements EvmSigner {
   clearSignTransaction(
     path: string,
     rawTxHex: string,
-    _resolutionConfig: ResolutionConfig,
+    resolutionConfig: ResolutionConfig,
     _throwOnError: boolean,
   ) {
-    return this.signTransaction(path, rawTxHex);
+    return this.signTransaction(path, rawTxHex, resolutionConfig);
   }
 
   signEIP712HashedMessage(

@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,7 @@ import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
 import { getFontStyle } from "~/components/LText";
+import { Keyboard } from "react-native";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
@@ -62,6 +63,16 @@ const EditAccountName = ({ navigation, route }: NavigationProps) => {
 
     navigation.goBack();
   }, [accountName, route.params, navigation, dispatch, account]);
+
+  useEffect(() => {
+    if (Platform.OS !== "ios") return;
+
+    const unsubscribe = navigation.addListener("gestureEnd", () => {
+      Keyboard.dismiss();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const isApplyDisabled = !accountName.trim();
 

@@ -6,6 +6,8 @@ declare module "jest-allure2-reporter/api" {
    */
   export function $TmsLink(...tmsLinks: string[]): void;
 
+  export function $Tag(...tags: string[]): void;
+
   export function $Severity(severity: string): void;
 
   export function $Epic(epic: string): void;
@@ -22,6 +24,8 @@ declare module "jest-allure2-reporter/api" {
 
 declare global {
   function $TmsLink(...tmsLinks: string[]): void;
+
+  function $Tags(...tags: string[]): void;
 
   function $Severity(severity: string): void;
 

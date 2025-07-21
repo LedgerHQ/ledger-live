@@ -25,15 +25,13 @@ export async function launchSpeculos(appName: string) {
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
-  const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
-  invariant(speculosDevice, "[E2E Setup] Speculos not started");
+  const device = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
 
-  const speculosApiPort = speculosDevice.ports.apiPort;
-  invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
-  setEnv("SPECULOS_API_PORT", speculosApiPort);
-  speculosDevices.set(speculosApiPort, speculosDevice.id);
-  log.warn(`Speculos ${speculosDevice.id} started on ${speculosApiPort}`);
-  return speculosApiPort;
+  invariant(device, "[E2E Setup] Speculos not started");
+  setEnv("SPECULOS_API_PORT", device.port);
+  speculosDevices.set(device.port, device.id);
+  log.warn(`Speculos ${device.id} started on ${device.port}`);
+  return device.port;
 }
 
 export async function launchProxy(

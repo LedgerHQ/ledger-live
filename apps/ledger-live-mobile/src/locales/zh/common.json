@@ -294,6 +294,14 @@
       "title" : "设备已断开",
       "description" : "Ledger Live 无法连接到您的设备。请重试。"
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+    },
     "CasperInvalidTransferId" : {
       "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
     },
@@ -511,6 +519,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1072,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
     }
   },
   "crash" : {
@@ -2160,7 +2176,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "正品检查和操作系统更新检查",
+    "title" : "Ledger 正品检查",
     "idle" : {
       "learnMore" : "详细了解正品检查",
       "checkCta" : "检查 {{ productName }}"
@@ -2196,11 +2212,11 @@
     "genuineCheckStep" : {
       "learnMore" : "详细了解正品检查",
       "inactive" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "这可确保您的 {{productName}} 是官方 Ledger 设备。"
       },
       "active" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "这可确保您的 {{productName}} 是官方 Ledger 设备。"
       },
       "completed" : {
@@ -2208,23 +2224,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "正品检查被拒绝",
+        "title" : "Ledger 正品检查未通过",
         "description" : "要继续使用 Ledger Live 应用程序设置 {{productName}}，必须完成正品检查。",
         "cta" : "继续检查"
       },
       "error" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "正品检查可确保您的 {{productName}} 是官方 Ledger 设备。"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "操作系统更新检查",
-        "description" : "这将检查您的 {{productName}} 操作系统系统是否为最新。 "
+        "title" : "Ledger OS 操作系统检查",
+        "description" : "此操作可检查您的 {{productName}} 操作系统是否为最新版本。 "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} 操作系统是最新的"
+          "title" : "Ledger OS 操作系统已是最新版本"
         }
       },
       "error" : {
@@ -2238,8 +2254,8 @@
         "skipCta" : "跳过更新"
       },
       "inactive" : {
-        "title" : "操作系统更新检查",
-        "description" : "这将检查您的 {{productName}} 操作系统是否为最新版本。 "
+        "title" : "Ledger OS 操作系统检查",
+        "description" : "此操作可检查您的 {{productName}} 操作系统是否为最新版本。 "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2251,7 +2267,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "设置 {{deviceName}}",
+    "title" : "准备好您的 {{productName}}",
     "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
     "deviceSelection" : {
       "title" : "选择您要设置的 Ledger 设备：",
@@ -2306,7 +2322,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} 为正品",
-      "subtitle" : "这台 {{productName}} 可以安全使用。您可以继续进行设置。",
+      "subtitle" : "您的 {{productName}} 可以安全使用。您现在可以开始设置。",
       "description" : "点按 {{productName}} 开始设置。"
     },
     "pinStep" : {
@@ -2316,30 +2332,58 @@
       "continueOnDevice" : "在您的 {{productName}} 上设置识别码。"
     },
     "seedStep" : {
-      "title" : "秘密恢复短语",
+      "title" : "设置与备份",
       "doneTitle" : "秘密恢复短语已确认",
       "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本",
       "choiceRestoreDirectOrRecover" : "占位符 - 选择直接恢复或使用 Recover",
       "recoverSeed" : "占位符：Recover",
-      "restoreSeed" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
       "selection" : "选择最适合您的设置选项：",
       "selectionNewLedger" : {
         "title" : "设置为新 Ledger 设备",
-        "desc" : "可让您创建新钱包。这会生成新的秘密恢复短语。"
+        "desc" : "这会为您生成新的秘密恢复短语。"
       },
       "selectionRestore" : {
-        "title" : "重置",
-        "desc" : "可让您使用秘密恢复短语或通过 Ledger Recover 恢复对现有资产的访问权限。"
+        "title" : "恢复对您资产的访问权限",
+        "desc" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "descWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。"
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key 恢复钥匙",
+        "desc" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
+        "cta" : "了解详情或购买",
+        "continueOnDevice" : "按照 {{productName}} 上的说明进行操作"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "选择您要通过以下方式恢复的备份：",
+        "continueOnDevice" : "在 {{productName}} 上选择相应选项。",
+        "secretRecoveryPhrase" : {
+          "title" : "秘密恢复短语",
+          "description" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。"
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key 恢复钥匙",
+          "description" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover 订阅",
+          "description" : "使用您的订阅服务，通过身份验证恢复对资产的访问权限。"
+        }
+      },
+      "restoreSeed" : {
+        "title" : "使用秘密恢复短语重置",
+        "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "continueOnDevice" : "在 {{productName}} 上选择相应选项。"
+      },
+      "restoreLedgerCharon" : {
+        "title" : "使用 Recovery Key 进行恢复",
+        "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "continueOnDevice" : "按照 {{productName}} 上的说明进行操作。"
       },
       "selectionContinueOnDevice" : "在 {{productName}} 上选择相应选项。",
-      "newSeedDescription" : "想进一步了解秘密恢复短语？请观看这些视频：",
-      "newSeedContinueOnDevice" : "在您的 {{productName}} 上执行此操作",
-      "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
-      "restoreChoiceContinueOnDevice" : "在 {{productName}} 上选择相应选项。",
-      "restoreChoiceSRPTitle" : "使用秘密恢复短语恢复",
-      "restoreChoiceSRPDescription" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。 ",
-      "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
-      "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，启动秘密恢复短语备份的恢复流程。"
+      "newSeedTitle" : "秘密恢复短语",
+      "newSeedDescription" : "观看这些视频，详细了解秘密恢复短语：",
+      "newSeedContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
+      "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
     },
     "backup" : {
       "title" : "秘密恢复短语备份",
@@ -3189,6 +3233,12 @@
         "placeholder" : "CAL 格式的兑换提供商信息",
         "currentSetting" : "当前设置",
         "error" : "CAL 值无效"
+      },
+      "customCALRef" : {
+        "title" : "自定义 CAL 引用",
+        "description" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
+        "enable" : "启用自定义 CAL 引用",
+        "disable" : "禁用自定义 CAL 引用"
       }
     },
     "debug" : {
@@ -3354,7 +3404,13 @@
         "verify" : "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
       "noResultsFound" : "未找到加密资产",
-      "noResultsDesc" : "请检查拼写后重试。"
+      "noResultsDesc" : "请检查拼写后重试。",
+      "sanctionedAddress" : {
+        "title" : "保障您的安全",
+        "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "关闭",
+        "learnMore" : "了解更多"
+      }
     },
     "buy" : {
       "title" : "买入",
@@ -3365,7 +3421,8 @@
       "description" : "安全出售加密货币以换取现金。"
     },
     "exchange" : {
-      "title" : "买入 / 卖出"
+      "title" : "买入 / 卖出",
+      "connectingTo" : "正在连接到 {{provider}}"
     },
     "stake" : {
       "title" : "权益质押",
@@ -3560,11 +3617,22 @@
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
       },
+      "quotesList" : {
+        "title" : "选择报价"
+      },
+      "twoStepApproval" : {
+        "title" : "完成步骤"
+      },
+      "history" : {
+        "title" : "互换历史记录"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
         "contact_support" : "联系客服",
         "ton_title" : "Ledger Nano S™ 不支持互换 TON",
         "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ton_tokens_title" : "Ledger Nano S™ 不支持互换 Ton 代币",
+        "ton_tokens_description" : "要互换 Ton 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
         "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "near_title" : "Ledger Nano S™ 不支持互换 Near",
@@ -3844,6 +3912,9 @@
           "title" : "未找到此网域的地址"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
     },
     "amount" : {
       "available" : "可用总额",
@@ -6082,6 +6153,7 @@
       "transferFees" : {
         "title" : "转账费用",
         "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）（最高为 {{maxFee}}）",
+        "feesHint" : "代币转账费用：{{transferFee}}",
         "notice" : "转账费用 {{fee}}%",
         "tooltipHint" : "归属代币创建者的转账百分比"
       },
@@ -7420,6 +7492,33 @@
     "performance" : "表现",
     "low" : "低",
     "high" : "高",
-    "title" : "市场走势"
+    "title" : "市场走势",
+    "overlay" : {
+      "title" : "在资产之间切换",
+      "action" : "向左或向右滑动",
+      "button" : "知道了！"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "您的 NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger 钱包。",
+    "learnMore" : "了解更多"
+  },
+  "versionBlocking" : {
+    "title" : "需要更新 Ledger Live",
+    "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
+    "openStore" : "更新"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "选择资产",
+    "selectNetwork" : "选择网络",
+    "selectAccount" : "选择账户"
   }
 }

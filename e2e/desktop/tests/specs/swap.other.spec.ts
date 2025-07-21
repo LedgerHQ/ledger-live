@@ -1,17 +1,23 @@
 import test from "../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   performSwapUntilDeviceVerificationStep,
 } from "../utils/swapUtils";
+import { getEnv } from "@ledgerhq/live-env";
+import { overrideNetworkPayload } from "../utils/networkUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -26,15 +32,15 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
 const checkProviders = [
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDC_1,
+    toAccount: TokenAccount.ETH_USDC_1,
     xrayTicket: "B2CQA-3119",
-    provider: Provider.PARASWAP,
+    provider: Provider.VELORA,
   },
 ];
 
@@ -90,7 +96,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.selectSpecificProvider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
         await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
@@ -278,7 +284,7 @@ test.describe("Swap - Rejected on device", () => {
 
 test.describe("Swap - Landing page", () => {
   const fromAccount = Account.ETH_1;
-  const toAccount = Account.ETH_USDC_1;
+  const toAccount = TokenAccount.ETH_USDC_1;
 
   setupEnv(true);
 
@@ -499,21 +505,21 @@ const tooLowAmountForQuoteSwaps = [
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
     xrayTicket: "B2CQA-3240",
     errorMessage: "Not enough balance",
     ctaBanner: false,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
+    swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
     xrayTicket: "B2CQA-3241",
     errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
     ctaBanner: true,
     quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
+    swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
     errorMessage: new RegExp(`Minimum \\d+(\\.\\d{1,10})? USDT needed for quotes\\.\\s*$`),
     ctaBanner: false,
@@ -630,7 +636,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
-      await app.swap.swithYouSendAndYouReceive(electronApp);
+      await app.swap.switchYouSendAndYouReceive(electronApp);
       await app.swap.checkAssetFrom(electronApp, swap.accountToCredit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToDebit.currency.ticker);
     },
@@ -764,7 +770,9 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.accounts.navigateToAccountByName(
+        getParentAccountName(swapEntryPoint.swap.accountToDebit),
+      );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
@@ -802,7 +810,7 @@ const swapMax = [
     xrayTicket: "B2CQA-3365",
   },
   {
-    fromAccount: Account.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3366",
   },
@@ -883,10 +891,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
 test.describe("Swap history", () => {
   const swapHistory = {
-    swap: new Swap(Account.ETH_1, Account.XLM_1, "0.008"),
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
     xrayTicket: "B2CQA-604",
-    provider: Provider.CHANGELLY,
-    swapId: "fmwnt4mc0tiz75kz",
+    provider: Provider.EXODUS,
+    swapId: "wQ90NrWdvJz5dA4",
   };
 
   setupEnv(true);
@@ -942,6 +950,69 @@ test.describe("Swap history", () => {
         swapHistory.swapId,
         swapHistory.swap,
         swapHistory.provider,
+      );
+    },
+  );
+});
+
+test.describe("Swap - Block blacklisted addresses", () => {
+  const fromAccount = Account.ETH_1;
+  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: fromAccount.currency.speculosApp,
+          cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+        },
+        {
+          app: toAccount.currency.speculosApp,
+          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
+        },
+      ],
+      { scope: "test" },
+    ],
+  });
+
+  test(
+    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3539",
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
+      await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
+        json.bannedAddresses = [fromAccount.address];
+        return json;
+      });
+
+      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount);
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+      const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+      await app.swap.clickExchangeButton(electronApp, selectedProvider);
+
+      await app.swapDrawer.checkErrorMessage(
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
       );
     },
   );

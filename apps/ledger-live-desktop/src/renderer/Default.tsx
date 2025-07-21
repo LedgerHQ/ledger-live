@@ -58,6 +58,8 @@ import { setShareAnalytics, setSharePersonalizedRecommendations } from "./action
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
+import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
+import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -255,163 +257,175 @@ export default function Default() {
       <TrackAppStart />
       <Idler />
       {process.platform === "darwin" ? <AppRegionDrag /> : null}
-
-      <IsUnlocked>
-        <BridgeSyncProvider>
-          <WalletSyncProvider>
-            <ContextMenuWrapper>
-              <ModalsLayer />
-              <DebugWrapper>
-                {process.env.DEBUG_THEME ? <DebugTheme /> : null}
-                {process.env.MOCK ? <DebugMock /> : null}
-                {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
-                {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
-                {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
-              </DebugWrapper>
-              {process.env.DISABLE_TRANSACTION_BROADCAST ? (
-                <DisableTransactionBroadcastWarning
-                  value={process.env.DISABLE_TRANSACTION_BROADCAST}
-                />
-              ) : null}
-              <Switch>
-                <Route
-                  path="/onboarding"
-                  render={() => (
-                    <>
-                      <Suspense fallback={<Fallback />}>
-                        <Onboarding />
-                      </Suspense>
-                      <Drawer />
-                    </>
-                  )}
-                />
-                <Route path="/sync-onboarding" render={withSuspense(SyncOnboarding)} />
-                <Route
-                  path="/post-onboarding"
-                  render={() => (
-                    <>
-                      <Suspense fallback={<Fallback />}>
-                        <PostOnboardingScreen />
-                      </Suspense>
-                      <Drawer />
-                    </>
-                  )}
-                />
-                <Route path="/recover-restore" render={withSuspense(RecoverRestore)} />
-
-                <Route path="/USBTroubleshooting">
-                  <Suspense fallback={<Fallback />}>
-                    <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
-                  </Suspense>
-                </Route>
-
-                {!hasCompletedOnboarding ? (
+      <AppGeoBlocker>
+        <AppVersionBlocker>
+          <IsUnlocked>
+            <BridgeSyncProvider>
+              <WalletSyncProvider>
+                <ContextMenuWrapper>
+                  <ModalsLayer />
+                  <DebugWrapper>
+                    {process.env.DEBUG_THEME ? <DebugTheme /> : null}
+                    {process.env.MOCK ? <DebugMock /> : null}
+                    {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
+                    {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
+                    {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
+                  </DebugWrapper>
+                  {process.env.DISABLE_TRANSACTION_BROADCAST ? (
+                    <DisableTransactionBroadcastWarning
+                      value={process.env.DISABLE_TRANSACTION_BROADCAST}
+                    />
+                  ) : null}
                   <Switch>
-                    <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
-                    <FeatureToggle featureId="protectServicesDesktop">
-                      <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
-                    </FeatureToggle>
-                  </Switch>
-                ) : (
-                  <Route>
-                    <Switch>
-                      <Route>
-                        <IsNewVersion />
-                        <IsSystemLanguageAvailable />
-                        <IsTermOfUseUpdated />
-                        <SyncNewAccounts priority={2} />
-
-                        <Box
-                          grow
-                          horizontal
-                          bg="palette.background.default"
-                          color="palette.text.shade60"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                          }}
-                        >
-                          <FeatureToggle featureId="protectServicesDesktop">
-                            <Switch>
-                              <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
-                            </Switch>
-                          </FeatureToggle>
-                          <MainSideBar />
-                          <Page>
-                            <TopBannerContainer>
-                              <UpdateBanner />
-                              <FirmwareUpdateBanner />
-                              <VaultSignerBanner />
-                            </TopBannerContainer>
-                            <Switch>
-                              <Route path="/" exact render={withSuspense(Dashboard)} />
-                              <Route path="/settings" render={withSuspense(Settings)} />
-                              <Route path="/accounts" render={withSuspense(Accounts)} />
-                              <Route exact path="/card/:appId?" render={withSuspense(Card)} />
-                              <Redirect from="/manager/reload" to="/manager" />
-                              <Route path="/manager" render={withSuspense(Manager)} />
-                              <Route
-                                path="/platform"
-                                render={withSuspense(PlatformCatalog)}
-                                exact
-                              />
-                              <Route path="/platform/:appId?" component={LiveApp} />
-                              <Route path="/earn" render={withSuspense(Earn)} />
-                              <Route
-                                exact
-                                path="/exchange/:appId?"
-                                render={withSuspense(Exchange)}
-                              />
-                              <Route
-                                exact
-                                path="/account/:id/nft-collection"
-                                render={withSuspense(
-                                  isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
-                                )}
-                              />
-                              <Route path="/swap-web" render={withSuspense(SwapWeb)} />
-                              <Route
-                                path="/account/:id/nft-collection/:collectionAddress?"
-                                render={withSuspense(
-                                  isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
-                                )}
-                              />
-                              <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
-                              <Route path="/account/:id" render={withSuspense(Account)} />
-                              <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
-                              <Route path="/swap" render={withSuspense(Swap2)} />
-                              <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
-                              <Route path="/market" render={withSuspense(Market)} />
-                            </Switch>
-                          </Page>
+                    <Route
+                      path="/onboarding"
+                      render={() => (
+                        <>
+                          <Suspense fallback={<Fallback />}>
+                            <Onboarding />
+                          </Suspense>
                           <Drawer />
-                          <ToastOverlay />
-                        </Box>
+                        </>
+                      )}
+                    />
+                    <Route path="/sync-onboarding" render={withSuspense(SyncOnboarding)} />
+                    <Route
+                      path="/post-onboarding"
+                      render={() => (
+                        <>
+                          <Suspense fallback={<Fallback />}>
+                            <PostOnboardingScreen />
+                          </Suspense>
+                          <Drawer />
+                        </>
+                      )}
+                    />
+                    <Route path="/recover-restore" render={withSuspense(RecoverRestore)} />
 
-                        {__PRERELEASE__ &&
-                        __CHANNEL__ !== "next" &&
-                        !__CHANNEL__.includes("sha") ? (
-                          <NightlyLayer />
-                        ) : null}
+                    <Route path="/USBTroubleshooting">
+                      <Suspense fallback={<Fallback />}>
+                        <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
+                      </Suspense>
+                    </Route>
 
-                        <KeyboardContent sequence="CRASH_TEST">
-                          <LetThisCrashForCrashTest />
-                        </KeyboardContent>
-                        <KeyboardContent sequence="CRASH_MAIN">
-                          <LetMainSendCrashTest />
-                        </KeyboardContent>
-                        <KeyboardContent sequence="CRASH_INTERNAL">
-                          <LetInternalSendCrashTest />
-                        </KeyboardContent>
+                    {!hasCompletedOnboarding ? (
+                      <Switch>
+                        <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
+                        <FeatureToggle featureId="protectServicesDesktop">
+                          <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
+                        </FeatureToggle>
+                      </Switch>
+                    ) : (
+                      <Route>
+                        <Switch>
+                          <Route>
+                            <IsNewVersion />
+                            <IsSystemLanguageAvailable />
+                            <IsTermOfUseUpdated />
+                            <SyncNewAccounts priority={2} />
+
+                            <Box
+                              grow
+                              horizontal
+                              bg="palette.background.default"
+                              color="palette.text.shade60"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            >
+                              <FeatureToggle featureId="protectServicesDesktop">
+                                <Switch>
+                                  <Route
+                                    path="/recover/:appId"
+                                    render={withSuspense(RecoverPlayer)}
+                                  />
+                                </Switch>
+                              </FeatureToggle>
+                              <MainSideBar />
+                              <Page>
+                                <TopBannerContainer>
+                                  <UpdateBanner />
+                                  <FirmwareUpdateBanner />
+                                  <VaultSignerBanner />
+                                </TopBannerContainer>
+                                <Switch>
+                                  <Route path="/" exact render={withSuspense(Dashboard)} />
+                                  <Route path="/settings" render={withSuspense(Settings)} />
+                                  <Route path="/accounts" render={withSuspense(Accounts)} />
+                                  <Route exact path="/card/:appId?" render={withSuspense(Card)} />
+                                  <Redirect from="/manager/reload" to="/manager" />
+                                  <Route path="/manager" render={withSuspense(Manager)} />
+                                  <Route
+                                    path="/platform"
+                                    render={withSuspense(PlatformCatalog)}
+                                    exact
+                                  />
+                                  <Route path="/platform/:appId?" component={LiveApp} />
+                                  <Route path="/earn" render={withSuspense(Earn)} />
+                                  <Route
+                                    exact
+                                    path="/exchange/:appId?"
+                                    render={withSuspense(Exchange)}
+                                  />
+                                  <Route
+                                    exact
+                                    path="/account/:id/nft-collection"
+                                    render={withSuspense(
+                                      isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
+                                    )}
+                                  />
+                                  <Route path="/swap-web" render={withSuspense(SwapWeb)} />
+                                  <Route
+                                    path="/account/:id/nft-collection/:collectionAddress?"
+                                    render={withSuspense(
+                                      isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
+                                    )}
+                                  />
+                                  <Route
+                                    path="/account/:parentId/:id"
+                                    render={withSuspense(Account)}
+                                  />
+                                  <Route path="/account/:id" render={withSuspense(Account)} />
+                                  <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
+                                  <Route path="/swap" render={withSuspense(Swap2)} />
+                                  <Route
+                                    path="/market/:currencyId"
+                                    render={withSuspense(MarketCoin)}
+                                  />
+                                  <Route path="/market" render={withSuspense(Market)} />
+                                </Switch>
+                              </Page>
+                              <Drawer />
+                              <ToastOverlay />
+                            </Box>
+
+                            {__PRERELEASE__ &&
+                            __CHANNEL__ !== "next" &&
+                            !__CHANNEL__.includes("sha") ? (
+                              <NightlyLayer />
+                            ) : null}
+
+                            <KeyboardContent sequence="CRASH_TEST">
+                              <LetThisCrashForCrashTest />
+                            </KeyboardContent>
+                            <KeyboardContent sequence="CRASH_MAIN">
+                              <LetMainSendCrashTest />
+                            </KeyboardContent>
+                            <KeyboardContent sequence="CRASH_INTERNAL">
+                              <LetInternalSendCrashTest />
+                            </KeyboardContent>
+                          </Route>
+                        </Switch>
                       </Route>
-                    </Switch>
-                  </Route>
-                )}
-              </Switch>
-            </ContextMenuWrapper>
-          </WalletSyncProvider>
-        </BridgeSyncProvider>
-      </IsUnlocked>
+                    )}
+                  </Switch>
+                </ContextMenuWrapper>
+              </WalletSyncProvider>
+            </BridgeSyncProvider>
+          </IsUnlocked>
+        </AppVersionBlocker>
+      </AppGeoBlocker>
 
       {analyticsConsoleActive ? <AnalyticsConsole /> : null}
     </>

@@ -185,6 +185,7 @@ export const walletSyncQrCodePinCodeSelector = (state: { walletSync: WalletSyncS
   state.walletSync.qrCodePinCode;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as WalletSyncHandlers<false>,
   initialStateWalletSync,
 );

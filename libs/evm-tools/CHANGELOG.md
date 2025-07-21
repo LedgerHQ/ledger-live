@@ -1,5 +1,61 @@
 # @ledgerhq/evm-tools
 
+## 1.7.0
+
+### Minor Changes
+
+- [#10543](https://github.com/LedgerHQ/ledger-live/pull/10543) [`881dc73`](https://github.com/LedgerHQ/ledger-live/commit/881dc73e98bba95567fc2a4a6c54659d44f22957) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - added dapp selectors to be able to track more types of transactions on evm contracts
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.9
+
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#10543](https://github.com/LedgerHQ/ledger-live/pull/10543) [`881dc73`](https://github.com/LedgerHQ/ledger-live/commit/881dc73e98bba95567fc2a4a6c54659d44f22957) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - added dapp selectors to be able to track more types of transactions on evm contracts
+
+### Patch Changes
+
+- Updated dependencies [[`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d)]:
+  - @ledgerhq/live-env@2.11.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.9-next.0
+
+## 1.6.4
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-env@2.10.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.8
+
+## 1.6.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357)]:
+  - @ledgerhq/live-env@2.10.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.8-next.0
+
+## 1.6.3
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47)]:
+  - @ledgerhq/live-env@2.9.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.7
+
+## 1.6.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47)]:
+  - @ledgerhq/live-env@2.9.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.7-next.0
+
 ## 1.6.2
 
 ### Patch Changes

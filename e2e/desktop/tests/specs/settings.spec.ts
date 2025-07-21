@@ -1,7 +1,7 @@
 import { test } from "../fixtures/common";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
 import { FileUtils } from "../utils/fileUtils";
 
@@ -23,11 +23,11 @@ test.describe("Settings", () => {
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
       await app.accounts.expectTokenBalanceToBeNull(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
       await app.layout.goToSettings();
       await app.settings.goToAccountsTab();
@@ -35,7 +35,7 @@ test.describe("Settings", () => {
       await app.layout.goToAccounts();
       await app.accounts.verifyChildrenTokensAreNotVisible(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
     },
   );

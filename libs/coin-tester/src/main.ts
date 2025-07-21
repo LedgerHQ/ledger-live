@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/types-live";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type ScenarioTransaction<T extends TransactionCommon, A extends Account> = Partial<T> & {
   name: string;
@@ -141,6 +142,10 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
             account: scenarioAccount,
             transaction,
             deviceId: "",
+            deviceModelId: DeviceModelId.nanoX,
+            // TODO: use "test" once test signatures from the CAL
+            // are all compatible with Speculos public key
+            certificateSignatureKind: "prod",
           })
           .pipe(
             map(e => {

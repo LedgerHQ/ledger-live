@@ -1,13 +1,16 @@
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export function runDeleteAccountTest(account: AccountType, tmsLinks: string[]) {
+export function runDeleteAccountTest(
+  account: AccountType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
         featureFlags: {
           llmAccountListUI: { enabled: true },
-          llmNetworkBasedAddAccountFlow: { enabled: true },
         },
         cliCommands: [
           async (userdataPath?: string) =>
@@ -23,6 +26,7 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[]) {
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
     it(`Perform a delete account - ${account.accountName}`, async () => {
       await app.account.openViaDeeplink();
       await app.account.expectAccountName(account.accountName);

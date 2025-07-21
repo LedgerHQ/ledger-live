@@ -35,7 +35,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    debuggableVariants = [System.getenv("SKIP_JS_BUNDLING") == "true" ? "detox" : ""]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -209,6 +209,7 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
@@ -231,10 +232,6 @@ dependencies {
     // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'
-
-    // implementation 'com.brentvatne.react:react-native-video'
-    implementation project(':react-native-video')
-    implementation "androidx.appcompat:appcompat:1.0.0"
 
     // Needed for LocationHelperModule
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"

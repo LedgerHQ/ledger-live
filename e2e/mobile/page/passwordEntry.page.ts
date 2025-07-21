@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");
   getLogin = () => getElementByText("Log in");
@@ -17,13 +15,13 @@ export default class PasswordEntryPage {
 
   @Step("Expect lock")
   async expectLock() {
-    await expect(this.getPasswordTextInput()).toBeVisible();
-    await expect(this.getPasswordTextInput()).toBeVisible();
+    await detoxExpect(this.getPasswordTextInput()).toBeVisible();
+    await detoxExpect(this.getPasswordTextInput()).toBeVisible();
   }
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await expect(this.getPasswordTextInput()).not.toBeVisible();
-    await expect(this.getPasswordTextInput()).not.toBeVisible();
+    await detoxExpect(this.getPasswordTextInput()).not.toBeVisible();
+    await detoxExpect(this.getPasswordTextInput()).not.toBeVisible();
   }
 }

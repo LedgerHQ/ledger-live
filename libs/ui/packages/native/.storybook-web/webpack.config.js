@@ -9,6 +9,10 @@ module.exports = ({ config }) => {
   config.resolve.modules = [path.resolve(__dirname, "..", "node_modules"), "node_modules"];
 
   // console.log(require("util").inspect(config, { depth: null, colors: true }));
-
+  config.resolve.fallback = {
+    ...(config.resolve.fallback || {}),
+    os: require.resolve("os-browserify/browser"),
+    tty: require.resolve("tty-browserify"),
+  };
   return config;
 };

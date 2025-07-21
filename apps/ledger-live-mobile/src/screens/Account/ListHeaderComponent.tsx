@@ -11,6 +11,7 @@ import {
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { TFunction } from "react-i18next";
+import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
@@ -37,7 +38,6 @@ import ErrorWarning from "./ErrorWarning";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNFTCollectionsDisplayable } from "./nftHelper";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
-import { log } from "console";
 
 type Props = {
   account?: AccountLike;
@@ -118,6 +118,7 @@ export function useListHeaderComponents({
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
       account: account as Account &
+        AptosAccount &
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &
@@ -146,7 +147,6 @@ export function useListHeaderComponents({
     "disableDelegation" in currencyConfig &&
     currencyConfig.disableDelegation === true;
 
-  log("disableDelegation:", disableDelegation);
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -182,7 +182,7 @@ export function useListHeaderComponents({
           key="EditOperationCard"
         />
       ) : null,
-      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions">
+      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions" isFirst>
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
@@ -191,7 +191,6 @@ export function useListHeaderComponents({
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
             <SectionContainer key="AccountHeader">
-              <p>{disableDelegation}</p>
               <SectionTitle title={t("account.earn")} containerProps={{ mx: 6, mb: 6 }} />
               <Box>
                 {AccountHeaderRendered && (

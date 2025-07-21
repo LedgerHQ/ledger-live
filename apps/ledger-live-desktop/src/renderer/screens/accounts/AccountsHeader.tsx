@@ -7,11 +7,26 @@ import OptionsButton from "./OptionsButton";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
+import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/ModularDrawer/analytics/addAccount.types";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
-  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
+  const { trackAddAccountEvent } = useAddAccountAnalytics();
+  const { openAssetFlow } = useOpenAssetFlow(
+    ModularDrawerLocation.ADD_ACCOUNT,
+    MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
+  );
+
+  const handleAddAccountClick = () => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Add account",
+      page: "Accounts",
+    });
+    openAssetFlow(true);
+  };
   return (
     <Box
       horizontal
@@ -24,7 +39,12 @@ const AccountsHeader = () => {
       </Box>
       <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
         <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
-        <Button small primary onClick={openAssetFlow} data-testid="accounts-add-account-button">
+        <Button
+          small
+          primary
+          onClick={handleAddAccountClick}
+          data-testid="accounts-add-account-button"
+        >
           <Box horizontal flow={1} alignItems="center">
             <IconPlus size={12} />
             <Box>{t("addAccounts.cta.add")}</Box>

@@ -51,6 +51,7 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
 function getResolution(
   transaction: Transaction,
   deviceModelId?: DeviceModelId,
+  certificateSignatureKind?: "prod" | "test",
 ): Resolution | undefined {
   if (!transaction.subAccountId || !transaction.model.commandDescriptor) {
     return;
@@ -62,6 +63,8 @@ function getResolution(
       if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
         return {
           deviceModelId,
+          certificateSignatureKind,
+          tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
@@ -70,6 +73,8 @@ function getResolution(
       }
       return {
         deviceModelId,
+        certificateSignatureKind,
+        tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
       };
     }
@@ -77,6 +82,7 @@ function getResolution(
     case "token.createATA": {
       return {
         deviceModelId,
+        certificateSignatureKind,
         createATA: {
           address: command.owner,
           mintAddress: command.mint,
@@ -91,7 +97,7 @@ export const buildSignOperation =
     signerContext: SignerContext<SolanaSigner>,
     api: () => Promise<ChainAPI>,
   ): AccountBridge<Transaction>["signOperation"] =>
-  ({ account, deviceId, deviceModelId, transaction }) =>
+  ({ account, deviceId, deviceModelId, transaction, certificateSignatureKind }) =>
     new Observable(subscriber => {
       const main = async () => {
         const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
@@ -108,7 +114,7 @@ export const buildSignOperation =
           signer.signTransaction(
             account.freshAddressPath,
             Buffer.from(tx.message.serialize()),
-            getResolution(transaction, deviceModelId),
+            getResolution(transaction, deviceModelId, certificateSignatureKind),
           ),
         );
 

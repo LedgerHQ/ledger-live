@@ -49,7 +49,6 @@ export default {
   xrp,
   mina,
 };
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "@ledgerhq/coin-aptos/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
@@ -57,7 +56,6 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } f
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "@ledgerhq/coin-tron/bridge/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
-  | ExtraDeviceTransactionField_aptos
   | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks

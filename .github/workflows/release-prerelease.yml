@@ -44,7 +44,7 @@ jobs:
         with:
           install-proto: true
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+        run: pnpm i -D -F "ledger-live" --ignore-scripts
       - name: Move patch updates to minor for release branch
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -77,8 +77,6 @@ jobs:
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      - name: build libs
-        run: pnpm run build:libs
       - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +107,7 @@ jobs:
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
+          commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ github.ref_name }}
         env:
@@ -120,21 +118,13 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: planetscale/ghcommit-action@v0.2.9
         with:
-          commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]"
+          commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})] [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ inputs.ref }}
         env:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: authenticate with npm
-        uses: actions/setup-node@v4
-        with:
-          registry-url: "https://registry.npmjs.org"
-      - name: publish prerelease
-        run: pnpm changeset publish --no-git-tag
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - uses: actions/github-script@v7
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -165,6 +155,7 @@ jobs:
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
+
 
   prerelease-fail:
     name: "Prerelease > Failure Reporting"

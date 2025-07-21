@@ -15,7 +15,7 @@ export class AddAccountModal extends Modal {
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
   private addSubAccountButton = this.page.getByTestId("modal-continue-button");
-  private successAddLabel = this.page.locator("text=Account added successfully");
+  private successAddLabel = this.page.locator("text=/Account(s)? added successfully/");
   private selectAccountInList = (Currency: Currency) =>
     this.page.getByRole("option", {
       name: `${Currency.name} (${Currency.ticker})`,

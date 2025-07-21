@@ -78,14 +78,14 @@ export const Drawer = () => {
     >
       <>
         <TransitionGroup>
-          {queue.map(({ Component, props }, index) => (
+          {queue.map(({ Component, props, id }, index) => (
             <Transition
               timeout={{
                 appear: DURATION,
                 enter: DURATION,
                 exit: DURATION * 2,
               }}
-              key={index}
+              key={id}
             >
               {s => (
                 <Bar

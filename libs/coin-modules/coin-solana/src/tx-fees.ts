@@ -176,6 +176,7 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
           amount: 0,
           mintAddress: randomAddresses[0],
           mintDecimals: 0,
+          tokenId: "",
           ownerAddress: address,
           ownerAssociatedTokenAccountAddress: randomAddresses[1],
           recipientDescriptor: {

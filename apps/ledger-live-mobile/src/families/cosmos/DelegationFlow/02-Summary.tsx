@@ -31,6 +31,9 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
 import Config from "react-native-config";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import TranslatedError from "~/components/TranslatedError";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -102,7 +105,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params, updateTransaction, bridge, setTransaction, chosenValidator]);
+  }, [route.params, updateTransaction, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -244,6 +247,17 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        {status.errors.sender && status.errors.sender instanceof AddressesSanctionedError ? (
+          <>
+            <Text color="alert">
+              <TranslatedError error={status.errors.sender} />
+            </Text>
+            <Text color="alert">
+              <TranslatedError error={status.errors.sender} field="description" />
+            </Text>
+            <SupportLinkError error={status.errors.sender} type="alert" />
+          </>
+        ) : null}
         <Button
           event="SummaryContinue"
           type="primary"

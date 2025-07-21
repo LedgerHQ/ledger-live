@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "분",
-    "minute_plural" : "분",
+    "minute_other" : "분",
     "minute_short" : "분",
     "second_short" : "초",
     "hour" : "시간",
-    "hour_plural" : "시",
+    "hour_other" : "시간",
     "range" : {
       "day" : "1일",
       "week" : "1주",
@@ -575,7 +575,7 @@
       "date" : "날짜",
       "from" : "수신",
       "fromAddress" : "발신 주소",
-      "fromAddress_plural" : "발신 주소",
+      "fromAddress_other" : "발신 주소",
       "to" : "발신",
       "toProvider" : "공급자 주소",
       "initialAmount" : "초기 금액",
@@ -893,6 +893,7 @@
     "title" : "암호화폐 매수 및 매도",
     "reset" : "플로우 리셋",
     "verifyAddress" : "장치에 표시된 주소와 정확히 일치하는지 확인하세요",
+    "connectingTo" : "{{provider}}에 연결",
     "buy" : {
       "header" : "당사 파트너와 함께 암호화폐 구매",
       "title" : "암호화폐를 구매할 공급자를 선택하세요",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "{{deviceName}} 설정하기",
+      "title" : "{{deviceName}} 장치를 준비합니다",
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
-        "title" : "이 {{deviceName}} 장치는 정품입니다",
-        "description" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+        "title" : "{{deviceName}}는 정품입니다",
+        "description" : "{{productName}}을(를) 사용해도 안전합니다. 설정을 시작할 준비가 되었습니다.",
         "continueOnDevice" : "설정을 시작하려면 {{productName}}를 탭하세요."
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "{{productName}}에 PIN을 설정하세요"
       },
       "seedContent" : {
-        "title" : "비밀 복구 문구",
+        "title" : "설정 및 백업",
         "titleCompleted" : "비밀 복구 문구 확인됨",
         "recoverSeed" : "자리 표시자: 복구",
-        "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "restoreSeed" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "restoreCharonTitle" : "Recovery Key로 복구",
+        "restoreCharonDescription" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "restoreCharonContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "selection" : "가장 적합한 설정 옵션을 선택하세요.",
-        "selectionNewLedger" : "<0>“새 Ledger로 설정”</0>을 통해 새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
-        "selectionRestore" : "<0>“복구”기능을 통해 비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다.",
+        "selectionNewLedgerTitle" : "새 Ledger로 설정",
+        "selectionNewLedgerDescription" : "이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
+        "selectionRestoreTitle" : "자산 액세스 복구",
+        "selectionRestoreDescription" : "비밀 복구 문구나 Ledger Recover 등의 백업을 사용하여 복구할 수 있습니다.",
+        "selectionRestoreDescriptionWithCharon" : "안내를 따라 백업(비밀 복구 문구, Ledger Recover 또는 Ledger Recovery Key)을 사용하여 복구할 수 있습니다.",
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
-        "newSeedDescription1" : "{{productName}}는 24개 단어로 구성된 고유한 목록인 비밀 복구 문구를 생성합니다. 이는 Ledger를 도난당하거나 분실하거나 PIN을 잊어버린 경우 자산을 복구할 수 있는 유일한 방법입니다.",
-        "newSeedDescription2" : "<0>비밀 복구 문구를 안전하게 비공개로 유지하세요.</0>\n이 비밀 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이를 분실하면 Ledger가 도와드릴 수 없습니다",
-        "newSeedDescription3" : "비밀 복구 문구를 요구하는 사람이나 소프트웨어를 조심하세요. 그것은 사기입니다. ",
-        "newSeedDescription4" : "비밀 복구 문구를 입력해야 하는 유일한 장소는 Ledger 장치뿐입니다.",
-        "newSeedDescription5" : "타인과 공유하지 마세요. 잃어버리지 마세요.",
-        "newSeedContinueOnDevice" : "{{productName}}에 생성된 비밀 복구 문구를 확인하고 기록해두세요",
+        "selectionNewSeedTitle" : "비밀 복구 문구",
+        "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
+        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이 문구를 분실하는 경우 Ledger가 대신 복구해드립니다.",
+        "selectionNewSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
+        "restoreDescription" : "복구에 사용할 백업 수단을 선택하세요.",
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
-        "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
+        "restoreChoiceSRPTitle" : "비밀 복구 문구",
         "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요.",
-        "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-        "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업을 복구하세요.",
-        "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요."
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "Recovery Key로 자산 액세스를 복구하세요",
+        "restoreChoiceRecoverTitle" : "Ledger Recover 구독",
+        "restoreChoiceRecoverDescription" : "구독 후 신원 확인만으로 자산 액세스 복구.",
+        "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "PIN 보호 기능과 보안 칩이 탑재된 카드에 새로운 백업을 생성해 보세요.   탭 몇 번이면 자산에 다시 액세스할 수 있어요.",
+        "backupCharonCta" : "자세히 알아보기 또는 구매",
+        "backupCharonContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
       },
       "backup" : {
         "title" : "비밀 복구 문구 백업",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "정품 확인 및\nOS 업데이트 확인",
-          "completed" : "귀하의 {{modelName}}는 정품이며 최신 상태입니다"
+          "active" : "Ledger 정품 확인",
+          "completed" : "Ledger 정품 확인"
         },
         "exitWarningDrawer" : {
           "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
@@ -1320,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "정품 확인 자세히 알아보기",
-        "startChecksCTA" : "내 {{modelName}} 확인하기",
+        "startChecksCTA" : "{{modelName}} 확인하기",
         "continueCTA" : "설정 계속하기",
         "genuineCheck" : {
           "title" : {
-            "active" : "정품 확인",
-            "completed" : "귀하의 {{modelName}}는 정품입니다",
+            "active" : "Ledger 정품 확인",
+            "completed" : "{{modelName}}는 정품입니다",
             "cancelled" : "정품 확인이 거부되었습니다"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "OS 업데이트 확인",
-            "completed" : "사용 중인 {{modelName}} OS가 최신 상태입니다. ",
+            "active" : "Ledger OS 확인",
+            "completed" : "Ledger OS가 최신 상태입니다.",
             "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 사용 가능"
           },
           "subtitle" : {
-            "active" : "이를 통해 사용 중인 {{modelName}} 운영 시스템이 최신 상태인지 확인합니다.",
-            "completed" : "{{modelName}}에서 앱 복구를 시작하려면, 아래의 “앱 복구” 버튼을 선택하세요.",
+            "active" : "{{modelName}}의 운영 체제가 최신 상태인지 확인합니다.",
             "updateAvailable" : "업데이트하여 최적의 보안과 최신 기능에 대한 액세스를 누리세요."
           },
           "viewUpdateCTA" : "{{modelName}} OS 업데이트",
@@ -1782,14 +1793,14 @@
     "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
     "fullNodeConfigure" : "노드 구성",
     "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
-    "accountToImportSubtitle_plural" : "기존 계정 추가",
+    "accountToImportSubtitle_other" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
     "unselectAll" : "모든 ({{count}}) 선택 해제",
     "noAccountToImport" : "추가할 기존 {{currencyName}} 계정이 없습니다",
     "success" : "계정이 성공적으로 추가되었습니다",
-    "success_plural" : "계정이 성공적으로 추가되었습니다",
+    "success_other" : "계정이 성공적으로 추가되었습니다",
     "successDescription" : "다른 계정을 추가하거나 포트폴리오로 돌아가세요",
-    "successDescription_plural" : "다른 계정을 추가하거나 포트폴리오로 돌아가세요",
+    "successDescription_other" : "다른 계정을 추가하거나 포트폴리오로 돌아가세요",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "<1><0>{{accountName}}</0></1> 계정으로 자산을 수령하기 전에는 새 계정을 추가할 수 없습니다",
       "noAccountToCreate" : "<1><0>{{currencyName}}</0></1> 계정이 생성되지 않은 것 같습니다",
@@ -1802,7 +1813,7 @@
     "cta" : {
       "addMore" : "더 추가하기",
       "add" : "계정 추가",
-      "add_plural" : "계정 추가",
+      "add_other" : "계정 추가",
       "addAccountName" : "{{currencyName}} 계정 추가",
       "receive" : "수령"
     },
@@ -1900,9 +1911,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "PIN을 통해 {{productName}}의 잠금을 해제하고 업데이트를 완료하세요.",
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
-    "appNotInstalledTitle_plural" : "필수 앱 없음",
+    "appNotInstalledTitle_other" : "필수 앱 없음",
     "appNotInstalled" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 내 Ledger로 이동하여 장치에 앱을 설치하세요",
-    "appNotInstalled_plural" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 내 Ledger로 이동하여 장치에 앱을 설치하세요",
+    "appNotInstalled_other" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 내 Ledger로 이동하여 장치에 앱을 설치하세요",
     "openManager" : "내 Ledger 열기",
     "openOnboarding" : "장치 설정",
     "outdated" : "앱 버전이 오래됨",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
-      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
+      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -1988,14 +2000,14 @@
       },
       "installSuccess" : {
         "title" : "앱이 성공적으로 설치되었습니다. 사용자의 {{app}} 계정을 추가할 수 있습니다",
-        "title_plural" : "앱이 설치되었습니다. 사용자의 계정을 추가할 수 있습니다",
+        "title_other" : "앱이 설치되었습니다. 사용자의 계정을 추가할 수 있습니다",
         "manageAccount" : "내 계정 관리"
       },
       "updatable" : {
         "title" : "업데이트 이용 가능",
-        "title_plural" : "업데이트 이용 가능",
+        "title_other" : "업데이트 이용 가능",
         "progressTitle" : "{{number}} 앱 업데이트",
-        "progressTitle_plural" : "{{number}} 앱 업데이트",
+        "progressTitle_other" : "{{number}}개 앱 업데이트",
         "progressWarning" : "업데이트 중에 내 Ledger를 중단하지 마세요.",
         "progress" : "모두 업데이트 중..."
       },
@@ -2397,7 +2409,8 @@
         "unitVByte" : "{{unit}}/vbyte",
         "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
-        "nftQuantity" : "수량"
+        "nftQuantity" : "수량",
+        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
       },
       "verification" : {
         "streaming" : {
@@ -3772,7 +3785,7 @@
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
       "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
       "transferFees" : {
-        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율",
         "transferFeesLabel" : "전송 수수료"
@@ -4085,7 +4098,7 @@
     "duration" : "기간",
     "durationJustStarted" : "시작됨",
     "durationDays" : "({{count}})일",
-    "durationDays_plural" : "({{count}})일",
+    "durationDays_other" : "{{count}}일",
     "howItWorks" : "위임은 어떤 원리인가요?",
     "delegationEarn" : "이제 계정을 위임하여 {{name}} 스테이킹 보상을 받을 수 있습니다.",
     "earnRewards" : "보상 받기",
@@ -4405,6 +4418,8 @@
       "mockAppUpdateDesc" : "내 Ledger에 이용할 수 있는 앱 업데이트를 표시하세요. 같은 앱 버전이 재설치 됩니다",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
+      "customCALRef" : "사용자 지정 CAL 참조",
+      "customCALRefDesc" : "모든 CAL 요청에 사용할 사용자 지정 브랜치, 커밋 또는 태그를 지정하세요",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
       "customLockScreen" : "맞춤식 잠금 화면 자산",
@@ -4709,7 +4724,7 @@
     "ctaSuccess" : "완료",
     "noAccounts" : "내보낼 계정 없음",
     "selectedAccounts" : "포함할 계정",
-    "selectedAccounts_plural" : "포함할 계정 {{count}}",
+    "selectedAccounts_other" : "포함할 계정({{count}})",
     "disclaimer" : "내보내기의 등가 가치는 정보 목적으로만 제공됩니다. 당사 서비스 공급자(Kaiko)의 가치 평가 방법에 따라 트랜잭션이나 내보내기 시점의 자산 가격을 추산한 값이므로, 회계, 세금, 규제 및 법률상의 목적으로 이러한 데이터를 활용하지 마시기 바랍니다."
   },
   "language" : {
@@ -4747,7 +4762,7 @@
   "informationCenter" : {
     "tooltip" : "정보 센터",
     "ongoingIncidentsTooltip" : "현재 진행 중인 ({{count}})개의 사건이 있습니다",
-    "ongoingIncidentsTooltip_plural" : "현재 진행 중인 ({{count}})개의 사건이 있습니다",
+    "ongoingIncidentsTooltip_other" : "진행 중 인시던트 {{count}}개",
     "tabs" : {
       "announcements" : "뉴스",
       "announcementsUnseen" : "뉴스 ({{unseenCount}})",
@@ -5874,6 +5889,10 @@
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -6036,6 +6055,10 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "문제가 발생했습니다",
       "description" : "이 수령 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
+    },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "선택한 파트너의 스왑 파라미터가 누락되었습니다. 재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "문제가 발생했습니다",
@@ -6590,6 +6613,10 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "사용자 보호 조치 실행 중",
+      "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7052,11 +7079,87 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "추가하려는 계정을 선택하세요",
+      "controls" : {
+        "selectAll" : "전체 선택",
+        "deselectAll" : "전체 선택 해제"
+      },
+      "cta" : {
+        "confirm" : "확인"
+      },
+      "newAccount" : "새 계정",
+      "addAccountSelection" : "자산을 추가할 계정을 선택하세요",
+      "addAccountSelectionPtxFlow" : "계정 선택"
+    },
+    "fundAccount" : {
+      "receive" : "수령",
+      "receiveDescription" : "다른 지갑에서 암호화폐를 받아보세요",
+      "buy" : "구매",
+      "buyDescription" : "현금으로 암호화폐를 안전하게 구매해보세요"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "스캔 중단"
+      },
+      "warning" : {
+        "title" : "새 {{currency}} 계정을 추가할 수 없습니다.",
+        "description" : "새 계정을 추가하려면 먼저 {{account}} 계정으로 자산을 수령하세요",
+        "cta" : "내 계정에 자금 추가하기",
+        "close" : "닫기",
+        "noAssociatedAccounts" : {
+          "description" : "{{currency}} 생태계에서는 일부 지정된 서비스만 새 계정을 만들 수 있습니다. Ledger에서는 아직 이 계정을 직접 만들 수는 없지만, 다른 서비스를 통해 생성이 가능합니다. 계정 생성 후에는 Ledger Live에 {{currency}} 계정을 추가할 수 있어요.",
+          "cta" : "{{currency}} 계정은 어떻게 만들 수 있나요?",
+          "close" : "닫기"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "계정을 찾을 수 없습니다",
+        "foundAccounts" : "{{count}}개의 계정을 찾았습니다",
+        "foundAccounts_other" : "{{count}}개의 계정을 찾았습니다",
+        "scanning" : "계정 검색 중…"
+      },
+      "title" : "블록체인상의 기존 계정을 찾고 있습니다..."
+    },
+    "connectYourDevice" : {
+      "title" : "장치를 연결하고 잠금을 해제하세요"
+    },
     "searchPlaceholder" : "검색",
-    "assetFlow" : {
-      "selectTemplate" : "{{dynamic}} 선택",
-      "asset" : "자산",
-      "network" : "네트워크"
+    "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "selectAsset" : "자산 선택",
+    "selectNetwork" : "네트워크 선택",
+    "selectAccount" : "계정 선택",
+    "accountCount_one" : "{{count}}개 계정",
+    "accountCount_other" : "{{count}} 계정",
+    "accountsAdded" : {
+      "title" : "포트폴리오에 계정이 추가되었습니다",
+      "title_other" : "{{count}}개의 계정이 포트폴리오에 추가되었습니다",
+      "cta" : {
+        "addFunds" : "내 계정에 자금 추가하기",
+        "selectAccount" : "계속",
+        "close" : "닫기"
+      }
     }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT(대체 불가능 토큰)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "learnMore" : "자세히 알아보기"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live 업데이트 필요",
+    "errorTitle" : "업데이트 실패",
+    "errorDescription" : "업데이트를 완료하지 못했습니다. 아래 링크를 눌러 Ledger Live 최신 버전을 직접 다운로드해 주세요. ",
+    "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
+    "restart" : "재시작",
+    "downloadOnLedger" : "Ledger.com에서 다운로드",
+    "downloadProgress" : "다운로드 중... {{ progress }}%"
   }
 }

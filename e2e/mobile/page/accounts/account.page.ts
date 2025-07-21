@@ -1,34 +1,47 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class AccountPage {
   baseLink = "account";
-  operationHistorySection = "operations-history-";
+  accountListTitleId = "accounts-list-title";
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
   accountRenameTextInputId = "account-rename-text-input";
+  baseSubAccountRow = "subAccount-row-name-";
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+  operationRowRegexp = new RegExp("operation-row-" + ".*");
+  operationHistorySection = "operations-history-";
+  operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
+  accountSettingsButtonId = "account-settings-button";
+  receiveButtonId = "account-quick-action-button-receive";
+  sendButtonId = "account-quick-action-button-send";
+  swapButtonId = "account-quick-action-button-swap";
 
-  accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
+  accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountSettingsButton = () => getElementById("account-settings-button");
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
   operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
-  receiveButton = () => getElementById("account-quick-action-button-receive");
-  sendButton = () => getElementById("account-quick-action-button-send");
+
   accountRenameRow = () => getElementById("account-settings-rename-row");
+  getSpecificOperation = (operationType: string) =>
+    getElementByIdAndText(this.operationRowRegexp, operationType, 0);
+  subAccountId = (account: Account) =>
+    `js:2:${account.currency.id}:${account.parentAccount!.address}:${account.currency.id}Sub+${account.address}`;
+  accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(this.accountListTitleId);
   }
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
+    await waitForElementById(this.baseAccountName + name);
     await tapById(this.baseAccountName + name);
   }
 
@@ -44,7 +57,8 @@ export default class AccountPage {
 
   @Step("Open account settings")
   async openAccountSettings() {
-    await tapByElement(this.accountSettingsButton());
+    await waitForElementById(this.accountSettingsButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.accountSettingsButtonId);
   }
 
   @Step("Open account advanced logs")
@@ -75,14 +89,31 @@ export default class AccountPage {
   @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
-    await scrollToId(id, this.accountScreenScrollView, 300, "bottom");
-    await expect(getElementById(id)).toBeVisible();
+    await scrollToId(id, this.accountScreenScrollView, 1000, "bottom");
+    await detoxExpect(getElementById(id)).toBeVisible();
+  }
+
+  @Step("Scroll to operation history")
+  async scrollToTransactions() {
+    await waitForElementById(this.accountScreenScrollView);
+    await scrollToId(
+      this.operationHistorySectionRegexp,
+      this.accountScreenScrollView,
+      300,
+      "bottom",
+    );
+  }
+
+  @Step("Scroll to a Specific SubAccount Row")
+  async scrollToSubAccount(subAccountId: string) {
+    await waitForElementById(this.accountScreenScrollView);
+    await scrollToId(subAccountId, this.accountScreenScrollView, 500, "bottom");
   }
 
   @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
-    await expect(this.accountGraph(accountId)).toBeVisible();
-    await expect(this.accountBalance(accountId)).toBeVisible();
+    await detoxExpect(this.accountGraph(accountId)).toBeVisible();
+    await detoxExpect(this.accountBalance(accountId)).toBeVisible();
   }
 
   @Step("Expect address index")
@@ -96,17 +127,40 @@ export default class AccountPage {
 
   @Step("Tap on receive button")
   async tapReceive() {
-    await tapByElement(this.receiveButton());
+    await waitForElementById(this.receiveButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.receiveButtonId);
   }
 
   @Step("Tap on send button")
   async tapSend() {
-    await tapByElement(this.sendButton());
+    await waitForElementById(this.sendButtonId); // Issue with RN75 : QAA-370
+    await tapById(this.sendButtonId);
   }
 
   @Step("Tap on earn button")
   async tapEarn() {
     await scrollToId(this.earnButtonId, this.accountScreenScrollView);
     await tapById(this.earnButtonId);
+  }
+
+  @Step("Tap on swap button")
+  async tapSwap() {
+    await scrollToId(this.swapButtonId, this.accountScreenScrollView);
+    await tapById(this.swapButtonId);
+  }
+
+  @Step("Navigate to token in account")
+  async navigateToTokenInAccount(subAccount: Account) {
+    const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
+    await this.scrollToSubAccount(subAccountId);
+    await waitForElementById(subAccountId);
+    await tapById(subAccountId);
+    await waitForElementById(this.accountGraphId(this.subAccountId(subAccount)));
+  }
+
+  @Step("Scroll to history and click on last operation")
+  async scrollToHistoryAndClickOnLastOperation(operationType: string) {
+    await this.scrollToTransactions();
+    await tapByElement(this.getSpecificOperation(operationType));
   }
 }

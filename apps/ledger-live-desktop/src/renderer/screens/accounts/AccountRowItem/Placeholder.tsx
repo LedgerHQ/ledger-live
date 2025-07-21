@@ -1,10 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
+import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/ModularDrawer/analytics/addAccount.types";
 
 const AddAccountButton = styled(Box)`
   border: 1px dashed rgba(153, 153, 153, 0.3);
@@ -27,10 +30,23 @@ const AddAccountButton = styled(Box)`
 `;
 const Placeholder = () => {
   const { t } = useTranslation();
-  const { openAssetFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT);
+  const { trackAddAccountEvent } = useAddAccountAnalytics();
+
+  const { openAssetFlow } = useOpenAssetFlow(
+    ModularDrawerLocation.ADD_ACCOUNT,
+    MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
+  );
+  const handleAddAccountClick = () => {
+    trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
+      button: "Add account list",
+      page: "Accounts",
+    });
+    openAssetFlow(true);
+  };
+
   return (
     <Box mb={5}>
-      <AddAccountButton onClick={openAssetFlow} pb={6}>
+      <AddAccountButton onClick={handleAddAccountClick} pb={6}>
         <IconPlus size={16} />
         <Box ml={20} ff="Inter|Regular" fontSize={4}>
           {t("addAccounts.cta.add")}

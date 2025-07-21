@@ -47,7 +47,7 @@ for (const account of accounts) {
         await app.redux.waitForReduxAction("UPDATE_ACCOUNT");
         await electronApp.close();
         const userData = await getUserdata(userdataFile);
-        expect(userData.data.wallet.accountNames[0][1]).toBe(newName);
+        expect(userData.data.wallet.accountsData.accountNames[0][1]).toBe(newName);
       },
     );
   });

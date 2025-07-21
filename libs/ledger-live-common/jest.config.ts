@@ -27,7 +27,16 @@ if (process.env.USE_BACKEND_MOCKS) {
   ];
 }
 
-const reporters = ["default"];
+const reporters = [
+  "default",
+  [
+    "jest-sonar",
+    {
+      outputName: "sonar-executionTests-report.xml",
+      reportedFilePath: "absolute",
+    },
+  ],
+];
 if (process.env.CI) {
   reporters.push("github-actions");
 }
@@ -51,6 +60,7 @@ const defaultConfig = {
   ],
   testPathIgnorePatterns,
   testRegex,
+  coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
       "@swc/jest",
@@ -87,6 +97,7 @@ export default {
       : undefined,
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  reporters: defaultConfig.reporters,
   coverageReporters: ["json", "lcov", "clover", "json-summary"],
   projects: [defaultConfig],
 };

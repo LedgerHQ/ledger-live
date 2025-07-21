@@ -1,41 +1,58 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
-  AccountData,
+  type AccountData,
   Aptos,
   AptosConfig,
   Ed25519PublicKey,
-  GasEstimation,
-  InputEntryFunctionData,
-  InputGenerateTransactionOptions,
+  type GasEstimation,
+  type InputEntryFunctionData,
+  type InputGenerateTransactionOptions,
   MimeType,
-  RawTransaction,
-  SimpleTransaction,
-  TransactionResponse,
-  UserTransactionResponse,
-  Block,
-  AptosSettings,
-  MoveFunctionId,
+  MoveStructId,
+  type RawTransaction,
+  type SimpleTransaction,
+  type TransactionResponse,
+  type UserTransactionResponse,
+  type Block,
+  type AptosSettings,
   Hex,
   postAptosFullNode,
-  PendingTransactionResponse,
+  type PendingTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
-import { APTOS_ASSET_ID, DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../constants";
-import { isTestnet } from "../bridge/logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
-import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
+  APTOS_ASSET_ID,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  ESTIMATE_GAS_MUL,
+  TOKEN_TYPE,
+} from "../constants";
+import type {
+  AptosBalance,
+  AptosTransaction,
+  StakePoolResource,
+  TransactionOptions,
+} from "../types";
+import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
+import type {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BlockInfo, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset, AptosExtra, AptosFeeParameters, AptosSender } from "../types/assets";
+import {
+  BlockInfo,
+  FeeEstimation,
+  Operation,
+  Pagination,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
+import { transactionsToOperations } from "../logic/transactionsToOperations";
+import { isTestnet } from "../logic/isTestnet";
+import { normalizeAddress } from "../logic/normalizeAddress";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -47,7 +64,8 @@ const getIndexerEndpoint = (currencyId: string) =>
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
-  private readonly apolloClient: ApolloClient<object>;
+
+  readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
     if (typeof currencyIdOrSettings === "string") {
@@ -75,13 +93,12 @@ export class AptosAPI {
 
   async getAccountInfo(address: string, startAt?: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
-      this.getCoinBalance(address, APTOS_ASSET_ID),
+      this.getBalances(address, APTOS_ASSET_ID),
       this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
-
     return {
-      balance,
+      balance: balance[0]?.amount ?? BigNumber(0),
       transactions,
       blockHeight,
     };
@@ -154,89 +171,55 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
-  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
-    if (token.tokenType === "coin") {
-      return await this.getCoinBalance(address, token.contractAddress);
-    } else {
-      return await this.getFABalance(address, token.contractAddress);
-    }
-  }
-
   async getLastBlock(): Promise<BlockInfo> {
     const { block_height } = await this.aptosClient.getLedgerInfo();
     const block = await this.aptosClient.getBlockByHeight({ blockHeight: Number(block_height) });
     return {
       height: Number(block.block_height),
       hash: block.block_hash,
-      time: new Date(Number(block.block_timestamp)),
+      time: new Date(Number(block.block_timestamp) / 1_000),
     };
   }
 
-  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::coin::balance",
-          typeArguments: [contract_address],
-          functionArguments: [address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (error) {
-      log("error", "getCoinBalance", {
-        error,
-      });
-      return new BigNumber(0);
-    }
-  }
-
-  async getFABalance(address: string, contract_address: string): Promise<BigNumber> {
-    try {
-      const [balanceStr] = await this.aptosClient.view<[string]>({
-        payload: {
-          function: "0x1::primary_fungible_store::balance",
-          typeArguments: ["0x1::object::ObjectCore"],
-          functionArguments: [address, contract_address],
-        },
-      });
-      const balance = parseInt(balanceStr, 10);
-      return new BigNumber(balance);
-    } catch (error) {
-      log("error", "getFABalance", {
-        error,
-      });
-      return new BigNumber(0);
-    }
-  }
-
-  async estimateFees(
-    transactionIntent: TransactionIntent<AptosAsset, AptosExtra, AptosSender>,
-  ): Promise<FeeEstimation<AptosFeeParameters>> {
-    const publicKeyEd = new Ed25519PublicKey(transactionIntent.sender.xpub);
-    const fn: MoveFunctionId = "0x1::aptos_account::transfer_coins";
+  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
+    const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
 
     const txPayload: InputEntryFunctionData = {
-      function: fn,
+      function: "0x1::aptos_account::transfer_coins",
       typeArguments: [APTOS_ASSET_ID],
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
+
+    if (transactionIntent.asset.type === "token") {
+      const { standard } = transactionIntent.asset;
+
+      if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
+        txPayload.function = "0x1::primary_fungible_store::transfer";
+        txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
+        txPayload.functionArguments = [
+          transactionIntent.asset.contractAddress,
+          transactionIntent.recipient,
+          transactionIntent.amount,
+        ];
+      } else if (standard === TOKEN_TYPE.COIN) {
+        txPayload.function = "0x1::aptos_account::transfer_coins";
+        txPayload.typeArguments = [transactionIntent.asset.contractAddress];
+      }
+    }
 
     const txOptions: TransactionOptions = {
       maxGasAmount: DEFAULT_GAS.toString(),
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     };
 
-    const tx = await this.generateTransaction(
-      transactionIntent.sender.freshAddress,
-      txPayload,
-      txOptions,
-    );
+    const tx = await this.generateTransaction(transactionIntent.sender, txPayload, txOptions);
 
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
 
-    const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+    const gasLimit = new BigNumber(completedTx.gas_used)
+      .multipliedBy(ESTIMATE_GAS_MUL)
+      .integerValue();
     const gasPrice = new BigNumber(completedTx.gas_unit_price);
 
     const expectedGas = gasPrice.multipliedBy(gasLimit);
@@ -244,10 +227,54 @@ export class AptosAPI {
     return {
       value: BigInt(expectedGas.toString()),
       parameters: {
+        storageLimit: BigInt(0),
         gasLimit: BigInt(gasLimit.toString()),
         gasPrice: BigInt(gasPrice.toString()),
       },
     };
+  }
+
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      return resource.locked_until_secs;
+    } catch (error) {
+      log("error", "Failed to fetch StakePool resource:", { error });
+    }
+  }
+
+  async getDelegatorBalanceInPool(
+    poolAddress: string,
+    delegatorAddress: string,
+  ): Promise<Array<string>> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (error) {
+      log("error", "Failed to fetch delegation_pool::get_stake", { error });
+      return ["0", "0", "0"];
+    }
+  }
+
+  async listOperations(
+    rawAddress: string,
+    pagination: Pagination,
+  ): Promise<[Operation<AptosAsset>[], string]> {
+    const address = normalizeAddress(rawAddress);
+    const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
+    const newOperations = transactionsToOperations(address, transactions.transactions);
+
+    return [newOperations, ""];
   }
 
   private async fetchTransactions(address: string, gt?: string) {
@@ -312,5 +339,33 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
+  }
+
+  async getBalances(address: string, contractAddress?: string): Promise<AptosBalance[]> {
+    try {
+      const whereCondition: any = {
+        owner_address: { _eq: address },
+      };
+
+      if (contractAddress !== undefined && contractAddress !== "") {
+        whereCondition.asset_type = { _eq: contractAddress };
+      }
+
+      const response = await this.aptosClient.getCurrentFungibleAssetBalances({
+        options: {
+          where: whereCondition,
+        },
+      });
+
+      return response.map(x => ({
+        contractAddress: x.asset_type ?? "",
+        amount: BigNumber(x.amount),
+      }));
+    } catch (error) {
+      log("error", "getCoinBalance", {
+        error,
+      });
+      return [{ amount: BigNumber(0), contractAddress: "" }];
+    }
   }
 }

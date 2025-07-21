@@ -92,6 +92,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySui: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
+  currencySeiNetworkEvm: DEFAULT_FEATURE,
+  currencyBerachain: DEFAULT_FEATURE,
+  currencyHyperevm: DEFAULT_FEATURE,
 };
 
 /**
@@ -153,6 +156,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,
@@ -396,6 +400,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellLoader: {
+    enabled: false,
+    params: {
+      durationMs: 0,
+    },
+  },
+
   buySellShortcut: {
     enabled: false,
   },
@@ -420,6 +431,10 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       manifest_id: "swap-live-app-demo-3",
     },
+  },
+
+  ptxSwapLiveAppKycWarning: {
+    enabled: false,
   },
 
   llmAnalyticsOptInPrompt: {
@@ -519,7 +534,6 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: { link: null },
   },
-  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -605,6 +619,18 @@ export const DEFAULT_FEATURES: Features = {
       live_app: true,
       receive_flow: true,
       send_flow: true,
+      enableModularization: false,
+    },
+  },
+  llmModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+      enableModularization: false,
     },
   },
   llNftSupport: DEFAULT_FEATURE,
@@ -617,6 +643,34 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkConnectApp: DEFAULT_FEATURE,
+  lldNetworkBasedAddAccount: DEFAULT_FEATURE,
+  llmOfacGeoBlocking: DEFAULT_FEATURE,
+  lldOfacGeoBlocking: DEFAULT_FEATURE,
+  llmDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      batchProcessingLevel: "MEDIUM",
+      batchSize: "MEDIUM",
+      bundleLogsWithRum: true,
+      bundleLogsWithTraces: true,
+      longTaskThresholdMs: 0,
+      nativeInteractionTracking: false,
+      nativeLongTaskThresholdMs: 0,
+      nativeViewTracking: false,
+      resourceTracingSamplingRate: 0,
+      serviceName: "Ledger Live Mobile (default)",
+      sessionSamplingRate: 0,
+      trackBackgroundEvents: false,
+      trackFrustrations: true,
+      trackErrors: false,
+      trackResources: false,
+      trackInteractions: false,
+      trackWatchdogTerminations: false,
+      uploadFrequency: "AVERAGE",
+      vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
+  llmSentry: { enabled: true },
 };
 
 // Firebase SDK treat JSON values as strings

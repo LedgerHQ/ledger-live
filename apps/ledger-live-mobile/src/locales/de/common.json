@@ -294,6 +294,14 @@
       "title" : "Gerät nicht verbunden",
       "description" : "Ledger Live konnte keine Verbindung zu Ihrem Gerät herstellen. Bitte versuchen Sie es noch einmal."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
+    },
     "CasperInvalidTransferId" : {
       "title" : "Die Transaktions-ID muss eine positive Zahl sein, die kleiner als {{maxTransferId}} ist"
     },
@@ -512,6 +520,10 @@
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen. ",
@@ -1072,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Sorge für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -2160,7 +2176,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Echtheitsprüfung und Prüfung auf Betriebssystem-Update",
+    "title" : "Ledger-Echtheitsprüfung",
     "idle" : {
       "learnMore" : "Weitere Informationen zur Echtheitsprüfung",
       "checkCta" : "{{ productName }} überprüfen"
@@ -2196,11 +2212,11 @@
     "genuineCheckStep" : {
       "learnMore" : "Weitere Informationen zur Echtheitsprüfung",
       "inactive" : {
-        "title" : "Echtheitsprüfung",
+        "title" : "Ledger-Echtheitsprüfung",
         "description" : "Hiermit wird verifiziert, dass es sich bei deinem {{productName}}-Gerät um ein offizielles Ledger-Gerät handelt."
       },
       "active" : {
-        "title" : "Echtheitsprüfung",
+        "title" : "Ledger-Echtheitsprüfung",
         "description" : "Hiermit wird verifiziert, dass es sich bei deinem {{productName}}-Gerät um ein offizielles Ledger-Gerät handelt."
       },
       "completed" : {
@@ -2208,23 +2224,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Echtheitsprüfung abgelehnt",
+        "title" : "Ledger-Echtheitsprüfung abgelehnt",
         "description" : "Diese Echtheitsprüfung ist obligatorisch, um die Einrichtung deines {{productName}}-Geräts mit der Ledger Live-App fortsetzen zu können.",
         "cta" : "Prüfung fortsetzen"
       },
       "error" : {
-        "title" : "Echtheitsprüfung",
+        "title" : "Ledger-Echtheitsprüfung",
         "description" : "Die Echtheitsprüfung stellt sicher, dass dein {{productName}}-Gerät ein offizielles Ledger-Gerät ist."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "Prüfung auf Betriebssystem-Update",
-        "description" : "Hiermit wird geprüft, ob das Betriebssystem deines {{productName}}-Geräts auf dem neuesten Stand ist. "
+        "title" : "Ledger-Betriebssystemprüfung",
+        "description" : "Hiermit wird geprüft, ob das Betriebssystem deiner {{productName}} auf dem neuesten Stand ist. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Das Betriebssystem deines Geräts {{productName}} ist auf dem neusten Stand"
+          "title" : "Ledger OS ist auf dem neusten Stand"
         }
       },
       "error" : {
@@ -2238,8 +2254,8 @@
         "skipCta" : "Update überspringen"
       },
       "inactive" : {
-        "title" : "Prüfung auf Betriebssystem-Update",
-        "description" : "Hiermit wird geprüft, ob das Betriebssystem deines {{productName}}-Geräts auf dem neuesten Stand ist. "
+        "title" : "Ledger-Betriebssystemprüfung",
+        "description" : "Hiermit wird geprüft, ob das Betriebssystem deiner {{productName}} auf dem neuesten Stand ist. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2251,7 +2267,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}} einrichten",
+    "title" : "{{productName}} bereithalten",
     "estimatedTimeFormat" : "{{estimatedTime}} Min.",
     "deviceSelection" : {
       "title" : "Wähle das Ledger-Gerät aus, das du einrichten möchtest:",
@@ -2306,7 +2322,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} ist echt",
-      "subtitle" : "Die Verwendung dieses {{productName}}-Geräts ist sicher. Du kannst mit dem Einrichten fortfahren.",
+      "subtitle" : "Die Nutzung deiner {{productName}} ist sicher. Du kannst nun mit der Einrichtung beginnen.",
       "description" : "Tippe auf {{productName}}, um mit dem Einrichten zu beginnen."
     },
     "pinStep" : {
@@ -2316,30 +2332,58 @@
       "continueOnDevice" : "Lege die PIN für dein {{productName}}-Gerät fest."
     },
     "seedStep" : {
-      "title" : "Geheime Wiederherstellungsphrase",
+      "title" : "Einrichtung und Backup",
       "doneTitle" : "Geheime Wiederherstellungsphrase bestätigt",
       "description" : "Ihre Wiederherstellungsphrase ist eine geheime Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden. Ihre {{productName}} erzeugt eine eindeutige Wiederherstellungsphrase. Ledger bewahrt keine Kopie davon auf.",
       "choiceRestoreDirectOrRecover" : "Platzhalter – wählen Sie direkte Wiederherstellung oder verwenden Sie „Recover“ (Wiederherstellung)",
       "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
-      "restoreSeed" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren.",
       "selection" : "Wähle die zu deinen Anforderungen passende Einrichtungsoption aus:",
       "selectionNewLedger" : {
         "title" : "Als neues Ledger-Gerät einrichten",
-        "desc" : "Ermöglicht dir die Erstellung einer neuen Wallet. Hierbei wird eine neue geheime Wiederherstellungsphrase generiert."
+        "desc" : "Hierbei wird deine neue geheime Wiederherstellungsphrase generiert."
       },
       "selectionRestore" : {
-        "title" : "Wiederherstellen",
-        "desc" : "Ermöglicht es dir. den Zugriff auf deine bestehenden Vermögenswerte mittels deiner geheimen Wiederherstellungsphrase oder durch Nutzung von Ledger Recover wiederherzustellen."
+        "title" : "Zugriff auf deine Assets wiederherstellen",
+        "desc" : "Mit deinem Backup – geheime Wiederherstellungsphrase oder Ledger Recover – kannst du eine Wiederherstellung durchführen.",
+        "descWithCharon" : "Mit deinem Backup – geheime Wiederherstellungsphrase, Ledger Recover oder Ledger Recovery Key – kannst du eine Wiederherstellung durchführen."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
+        "cta" : "Mehr erfahren oder kaufen",
+        "continueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "Wähle ein Backup aus, das du wiederherstellen möchtest:",
+        "continueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus.",
+        "secretRecoveryPhrase" : {
+          "title" : "Geheime Wiederherstellungsphrase",
+          "description" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Mit deinem Recovery Key kannst du den Zugriff auf deine Assets wiederherstellen."
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover-Abonnement",
+          "description" : "Dank deines Abonnements kannst du mit deiner Identität wieder auf deine Assets zugreifen."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
+        "description" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "continueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Wiederherstellen mit Recovery Key",
+        "description" : "Zum Wiederherstellen befolge die Anweisungen auf deinem Ledger Secure Screen.",
+        "continueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}."
       },
       "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus.",
-      "newSeedDescription" : "Möchtest du mehr über die geheime Wiederherstellungsphrase erfahren? Dann sieh dir diese Videos an:",
-      "newSeedContinueOnDevice" : "Machen Sie dies auf Ihrem {{productName}}",
-      "recovery" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren.",
-      "restoreChoiceContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus.",
-      "restoreChoiceSRPTitle" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
-      "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwende eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase. ",
-      "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Wenn du Ledger Recover abonniert hast, melde sich bei deinem Abonnement an, um den Wiederherstellungsprozess für die Sicherheitskopie deiner geheimen Wiederherstellungsphrase zu beginnen."
+      "newSeedTitle" : "Geheime Wiederherstellungsphrase",
+      "newSeedDescription" : "Sieh dir diese Videos an, um mehr über die geheime Wiederherstellungsphrase zu erfahren:",
+      "newSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
+      "recovery" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren."
     },
     "backup" : {
       "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -3189,6 +3233,12 @@
         "placeholder" : "Info des Börsenanbieters im CAL-Format",
         "currentSetting" : "Aktuelle Einstellung",
         "error" : "Ungültiger CAL-Wert"
+      },
+      "customCALRef" : {
+        "title" : "Benutzerdefinierte CAL-Referenz",
+        "description" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
+        "enable" : "Benutzerdefinierte CAL-Referenz aktivieren",
+        "disable" : "Benutzerdefinierte CAL-Referenz deaktivieren"
       }
     },
     "debug" : {
@@ -3354,7 +3404,13 @@
         "verify" : "Die Adresse von {{accountType}} wurde nicht überprüft. Überprüfen Sie die Adressen auf Ihrem Gerät, um sicher zu bleiben."
       },
       "noResultsFound" : "Kein Krypto-Wert gefunden",
-      "noResultsDesc" : "Bitte überprüfe die Schreibweise und versuche es noch einmal"
+      "noResultsDesc" : "Bitte überprüfe die Schreibweise und versuche es noch einmal",
+      "sanctionedAddress" : {
+        "title" : "Wir sorgen für deine Sicherheit",
+        "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Schließen",
+        "learnMore" : "Weitere Informationen"
+      }
     },
     "buy" : {
       "title" : "Kaufen",
@@ -3365,7 +3421,8 @@
       "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
     },
     "exchange" : {
-      "title" : "Kaufen & Verkaufen"
+      "title" : "Kaufen & Verkaufen",
+      "connectingTo" : "Du wirst mit {{provider}} verbunden"
     },
     "stake" : {
       "title" : "Staken",
@@ -3560,11 +3617,22 @@
           "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
       },
+      "quotesList" : {
+        "title" : "Angebot auswählen"
+      },
+      "twoStepApproval" : {
+        "title" : "Schritte erledigen"
+      },
+      "history" : {
+        "title" : "Swap-Verlauf"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Kompatible Geräte entdecken",
         "contact_support" : "Kundensupport kontaktieren",
         "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
         "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "ton_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton-Token nicht",
+        "ton_tokens_description" : "Zum Swappen von Ton-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
         "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "near_title" : "Ledger Nano S™ unterstützt das Swappen von Near nicht",
@@ -3844,6 +3912,9 @@
           "title" : "Für diese Domain wurde keine Adresse gefunden"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
     },
     "amount" : {
       "available" : "Insgesamt verfügbar",
@@ -6082,6 +6153,7 @@
       "transferFees" : {
         "title" : "Überweisungsgebühren",
         "feesPercentHint" : "Für das Token fällt eine Übertragungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an (max. {{maxFee}})",
+        "feesHint" : "Tokenübertragungsgebühr: {{transferFee}}",
         "notice" : "Überweisungsgebühr {{fee}} %",
         "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird"
       },
@@ -7420,6 +7492,33 @@
     "performance" : "Performance",
     "low" : "Niedrig",
     "high" : "Hoch",
-    "title" : "Marktbewegungen"
+    "title" : "Marktbewegungen",
+    "overlay" : {
+      "title" : "Zwischen Assets wechseln",
+      "action" : "Nach links oder rechts wischen",
+      "button" : "Verstanden!"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "Deine NFTs",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "Nicht am Ort verfügbar",
+    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "learnMore" : "Weitere Informationen"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live-Update erforderlich",
+    "description" : "Diese Ledger Live-Version ist nicht mit dem neuesten Betriebssystem deines Geräts kompatibel. Führe jetzt ein Update durch, um von verbesserter Konnektivität zu profitieren.",
+    "openStore" : "Aktualisieren"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "Vermögenswert auswählen",
+    "selectNetwork" : "Netzwerk auswählen",
+    "selectAccount" : "Konto auswählen"
   }
 }

@@ -1,4 +1,4 @@
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import Divider from "../../../../src/components/Layout/Divider";
@@ -98,7 +98,7 @@ const defaultItems = [
   },
 ];
 
-export const VerticalTimelineStory: ComponentStory<typeof VerticalTimeline> = () => {
+export const VerticalTimelineStory: StoryFn<typeof VerticalTimeline> = () => {
   const [items, setItems] = useState(defaultItems);
   const [animate, setAnimate] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);

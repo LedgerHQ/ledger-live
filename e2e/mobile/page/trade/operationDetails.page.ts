@@ -1,4 +1,4 @@
-import { expect } from "detox";
+import { getAccountAddress, Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -13,10 +13,13 @@ export default class OperationDetailsPage {
     STAKE: "Staked",
     LOCK: "Locked",
   };
+  operationDetailsConfirmed = "operation-details-text-confirmed";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById("operationDetails-account");
   amount = () => getElementById("operationDetails-amount");
+  operation = () => getElementById("operationDetails-identifier");
+  date = () => getElementById("operationDetails-date");
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
@@ -25,41 +28,65 @@ export default class OperationDetailsPage {
 
   @Step("Check account details")
   async checkAccount(account: string) {
-    await expect(this.account()).toHaveText(account);
+    await detoxExpect(this.account()).toHaveText(account);
   }
 
   @Step("Check recipient details")
-  async checkRecipient(recipient: string) {
+  async checkRecipientAddress(recipient: Account) {
     await scrollToId(this.recipientId);
-    await expect(getElementById(this.recipientId)).toHaveText(recipient);
+    const recipientElement = getElementById(this.recipientId);
+
+    let expected: string;
+    if (await IsIdVisible(this.operationDetailsConfirmed)) {
+      expected = getAccountAddress(recipient);
+    } else {
+      expected = recipient.address;
+    }
+    await detoxExpect(recipientElement).toHaveText(expected);
+  }
+
+  @Step("Check recipient as provider")
+  async checkRecipientAsProvider(recipientAddress: string) {
+    await scrollToId(this.recipientId);
+    const recipientElement = getElementById(this.recipientId);
+    await detoxExpect(recipientElement).toHaveText(recipientAddress);
   }
 
   @Step("Check delegated provider")
   async checkProvider(provider: string) {
     await scrollToId(this.providerId);
-    await expect(getElementById(this.providerId)).toHaveText(provider);
+    await detoxExpect(getElementById(this.providerId)).toHaveText(provider);
   }
 
   @Step("Check delegated amount")
   async checkDelegatedAmount(amount: string) {
     await scrollToId(this.delegatedAmountId);
-    await expect(getElementById(this.delegatedAmountId)).toHaveText(amount);
+    await detoxExpect(getElementById(this.delegatedAmountId)).toHaveText(amount);
   }
 
   @Step("Check sender")
   async checkSender(sender: string) {
     await scrollToId(this.senderId);
-    await expect(getElementById(this.senderId)).toHaveText(sender);
+    await detoxExpect(getElementById(this.senderId)).toHaveText(sender);
   }
 
   @Step("Check Fees")
   async checkFees(fees: string) {
     await scrollToId(this.feesId);
-    await expect(await getElementById(this.feesId)).toHaveText(fees);
+    await detoxExpect(getElementById(this.feesId)).toHaveText(fees);
   }
 
   @Step("Check transaction type")
   async checkTransactionType(type: keyof typeof this.operationsType) {
-    await expect(await getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+    await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+  }
+
+  @Step("Check that transaction details are displayed")
+  async checkTransactionDetailsVisibility() {
+    await this.waitForOperationDetails();
+    await detoxExpect(this.account()).toBeVisible();
+    await detoxExpect(this.amount()).toBeVisible();
+    await detoxExpect(this.operation()).toBeVisible();
+    await detoxExpect(this.date()).toBeVisible();
   }
 }

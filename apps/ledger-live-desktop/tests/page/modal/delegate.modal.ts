@@ -26,6 +26,20 @@ export class delegateModal extends Modal {
     return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
   }
 
+  @step("Wait for crypto amount to be populated")
+  async waitForCryptoAmountToBePopulated() {
+    const timeout = 100;
+    let retries = 0;
+    while (retries < 5) {
+      if ((await this.cryptoAmountField.inputValue()) === "") {
+        await this.page.waitForTimeout(timeout);
+        retries++;
+      } else {
+        break;
+      }
+    }
+  }
+
   @step("Get crypto amount")
   async getCryptoAmount() {
     const valueAmount = await this.cryptoAmountField.inputValue();

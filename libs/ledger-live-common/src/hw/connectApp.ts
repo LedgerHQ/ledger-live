@@ -26,10 +26,19 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { mustUpgrade } from "../apps";
+import { mustUpgrade, getMinVersion } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import {
+  type ApplicationDependency,
+  type ApplicationConstraint,
+  type ApplicationVersionConstraint,
+  type DeviceManagementKit,
+  DeviceModelId,
+} from "@ledgerhq/device-management-kit";
+import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
+import { ConnectAppEventMapper } from "./connectAppEventMapper";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -274,7 +283,7 @@ const derivationLogic = (
  * @param allowPartialDependencies If some dependencies need to be installed, and if set to true,
  *   skip any app install if the app is not found from the provider.
  */
-const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEvent> => {
   const {
     appName,
     requiresDerivation,
@@ -283,200 +292,228 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
     outdatedApp,
     allowPartialDependencies = false,
   } = request;
-  return withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
-        const timeoutSub = of({
-          type: "unresponsiveDevice",
-        })
-          .pipe(delay(1000))
-          .subscribe(e => o.next(e as ConnectAppEvent));
-        const innerSub = ({
-          appName,
-          dependencies,
-          requireLatestFirmware,
-        }: ConnectAppRequest): Observable<ConnectAppEvent> =>
-          defer(() => from(getAppAndVersion(transport))).pipe(
-            concatMap((appAndVersion): Observable<ConnectAppEvent> => {
-              timeoutSub.unsubscribe();
+  return new Observable(o => {
+    const timeoutSub = of({
+      type: "unresponsiveDevice",
+    })
+      .pipe(delay(1000))
+      .subscribe(e => o.next(e as ConnectAppEvent));
+    const innerSub = ({
+      appName,
+      dependencies,
+      requireLatestFirmware,
+    }: ConnectAppRequest): Observable<ConnectAppEvent> =>
+      defer(() => from(getAppAndVersion(transport))).pipe(
+        concatMap((appAndVersion): Observable<ConnectAppEvent> => {
+          timeoutSub.unsubscribe();
 
-              if (isDashboardName(appAndVersion.name)) {
-                // check if we meet minimum fw
-                if (requireLatestFirmware || outdatedApp) {
-                  return from(getDeviceInfo(transport)).pipe(
-                    mergeMap((deviceInfo: DeviceInfo) =>
-                      from(getLatestFirmwareForDeviceUseCase(deviceInfo)).pipe(
-                        mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
-                          const isLatest =
-                            !latest || semver.eq(deviceInfo.version, latest.final.version);
+          if (isDashboardName(appAndVersion.name)) {
+            // check if we meet minimum fw
+            if (requireLatestFirmware || outdatedApp) {
+              return from(getDeviceInfo(transport)).pipe(
+                mergeMap((deviceInfo: DeviceInfo) =>
+                  from(getLatestFirmwareForDeviceUseCase(deviceInfo)).pipe(
+                    mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
+                      const isLatest =
+                        !latest || semver.eq(deviceInfo.version, latest.final.version);
 
-                          if (
-                            (!requireLatestFirmware || (requireLatestFirmware && isLatest)) &&
-                            outdatedApp
-                          ) {
-                            return from(isUpdateAvailable(deviceInfo, outdatedApp)).pipe(
-                              mergeMap(isAvailable =>
-                                isAvailable
-                                  ? throwError(
-                                      () =>
-                                        new UpdateYourApp(undefined, {
-                                          managerAppName: outdatedApp.name,
-                                        }),
-                                    )
-                                  : throwError(
-                                      () =>
-                                        new LatestFirmwareVersionRequired(
-                                          "LatestFirmwareVersionRequired",
-                                          {
-                                            latest: latest?.final.version,
-                                            current: deviceInfo.version,
-                                          },
-                                        ),
+                      if (
+                        (!requireLatestFirmware || (requireLatestFirmware && isLatest)) &&
+                        outdatedApp
+                      ) {
+                        return from(isUpdateAvailable(deviceInfo, outdatedApp)).pipe(
+                          mergeMap(isAvailable =>
+                            isAvailable
+                              ? throwError(
+                                  () =>
+                                    new UpdateYourApp(undefined, {
+                                      managerAppName: outdatedApp.name,
+                                    }),
+                                )
+                              : throwError(
+                                  () =>
+                                    new LatestFirmwareVersionRequired(
+                                      "LatestFirmwareVersionRequired",
+                                      {
+                                        latest: latest?.final.version,
+                                        current: deviceInfo.version,
+                                      },
                                     ),
-                              ),
-                            );
-                          }
+                                ),
+                          ),
+                        );
+                      }
 
-                          if (isLatest) {
-                            o.next({ type: "latest-firmware-resolved" });
-                            return innerSub({
-                              appName,
-                              dependencies,
-                              allowPartialDependencies,
-                              // requireLatestFirmware // Resolved!.
-                            });
-                          } else {
-                            return throwError(
-                              () =>
-                                new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
-                                  latest: latest.final.version,
-                                  current: deviceInfo.version,
-                                }),
-                            );
-                          }
-                        }),
-                      ),
-                    ),
-                  );
-                }
-                // check if we meet dependencies
-                if (dependencies?.length) {
-                  const completesInDashboard = isDashboardName(appName);
-                  return inlineAppInstall({
-                    transport,
-                    appNames: [...(completesInDashboard ? [] : [appName]), ...dependencies],
-                    onSuccessObs: () => {
-                      o.next({
-                        type: "dependencies-resolved",
-                      });
-                      return innerSub({
-                        appName,
-                        allowPartialDependencies,
-                        // dependencies // Resolved!
-                      });
-                    },
-                    allowPartialDependencies,
+                      if (isLatest) {
+                        o.next({ type: "latest-firmware-resolved" });
+                        return innerSub({
+                          appName,
+                          dependencies,
+                          allowPartialDependencies,
+                          // requireLatestFirmware // Resolved!.
+                        });
+                      } else {
+                        return throwError(
+                          () =>
+                            new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
+                              latest: latest.final.version,
+                              current: deviceInfo.version,
+                            }),
+                        );
+                      }
+                    }),
+                  ),
+                ),
+              );
+            }
+            // check if we meet dependencies
+            if (dependencies?.length) {
+              const completesInDashboard = isDashboardName(appName);
+              return inlineAppInstall({
+                transport,
+                appNames: [...(completesInDashboard ? [] : [appName]), ...dependencies],
+                onSuccessObs: () => {
+                  o.next({
+                    type: "dependencies-resolved",
                   });
+                  return innerSub({
+                    appName,
+                    allowPartialDependencies,
+                    // dependencies // Resolved!
+                  });
+                },
+                allowPartialDependencies,
+              });
+            }
+
+            // maybe we want to be in the dashboard
+            if (appName === appAndVersion.name) {
+              const e: ConnectAppEvent = {
+                type: "opened",
+                app: appAndVersion,
+              };
+              return of(e);
+            }
+
+            // we're in dashboard
+            return openAppFromDashboard(transport, appName);
+          }
+
+          const appNeedsUpgrade = mustUpgrade(appAndVersion.name, appAndVersion.version);
+          if (appNeedsUpgrade) {
+            // quit app, check provider's app update for device's minimum requirements.
+            o.next({
+              type: "has-outdated-app",
+              outdatedApp: appAndVersion,
+            });
+          }
+
+          // need dashboard to check firmware, install dependencies, or verify app update
+          if (
+            dependencies?.length ||
+            requireLatestFirmware ||
+            appAndVersion.name !== appName ||
+            appNeedsUpgrade
+          ) {
+            return attemptToQuitApp(transport, appAndVersion as AppAndVersion);
+          }
+
+          if (requiresDerivation) {
+            return derivationLogic(transport, {
+              requiresDerivation,
+              appAndVersion: appAndVersion as AppAndVersion,
+              appName,
+            });
+          } else {
+            const e: ConnectAppEvent = {
+              type: "opened",
+              app: appAndVersion,
+            };
+            return of(e);
+          }
+        }),
+        catchError((e: unknown) => {
+          if (
+            (typeof e === "object" &&
+              e !== null &&
+              "_tag" in e &&
+              e._tag === "DeviceDisconnectedWhileSendingError") ||
+            e instanceof DisconnectedDeviceDuringOperation ||
+            e instanceof DisconnectedDevice
+          ) {
+            return of(<ConnectAppEvent>{
+              type: "disconnected",
+            });
+          }
+
+          if (e && e instanceof TransportStatusError) {
+            switch (e.statusCode) {
+              case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
+              case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
+                // fallback on "old way" because device does not support getAppAndVersion
+                if (!requiresDerivation) {
+                  // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
+                  return throwError(() => new FirmwareOrAppUpdateRequired());
                 }
 
-                // maybe we want to be in the dashboard
-                if (appName === appAndVersion.name) {
-                  const e: ConnectAppEvent = {
-                    type: "opened",
-                    app: appAndVersion,
-                  };
-                  return of(e);
-                }
-
-                // we're in dashboard
-                return openAppFromDashboard(transport, appName);
-              }
-
-              const appNeedsUpgrade = mustUpgrade(appAndVersion.name, appAndVersion.version);
-              if (appNeedsUpgrade) {
-                // quit app, check provider's app update for device's minimum requirements.
-                o.next({
-                  type: "has-outdated-app",
-                  outdatedApp: appAndVersion,
-                });
-              }
-
-              // need dashboard to check firmware, install dependencies, or verify app update
-              if (
-                dependencies?.length ||
-                requireLatestFirmware ||
-                appAndVersion.name !== appName ||
-                appNeedsUpgrade
-              ) {
-                return attemptToQuitApp(transport, appAndVersion as AppAndVersion);
-              }
-
-              if (requiresDerivation) {
                 return derivationLogic(transport, {
                   requiresDerivation,
-                  appAndVersion: appAndVersion as AppAndVersion,
                   appName,
                 });
-              } else {
-                const e: ConnectAppEvent = {
-                  type: "opened",
-                  app: appAndVersion,
-                };
-                return of(e);
-              }
-            }),
-            catchError((e: unknown) => {
-              if (
-                (typeof e === "object" &&
-                  e !== null &&
-                  "_tag" in e &&
-                  e._tag === "DeviceDisconnectedWhileSendingError") ||
-                e instanceof DisconnectedDeviceDuringOperation ||
-                e instanceof DisconnectedDevice
-              ) {
-                return of(<ConnectAppEvent>{
-                  type: "disconnected",
-                });
-              }
+            }
+          } else if (e instanceof LockedDeviceError) {
+            return of({
+              type: "lockedDevice",
+            } as ConnectAppEvent);
+          }
 
-              if (e && e instanceof TransportStatusError) {
-                switch (e.statusCode) {
-                  case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
-                  case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
-                    // fallback on "old way" because device does not support getAppAndVersion
-                    if (!requiresDerivation) {
-                      // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
-                      return throwError(() => new FirmwareOrAppUpdateRequired());
-                    }
+          return throwError(() => e);
+        }),
+      );
 
-                    return derivationLogic(transport, {
-                      requiresDerivation,
-                      appName,
-                    });
-                }
-              } else if (e instanceof LockedDeviceError) {
-                return of({
-                  type: "lockedDevice",
-                } as ConnectAppEvent);
-              }
+    const sub = innerSub({
+      appName,
+      dependencies,
+      requireLatestFirmware,
+      allowPartialDependencies,
+    }).subscribe(o);
 
-              return throwError(() => e);
-            }),
-          );
+    return () => {
+      timeoutSub.unsubscribe();
+      sub.unsubscribe();
+    };
+  });
+};
 
-        const sub = innerSub({
-          appName,
-          dependencies,
-          requireLatestFirmware,
-          allowPartialDependencies,
-        }).subscribe(o);
-
-        return () => {
-          timeoutSub.unsubscribe();
-          sub.unsubscribe();
-        };
-      }),
+const isDmkTransport = (
+  transport: Transport,
+): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
+  return (
+    "dmk" in transport &&
+    transport.dmk !== undefined &&
+    "sessionId" in transport &&
+    transport.sessionId !== undefined
   );
+};
+
+const appNameToDependency = (appName: string): ApplicationDependency => {
+  const constraints = Object.values(DeviceModelId).reduce<ApplicationConstraint[]>(
+    (result, model) => {
+      const minVersion = getMinVersion(appName, model);
+      if (minVersion) {
+        result.push({
+          minVersion: minVersion as ApplicationVersionConstraint,
+          applicableModels: [model],
+        });
+      }
+      return result;
+    },
+    [],
+  );
+  return {
+    name: appName,
+    constraints,
+  };
 };
 
 export default function connectAppFactory(
@@ -487,7 +524,46 @@ export default function connectAppFactory(
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
-    return cmd;
+    return ({ deviceId, request }: Input): Observable<ConnectAppEvent> =>
+      withDevice(deviceId)(transport => cmd(transport, { deviceId, request }));
   }
-  throw new Error("LdkmConnectApp is not supported yet");
+  return ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+    const {
+      appName,
+      requiresDerivation,
+      dependencies,
+      requireLatestFirmware,
+      allowPartialDependencies = false,
+    } = request;
+    return withDevice(deviceId)(transport => {
+      if (!isDmkTransport(transport)) {
+        return cmd(transport, { deviceId, request });
+      }
+      const { dmk, sessionId } = transport;
+      const deviceAction = new ConnectAppDeviceAction({
+        input: {
+          application: appNameToDependency(appName),
+          dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
+          requireLatestFirmware,
+          allowMissingApplication: allowPartialDependencies,
+          unlockTimeout: 0, // Expect to fail immediately when device is locked
+          requiredDerivation: requiresDerivation
+            ? async () => {
+                const { currencyId, ...derivationRest } = requiresDerivation;
+                const derivation = await getAddress(transport, {
+                  currency: getCryptoCurrencyById(currencyId),
+                  ...derivationRest,
+                });
+                return derivation.address;
+              }
+            : undefined,
+        },
+      });
+      const observable = dmk.executeDeviceAction({
+        sessionId,
+        deviceAction,
+      });
+      return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+    });
+  };
 }

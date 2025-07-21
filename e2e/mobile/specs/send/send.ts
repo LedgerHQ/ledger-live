@@ -16,7 +16,6 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     featureFlags: {
       llmAccountListUI: { enabled: true },
-      llmNetworkBasedAddAccountFlow: { enabled: true },
     },
     cliCommands: [
       (userdataPath?: string) => {
@@ -33,8 +32,13 @@ const beforeAllFunction = async (transaction: TransactionType) => {
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export function runSendTest(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -56,14 +60,13 @@ export function runSendTest(transaction: TransactionType, tmsLinks: string[]) {
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await app.speculos.signSendTransaction(transaction);
-
       await device.disableSynchronization();
+      await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipient(addressToCredit);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
     });
   });
@@ -73,9 +76,11 @@ export function runSendInvalidAddressTest(
   transaction: TransactionType,
   expectedErrorMessage: string,
   tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
   accountName?: string,
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send - invalid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -92,16 +97,19 @@ export function runSendInvalidAddressTest(
 export function runSendValidAddressTest(
   transaction: TransactionType,
   tmsLinks: string[],
+  testName: string,
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send - valid address & amount input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} - valid address & amount input`, async () => {
+    it(`Send from ${transaction.accountToDebit.accountName} ${accountName || ""} to ${transaction.accountToCredit.accountName} (${testName})`, async () => {
       await navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(transaction.accountToCredit.address, transaction.memoTag);
       await app.send.expectSendRecipientSuccess(expectedWarningMessage);
@@ -121,8 +129,10 @@ export function runSendInvalidAmountTest(
   transaction: TransactionType,
   expectedErrorMessage: string,
   tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Check invalid amount input error", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -144,8 +154,10 @@ export function runSendInvalidTokenAmountTest(
   transaction: TransactionType,
   expectedErrorMessage: RegExp | string,
   tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
 ) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Send token (subAccount) - invalid amount input", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -173,10 +185,15 @@ export function runSendInvalidTokenAmountTest(
   });
 }
 
-export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendMaxTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Verify send max user flow", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -197,10 +214,15 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[])
   });
 }
 
-export function runSendENSTest(transaction: TransactionType, tmsLinks: string[]) {
+export function runSendENSTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("User sends funds to ENS address", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction);
@@ -224,14 +246,13 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[])
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await app.speculos.signSendTransaction(transaction);
-
       await device.disableSynchronization();
+      await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
     });
   });

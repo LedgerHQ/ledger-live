@@ -17,7 +17,7 @@ import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad"
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -75,7 +75,14 @@ export function useInitSwapDeviceAction() {
 
 export function useManagerDeviceAction() {
   const mock = useEnv("MOCK");
-  return useMemo(() => managerCreateAction(mock ? connectManagerExecMock : connectManager), [mock]);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      managerCreateAction(
+        mock ? connectManagerExecMock : connectManagerFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
 }
 
 export function useSignMessageDeviceAction() {

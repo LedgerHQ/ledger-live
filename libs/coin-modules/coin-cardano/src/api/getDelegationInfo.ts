@@ -30,6 +30,7 @@ export async function getDelegationInfo(
   return (
     res && {
       status: res.status,
+      deposit: res.deposit,
       poolId: res.poolInfo?.poolId,
       dRepHex: res.dRepInfo?.hex,
       ticker: res.poolInfo?.ticker,

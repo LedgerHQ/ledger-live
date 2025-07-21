@@ -1,0 +1,27 @@
+services:
+  agave:
+    image: ghcr.io/zeta-chain/solana-docker:2.0.24
+    container_name: agave
+    volumes:
+      - ./data:/ledger
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://127.0.0.1:8899", "-H", "Content-Type: application/json", "-H", "Accept: application/json", "-d", '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "getLatestBlockhash" }']
+        interval: 5s
+        timeout: 10s
+        retries: 12
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    # Start local validator, and import well known token account
+    # USDC: `spl-token create-token --decimals 6 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
+    # CWIF: `spl-token create-token --decimals 2 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ --transfer-fee-basis-points 400 --transfer-fee-maximum-fee 99999999999999900 --program-2022 -ul`
+    # VIRTUAL: `spl-token create-token --decimals 9 --mint-authority GP9eo3dqHU3e7kGVvqNVzLym7BsTLTfmkuhEr6vqh6TQ -ul`
+    # Tokens with random mint addresses but controllable mint authority are created. Store their account as JSON with `solana account --output json <token_address> -ul` and update the token address
+    # with whatever token account imported in the test validator.
+    # Note: These commands need an up-and-running test validator node. By precomputing those files we avoid the burden of having to create multiple instances.
+    command: >
+      solana-test-validator
+        --account EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v /ledger/usdc.json
+        --account 7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1 /ledger/cwif.json
+        --account 3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y /ledger/virtual.json
+        --reset

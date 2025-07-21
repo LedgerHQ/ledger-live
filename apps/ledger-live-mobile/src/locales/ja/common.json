@@ -294,6 +294,14 @@
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+    },
     "CasperInvalidTransferId" : {
       "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
     },
@@ -511,6 +519,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "申し訳ございませんが、手数料のための資金が不足しています",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1072,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "お客様の安全を確保",
+      "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -2160,7 +2176,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "正規品チェックと\nOSアップデートチェック",
+    "title" : "Ledger正規品チェック",
     "idle" : {
       "learnMore" : "正規品チェックの詳細",
       "checkCta" : "{{ productName }}をチェック"
@@ -2196,11 +2212,11 @@
     "genuineCheckStep" : {
       "learnMore" : "正規品チェックについて詳しく見る",
       "inactive" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "これにより、お使いの{{productName}}が正規品であることが確認されます。"
       },
       "active" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "これにより、お使いの{{productName}}が正規品であることが確認されます。"
       },
       "completed" : {
@@ -2208,23 +2224,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "正規品チェックが拒否されました",
+        "title" : "Ledger正規品チェックが拒否されました",
         "description" : "Ledger Liveアプリを使用して{{productName}}の設定を続けるには、正規品チェックが必須です。",
         "cta" : "チェックを再開"
       },
       "error" : {
-        "title" : "正規品チェック",
+        "title" : "Ledger正規品チェック",
         "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "OSアップデートチェック",
-        "description" : "これにより、{{productName}}のオペレーティングシステムが最新かどうかがチェックされます。 "
+        "title" : "Ledger OSチェック",
+        "description" : "これは、お持ちの{{productName}}のオペレーティングシステムが最新かどうかを確認します。 "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}}のOSは最新です"
+          "title" : "Ledger OSは最新です"
         }
       },
       "error" : {
@@ -2238,8 +2254,8 @@
         "skipCta" : "アップデートをスキップする"
       },
       "inactive" : {
-        "title" : "OSアップデートチェック",
-        "description" : "{{productName}}のオペレーティングシステムが最新であることを確認します。 "
+        "title" : "Ledger OSチェック",
+        "description" : "これは、お持ちの{{productName}}のオペレーティングシステムが最新かどうかを確認します。 "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2251,7 +2267,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}}をセットアップ",
+    "title" : "{{productName}}を準備",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
       "title" : "設定したいLedgerを選択：",
@@ -2306,7 +2322,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}}は正規品です",
-      "subtitle" : "この{{productName}}は安全にご使用いただけます。セットアップに進むことができます。",
+      "subtitle" : "お持ちの{{productName}}は安全にご利用いただけます。セットアップの準備に進めます。",
       "description" : "{{productName}}をタップしてセットアップを開始します。"
     },
     "pinStep" : {
@@ -2316,30 +2332,58 @@
       "continueOnDevice" : "{{productName}}にPINを設定します。"
     },
     "seedStep" : {
-      "title" : "シークレットリカバリーフレーズ",
+      "title" : "セットアップとバックアップ",
       "doneTitle" : "シークレットリカバリーフレーズ確認済み",
       "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません",
       "choiceRestoreDirectOrRecover" : "Placeholder－直接復元、またはRecoverの使用を選択",
       "recoverSeed" : "Placeholder：Recover",
-      "restoreSeed" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
       "selection" : "最適な設定オプションを選択してください：",
       "selectionNewLedger" : {
         "title" : "新しいLedgerとしてセットアップ",
-        "desc" : "新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。"
+        "desc" : "これにより、新しいシークレットリカバリーフレーズが生成されます。"
       },
       "selectionRestore" : {
-        "title" : "復元",
-        "desc" : "シークレットリカバリーフレーズまたはLedger Recoverを使用すると既存の資産へのアクセスを回復できます。"
+        "title" : "資産へのアクセスを復元",
+        "desc" : "これにより、バックアップ（シークレットリカバリーフレーズまたはLedger Recover）を使用して復元できます。",
+        "descWithCharon" : "これにより、バックアップ（シークレットリカバリーフレーズ、Ledger Recover、またはLedger Recovery Key）を使用して復元できます。"
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
+        "cta" : "詳細の確認または購入",
+        "continueOnDevice" : "{{productName}}の指示に従う"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "復元で使用するバックアップを選択：",
+        "continueOnDevice" : "{{productName}}で関連するオプションを選択します。",
+        "secretRecoveryPhrase" : {
+          "title" : "シークレットリカバリーフレーズ",
+          "description" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。"
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Recovery Keyを使用して、資産へのアクセスを復元します。"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recoverサブスクリプション",
+          "description" : "サブスクリプションを使用して、お客様のIDで資産へのアクセスを復元します。"
+        }
+      },
+      "restoreSeed" : {
+        "title" : "シークレットリカバリーフレーズを使用して復元する",
+        "description" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "continueOnDevice" : "{{productName}}で関連するオプションを選択します。"
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Recovery Keyを使用して復元",
+        "description" : "復元するには、Ledgerのセキュアスクリーンに表示される指示に従ってください。",
+        "continueOnDevice" : "{{productName}}の指示に従う"
       },
       "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
-      "newSeedDescription" : "シークレットリカバリーフレーズの詳細については、次の動画をご覧ください：",
-      "newSeedContinueOnDevice" : "{{productName}}でこれを行う",
-      "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
-      "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
-      "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
-      "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。 ",
-      "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
-      "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をされている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップ復元プロセスを開始します。"
+      "newSeedTitle" : "シークレットリカバリーフレーズ",
+      "newSeedDescription" : "シークレットリカバリーフレーズについて詳しくは、次の動画をご覧ください。",
+      "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
+      "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
     "backup" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -3189,6 +3233,12 @@
         "placeholder" : "CAL形式のExchangeプロバイダー情報",
         "currentSetting" : "現在の設定",
         "error" : "CAL値が無効です"
+      },
+      "customCALRef" : {
+        "title" : "カスタムCAL参照",
+        "description" : "すべてのCALリクエストに使用するカスタムブランチ、コミット、またはタグを指定する",
+        "enable" : "カスタムCAL参照を有効にする",
+        "disable" : "カスタムCAL参照を無効にする"
       }
     },
     "debug" : {
@@ -3354,7 +3404,13 @@
         "verify" : "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
       },
       "noResultsFound" : "暗号資産が見つかりません",
-      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
+      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。",
+      "sanctionedAddress" : {
+        "title" : "お客様の安全を維持",
+        "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "閉じる",
+        "learnMore" : "詳細はこちら"
+      }
     },
     "buy" : {
       "title" : "購入",
@@ -3365,7 +3421,8 @@
       "description" : "暗号資産を安全に売却する。"
     },
     "exchange" : {
-      "title" : "購入/売却"
+      "title" : "購入/売却",
+      "connectingTo" : "{{provider}}に接続中"
     },
     "stake" : {
       "title" : "ステーキング",
@@ -3560,11 +3617,22 @@
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       },
+      "quotesList" : {
+        "title" : "見積もりを選択"
+      },
+      "twoStepApproval" : {
+        "title" : "手順を完了する"
+      },
+      "history" : {
+        "title" : "スワップ履歴"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
         "contact_support" : "カスタマーサポートに問い合わせる",
         "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
         "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
+        "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
         "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "near_title" : "Ledger Nano S™はNearのスワップに対応していません",
@@ -3844,6 +3912,9 @@
           "title" : "このドメインのアドレスが見つかりません"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
     },
     "amount" : {
       "available" : "合計利用可能額",
@@ -6082,6 +6153,7 @@
       "transferFees" : {
         "title" : "転送手数料",
         "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります（最大{{maxFee}}）",
+        "feesHint" : "トークン転送手数料：{{transferFee}}",
         "notice" : "転送手数料{{fee}}%",
         "tooltipHint" : "トークン作成者のために保留された転送の割合"
       },
@@ -7420,6 +7492,33 @@
     "performance" : "パフォーマンス",
     "low" : "低速",
     "high" : "高速",
-    "title" : "市場の動向"
+    "title" : "市場の動向",
+    "overlay" : {
+      "title" : "資産間の移動",
+      "action" : "左右にスワイプ",
+      "button" : "了解！"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "所有するNFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "利用不可のロケーション",
+    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "learnMore" : "詳細はこちら"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Liveのアップデートが必要です",
+    "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
+    "openStore" : "アップデート"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "暗号資産を選択",
+    "selectNetwork" : "ネットワークを選択",
+    "selectAccount" : "アカウントを選択"
   }
 }

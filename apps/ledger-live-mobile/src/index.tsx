@@ -31,12 +31,15 @@ import {
   saveMarketState,
   saveTrustchainState,
   saveWalletExportState,
+  saveLargeMoverState,
 } from "./db";
 import {
   exportSelector as settingsExportSelector,
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
   hasCompletedOnboardingSelector,
+  trackingEnabledSelector,
+  reportErrorsEnabledSelector,
 } from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
@@ -93,6 +96,21 @@ import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 import { StoragePerformanceOverlay } from "./newArch/storage/screens/PerformanceMonitor";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import AppVersionBlocker from "LLM/features/AppBlockers/components/AppVersionBlocker";
+import AppGeoBlocker from "LLM/features/AppBlockers/components/AppGeoBlocker";
+import { exportLargeMoverSelector } from "./reducers/largeMover";
+import {
+  TrackingConsent,
+  DatadogProvider,
+  AutoInstrumentationConfiguration,
+  DdSdkReactNative,
+  PropagatorType,
+} from "@datadog/mobile-react-native";
+import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
+import { initSentry } from "./sentry";
+import getOrCreateUser from "./user";
+import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -122,12 +140,32 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const datadogFF = useFeature("llmDatadog");
+  const sentryFF = useFeature("llmSentry");
   const isLDMKEnabled = useDeviceManagementKitEnabled();
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
+
+  const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
+    () => ({
+      trackErrors: datadogFF?.params?.trackErrors ?? false,
+      trackInteractions: datadogFF?.params?.trackInteractions ?? false,
+      trackResources: datadogFF?.params?.trackResources ?? false,
+      errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+      firstPartyHosts: [
+        {
+          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+        },
+      ],
+    }),
+    [datadogFF?.params, automaticBugReportingEnabled],
+  );
 
   useEffect(() => {
     if (providerNumber && isLDMKEnabled) {
@@ -155,6 +193,33 @@ function App() {
     hasSeenAnalyticsOptInPrompt,
     hasCompletedOnboarding,
   ]);
+
+  useEffect(() => {
+    if (!datadogFF?.enabled) return;
+    const setUserEquipmentId = async () => {
+      const { user } = await getOrCreateUser();
+      if (!user) return;
+      const { id } = user; // id is the user uuid aka equipment ID (used
+      // in segment)
+      DdSdkReactNative.setUserInfo({
+        id,
+      });
+    };
+    initializeDatadogProvider(
+      datadogFF?.params as Partial<PartialInitializationConfiguration>,
+      isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
+    )
+      .then(setUserEquipmentId)
+      .catch(e => {
+        console.error("Datadog initialization failed", e);
+      });
+  }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
+
+  useEffect(() => {
+    if (sentryFF?.enabled) {
+      initSentry(automaticBugReportingEnabled);
+    }
+  }, [sentryFF?.enabled, automaticBugReportingEnabled]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useFetchCurrencyAll();
@@ -251,12 +316,26 @@ function App() {
     lense: walletExportSelector,
   });
 
+  useDBSaveEffect({
+    save: saveLargeMoverState,
+    throttle: 500,
+    getChangesStats: (a, b) => a.largeMover !== b.largeMover,
+    lense: exportLargeMoverSelector,
+  });
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
       <ExperimentalHeader />
-      <RootNavigator />
+      {datadogFF?.enabled ? (
+        <DatadogProvider configuration={datadogAutoInstrumentation}>
+          <RootNavigator />
+        </DatadogProvider>
+      ) : (
+        <RootNavigator />
+      )}
+
       <AnalyticsConsole />
       <PerformanceConsole />
       <DebugTheme />
@@ -350,6 +429,7 @@ export default class Root extends Component {
             ready ? (
               <>
                 <SetEnvsFromSettings />
+                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
                 <HookSentry />
                 <SegmentSetup />
                 <HookNotifications />
@@ -369,7 +449,11 @@ export default class Root extends Component {
                                     <NavBarColorHandler />
                                     <AuthPass>
                                       <AppProviders initialCountervalues={initialCountervalues}>
-                                        <App />
+                                        <AppGeoBlocker>
+                                          <AppVersionBlocker>
+                                            <App />
+                                          </AppVersionBlocker>
+                                        </AppGeoBlocker>
                                       </AppProviders>
                                     </AuthPass>
                                   </StylesProvider>

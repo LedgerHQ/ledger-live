@@ -1,4 +1,4 @@
-import { by, element, expect } from "detox";
+import { by, element } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
@@ -14,7 +14,6 @@ export default class ReceivePage {
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   receivePageScrollViewId = "receive-screen-scrollView";
 
-  accountId = (t: string) => `test-id-account-${t}`;
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
@@ -37,15 +36,15 @@ export default class ReceivePage {
 
   @Step("Expect first step")
   async expectFirstStep() {
-    await expect(this.step1HeaderTitle()).toBeVisible();
+    await detoxExpect(this.step1HeaderTitle()).toBeVisible();
   }
 
   @Step("Expect second step networks")
   async expectSecondStepNetworks(networks: string[]): Promise<void> {
-    await expect(getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await expect(getElementById("receive-header-step2-networks")).toBeVisible();
+    await detoxExpect(getElementById(this.step2HeaderTitleId)).toBeVisible();
+    await detoxExpect(getElementById("receive-header-step2-networks")).toBeVisible();
     for (const network of networks) {
-      await expect(getElementById(this.currencyNameId(network))).toBeVisible();
+      await detoxExpect(getElementById(this.currencyNameId(network))).toBeVisible();
     }
   }
 
@@ -69,8 +68,8 @@ export default class ReceivePage {
 
   @Step("Expect second step accounts")
   async expectSecondStepAccounts() {
-    await expect(this.step2HeaderTitle()).toBeVisible();
-    await expect(this.step2Accounts()).toBeVisible();
+    await detoxExpect(this.step2HeaderTitle()).toBeVisible();
+    await detoxExpect(this.step2Accounts()).toBeVisible();
   }
 
   @Step("Select network in list if needed")
@@ -78,13 +77,6 @@ export default class ReceivePage {
     if (await IsIdVisible(this.networkBasedStep2HeaderTitleId)) {
       await this.selectNetwork(networkId);
     }
-  }
-
-  @Step("Select account in list")
-  async selectAccount(account: string): Promise<void> {
-    const id = this.accountId(account);
-    await waitForElementById(id);
-    await tapById(id);
   }
 
   @Step("Accept to verify address")
@@ -110,7 +102,7 @@ export default class ReceivePage {
     const accountNameID = this.currencyNameId(currencyName);
     const accountCountID = this.currencySubtitleId(accountCountText);
 
-    await expect(
+    await detoxExpect(
       element(
         by
           .id(networkRowID)
@@ -135,8 +127,8 @@ export default class ReceivePage {
   @Step("Expect account is created")
   async expectAccountIsCreated(accountName: string): Promise<void> {
     await waitForElementById(this.step2HeaderTitleId);
-    await expect(getElementById(this.step2HeaderTitleId)).toBeVisible();
-    await expect(getElementByText(accountName)).toBeVisible();
+    await detoxExpect(getElementById(this.step2HeaderTitleId)).toBeVisible();
+    await detoxExpect(getElementByText(accountName)).toBeVisible();
   }
 
   @Step("Select dont verify address")
@@ -157,13 +149,13 @@ export default class ReceivePage {
     const accountNameID = this.accountNameReceiveId(accountName);
     await waitForElementById(this.accountAddress);
     await waitForElementById(titleID);
-    await expect(getElementById(titleID)).toBeVisible();
-    await expect(getElementById(accountNameID)).toBeVisible();
+    await detoxExpect(getElementById(titleID)).toBeVisible();
+    await detoxExpect(getElementById(accountNameID)).toBeVisible();
   }
 
   @Step("Expect given address is displayed on receive page")
   async expectAddressIsCorrect(address: string): Promise<void> {
-    await expect(getElementById(this.accountAddress)).toHaveText(address);
+    await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
   @Step("Expect tron new address warning")
@@ -173,8 +165,8 @@ export default class ReceivePage {
     const scrollView = this.receivePageScrollViewId;
 
     await scrollToId(warnId, scrollView);
-    await expect(getElementById(warnId)).toBeVisible();
-    await expect(getElementById(descId)).toHaveText(
+    await detoxExpect(getElementById(warnId)).toBeVisible();
+    await detoxExpect(getElementById(descId)).toHaveText(
       "You first need to send at least 0.1 TRX to this address to activate it.",
     );
   }

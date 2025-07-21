@@ -29,19 +29,19 @@ on:
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         type: string
         required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        type: string
-        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
-      e2e_tests:
-        description: Run E2E tests
+      tests_type:
+        description: Tests type
         required: false
-        type: boolean
-        default: false
+        options:
+          - Mocked
+          - E2E - Android Only
+          - E2E - iOS & Android
+        default: Mocked
+        type: choice
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
@@ -61,13 +61,22 @@ on:
         type: boolean
         default: false
       test_execution_android:
-        description: "[Android] Test Execution ticket ID. Ex: 'B2CQA-2461'"
+        description: "🤖 Test Execution. Ex: 'B2CQA-2461'"
         required: false
         type: string
       test_execution_ios:
-        description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
+        description: "🍏 Test Execution. Ex: 'B2CQA-2462'"
         required: false
         type: string
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoX
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -81,27 +90,36 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
 
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
     runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
-    if: ${{ !inputs.e2e_tests && github.event_name != 'schedule' }}
+    if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      SEED: ${{ vars.SEED_QAA_B2C }}
-      INPUT_E2E: ${{ inputs.e2e_tests || github.event_name == 'schedule' }}
-      INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
     outputs:
-      status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3, 1]
+        exclude:
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ github.event.inputs.tests_type != 'Mocked' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
     steps:
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -130,8 +148,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..."  --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
 
       - name: Flake alert - ArgumentError
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
@@ -174,60 +192,93 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
 
-      - name: Create iOS simulator
-        id: simulator
-        run: xcrun simctl create "iOS Simulator" "iPhone 15"
-
-      - name: Build iOS app for Detox test run
-        if: steps.detox-build.outputs.cache-hit != 'true'
-        run: pnpm mobile e2e:ci -p ios -b
-
-      - name: Build JS Bundle app for Detox test run
-        if: steps.detox-build.outputs.cache-hit == 'true'
-        run: pnpm mobile e2e:ci -p ios --bundle
-
-      - name: Setup Speculos image and Coin Apps
+      - name: Build CLI
         if: ${{ env.E2E_RUN == 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
-        with:
-          coinapps_path: ${{ env.COINAPPS }}
-          speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
-          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-
-      - name: Test iOS app
-        id: detox
-        timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm test:llm:ios:e2e -- -p ios -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--e2e') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
+          command: pnpm build:cli
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
-      - name: Delete iOS simulator
-        if: ${{ always() }}
-        run: |
-          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
+      - name: Build iOS app for Detox test run
+        if: steps.detox-build.outputs.cache-hit != 'true' || inputs.production_firebase == 'true'
+        run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        env:
+          PRODUCTION: ${{ inputs.production_firebase }}
+
+      - name: Build JS Bundle app for Detox test run
+        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase != 'true'
+        run: pnpm mobile e2e:ci -p ios --bundle
+
+      - name: Setup Speculos image and Coin Apps
+        if: ${{ env.E2E_RUN == 'true' }}
+        id: setup-speculos
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        with:
+          coinapps_path: ${{ env.COINAPPS }}
+          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        if: ${{ env.E2E_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+
+      - name: Test iOS app E2E
+        if: ${{ env.E2E_RUN == 'true' }}
+        id: detox-e2e
+        run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_E2E" == "true" ]] && printf %s '--e2e') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
+        timeout-minutes: 240
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          AWS_ROLE: ${{ secrets.B2CQA_AWS_ROLE }}
+          CLUSTER: ${{ secrets.B2CQA_CLUSTER }}
+          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
+          INPUT_E2E: ${{ env.E2E_RUN }}
+          REMOTE_SPECULOS: "true"
+          PRODUCTION: ${{ inputs.production_firebase }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+
+      - name: Test iOS app Mock
+        if: ${{ env.E2E_RUN != 'true' }}
+        id: detox-mock
+        timeout-minutes: 75
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm test:llm:ios:e2e -- -p ios -t
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts"
+          name: "ios-test-artifacts-${{ matrix.shardIndex }}"
           path: ${{ env.E2E_RUN == 'true' && 'e2e/mobile/artifacts/' || 'apps/ledger-live-mobile/artifacts/' }}
       - run: echo "${{ steps.test-artifacts.outputs.artifact-id }}"
+      - name: Set job output based on detox result
+        id: set-output
+        if: always()
+        run: |
+          if [ "${{ env.E2E_RUN }}" == "true" ]; then
+             echo "status_${{ matrix.shardIndex }}=${{ steps.detox-e2e.outcome }}" >> $GITHUB_OUTPUT
+           else
+             echo "status_${{ matrix.shardIndex }}=${{ steps.detox-mock.outcome }}" >> $GITHUB_OUTPUT
+           fi
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && !inputs.e2e_tests && needs.detox-tests-ios.outputs.artifact }}
+    if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'E2E - Android Only' }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
-      status: ${{ needs.detox-tests-ios.outputs.status }}
+      finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -250,6 +301,22 @@ jobs:
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
+      - name: Aggregate test results
+        id: aggregate
+        run: |
+          if [ "${{ env.E2E_RUN }}" == "true" ]; then
+            statuses=("${{ needs.detox-tests-ios.outputs.status_1 }}" "${{ needs.detox-tests-ios.outputs.status_2 }}" "${{ needs.detox-tests-ios.outputs.status_3 }}")
+          else
+            statuses=("${{ needs.detox-tests-ios.outputs.status_1 }}")
+          fi
+          finalStatus="success"
+          for status in "${statuses[@]}"; do
+            if [ "$status" != "success" ]; then
+              finalStatus="failure"
+              break
+            fi
+          done
+          echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
 
   detox-tests-android:
     name: "Android Detox"
@@ -278,10 +345,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3, 1]
         exclude:
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.e2e_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
-          - shardTotal: ${{ github.event.inputs.e2e_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ github.event.inputs.tests_type != 'Mocked' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -310,7 +377,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
-      - name: Enable KVM group perms
+      - name: Enable Hardware Acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -483,6 +550,9 @@ jobs:
         platform:
           - android
           - ios
+        exclude:
+          - platform: ${{ github.event.inputs.tests_type == 'E2E - Android Only' && 'ios' }}
+
       fail-fast: false
     env:
       XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
@@ -506,7 +576,7 @@ jobs:
           merge-multiple: true
 
       - name: Format Xray results
-        run: apps/ledger-live-mobile/e2e/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
+        run: e2e/mobile/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
 
       - name: Upload aggregated xray results
         uses: actions/upload-artifact@v4
@@ -544,10 +614,11 @@ jobs:
     needs: [allure-report-android, allure-report-ios]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
     env:
-      IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
+      IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
       ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
       ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
+      ANDROID_ONLY: ${{ inputs.tests_type == 'E2E - Android Only' }}
     steps:
       - name: format message
         uses: actions/github-script@v7
@@ -563,7 +634,7 @@ jobs:
                   "type": "plain_text",
                   "text": process.env.E2E_RUN == 'false'
                     ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }}",
+                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
                   "emoji": true
                 }
               },
@@ -587,7 +658,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];
@@ -607,7 +678,7 @@ jobs:
             ];
 
             const infoFields = []
-              .concat(${{ env.E2E_RUN == 'true' }} ? [] : iOSInfo)
+              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
               .concat(androidInfo)
               .concat([
               {
@@ -628,7 +699,7 @@ jobs:
 
             const blocks = []
               .concat(header)
-              .concat(${{ env.E2E_RUN == 'true' }} ? [] : iOSResult)
+              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
               .concat(androidResult)
               .concat(infoBlock);
 
@@ -640,7 +711,7 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success'
+                      color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
                         ? "#FF333C"
                         : "#33FF39",
                       blocks,

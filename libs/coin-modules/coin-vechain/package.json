@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.7.6",
+  "version": "2.7.13",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -117,7 +117,6 @@
     "@types/lodash": "^4.14.191",
     "dotenv": "^16.4.5",
     "jest": "^29.7.0",
-    "jest-sonar": "0.2.16",
     "msw": "^2.2.13",
     "ts-jest": "^29.1.1"
   }

@@ -15,10 +15,19 @@ https://ledgerhq.atlassian.net/wiki/spaces/PTX/pages/4295000160/Switch+devices+w
 import { access, constants } from "fs";
 import path from "path";
 import { init, loadConfig } from "./server";
+import { ServerData } from "./types";
+import { Subject } from "rxjs";
 
 const filePath = process.argv[2];
 
 const fullFilePath = path.resolve("e2e", "userdata", `${filePath}.json`);
+
+global.webSocket = {
+  wss: undefined,
+  ws: undefined,
+  messages: {},
+  e2eBridgeServer: new Subject<ServerData>(),
+};
 
 access(fullFilePath, constants.F_OK, err => {
   if (err) {

@@ -4,10 +4,11 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./network";
 import {
   getMaybeMintAccount,
@@ -88,6 +89,7 @@ import {
   VersionedTransaction,
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -159,12 +161,14 @@ function decodeInstruction(
 }
 
 function buildTransferTransaction(
+  raw: string,
   lamports: bigint,
   fromPubkey: PublicKey,
   toPubkey: PublicKey,
   estimatedFees: number | null,
 ): Transaction {
   return {
+    raw,
     family: "solana",
     amount: fromBigIntToBigNumber(lamports),
     recipient: String(toPubkey),
@@ -202,6 +206,7 @@ async function toLiveTransaction(
   const estimatedFees = await api.getFeeForMessage(message);
 
   return buildTransferTransaction(
+    serializedTransaction,
     decodedInstruction.lamports,
     decodedInstruction.fromPubkey,
     decodedInstruction.toPubkey,
@@ -316,7 +321,15 @@ const deriveTokenTransferCommandDescriptor = async (
   const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
   if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
-    errors.fee = new NotEnoughBalance();
+    const query = new URLSearchParams({
+      ...(mainAccount?.id ? { account: mainAccount.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), new BigNumber(fee)),
+      ticker: mainAccount.currency.ticker,
+      cryptoName: mainAccount.currency.name,
+      links: [`ledgerlive://buy?${query.toString()}`],
+    });
   }
 
   if (!tx.useAllAmount && tx.amount.lte(0)) {
@@ -344,6 +357,7 @@ const deriveTokenTransferCommandDescriptor = async (
       amount: txAmount,
       mintAddress,
       mintDecimals,
+      tokenId: tokenAccount.token.id,
       recipientDescriptor: recipientDescriptor,
       memo: model.uiState.memo,
       tokenProgram: tokenProgram,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.11.6",
+  "version": "0.11.13",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -66,8 +66,7 @@
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
     "msw": "^2.0.11",
-    "ts-jest": "^29.1.1",
-    "jest-sonar": "0.2.16"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

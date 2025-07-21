@@ -1,5 +1,156 @@
 # @ledgerhq/live-signer-evm
 
+## 0.5.6
+
+### Patch Changes
+
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0
+  - @ledgerhq/hw-app-eth@6.45.11
+
+## 0.5.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ad01130`](https://github.com/LedgerHQ/ledger-live/commit/ad01130147094f0bf71691fdd31d243db7bcf791), [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542), [`c57bdbe`](https://github.com/LedgerHQ/ledger-live/commit/c57bdbe55941a2f49eb4e8e33abc9fc697e4a3ba)]:
+  - @ledgerhq/coin-evm@2.23.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.11-next.0
+
+## 0.5.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.6
+  - @ledgerhq/hw-app-eth@6.45.10
+
+## 0.5.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.6-next.0
+  - @ledgerhq/hw-app-eth@6.45.10-next.0
+
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.5
+  - @ledgerhq/hw-app-eth@6.45.9
+
+## 0.5.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.5-next.0
+  - @ledgerhq/hw-app-eth@6.45.9-next.0
+
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0
+  - @ledgerhq/coin-evm@2.22.4
+  - @ledgerhq/hw-app-eth@6.45.8
+
+## 0.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b5e3217`](https://github.com/LedgerHQ/ledger-live/commit/b5e321789d3a6f9cb1916067790590640db0876f)]:
+  - @ledgerhq/errors@6.22.0-next.0
+  - @ledgerhq/coin-evm@2.22.4-next.0
+  - @ledgerhq/hw-app-eth@6.45.8-next.0
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3
+  - @ledgerhq/hw-app-eth@6.45.7
+
+## 0.5.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3-next.1
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.3-next.0
+  - @ledgerhq/hw-app-eth@6.45.7-next.0
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.2
+  - @ledgerhq/hw-app-eth@6.45.6
+
+## 0.5.1-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.2-next.2
+  - @ledgerhq/hw-app-eth@6.45.6-next.2
+
+## 0.5.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.2-next.1
+  - @ledgerhq/hw-app-eth@6.45.6-next.1
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.22.2-next.0
+  - @ledgerhq/hw-app-eth@6.45.6-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Skip open app in DMK ETH signer
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix sending USDT with LNS
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0
+  - @ledgerhq/coin-evm@2.22.1
+  - @ledgerhq/hw-app-eth@6.45.5
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Skip open app in DMK ETH signer
+
+- [#10124](https://github.com/LedgerHQ/ledger-live/pull/10124) [`0104847`](https://github.com/LedgerHQ/ledger-live/commit/0104847fa980dddc56ee31c24de15f31f6b9f33d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix sending USDT with LNS
+
+### Patch Changes
+
+- Updated dependencies [[`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47), [`9081c26`](https://github.com/LedgerHQ/ledger-live/commit/9081c2648490f977469a33762a3c67bb2c2a0be5)]:
+  - @ledgerhq/errors@6.21.0-next.0
+  - @ledgerhq/coin-evm@2.22.1-next.0
+  - @ledgerhq/hw-app-eth@6.45.5-next.0
+
 ## 0.4.2
 
 ### Patch Changes

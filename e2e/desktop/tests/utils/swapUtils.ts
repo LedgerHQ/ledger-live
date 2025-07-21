@@ -2,6 +2,7 @@ import test from "../fixtures/common";
 import { Application } from "../page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -19,18 +20,29 @@ export function setupEnv(disableBroadcast?: boolean) {
   });
 }
 
+export async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
+  await app.layout.goToAccounts();
+  await app.accounts.clickSyncBtnForAccount(swap.accountToDebit.accountName);
+  await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
+  await app.account.verifySendButtonVisibility();
+}
+
 export async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
   swap: Swap,
   minAmount: string,
 ) {
+  if (swap.accountToDebit.currency === Currency.APT) {
+    await checkAccountFromIsSynchronised(app, swap);
+  }
   await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
-
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
+  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
+  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 

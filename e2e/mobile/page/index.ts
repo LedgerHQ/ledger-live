@@ -25,13 +25,13 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
+import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setupEnvironment } from "../helpers/commonHelpers";
@@ -40,7 +40,7 @@ setupEnvironment();
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
-type ApplicationOptions = {
+export type ApplicationOptions = {
   speculosApp?: AppInfosType;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
@@ -111,6 +111,7 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
+  private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
 
   public async init({
     speculosApp,
@@ -122,13 +123,12 @@ export class Application {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
 
-    if (!getEnv("MOCK"))
-      fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
+    fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
     for (const { app, cmd } of cliCommandsOnApp || []) {
-      const proxyPort = await this.common.addSpeculos(app.name);
+      const apiPort = await this.common.addSpeculos(app.name);
       await executeCliCommand(cmd, userdataPath);
-      this.common.removeSpeculos(proxyPort);
+      this.common.removeSpeculos(apiPort);
     }
 
     if (speculosApp) await this.common.addSpeculos(speculosApp.name);
@@ -136,10 +136,8 @@ export class Application {
       await executeCliCommand(cmd, userdataPath);
     }
 
-    if (!getEnv("MOCK")) {
-      await loadConfig(userdataSpeculos, true);
-      fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
-    } else userdata && (await loadConfig(userdata, true));
+    await loadConfig(userdataSpeculos, true);
+    fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
 
     featureFlags && (await setFeatureFlags(featureFlags));
   }
@@ -250,5 +248,9 @@ export class Application {
 
   public get celoManageAssets() {
     return this.celoManageAssetsPageInstance();
+  }
+
+  public get transferMenuDrawer() {
+    return this.TransferMenuDrawerInstance();
   }
 }

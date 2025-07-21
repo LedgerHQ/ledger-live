@@ -10,7 +10,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Alert from "~/renderer/components/Alert";
 import { useTrack } from "~/renderer/analytics/segment";
@@ -132,7 +132,7 @@ export default function FeesDrawerLiveApp({
       <Box mt={3} flow={4} mx={3} flex="1">
         {transaction && mainAccount && (
           <SendAmountFields
-            account={parentAccount || (mainAccount as Account)}
+            account={parentAccount || mainAccount}
             parentAccount={parentAccount}
             status={transactionStatus}
             transaction={transaction}

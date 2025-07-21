@@ -1,5 +1,5 @@
 import test from "../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -36,8 +36,8 @@ const swaps = [
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDT_1,
-    toAccount: Account.ETH_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_1,
     xrayTicket: "B2CQA-2752, B2CQA-2048",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
@@ -49,7 +49,7 @@ const swaps = [
   },
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2749",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
@@ -61,18 +61,18 @@ const swaps = [
   },
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2746",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2751",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
@@ -91,24 +91,24 @@ const swaps = [
   },
   {
     fromAccount: Account.SOL_1,
-    toAccount: Account.ETH_USDT_1,
+    toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2777",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDC_1,
+    fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2830",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDC_1,
+    fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2831",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_USDC_1,
+    fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
@@ -121,7 +121,7 @@ const swaps = [
   },
   {
     fromAccount: Account.XRP_1,
-    toAccount: Account.ETH_USDC_1,
+    toAccount: TokenAccount.ETH_USDC_1,
     xrayTicket: "B2CQA-3075",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },

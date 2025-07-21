@@ -1,6 +1,6 @@
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Account, Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { AptosAPI } from "../../network";
@@ -14,6 +14,8 @@ import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { txsToOps } from "../../bridge/logic";
+import { AptosAccount } from "../../types";
+import { getEnv } from "@ledgerhq/live-env";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
@@ -54,7 +56,7 @@ describe("getAccountShape", () => {
 
   it("account with xpub", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -64,7 +66,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -85,8 +87,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -97,7 +99,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -108,7 +110,7 @@ describe("getAccountShape", () => {
 
   it("account without xpub", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -118,7 +120,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -138,8 +140,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -150,7 +152,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -161,7 +163,7 @@ describe("getAccountShape", () => {
 
   it("without initialAccount", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -171,7 +173,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -183,7 +185,7 @@ describe("getAccountShape", () => {
         xpub: "address",
         derivationPath: "",
         deviceId: "1",
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -194,7 +196,7 @@ describe("getAccountShape", () => {
 
   it("initialAccount with operations", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -204,7 +206,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -224,8 +226,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -236,7 +238,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -247,7 +249,7 @@ describe("getAccountShape", () => {
 
   it("initialAccount with operations with extra", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -257,7 +259,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -277,8 +279,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -289,7 +291,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -300,7 +302,7 @@ describe("getAccountShape", () => {
 
   it("get publicKey from rest", async () => {
     const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
-      balance: BigInt(0),
+      balance: BigNumber(0),
       transactions: [],
       blockHeight: 0,
     }));
@@ -310,7 +312,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], []]);
+    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -330,8 +332,8 @@ describe("getAccountShape", () => {
           freshAddress: "address",
           freshAddressPath: "",
           used: true,
-          balance: BigInt(10),
-          spendableBalance: BigInt(10),
+          balance: BigNumber(10),
+          spendableBalance: BigNumber(10),
           creationDate: new Date(),
           blockHeight: 0,
           currency: getCryptoCurrencyById("aptos"),
@@ -343,7 +345,7 @@ describe("getAccountShape", () => {
           swapHistory: [],
         },
         rest: { publicKey: "restPublicKey" },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -798,10 +800,15 @@ describe("getAccountShape", () => {
       blockHeight: 316278241,
     }));
 
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
+      getBalances: mockGetBalances,
       getAccountInfo: mockGetAccountInfo,
-      getBalance: mockGetBalance,
     }));
 
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
@@ -889,6 +896,7 @@ describe("getAccountShape", () => {
         hasFailed: false,
       },
     ] as Operation[];
+
     const tokenOperations = [
       {
         id: "js:2:aptos:474d:aptos-0x3f35-OUT",
@@ -929,8 +937,11 @@ describe("getAccountShape", () => {
         hasFailed: false,
       },
     ] as Operation[];
+
+    const stakingOperations = [] as Operation[];
+
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations]);
+    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {
@@ -1044,7 +1055,7 @@ describe("getAccountShape", () => {
           },
         ],
       },
-    } as unknown as AccountShapeInfo<Account>;
+    } as unknown as AccountShapeInfo<AptosAccount>;
 
     const result = await getAccountShape(info, {} as SyncConfig);
 
@@ -1312,9 +1323,14 @@ describe("getSubAccountShape", () => {
   ] as Operation[];
 
   it("returns the correct information", async () => {
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(1234567));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
-      getBalance: mockGetBalance,
+      getBalances: mockGetBalances,
     }));
 
     const subAccount = await getSubAccountShape(currency, address, parentId, token, operations);
@@ -1377,7 +1393,7 @@ describe("getSubAccounts", () => {
     index: 1,
     derivationPath: "44'/637'/0'",
     derivationMode: "aptos",
-  } as AccountShapeInfo<Account>;
+  } as AccountShapeInfo<AptosAccount>;
   const accountId = "js:2:aptos:3282:aptos";
   const lastTokenOperations = [
     {
@@ -1421,9 +1437,14 @@ describe("getSubAccounts", () => {
   ] as Operation[];
 
   it("returns the correct information", async () => {
-    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(1234567));
+    const TOKEN_CONTRACT_ADDRESS = "0xd111::staked_coin::StakedAptos";
+
+    const mockGetBalances = jest
+      .fn()
+      .mockResolvedValue([{ contractAddress: TOKEN_CONTRACT_ADDRESS, amount: BigNumber(1234567) }]);
+
     mockedAptosAPI.mockImplementation(() => ({
-      getBalance: mockGetBalance,
+      getBalances: mockGetBalances,
     }));
 
     mockedDecodeTokenAccountId.mockReturnValue({
@@ -1564,5 +1585,765 @@ describe("getSubAccounts", () => {
         swapHistory: [],
       },
     ]);
+  });
+});
+
+describe("getStake", () => {
+  beforeEach(() => {
+    mockedAptosAPI = jest.mocked(AptosAPI);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("When AptosResource has StakingPositions should validate", async () => {
+    const mockDelegatorBalance = [1000000, 500000, 200000];
+
+    const validatorAddress = "0xvalidator1";
+    const stakingOperations = [
+      {
+        id: "js:2:aptos:474d:aptos-0x3f35-OUT",
+        hash: "0x3f35",
+        type: "STAKE",
+        value: BigNumber(1200),
+        fee: BigNumber(1200),
+        blockHash: "0x6d02",
+        blockHeight: 311948147,
+        senders: ["0xa0d8"],
+        recipients: [validatorAddress],
+        accountId: "js:2:aptos:474d:aptos",
+        date: new Date("2025-03-28T15:56:00.481Z"),
+        extra: {
+          version: "2532591427",
+        },
+        transactionSequenceNumber: 121,
+        hasFailed: false,
+      },
+    ] as Operation[];
+
+    const mockGetAccountInfo = jest.fn().mockImplementation(async () => ({
+      balance: BigNumber(68254118),
+      transactions: [
+        {
+          version: "2532591427",
+          hash: "0x3f35",
+          state_change_hash: "0xb480",
+          event_root_hash: "0x3fa1",
+          state_checkpoint_hash: null,
+          gas_used: "12",
+          success: true,
+          vm_status: "Executed successfully",
+          accumulator_root_hash: "0x319f",
+          changes: [
+            {
+              address: "0x4e5e",
+              state_key_hash: "0x3c0c",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "4000000",
+                  },
+                  deposit_events: {
+                    counter: "9",
+                    guid: {
+                      id: {
+                        addr: "0x4e5e",
+                        creation_num: "4",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "6",
+                    guid: {
+                      id: {
+                        addr: "0x4e5e",
+                        creation_num: "5",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x1709",
+              data: {
+                type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+                data: {
+                  coin: {
+                    value: "68254118",
+                  },
+                  deposit_events: {
+                    counter: "46",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "2",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "89",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "3",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x5520",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "1000000",
+                  },
+                  deposit_events: {
+                    counter: "7",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "10",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "13",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "11",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x6f1e",
+              data: {
+                type: "0x1::account::Account",
+                data: {
+                  authentication_key: "0xa0d8",
+                  coin_register_events: {
+                    counter: "5",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "0",
+                      },
+                    },
+                  },
+                  guid_creation_num: "12",
+                  key_rotation_events: {
+                    counter: "0",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "1",
+                      },
+                    },
+                  },
+                  rotation_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                  sequence_number: "122",
+                  signer_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              state_key_hash: "0x6e4b",
+              handle: "0x1b85",
+              key: "0x0619",
+              value: "0x1ddaf8da3b1497010000000000000000",
+              data: null,
+              type: "write_table_item",
+            },
+          ],
+          sender: "0xa0d8",
+          sequence_number: "121",
+          max_gas_amount: "12",
+          gas_unit_price: "100",
+          expiration_timestamp_secs: "1743177404",
+          payload: {
+            function: "0x1::aptos_account::transfer_coins",
+            type_arguments: ["0xd111::staked_coin::StakedAptos"],
+            arguments: ["0x4e5e", "1500000"],
+            type: "entry_function_payload",
+          },
+          signature: {
+            public_key: "0x474d",
+            signature: "0x0ad8",
+            type: "ed25519_signature",
+          },
+          events: [
+            {
+              guid: {
+                creation_number: "11",
+                account_address: "0xa0d8",
+              },
+              sequence_number: "12",
+              type: "0x1::coin::WithdrawEvent",
+              data: {
+                amount: "1500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "4",
+                account_address: "0x4e5e",
+              },
+              sequence_number: "8",
+              type: "0x1::coin::DepositEvent",
+              data: {
+                amount: "1500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "0",
+                account_address: "0x0",
+              },
+              sequence_number: "0",
+              type: "0x1::transaction_fee::FeeStatement",
+              data: {
+                execution_gas_units: "6",
+                io_gas_units: "6",
+                storage_fee_octas: "0",
+                storage_fee_refund_octas: "0",
+                total_charge_gas_units: "12",
+              },
+            },
+          ],
+          timestamp: "1743177360481259",
+          type: "user_transaction",
+          block: {
+            height: 311948147,
+            hash: "0x6d02",
+          },
+        },
+        {
+          version: "2532549325",
+          hash: "0x9a6b",
+          state_change_hash: "0xa424",
+          event_root_hash: "0x0321",
+          state_checkpoint_hash: null,
+          gas_used: "12",
+          success: true,
+          vm_status: "Executed successfully",
+          accumulator_root_hash: "0xede9",
+          changes: [
+            {
+              address: "0x4e5e",
+              state_key_hash: "0x3c0c",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "2500000",
+                  },
+                  deposit_events: {
+                    counter: "8",
+                    guid: {
+                      id: {
+                        addr: "0x4e5e",
+                        creation_num: "4",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "6",
+                    guid: {
+                      id: {
+                        addr: "0x4e5e",
+                        creation_num: "5",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x1709",
+              data: {
+                type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+                data: {
+                  coin: {
+                    value: "68255318",
+                  },
+                  deposit_events: {
+                    counter: "46",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "2",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "89",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "3",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x5520",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "2500000",
+                  },
+                  deposit_events: {
+                    counter: "7",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "10",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "12",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "11",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d8",
+              state_key_hash: "0x6f1e",
+              data: {
+                type: "0x1::account::Account",
+                data: {
+                  authentication_key: "0xa0d8",
+                  coin_register_events: {
+                    counter: "5",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "0",
+                      },
+                    },
+                  },
+                  guid_creation_num: "12",
+                  key_rotation_events: {
+                    counter: "0",
+                    guid: {
+                      id: {
+                        addr: "0xa0d8",
+                        creation_num: "1",
+                      },
+                    },
+                  },
+                  rotation_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                  sequence_number: "121",
+                  signer_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              state_key_hash: "0x6e4b",
+              handle: "0x1b85",
+              key: "0x0619",
+              value: "0xe86e0039581497010000000000000000",
+              data: null,
+              type: "write_table_item",
+            },
+          ],
+          sender: "0xa0d8",
+          sequence_number: "120",
+          max_gas_amount: "12",
+          gas_unit_price: "100",
+          expiration_timestamp_secs: "1743176706",
+          payload: {
+            function: "0x1::aptos_account::transfer_coins",
+            type_arguments: ["0xd111::staked_coin::StakedAptos"],
+            arguments: ["0x4e5e", "2500000"],
+            type: "entry_function_payload",
+          },
+          signature: {
+            public_key: "0x474d",
+            signature: "0xb70e",
+            type: "ed25519_signature",
+          },
+          events: [
+            {
+              guid: {
+                creation_number: "11",
+                account_address: "0xa0d8",
+              },
+              sequence_number: "11",
+              type: "0x1::coin::WithdrawEvent",
+              data: {
+                amount: "2500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "4",
+                account_address: "0x4e5e",
+              },
+              sequence_number: "7",
+              type: "0x1::coin::DepositEvent",
+              data: {
+                amount: "2500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "0",
+                account_address: "0x0",
+              },
+              sequence_number: "0",
+              type: "0x1::transaction_fee::FeeStatement",
+              data: {
+                execution_gas_units: "6",
+                io_gas_units: "6",
+                storage_fee_octas: "0",
+                storage_fee_refund_octas: "0",
+                total_charge_gas_units: "12",
+              },
+            },
+          ],
+          timestamp: "1743176594693251",
+          type: "user_transaction",
+          block: {
+            height: 311942427,
+            hash: "0x8655",
+          },
+        },
+      ],
+      blockHeight: 316278241,
+    }));
+
+    const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
+
+    mockedDecodeTokenAccountId.mockReturnValue({
+      token: {
+        type: "TokenCurrency",
+        id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
+        contractAddress: "0xd111::staked_coin::StakedAptos",
+        parentCurrency: {
+          type: "CryptoCurrency",
+          id: "aptos",
+          coinType: 637,
+          name: "Aptos",
+          managerAppName: "Aptos",
+          ticker: "APT",
+          scheme: "aptos",
+          color: "#231F20",
+          family: "aptos",
+          units: [
+            {
+              name: "APT",
+              code: "APT",
+              magnitude: 8,
+            },
+          ],
+          explorerViews: [
+            {
+              address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+              tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+            },
+          ],
+        },
+        name: "dstAPT",
+        tokenType: "coin",
+        ticker: "dstAPT",
+        disableCountervalue: false,
+        delisted: false,
+        units: [
+          {
+            name: "dstAPT",
+            code: "dstAPT",
+            magnitude: 8,
+          },
+        ],
+      },
+      accountId: "js:2:aptos:6415:aptos",
+    });
+
+    const operations = [
+      {
+        id: "js:2:aptos:474d:aptos-0x3f35-OUT",
+        hash: "0x3f35",
+        type: "FEES",
+        value: BigNumber(1200),
+        fee: BigNumber(1200),
+        blockHash: "0x6d02",
+        blockHeight: 311948147,
+        senders: ["0xa0d8"],
+        recipients: ["0x4e5e"],
+        accountId: "js:2:aptos:474d:aptos",
+        date: new Date("2025-03-28T15:56:00.481Z"),
+        extra: {
+          version: "2532591427",
+        },
+        transactionSequenceNumber: 121,
+        hasFailed: false,
+      },
+      {
+        id: "js:2:aptos:474d:aptos-0x9a6b-OUT",
+        hash: "0x9a6b",
+        type: "FEES",
+        value: BigNumber(1200),
+        fee: BigNumber(1200),
+        blockHash: "0x8655",
+        blockHeight: 311942427,
+        senders: ["0xa0d8"],
+        recipients: ["0x4e5e"],
+        accountId: "js:2:aptos:474d:aptos",
+        date: new Date("2025-03-28T15:43:14.693Z"),
+        extra: {
+          version: "2532549325",
+        },
+        transactionSequenceNumber: 120,
+        hasFailed: false,
+      },
+    ] as Operation[];
+
+    const tokenOperations = [
+      {
+        id: "js:2:aptos:474d:aptos-0x3f35-OUT",
+        hash: "0x3f35",
+        type: "OUT",
+        value: BigNumber(1500000),
+        fee: BigNumber(1200),
+        blockHash: "0x6d02",
+        blockHeight: 311948147,
+        senders: ["0xa0d8"],
+        recipients: ["0x4e5e"],
+        accountId:
+          "js:2:aptos:474d:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd111%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+        date: new Date("2025-03-28T15:56:00.481Z"),
+        extra: {
+          version: "2532591427",
+        },
+        transactionSequenceNumber: 121,
+        hasFailed: false,
+      },
+      {
+        id: "js:2:aptos:474d:aptos-0x9a6b-OUT",
+        hash: "0x9a6b",
+        type: "OUT",
+        value: BigNumber(2500000),
+        fee: BigNumber(1200),
+        blockHash: "0x8655",
+        blockHeight: 311942427,
+        senders: ["0xa0d8"],
+        recipients: ["0x4e5e"],
+        accountId:
+          "js:2:aptos:474d:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd111%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+        date: new Date("2025-03-28T15:43:14.693Z"),
+        extra: {
+          version: "2532549325",
+        },
+        transactionSequenceNumber: 120,
+        hasFailed: false,
+      },
+    ] as Operation[];
+
+    const mockedGetDelegatorBalanceInPool = jest.fn().mockResolvedValue([
+      BigNumber(mockDelegatorBalance[0]), // active
+      BigNumber(mockDelegatorBalance[1]), // inactive
+      BigNumber(mockDelegatorBalance[2]), // pending_inactive
+    ]);
+
+    mockedAptosAPI.mockImplementation(() => ({
+      getAccountInfo: mockGetAccountInfo,
+      getDelegatorBalanceInPool: mockedGetDelegatorBalanceInPool,
+      getBalances: mockGetBalance,
+    }));
+
+    jest.mocked(mergeOps).mockReturnValue(operations);
+    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+
+    const info = {
+      currency: {
+        type: "CryptoCurrency",
+        id: "aptos",
+        coinType: 637,
+        name: "Aptos",
+        managerAppName: "Aptos",
+        ticker: "APT",
+        scheme: "aptos",
+        color: "#231F20",
+        family: "aptos",
+        units: [
+          {
+            name: "APT",
+            code: "APT",
+            magnitude: 8,
+          },
+        ],
+      },
+      index: 0,
+      address: "0xa0d8",
+      derivationPath: "44'/637'/0'",
+      derivationMode: "aptos",
+      initialAccount: {
+        type: "Account",
+        id: "js:2:aptos:474d:aptos",
+        used: true,
+        seedIdentifier: "3086",
+        derivationMode: "aptos",
+        index: 0,
+        freshAddress: "0xa0d8",
+        freshAddressPath: "44'/637'/0'/0'/0'",
+        blockHeight: 316272224,
+        creationDate: "2025-01-16T14:17:41.076Z",
+        balance: BigNumber(68254118),
+        spendableBalance: BigNumber(68254118),
+        operations: [],
+        operationsCount: 0,
+        pendingOperations: [],
+        currency: {
+          type: "CryptoCurrency",
+          id: "aptos",
+          coinType: 637,
+          name: "Aptos",
+          managerAppName: "Aptos",
+          ticker: "APT",
+          scheme: "aptos",
+          color: "#231F20",
+          family: "aptos",
+          units: [
+            {
+              name: "APT",
+              code: "APT",
+              magnitude: 8,
+            },
+          ],
+        },
+        lastSyncDate: new Date(),
+        swapHistory: [],
+        balanceHistoryCache: emptyHistoryCache,
+        xpub: "474d",
+        subAccounts: [
+          {
+            type: "TokenAccount",
+            id: "js:2:aptos:474d:aptos+aptos%2Fcoin%2Fdstapt~!underscore!~0xd111%3A%3Astaked~!underscore!~coin%3A%3Astakedaptos",
+            parentId: "js:2:aptos:474d:aptos",
+            token: {
+              type: "TokenCurrency",
+              id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
+              contractAddress: "0xd111::staked_coin::StakedAptos",
+              parentCurrency: {
+                type: "CryptoCurrency",
+                id: "aptos",
+                coinType: 637,
+                name: "Aptos",
+                managerAppName: "Aptos",
+                ticker: "APT",
+                scheme: "aptos",
+                color: "#231F20",
+                family: "aptos",
+                units: [
+                  {
+                    name: "APT",
+                    code: "APT",
+                    magnitude: 8,
+                  },
+                ],
+              },
+              name: "dstAPT",
+              tokenType: "coin",
+              ticker: "dstAPT",
+              disableCountervalue: false,
+              delisted: false,
+              units: [
+                {
+                  name: "dstAPT",
+                  code: "dstAPT",
+                  magnitude: 8,
+                },
+              ],
+            },
+            balance: BigNumber(5000000),
+            spendableBalance: BigNumber(5000000),
+            creationDate: "2025-03-11T09:33:46.840Z",
+            operations: [],
+            operationsCount: 0,
+            pendingOperations: [],
+            swapHistory: [],
+            balanceHistoryCache: emptyHistoryCache,
+          },
+        ],
+      },
+    } as unknown as AccountShapeInfo<AptosAccount>;
+
+    const result = await getAccountShape(info, {} as SyncConfig);
+
+    expect(result.aptosResources).toBeDefined();
+
+    const stakingEnabled = getEnv("APTOS_ENABLE_STAKING") === true;
+    if (stakingEnabled) {
+      expect(result.aptosResources?.stakingPositions).toHaveLength(1);
+
+      const position = result.aptosResources?.stakingPositions?.[0];
+      expect(position).toEqual({
+        active: BigNumber(mockDelegatorBalance[0]),
+        inactive: BigNumber(mockDelegatorBalance[1]),
+        pendingInactive: BigNumber(mockDelegatorBalance[2]),
+        validatorId: stakingOperations[0].recipients[0],
+      });
+
+      expect(result.aptosResources?.activeBalance).toEqual(BigNumber(mockDelegatorBalance[0]));
+      expect(result.aptosResources?.inactiveBalance).toEqual(BigNumber(mockDelegatorBalance[1]));
+      expect(result.aptosResources?.pendingInactiveBalance).toEqual(
+        BigNumber(mockDelegatorBalance[2]),
+      );
+    }
   });
 });

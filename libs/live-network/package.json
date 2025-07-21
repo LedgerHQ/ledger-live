@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-network",
-  "version": "2.0.7",
+  "version": "2.0.12",
   "description": "Ledger Live network and cache utilities",
   "keywords": [
     "Ledger"
@@ -85,6 +85,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "coverage": "jest --coverage",
     "unimported": "unimported"
   }
 }

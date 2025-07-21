@@ -11,7 +11,13 @@ import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import storage from "LLM/storage";
 import type { User } from "./types/store";
-import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
+import type {
+  BleState,
+  LargeMoverState,
+  MarketState,
+  ProtectState,
+  SettingsState,
+} from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
@@ -311,4 +317,11 @@ export function useDB<State, Selected>(
     setter: (state: State) => storage.save(key, state),
     selector,
   });
+}
+
+export function getLargeMoverState(): Promise<LargeMoverState> {
+  return storage.get("largeMover") as Promise<LargeMoverState>;
+}
+export async function saveLargeMoverState(state: LargeMoverState): Promise<void> {
+  await storage.save("largeMover", state);
 }

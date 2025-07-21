@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.5.6",
+  "version": "0.5.13",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"
@@ -46,7 +46,9 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-countervalues",
-    "test": "jest"
+    "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {

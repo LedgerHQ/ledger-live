@@ -19,13 +19,24 @@
     "src/operation.ts",
     "src/signer.ts",
     "src/transaction/common.ts",
-    "src/utils.ts"
+    "src/utils.ts",
+    "src/sanction/index.ts",
+    "src/sanction/errors.ts"
   ],
   "ignoreUnimported": [
     "src/config.ts",
+    "src/crypto-assets/index.ts",
+    "src/crypto-assets/type.ts",
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts"
   ],
-  "ignoreUnresolved": ["follow-redirects", "form-data", "proxy-from-env"],
-  "ignoreUnused": ["lru-cache"]
+  "ignoreUnresolved": [
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
+  ],
+  "ignoreUnused": [
+    "lru-cache",
+    "uuid"
+  ]
 }

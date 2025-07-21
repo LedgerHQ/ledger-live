@@ -159,7 +159,11 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
-  postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+  postMessage({
+    type: "addKnownSpeculos",
+    id: uniqueId(),
+    payload: JSON.stringify({ address: proxyAddress, model: process.env.SPECULOS_DEVICE }),
+  });
 }
 
 export async function removeKnownSpeculos(id: string) {
@@ -188,6 +192,21 @@ function onMessage(messageStr: string) {
       break;
     case "earnLiveAppReady":
       clientResponse("Earn Live App is ready");
+      break;
+    case "appFile":
+      try {
+        const { fileName, fileContent }: { fileName: string; fileContent: string } = JSON.parse(
+          msg.payload,
+        );
+        const artifactsDir = path.resolve(__dirname, "../artifacts");
+        if (!fs.existsSync(artifactsDir)) {
+          fs.mkdirSync(artifactsDir, { recursive: true });
+        }
+        const filePath = path.join(artifactsDir, fileName);
+        fs.writeFileSync(filePath, fileContent, "utf8");
+      } catch (err) {
+        log(`Failed to save file: ${err}`);
+      }
       break;
     default:
       break;

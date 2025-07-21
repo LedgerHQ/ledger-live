@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 
@@ -32,6 +31,6 @@ export default class AccountsPage extends CommonPage {
   @Step("Expect no accounts screen")
   async expectNoAccount() {
     const el = this.emptyAccountDisplay();
-    await expect(el).toBeVisible();
+    await detoxExpect(el).toBeVisible();
   }
 }

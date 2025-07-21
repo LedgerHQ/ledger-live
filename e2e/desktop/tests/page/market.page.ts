@@ -54,9 +54,7 @@ export class MarketPage extends AppPage {
 
   @step("Open buy page for $0")
   async openBuyPage(ticker: string) {
-    await this.buyButton(ticker).click();
-    // FIXME windows seems to be choking on the transition taking longer.
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await this.buyButton(ticker.toLowerCase()).click();
   }
 
   @step("Wait for loading")

@@ -1,11 +1,11 @@
 import "tsconfig-paths/register";
 import { globalSetup } from "detox/runners/jest";
 import { Subject, Subscription } from "rxjs";
-import { $TmsLink, Step } from "jest-allure2-reporter/api";
+import { $TmsLink, Step, $Tag } from "jest-allure2-reporter/api";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -19,6 +19,7 @@ import { log } from "detox";
 
 global.Step = Step;
 global.$TmsLink = $TmsLink;
+global.$Tag = $Tag;
 
 // Import Application after Step globals to avoid premature loading
 import { Application } from "./page";
@@ -82,18 +83,22 @@ export default async function setup(): Promise<void> {
   global.Currency = Currency;
   global.Delegate = Delegate;
   global.Account = Account;
+  global.TokenAccount = TokenAccount;
   global.Transaction = Transaction;
   global.Fee = Fee;
   global.AppInfos = AppInfos;
   global.Swap = Swap;
 
   // Bind native helpers
+  global.detoxExpect = NativeElementHelpers.expect;
   global.waitForElementById = NativeElementHelpers.waitForElementById;
   global.waitForElementByText = NativeElementHelpers.waitForElementByText;
   global.waitForElementNotVisible = NativeElementHelpers.waitForElementNotVisible;
   global.getElementById = NativeElementHelpers.getElementById;
   global.getElementsById = NativeElementHelpers.getElementsById;
   global.getElementByText = NativeElementHelpers.getElementByText;
+  global.getElementByIdAndText = NativeElementHelpers.getElementByIdAndText;
+  global.countElementsById = NativeElementHelpers.countElementsById;
   global.IsIdVisible = NativeElementHelpers.isIdVisible;
   global.tapById = NativeElementHelpers.tapById;
   global.tapByText = NativeElementHelpers.tapByText;
@@ -113,8 +118,11 @@ export default async function setup(): Promise<void> {
   global.getWebElementByTestId = WebElementHelpers.getWebElementByTestId;
   global.getWebElementText = WebElementHelpers.getWebElementText;
   global.getWebElementsByIdAndText = WebElementHelpers.getWebElementsByIdAndText;
+  global.getWebElementsByCssSelector = WebElementHelpers.getWebElementsByCssSelector;
   global.getWebElementsText = WebElementHelpers.getWebElementsText;
   global.waitWebElementByTestId = WebElementHelpers.waitWebElementByTestId;
   global.tapWebElementByTestId = WebElementHelpers.tapWebElementByTestId;
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
+  global.getValueByWebTestId = WebElementHelpers.getValueByWebTestId;
+  global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
 }

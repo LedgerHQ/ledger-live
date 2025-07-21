@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.10.1",
+  "version": "0.13.2",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -71,7 +71,6 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
-    "jest-sonar": "0.2.16",
     "ts-jest": "^29.1.1"
   },
   "scripts": {

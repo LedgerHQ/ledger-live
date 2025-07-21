@@ -53,6 +53,10 @@ const familiesWPackage = [
   "mina",
 ];
 
+const alpacaized = {
+  xrp: true,
+};
+
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
 await fs.promises.mkdir("generated");
@@ -112,8 +116,12 @@ function genCoinFrameworkTarget(targetFile) {
 
     switch (targetFile) {
       case "bridge/js.ts":
-        imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
-        exprts += `\n  ${family},`;
+        if (alpacaized[family]) {
+          break;
+        } else {
+          imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+          exprts += `\n  ${family},`;
+        }
         break;
       case "cli-transaction.ts":
         imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
@@ -176,7 +184,7 @@ async function getDeviceTransactionConfig(families) {
 
   const libsDir = path.join(__dirname, "../..");
   const target = "deviceTransactionConfig.ts";
-  for (const family of ["aptos", "casper", "filecoin", "stacks", "polkadot", "tron"]) {
+  for (const family of ["casper", "filecoin", "stacks", "polkadot", "tron"]) {
     if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
       imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
       exprts += `\n  | ExtraDeviceTransactionField_${family}`;

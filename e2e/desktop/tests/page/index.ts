@@ -13,6 +13,7 @@ import { Drawer } from "../component/drawer.component";
 import { SettingsPage } from "./settings.page";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { SwapPage } from "./swap.page";
+import { EarnPage } from "./earn.dashboard.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
@@ -27,6 +28,7 @@ import { SettingsModal } from "./modal/settings.modal";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { LiveApp } from "./liveApp.page";
 import { OnboardingPage } from "./onboarding.page";
+import { BuyAndSellPage } from "./buyAndSell.page";
 import { Redux } from "tests/utils/redux";
 
 export class Application extends PageHolder {
@@ -45,6 +47,7 @@ export class Application extends PageHolder {
   public settings = new SettingsPage(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public swap = new SwapPage(this.page);
+  public earnDashboard = new EarnPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public delegateDrawer = new DelegateDrawer(this.page);
   public sendDrawer = new SendDrawer(this.page);
@@ -58,5 +61,6 @@ export class Application extends PageHolder {
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public liveApp = new LiveApp(this.page);
+  public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public redux = new Redux(this.page);
 }

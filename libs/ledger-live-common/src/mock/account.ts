@@ -130,6 +130,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
           (account as CardanoAccount).cardanoResources = {
             delegation: {
               status: true,
+              deposit: "2000000",
               poolId: "45",
               ticker: "ADA",
               name: "Cardano",

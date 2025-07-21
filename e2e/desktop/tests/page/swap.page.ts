@@ -4,7 +4,7 @@ import { step } from "../misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import fs from "fs/promises";
@@ -16,7 +16,7 @@ export class SwapPage extends AppPage {
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
-  private fromAccountAmoutInput = "from-account-amount-input";
+  private fromAccountAmountInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
   private quoteCardProviderName = "quote-card-provider-name";
   private numberOfQuotes = "number-of-quotes";
@@ -84,7 +84,7 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
-      provider === Provider.PARASWAP.name ||
+      provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
@@ -95,7 +95,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Select specific provider $0")
-  async selectSpecificprovider(provider: string, electronApp: ElectronApplication) {
+  async selectSpecificProvider(provider: string, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
@@ -152,8 +152,7 @@ export class SwapPage extends AppPage {
     const providersList = await this.getProviderList(electronApp);
 
     const providers = providersList.filter(providerName => {
-      const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      return provider;
+      return Object.values(Provider).find(p => p.uiName === providerName);
     });
 
     for (const providerName of providers) {
@@ -162,10 +161,10 @@ export class SwapPage extends AppPage {
         .getByText(providerName)
         .first();
 
-      await providerLocator.isVisible();
-      await providerLocator.click();
-
-      return providerName;
+      if (await providerLocator.isVisible()) {
+        await providerLocator.click();
+        return providerName;
+      }
     }
     throw new Error("No valid providers found");
   }
@@ -227,7 +226,7 @@ export class SwapPage extends AppPage {
 
     const buttonText = [
       Provider.ONE_INCH.uiName,
-      Provider.PARASWAP.uiName,
+      Provider.VELORA.uiName,
       Provider.MOONPAY.uiName,
     ].includes(provider)
       ? `Continue with ${provider}`
@@ -275,7 +274,7 @@ export class SwapPage extends AppPage {
   @step("Retrieve send currency amount value")
   async getAmountToSend(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    return await webview.getByTestId(this.fromAccountAmoutInput).inputValue();
+    return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
   }
 
   @step("Retrieve fees amount value")
@@ -292,7 +291,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Check currency to swap from is $0")
-  async swithYouSendAndYouReceive(electronApp: ElectronApplication) {
+  async switchYouSendAndYouReceive(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.switchButton).click();
   }
@@ -300,8 +299,8 @@ export class SwapPage extends AppPage {
   @step("Check currency to swap from is $1")
   async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
     const [, webview] = electronApp.windows();
-    const fromAccount = await webview.getByTestId(this.fromAccountCoinSelector).innerText();
-    expect(fromAccount).toContain(currency);
+    const fromAccount = webview.getByTestId(this.fromAccountCoinSelector);
+    await expect(fromAccount).toContainText(currency);
   }
 
   @step("Expect asset or account selected $0 to be displayed")
@@ -313,7 +312,7 @@ export class SwapPage extends AppPage {
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountAmoutInput).fill(amount);
+    await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
   }
@@ -328,11 +327,11 @@ export class SwapPage extends AppPage {
   @step("Check currency to swap to is $1")
   async checkAssetTo(electronApp: ElectronApplication, currency: string) {
     const [, webview] = electronApp.windows();
-    const assetTo = await webview.getByTestId(this.toAccountCoinSelector).innerText();
+    const assetTo = webview.getByTestId(this.toAccountCoinSelector);
     if (currency === "") {
-      expect(assetTo).toContain("Choose asset");
+      await expect(assetTo).toContainText("Choose asset");
     } else {
-      expect(assetTo).toContain(currency);
+      await expect(assetTo).toContainText(currency);
     }
   }
 
@@ -389,7 +388,7 @@ export class SwapPage extends AppPage {
           throw new Error("Missing ticker for one of the currencies");
         }
 
-        this.expectUrlToContainAll(url, [
+        await this.expectUrlToContainAll(url, [
           swap.amount,
           debitTicker,
           creditTicker,
@@ -399,7 +398,7 @@ export class SwapPage extends AppPage {
         ]);
         break;
       }
-      case Provider.PARASWAP.uiName: {
+      case Provider.VELORA.uiName: {
         const debitContractAddress = swap.accountToDebit.currency.contractAddress;
         const creditContractAddress = swap.accountToCredit.currency.contractAddress;
 
@@ -407,7 +406,7 @@ export class SwapPage extends AppPage {
           throw new Error("Missing contract address on one of the currencies");
         }
 
-        this.expectUrlToContainAll(url, [
+        await this.expectUrlToContainAll(url, [
           swap.amount,
           debitContractAddress,
           creditContractAddress,
@@ -483,17 +482,6 @@ export class SwapPage extends AppPage {
   @step("Check minimum amount for swap")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
     return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
-  }
-
-  @step("Check URL contains all values")
-  async expectUrlToContainAll(url: string, values: string[]) {
-    if (!url) {
-      throw new Error("URL is null or undefined");
-    }
-    const normalizedUrl = url.toLowerCase();
-    for (const value of values) {
-      expect(normalizedUrl).toContain(value.toLowerCase());
-    }
   }
 
   @step("Click on swap max")

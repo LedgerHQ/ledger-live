@@ -1,4 +1,5 @@
 import { RawTransaction } from "@ledgerhq/wallet-api-core";
+import BigNumber from "bignumber.js";
 
 export enum ExchangeType {
   SWAP = 0x00,
@@ -27,6 +28,18 @@ export type ExchangeStartSwapParams = {
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
+};
+
+export type ExchangeSwapParams = ExchangeStartSwapParams & {
+  fromAmount: string;
+  fromAmountAtomic: number;
+  quoteId?: string;
+  toNewTokenId?: string;
+  feeStrategy: "slow" | "medium" | "fast" | "custom";
+  customFeeConfig?: {
+    [key: string]: BigNumber;
+  };
+  swapAppVersion?: string;
 };
 
 export type ExchangeStartResult = {
@@ -65,6 +78,11 @@ export type ExchangeCompleteParams =
 
 export type ExchangeCompleteResult = {
   transactionHash: string;
+};
+
+export type SwapResult = {
+  operationHash: string;
+  swapId: string;
 };
 
 export type SwapLiveError = {

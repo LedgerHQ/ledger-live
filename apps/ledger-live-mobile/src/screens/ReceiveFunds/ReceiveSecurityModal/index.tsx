@@ -4,7 +4,6 @@ import storage from "LLM/storage";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
-import Config from "react-native-config";
 import { LayoutChangeEvent } from "react-native";
 
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
@@ -42,12 +41,16 @@ const ReceiveSecurityModal = ({
   }, [triggerSuccessEvent]);
 
   const [step, setStep] = useState("initMessage");
+
+  // UPGRADE-RN77:
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
   const sharedHeight = useSharedValue(0);
   const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     sharedHeight.value = withTiming(layout.height, { duration: 200 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const animatedStyle = useAnimatedStyle(
     () => ({
       height: sharedHeight.value,
@@ -88,7 +91,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={Config.DETOX ? undefined : animatedStyle}>
+      <Animated.ScrollView style={animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

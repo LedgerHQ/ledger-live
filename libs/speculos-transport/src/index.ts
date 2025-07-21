@@ -49,7 +49,7 @@ export const modelMap: Record<string, DeviceModelId> = {
   blue: DeviceModelId.blue,
 };
 
-const reverseModelMap: Record<string, string> = {};
+export const reverseModelMap: Record<string, string> = {};
 for (const k in modelMap) {
   reverseModelMap[modelMap[k]] = k;
 }
@@ -105,7 +105,7 @@ const getPorts = (idCounter: number, isSpeculosWebsocket?: boolean) => {
   }
 };
 
-function conventionalAppSubpath(
+export function conventionalAppSubpath(
   model: DeviceModelId,
   firmware: string,
   appName: string,
@@ -119,24 +119,26 @@ interface Dependency {
   appVersion?: string;
 }
 
+export type DeviceParams = {
+  model: DeviceModelId;
+  firmware: string;
+  appName: string;
+  appVersion: string;
+  dependency?: string;
+  dependencies?: Dependency[];
+  seed: string;
+  // Root folder from which you need to lookup app binaries
+  coinapps: string;
+  // if you want to force a specific app path
+  overridesAppPath?: string;
+  onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
+};
+
 /**
  * instanciate a speculos device that runs through docker
  */
 export async function createSpeculosDevice(
-  arg: {
-    model: DeviceModelId;
-    firmware: string;
-    appName: string;
-    appVersion: string;
-    dependency?: string;
-    dependencies?: Dependency[];
-    seed: string;
-    // Root folder from which you need to lookup app binaries
-    coinapps: string;
-    // if you want to force a specific app path
-    overridesAppPath?: string;
-    onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
-  },
+  arg: DeviceParams,
   maxRetry = 3,
 ): Promise<SpeculosDevice> {
   const {
@@ -205,7 +207,7 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    ...(getEnv("PLAYWRIGHT_RUN") ? ["-p"] : []), // to use the production PKI
+    ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [

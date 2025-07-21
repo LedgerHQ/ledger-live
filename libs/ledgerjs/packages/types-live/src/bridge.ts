@@ -64,6 +64,7 @@ export type SignOperationArg0<T extends TransactionCommon, A extends Account> = 
   transaction: T;
   deviceId: DeviceId;
   deviceModelId?: DeviceModelId;
+  certificateSignatureKind?: "prod" | "test";
 };
 
 /**
@@ -320,5 +321,8 @@ export type DatasetTest<T extends TransactionCommon> = {
  */
 export type BridgeCacheSystem = {
   hydrateCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
-  prepareCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
+  prepareCurrency: (
+    currency: CryptoCurrency,
+    { forceUpdate }?: { forceUpdate: boolean },
+  ) => Promise<unknown | null | undefined>;
 };

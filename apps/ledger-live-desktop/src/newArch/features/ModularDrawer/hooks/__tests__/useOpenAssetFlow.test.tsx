@@ -1,8 +1,8 @@
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
-import { ModularDrawerLocation } from "../../enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAssetFlow from "../../components/SelectAssetFlow";
+import ModularDrawerFlowManager from "../../ModularDrawerFlowManager";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),
@@ -16,7 +16,7 @@ describe("useOpenAssetFlow", () => {
   const modularDrawerLocation = ModularDrawerLocation.ADD_ACCOUNT;
 
   it("should dispatch openModal if the modular drawer is not visible", async () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
@@ -28,20 +28,23 @@ describe("useOpenAssetFlow", () => {
       },
     });
 
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(true);
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
-      data: undefined,
+      data: { newModalName: undefined },
     });
     expect(setDrawer).not.toHaveBeenCalled();
   });
 
-  it("should open the modular drawer if it is visible and open the modal once a currency is chosen", () => {
-    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation), {
+  it("should open the modular drawer if it is visible and open the legacy modal once a currency is chosen and the lldNetworkBasedAddAccount flag is off", () => {
+    const { result, store } = renderHook(() => useOpenAssetFlow(modularDrawerLocation, "test"), {
       initialState: {
         settings: {
           overriddenFeatureFlags: {
+            lldNetworkBasedAddAccount: {
+              enabled: false,
+            },
             lldModularDrawer: {
               enabled: true,
               params: {
@@ -59,16 +62,23 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow();
+    result.current.openAssetFlow(false);
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(
-      SelectAssetFlow,
+      ModularDrawerFlowManager,
       {
         currencies: [],
+        drawerConfiguration: {
+          assets: { leftElement: "undefined", rightElement: "undefined" },
+          networks: { leftElement: "undefined", rightElement: "undefined" },
+        },
+        flow: "add_account",
         onAssetSelected: expect.any(Function),
+        source: "test",
       },
       {
+        closeButtonComponent: expect.any(Function),
         onRequestClose: expect.any(Function),
       },
     );
@@ -76,7 +86,7 @@ describe("useOpenAssetFlow", () => {
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBeFalsy();
 
     // Select currency in the drawer
-    const mockCurrency = { id: "btc" };
+    const mockCurrency = { id: "btc", type: "CryptoCurrency" };
     selectAsset(mockCurrency);
 
     expect(setDrawer).toHaveBeenCalledTimes(2);

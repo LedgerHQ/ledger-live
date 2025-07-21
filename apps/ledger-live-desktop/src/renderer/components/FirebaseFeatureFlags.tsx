@@ -10,7 +10,7 @@ import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
 export const FirebaseFeatureFlagsProvider = ({ children, getFeature }: Props): JSX.Element => {
-  const remoteConfig = useFirebaseRemoteConfig();
+  const { config: remoteConfig } = useFirebaseRemoteConfig();
 
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();

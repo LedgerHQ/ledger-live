@@ -134,6 +134,9 @@ export type CurrencyFeatures = {
   currencySui: DefaultFeature;
   currencyMina: DefaultFeature;
   currencyBabylon: DefaultFeature;
+  currencySeiNetworkEvm: DefaultFeature;
+  currencyBerachain: DefaultFeature;
+  currencyHyperevm: DefaultFeature;
 };
 
 /**
@@ -151,6 +154,7 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
+  buySellLoader: Feature_BuySellLoader;
   buySellShortcut: DefaultFeature;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
@@ -178,6 +182,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
+  ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
@@ -209,7 +214,6 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llMevProtection: Feature_LlMevProtection;
-  llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmRebornFlex: DefaultFeature;
@@ -224,10 +228,39 @@ export type Features = CurrencyFeatures & {
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
-  lldModularDrawer: Feature_LldModularDrawer;
+  lldModularDrawer: Feature_ModularDrawer;
+  llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
+  lldNetworkBasedAddAccount: DefaultFeature;
+  llmOfacGeoBlocking: DefaultFeature;
+  lldOfacGeoBlocking: DefaultFeature;
+  llmDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      batchProcessingLevel: "MEDIUM" | "HIGH" | "LOW";
+      batchSize: "LARGE" | "MEDIUM" | "SMALL";
+      bundleLogsWithRum: boolean;
+      bundleLogsWithTraces: boolean;
+      longTaskThresholdMs: number | false;
+      nativeInteractionTracking: boolean;
+      nativeLongTaskThresholdMs: number | false;
+      nativeViewTracking: boolean;
+      resourceTracingSamplingRate: number;
+      serviceName: string;
+      sessionSamplingRate: number;
+      trackBackgroundEvents: boolean;
+      trackFrustrations: boolean;
+      trackErrors: boolean;
+      trackResources: boolean;
+      trackInteractions: boolean;
+      trackWatchdogTerminations: boolean;
+      uploadFrequency: "AVERAGE" | "FREQUENT" | "RARE";
+      vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
+    }>;
+  };
+  llmSentry: DefaultFeature;
 };
 
 /**
@@ -299,10 +332,17 @@ export type Redirect<M extends PlatformManifestId> = {
   queryParams?: Record<string, string> & RedirectQueryParam<M>;
 };
 
+export type VersionedRedirect = {
+  desktop_version?: string;
+  mobile_version?: string;
+  redirects: Record<string, Redirect<PlatformManifestId>>;
+};
+
 export type Feature_StakePrograms = Feature<{
   list: string[];
   /** redirects is a dictionary of crypto asset ids to partner app params for overriding flows for specific tokens. */
   redirects: Record<string, Redirect<PlatformManifestId>>;
+  versions?: VersionedRedirect[];
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
@@ -399,6 +439,7 @@ export type Feature_ProtectServicesMobile = Feature<{
 }>;
 
 export type Feature_ProtectServicesDesktop = Feature<{
+  openWithDevTools: boolean;
   availableOnDesktop: boolean;
   isNew: boolean;
   openRecoverFromSidebar: boolean;
@@ -563,6 +604,10 @@ export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
 }>;
 
+export type Feature_BuySellLoader = Feature<{
+  durationMs: number;
+}>;
+
 export type Feature_LldWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
@@ -605,12 +650,13 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-export type Feature_LldModularDrawer = Feature<{
+type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   earn_flow: boolean;
   live_app: boolean;
   receive_flow: boolean;
   send_flow: boolean;
+  enableModularization: boolean;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

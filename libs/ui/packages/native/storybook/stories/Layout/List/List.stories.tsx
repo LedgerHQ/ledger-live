@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { List } from "../../../../src/components";
 import { IconsLegacy } from "../../../../src/assets";
 
@@ -30,7 +30,7 @@ export default {
   },
 };
 
-export const Default: ComponentStory<typeof List> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof List> = (args: typeof DefaultArgs) => {
   return (
     <List
       items={[
@@ -61,7 +61,7 @@ const DefaultArgs = {
 Default.args = DefaultArgs;
 
 const Check = <IconsLegacy.CheckAloneMedium size={20} color={"#6EC85C"} />;
-export const Bullets: ComponentStory<typeof List> = (args: typeof BulletArgs) => {
+export const Bullets: StoryFn<typeof List> = (args: typeof BulletArgs) => {
   return (
     <List
       items={[

@@ -1,0 +1,116 @@
+name: "[CAL] - Import CAL Tokens - Scheduled"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 1"
+
+jobs:
+  import-cal-tokens:
+    name: Import CAL Tokens
+    runs-on: ubuntu-24.04
+    env:
+      CAL_BRANCH: "feat/import-cal-tokens"
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+      pr_url: ${{ steps.create-pr.outputs.pr_url }}
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
+      - name: Create CAL import branch
+        run: |
+          git fetch origin
+          if git show-ref --quiet refs/remotes/origin/$CAL_BRANCH; then
+            git push origin --delete $CAL_BRANCH
+          fi
+          git checkout -b $CAL_BRANCH
+          git push -u origin $CAL_BRANCH
+
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build libs
+        run: pnpm build:libs
+
+      - name: Import CAL tokens
+        run: pnpm import:cal-tokens
+
+      - name: Check for change
+        id: changes
+        run: |
+          git add .
+          if git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit imported tokens
+        if: ${{ steps.changes.outputs.changed == 'true' }}
+        uses: planetscale/ghcommit-action@v0.2.9
+        with:
+          commit_message: "chore(cal): import CAL tokens"
+          repo: ${{ github.repository }}
+          branch: ${{ env.CAL_BRANCH }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: Create PR to develop
+        if: ${{ steps.changes.outputs.changed == 'true' }}
+        id: create-pr
+        run: |
+          gh pr create --title ":zap: Import CAL tokens" --body "Automated import of CAL tokens" --base develop --head $CAL_BRANCH
+          PR_URL=$(gh pr view $CAL_BRANCH --json url -q .url)
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  report-pr-creation:
+    name: "Slack PR creation Reporting"
+    needs: import-cal-tokens
+    runs-on: ubuntu-24.04
+    if: ${{ !failure() && needs.import-cal-tokens.outputs.changed == 'true' }}
+    steps:
+      - name: post to a Slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[CAL] Import Tokens PR created: <${{ needs.import-cal-tokens.outputs.pr_url }}|View Pull Request>"
+
+  import-cal-tokens-fail:
+    name: Failure Reporting
+    needs: import-cal-tokens
+    if: failure()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: post to a Slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C06RTDKT324"
+            text: "[Alert] Import CAL Tokens failed: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

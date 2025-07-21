@@ -3,14 +3,15 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { DeployUtil } from "casper-js-sdk";
+import { CasperNetwork, PublicKey, Transaction } from "casper-js-sdk";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { CASPER_NETWORK } from "../../consts";
-import { casperAccountHashFromPublicKey, casperGetCLPublicKey, isAddressValid } from "./addresses";
+import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../consts";
+import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
 import { ITxnHistoryData } from "../../api/types";
 import { getEstimatedFees } from "./fee";
 import { CasperOperation } from "../../types";
 import invariant from "invariant";
+import { getCasperNodeRpcClient } from "../../api";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
@@ -89,33 +90,32 @@ export function mapTxToOps(
   };
 }
 
-export const createNewDeploy = (
+export const createNewTransaction = async (
   sender: string,
   recipient: string,
   amount: BigNumber,
   fees: BigNumber,
   transferId?: string,
   network = CASPER_NETWORK,
-): DeployUtil.Deploy => {
-  log("debug", `Creating new Deploy: ${sender}, ${recipient}, ${network}`);
+): Promise<Transaction> => {
+  log("debug", `Creating new Transaction: ${sender}, ${recipient}, ${network}`);
 
   if (recipient && !isAddressValid(recipient)) {
     throw InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 
-  const deployParams = new DeployUtil.DeployParams(casperGetCLPublicKey(sender), network);
+  const client = getCasperNodeRpcClient();
+  const helper = await CasperNetwork.create(client);
 
-  const session = DeployUtil.ExecutableDeployItem.newTransferWithOptionalTransferId(
-    amount?.toNumber() ?? 0,
-    casperGetCLPublicKey(recipient),
-    undefined,
-    transferId,
+  const tx = helper.createTransferTransaction(
+    PublicKey.fromHex(sender),
+    PublicKey.fromHex(recipient),
+    network,
+    amount.toString(),
+    fees.toNumber(),
+    CASPER_DEFAULT_TTL,
+    parseInt(transferId ?? "0"),
   );
 
-  const payment = DeployUtil.standardPayment(fees.toString());
-  const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
-  const txnRaw = DeployUtil.deployToJson(deploy);
-  const txnFromRaw = DeployUtil.deployFromJson(txnRaw).unwrap();
-
-  return txnFromRaw;
+  return tx;
 };

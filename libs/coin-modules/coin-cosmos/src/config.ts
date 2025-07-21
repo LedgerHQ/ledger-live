@@ -67,7 +67,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_osmo: {
     type: "object",
     default: {
-      lcd: "https://lcd.osmosis.zone",
+      lcd: "https://osmo.coin.ledger.com",
       minGasPrice: 0.025,
       ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
       status: {
@@ -194,7 +194,7 @@ export const cosmosConfig: CosmosConfig = {
     type: "object",
     default: {
       lcd: "https://api.diamond.zenrocklabs.io",
-      minGasPrice: 0.1,
+      minGasPrice: 2.5,
       status: {
         type: "active",
       },

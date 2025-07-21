@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SendPage {
@@ -41,11 +40,12 @@ export default class SendPage {
   @Step("Expect first step")
   async expectFirstStep() {
     const header = this.getStep1HeaderTitle();
-    await expect(header).toBeVisible();
+    await detoxExpect(header).toBeVisible();
   }
 
   @Step("Set recipient and memo tag")
   async setRecipient(address: string, memoTag?: string) {
+    await waitForElementById(this.recipientInputId); // Issue with RN75 : QAA-370
     await typeTextById(this.recipientInputId, address);
     if (memoTag && memoTag !== "noTag") {
       await typeTextById(this.memoTagInputId, memoTag);
@@ -65,26 +65,40 @@ export default class SendPage {
 
   @Step("Expect recipient error message")
   async expectSendRecipientError(errorMessage: string) {
+    await this.expectRecipientMessage(errorMessage);
+  }
+
+  @Step("Expect recipient warning message")
+  async expectSendRecipientWarning(expectedWarningMessage: string | null) {
+    await this.expectRecipientMessage(expectedWarningMessage, true);
+  }
+
+  private async expectRecipientMessage(message: string | null, continueButtonVisible = false) {
     const errElem = getElementById(this.recipientErrorId);
-    if (errorMessage) {
-      await expect(errElem).toHaveText(errorMessage);
+    if (message) {
+      await detoxExpect(errElem).toHaveText(message);
     } else {
-      await expect(errElem).not.toBeVisible();
+      await detoxExpect(errElem).not.toBeVisible();
     }
+
     const contBtn = getElementById(this.recipientContinueButtonId);
-    await expect(contBtn).not.toBeVisible();
+    if (continueButtonVisible) {
+      await detoxExpect(contBtn).toBeVisible();
+    } else {
+      await detoxExpect(contBtn).not.toBeVisible();
+    }
   }
 
   @Step("Expect recipient step success")
   async expectSendRecipientSuccess(expectedWarningMessage?: string) {
     const errElem = getElementById(this.recipientErrorId);
     if (!expectedWarningMessage) {
-      await expect(errElem).not.toBeVisible();
+      await detoxExpect(errElem).not.toBeVisible();
     } else {
-      await expect(errElem).toHaveText(expectedWarningMessage);
+      await detoxExpect(errElem).toHaveText(expectedWarningMessage);
     }
     const contBtn = getElementById(this.recipientContinueButtonId);
-    await expect(contBtn).toBeVisible();
+    await detoxExpect(contBtn).toBeVisible();
   }
 
   @Step("Set recipient and continue")
@@ -115,17 +129,17 @@ export default class SendPage {
   @Step("Expect amount step success")
   async expectSendAmountSuccess() {
     const errElem = getElementById(this.amountErrorId);
-    await expect(errElem).toHaveText("");
+    await detoxExpect(errElem).toHaveText("");
     const contBtn = this.amountContinueButton();
-    await expect(contBtn).toBeVisible();
+    await detoxExpect(contBtn).toBeVisible();
   }
 
   @Step("Expect amount error message")
   async expectSendAmountError(errorMessage: string) {
     const errElem = getElementById(this.amountErrorId);
-    await expect(errElem).toHaveText(errorMessage);
+    await detoxExpect(errElem).toHaveText(errorMessage);
     const contBtn = this.amountContinueButton();
-    await expect(contBtn).not.toBeVisible();
+    await detoxExpect(contBtn).not.toBeVisible();
   }
 
   @Step("Set amount and continue")
@@ -143,7 +157,7 @@ export default class SendPage {
   @Step("Expect amount in summary")
   async expectSummaryAmount(amount: string) {
     const amt = getElementById(this.summaryAmountId);
-    await expect(amt).toHaveText(amount);
+    await detoxExpect(amt).toHaveText(amount);
   }
 
   @Step("Expect max amount is within range in summary")
@@ -158,7 +172,7 @@ export default class SendPage {
   @Step("Expect recipient in summary")
   async expectSummaryRecipient(recipient: string) {
     const rec = this.summaryRecipient();
-    await expect(rec).toHaveText(recipient);
+    await detoxExpect(rec).toHaveText(recipient);
   }
 
   @Step("Expect error in summary")
@@ -166,29 +180,29 @@ export default class SendPage {
     const err = await getTextOfElement(this.summaryErrorId);
     jestExpect(err).toMatch(errorMessage);
     const btn = this.summaryContinueButton();
-    await expect(btn).not.toBeVisible();
+    await detoxExpect(btn).not.toBeVisible();
   }
 
   @Step("Expect warning in summary")
   async expectSummaryWarning(warningMessage: string) {
     const warn = this.summaryWarning();
-    await expect(warn).toHaveText(warningMessage);
+    await detoxExpect(warn).toHaveText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary")
   async expectSummaryRecipientEns(ensName: string) {
     const ens = this.summaryRecipientEns();
-    await expect(ens).toHaveText(ensName);
+    await detoxExpect(ens).toHaveText(ensName);
   }
 
   @Step("Expect memo tag in summary")
   async expectSummaryMemoTag(memoTag?: string) {
     if (memoTag && memoTag !== "noTag") {
       const memoEl = this.summaryMemoTag();
-      await expect(memoEl).toHaveText(memoTag);
+      await detoxExpect(memoEl).toHaveText(memoTag);
     } else if (await IsIdVisible(this.summaryMemoTagId)) {
       const memoEl = this.summaryMemoTag();
-      await expect(memoEl).toHaveText("");
+      await detoxExpect(memoEl).toHaveText("");
     }
   }
 
@@ -202,7 +216,7 @@ export default class SendPage {
   @Step("Expect ENS name in device validation screen")
   async expectValidationEnsName(ensName: string) {
     const elem = getElementById(this.validationEnsId);
-    await expect(elem).toHaveText(ensName);
+    await detoxExpect(elem).toHaveText(ensName);
   }
 
   @Step("Choose fee strategy")

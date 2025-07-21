@@ -1,4 +1,8 @@
-import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -13,7 +17,7 @@ import {
 import BigNumber from "bignumber.js";
 import { BoilerplateAsset } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
+export function createApi(config: BoilerplateConfig): AlpacaApi<BoilerplateAsset> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

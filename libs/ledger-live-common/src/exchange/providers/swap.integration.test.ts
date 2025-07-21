@@ -1,19 +1,4 @@
-import { fetchAndMergeProviderData, findExchangeCurrencyData } from "./swap";
-
-describe("findExchangeCurrencyData", () => {
-  it("returns all data in expected format", async () => {
-    // When
-    const currencies = await findExchangeCurrencyData("arbitrum");
-
-    // Then
-    expect(currencies).toEqual({
-      config: "0345544808457468657265756d0d0345544812000000000000a4b1",
-      id: "arbitrum",
-      signature:
-        "30450221008ca557e4acc2fa290a6a44c2b0eb5232712ba69b23df93645a320bcff9789fd9022017e6e05582806a9d4b7b2aaaedbcc3471bd26e10ad686e4f313fc0b1068b5d64",
-    });
-  });
-});
+import { fetchAndMergeProviderData } from "./swap";
 
 describe("fetchAndMergeProviderData", () => {
   it("returns all data in expected format", async () => {
@@ -31,6 +16,11 @@ describe("fetchAndMergeProviderData", () => {
         mainUrl: "https://changelly.com/",
         name: "Changelly",
         needsKYC: false,
+        usefulUrls: [
+          "https://changelly.com/terms-of-use",
+          "https://changelly.com/aml-kyc",
+          "https://support.changelly.com/en/support/tickets/new",
+        ],
         publicKey: {
           curve: "secp256k1",
           data: Buffer.from(
@@ -46,6 +36,33 @@ describe("fetchAndMergeProviderData", () => {
         termsOfUseUrl: "https://changelly.com/terms-of-use",
         type: "CEX",
         version: 1,
+      },
+      changelly_v2: {
+        displayName: "Changelly",
+        name: "Changelly",
+        useInExchangeApp: true,
+        publicKey: {
+          curve: "secp256k1",
+          data: Buffer.from(
+            "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
+            "hex",
+          ),
+        },
+        signature: Buffer.from(
+          "3045022100c2db00da651cfcc84702f75ab5f131a3f037592080ea750a6f665a8cb36797c802200e594938cdf2c836b34717f57487002a0588f2088f64f00a6c4d320fd37db6fa",
+          "hex",
+        ),
+        needsKYC: false,
+        type: "CEX",
+        usefulUrls: [
+          "https://changelly.com/terms-of-use",
+          "https://changelly.com/aml-kyc",
+          "https://support.changelly.com/en/support/tickets/new",
+        ],
+        termsOfUseUrl: "https://changelly.com/terms-of-use",
+        supportUrl: "https://support.changelly.com/en/support/home",
+        mainUrl: "https://changelly.com/",
+        version: 2,
       },
       changenow: {
         name: "ChangeNOW",
@@ -229,6 +246,15 @@ describe("fetchAndMergeProviderData", () => {
           "hex",
         ),
         version: 1,
+      },
+      velora: {
+        type: "DEX",
+        useInExchangeApp: false,
+        displayName: "Velora",
+        termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+        supportUrl: "https://help.paraswap.io/en/",
+        mainUrl: "https://www.velora.xyz/",
+        needsKYC: false,
       },
     });
   });

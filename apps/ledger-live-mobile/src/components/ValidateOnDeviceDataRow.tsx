@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
   dataRowValue: {
     fontSize: 14,
     flexGrow: 1,
+    alignItems: "flex-end",
+  },
+  valueText: {
     textAlign: "right",
   },
   text: {
@@ -97,9 +100,11 @@ export function TextValueField({
       <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
         {label}
       </LText>
-      <LText numberOfLines={numberOfLines} style={styles.dataRowValue} testID={testID}>
-        {value}
-      </LText>
+      <View style={styles.dataRowValue}>
+        <LText numberOfLines={numberOfLines} testID={testID} style={styles.valueText}>
+          {value}
+        </LText>
+      </View>
     </View>
   );
 }

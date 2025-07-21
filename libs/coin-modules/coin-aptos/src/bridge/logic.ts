@@ -1,12 +1,5 @@
-import {
-  EntryFunctionPayloadResponse,
-  Event,
-  InputEntryFunctionData,
-  MoveResource,
-  WriteSetChange,
-  WriteSetChangeWriteResource,
-} from "@aptos-labs/ts-sdk";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
+import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
   decodeTokenAccountId,
@@ -14,41 +7,27 @@ import {
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import {
-  APTOS_ASSET_ID,
-  APTOS_FUNGIBLE_STORE,
-  BATCH_TRANSFER_TYPES,
-  DELEGATION_POOL_TYPES,
-  DIRECTION,
-  COIN_TRANSFER_TYPES,
-  FA_TRANSFER_TYPES,
-  APTOS_OBJECT_CORE,
-} from "../constants";
-import type {
-  AptosFungibleoObjectCoreResourceData,
-  AptosFungibleStoreResourceData,
-  AptosMoveResource,
-  AptosTransaction,
-  Transaction,
-} from "../types";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-
-const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
-
-export function isTestnet(currencyId: string): boolean {
-  return getCryptoCurrencyById(currencyId).isTestnetFor ? true : false;
-}
+import { APTOS_ASSET_ID, OP_TYPE, DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";
+import type { AptosTransaction, Transaction } from "../types";
+import { convertFunctionPayloadResponseToInputEntryFunctionData } from "../logic/transactionsToOperations";
+import { compareAddress, getCoinAndAmounts } from "../logic/getCoinAndAmounts";
+import { calculateAmount } from "../logic/calculateAmount";
+import { processRecipients } from "../logic/processRecipients";
+import { getFunctionAddress } from "../logic/getFunctionAddress";
 
 export const getMaxSendBalance = (
-  gas: BigNumber,
-  gasPrice: BigNumber,
   account: Account,
   transaction?: Transaction,
+  gas?: BigNumber,
+  gasPrice?: BigNumber,
 ): BigNumber => {
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
+  gas = gas ?? BigNumber(DEFAULT_GAS);
+  gasPrice = gasPrice ?? BigNumber(DEFAULT_GAS_PRICE);
 
   const totalGas = gas.multipliedBy(gasPrice);
 
@@ -79,22 +58,15 @@ export const getBlankOperation = (
   hasFailed: false,
 });
 
-const convertFunctionPayloadResponseToInputEntryFunctionData = (
-  payload: EntryFunctionPayloadResponse,
-): InputEntryFunctionData => ({
-  function: payload.function,
-  typeArguments: payload.type_arguments,
-  functionArguments: payload.arguments,
-});
-
 export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[]] => {
+): [Operation[], Operation[], Operation[]] => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
+  const opsStaking: Operation[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
@@ -111,9 +83,14 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
+      const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
       op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
-      op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+      op.type =
+        type !== OP_TYPE.UNKNOWN
+          ? type
+          : compareAddress(tx.sender, address)
+            ? OP_TYPE.OUT
+            : OP_TYPE.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -122,10 +99,17 @@ export const txsToOps = (
 
       if (op.value.isZero()) {
         // skip transaction that result no Aptos change
-        op.type = DIRECTION.UNKNOWN;
+        op.type = OP_TYPE.UNKNOWN;
       }
 
-      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+      if (
+        op.type === OP_TYPE.STAKE ||
+        op.type === OP_TYPE.UNSTAKE ||
+        op.type === OP_TYPE.WITHDRAW
+      ) {
+        ops.push(op);
+        opsStaking.push(op);
+      } else if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
@@ -134,7 +118,7 @@ export const txsToOps = (
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
 
-            if (op.type === DIRECTION.OUT) {
+            if (op.type === OP_TYPE.OUT) {
               ops.push({
                 ...op,
                 accountId: decodeTokenAccountId(op.accountId).accountId,
@@ -148,229 +132,8 @@ export const txsToOps = (
     }
   });
 
-  return [ops, opsTokens];
+  return [ops, opsTokens, opsStaking];
 };
-
-export function compareAddress(addressA: string, addressB: string) {
-  return (
-    addressA.replace(CLEAN_HEX_REGEXP, "").toLowerCase() ===
-    addressB.replace(CLEAN_HEX_REGEXP, "").toLowerCase()
-  );
-}
-
-export function getFunctionAddress(payload: InputEntryFunctionData): string | undefined {
-  if (payload.function) {
-    const parts = payload.function.split("::");
-    return parts.length === 3 && parts[0].length ? parts[0] : undefined;
-  }
-  return undefined;
-}
-
-export function processRecipients(
-  payload: InputEntryFunctionData,
-  address: string,
-  op: Operation,
-  function_address: string,
-): void {
-  // get recipients buy 3 groups
-  if (
-    (COIN_TRANSFER_TYPES.includes(payload.function) ||
-      DELEGATION_POOL_TYPES.includes(payload.function)) &&
-    payload.functionArguments &&
-    payload.functionArguments.length > 0 &&
-    typeof payload.functionArguments[0] === "string"
-  ) {
-    // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.functionArguments[0].toString());
-  } else if (
-    FA_TRANSFER_TYPES.includes(payload.function) &&
-    payload.functionArguments &&
-    payload.functionArguments.length > 1 &&
-    typeof payload.functionArguments[0] === "object" &&
-    typeof payload.functionArguments[1] === "string"
-  ) {
-    // 1. Transfer like functions (includes some delegation pool functions)
-    op.recipients.push(payload.functionArguments[1].toString());
-  } else if (
-    BATCH_TRANSFER_TYPES.includes(payload.function) &&
-    payload.functionArguments &&
-    payload.functionArguments.length > 0 &&
-    Array.isArray(payload.functionArguments[0])
-  ) {
-    // 2. Batch function, to validate we are in the recipients list
-    if (!compareAddress(op.senders[0], address)) {
-      for (const recipient of payload.functionArguments[0]) {
-        if (recipient && compareAddress(recipient.toString(), address)) {
-          op.recipients.push(recipient.toString());
-        }
-      }
-    }
-  } else {
-    // 3. other smart contracts, in this case smart contract will be treated as a recipient
-    op.recipients.push(function_address);
-  }
-}
-
-export function getEventCoinAddress(
-  change: WriteSetChangeWriteResource,
-  event: Event,
-  event_name: string,
-): string | null {
-  const change_data = change.data;
-
-  const mr = change_data as MoveResource<AptosMoveResource>; // -> this is data that we want to parse
-
-  if (!(event_name in mr.data)) {
-    return null;
-  }
-
-  const change_event_data = mr.data[event_name];
-  if (
-    change_event_data.guid.id.addr !== event.guid.account_address ||
-    change_event_data.guid.id.creation_num !== event.guid.creation_number
-  ) {
-    return null;
-  }
-
-  const address = extractAddress(mr.type);
-
-  return address;
-}
-
-export function getEventFAAddress(
-  change: WriteSetChangeWriteResource,
-  event: Event,
-  _event_name: string,
-): string | null {
-  const change_data = change.data;
-
-  if (change_data.type !== APTOS_FUNGIBLE_STORE) {
-    return null;
-  }
-
-  const mr = change_data as MoveResource<AptosFungibleStoreResourceData>;
-
-  if (change.address !== event.data.store) {
-    return null;
-  }
-
-  return mr.data.metadata.inner;
-}
-
-export function getResourceAddress(
-  tx: AptosTransaction,
-  event: Event,
-  event_name: string,
-  getAddressProcessor: (
-    change: WriteSetChangeWriteResource,
-    event: Event,
-    event_name: string,
-  ) => string | null,
-): string | null {
-  for (const change of tx.changes) {
-    if (isWriteSetChangeWriteResource(change)) {
-      const address = getAddressProcessor(change, event, event_name);
-      if (address !== null) {
-        return address;
-      }
-    }
-  }
-  return null;
-}
-
-function isWriteSetChangeWriteResource(
-  change: WriteSetChange,
-): change is WriteSetChangeWriteResource {
-  return (change as WriteSetChangeWriteResource).data !== undefined;
-}
-
-export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: string): boolean {
-  for (const change of tx.changes) {
-    if (isWriteSetChangeWriteResource(change)) {
-      const storeData = change.data as MoveResource<AptosFungibleoObjectCoreResourceData>;
-      if (
-        change.address == event.data.store &&
-        storeData.type == APTOS_OBJECT_CORE &&
-        storeData.data.owner == user_address
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-export function getCoinAndAmounts(
-  tx: AptosTransaction,
-  address: string,
-): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
-  let coin_id: string | null = null;
-  let amount_in = BigNumber(0);
-  let amount_out = BigNumber(0);
-
-  // collect all events related to the address and calculate the overall amounts
-  tx.events.forEach(event => {
-    switch (event.type) {
-      case "0x1::coin::WithdrawEvent":
-        if (compareAddress(event.guid.account_address, address)) {
-          coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
-          amount_out = amount_out.plus(event.data.amount);
-        }
-        break;
-      case "0x1::coin::DepositEvent":
-        if (compareAddress(event.guid.account_address, address)) {
-          coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
-          amount_in = amount_in.plus(event.data.amount);
-        }
-        break;
-      case "0x1::fungible_asset::Withdraw":
-        if (checkFAOwner(tx, event, address)) {
-          coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-          amount_out = amount_out.plus(event.data.amount);
-        }
-        break;
-      case "0x1::fungible_asset::Deposit":
-        if (checkFAOwner(tx, event, address)) {
-          coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-          amount_in = amount_in.plus(event.data.amount);
-        }
-        break;
-      case "0x1::transaction_fee::FeeStatement":
-        if (tx.sender === address) {
-          if (coin_id === null) coin_id = APTOS_ASSET_ID;
-          if (coin_id === APTOS_ASSET_ID) {
-            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-            amount_out = amount_out.plus(fees);
-          }
-        }
-        break;
-    }
-  });
-  return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
-}
-
-export function calculateAmount(
-  sender: string,
-  address: string,
-  amount_in: BigNumber,
-  amount_out: BigNumber,
-): BigNumber {
-  const is_sender: boolean = compareAddress(sender, address);
-  // LL negates the amount for SEND transactions
-  // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
-  // we need to make it negative
-  return is_sender ? amount_out.minus(amount_in) : amount_in.minus(amount_out);
-}
-
-/**
- * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
- * @param {string} str - The input string containing the address.
- * @returns {string | null} - The extracted address or null if not found.
- */
-function extractAddress(str: string): string | null {
-  const match = str.match(/<([^<>]+)>{1}$/);
-  return match ? match[1] : null;
-}
 
 export function getTokenAccount(
   account: Account,

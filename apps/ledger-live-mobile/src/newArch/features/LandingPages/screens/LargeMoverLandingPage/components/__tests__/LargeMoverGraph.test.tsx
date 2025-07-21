@@ -39,9 +39,10 @@ describe("LargeMoverGraph", () => {
     const { getByTestId } = render(
       <LargeMoverGraph
         chartData={mockChartData}
-        range={KeysPriceChange.hour}
+        range={KeysPriceChange.day}
         currencyId="bitcoin"
         width={200}
+        loading={false}
       />,
     );
 
@@ -56,6 +57,7 @@ describe("LargeMoverGraph", () => {
         range={KeysPriceChange.day}
         currencyId="bitcoin"
         width={200}
+        loading={false}
       />,
     );
 
@@ -75,6 +77,7 @@ describe("LargeMoverGraph", () => {
         range={KeysPriceChange.week}
         currencyId="bitcoin"
         width={200}
+        loading={false}
       />,
     );
 

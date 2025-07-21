@@ -1,19 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, fn, within } from "@storybook/test";
 import { AccountItem } from "./AccountItem";
-import { expect, within } from "@storybook/test";
+
+const onClick = fn();
 
 const meta: Meta<typeof AccountItem> = {
   component: AccountItem,
   title: "PreLdls/Components/AccountItem",
   tags: ["autodocs"],
   args: {
+    onClick: onClick,
     account: {
-      id: "12345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 ETH",
-      fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
+      balance: "0.118 ETH",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
       ticker: "btc",
     },
   },
@@ -26,14 +29,15 @@ export const Default: Story = {};
 
 export const TestAccount: Story = {
   args: {
+    onClick: onClick,
     account: {
-      id: "12345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 BTC",
-      fiatValue: "$5,969.83",
-      protocol: "Native Segwit",
       address: "n4A9...Zgty",
+      balance: "0.118 BTC",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      protocol: "Native Segwit",
       ticker: "btc",
     },
   },
@@ -59,13 +63,14 @@ export const TestAccount: Story = {
 
 export const TestWithoutProtocol: Story = {
   args: {
+    onClick: onClick,
     account: {
-      id: "21345",
-      cryptoId: "bitcoin",
-      name: "Main BTC",
-      balance: "0.118 BTC",
-      fiatValue: "$5,969.83",
       address: "n4A9...Zgty",
+      balance: "0.118 BTC",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "21345",
+      name: "Main BTC",
       ticker: "btc",
     },
   },
@@ -80,12 +85,13 @@ export const TestWithoutProtocol: Story = {
 
 export const TestWithoutAddressIcon: Story = {
   args: {
+    onClick: onClick,
     account: {
-      id: "bitcoin",
-      name: "Main BTC",
+      address: "n4A9...Zgty",
       balance: "0.118 BTC",
       fiatValue: "$5,969.83",
-      address: "n4A9...Zgty",
+      id: "bitcoin",
+      name: "Main BTC",
     },
     showIcon: false,
   },
@@ -95,5 +101,83 @@ export const TestWithoutAddressIcon: Story = {
     const addressIcon = canvas.queryByRole("img");
 
     await expect(addressIcon).not.toBeInTheDocument();
+  },
+};
+
+export const TestWithCheckbox: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      balance: "0.118",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    onClick,
+    rightElement: {
+      type: "checkbox",
+      checkbox: {
+        isChecked: false,
+        name: "checkbox",
+        onChange: () => {},
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-checkbox");
+
+    await expect(arrowIcon).toBeInTheDocument();
+  },
+};
+
+export const TestWithArrow: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    rightElement: {
+      type: "arrow",
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-arrow-icon");
+
+    await expect(arrowIcon).toBeInTheDocument();
+  },
+};
+
+export const TestWithEdit: Story = {
+  args: {
+    account: {
+      address: "n4A9...Zgty",
+      cryptoId: "bitcoin",
+      fiatValue: "$5,969.83",
+      id: "12345",
+      name: "Main BTC",
+      ticker: "btc",
+    },
+    onClick: undefined,
+    rightElement: {
+      type: "edit",
+      onClick,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const arrowIcon = canvas.getByTestId("right-element-edit-icon");
+
+    await expect(arrowIcon).toBeInTheDocument();
   },
 };

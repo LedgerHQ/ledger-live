@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
@@ -44,7 +43,9 @@ export default class StakePage {
   async setAmount(currencyId: string, amount: string) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
+    await waitForElementById(this.delegationAmountInput(currencyId)); // Issue with RN75 : QAA-370
     await typeTextById(this.delegationAmountInput(currencyId), amount);
+    await waitForElementById(this.delegationAmountContinueId(currencyId)); // Issue with RN75 : QAA-370
   }
 
   @Step("Set delegated amount percent")
@@ -56,7 +57,7 @@ export default class StakePage {
 
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
-    jestExpect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
+    jestExpect(await this.delegationSummaryValidator(currencyId)).toContain(provider);
   }
 
   @Step("Select new provider")
@@ -70,7 +71,7 @@ export default class StakePage {
 
   @Step("Verify fees visible in summary")
   async verifyFeesVisible(currencyId: string) {
-    await expect(getElementById(this.delegationFees(currencyId))).toBeVisible();
+    await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
   }
 
   @Step("Get fees displayed in summary")

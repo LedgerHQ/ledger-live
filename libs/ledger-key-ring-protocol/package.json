@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.5.6",
+  "version": "0.5.11",
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
     "Ledger"
@@ -87,6 +87,7 @@
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/ledger-key-ring-protocol",
     "test": "jest",
+    "coverage": "jest --coverage",
     "e2e": "ts-node scripts/e2e.ts"
   }
 }

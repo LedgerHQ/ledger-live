@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "دقيقة",
-    "minute_plural" : "دقائق",
+    "minute_other" : "دقائق",
     "minute_short" : "دقيقة",
     "second_short" : "ثانية",
     "hour" : "ساعة",
-    "hour_plural" : "ساعات",
+    "hour_other" : "ساعات",
     "range" : {
       "day" : "1 يوم",
       "week" : "1 أسبوع",
@@ -575,7 +575,7 @@
       "date" : "التاريخ",
       "from" : "من",
       "fromAddress" : "عنوان المصدر",
-      "fromAddress_plural" : "عناوين المصدر",
+      "fromAddress_other" : "عناوين المصدر",
       "to" : "إلى",
       "toProvider" : "عنوان المزود",
       "initialAmount" : "المبلغ الأولي",
@@ -893,6 +893,7 @@
     "title" : "شراء وبيع الأصول المشفرة",
     "reset" : "إعادة تعيين التدفق",
     "verifyAddress" : "يُرجى تأكيد أن العنوان المعروض يتطابق تماماً مع العنوان المعروض على جهازك",
+    "connectingTo" : "جارٍ توصيلك بـ {{provider}}",
     "buy" : {
       "header" : "شراء الأصول المشفرة عن طريق شريكنا",
       "title" : "اختر مزود لشراء الأصول المشفرة",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "إعداد جهازك {{deviceName}}",
+      "title" : "جهّز {{deviceName}} الخاص بك",
       "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
-        "title" : "جهاز {{deviceName}} هذا أصلي",
-        "description" : "من الآمن استخدام جهاز {{productName}} هذا. يمكنك المتابعة إلى إعداده.",
+        "title" : "{{deviceName}} أصلي",
+        "description" : "جهازك {{productName}} آمن للاستخدام. أنت مستعدٌ للبدء في الإعداد.",
         "continueOnDevice" : "انقر على جهازك {{productName}} لبدء الإعداد"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "إعداد كود PIN الخاص بك على جهازك {{productName}}"
       },
       "seedContent" : {
-        "title" : "عبارة الاسترداد السرية",
+        "title" : "الإعداد والنسخ الاحتياطي",
         "titleCompleted" : "تم تأكيد عبارة الاسترداد السرية",
         "recoverSeed" : "Placeholder: استرداد",
-        "restoreSeed" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك..\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
+        "restoreSeed" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة خاصتك.",
+        "restoreCharonTitle" : "الاستعادة باستخدام Recovery Key",
+        "restoreCharonDescription" : "للاستعادة، اتبع التعليمات التي تظهر على شاشة Ledger الآمنة لديك.",
+        "restoreCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
         "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
-        "selectionNewLedger" : "<0>”Set up as a new Ledger (الإعداد كجهاز Ledger جديد)“</0> يتيح لك إنشاء محفظة جديدة. هذا يُنشئ عبارة استرداد سرية جديدة.",
-        "selectionRestore" : "<0>”Restore (استعادة)“</0> يتيح لك استعادة الوصول إلى أصولك الموجودة عن طريق عبارة الاسترداد السرية الخاصة بك، أو باستخدام Ledger Recover.",
+        "selectionNewLedgerTitle" : "الإعداد كجهاز Ledger جديد",
+        "selectionNewLedgerDescription" : "هذا يُنشئ عبارة استرداد سرية جديدة.",
+        "selectionRestoreTitle" : "استعادة الوصول إلى الأصول",
+        "selectionRestoreDescription" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover.",
+        "selectionRestoreDescriptionWithCharon" : "هذا يتيح لك الاستعادة باستخدام نسخك الاحتياطي — عبارة الاسترداد السرية أو Ledger Recover أو Ledger Recovery Key.",
         "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "newSeedDescription1" : "جهاز {{productName}} سيقوم بإنشاء عبارة الاسترداد السرية—قائمة فريدة من 24 كلمة. إنها الطريقة الوحيدة لاستعادة أصولك في حالة سرقة أو فقد جهازك Ledger أو إذا نسيت كود PIN الخاص بك.",
-        "newSeedDescription2" : "<0>احفظها بأمان وخصوصية:\n</0>عبارة الاسترداد السرية الخاصة بك تتحكم في كل أصولك وغير قابلة للاستبدال. أي شخص لديه عبارتك يتحكم في أصولك أيضاً ويمكنه سرقتها. إذا فقدت عبارتك، ليس بوسع Ledger مساعدتك.",
-        "newSeedDescription3" : "احذر من أي شخص أو أي برنامج يطلب عبارة الاسترداد السرية الخاصة بك. إنه احتيال. ",
-        "newSeedDescription4" : "المكان الوحيد الذي يجب عليك إدخال عبارة الاسترداد السرية الخاصة بك فيه هو جهازك Ledger.",
-        "newSeedDescription5" : "لا تشاركها. لا تفقدها.",
-        "newSeedContinueOnDevice" : "اعرض واكتب عبارة الاسترداد السرية التي تم إنشاؤها على جهازك {{productName}}",
+        "selectionNewSeedTitle" : "عبارة الاسترداد السرية",
+        "selectionNewSeedSubtitle" : "احفظها بأمان وخصوصية",
+        "selectionNewSeedDescription" : "عبارة الاسترداد السرية الخاصة بك تتحكم في أصولك وهي غير قابلة للاستبدال. أي شخص لديه عبارتك يمكنه سرقة كل أصولك. إذا فقدتها، Ledger لا يمكنها استرجاعها من أجلك.",
+        "selectionNewSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
+        "restoreDescription" : "قم باختيار نسخ احتياطي ترغب في الاستعادة منه:",
         "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}",
-        "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
+        "restoreChoiceSRPTitle" : "عبارة الاسترداد السرية",
         "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان.",
-        "restoreChoiceRecoverTitle" : "الاستعادة باستخدام Ledger Recover",
-        "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لاستعادة النسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك.",
-        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}."
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "استخدم Recovery Key الخاص بك لاستعادة الوصول إلى أصولك.",
+        "restoreChoiceRecoverTitle" : "اشتراك Ledger Recover",
+        "restoreChoiceRecoverDescription" : "استخدم اشتراكك لاستعادة الوصول إلى أصولك بواسطة هويّتك.",
+        "followInstructions" : "اتبع التعليمات التي تظهر على جهازك {{productName}}.",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
+        "backupCharonCta" : "معرفة المزيد أو الشراء",
+        "backupCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
       },
       "backup" : {
         "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "اختبار الأصالة\nوالتحقق من تحديث نظام التشغيل",
-          "completed" : "جهازك {{modelName}} أصلي ومُحدَّث إلى آخر إصدار"
+          "active" : "اختبار أصالة Ledger",
+          "completed" : "اختبار أصالة Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "إلغاء اختبار الأصالة والتحقق من تحديث نظام التشغيل؟",
@@ -1320,12 +1332,12 @@
           }
         },
         "whyPerformChecksLink" : "تعرّف على المزيد حول اختبار الأصالة",
-        "startChecksCTA" : "التحقق من جهازي {{modelName}}",
+        "startChecksCTA" : "تحقق من {{modelName}}",
         "continueCTA" : "المتابعة إلى الإعداد",
         "genuineCheck" : {
           "title" : {
-            "active" : "اختبار الأصالة",
-            "completed" : "جهازك {{modelName}} أصلي",
+            "active" : "اختبار أصالة Ledger",
+            "completed" : "{{modelName}} أصلي",
             "cancelled" : "اختبار الأصالة تم رفضه"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "التحقق من تحديث نظام التشغيل",
-            "completed" : "نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
+            "active" : "التحقق من نظام تشغيل Ledger OS",
+            "completed" : "نظام تشغيل Ledger OS مُحدَّث إلى آخر إصدار",
             "updateAvailable" : "تحديث نظام التشغيل {{firmwareVersion}} متاح"
           },
           "subtitle" : {
-            "active" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار أم لا.",
-            "completed" : "لبدء استعادة التطبيق على جهازك {{modelName}}، اختر زر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+            "active" : "هذا يتحقق مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
             "updateAvailable" : "قم بالتحديث من أجل الأمان الأمثل والوصول إلى أحدث الميزات."
           },
           "viewUpdateCTA" : "تحديث نظام تشغيل {{modelName}}",
@@ -1782,14 +1793,14 @@
     "fullNodeReadyInfo" : "ستتم إضافة الحسابات باستخدام عقدتك الكاملة لبيتكوين.",
     "fullNodeConfigure" : "تكوين العقدة",
     "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً في حساب {{currency}}.",
-    "accountToImportSubtitle_plural" : "إضافة حسابات موجودة",
+    "accountToImportSubtitle_other" : "إضافة حسابات موجودة",
     "selectAll" : "اختر الكل ({{count}})",
     "unselectAll" : "إلغاء اختيار الكل ({{count}})",
     "noAccountToImport" : "ليس هناك حسابات {{currencyName}} موجودة لإضافتها",
     "success" : "تمت إضافة الحساب بنجاح",
-    "success_plural" : "تمت إضافة الحسابات بنجاح",
+    "success_other" : "تمت إضافة الحسابات بنجاح",
     "successDescription" : "إضافة حسابات أخرى أو العودة إلى المحفظة الاستثمارية",
-    "successDescription_plural" : "إضافة حسابات أخرى أو العودة إلى المحفظة الاستثمارية",
+    "successDescription_other" : "إضافة حسابات أخرى أو العودة إلى المحفظة الاستثمارية",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "لا يمكن اضافة حساب جديد قبل أن تتلقى الأصول على حسابك <1><0>{{accountName}}</0></1>",
       "noAccountToCreate" : "لم يتم العثور على حساب <1><0>{{currencyName}}</0></1> ليتم إنشاءه",
@@ -1802,7 +1813,7 @@
     "cta" : {
       "addMore" : "إضافة المزيد",
       "add" : "إضافة حساب",
-      "add_plural" : "إضافة حسابات",
+      "add_other" : "إضافة حسابات",
       "addAccountName" : "أضف حساب {{currencyName}}",
       "receive" : "تلقي"
     },
@@ -1900,9 +1911,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "قم بإلغاء قفل {{productName}} عن طريق كود PIN الخاص بك لإكمال التحديث.",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
-    "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
+    "appNotInstalledTitle_other" : "التطبيقات المطلوبة غير موجودة",
     "appNotInstalled" : "تطبيق {{appName}} مطلوب لإكمال هذا الإجراء. يُرجى الانتقال إلى My Ledger وتثبيته على جهازك",
-    "appNotInstalled_plural" : "تطبيقات {{appName}} مطلوبة لإكمال هذا الإجراء. يُرجى الانتقال إلى My Ledger وتثبيتهم على جهازك",
+    "appNotInstalled_other" : "تطبيقات {{appName}} مطلوبة لإكمال هذا الإجراء. يُرجى الانتقال إلى My Ledger (جهازي Ledger) وتثبيتهم على جهازك",
     "openManager" : "افتح My Ledger",
     "openOnboarding" : "إعداد الجهاز",
     "outdated" : "إصدار التطبيق قديم",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "رسوم الدفع",
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>"
+      "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
+      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -1988,14 +2000,14 @@
       },
       "installSuccess" : {
         "title" : "تم تثبيت التطبيق بنجاح. يمكنك الآن إضافة حساباتك {{app}}",
-        "title_plural" : "تم تثبيت التطبيقات بنجاح. يمكنك الآن إضافة حساباتك",
+        "title_other" : "تم تثبيت التطبيقات بنجاح. يمكنك الآن إضافة حساباتك",
         "manageAccount" : "إدارة حساباتي"
       },
       "updatable" : {
         "title" : "متاح تحديث",
-        "title_plural" : "التحديثات المتاحة",
+        "title_other" : "متاح تحديثات",
         "progressTitle" : "{{number}} تحديث تطبيق",
-        "progressTitle_plural" : "{{number}} تحديثات للتطبيق",
+        "progressTitle_other" : "{{number}} تحديثات للتطبيق",
         "progressWarning" : "لا تغادر My Ledger أثناء التحديث.",
         "progress" : "جارى تحديث الكل..."
       },
@@ -2397,7 +2409,8 @@
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "unitPerByte" : "{{unit}}/بايت (byte)",
         "nft" : "NFT",
-        "nftQuantity" : "الكمية"
+        "nftQuantity" : "الكمية",
+        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
       },
       "verification" : {
         "streaming" : {
@@ -3772,7 +3785,7 @@
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
       "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
       "transferFees" : {
-        "feesPercentHint" : "رمز التوكن له %{{feePercent}} ({{feeBps}} نقطة أساس (bps) ) رسوم تحويل. {{maxFee}} بحد أقصى",
+        "feesHint" : "رسوم تحويل رمز التوكن: {{transferFee}}",
         "notice" : "رسوم التحويل %{{fee}}",
         "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن",
         "transferFeesLabel" : "رسوم التحويل"
@@ -4085,7 +4098,7 @@
     "duration" : "المدة",
     "durationJustStarted" : "بدأت للتو",
     "durationDays" : "{{count}} يوم",
-    "durationDays_plural" : "{{count}} أيام",
+    "durationDays_other" : "{{count}} أيام",
     "howItWorks" : "كيف يعمل التفويض",
     "delegationEarn" : "يمكنك الآن أن كسب مكافآت تكديس {{name}} عن طريق تفويض حسابك.",
     "earnRewards" : "اكسب المكافآت",
@@ -4405,6 +4418,8 @@
       "mockAppUpdateDesc" : "يعرض التحديث المتاح للتطبيق في My Ledger (جهازي Ledger)، ويقوم بإعادة تثبيت نفس إصدار التطبيق",
       "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
       "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
+      "customCALRef" : "مرجع CAL مخصص",
+      "customCALRefDesc" : "حدّد فرع مخصص أو تضمين أو علامة للاستخدام gكل طلبات CAL",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
       "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
@@ -4709,7 +4724,7 @@
     "ctaSuccess" : "تم",
     "noAccounts" : "لا توجد حسابات للتصدير",
     "selectedAccounts" : "الحسابات المراد تضمينها",
-    "selectedAccounts_plural" : "الحسابات المراد تضمينها: ({{count}})",
+    "selectedAccounts_other" : "الحسابات المراد تضمينها: ({{count}})",
     "disclaimer" : "القيمة المقابلة في التصدير يتم تقديمها لأغراض تعريفية فقط. لا تعتمد على هذه البيانات للأغراض المحاسبية أو الضريبية أو التنظيمية أو القانونية، لأنها لا تمثل سوى تقدير لسعر الأصول في وقت إجراء المعاملات والتصدير، وفقاً لطرق التقييم المقدمة من مزود للخدمة لدينا، Kaiko"
   },
   "language" : {
@@ -4747,7 +4762,7 @@
   "informationCenter" : {
     "tooltip" : "مركز المعلومات",
     "ongoingIncidentsTooltip" : "هناك {{count}} حدث جاري",
-    "ongoingIncidentsTooltip_plural" : "هناك {{count}} أحداث جارية",
+    "ongoingIncidentsTooltip_other" : "هناك {{count}} أحداث جارية",
     "tabs" : {
       "announcements" : "الأخبار",
       "announcementsUnseen" : "أخبار ({{unseenCount}})",
@@ -5874,6 +5889,10 @@
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. قم بتعديل المبلغ أو تحقق من الرصيد.",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -6036,6 +6055,10 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "حدث خطأ ما",
       "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
+    },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "حدث خطأ ما",
+      "description" : "مُعلّمة المبادلة مفقودة من المزود المختار. يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "حدث خطأ ما",
@@ -6590,6 +6613,10 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7052,11 +7079,87 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "اختر الحسابات التي ترغب في إضافتها",
+      "controls" : {
+        "selectAll" : "اختيار الكل",
+        "deselectAll" : "إلغاء اختيار الكل"
+      },
+      "cta" : {
+        "confirm" : "تأكيد"
+      },
+      "newAccount" : "حساب جديد",
+      "addAccountSelection" : "اختر الحساب لإضافة الأموال",
+      "addAccountSelectionPtxFlow" : "اختر حساب"
+    },
+    "fundAccount" : {
+      "receive" : "تلقي",
+      "receiveDescription" : "تلقى الأصول المشفرة من محفظة أخرى",
+      "buy" : "شراء",
+      "buyDescription" : "شراء الأصول المشفرة بأمان باستخدام النقود"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "إيقاف المسح الضوئي"
+      },
+      "warning" : {
+        "title" : "لم نتمكن من إضافة حساب {{currency}} جديد",
+        "description" : "لا يمكن إضافة حساب جديد قبل أن تتلقى أصولاً في حسابك {{account}}",
+        "cta" : "إضافة أموال إلى حسابي",
+        "close" : "إغلاق",
+        "noAssociatedAccounts" : {
+          "description" : "في نظام {{currency}} البيئي، عدد محدود فقط من الخدمات هي التي يمكنها أن تُنشئ حسابات جديدة. بينما لا توفر Ledger حالياً خدمة التهيئة هذه، هناك بدائل متاحة. ستكون قادراً على إضافة حسابك {{currency}} على Ledger Live بمجرد إنشائه.",
+          "cta" : "كيف تنشئ حساب {{currency}}؟",
+          "close" : "إغلاق"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "لم يتم العثور على حساب",
+        "foundAccounts" : "وجدنا {{count}} حساب",
+        "foundAccounts_other" : "وجدنا {{count}} حساب",
+        "scanning" : "جارٍ فحص الحسابات..."
+      },
+      "title" : "جارٍ البحث عن أي حسابات قائمة على سلسلة الكتل (blockchain)..."
+    },
+    "connectYourDevice" : {
+      "title" : "قم بتوصيل جهازك وإلغاء قفله"
+    },
     "searchPlaceholder" : "بحث",
-    "assetFlow" : {
-      "selectTemplate" : "اختر {{dynamic}}",
-      "asset" : "أصل",
-      "network" : "الشبكة"
+    "emptyAssetList" : "لم يتم العثور على أصول",
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر الشبكة",
+    "selectAccount" : "اختر حساب",
+    "accountCount_one" : "{{count}} حساب",
+    "accountCount_other" : "{{count}} حساب",
+    "accountsAdded" : {
+      "title" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
+      "title_other" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
+      "cta" : {
+        "addFunds" : "إضافة أموال إلى حسابي",
+        "selectAccount" : "متابعة",
+        "close" : "إغلاق"
+      }
     }
+  },
+  "nftEntryPoint" : {
+    "title" : "الرموز غير القابلة للاستبدال (NFT)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "الموقع غير متاح",
+    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "learnMore" : "تعرّف على المزيد"
+  },
+  "versionBlocking" : {
+    "title" : "تحديث Ledger Live مطلوب",
+    "errorTitle" : "فشل التحديث",
+    "errorDescription" : "لقد فشل التحديث. يُرجى اتباع الرابط التالي لتنزيل أحدث إصدار من Ledger Live. ",
+    "description" : "هذا الإصدار من Ledger Live غير متوافق مع أحدث أنظمة تشغيل الجهاز. قم بالتحديث الآن للاستمتاع باتصال مُحسّن.",
+    "restart" : "إعادة التشغيل",
+    "downloadOnLedger" : "تنزيل من Ledger.com",
+    "downloadProgress" : "جارٍ التنزيل... %{{ progress }}"
   }
 }

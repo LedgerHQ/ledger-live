@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.18.3",
+  "version": "24.19.4",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -59,10 +59,12 @@
     "command-line-args": "5.2.1",
     "cors": "2.8.5",
     "express": "4.19.2",
+    "got": "14.4.7",
     "invariant": "2.2.4",
     "lodash": "4.17.21",
     "node-hid": "2.1.2",
     "pako": "2.1.0",
+    "purify-ts": "2.1.0",
     "qrcode-terminal": "0.12.0",
     "qrloop": "1.4.1",
     "react": "18.3.1",

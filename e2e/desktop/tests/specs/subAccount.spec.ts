@@ -2,7 +2,11 @@ import { test } from "../fixtures/common";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import {
+  Account,
+  TokenAccount,
+  getParentAccountName,
+} from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
@@ -10,7 +14,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 const subAccounts = [
-  { account: Account.ETH_USDT_1, xrayTicket1: "B2CQA-2577, B2CQA-1079", xrayTicket2: "B2CQA-2583" },
+  {
+    account: TokenAccount.ETH_USDT_1,
+    xrayTicket1: "B2CQA-2577, B2CQA-1079",
+    xrayTicket2: "B2CQA-2583",
+  },
   { account: Account.XLM_USCD, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
   { account: Account.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
   { account: Account.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
@@ -19,8 +27,8 @@ const subAccounts = [
 ];
 
 const subAccountReceive = [
-  { account: Account.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
-  { account: Account.ETH_LIDO, xrayTicket: "B2CQA-2491" },
+  { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
+  { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
   { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
   { account: Account.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
   { account: Account.BSC_SHIBA, xrayTicket: "B2CQA-2490" },
@@ -85,8 +93,8 @@ for (const token of subAccountReceive) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(token.account.accountName);
-        await app.account.expectAccountVisibility(token.account.accountName);
+        await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
+        await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
         await app.account.clickAddToken();
         await app.receive.selectToken(token.account);
@@ -122,7 +130,7 @@ for (const token of subAccounts) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(token.account.accountName);
+        await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectTokenToBePresent(token.account);
       },
     );
@@ -131,7 +139,13 @@ for (const token of subAccounts) {
 
 const transactionE2E = [
   {
-    tx: new Transaction(Account.SOL_GIGA_1, Account.SOL_GIGA_2, "0.5", undefined, "noTag"),
+    tx: new Transaction(
+      TokenAccount.SOL_GIGA_1,
+      TokenAccount.SOL_GIGA_2,
+      "0.5",
+      undefined,
+      "noTag",
+    ),
     xrayTicket: "B2CQA-3055, B2CQA-3057",
   },
 ];
@@ -174,7 +188,9 @@ for (const transaction of transactionE2E) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.accounts.navigateToAccountByName(
+          getParentAccountName(transaction.tx.accountToDebit),
+        );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
         await app.send.craftTx(transaction.tx);
@@ -189,8 +205,12 @@ for (const transaction of transactionE2E) {
         await app.drawer.closeDrawer();
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           await app.layout.goToAccounts();
-          await app.accounts.clickSyncBtnForAccount(transaction.tx.accountToCredit.accountName);
-          await app.accounts.navigateToAccountByName(transaction.tx.accountToCredit.accountName);
+          await app.accounts.clickSyncBtnForAccount(
+            getParentAccountName(transaction.tx.accountToCredit),
+          );
+          await app.accounts.navigateToAccountByName(
+            getParentAccountName(transaction.tx.accountToCredit),
+          );
           await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
           await app.account.expectAccountBalance();
           await app.account.checkAccountChart();
@@ -210,32 +230,32 @@ const transactionsAddressInvalid = [
     xrayTicket: "B2CQA-2702",
   },
   {
-    transaction: new Transaction(Account.SOL_GIGA_1, Account.SOL_WIF_2, "0.1", undefined),
-    recipient: Account.SOL_WIF_2.ataAddress,
+    transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
+    recipient: TokenAccount.SOL_WIF_2.address,
     expectedErrorMessage: "This associated token account holds another token",
     xrayTicket: "B2CQA-3083",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_GIGA_2, "0.1", undefined),
-    recipient: Account.SOL_GIGA_2.ataAddress,
+    transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
+    recipient: TokenAccount.SOL_GIGA_2.address,
     expectedErrorMessage: "This is a token account. Input a regular wallet address",
     xrayTicket: "B2CQA-3084",
   },
   {
-    transaction: new Transaction(Account.SOL_WIF_1, Account.SOL_WIF_2, "0.1", undefined),
-    recipient: Account.SOL_WIF_2.currency.contractAddress,
+    transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
+    recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
     xrayTicket: "B2CQA-3085",
   },
   {
-    transaction: new Transaction(Account.SOL_WIF_1, Account.SOL_GIGA_2, "0.1", undefined),
-    recipient: Account.SOL_GIGA_2.currency.contractAddress,
+    transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
+    recipient: TokenAccount.SOL_GIGA_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
     xrayTicket: "B2CQA-3086",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_WIF_2, "0.1", undefined),
-    recipient: Account.SOL_WIF_2.currency.contractAddress,
+    transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
+    recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
     xrayTicket: "B2CQA-3087",
   },
@@ -283,7 +303,12 @@ for (const transaction of transactionsAddressInvalid) {
 
 const transactionsAddressValid = [
   {
-    transaction: new Transaction(Account.SOL_GIGA_1, Account.SOL_GIGA_2, "0.1", undefined),
+    transaction: new Transaction(
+      TokenAccount.SOL_GIGA_1,
+      TokenAccount.SOL_GIGA_2,
+      "0.1",
+      undefined,
+    ),
     expectedErrorMessage:
       "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing",
     xrayTicket: "B2CQA-3082",
@@ -321,7 +346,7 @@ for (const transaction of transactionsAddressValid) {
 
         await app.layout.openSendModalFromSideBar();
         await app.send.selectDebitCurrency(transaction.transaction);
-        const recipientAddress = transaction.transaction.accountToCredit.ataAddress ?? "";
+        const recipientAddress = transaction.transaction.accountToCredit.address ?? "";
         await app.send.fillRecipient(recipientAddress);
 
         await app.send.checkContinueButtonEnable();
@@ -340,20 +365,29 @@ const tokenTransactionInvalid = [
     xrayTicket: "B2CQA-2700",
   },
   {
-    tx: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
+    tx: new Transaction(TokenAccount.ETH_USDT_2, TokenAccount.ETH_USDT_1, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
     ),
     xrayTicket: "B2CQA-2701",
   },
   {
-    tx: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
+    tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_2, "10000", Fee.MEDIUM),
     expectedWarningMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-3043",
   },
   {
-    tx: new Transaction(Account.SOL_GIGA_3, Account.SOL_GIGA_1, "0.5", undefined, "noTag"),
-    expectedWarningMessage: new RegExp("Sorry, insufficient funds"),
+    tx: new Transaction(
+      TokenAccount.SOL_GIGA_3,
+      TokenAccount.SOL_GIGA_1,
+      "0.5",
+      undefined,
+      "noTag",
+    ),
+    expectedWarningMessage: new RegExp(
+      "You need \\d+\\.\\d+ SOL in your account to pay for transaction fees on the Solana" +
+        " network\\. Buy SOL or deposit more into your account\\. Learn more",
+    ),
     xrayTicket: "B2CQA-3058",
   },
 ];
@@ -375,7 +409,7 @@ for (const transaction of tokenTransactionInvalid) {
       ],
     });
     test(
-      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
+      `Send from ${transaction.tx.accountToDebit.accountName} ${transaction.tx.accountToDebit.index} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
       {
         tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
@@ -387,7 +421,9 @@ for (const transaction of tokenTransactionInvalid) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.accounts.navigateToAccountByName(
+          getParentAccountName(transaction.tx.accountToDebit),
+        );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
         await app.send.craftTx(transaction.tx);
@@ -404,8 +440,8 @@ for (const transaction of tokenTransactionInvalid) {
 
 test.describe("Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
-    Account.ETH_USDT_1,
-    Account.ETH_USDT_2,
+    TokenAccount.ETH_USDT_1,
+    TokenAccount.ETH_USDT_2,
     "1",
     Fee.MEDIUM,
   );
@@ -437,7 +473,9 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(tokenTransactionValid.accountToDebit.accountName);
+      await app.accounts.navigateToAccountByName(
+        getParentAccountName(tokenTransactionValid.accountToDebit),
+      );
       await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToDebit);
       await app.account.clickSend();
       await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cosmos",
-  "version": "0.14.2",
+  "version": "0.16.2",
   "description": "Ledger Cosmos Coin integration",
   "keywords": [
     "Ledger",
@@ -77,8 +77,7 @@
     "@types/lodash": "^4.14.191",
     "@types/semver": "^7.5.8",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
-    "jest-sonar": "0.2.16"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

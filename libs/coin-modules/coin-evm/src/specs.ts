@@ -19,7 +19,7 @@ import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
-import { getEstimatedFees } from "./logic";
+import { getEstimatedFees } from "./utils";
 
 const testTimeout = 10 * 60 * 1000;
 
@@ -48,6 +48,9 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   linea_sepolia: 0.001,
   blast: 0.001,
   blast_sepolia: 0.001,
+  hyperevm: 0.001,
+  berachain: 0.001,
+  sei_network_evm: 0.001,
 };
 
 /**

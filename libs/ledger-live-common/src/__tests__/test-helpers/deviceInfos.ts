@@ -19,6 +19,7 @@ const deviceInfos: Record<
       isBootloader: false,
       managerAllowed: false,
       pinValidated: false,
+      seFlags: Buffer.alloc(0),
     },
   },
   NanoS142: {
@@ -33,6 +34,7 @@ const deviceInfos: Record<
       providerName: null,
       majMin: "1.4",
       targetId: 823132163,
+      seFlags: Buffer.alloc(0),
     },
   },
   NanoS155: {
@@ -47,6 +49,7 @@ const deviceInfos: Record<
       providerName: null,
       majMin: "1.5",
       targetId: 823132164,
+      seFlags: Buffer.alloc(0),
     },
   },
   NanoX1242rc5: {
@@ -61,6 +64,7 @@ const deviceInfos: Record<
       isBootloader: false,
       managerAllowed: true,
       pinValidated: true,
+      seFlags: Buffer.alloc(0),
     },
   },
   Blue211: {
@@ -75,6 +79,7 @@ const deviceInfos: Record<
       isBootloader: false,
       managerAllowed: false,
       pinValidated: true,
+      seFlags: Buffer.alloc(0),
     },
   },
 };

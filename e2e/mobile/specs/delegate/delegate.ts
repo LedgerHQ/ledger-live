@@ -4,8 +4,13 @@ import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from ".
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
 
-export function runDelegateTest(delegation: DelegateType, tmsLinks: string[]) {
+export function runDelegateTest(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX"],
+) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
     beforeAll(async () => {
       await app.init({
@@ -52,8 +57,8 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[]) {
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode, fees);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
       await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
@@ -98,8 +103,8 @@ export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string
       await app.stake.validateAmount(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
       await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
@@ -134,7 +139,8 @@ export async function runDelegateTezos(delegation: DelegateType, tmsLinks: strin
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
-      await app.speculos.activateContractData();
+      await app.speculos.goToSettings();
+      await app.speculos.activateExpertMode();
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
@@ -144,8 +150,8 @@ export async function runDelegateTezos(delegation: DelegateType, tmsLinks: strin
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
       await verifyStakeOperationDetailsInfo(delegation, amountWithCode);

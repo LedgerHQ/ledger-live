@@ -8,6 +8,8 @@ export type AssetType = {
   name: string;
   ticker: string;
   id: string;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
 };
 
 type AssetItemProps = AssetType & {
@@ -30,6 +32,7 @@ const Wrapper = styled.div`
   cursor: pointer;
   border-radius: var(--radius-s, 8px);
   align-items: center;
+  overflow: hidden;
 
   :hover {
     background-color: var(--colors-surface-transparent-hover);
@@ -45,28 +48,57 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: var(--margin-s);
+  overflow: hidden;
+  flex: 1;
+  gap: 4px;
 `;
 
-export const AssetItem = ({ name, ticker, id, onClick }: AssetItemProps) => {
+const LeftElementWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+export const AssetItem = ({
+  name,
+  ticker,
+  id,
+  onClick,
+  leftElement,
+  rightElement,
+}: AssetItemProps) => {
   return (
     <Wrapper onClick={() => onClick({ name, ticker, id })}>
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"
           color="var(--colors-content-default-default)"
+          style={{
+            display: "block",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
         >
           {name}
         </Text>
-        <Text
-          variant="bodyLineHeight"
-          fontWeight="semiBold"
-          color="var(--colors-content-subdued-default-default)"
-        >
-          {ticker}
-        </Text>
+        <LeftElementWrapper>
+          <Text
+            fontSize="12px"
+            lineHeight="16px"
+            variant="bodyLineHeight"
+            fontWeight="medium"
+            color="var(--colors-content-subdued-default-default)"
+          >
+            {ticker}
+          </Text>
+          {leftElement}
+        </LeftElementWrapper>
       </InfoWrapper>
+      {rightElement}
     </Wrapper>
   );
 };

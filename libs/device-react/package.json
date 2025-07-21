@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-react",
-  "version": "0.2.30",
+  "version": "0.2.37",
   "description": "Ledger Live device react module",
   "keywords": [
     "Ledger"
@@ -43,7 +43,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {

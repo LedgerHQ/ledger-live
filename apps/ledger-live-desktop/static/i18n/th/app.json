@@ -259,11 +259,11 @@
   },
   "time" : {
     "minute" : "นาที",
-    "minute_plural" : "นาที",
+    "minute_other" : "นาที",
     "minute_short" : "นาที",
     "second_short" : "วินาที",
     "hour" : "ชั่วโมง",
-    "hour_plural" : "ชั่วโมง",
+    "hour_other" : "ชั่วโมง",
     "range" : {
       "day" : "1D",
       "week" : "1W",
@@ -575,7 +575,7 @@
       "date" : "วันที่",
       "from" : "จาก",
       "fromAddress" : "Address ต้นทาง",
-      "fromAddress_plural" : "Address ต้นทาง",
+      "fromAddress_other" : "Address ต้นทาง",
       "to" : "ถึง",
       "toProvider" : "Address ผู้ให้บริการ",
       "initialAmount" : "จำนวนเริ่มต้น",
@@ -893,6 +893,7 @@
     "title" : "ซื้อและขายคริปโต",
     "reset" : "รีเซ็ตโฟลว์",
     "verifyAddress" : "โปรดยืนยัน Address ที่ปรากฏว่าตรงกับที่แสดงบนอุปกรณ์ของคุณหรือไม่",
+    "connectingTo" : "กำลังเชื่อมต่อคุณกับ {{provider}}",
     "buy" : {
       "header" : "ซื้อคริปโตกับพาร์ทเนอร์ของเรา",
       "title" : "เลือกผู้ให้บริการเพื่อซื้อคริปโต",
@@ -1241,11 +1242,11 @@
       }
     },
     "manual" : {
-      "title" : "ตั้งค่า {{deviceName}} ของคุณ",
+      "title" : "เตรียม {{deviceName}} ของคุณให้พร้อม",
       "continueOnDevice" : "ดำเนินการนี้บน {{productName}} ของคุณ",
       "pairedContent" : {
-        "title" : "{{deviceName}} นี้เป็นของแท้",
-        "description" : "ปลอดภัยที่จะใช้ {{productName}} นี้ คุณสามารถดำเนินการตั้งค่าได้",
+        "title" : "{{deviceName}} เป็นอุปกรณ์ของแท้",
+        "description" : "{{productName}} ของคุณปลอดภัยสำหรับการใช้งาน คุณสามารถเริ่มการติดตั้งได้เลย",
         "continueOnDevice" : "แตะที่ {{productName}} เพื่อเริ่มตั้งค่า"
       },
       "pinContent" : {
@@ -1255,26 +1256,37 @@
         "continueOnDevice" : "ตั้งค่า PIN ของคุณบน {{productName}}"
       },
       "seedContent" : {
-        "title" : "Secret Recovery Phrase",
+        "title" : "การติดตั้งและสำรองข้อมูล",
         "titleCompleted" : "ยืนยัน Secret Recovery Phrase แล้ว",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "อย่าลืมใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุดสำหรับสินทรัพย์ของคุณ..\n\nหากยังไม่มี ใช้ {{productName}} ของคุณเพื่อสร้าง Phrase ใหม่",
+        "restoreSeed" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "restoreCharonTitle" : "กู้คืนโดยใช้ Recovery Key",
+        "restoreCharonDescription" : "ทำตามคำแนะนำที่ปรากฏบนหน้าจอ Secure Screen ของ Ledger เพื่อทำการกู้คืน",
+        "restoreCharonContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
         "selection" : "เลือกตัวเลือกการติดตั้งที่เหมาะกับคุณที่สุด:",
-        "selectionNewLedger" : "<0>“ติดตั้งเป็นเครื่อง Ledger ใหม่”</0> ช่วยให้คุณสร้าง Wallet ใหม่ได้ ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
-        "selectionRestore" : "<0>\"กู้คืน\"</0> ช่วยให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ที่มีอยู่ของคุณด้วย Secret Recovery Phrase หรือโดยใช้ Ledger Recover",
+        "selectionNewLedgerTitle" : "ติดตั้ง Ledger เครื่องนี้เป็นอุปกรณ์ใหม่",
+        "selectionNewLedgerDescription" : "ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
+        "selectionRestoreTitle" : "กู้คืนการเข้าถึงสินทรัพย์",
+        "selectionRestoreDescription" : "สิ่งนี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase หรือ Ledger Recover",
+        "selectionRestoreDescriptionWithCharon" : "สิ่งเหล่านี้จะทำให้คุณสามารถกู้คืนโดยใช้ข้อมูลที่สำรองไว้ได้ ได้แก่ Secret Recovery Phrase, บริการ Ledger Recover หรือ Ledger Recovery Key",
         "selectionContinueOnDevice" : "เลือกตัวเลือกบน {{productName}} ของคุณ",
-        "newSeedDescription1" : "{{productName}} ของคุณจะสร้าง Secret Recovery Phrase หรือก็คือวลีกู้คืน 24 คำ ซึ่งเป็นวิธีเดียวที่จะกู้คืนสินทรัพย์ของคุณได้ในกรณีที่ Ledger ของคุณถูกขโมย สูญหาย หรือคุณลืม PIN",
-        "newSeedDescription2" : "<0>เก็บรักษาให้ปลอดภัยและเป็นส่วนตัว:</0>\nSecret Recovery Phrase ใช้ควบคุมสินทรัพย์ทั้งหมดของคุณและไม่สามารถแทนที่ได้ ใครก็ตามที่มี Phrase ของคุณจะสามารถควบคุมและขโมยสินทรัพย์ของคุณได้ หากคุณทำ Phrase หาย Ledger ก็ไม่สามารถช่วยคุณได้",
-        "newSeedDescription3" : "พึงระวังบุคคลหรือซอฟต์แวร์ใด ๆ ที่ขอ Secret Recovery Phrase ของคุณ เพราะนั่นคือมิจฉาชีพ ",
-        "newSeedDescription4" : "อุปกรณ์เดียวที่คุณควรป้อน Secret Recovery Phrase คือบนอุปกรณ์ Ledger ของคุณเอง",
-        "newSeedDescription5" : "ห้ามแชร์กับผู้อื่น ห้ามทำหาย",
-        "newSeedContinueOnDevice" : "ดูและเขียน Secret Recovery Phrase ที่สร้างขึ้นบน {{productName}} ของคุณ",
+        "selectionNewSeedTitle" : "Secret Recovery Phrase",
+        "selectionNewSeedSubtitle" : "โปรดเก็บรักษาให้ปลอดภัยและเป็นส่วนตัว",
+        "selectionNewSeedDescription" : "Secret Recovery Phrase ใช้ควบคุมสินทรัพย์ทั้งหมดของคุณและไม่สามารถเปลี่ยนแปลงได้ ใครก็ตามที่มีวลีกู้คืนนี้ของคุณจะสามารถขโมยสินทรัพย์ของคุณได้ หากคุณทำวลีกู้คืนหาย Ledger จะไม่สามารถช่วยคุณกู้คืนกลับมาได้",
+        "selectionNewSeedContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ",
+        "restoreDescription" : "เลือกวิธีการกู้คืนที่คุณต้องการ:",
         "restoreChoiceContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
-        "restoreChoiceSRPTitle" : "กู้คืนโดยใช้ Secret Recovery Phrase",
+        "restoreChoiceSRPTitle" : "Secret Recovery Phrase",
         "restoreChoiceSRPDescription" : "ใช้ Secret Recovery Phrase ซึ่งสร้างโดยอุปกรณ์ Ledger เพื่อความปลอดภัยสูงสุด",
-        "restoreChoiceRecoverTitle" : "กู้คืนโดยใช้ Ledger Recover",
-        "restoreChoiceRecoverDescription" : "หากคุณสมัครใช้งาน Ledger Recover ให้เข้าสู่ระบบ Subscription ของคุณเพื่อกู้คืนการสำรองข้อมูลของ Secret Recovery Phrase",
-        "followInstructions" : "ทำตามคำแนะนำที่แสดงบน {{productName}} ของคุณ"
+        "restoreChoiceCharonTitle" : "Ledger Recovery Key",
+        "restoreChoiceCharonDescription" : "ใช้ Ledger Recovery Key เพื่อกู้คืนการเข้าถึงสินทรัพย์ของคุณ",
+        "restoreChoiceRecoverTitle" : "บริการ Ledger Recover",
+        "restoreChoiceRecoverDescription" : "ใช้บริการนี้เพื่อกู้คืนการเข้าถึงสินทรัพย์ด้วยการยืนยันตัวตนของคุณ",
+        "followInstructions" : "ทำตามคำแนะนำที่แสดงบน {{productName}} ของคุณ",
+        "backupCharonTitle" : "Ledger Recovery Key",
+        "backupCharonDescription" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว — เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
+        "backupCharonCta" : "ดูข้อมูลหรือซื้อเลย",
+        "backupCharonContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
       },
       "backup" : {
         "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
@@ -1296,8 +1308,8 @@
       },
       "softwareCheckContent" : {
         "title" : {
-          "active" : "Genuine Check\nและตรวจสอบการอัปเดต OS",
-          "completed" : "{{modelName}} ของคุณเป็นของแท้และได้รับการอัปเดตล่าสุดแล้ว"
+          "active" : "Genuine Check ของ Ledger",
+          "completed" : "Genuine Check ของ Ledger"
         },
         "exitWarningDrawer" : {
           "title" : "ยกเลิก Genuine Check และการอัปเดต OS หรือไม่?",
@@ -1319,13 +1331,13 @@
             "description" : "{{productName}} นี้ไม่ปลอดภัยในการใช้งาน\nโปรดติดต่อ Ledger Support"
           }
         },
-        "whyPerformChecksLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Genuine Check",
-        "startChecksCTA" : "ตรวจสอบ {{modelName}} ของฉัน",
+        "whyPerformChecksLink" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Genuine Check",
+        "startChecksCTA" : "ตรวจสอบ {{modelName}}",
         "continueCTA" : "ดำเนินการติดตั้งต่อ",
         "genuineCheck" : {
           "title" : {
-            "active" : "Genuine Check",
-            "completed" : "{{modelName}} ของคุณเป็นของแท้",
+            "active" : "Genuine Check ของ Ledger",
+            "completed" : "{{modelName}} เป็นอุปกรณ์ของแท้",
             "cancelled" : "Genuine Check ถูกปฏิเสธ"
           },
           "subtitle" : {
@@ -1336,13 +1348,12 @@
         },
         "firmwareUpdate" : {
           "title" : {
-            "active" : "ตรวจสอบการอัปเดต OS",
-            "completed" : "{{modelName}} OS ของคุณได้รับการอัปเดตล่าสุดแล้ว",
+            "active" : "ตรวจสอบ Ledger OS",
+            "completed" : "Ledger OS เป็นเวอร์ชันปัจจุบันแล้ว",
             "updateAvailable" : "มีการอัปเดต OS {{firmwareVersion}}"
           },
           "subtitle" : {
-            "active" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{modelName}} ของคุณได้รับการอัปเดตล่าสุดแล้วหรือไม่",
-            "completed" : "เพื่อเริ่มใช้การกู้คืนแอปบน {{modelName}} ของคุณ ให้เลือกปุ่ม “กู้คืนแอป” ด้านล่าง",
+            "active" : "เป็นการตรวจสอบว่าระบบปฏิบัติการบน {{modelName}} ของคุณเป็นเวอร์ชันล่าสุดแล้วหรือไม่",
             "updateAvailable" : "อัปเดตเพื่อความปลอดภัยและเข้าถึงฟีเจอร์ล่าสุด"
           },
           "viewUpdateCTA" : "อัปเดต OS สำหรับ {{modelName}}",
@@ -1782,14 +1793,14 @@
     "fullNodeReadyInfo" : "จะมีการเพิ่มบัญชีโดยใช้ Bitcoin แบบ Full Node",
     "fullNodeConfigure" : "กำหนดค่าโหนด",
     "tokensTip" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}} คุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
-    "accountToImportSubtitle_plural" : "เพิ่มบัญชีที่มีอยู่",
+    "accountToImportSubtitle_other" : "เพิ่มบัญชีที่มีอยู่",
     "selectAll" : "เลือกทั้งหมด ({{count}})",
     "unselectAll" : "ยกเลิกการเลือกทั้งหมด ({{count}})",
     "noAccountToImport" : "ไม่มีบัญชีที่มี {{currencyName}} อยู่ให้เพิ่ม",
     "success" : "เพิ่มบัญชีเรียบร้อยแล้ว",
-    "success_plural" : "เพิ่มบัญชีเรียบร้อยแล้ว",
+    "success_other" : "เพิ่มบัญชีเรียบร้อยแล้ว",
     "successDescription" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
-    "successDescription_plural" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
+    "successDescription_other" : "เพิ่มบัญชีอื่น ๆ หรือกลับไปยังพอร์ตโฟลิโอ",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "ไม่สามารถเพิ่มบัญชีใหม่ก่อนที่คุณจะได้รับสินทรัพย์ในบัญชี <1><0>{{accountName}}</0></1> ของคุณ",
       "noAccountToCreate" : "ไม่พบบัญชี <1><0>{{currencyName}}</0></1> ที่จะสร้าง",
@@ -1802,7 +1813,7 @@
     "cta" : {
       "addMore" : "เพิ่มอีก",
       "add" : "เพิ่มบัญชี",
-      "add_plural" : "เพิ่มบัญชี",
+      "add_other" : "เพิ่มบัญชี",
       "addAccountName" : "เพิ่มบัญชี {{currencyName}}",
       "receive" : "รับ"
     },
@@ -1900,9 +1911,9 @@
     "unlockDeviceAfterFirmwareUpdateStep2" : "ปลดล็อก {{productName}} ด้วย PIN ของคุณเพื่อทำการอัปเดตให้เสร็จสมบูรณ์",
     "quitApp" : "ออกจากแอปพลิเคชันบนอุปกรณ์ของคุณ",
     "appNotInstalledTitle" : "ไม่มีแอปที่จำเป็น",
-    "appNotInstalledTitle_plural" : "ไม่มีแอปที่จำเป็น",
+    "appNotInstalledTitle_other" : "ไม่มีแอปที่จำเป็น",
     "appNotInstalled" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
-    "appNotInstalled_plural" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
+    "appNotInstalled_other" : "ต้องใช้แอป {{appName}} เพื่อดำเนินการนี้ให้เสร็จสิ้น โปรดไปที่ My Ledger และติดตั้งลงในอุปกรณ์ของคุณ",
     "openManager" : "เปิด My Ledger",
     "openOnboarding" : "ตั้งค่าอุปกรณ์",
     "outdated" : "เวอร์ชันแอปล้าสมัย",
@@ -1925,7 +1936,8 @@
       "payoutNetworkFees" : "Payout Fees",
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
-      "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>"
+      "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
+      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly"
     },
     "swap2" : {
       "amountSent" : "จำนวนที่จะส่ง",
@@ -1988,14 +2000,14 @@
       },
       "installSuccess" : {
         "title" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชี {{app}} ของคุณได้แล้ว",
-        "title_plural" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชีของคุณได้แล้ว",
+        "title_other" : "ติดตั้งแอปเรียบร้อยแล้ว ตอนนี้คุณสามารถเพิ่มบัญชีของคุณได้แล้ว",
         "manageAccount" : "จัดการบัญชีของฉัน"
       },
       "updatable" : {
         "title" : "มีการอัปเดตพร้อมใช้งาน",
-        "title_plural" : "มีการอัปเดตพร้อมใช้งาน",
+        "title_other" : "มีการอัปเดตพร้อมใช้งาน",
         "progressTitle" : "มีการอัปเดตแอป {{number}} รายการ",
-        "progressTitle_plural" : "มีการอัปเดตแอป {{number}} รายการ",
+        "progressTitle_other" : "มีการอัปเดตแอป {{number}} รายการ",
         "progressWarning" : "อย่าออกจาก My Ledger ในระหว่างการอัปเดต",
         "progress" : "กำลังอัปเดตทั้งหมด..."
       },
@@ -2397,7 +2409,8 @@
         "unitVByte" : "{{unit}}/vbyte",
         "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
-        "nftQuantity" : "ปริมาณ"
+        "nftQuantity" : "ปริมาณ",
+        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
       },
       "verification" : {
         "streaming" : {
@@ -3772,7 +3785,7 @@
       "frozenStateWarning" : "สินทรัพย์บัญชีถูก Freeze!",
       "transferWarning" : "ในการตรวจสอบ Address ผู้รับสำหรับโทเคน Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>",
       "transferFees" : {
-        "feesPercentHint" : "โทเคนมีค่าธรรมเนียม {{feePercent}}% ({{feeBps}}bps) แต่ไม่เกิน {{maxFee}}",
+        "feesHint" : "ค่าธรรมเนียมการโอนโทเคน: {{transferFee}}",
         "notice" : "ค่าธรรมเนียมการโอน {{fee}}%",
         "tooltipHint" : "เปอร์เซ็นต์การโอนที่ถูกระงับไว้สำหรับผู้สร้างโทเคน",
         "transferFeesLabel" : "ค่าธรรมเนียมการโอน"
@@ -4085,7 +4098,7 @@
     "duration" : "ระยะเวลา",
     "durationJustStarted" : "เพิ่งเริ่มต้น",
     "durationDays" : "{{count}} วัน",
-    "durationDays_plural" : "{{count}} วัน",
+    "durationDays_other" : "{{count}} วัน",
     "howItWorks" : "วิธีใช้งานการ Delegate",
     "delegationEarn" : "คุณสามารถรับ Reward จากการ Staking {{name}} ได้แล้วในตอนนี้ด้วยการ Delegate บัญชีของคุณ",
     "earnRewards" : "รับ Reward",
@@ -4405,6 +4418,8 @@
       "mockAppUpdateDesc" : "แสดงการอัปเดตแอปที่มีอยู่ใน My Ledger ซึ่งจะติดตั้งแอปเวอร์ชันเดียวกันอีกครั้ง",
       "catalogUrl" : "ตั้งค่าผู้ให้บริการแค็ตตาล็อกแอป",
       "catalogUrlDesc" : "ป้อน URL ของผู้ให้บริการแค็ตตาล็อกที่คุณกำหนด",
+      "customCALRef" : "การอ้างอิง CAL ที่กำหนดเอง",
+      "customCALRefDesc" : "ระบุสาขาที่กำหนดเอง มอบหมาย หรือแท็กเพื่อใช้งานสำหรับคำขอ CAL ทั้งหมด",
       "enablePlatformDevTools" : "เปิดใช้งานเครื่องมือสำหรับพัฒนาแพลตฟอร์ม",
       "enablePlatformDevToolsDesc" : "เปิดใช้งานการเปิดหน้าต่างเครื่องมือสำหรับนักพัฒนาแอปบนแพลตฟอร์ม",
       "customLockScreen" : "สินทรัพย์บนหน้าจอล็อคแบบกำหนดเอง",
@@ -4709,7 +4724,7 @@
     "ctaSuccess" : "เสร็จสิ้น",
     "noAccounts" : "ไม่มีบัญชีที่จะส่งออก",
     "selectedAccounts" : "บัญชีที่จะรวม",
-    "selectedAccounts_plural" : "({{count}}) บัญชีที่จะรวมกัน",
+    "selectedAccounts_other" : "({{count}}) บัญชีที่จะรวมกัน",
     "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลนี้เพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
   },
   "language" : {
@@ -4747,7 +4762,7 @@
   "informationCenter" : {
     "tooltip" : "ศูนย์ข้อมูล",
     "ongoingIncidentsTooltip" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
-    "ongoingIncidentsTooltip_plural" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
+    "ongoingIncidentsTooltip_other" : "มีเหตุการณ์เกิดขึ้น {{count}} ครั้ง",
     "tabs" : {
       "announcements" : "ข่าว",
       "announcementsUnseen" : "({{unseenCount}}) ข่าว",
@@ -5874,6 +5889,10 @@
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "ขออภัย ยอดคงเหลือรวมค่าธรรมเนียมเครือข่ายไม่เพียงพอ ปรับจำนวนหรือตรวจสอบยอดคงเหลือ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
@@ -6036,6 +6055,10 @@
     "WrongDeviceForAccountPayout" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "บัญชีผู้รับนี้ไม่ได้อยู่ในอุปกรณ์ที่คุณเชื่อมต่อ โปรดเปลี่ยนบัญชีผู้รับและลองใหม่"
+    },
+    "MissingSwapPayloadParamaters" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "พารามิเตอร์สวอป (Swap) หายไปจากผู้ให้บริการที่เลือก โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "มีบางอย่างผิดปกติ",
@@ -6590,6 +6613,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Minimum required amount for this transaction is {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "ปกป้องคุณให้ปลอดภัย",
+      "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
     }
   },
   "cryptoOrg" : {
@@ -7052,11 +7079,87 @@
     }
   },
   "modularAssetDrawer" : {
+    "addAccounts" : {
+      "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
+      "controls" : {
+        "selectAll" : "เลือกทั้งหมด",
+        "deselectAll" : "ยกเลิกการเลือกทั้งหมด"
+      },
+      "cta" : {
+        "confirm" : "ยืนยัน"
+      },
+      "newAccount" : "บัญชีใหม่",
+      "addAccountSelection" : "เลือกบัญชีเพื่อเติมเงินทุน",
+      "addAccountSelectionPtxFlow" : "เลือกบัญชี"
+    },
+    "fundAccount" : {
+      "receive" : "รับ",
+      "receiveDescription" : "รับคริปโตจากวอลเล็ตอื่น",
+      "buy" : "ซื้อ",
+      "buyDescription" : "ซื้อคริปโตด้วยเงินสดได้อย่างปลอดภัย"
+    },
+    "scanAccounts" : {
+      "cta" : {
+        "stopScanning" : "หยุดการสแกน"
+      },
+      "warning" : {
+        "title" : "เราไม่สามารถเพิ่มบัญชี {{currency}} ใหม่ได้",
+        "description" : "ไม่สามารถเพิ่มบัญชีก่อนที่คุณจะรับสินทรัพย์ในบัญชี {{account}} ของคุณได้",
+        "cta" : "เติมเงินทุนไปยังบัญชีของฉัน",
+        "close" : "ปิด",
+        "noAssociatedAccounts" : {
+          "description" : "ในระบบนิเวศของ {{currency}} มีเพียงผู้บริการบางรายเท่านั้นที่สามารถสร้างบัญชีใหม่ได้ แม้ Ledger จะยังไม่มีบริการดังกล่าวในขณะนี้ แต่คุณยังสามารถใช้ทางเลือกอื่น โดยคุณจะสามารถเพิ่มบัญชี {{currency}} ได้เมื่อสร้างบัญชีบนแอป Ledger Live แล้ว",
+          "cta" : "วิธีสร้างบัญชี {{currency}} ทำอย่างไร?",
+          "close" : "ปิด"
+        }
+      },
+      "status" : {
+        "foundAccounts_zero" : "ไม่พบบัญชี",
+        "foundAccounts" : "เราพบ {{count}} บัญชี",
+        "foundAccounts_other" : "เราพบ {{count}} บัญชี",
+        "scanning" : "กำลังสแกนบัญชี..."
+      },
+      "title" : "กำลังมองหาบัญชีที่มีอยู่บนบล็อกเชน..."
+    },
+    "connectYourDevice" : {
+      "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
+    },
     "searchPlaceholder" : "ค้นหา",
-    "assetFlow" : {
-      "selectTemplate" : "เลือก {{dynamic}}",
-      "asset" : "สินทรัพย์",
-      "network" : "เครือข่าย"
+    "emptyAssetList" : "ไม่พบสินทรัพย์",
+    "selectAsset" : "เลือกสินทรัพย์",
+    "selectNetwork" : "เลือกเครือข่าย",
+    "selectAccount" : "เลือกบัญชี",
+    "accountCount_one" : "{{count}} บัญชี",
+    "accountCount_other" : "บัญชี {{count}}",
+    "accountsAdded" : {
+      "title" : "เพิ่มบัญชีในพอร์ตโฟลิโอของคุณแล้ว",
+      "title_other" : "เพิ่ม {{count}} บัญชีในพอร์ตโฟลิโอของคุณแล้ว",
+      "cta" : {
+        "addFunds" : "เติมเงินทุนไปยังบัญชีของฉัน",
+        "selectAccount" : "ดำเนินการต่อ",
+        "close" : "ปิด"
+      }
     }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
+    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "learnMore" : "เรียนรู้เพิ่มเติม"
+  },
+  "versionBlocking" : {
+    "title" : "ต้องอัปเดต Ledger Live",
+    "errorTitle" : "การอัปเดตล้มเหลว",
+    "errorDescription" : "การอัปเดตล้มเหลว โปรดทำตามลิงก์ด้านล่างเพื่อดาวน์โหลดแอป Ledger Live เวอร์ชันล่าสุด ",
+    "description" : "แอป Ledger Live เวอร์ชันนี้ไม่สามารถใช้งานร่วมกับระบบปฏิบัติการเวอร์ชันล่าสุดของอุปกรณ์ได้ อัปเดตตอนนี้เพื่อประสบการณ์การเชื่อมต่อที่ดีขึ้น",
+    "restart" : "รีสตาร์ท",
+    "downloadOnLedger" : "ดาวน์โหลดได้ที่ Ledger.com",
+    "downloadProgress" : "กำลังดาวน์โหลด... {{ progress }}%"
   }
 }

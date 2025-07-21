@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import IconUpdate from "~/renderer/icons/Update";
@@ -9,6 +9,7 @@ import Spinner from "~/renderer/components/Spinner";
 import TopBanner, { FakeLink, Content } from "~/renderer/components/TopBanner";
 import { UpdaterContext } from "./UpdaterContext";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { TFunction } from "i18next";
 
 export const VISIBLE_STATUS = [
   "download-progress",
@@ -18,88 +19,64 @@ export const VISIBLE_STATUS = [
   "update-available",
   "downloading-update",
 ];
-const CONTENT_BY_STATUS = (
+
+const getContentByStatus = (
   quitAndInstall: () => void,
   reDownload: () => void,
   progress: number,
   version: string,
-): {
-  [x: string]: Content;
-} => ({
+  t: TFunction,
+): Record<string, Content> => ({
   "download-progress": {
     Icon: Spinner,
-    message: <Trans i18nKey="update.downloadInProgress" />,
-    right: (
-      <Trans
-        i18nKey="update.downloadProgress"
-        values={{
-          progress,
-        }}
-      />
-    ),
+    message: t("update.downloadInProgress"),
+    right: t("update.downloadProgress", { progress }),
   },
   checking: {
     Icon: IconDonjon,
-    message: <Trans i18nKey="update.checking" />,
+    message: t("update.checking"),
   },
   "check-success": {
     Icon: IconUpdate,
-    message: <Trans i18nKey="update.checkSuccess" />,
-    right: (
-      <FakeLink onClick={quitAndInstall}>
-        <Trans i18nKey="update.quitAndInstall" />
-      </FakeLink>
-    ),
+    message: t("update.checkSuccess"),
+    right: <FakeLink onClick={quitAndInstall}>{t("update.quitAndInstall")}</FakeLink>,
   },
   "downloading-update": {
     Icon: IconUpdate,
-    message: <Trans i18nKey="update.downloadInProgress" />,
+    message: t("update.downloadInProgress"),
   },
   "update-available": {
     Icon: IconUpdate,
-    message: (
-      <Trans
-        i18nKey="update.updateAvailable"
-        values={{
-          version,
-        }}
-      />
-    ),
+    message: t("update.updateAvailable", { version }),
   },
   error: {
     Icon: IconWarning,
-    message: <Trans i18nKey="update.error" />,
-    right: (
-      <FakeLink onClick={reDownload}>
-        <Trans i18nKey="update.reDownload" />
-      </FakeLink>
-    ),
+    message: t("update.error"),
+    right: <FakeLink onClick={reDownload}>{t("update.reDownload")}</FakeLink>,
   },
 });
-const UpdaterTopBanner = () => {
+
+const UpdaterTopBanner: React.FC = () => {
   const context = useContext(UpdaterContext);
   const urlLive = useLocalizedUrl(urls.liveHome);
-  const reDownload = () => {
-    openURL(urlLive);
-  };
-  if (context && context.version) {
-    const { status, quitAndInstall, downloadProgress, version } = context;
-    if (!VISIBLE_STATUS.includes(status)) return null;
-    const content: Content | undefined | null = CONTENT_BY_STATUS(
-      quitAndInstall,
-      reDownload,
-      downloadProgress,
-      version,
-    )[status];
-    if (!content) return null;
-    return (
-      <TopBanner
-        testId="layout-app-update-banner"
-        content={content}
-        status={status === "error" ? "alertRed" : "warning"}
-      />
-    );
-  }
-  return null;
+  const { t } = useTranslation();
+
+  const reDownload = () => openURL(urlLive);
+
+  if (!context?.version || !VISIBLE_STATUS.includes(context.status)) return null;
+  const { status, quitAndInstall, downloadProgress, version } = context;
+  const content = getContentByStatus(quitAndInstall, reDownload, downloadProgress, version, t)[
+    status
+  ];
+
+  if (!content) return null;
+
+  return (
+    <TopBanner
+      testId="layout-app-update-banner"
+      content={content}
+      status={context?.status === "error" ? "alertRed" : "warning"}
+    />
+  );
 };
 export default UpdaterTopBanner;

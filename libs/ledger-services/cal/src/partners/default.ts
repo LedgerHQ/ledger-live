@@ -10,6 +10,7 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   mainUrl: string;
   useInExchangeApp: boolean;
   displayName: string;
+  usefulUrls?: string[];
 };
 
 export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
@@ -28,6 +29,25 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     useInExchangeApp: true,
     displayName: "Changelly",
     termsOfUseUrl: "https://changelly.com/terms-of-use",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+    needsKYC: false,
+  },
+  changelly_v2: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "Changelly",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
     needsKYC: false,
@@ -94,6 +114,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
       "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
     supportUrl: "https://support.uniswap.org/hc/en-us/requests/new",
     mainUrl: "https://uniswap.org/",
+    needsKYC: false,
+  },
+  velora: {
+    type: "DEX",
+    useInExchangeApp: false,
+    displayName: "Velora",
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.velora.xyz/",
     needsKYC: false,
   },
 };

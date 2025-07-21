@@ -90,7 +90,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listCurrencies = useListPlatformCurrencies();
 
-    const { isModularDrawerVisible } = useModularDrawerVisibility();
+    const { isModularDrawerVisible } = useModularDrawerVisibility({
+      modularDrawerFeatureFlagKey: "lldModularDrawer",
+    });
     const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
     const requestAccount = useCallback(

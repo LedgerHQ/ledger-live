@@ -294,6 +294,14 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+    },
     "CasperInvalidTransferId" : {
       "title" : "Transfer Kimliği, {{maxTransferId}} sayısından küçük pozitif bir sayı olmalıdır"
     },
@@ -511,6 +519,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -1072,6 +1084,10 @@
     },
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Sizi güvende tutuyoruz",
+      "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -2160,7 +2176,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Orijinallik Denetimi ve İşletim Sistemi güncellemesi denetimi",
+    "title" : "Ledger Orijinallik Denetimi",
     "idle" : {
       "learnMore" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
       "checkCta" : "{{ productName }} cihazını denetle"
@@ -2196,11 +2212,11 @@
     "genuineCheckStep" : {
       "learnMore" : "Orijinallik Denetimi hakkında daha fazla bilgi edinin",
       "inactive" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Bu işlem, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       },
       "active" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Bu işlem, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       },
       "completed" : {
@@ -2208,23 +2224,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "Orijinallik Denetimi reddedildi",
+        "title" : "Ledger Orijinallik Denetimi reddedildi",
         "description" : "Ledger Live uygulamasını kullanarak {{productName}} cihazınızın kurulumuna devam edebilmek için Orijinallik Denetimi zorunludur.",
         "cta" : "Denetimi sürdür"
       },
       "error" : {
-        "title" : "Orijinallik Denetimi",
+        "title" : "Ledger Orijinallik Denetimi",
         "description" : "Orijinallik Denetimi, {{productName}} cihazınızın resmî bir Ledger cihazı olduğundan emin olmanızı sağlar."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "İşletim Sistemi güncellemesi denetimi",
-        "description" : "Bu işlem, {{productName}} İşletim Sisteminizin güncel olup olmadığını denetler. "
+        "title" : "Ledger OS denetimi",
+        "description" : "Bu, {{productName}} cihazınızın işletim sisteminin güncel olup olmadığını denetler. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} işletim sistemi güncel"
+          "title" : "Ledger OS güncel"
         }
       },
       "error" : {
@@ -2238,8 +2254,8 @@
         "skipCta" : "Güncellemeyi atla"
       },
       "inactive" : {
-        "title" : "İşletim Sistemi güncellemesi denetimi",
-        "description" : "Bu işlem, {{productName}} İşletim Sisteminizin güncel olup olmadığını denetler. "
+        "title" : "Ledger OS denetimi",
+        "description" : "Bu, {{productName}} cihazınızın işletim sisteminin güncel olup olmadığını denetler. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2251,7 +2267,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}} cihazını kurun",
+    "title" : "{{productName}} cihazınızı hazırlayın",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2306,7 +2322,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} orijinal",
-      "subtitle" : "Bu {{productName}} cihazını kullanmak güvenlidir. Cihazın kurulumuna geçebilirsiniz.",
+      "subtitle" : "{{productName}} cihazınızı güvenle kullanabilirsiniz. Kuruluma başlayabilirsiniz.",
       "description" : "Kurulumu başlatmak için {{productName}} cihazına dokunun."
     },
     "pinStep" : {
@@ -2316,30 +2332,58 @@
       "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin."
     },
     "seedStep" : {
-      "title" : "Gizli Kurtarma İfadesi",
+      "title" : "Kurulum ve yedekleme",
       "doneTitle" : "Gizli Kurtarma İfadesi onaylandı",
       "description" : "Kurtarma ifadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan gizli bir listedir. {{productName}} cihazınız benzersiz bir kurtarma ifadesi oluşturur. Ledger bunun bir kopyasını saklamaz",
       "choiceRestoreDirectOrRecover" : "Yer tutucu: Doğrudan geri yüklemeyi seçin veya Recover'ı kullanın",
       "recoverSeed" : "Yer tutucu: Recover",
-      "restoreSeed" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
       "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
       "selectionNewLedger" : {
         "title" : "Yeni bir Ledger cihazı olarak kurun",
-        "desc" : "Yeni bir cüzdan oluşturmanızı sağlar. Bu işlem yeni bir Gizli Kurtarma İfadesi oluşturur."
+        "desc" : "Bu işlem yeni Gizli Kurtarma İfadenizi oluşturur."
       },
       "selectionRestore" : {
-        "title" : "Geri yükle",
-        "desc" : "Gizli Kurtarma İfadenizle veya Ledger Recover'ı kullanarak mevcut varlıklarınıza yeniden erişmenizi sağlar."
+        "title" : "Varlıklarınıza erişiminizi kurtarın",
+        "desc" : "Bu işlem, Gizli Kurtarma İfadesi veya Ledger Recover yedeklemenizi kullanarak hesaplarınızı geri yüklemenize olanak tanır.",
+        "descWithCharon" : "Bu işlem, yedeklemenizi kullanarak şunları geri yüklemenize olanak tanır: Gizli Kurtarma İfadesi, Ledger Recover veya Ledger Recovery Key."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
+        "cta" : "Daha fazla bilgi edinin veya satın alın",
+        "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "Geri yükleme işleminde kullanılacak yedeklemeyi seçin:",
+        "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
+        "secretRecoveryPhrase" : {
+          "title" : "Gizli Kurtarma İfadesi",
+          "description" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Varlıklarınıza yeniden erişebilmek için Recovery Key'inizi kullanın."
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover aboneliği",
+          "description" : "Varlıklarınıza kimliğinizle yeniden erişebilmek için aboneliğinizi kullanın."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
+        "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "continueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Recovery Key ile geri yükleyin",
+        "description" : "Geri yükleme işlemi için Ledger cihazınızın Güvenli Ekranındaki yönergeleri izleyin.",
+        "continueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin."
       },
       "selectionContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
-      "newSeedDescription" : "Gizli Kurtarma İfadesi hakkında daha fazla bilgi edinmek ister misiniz? Şu videoları izleyin:",
-      "newSeedContinueOnDevice" : "Bunu {{productName}} cihazınızda yapın",
-      "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
-      "restoreChoiceContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
-      "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
-      "restoreChoiceSRPDescription" : "Maksimum güvenlik için bir Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullanın. ",
-      "restoreChoiceRecoverTitle" : "Ledger Recover ile geri yükleyin",
-      "restoreChoiceRecoverDescription" : "Ledger Recover'a aboneyseniz, Gizli Kurtarma İfadenizin yedeklemesi ile geri yükleme işlemini başlatmak için aboneliğinize giriş yapın."
+      "newSeedTitle" : "Gizli Kurtarma İfadesi",
+      "newSeedDescription" : "Gizli Kurtarma İfadesi hakkında daha fazla bilgi edinmek için bu videoları izleyin:",
+      "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
+      "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -3189,6 +3233,12 @@
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri",
         "currentSetting" : "Mevcut Ayar",
         "error" : "Geçersiz CAL değeri"
+      },
+      "customCALRef" : {
+        "title" : "Özel CAL referansı",
+        "description" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
+        "enable" : "Özel CAL referansını etkinleştirin",
+        "disable" : "Özel CAL referansını devre dışı bırakın"
       }
     },
     "debug" : {
@@ -3354,7 +3404,13 @@
         "verify" : "{{accountType}} hesabının adresi doğrulanmadı. Güvende kalmak için cihazınızdaki adresleri doğrulayın."
       },
       "noResultsFound" : "Kripto varlık bulunamadı",
-      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
+      "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin",
+      "sanctionedAddress" : {
+        "title" : "Sizi güvende tutuyoruz",
+        "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "Kapat",
+        "learnMore" : "Daha Fazla Bilgi"
+      }
     },
     "buy" : {
       "title" : "Satın Al",
@@ -3365,7 +3421,8 @@
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
     },
     "exchange" : {
-      "title" : "Satın Al / Sat"
+      "title" : "Satın Al / Sat",
+      "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
     },
     "stake" : {
       "title" : "Stake et",
@@ -3560,11 +3617,22 @@
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
       },
+      "quotesList" : {
+        "title" : "Teklif seçin"
+      },
+      "twoStepApproval" : {
+        "title" : "Adımları tamamlayın"
+      },
+      "history" : {
+        "title" : "Takas geçmişi"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
         "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
         "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "ton_tokens_title" : "Ledger Nano S™, Ton token takasını desteklemez",
+        "ton_tokens_description" : "Ton token’larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
         "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "near_title" : "Ledger Nano S™, Near takasını desteklemez",
@@ -3844,6 +3912,9 @@
           "title" : "Bu alan için adres bulunamadı"
         }
       }
+    },
+    "spl2022" : {
+      "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -6082,6 +6153,7 @@
       "transferFees" : {
         "title" : "Transfer ücretleri",
         "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır (maks. {{maxFee}})",
+        "feesHint" : "Token transfer ücreti: {{transferFee}}",
         "notice" : "Transfer ücreti: %{{fee}}",
         "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi"
       },
@@ -7420,6 +7492,33 @@
     "performance" : "Performans",
     "low" : "Düşük",
     "high" : "Yüksek",
-    "title" : "Piyasa Hareketleri"
+    "title" : "Piyasa Hareketleri",
+    "overlay" : {
+      "title" : "Varlıklar arasında geçiş yapın",
+      "action" : "Sola veya sağa kaydırın",
+      "button" : "Anladım!"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "NFT'leriniz",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "Konum kullanılamıyor",
+    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "learnMore" : "Daha fazla bilgi"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live Güncellemesi Gerekli",
+    "description" : "Ledger Live'ın bu sürümü, en son cihaz işletim sistemiyle uyumlu değil. Daha iyi bir bağlantının keyfini çıkarmak için hemen güncelleyin.",
+    "openStore" : "Güncelle"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "Varlık seçin",
+    "selectNetwork" : "Ağ seçin",
+    "selectAccount" : "Hesap seçin"
   }
 }

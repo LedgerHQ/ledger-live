@@ -7,7 +7,7 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -33,10 +33,14 @@ import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
+import { delegateAptos } from "./families/aptos";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
+import { delegateOsmosis } from "./families/osmosis";
+
+const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -51,6 +55,10 @@ export type Spec = {
 };
 
 export type Dependency = { name: string; appVersion?: string };
+export type SpeculosDevice = {
+  id: string;
+  port: number;
+};
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
   const map = new Map<string, Dependency>();
@@ -376,9 +384,14 @@ export async function startSpeculos(
     coinapps,
     onSpeculosDeviceCreated,
   };
-
   try {
-    return await createSpeculosDevice(deviceParams);
+    const device = isSpeculosRemote
+      ? await createSpeculosDeviceCI(deviceParams)
+      : await createSpeculosDevice(deviceParams).then(device => {
+          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+          return { id: device.id, port: device.ports.apiPort };
+        });
+    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -388,7 +401,9 @@ export async function startSpeculos(
 export async function stopSpeculos(deviceId: string | undefined) {
   if (deviceId) {
     log("engine", `test ${deviceId} finished`);
-    await releaseSpeculosDevice(deviceId);
+    isSpeculosRemote
+      ? await releaseSpeculosDeviceCI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -400,30 +415,29 @@ interface ResponseData {
   events: Event[];
 }
 
-export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  let attempts = 0;
-  let textFound: boolean = false;
-  while (attempts < maxAttempts && !textFound) {
-    const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
-    );
-    const responseData = response.data;
-    const texts = responseData.events.map(event => event.text);
+export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
+  const port = getEnv("SPECULOS_API_PORT");
+  const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
 
-    if (texts?.[0]?.includes(text)) {
-      textFound = true;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const { data } = await axios.get<ResponseData>(url);
+    const texts = data.events.map(event => event.text);
+
+    if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
       return texts;
     }
-    attempts++;
+
     await waitForTimeOut(500);
   }
-  return [];
+
+  throw new Error(`Text "${text}" not found on device screen after ${maxAttempts} attempts.`);
 }
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
     action: "press-and-release",
   });
 }
@@ -451,22 +465,25 @@ export async function pressUntilTextFound(
 }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
   );
   return response.data.events.map(event => event.text);
 }
 
 export async function pressRightButton(): Promise<void> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  await axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
 }
@@ -486,9 +503,10 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
     });
     return response.data;
@@ -539,6 +557,11 @@ export async function activateContractData() {
   await pressBoth();
 }
 
+export async function goToSettings() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+}
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   let deviceLabels: string[];
 
@@ -548,7 +571,14 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
       break;
     case Currency.DOT:
     case Currency.ATOM:
-      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
+      deviceLabels = [
+        DeviceLabels.PLEASE_REVIEW,
+        DeviceLabels.CAPS_APPROVE,
+        DeviceLabels.CAPS_REJECT,
+      ];
+      break;
+    case Currency.BTC:
+      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.CANCEL];
       break;
     default:
       deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
@@ -609,12 +639,10 @@ export async function signSendTransaction(tx: Transaction) {
 
 export async function signSendNFTTransaction(tx: NFTTransaction) {
   const currencyName = tx.accountToDebit.currency;
-  switch (currencyName) {
-    case Currency.ETH:
-      await sendEvmNFT(tx);
-      break;
-    default:
-      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+  if (currencyName === Currency.ETH) {
+    await sendEvmNFT(tx);
+  } else {
+    throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
@@ -629,8 +657,10 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.ATOM_1.currency.name:
     case Account.INJ_1.currency.name:
-    case Account.OSMO_1.currency.name:
       await delegateCosmos(delegatingAccount);
+      break;
+    case Account.OSMO_1.currency.name:
+      await delegateOsmosis(delegatingAccount);
       break;
     case Account.MULTIVERS_X_1.currency.name:
       await delegateMultiversX();
@@ -644,18 +674,23 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
     case Account.CELO_1.currency.name:
       await delegateCelo(delegatingAccount);
       break;
+    case Account.APTOS_1.currency.name:
+      await delegateAptos(delegatingAccount);
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
   }
 }
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
   await verifySwapData(swap, events, amount);
   await pressBoth();

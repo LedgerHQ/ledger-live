@@ -113,6 +113,7 @@ export type TokenTransferCommand = {
   amount: number;
   mintAddress: string;
   mintDecimals: number;
+  tokenId: string;
   memo?: string | undefined;
   tokenProgram: SolanaTokenProgram;
   extensions?: {

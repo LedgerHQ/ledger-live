@@ -1,7 +1,5 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
-import { getEnv } from "@ledgerhq/live-env";
 import { retryUntilTimeout } from "../../utils/retry";
 
 export default class AddAccountDrawer extends CommonPage {
@@ -12,9 +10,9 @@ export default class AddAccountDrawer extends CommonPage {
   closeAddAccountButtonId = "button-close-add-account";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
+  addNewOrExistingAccount = "add-new-account-button";
 
-  accountId = (currency: string, index: number) =>
-    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
+  accountIdAccountDrawer = (currency: string) => `js:2:${currency}:.*`;
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
@@ -43,12 +41,12 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Expect account discovered")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
-    await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
+    await detoxExpect(this.accountItem(this.accountIdAccountDrawer(currencyId))).toBeVisible();
     const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
       this.accountItemId,
       "",
     );
-    await expect(this.accountItemName(accountId)).toHaveText(accountName);
+    await detoxExpect(this.accountItemName(accountId)).toHaveText(accountName);
     return accountId;
   }
 
@@ -76,5 +74,11 @@ export default class AddAccountDrawer extends CommonPage {
   @Step("Click on 'Receive' in action drawer")
   async tapReceiveActionDrawer() {
     await tapById(this.actionDrawerReceiveButtonId);
+  }
+
+  @Step("Tap on (Add new or existing account) button")
+  async tapAddNewOrExistingAccountButton() {
+    await scrollToId(this.addNewOrExistingAccount);
+    await tapById(this.addNewOrExistingAccount);
   }
 }

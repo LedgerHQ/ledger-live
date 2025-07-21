@@ -1,7 +1,7 @@
 // FIXME: this is a duplicate of apps/ledger-live-desktop/src/renderer/modals/Send/steps/StepSummary.tsx
 
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
   getAccountCurrency,
@@ -56,6 +56,7 @@ const Separator = styled.div`
 const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
+  const { t } = useTranslation();
   const { account, parentAccount, transaction, status } = props;
   const accountName = useMaybeAccountName(account);
 
@@ -104,8 +105,16 @@ const StepSummary = (props: StepProps) => {
       {/* Since a sign transaction (live-app related) can start at the summary step
       (if fees provided by live-app), we need to display transaction status errors here */}
       {errors && Object.keys(errors).length ? (
-        <Alert type="error">
-          <TranslatedError error={Object.values<Error>(errors)[0]} />
+        <Alert
+          type="error"
+          title={
+            status.errors.sender ? t("errors." + status.errors.sender.name + ".title") : undefined
+          }
+        >
+          <TranslatedError
+            error={status.errors.sender ?? Object.values<Error>(errors)[0]}
+            field={status.errors.sender ? "description" : undefined}
+          />
         </Alert>
       ) : null}
       <FromToWrapper>

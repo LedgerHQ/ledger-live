@@ -104,55 +104,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-transform-worker", {
         "metro-minify-terser": "*",
       }),
-      /* Expo packages… */
-      addDependencies("@expo/webpack-config", {
-        "resolve-from": "*",
-        "fs-extra": "*",
-        tapable: "*",
-        "source-map": "*",
-      }),
-      addPeerDependencies("@expo/cli", {
-        glob: "*",
-        metro: "*",
-        "metro-core": "*",
-        "@expo/metro-config": "*",
-        minimatch: "*",
-      }),
-      addDependencies("@expo/cli", {
-        "find-yarn-workspace-root": "*",
-      }),
-      addDependencies("@expo/metro-config", { glob: "*" }),
-      addDependencies("@expo/dev-tools", { "@expo/spawn-async": "*" }),
-      addDependencies("@expo/dev-server", {
-        "@expo/config": "*",
-        "@expo/spawn-async": "*",
-        glob: "*",
-      }),
-      addDependencies("expo-pwa", {
-        "@expo/config": "*",
-      }),
-      addPeerDependencies("expo-modules-core", {
-        "react-native": "*",
-      }),
-      addPeerDependencies("expo", {
-        "react-native": "*",
-        react: "*",
-        "expo-modules-autolinking": "*",
-        "expo-modules-core": "*",
-      }),
-      addPeerDependencies(/^expo-/, {
-        "expo-modules-core": "*",
-        "expo-constants": "*",
-        "react-native": "*",
-        react: "*",
-      }),
-      addPeerDependencies("expo-asset", {
-        "expo-modules-core": "*",
-        "expo-file-system": "*",
-      }),
-      addPeerDependencies("expo-font", {
-        "expo-asset": "*",
-      }),
+
       /* Other packages */
       addDependencies("detox", {
         "@jest/reporters": "*",
@@ -208,6 +160,25 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-native-animatable", {
         react: "*",
         "react-native": "*",
+      }),
+
+      addDependencies("expo-pwa", {
+        "@expo/config": "*",
+      }),
+      addPeerDependencies("expo-modules-core", {
+        "react-native": "*",
+      }),
+      addPeerDependencies("expo", {
+        "react-native": "*",
+        react: "*",
+        "expo-modules-autolinking": "*",
+        "expo-modules-core": "*",
+      }),
+      addPeerDependencies(/^expo-/, {
+        "expo-modules-core": "*",
+        "expo-constants": "*",
+        "react-native": "*",
+        react: "*",
       }),
 
       addDependencies("@react-native/dev-middleware", { ws: "*" }),

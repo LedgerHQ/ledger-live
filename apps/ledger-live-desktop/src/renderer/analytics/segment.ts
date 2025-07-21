@@ -35,6 +35,8 @@ import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
+import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -97,11 +99,40 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("lldModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    earn_flow: madFeatureFlag?.params?.earn_flow ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
+const getAddAccountAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const addAccount = analyticsFeatureFlagMethod("lldNetworkBasedAddAccount");
+
+  const isEnabled = addAccount?.enabled ?? false;
+
+  return {
+    feature_add_account_desktop: isEnabled,
+  };
+};
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-  const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+  const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
   const isBatch1Enabled: boolean =
@@ -116,6 +147,12 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+
+  // Apply versioned redirects logic to the stakePrograms feature flag
+  const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+  const stakePrograms = rawStakePrograms
+    ? getVersionedRedirects(rawStakePrograms, appVersion)
+    : null;
 
   const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -174,6 +211,8 @@ const extraProperties = (store: ReduxStore) => {
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
   const marketWidgetAttributes = getMarketWidgetAnalytics(state);
+  const madAttributes = getMADAttributes();
+  const addAccountAttributes = getAddAccountAttributes();
 
   const deviceInfo = device
     ? {
@@ -233,6 +272,8 @@ const extraProperties = (store: ReduxStore) => {
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    ...addAccountAttributes,
+    madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
   };

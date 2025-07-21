@@ -24,6 +24,11 @@ function withRN75Delay<T>(fn: () => T) {
 }
 
 export const NativeElementHelpers = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expect(element: any) {
+    return withRN75Delay(() => detoxExpect(element));
+  },
+
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
     return waitFor(element(by.id(id)))
       .toBeVisible()
@@ -40,7 +45,7 @@ export const NativeElementHelpers = {
     const el = element(by.id(id));
 
     try {
-      await detoxExpect(el).not.toBeVisible();
+      await NativeElementHelpers.expect(el).not.toBeVisible();
       return true;
     } catch {
       try {
@@ -49,6 +54,15 @@ export const NativeElementHelpers = {
       } catch {
         return false;
       }
+    }
+  },
+
+  async countElementsById(id: string | RegExp, index = 0): Promise<number> {
+    try {
+      await detoxExpect(element(by.id(id)).atIndex(index)).toBeVisible();
+      return countElementsById(id, index + 1);
+    } catch {
+      return index;
     }
   },
 
@@ -62,6 +76,10 @@ export const NativeElementHelpers = {
 
   getElementByText(text: string | RegExp, index = 0) {
     return withRN75Delay(() => element(by.text(text)).atIndex(index));
+  },
+
+  getElementByIdAndText(id: string | RegExp, text: string | RegExp, index = 0) {
+    return withRN75Delay(() => element(by.id(id).and(by.text(text))).atIndex(index));
   },
 
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
@@ -165,7 +183,9 @@ export const WebElementHelpers = {
   },
 
   async getWebElementText(id: string, index = 0) {
-    return await getWebElementByTestId(id, index).getText();
+    const elem = WebElementHelpers.getWebElementByTestId(id, index);
+    await detoxExpect(elem).toExist();
+    return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
   },
 
   getWebElementById(id: string, index = 0): WebElement {
@@ -178,10 +198,34 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
+    const texts: string[] = [];
+    let i = 0;
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const element = web
+          .element(by.web.cssSelector(selector))
+          .atIndex(i) as unknown as IndexedWebElement;
+        const text: string = await element.runScript((node: HTMLElement) =>
+          (node.innerText || node.textContent || "").trim(),
+        );
+        texts.push(text);
+        i++;
+      } catch {
+        break;
+      }
+    }
+
+    return texts.filter(Boolean);
+  },
+
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
-    const base = web.element(
-      by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`),
-    ) as IndexedWebElement;
+    const xpath = id
+      ? `//span[@data-testid="${id}" and text()="${text}"]`
+      : `//span[text()="${text}"]`;
+    const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -193,7 +237,7 @@ export const WebElementHelpers = {
     while (true) {
       try {
         const element = WebElementHelpers.getWebElementByTestId(id, i);
-        const text = await element.getText();
+        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
         texts.push(text);
         i++;
       } catch {
@@ -210,7 +254,7 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.getText(), 1000, 200);
+        await retryUntilTimeout(() => elem.runScript(el => el.innerText), 1000, 200);
         return elem;
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
@@ -222,6 +266,10 @@ export const WebElementHelpers = {
 
   async tapWebElementByTestId(id: string, index = 0): Promise<void> {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
+  },
+
+  async tapWebElementByElement(element: WebElement): Promise<void> {
+    await retryUntilTimeout(async () => element.tap());
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
@@ -239,5 +287,16 @@ export const WebElementHelpers = {
         [text],
       ),
     );
+  },
+
+  async getValueByWebTestId(id: string): Promise<string> {
+    const raw = await retryUntilTimeout(() =>
+      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    );
+
+    if (raw != null && typeof raw === "object" && "result" in raw) {
+      return String(raw["result"]);
+    }
+    return String(raw);
   },
 };

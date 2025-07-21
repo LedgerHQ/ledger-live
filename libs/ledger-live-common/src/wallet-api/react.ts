@@ -52,6 +52,7 @@ import {
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -129,6 +130,7 @@ export interface UiHook {
   "account.request": (params: {
     accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
+    drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
   }) => void;
@@ -354,39 +356,43 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountRequest) return;
 
-    server.setHandler("account.request", async ({ accounts$, currencies$ }) => {
-      tracking.requestAccountRequested(manifest);
-      const currencies = await firstValueFrom(currencies$);
+    server.setHandler(
+      "account.request",
+      async ({ accounts$, currencies$, drawerConfiguration }) => {
+        tracking.requestAccountRequested(manifest);
+        const currencies = await firstValueFrom(currencies$);
 
-      return new Promise((resolve, reject) => {
-        // handle no curencies selected case
-        const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
-          const currency = findCryptoCurrencyById(id) || findTokenById(id);
-          if (currency) {
-            prev.push(currency);
-          }
-          return prev;
-        }, []);
+        return new Promise((resolve, reject) => {
+          // handle no curencies selected case
+          const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
+            const currency = findCryptoCurrencyById(id) || findTokenById(id);
+            if (currency) {
+              prev.push(currency);
+            }
+            return prev;
+          }, []);
 
-        let done = false;
-        uiAccountRequest({
-          accounts$,
-          currencies: currencyList,
-          onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
-          },
-          onCancel: () => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountFail(manifest);
-            reject(new Error("Canceled by user"));
-          },
+          let done = false;
+          uiAccountRequest({
+            accounts$,
+            currencies: currencyList,
+            drawerConfiguration,
+            onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountSuccess(manifest);
+              resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+            },
+            onCancel: () => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountFail(manifest);
+              reject(new Error("Canceled by user"));
+            },
+          });
         });
-      });
-    });
+      },
+    );
   }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
@@ -519,7 +525,9 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return Buffer.from(signedOperation.signature);
+        return account.currency === "solana"
+          ? Buffer.from(signedOperation.signature, "hex")
+          : Buffer.from(signedOperation.signature);
       },
     );
   }, [accounts, manifest, server, tracking, uiTxSign]);

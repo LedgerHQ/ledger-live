@@ -21,6 +21,8 @@ describe.skip("NFT Gallery screen", () => {
   });
 
   $TmsLink("B2CQA-132");
+  const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+  tags.forEach(tag => $Tag(tag));
   it("should navigate to/from portfolio on tab press", async () => {
     await app.walletTabNavigator.navigateToPortfolio();
     await app.nftGallery.expectGalleryNotVisible();

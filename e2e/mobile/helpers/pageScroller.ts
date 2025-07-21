@@ -1,8 +1,9 @@
-import { element, by, waitFor, device } from "detox";
+import { element, by, waitFor } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
+import { delay, isAndroid } from "./commonHelpers";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
-const SCROLL_STALL_THRESHOLD = 2;
+const SCROLL_STALL_THRESHOLD = 7;
 const ANDROID_SCROLL_DELAY = 500;
 
 export class PageScroller {
@@ -28,6 +29,7 @@ export class PageScroller {
       await this.scrollOnce(scrollContainer, direction, pixels);
 
       if (await this.isVisible(matcher, timeout)) {
+        await this.waitForScrollToSettle();
         return;
       }
 
@@ -60,7 +62,7 @@ export class PageScroller {
     if (scrollViewId) {
       return element(by.id(scrollViewId));
     }
-    const type = device.getPlatform() === "android" ? "android.widget.ScrollView" : "RCTScrollView";
+    const type = isAndroid() ? "android.widget.ScrollView" : "RCTScrollView";
     return element(by.type(type)).atIndex(0);
   }
 
@@ -69,12 +71,15 @@ export class PageScroller {
     direction: Direction,
     pixels: number,
   ): Promise<void> {
-    if (direction === "bottom") {
-      return scrollContainer.swipe("up", "fast");
-    } else if (direction === "down") {
-      return scrollContainer.scroll(pixels, direction, NaN, 0.8);
-    } else {
-      return scrollContainer.swipe("down", "fast");
+    switch (direction) {
+      case "down":
+        return scrollContainer.scroll(pixels, "down", NaN, 0.8);
+      case "up":
+        return scrollContainer.scroll(pixels, "up", NaN, 0.8);
+      case "bottom":
+        return scrollContainer.swipe("up", "fast");
+      default:
+        throw new Error(`Unsupported scroll direction: ${direction}`);
     }
   }
 
@@ -90,11 +95,24 @@ export class PageScroller {
     resetStall: boolean;
   } {
     if (stallCount >= SCROLL_STALL_THRESHOLD) {
-      const flipped = currentDirection === "down" ? "up" : "down";
+      let flipped: Direction;
+
+      if (currentDirection === "down") {
+        flipped = "up";
+        bottomReached = true;
+      } else if (currentDirection === "up") {
+        flipped = "bottom";
+        topReached = true;
+      } else if (currentDirection === "bottom") {
+        flipped = "up";
+      } else {
+        flipped = "down";
+      }
+
       return {
         nextDirection: flipped,
-        bottomReached: currentDirection === "down" ? true : bottomReached,
-        topReached: currentDirection === "up" ? true : topReached,
+        bottomReached,
+        topReached,
         resetStall: true,
       };
     }
@@ -105,5 +123,9 @@ export class PageScroller {
       topReached,
       resetStall: false,
     };
+  }
+
+  async waitForScrollToSettle(): Promise<void> {
+    await delay(1_000);
   }
 }

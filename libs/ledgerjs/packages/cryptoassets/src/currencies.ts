@@ -687,6 +687,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
+    ethereumLikeInfo: {
+      chainId: 42220,
+    },
     explorerViews: [
       {
         tx: "https://explorer.celo.org/tx/$hash",
@@ -2929,7 +2932,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "tron",
     color: "#D9012C",
     family: "tron",
-    blockAvgTime: 3,
+    blockAvgTime: 9,
     units: [
       {
         name: "TRX",
@@ -4009,6 +4012,72 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://www.teloscan.io/tx/$hash",
         address: "https://www.teloscan.io/address/$address",
         token: "https://www.teloscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  berachain: {
+    type: "CryptoCurrency",
+    id: "berachain",
+    coinType: CoinType.ETH,
+    name: "Berachain",
+    managerAppName: "Ethereum",
+    ticker: "BERA",
+    scheme: "berachain",
+    color: "#814625",
+    family: "evm",
+    units: ethereumUnits("BERA", "BERA"),
+    ethereumLikeInfo: {
+      chainId: 80094,
+    },
+    explorerViews: [
+      {
+        tx: "https://berascan.com/tx/$hash",
+        address: "https://berascan.com/address/$address",
+        token: "https://berascan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  sei_network_evm: {
+    type: "CryptoCurrency",
+    id: "sei_network_evm",
+    coinType: CoinType.ETH,
+    name: "SEI Network EVM",
+    managerAppName: "Ethereum",
+    ticker: "SEI",
+    scheme: "sei",
+    color: "#89395b",
+    family: "evm",
+    units: ethereumUnits("SEI", "SEI"),
+    ethereumLikeInfo: {
+      chainId: 1329,
+    },
+    explorerViews: [
+      {
+        tx: "https://seistream.app/transactions/$hash",
+        address: "https://seistream.app/account/$address",
+        token: "https://seistream.app/tokens/$address",
+      },
+    ],
+  },
+  hyperevm: {
+    type: "CryptoCurrency",
+    id: "hyperevm",
+    coinType: CoinType.ETH,
+    name: "HyperEVM",
+    managerAppName: "Ethereum",
+    ticker: "HYPE",
+    scheme: "hyperevm",
+    color: "#97FCE4",
+    family: "evm",
+    units: ethereumUnits("HYPE", "HYPE"),
+    ethereumLikeInfo: {
+      chainId: 999,
+    },
+    explorerViews: [
+      {
+        tx: "https://www.hyperscan.com/tx/$hash",
+        address: "https://www.hyperscan.com/address/$address",
+        token: "https://www.hyperscan.com/token/$contractAddress",
       },
     ],
   },

@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
@@ -23,7 +23,6 @@ import type {
 import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
@@ -102,7 +101,6 @@ function SelectAccount({ navigation, route }: Props) {
   const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds));
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       onSuccess && onSuccess(account, parentAccount);
@@ -128,37 +126,20 @@ function SelectAccount({ navigation, route }: Props) {
   }, [route.params, navigation]);
 
   const onAddAccount = useCallback(() => {
-    if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigation.navigate(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : (currency as CryptoCurrency),
-          context: AddAccountContexts.AddAccounts,
-          inline: true,
-          sourceScreenName: ScreenName.RequestAccountsSelectAccount,
-          onSuccess: navigateOnAddAccountSuccess,
-        },
-      });
-    } else {
-      navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
-        screen: ScreenName.AddAccountsSelectDevice,
-        params: {
-          currency: currency as CryptoOrTokenCurrency,
-          onSuccess: () =>
-            navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
-        },
-      });
-    }
-  }, [
-    currency,
-    navigation,
-    route.params,
-    llmNetworkBasedAddAccountFlow?.enabled,
-    navigateOnAddAccountSuccess,
-  ]);
+    navigation.navigate(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency:
+          currency.type === "TokenCurrency"
+            ? currency.parentCurrency
+            : (currency as CryptoCurrency),
+        context: AddAccountContexts.AddAccounts,
+        inline: true,
+        sourceScreenName: ScreenName.RequestAccountsSelectAccount,
+        onSuccess: navigateOnAddAccountSuccess,
+      },
+    });
+  }, [currency, navigation, navigateOnAddAccountSuccess]);
 
   const renderFooter = useCallback(
     () =>
@@ -170,11 +151,7 @@ function SelectAccount({ navigation, route }: Props) {
             type="primary"
             title={
               <Trans
-                i18nKey={
-                  llmNetworkBasedAddAccountFlow?.enabled
-                    ? "addAccounts.addNewOrExisting"
-                    : "requestAccount.selectAccount.addAccount"
-                }
+                i18nKey={"addAccounts.addNewOrExisting"}
                 values={{
                   currency: currency.name,
                 }}
@@ -184,7 +161,7 @@ function SelectAccount({ navigation, route }: Props) {
           />
         </View>
       ) : null,
-    [allowAddAccount, currency.name, onAddAccount, llmNetworkBasedAddAccountFlow?.enabled],
+    [allowAddAccount, currency.name, onAddAccount],
   );
 
   const renderList = useCallback(

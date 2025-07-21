@@ -7,7 +7,7 @@ describe("isValidAddress", () => {
 
     const isValid = isValidAddress(address);
 
-    expect(isValid).toBeTruthy();
+    expect(isValid).toBe(true);
   });
 
   it("returns false with a invalid address", () => {
@@ -15,6 +15,6 @@ describe("isValidAddress", () => {
 
     const isValid = isValidAddress(address);
 
-    expect(isValid).toBeFalsy();
+    expect(isValid).toBe(false);
   });
 });
