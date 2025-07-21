@@ -4,6 +4,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  getScreenSpecs,
   getScreenVisibleAreaDimensions,
   isCustomLockScreenSupported,
 } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
@@ -166,6 +167,7 @@ export default React.memo(function DebugFetchCustomImage() {
             <ImageHexProcessor
               hexData={hex}
               {...getScreenVisibleAreaDimensions(clsDeviceModelId)}
+              bitsPerPixel={getScreenSpecs(clsDeviceModelId).bitsPerPixel}
               onPreviewResult={handleImageSourceLoaded}
               onError={() => console.error(error)}
             />

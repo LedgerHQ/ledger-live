@@ -10,6 +10,7 @@ export type Props = ProcessorRawResult & {
   onError: (_: Error) => void;
   onPreviewResult: (_: ProcessorPreviewResult) => void;
   debug?: boolean;
+  bitsPerPixel: 1 | 4;
 };
 
 /**
@@ -67,8 +68,10 @@ export default class ImageHexProcessor extends React.Component<Props> {
   };
 
   processImage = () => {
-    const { hexData, width, height } = this.props;
-    this.injectJavaScript(`window.reconstructImage(${width}, ${height}, "${hexData}");`);
+    const { hexData, width, height, bitsPerPixel } = this.props;
+    this.injectJavaScript(
+      `window.reconstructImage(${width}, ${height}, "${hexData}", ${bitsPerPixel});`,
+    );
   };
 
   computeResult = () => {
