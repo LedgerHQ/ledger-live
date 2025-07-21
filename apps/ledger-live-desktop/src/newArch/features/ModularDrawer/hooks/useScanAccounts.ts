@@ -23,12 +23,12 @@ import {
 } from "../screens/ScanAccounts/utils/processAccounts";
 import { WARNING_REASON, WarningReason } from "../types";
 
-export const selectImportable = (importable: Account[]) => (selected: string[]) => {
+const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
   return [...new Set([...selected, ...importableIds])];
 };
 
-export const deselectImportable = (importable: Account[]) => (selected: string[]) => {
+const deselectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = new Set(importable.map(a => a.id));
   return selected.filter(id => !importableIds.has(id));
 };
