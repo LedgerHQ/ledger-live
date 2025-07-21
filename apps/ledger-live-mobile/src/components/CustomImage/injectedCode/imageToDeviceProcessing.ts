@@ -142,7 +142,7 @@ function codeToInject() {
       let buffer = 0,
         bitsCount = 0;
       for (const pixel of orderedPixelsNColors) {
-        //       1 BPP ─ pack 4 pixels (bits) per 1-hex-digit
+        // 1 BPP ─ pack 4 pixels (bits) per 1-hex-digit
         buffer = (buffer << 1) | (1 - (pixel & 1)); // invert colour bit
         if (++bitsCount === 4) {
           // flush every 4 pixels (= 4 bits = 1 hex digit)
@@ -214,6 +214,7 @@ function codeToInject() {
    * - declaring some helpers to post messages to the WebView.
    * - using a global temporary variable to store intermediary results
    * - storing some functions as properties of the window object so they are
+   *
    *   still accessible after code minification.
    * */
 
