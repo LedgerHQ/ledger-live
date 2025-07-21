@@ -1,5 +1,15 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-next.1
+
+### Minor Changes
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`948dcc4`](https://github.com/LedgerHQ/ledger-live/commit/948dcc4e8de83985d8dbeb0af5538a5ff25c80d2) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Fix sui swap device disconnected error
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`0318e2b`](https://github.com/LedgerHQ/ledger-live/commit/0318e2bee721ec12156be9f12530743a4c169396) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: sui pending operation sync
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`d56a4ba`](https://github.com/LedgerHQ/ledger-live/commit/d56a4ba6ae09a2e90fc9034a04b62e490d5ef4e6) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: alpaca operation sync and time
+
 ## 0.7.0-next.0
 
 ### Minor Changes

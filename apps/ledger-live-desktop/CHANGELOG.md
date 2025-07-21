@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.122.0-next.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.0-next.2
+  - @ledgerhq/live-dmk-desktop@0.8.0-next.3
+
 ## 2.122.0-next.2
 
 ### Minor Changes

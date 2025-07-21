@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.42.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`948dcc4`](https://github.com/LedgerHQ/ledger-live/commit/948dcc4e8de83985d8dbeb0af5538a5ff25c80d2), [`0318e2b`](https://github.com/LedgerHQ/ledger-live/commit/0318e2bee721ec12156be9f12530743a4c169396), [`d56a4ba`](https://github.com/LedgerHQ/ledger-live/commit/d56a4ba6ae09a2e90fc9034a04b62e490d5ef4e6)]:
+  - @ledgerhq/coin-sui@0.7.0-next.1
+
 ## 34.42.0-next.1
 
 ### Patch Changes
