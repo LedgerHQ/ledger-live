@@ -1328,6 +1328,20 @@ describe("filterOperations", () => {
       ]);
     });
 
+    test("toBlockOperation should ignore transfers from unsupported owner types", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            Shared: {
+              initial_shared_version: "0",
+            },
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
     test("toBlockOperation should map token transfers correctly", () => {
       expect(
         sdk.toBlockOperation({
