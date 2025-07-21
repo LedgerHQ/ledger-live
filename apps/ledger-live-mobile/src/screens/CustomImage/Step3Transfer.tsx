@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { completeCustomImageFlow, setCustomImageType } from "~/actions/settings";
 import { ScreenName } from "~/const";
@@ -20,6 +19,7 @@ import {
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep3Transfer>
@@ -60,7 +60,11 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   useEffect(() => {
-    if (!device && lastConnectedDevice?.modelId === DeviceModelId.stax) {
+    if (
+      !device &&
+      lastConnectedDevice?.modelId &&
+      isCustomLockScreenSupported(lastConnectedDevice?.modelId)
+    ) {
       setDevice(lastConnectedDevice);
     }
   }, [lastConnectedDevice, device]);
