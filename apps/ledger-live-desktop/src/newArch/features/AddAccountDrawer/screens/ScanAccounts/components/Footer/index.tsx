@@ -1,12 +1,12 @@
 import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
-} from "LLD/features/ModularDrawer/analytics/addAccount.types";
-import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
-import React from "react";
-import { useTranslation } from "react-i18next";
+} from "../../../../analytics/addAccount.types";
+import useAddAccountAnalytics from "../../../../analytics/useAddAccountAnalytics";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../../../styles";
 
 export type FooterProps = {

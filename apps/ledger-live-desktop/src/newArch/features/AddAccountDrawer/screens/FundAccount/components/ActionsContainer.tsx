@@ -1,19 +1,19 @@
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { Flex, Icons, Text } from "@ledgerhq/react-ui";
-import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
-import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { IconContainer } from "./IconContainer";
-import useAddAccountAnalytics from "LLD/features/ModularDrawer/analytics/useAddAccountAnalytics";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_PAGE_NAME,
 } from "../../../analytics/addAccount.types";
+import useAddAccountAnalytics from "../../../analytics/useAddAccountAnalytics";
+import { IconContainer } from "./IconContainer";
 
 const ActionItem = styled(Flex)`
   cursor: pointer;

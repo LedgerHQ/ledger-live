@@ -1,4 +1,8 @@
-import { ETH_ACCOUNT, BTC_ACCOUNT, ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+import {
+  ARB_ACCOUNT,
+  BTC_ACCOUNT,
+  ETH_ACCOUNT,
+} from "../../../../ModularDrawer/__mocks__/accounts.mock";
 import { getAccountProtocol } from "../getAccountProtocol";
 
 describe("getAccountProtocol", () => {

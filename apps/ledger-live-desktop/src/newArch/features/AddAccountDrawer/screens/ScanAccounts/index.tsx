@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
-import { TrackAddAccountScreen } from "LLD/features/ModularDrawer/analytics/TrackAddAccountScreen";
 import { default as React, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -10,12 +9,13 @@ import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
+import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ScrollContainer } from "../../components/ScrollContainer";
-import { useFormatAccount } from "../../hooks/useFormatAccount";
-import { useScanAccounts, type UseScanAccountsProps } from "../../hooks/useScanAccounts";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
+import { useFormatAccount } from "./useFormatAccount";
+import { useScanAccounts, type UseScanAccountsProps } from "./useScanAccounts";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;

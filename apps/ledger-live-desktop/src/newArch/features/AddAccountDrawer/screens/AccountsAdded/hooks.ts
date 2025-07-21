@@ -1,14 +1,14 @@
-import { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { Account } from "@ledgerhq/types-live";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import { formatAddress } from "LLD/utils/formatAddress";
 import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
+import { useCallback } from "react";
+import { useSelector } from "react-redux";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { getAccountProtocol } from "./getAccountProtocol";
 import { FormattedAccount } from "./types";
-import { getAccountProtocol } from "../../utils/getAccountProtocol";
 
 export const useAccountsData = () => {
   const walletState = useSelector(walletSelector);

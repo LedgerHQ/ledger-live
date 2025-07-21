@@ -1,5 +1,5 @@
-import React from "react";
 import { Button, Flex } from "@ledgerhq/react-ui";
+import React from "react";
 import { ActionButtonsProps } from "../types";
 
 export const ActionButtons = ({ primaryAction, secondaryAction }: ActionButtonsProps) => {

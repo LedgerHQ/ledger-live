@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { WarningReason } from "../../types";
+import { WarningReason } from "../../domain";
 
 export interface ActionButtonsProps {
   primaryAction: {

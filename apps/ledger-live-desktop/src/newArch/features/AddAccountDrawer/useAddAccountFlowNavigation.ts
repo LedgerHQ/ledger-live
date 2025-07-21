@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
-import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, WarningReason } from "../types";
-import { useAddAccountNavigation } from "./useModularDrawerNavigation";
-import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
+import { useCallback, useMemo, useState } from "react";
+import { account } from "../Collectibles/__integration__/mocks/mockedAccount";
+import { useAddAccountNavigation } from "../ModularDrawer/hooks/useModularDrawerNavigation";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
-} from "../analytics/addAccount.types";
-import { account } from "../../Collectibles/__integration__/mocks/mockedAccount";
+} from "./analytics/addAccount.types";
+import useAddAccountAnalytics from "./analytics/useAddAccountAnalytics";
+import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, WarningReason } from "./domain";
 
 interface UseAddAccountFlowNavigationProps {
   selectedAccounts: Account[];

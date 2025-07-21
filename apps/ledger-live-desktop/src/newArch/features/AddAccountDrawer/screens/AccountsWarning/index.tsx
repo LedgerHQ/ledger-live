@@ -1,11 +1,11 @@
-import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { WARNING_REASON } from "../../types";
-import { ActionButtons, IconContainer } from "./components";
-import { useWarningConfig } from "./useWarningConfig";
-import { AccountsWarningProps } from "./types";
+import React from "react";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
+import { WARNING_REASON } from "../../domain";
+import { ActionButtons, IconContainer } from "./components";
+import { AccountsWarningProps } from "./types";
+import { useWarningConfig } from "./useWarningConfig";
 
 const AccountsWarning = ({
   warningReason,

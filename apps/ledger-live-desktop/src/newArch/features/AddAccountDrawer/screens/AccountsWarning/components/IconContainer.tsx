@@ -1,6 +1,6 @@
+import { Box } from "@ledgerhq/react-ui";
 import React from "react";
 import styled from "styled-components";
-import { Box } from "@ledgerhq/react-ui";
 
 const Container = styled(Box)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};

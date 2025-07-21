@@ -1,17 +1,17 @@
+import { Icons } from "@ledgerhq/react-ui";
+import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useTheme } from "styled-components";
-import { Icons } from "@ledgerhq/react-ui";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useAccountFormatter } from "../AccountsAdded/hooks";
+import { urls } from "~/config/urls";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useAccountFormatter } from "../AccountsAdded/hooks";
 
 export const useWarningConfig = (
   currency: CryptoCurrency,
