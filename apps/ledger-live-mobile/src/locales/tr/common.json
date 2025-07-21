@@ -288,19 +288,119 @@
     },
     "DisconnectedDevice" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DisconnectError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceLockedError" : {
+      "title" : "Cihaz kilitli",
+      "description" : "Cihazınız kilitlenmiş. Lütfen kilidini açıp tekrar deneyin."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Bellek yetersiz",
+      "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "İşletim sistemi desteklenmiyor",
+      "description" : "Cihazınızın işletim sistemi desteklenmiyor. Lütfen Ledger Live üzerinden güncelleyin veya zorluk yaşarsanız yardım almak için Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Pil hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Pil hatası",
+      "description" : "Pil durumu hatası. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDAError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ReceiverApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "FramerApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "CasperInvalidTransferId" : {
       "title" : "Transfer Kimliği, {{maxTransferId}} sayısından küçük pozitif bir sayı olmalıdır"
@@ -517,9 +617,29 @@
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
     },
+    "NotEnoughToStake" : {
+      "title" : "Stake etmeyi etkinleştirebilmeniz için en az {{minStake}} {{currency}} gerekir",
+      "description" : "Stake etmeyi etkinleştirebilmeniz için en az {{minStake}} {{currency}} gerekir"
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır",
+      "description" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} miktarından fazla varlığı yeniden stake ederseniz, toplamda {{totalAmount}} miktarında varlığınız yeniden stake edilecektir",
+      "description" : "{{maxAmount}} miktarından fazla varlığı yeniden stake ederseniz, toplamda {{totalAmount}} miktarında varlığınız yeniden stake edilecektir"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Yeniden stake edeceğiniz varlıkların miktarı en az {{minAmount}} olmalıdır",
+      "description" : "Yeniden stake edeceğiniz varlıkların miktarı en az {{minAmount}} olmalıdır."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Stake etmeyi durduracağınız varlıkların miktarı en az {{minAmount}} olmalıdır",
+      "description" : "Stake etmeyi durduracağınız varlıkların miktarı en az {{minAmount}} olmalıdır."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
@@ -3116,8 +3236,8 @@
         "desc" : "Önemli Ledger Live haberlerini alın"
       },
       "largeMover" : {
-        "title" : "Büyük Hareketler",
-        "desc" : "BTC, ETH, SOL, ADA veya XRP varlıklarınız varsa büyük fiyat hareketleri olduğunda bildirim alacaksınız."
+        "title" : "Fiyat Uyarıları",
+        "desc" : "Sahip olduğunuz popüler token’lardaki önemli fiyat hareketleri için bildirim alacaksınız"
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
@@ -6327,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Kullanılabilir Aptos tutarı",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "storageUsage" : {
+        "title" : "Minimum bakiye",
+        "description" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir."
+      },
+      "staked" : {
+        "title" : "Stake bakiyesi",
+        "description" : "Doğrulayıcılarla stake edilmiş olan güncel miktar."
+      },
+      "pending" : {
+        "title" : "Bekleyen bakiye",
+        "description" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar."
+      },
+      "withdrawable" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Stake’i durdurulmuş ve çekilebilecek olan güncel miktar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Stake yapılamıyor",
+        "description" : "Hesabınızın bakiyesi stake etmek, stake durdurmak ve çekim yapmak için yeterli değil."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Stake edilmiş miktar",
+        "unstakedAmount" : "Staking’i durdurulan tutar",
+        "withdrawnAmount" : "Çekilen tutar"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking'i durdurulacak miktar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı stake etmeyi başarıyla durdurdunuz"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Çekilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Yeniden stake edilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla yeniden stake ettiniz"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Staking Pozisyonları",
+      "info" : "Staking Nasıl Çalışır?",
+      "add" : "Ekle",
+      "stakingEarn" : "Varlıklarınızı stake ederek Aptos ödülleri kazanabilirsiniz.",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "comm" : "Komisy.",
+      "timeToUnlock" : "Kilidinin açılmasına kalan süre:",
+      "iStake" : "Stake et:",
+      "actions" : {
+        "unstake" : "Staking'i durdur:",
+        "withdraw" : "Çek:",
+        "restake" : "Yeniden stake et:"
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "pending" : "Beklemede",
+        "available" : "Çekilebilir bakiye"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Stake edilecek miktar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos varlıklarınızı stake edin ve varlıklarınızın kontrolünü bırakmadan, güvenle ödüller kazanın.",
+            "steps" : {
+              "0" : "Stake ettiğiniz varlıklar sizin mülkiyetinizde kalmaya devam eder.",
+              "1" : "Staking’i durdurma işleminin tamamlanması için yaklaşık 2 saat beklemeniz gerekecektir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle stake edin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Yetki Devri Aşımı",
     "delegationSendWarnDesc" : "Gönderilecek tutar yetkisi devredilmiş hesabınızdan düşülecektir.",
@@ -6727,8 +6982,8 @@
       "7d" : "7G",
       "30d" : "30G",
       "1y" : "1Y",
-      "1D_label" : "1G",
       "1H_label" : "1SA",
+      "1D_label" : "1G",
       "1W_label" : "1H",
       "1M_label" : "1A",
       "1Y_label" : "1Y"
@@ -7519,6 +7774,7 @@
   "modularDrawer" : {
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
-    "selectAccount" : "Hesap seçin"
+    "selectAccount" : "Hesap seçin",
+    "searchPlaceholder" : "Ara"
   }
 }
