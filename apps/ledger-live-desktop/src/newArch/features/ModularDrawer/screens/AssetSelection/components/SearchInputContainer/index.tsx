@@ -36,6 +36,7 @@ const SearchInputContainer = ({
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
         onDebouncedChange={handleDebouncedChange}
         onChange={handleSearch}
+        data-testid="modular-asset-drawer-search-input"
       />
     </Box>
   );
