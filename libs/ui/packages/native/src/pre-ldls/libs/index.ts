@@ -21,9 +21,11 @@ const overrideColor = {
     "surface-transparent-pressed": "#0000001A",
     "border-subdued-default-hover": "#D5D5D5",
     "border-subdued-default-pressed": "#C1C1C1",
+    "border-active": "#D4A0FF",
   },
   dark: {
     "opacity-default-10": "#FFFFFF1A",
+    "border-active": "#D4A0FF",
   },
 } as const;
 

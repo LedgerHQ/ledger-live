@@ -42,6 +42,8 @@ export function useModularDrawerState({
   const [asset, setAsset] = useState<CryptoOrTokenCurrency | null>(null);
   const [network, setNetwork] = useState<CryptoOrTokenCurrency | null>(null);
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
+  const [defaultSearchValue, setDefaultSearchValue] = useState("");
+
   const { providers, setProviders, getNetworksFromProvider } = useProviders();
 
   const navigateToDevice = useCallback(
@@ -236,6 +238,8 @@ export function useModularDrawerState({
     handleBack,
     handleAsset,
     handleNetwork,
+    defaultSearchValue,
+    setDefaultSearchValue,
     handleSingleCurrencyFlow,
   };
 }

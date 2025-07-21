@@ -39,6 +39,7 @@ import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDraw
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -124,9 +125,11 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <QueuedDrawersContextProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          <BottomSheetModalProvider>
+            <QueuedDrawersContextProvider>
+              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+            </QueuedDrawersContextProvider>
+          </BottomSheetModalProvider>
         </I18nextProvider>
       </StyleProvider>
     );
