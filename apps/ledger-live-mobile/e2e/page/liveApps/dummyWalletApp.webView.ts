@@ -1,3 +1,4 @@
+import { expect } from "detox";
 import { startLiveApp, stopServer } from "../../models/liveApps";
 import DiscoverPage from "../discover/discover.page";
 
@@ -49,6 +50,38 @@ export default class DummyWalletApp {
     await typeTextByWebTestId("amount-input", amount);
     await typeTextByWebTestId("recipient-input", recipientAddress);
     await tapWebElementByTestId("transaction-sign");
+  }
+
+  async transactionSign() {
+    await tapWebElementByTestId("transaction-sign");
+  }
+
+  async transactionSignSolana() {
+    await tapWebElementByTestId("transaction-sign-solana");
+  }
+
+  async transactionSignRawSolana() {
+    await tapWebElementByTestId("transaction-sign-raw-solana");
+  }
+
+  async setAccountId(accountId: string) {
+    await typeTextByWebTestId("account-id-input", accountId);
+    await expect(getWebElementByTestId("account-id-input")).toHaveText(accountId);
+  }
+
+  async setRecipient(recipient: string) {
+    await typeTextByWebTestId("recipient-input", recipient);
+    await expect(getWebElementByTestId("recipient-input")).toHaveText(recipient);
+  }
+
+  async setAmount(amount: string) {
+    await typeTextByWebTestId("amount-input", amount);
+    await expect(getWebElementByTestId("amount-input")).toHaveText(amount);
+  }
+
+  async setData(data: string) {
+    await typeTextByWebTestId("data-input", data);
+    await expect(getWebElementByTestId("data-input")).toHaveText(data);
   }
 
   async getResOutput() {
