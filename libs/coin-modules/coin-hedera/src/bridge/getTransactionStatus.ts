@@ -44,7 +44,6 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   }
 
   const estimatedFees = await getEstimatedFees(account);
-  transaction.maxFee = estimatedFees;
 
   return {
     amount,
