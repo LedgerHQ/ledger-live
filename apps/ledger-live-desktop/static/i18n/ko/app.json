@@ -3844,6 +3844,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "스테이킹 잔액",
+      "stakedBalanceTooltip" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다.",
+      "withdrawableBalance" : "출금 가능 잔액",
+      "withdrawableBalanceTooltip" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다.",
+      "pendingBalance" : "승인 대기 잔액",
+      "pendingBalanceTooltip" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+    },
+    "common" : {
+      "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
+      "viewDetails" : "세부사항 보기",
+      "connectDevice" : {
+        "title" : "장치"
+      },
+      "confirmation" : {
+        "title" : "확인"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "스테이킹 금액",
+        "unstakedAmount" : "언스테이킹된 금액",
+        "withdrawnAmount" : "출금된 금액"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "자산을 스테이킹하여 Aptos 보상을 받을 수 있습니다.",
+        "info" : "스테이킹 작동 방식",
+        "earnRewards" : "보상 받기"
+      },
+      "table" : {
+        "header" : "스테이킹 포지션",
+        "stake" : "추가",
+        "active" : "스테이킹 완료",
+        "pendingInactive" : "보류 중인 릴리스",
+        "inactive" : "출금 가능",
+        "nextUnlock" : "다음 잠금 해제"
+      },
+      "nextUnlockIn" : "다음 잠금 해제까지 남은 시간",
+      "unstake" : "언스테이킹",
+      "withdraw" : "출금",
+      "restake" : "재활성화",
+      "activeTooltip" : "스테이킹된 금액은 보상을 생성합니다",
+      "inactiveTooltip" : "언스테이킹된 금액은 보상을 생성하지 않습니다",
+      "commission" : "커미션",
+      "totalStake" : "총 스테이킹",
+      "minSafeWarning" : "자금이 부족합니다",
+      "reserveWarning" : "향후 스테이킹 해제 및 출금에 필요한 네트워크 수수료를 감안하여, 지갑에 최소 {{amount}}의 APT를 보유하고 있어야 합니다.",
+      "flow" : {
+        "title" : "스테이킹",
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos 암호화폐를 검증인에게 스테이킹하여 보상을 받을 수 있습니다.",
+            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치를 사용한 스테이킹", "자산은 언스테이킹 0~14일 후에 이용 가능합니다"],
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            }
+          },
+          "amount" : {
+            "title" : "금액"
+          },
+          "validator" : {
+            "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "스테이킹 재활성화",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "subtitle" : "리스테이킹 진행 시 인출 가능 잔액이 다시 스테이킹됩니다.",
+            "warning" : "가용 잔액이 모두 리스테이킹되며, 리스테이킹된 금액은 언스테이킹 작업과 잠금 해제 시간 이후 인출 가능합니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "리스테이킹 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산 리스테이킹이 성공적으로 완료되었습니다.",
+              "description" : "{{amount}}가 {{validator}}을(를) 통해 재스테이킹되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "스테이킹된 자산이 충분하지 않아 언스테이킹이 불가능합니다.",
+      "flow" : {
+        "title" : "언스테이킹",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "subtitle" : "언스테이킹 프로세스는 완료까지 {{timeToUnlock}}시간이 소요됩니다.",
+            "subtitle2" : "언스테이킹 프로세스는 완료까지 최대 30일이 소요됩니다.",
+            "warning" : "보상은 즉시 현금화할 수 있습니다. 언스테이킹된 금액은 잠금 해제 기간이 지난 후 인출이 가능합니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "언스테이킹할 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다.",
+              "description" : "{{amount}}가 {{validator}}을(를) 통해 언스테이킹되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "출금할 자산이 충분하지 않습니다.",
+      "flow" : {
+        "title" : "출금",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "출금 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다.",
+              "description" : "{{amount}}가 {{validator}}에 의해 인출되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "ETH 보유량 늘리기",
@@ -5884,9 +6053,29 @@
       "title" : "죄송합니다, 수수료 추정에 실패했습니다",
       "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
     },
+    "NotEnoughToStake" : {
+      "title" : "{{minStake}} {{currency}} 이상부터 스테이킹할 수 있습니다",
+      "description" : "스테이킹에는 최소 {{minStake}} {{currency}}이/가 필요합니다."
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다."
     },
     "NotEnoughBalanceFees" : {
       "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
@@ -7090,6 +7279,15 @@
       "newAccount" : "새 계정",
       "addAccountSelection" : "자산을 추가할 계정을 선택하세요",
       "addAccountSelectionPtxFlow" : "계정 선택"
+    },
+    "editAccountName" : {
+      "title" : "계정 이름 변경",
+      "input" : {
+        "name" : "이름"
+      },
+      "cta" : {
+        "save" : "저장"
+      }
     },
     "fundAccount" : {
       "receive" : "수령",
