@@ -25,9 +25,8 @@ const ScanControls = () => {
       id: accounts.length + 1 + BTC_ACCOUNT.id.slice(1),
       freshAddress: `id${accounts.length + 1}-${BTC_ACCOUNT.freshAddress.slice(4)}`,
     };
+    triggerNext([...accounts, newAccount]);
     setAccounts([...accounts, newAccount]);
-
-    triggerNext(newAccount);
   };
 
   const handleComplete = () => {

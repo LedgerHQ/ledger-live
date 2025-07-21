@@ -79,7 +79,12 @@ export const Checkbox = ({
       id={name}
       checked={isChecked}
       disabled={isDisabled}
-      onChange={() => onChange(!isChecked)}
+      onChange={e => {
+        // TODO Checkbox should be an uncontrolled component that exposes the event onChange.
+        // (leave stopPropagation to the parent)
+        e.stopPropagation();
+        onChange(!isChecked);
+      }}
       size={size}
     />
   </Container>

@@ -38,24 +38,26 @@ export default DeviceAction;
 
 export const renderError = () => <h1>Error</h1>;
 
-export let triggerNext: (account: Account) => void = () => null;
+export let triggerNext: (accounts: Account[]) => void = () => null;
 export let triggerComplete: () => void = () => null;
 
 export const getCurrencyBridge = () => ({
   scanAccounts: () => ({
-    subscribe: ({
-      next,
-      complete,
-    }: {
-      next: ({ account }: { account: Account }) => void;
-      complete: () => void;
-    }) => {
-      triggerNext = account => next({ account });
-      triggerComplete = () => complete();
+    pipe: () => ({
+      subscribe: ({
+        next,
+        complete,
+      }: {
+        next: (account: Account[]) => void;
+        complete: () => void;
+      }) => {
+        triggerNext = account => next(account);
+        triggerComplete = () => complete();
 
-      return {
-        unsubscribe: triggerComplete,
-      };
-    },
+        return {
+          unsubscribe: triggerComplete,
+        };
+      },
+    }),
   }),
 });
