@@ -11,11 +11,13 @@ const AccountsWarning = ({
   warningReason,
   currency,
   emptyAccount,
+  navigateToEditAccountName,
   navigateToFundAccount,
   source,
 }: AccountsWarningProps) => {
   const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
     currency,
+    navigateToEditAccountName,
     navigateToFundAccount,
     emptyAccount,
   );

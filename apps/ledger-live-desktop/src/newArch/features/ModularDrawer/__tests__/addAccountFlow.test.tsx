@@ -328,6 +328,27 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
   });
 
+  it("should allow name edit on already imported empty account", async () => {
+    const OLD_NAME = "Arbitrum 2";
+    const NEW_NAME = "My Edited Account";
+
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
+
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+    await userEvent.click(screen.getByRole("button", { name: /Edit account item/i }));
+
+    expect(screen.getByText(/Edit account name/i)).toBeInTheDocument();
+
+    const input = screen.getByRole("textbox", { name: "account name" });
+    expect(input).toHaveValue(OLD_NAME);
+    await userEvent.clear(input);
+    await userEvent.type(input, NEW_NAME);
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
+  });
+
   it("should error on a Hedera account with no associated accounts", async () => {
     setup(hederaCurrency);
 
