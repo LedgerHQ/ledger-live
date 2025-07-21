@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import {
   DisconnectedDeviceDuringOperation,
   TransportStatusError,
@@ -166,11 +167,12 @@ const completeExchange = (
         // but the device app requires the related public key for verification.
         // Since this key is stored on-chain, we use the TrustedService
         // to fetch a signed descriptor linking the address to its public key.
-        const hederaAccount = (() => {
-          if (payoutAccount.currency.family === "hedera") return payoutAccount;
-          if (refundAccount.currency.family === "hedera") return refundAccount;
-          return null;
-        })();
+        let hederaAccount: Account | null = null;
+        if (payoutAccount.currency.family === "hedera") {
+          hederaAccount = payoutAccount;
+        } else if (refundAccount.currency.family === "hedera") {
+          hederaAccount = refundAccount;
+        }
 
         if (hederaAccount) {
           invariant(deviceModelId, "hedera: deviceModelId is not available");
