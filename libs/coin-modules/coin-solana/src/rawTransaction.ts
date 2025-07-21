@@ -33,13 +33,6 @@ export async function toLiveTransaction(
     Buffer.from(serializedTransaction, "base64"),
   );
 
-  console.log("tx: ", serializedTransaction);
-  console.log("message: ", solanaTransaction.message);
-  console.log(
-    "message base64: ",
-    Buffer.from(solanaTransaction.message.serialize()).toString("base64"),
-  );
-
   const estimatedFees = await api.getFeeForMessage(solanaTransaction.message);
 
   return buildRawTransaction(serializedTransaction, estimatedFees);
