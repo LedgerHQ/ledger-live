@@ -42,6 +42,11 @@ runs:
         cat /tmp/cache-path.txt
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
+    - name: Cat
+      shell: bash
+      run: |
+        cat /tmp/cache-path.txt
+
     - name: Compressing files (macOS)
       shell: bash
       if: runner.os == 'macOS'
