@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.122.0-next.2
+
+### Minor Changes
+
+- [#11011](https://github.com/LedgerHQ/ledger-live/pull/11011) [`70fdff5`](https://github.com/LedgerHQ/ledger-live/commit/70fdff5fcb451f2379ceff6c464126300c9ba314) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Properly handle disconnection before/while sending an apdu
+
+### Patch Changes
+
+- Updated dependencies [[`70fdff5`](https://github.com/LedgerHQ/ledger-live/commit/70fdff5fcb451f2379ceff6c464126300c9ba314)]:
+  - @ledgerhq/live-dmk-desktop@0.8.0-next.2
+
 ## 2.122.0-next.1
 
 ### Patch Changes
