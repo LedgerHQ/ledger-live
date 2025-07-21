@@ -92,10 +92,8 @@ export const useAddAccountFlowNavigation = ({
             }
             if (selectedAccounts.length === 0) {
               navigateToWarningScreen();
-            } else if (selectedAccounts.length === 1) {
-              navigateToAccountsAdded();
             } else {
-              navigateToSelectAccount();
+              navigateToAccountsAdded();
             }
           };
         }
