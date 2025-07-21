@@ -209,7 +209,6 @@ function codeToInject() {
    *
    *
    *
-   *
    * INTERFACING WITH REACT NATIVE WEBVIEW
    *
    * - declaring some helpers to post messages to the WebView.

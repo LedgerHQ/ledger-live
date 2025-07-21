@@ -54,9 +54,9 @@ import {
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "~/analytics";
-import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
+import ImageHexProcessor from "~/components/CustomImage/ImageFromDeviceProcessor";
 import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
-import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
+import { ProcessorPreviewResult } from "~/components/CustomImage/ImageToDeviceProcessor";
 import { ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";

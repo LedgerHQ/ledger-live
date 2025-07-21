@@ -43,7 +43,7 @@ import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageToDeviceProcessor";
 import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
