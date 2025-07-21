@@ -136,13 +136,15 @@ const SwapOperationDetails = ({
   const specific = mainCurrency ? getLLDCoinFamily(mainCurrency.family) : null;
   const getTransactionExplorer = specific?.getTransactionExplorer;
 
+  let url: string | null | undefined;
   //Temporary feature before adding history to swap live app
-  const url =
-    provider === "lifi"
-      ? "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash)
-      : getTransactionExplorer
-        ? getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation)
-        : getDefaultTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+  if (provider === "lifi") {
+    url = "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash);
+  } else if (getTransactionExplorer) {
+    url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation);
+  } else {
+    url = getDefaultTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+  }
 
   useEffect(() => {
     const getProvideData = async () => {

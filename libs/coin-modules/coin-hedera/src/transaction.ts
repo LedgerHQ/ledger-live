@@ -27,7 +27,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...common,
     family: tr.family,
     memo: tr.memo,
-    maxFee: tr.maxFee ? new BigNumber(tr.maxFee) : undefined,
+    ...(tr.maxFee && { maxFee: new BigNumber(tr.maxFee) }),
   };
 }
 
@@ -38,7 +38,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     ...common,
     family: t.family,
     memo: t.memo,
-    maxFee: t.maxFee ? t.maxFee.toString() : undefined,
+    ...(t.maxFee && { maxFee: t.maxFee.toString() }),
   };
 }
 
