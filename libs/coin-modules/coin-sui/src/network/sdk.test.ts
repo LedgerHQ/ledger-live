@@ -1309,9 +1309,9 @@ describe("filterOperations", () => {
   });
 
   describe("conversion methods", () => {
-    test("balanceChangeToBlockOperation should map native transfers correctly", () => {
+    test("toBlockOperation should map native transfers correctly", () => {
       expect(
-        sdk.balanceChangeToBlockOperation({
+        sdk.toBlockOperation({
           owner: {
             AddressOwner: "0x65449f57946938c84c5127",
           },
@@ -1328,9 +1328,9 @@ describe("filterOperations", () => {
       ]);
     });
 
-    test("balanceChangeToBlockOperation should map token transfers correctly", () => {
+    test("toBlockOperation should map token transfers correctly", () => {
       expect(
-        sdk.balanceChangeToBlockOperation({
+        sdk.toBlockOperation({
           owner: {
             AddressOwner: "0x65449f57946938c84c5127",
           },
@@ -1350,9 +1350,9 @@ describe("filterOperations", () => {
       ]);
     });
 
-    test("suiCheckpointToBlockInfo should map checkpoints correctly", () => {
+    test("toBlockInfo should map checkpoints correctly", () => {
       expect(
-        sdk.suiCheckpointToBlockInfo({
+        sdk.toBlockInfo({
           checkpointCommitments: [],
           digest: "0xaaaaaaaaa",
           previousDigest: "0xbbbbbbbbbb",
@@ -1380,9 +1380,9 @@ describe("filterOperations", () => {
       });
     });
 
-    test("suiTransactionBlockToBlockTransaction should map transactions correctly", () => {
+    test("toBlockTransaction should map transactions correctly", () => {
       expect(
-        sdk.suiTransactionBlockToBlockTransaction(
+        sdk.toBlockTransaction(
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           mockTransaction as unknown as SuiTransactionBlockResponse,
         ),
@@ -1414,12 +1414,12 @@ describe("filterOperations", () => {
       });
     });
 
-    test("suiCoinTypeToAsset should map native coin correctly", () => {
-      expect(sdk.suiCoinTypeToAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
+    test("toSuiAsset should map native coin correctly", () => {
+      expect(sdk.toSuiAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
     });
 
     test("suiCoinTypeToAsset should map tokens correctly", () => {
-      expect(sdk.suiCoinTypeToAsset("0x123::test::TOKEN")).toEqual({
+      expect(sdk.toSuiAsset("0x123::test::TOKEN")).toEqual({
         type: "token",
         coinType: "0x123::test::TOKEN",
       });

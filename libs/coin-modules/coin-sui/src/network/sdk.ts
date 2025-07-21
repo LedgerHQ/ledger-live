@@ -283,7 +283,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
  *
  * @param checkpoint SUI RPC checkpoint info
  */
-export function suiCheckpointToBlockInfo(checkpoint: Checkpoint): BlockInfo {
+export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
@@ -312,13 +312,13 @@ export function suiCheckpointToBlockInfo(checkpoint: Checkpoint): BlockInfo {
  *
  * @param transaction SUI RPC transaction block response
  */
-export function suiTransactionBlockToBlockTransaction(
+export function toBlockTransaction(
   transaction: SuiTransactionBlockResponse,
 ): BlockTransaction<SuiAsset> {
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status != "success",
-    operations: transaction.balanceChanges?.flatMap(balanceChangeToBlockOperation) || [],
+    operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
     fees: BigInt(getOperationFee(transaction).toString()),
     feesPayer: transaction.transaction?.data.sender || "",
   };
@@ -329,13 +329,13 @@ export function suiTransactionBlockToBlockTransaction(
  *
  * @param change balance change
  */
-export function balanceChangeToBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
+export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
   if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
   return [
     {
       type: "transfer",
       address: change.owner.AddressOwner,
-      asset: suiCoinTypeToAsset(change.coinType),
+      asset: toSuiAsset(change.coinType),
       amount: BigInt(change.amount),
     },
   ];
@@ -346,7 +346,7 @@ export function balanceChangeToBlockOperation(change: BalanceChange): BlockOpera
  *
  * @param coinType coin type, as returned from SUI RPC
  */
-export function suiCoinTypeToAsset(coinType: string): SuiAsset {
+export function toSuiAsset(coinType: string): SuiAsset {
   switch (coinType) {
     case DEFAULT_COIN_TYPE:
       return { type: "native" };
@@ -466,7 +466,7 @@ export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
 export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
-    return suiCheckpointToBlockInfo(checkpoint);
+    return toBlockInfo(checkpoint);
   });
 
 /**
@@ -480,8 +480,8 @@ export const getBlock = async (id: string): Promise<Block<SuiAsset>> =>
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
-      info: suiCheckpointToBlockInfo(checkpoint),
-      transactions: rawTxs.map(suiTransactionBlockToBlockTransaction),
+      info: toBlockInfo(checkpoint),
+      transactions: rawTxs.map(toBlockTransaction),
     };
   });
 
