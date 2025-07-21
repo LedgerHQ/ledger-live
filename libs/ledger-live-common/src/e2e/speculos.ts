@@ -414,7 +414,7 @@ interface ResponseData {
   events: Event[];
 }
 
-export async function waitFor(text: string, maxAttempts = 10): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;

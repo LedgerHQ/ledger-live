@@ -36,13 +36,12 @@ const checkProviders = [
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
-  //ToDo: Enable when Paraswap is migrated to Velora
-  // {
-  //   fromAccount: Account.ETH_1,
-  //   toAccount: TokenAccount.ETH_USDC_1,
-  //   xrayTicket: "B2CQA-3119",
-  //   provider: Provider.PARASWAP,
-  // },
+  {
+    fromAccount: Account.ETH_1,
+    toAccount: TokenAccount.ETH_USDC_1,
+    xrayTicket: "B2CQA-3119",
+    provider: Provider.VELORA,
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
