@@ -65,10 +65,40 @@ export type Account = {
   currencyUnit: Unit;
 };
 
-export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Balance<AssetInfo extends Asset<TokenInfoCommon>> =
+  | StandardBalance<AssetInfo>
+  | Stake<AssetInfo>;
+
+export type StandardBalance<AssetInfo extends Asset<TokenInfoCommon>> = {
+  type: "standard";
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
+};
+
+export type StakeState = "inactive" | "activating" | "active" | "deactivating";
+
+export type Stake<AssetInfo extends Asset<TokenInfoCommon>> = {
+  uid: string;
+  address: string;
+  asset: AssetInfo;
+  amount: bigint;
+  state: StakeState;
+  created_at?: Date;
+  status_updated_at?: Date;
+  amount_deposited?: bigint;
+  amount_rewarded?: bigint;
+  delegate?: string;
+  details: Record<string, unknown>;
+};
+
+export type Reward<AssetInfo extends Asset<TokenInfoCommon>> = {
+  stake: string;
+  asset: AssetInfo;
+  amount: bigint;
+  received_at: Date;
+  transaction_hash?: string;
+  details: Record<string, unknown>;
 };
 
 export interface Memo {
@@ -161,7 +191,16 @@ export type AlpacaApi<
     transactionIntent: TransactionIntent<AssetInfo, MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
+
+  // note: getBalance only returns the stakes with non-zero amount
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+
+  // getStakes returns all stakes, including closed/withdrawn ones
+  getStakes: (address: string) => Promise<Stake<AssetInfo>[]>;
+
+  // paginated list of all historical rewards distributed
+  getRewards: (address: string, cursor?: string) => Promise<[Reward<AssetInfo>[], string]>;
+
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
