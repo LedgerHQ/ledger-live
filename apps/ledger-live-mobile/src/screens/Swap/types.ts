@@ -1,7 +1,7 @@
 import { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, SwapOperation } from "@ledgerhq/types-live";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
@@ -58,7 +58,7 @@ export type SwapSelectCurrency = {
   provider?: string;
 };
 
-export type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
+export type SwapOperationDetails = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
   fromAccountId: string;
   toAccountId: string;
 };

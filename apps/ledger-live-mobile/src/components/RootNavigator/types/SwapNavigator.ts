@@ -40,7 +40,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
-  SwapOperation,
+  SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
 } from "../../../screens/Swap/types";
@@ -88,7 +88,7 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
-    swapOperation: SwapOperation;
+    swapOperation: SwapOperationDetails;
     fromPendingOperation?: true;
   };
   [ScreenName.AlgorandEditMemo]: {
