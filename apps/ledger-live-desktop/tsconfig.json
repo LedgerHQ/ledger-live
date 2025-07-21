@@ -13,7 +13,8 @@
     "paths": {
       "~/*": ["src/*"],
       "tests/*": ["tests/*"],
-      "LLD/*": ["src/newArch/*"]
+      "LLD/*": ["src/newArch/*"],
+      "@ldls/ui-react/*": ["./node_modules/@ldls/ui-react/dist/lib/**/*.{js,ts,jsx,tsx}"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]

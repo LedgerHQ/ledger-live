@@ -12,6 +12,8 @@ import {
 import { LogoWrapper } from "../../components/LogoWrapper";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { openURL } from "~/renderer/linking";
+import { ArrowUp, Spinner } from "@ldls/ui-react/symbols";
+import { Button as LdlsButton } from "@ldls/ui-react";
 
 type Props = {
   goToCreateBackup: () => void;
@@ -42,6 +44,19 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, so
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
       <TrackPage category={AnalyticsPage.Activation} source={sourcePage} />
+
+      <LdlsButton appearance="gray" icon={ArrowUp} className="font-serif">
+        Click me
+      </LdlsButton>
+      <LdlsButton appearance="red" icon={ArrowUp} loading>
+        Click me
+      </LdlsButton>
+      <div className="flex items-center justify-between gap-2 p-4 bg-crypto-avax ">
+        <div className="font-mono text-clip size-14 ">Some text</div>
+        <ArrowUp size={40} />
+        <Spinner />
+      </div>
+
       <Flex justifyContent="center" alignItems="center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />

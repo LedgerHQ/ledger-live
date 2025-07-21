@@ -360,6 +360,12 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
+      '@ldls/design-core':
+        specifier: 0.0.8
+        version: 0.0.8
+      '@ldls/ui-react':
+        specifier: 0.0.11
+        version: 0.0.11
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -495,6 +501,12 @@ importers:
       chart.js:
         specifier: 2.9.4
         version: 2.9.4
+      class-variance-authority:
+        specifier: 0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
       color:
         specifier: 4.2.3
         version: 4.2.3
@@ -642,6 +654,9 @@ importers:
       styled-system:
         specifier: 5.1.5
         version: 5.1.5
+      tailwind-merge:
+        specifier: 3.3.1
+        version: 3.3.1
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -823,6 +838,9 @@ importers:
       allure-playwright:
         specifier: 2.15.1
         version: 2.15.1
+      autoprefixer:
+        specifier: 10.4.21
+        version: 10.4.21(postcss@8.5.6)
       axios:
         specifier: 1.7.7
         version: 1.7.7
@@ -880,6 +898,9 @@ importers:
       nock:
         specifier: 13.5.4
         version: 13.5.4
+      postcss:
+        specifier: 8.5.6
+        version: 8.5.6
       prebuild-install:
         specifier: 7.1.2
         version: 7.1.2
@@ -895,6 +916,9 @@ importers:
       storybook:
         specifier: 8.6.12
         version: 8.6.12(prettier@3.2.5)
+      tailwindcss:
+        specifier: 3.4.3
+        version: 3.4.3(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       ts-jest:
         specifier: 29.1.2
         version: 29.1.2(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))(typescript@5.4.3)
@@ -14141,6 +14165,12 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
+  '@ldls/design-core@0.0.8':
+    resolution: {integrity: sha512-Iddoc44G3+jqu+1ZJGaETb9aUPwaWvKnQNaoyIVn88W7IAO+0elUUfO3gWvzCFbM6KLV4tKoFq5ATk2+oQFhXg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ldls-npm-prod-public/@ldls/design-core/-/@ldls/design-core-0.0.8.tgz}
+
+  '@ldls/ui-react@0.0.11':
+    resolution: {integrity: sha512-po+a0JRYEujtnxBgj30bgmZnH62VjWtPS5zh8kILhNYCn7KhJDBGROHQAgGNU9rRnqOZuRM6wNVRFPH2ZSereg==, tarball: https://jfrog.ledgerlabs.net/artifactory/api/npm/ldls-npm-prod-public/@ldls/ui-react/-/@ldls/ui-react-0.0.11.tgz}
+
   '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
     resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
     version: 1.3.1
@@ -20661,6 +20691,13 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
+  autoprefixer@10.4.21:
+    resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
+    engines: {node: ^10 || ^12 || >=14}
+    hasBin: true
+    peerDependencies:
+      postcss: ^8.1.0
+
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
@@ -21657,6 +21694,9 @@ packages:
   class-is@1.1.0:
     resolution: {integrity: sha512-rhjH9AG1fvabIDoGRVH587413LPjTZgmDF9fOFCbFJQV4yuocX1mHxxvXI4g3cGwbVY9wAYIoKlg1N79frJKQw==}
 
+  class-variance-authority@0.7.1:
+    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
+
   classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
 
@@ -21755,6 +21795,10 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
+
+  clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
+    engines: {node: '>=6'}
 
   cluster-key-slot@1.1.2:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
@@ -28433,6 +28477,11 @@ packages:
   nanoassert@2.0.0:
     resolution: {integrity: sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA==}
 
+  nanoid@3.3.11:
+    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -29853,6 +29902,10 @@ packages:
 
   postcss@8.5.1:
     resolution: {integrity: sha512-6oz2beyjc5VMn/KV1pPw8fliQkhBXrVn1Z3TVyqZxU8kZpzEKhBdmCFqI6ZbmGtamQvQGuU1sgPTk8ZrXDD7jQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.6:
+    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
   postgres-array@2.0.0:
@@ -32500,6 +32553,9 @@ packages:
   table@6.8.2:
     resolution: {integrity: sha512-w2sfv80nrAh2VCbqR5AK27wswXhqcck2AhfnNW76beQXskGZ1V12GwS//yYVa3d3fcvAip2OUnbDAjW2k3v9fA==}
     engines: {node: '>=10.0.0'}
+
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
 
   tailwindcss@3.4.3:
     resolution: {integrity: sha512-U7sxQk/n397Bmx4JHbJx/iSOOv5G+II3f1kpLpY2QeUv5DcPdcTsYLlusZfq1NthHS1c1cZoyFmmkex1rzke0A==}
@@ -36844,7 +36900,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.26.5
       '@babel/helper-validator-option': 7.25.9
-      browserslist: 4.24.2
+      browserslist: 4.25.0
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -36860,7 +36916,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.27.5
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.24.2
+      browserslist: 4.25.0
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -43254,6 +43310,12 @@ snapshots:
       - supports-color
 
   '@kwsites/promise-deferred@1.1.1': {}
+
+  '@ldls/design-core@0.0.8':
+    dependencies:
+      tslib: 2.6.2
+
+  '@ldls/ui-react@0.0.11': {}
 
   '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
     dependencies:
@@ -53043,6 +53105,16 @@ snapshots:
       postcss: 8.5.1
       postcss-value-parser: 4.2.0
 
+  autoprefixer@10.4.21(postcss@8.5.6):
+    dependencies:
+      browserslist: 4.25.0
+      caniuse-lite: 1.0.30001721
+      fraction.js: 4.3.7
+      normalize-range: 0.1.2
+      picocolors: 1.1.1
+      postcss: 8.5.6
+      postcss-value-parser: 4.2.0
+
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.0.0
@@ -54545,6 +54617,10 @@ snapshots:
 
   class-is@1.1.0: {}
 
+  class-variance-authority@0.7.1:
+    dependencies:
+      clsx: 2.1.1
+
   classnames@2.5.1: {}
 
   clean-css@5.3.3:
@@ -54651,6 +54727,8 @@ snapshots:
   clone@0.1.19: {}
 
   clone@1.0.4: {}
+
+  clsx@2.1.1: {}
 
   cluster-key-slot@1.1.2: {}
 
@@ -65157,6 +65235,8 @@ snapshots:
 
   nanoassert@2.0.0: {}
 
+  nanoid@3.3.11: {}
+
   nanoid@3.3.7: {}
 
   nanoid@3.3.8: {}
@@ -66452,6 +66532,13 @@ snapshots:
       read-cache: 1.0.0
       resolve: 1.22.8
 
+  postcss-import@15.1.0(postcss@8.5.6):
+    dependencies:
+      postcss: 8.5.6
+      postcss-value-parser: 4.2.0
+      read-cache: 1.0.0
+      resolve: 1.22.8
+
   postcss-initial@4.0.1(postcss@8.4.38):
     dependencies:
       postcss: 8.4.38
@@ -66464,6 +66551,11 @@ snapshots:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.5.1
+
+  postcss-js@4.0.1(postcss@8.5.6):
+    dependencies:
+      camelcase-css: 2.0.1
+      postcss: 8.5.6
 
   postcss-lab-function@4.2.1(postcss@8.4.38):
     dependencies:
@@ -66488,6 +66580,14 @@ snapshots:
       yaml: 2.4.1
     optionalDependencies:
       postcss: 8.5.1
+
+  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)):
+    dependencies:
+      lilconfig: 3.1.1
+      yaml: 2.4.1
+    optionalDependencies:
+      postcss: 8.5.6
+      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
 
   postcss-load-config@4.0.2(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
@@ -66606,6 +66706,11 @@ snapshots:
   postcss-nested@6.0.1(postcss@8.5.1):
     dependencies:
       postcss: 8.5.1
+      postcss-selector-parser: 6.0.16
+
+  postcss-nested@6.0.1(postcss@8.5.6):
+    dependencies:
+      postcss: 8.5.6
       postcss-selector-parser: 6.0.16
 
   postcss-nesting@10.2.0(postcss@8.4.38):
@@ -66919,6 +67024,12 @@ snapshots:
   postcss@8.5.1:
     dependencies:
       nanoid: 3.3.8
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.6:
+    dependencies:
+      nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -70640,6 +70751,8 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
 
+  tailwind-merge@3.3.1: {}
+
   tailwindcss@3.4.3:
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -70661,6 +70774,33 @@ snapshots:
       postcss-js: 4.0.1(postcss@8.5.1)
       postcss-load-config: 4.0.2(postcss@8.5.1)
       postcss-nested: 6.0.1(postcss@8.5.1)
+      postcss-selector-parser: 6.0.16
+      resolve: 1.22.8
+      sucrase: 3.35.0
+    transitivePeerDependencies:
+      - ts-node
+
+  tailwindcss@3.4.3(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)):
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      arg: 5.0.2
+      chokidar: 3.6.0
+      didyoumean: 1.2.2
+      dlv: 1.1.3
+      fast-glob: 3.3.2
+      glob-parent: 6.0.2
+      is-glob: 4.0.3
+      jiti: 1.21.0
+      lilconfig: 2.1.0
+      micromatch: 4.0.7
+      normalize-path: 3.0.0
+      object-hash: 3.0.0
+      picocolors: 1.1.1
+      postcss: 8.5.6
+      postcss-import: 15.1.0(postcss@8.5.6)
+      postcss-js: 4.0.1(postcss@8.5.6)
+      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+      postcss-nested: 6.0.1(postcss@8.5.6)
       postcss-selector-parser: 6.0.16
       resolve: 1.22.8
       sucrase: 3.35.0
@@ -72551,7 +72691,7 @@ snapshots:
   vite@4.5.6:
     dependencies:
       esbuild: 0.18.20
-      postcss: 8.5.1
+      postcss: 8.5.6
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
