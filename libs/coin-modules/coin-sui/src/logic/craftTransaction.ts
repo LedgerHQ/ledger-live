@@ -10,7 +10,9 @@ export type CreateExtrinsicArg = {
   amount: BigNumber;
   coinType: string;
   recipient: string;
-  useAllAmount?: boolean | undefined;
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+  fees?: BigNumber | null;
 };
 
 export async function craftTransaction({
@@ -19,12 +21,18 @@ export async function craftTransaction({
   recipient,
   coinType,
   type,
-}: TransactionIntent<SuiAsset> & { coinType?: string }): Promise<CoreTransaction> {
+  ...extra
+}: TransactionIntent<SuiAsset> & {
+  coinType?: string;
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+}): Promise<CoreTransaction> {
   const unsigned = await suiAPI.createTransaction(sender, {
     amount: BigNumber(amount.toString()),
     recipient,
     coinType: coinType ?? DEFAULT_COIN_TYPE,
     mode: type as SuiTransactionMode,
+    ...extra,
   });
 
   return { unsigned };

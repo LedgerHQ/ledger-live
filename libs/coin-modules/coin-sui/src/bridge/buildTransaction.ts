@@ -3,7 +3,15 @@ import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 
 export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicArg =>
-  pick(transaction, ["mode", "amount", "recipient", "useAllAmount", "coinType"]);
+  pick(transaction, [
+    "mode",
+    "amount",
+    "recipient",
+    "useAllAmount",
+    "coinType",
+    "stakedSuiId",
+    "fees",
+  ]);
 
 /**
  * @param {Account} account
@@ -11,7 +19,7 @@ export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicAr
  */
 export const buildTransaction = async (
   { freshAddress }: SuiAccount,
-  { recipient, mode, amount, coinType }: Transaction,
+  { recipient, mode, amount, coinType, useAllAmount = false, stakedSuiId = "" }: Transaction,
 ) => {
   return craftTransaction({
     sender: freshAddress,
@@ -20,5 +28,7 @@ export const buildTransaction = async (
     coinType,
     amount: BigInt(amount.toString()),
     asset: { type: "native" },
+    useAllAmount,
+    stakedSuiId,
   });
 };
