@@ -1,3 +1,3 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---

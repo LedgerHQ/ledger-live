@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.3.22-next.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.0-next.3
+
 ## 0.3.22-next.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.87.0-next.1
+
+### Minor Changes
+
+- [#11034](https://github.com/LedgerHQ/ledger-live/pull/11034) [`dc04406`](https://github.com/LedgerHQ/ledger-live/commit/dc04406f654ed4d0f35d9a8c0331781c7e24643c) Thanks [@Wozacosta](https://github.com/Wozacosta)! -
+
 ## 3.87.0-next.0
 
 ### Minor Changes

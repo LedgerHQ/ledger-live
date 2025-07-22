@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.122.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`08461e7`](https://github.com/LedgerHQ/ledger-live/commit/08461e7d8dee96c538b68a1effb04a16a6b29afc)]:
+  - @ledgerhq/coin-bitcoin@0.18.0-next.1
+  - @ledgerhq/live-common@34.42.0-next.3
+  - @ledgerhq/live-dmk-desktop@0.8.0-next.4
+
 ## 2.122.0-next.3
 
 ### Patch Changes
