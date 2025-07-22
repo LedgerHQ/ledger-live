@@ -6162,6 +6162,10 @@
       "title" : "Henüz alt hesaplardan gönderilemiyor",
       "description" : "Babylon güncellemesinde yapılan değişikliklerden dolayı bu özellik ileriki bir zamanda eklenecek."
     },
+    "UnavailableTezosOriginatedAccountSend" : {
+      "title" : "Henüz alt hesaplardan gönderilemiyor",
+      "description" : "Terra Classic güncellemesinde yapılan değişikliklerden dolayı bu özellik ileriki bir zamanda eklenecek."
+    },
     "RecommendUndelegation" : {
       "title" : "Hesabı boşaltmadan önce lütfen yetki devrini iptal edin"
     },
