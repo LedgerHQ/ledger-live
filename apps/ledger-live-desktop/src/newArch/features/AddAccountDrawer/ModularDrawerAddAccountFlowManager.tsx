@@ -6,20 +6,20 @@ import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
-import { MODULAR_DRAWER_PAGE_NAME } from "./analytics/modularDrawer.types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDrawer.types";
 import AnimatedScreenWrapper from "../ModularDrawer/components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "../ModularDrawer/components/BackButton";
-import HeaderGradient from "../ModularDrawer/components/HeaderGradient";
-import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
-import AccountsAdded from "./screens/AccountsAdded";
 import { AccountSelection } from "../ModularDrawer/screens/AccountSelection";
+import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
+import HeaderGradient from "./components/HeaderGradient";
+import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
+import AccountsAdded from "./screens/AccountsAdded";
 import AccountsWarning from "./screens/AccountsWarning";
 import ConnectYourDevice from "./screens/ConnectYourDevice";
 import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
-import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
+import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 

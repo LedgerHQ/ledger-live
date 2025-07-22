@@ -1,9 +1,9 @@
-import React from "react";
-import AccountsWarning from ".";
 import type { Meta, StoryObj } from "@storybook/react";
-import { bitcoinCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
-import { legacy_createStore as createStore } from "redux";
+import React from "react";
 import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import AccountsWarning from ".";
+import { bitcoinCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 
 const store = createStore(() => ({}));
 

@@ -1,19 +1,19 @@
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
   usdcToken,
-} from "../../__mocks__/useSelectAssetFlow.mock";
+} from "../../../__mocks__/useSelectAssetFlow.mock";
 import {
-  safeCurrencyLookup,
-  isProviderToken,
-  getProviderCurrency,
   buildProviderCoverageMap,
-  filterProvidersByIds,
   extractProviderCurrencies,
+  filterProvidersByIds,
+  getProviderCurrency,
+  isProviderToken,
+  safeCurrencyLookup,
 } from "../currencyUtils";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("safeCurrencyLookup", () => {
   it("should return the currency if it is found", () => {

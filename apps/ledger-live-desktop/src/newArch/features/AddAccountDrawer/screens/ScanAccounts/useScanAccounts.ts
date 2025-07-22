@@ -14,14 +14,14 @@ import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
   ADD_ACCOUNT_PAGE_NAME,
-} from "../analytics/addAccount.types";
-import useAddAccountAnalytics from "../analytics/useAddAccountAnalytics";
+} from "../../analytics/addAccount.types";
+import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import {
   determineSelectedIds,
   getGroupedAccounts,
   getUnimportedAccounts,
-} from "../screens/ScanAccounts/utils/processAccounts";
-import { WARNING_REASON, WarningReason } from "../types";
+} from "./utils/processAccounts";
+import { WARNING_REASON, WarningReason } from "../../domain";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);

@@ -1,3 +1,4 @@
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { fn, Mock } from "@storybook/test";
 import BigNumber from "bignumber.js";
 import {
@@ -7,7 +8,6 @@ import {
   ethereumCurrency,
   scrollCurrency,
 } from "./useSelectAssetFlow.mock";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 
 export const useGetAccountIds: Mock = fn(() => undefined);
 export const getBalanceHistoryWithCountervalue: Mock = fn(() => ({

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import { Account } from "@ledgerhq/types-live";
 import { Meta, StoryObj } from "@storybook/react";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
+import React, { useState } from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { accountsSelector, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
+import { bitcoinCurrency } from "../__mocks__/useSelectAssetFlow.mock";
+import { triggerComplete, triggerNext } from "./__mocks__/bridge.mock";
 import ModularDrawerAddAccountFlowManager, {
   ModularDrawerAddAccountFlowManagerProps,
 } from "./ModularDrawerAddAccountFlowManager";
-import { bitcoinCurrency } from "./__mocks__/useSelectAssetFlow.mock";
-import { Provider } from "react-redux";
-import { legacy_createStore as createStore } from "redux";
-import { triggerComplete, triggerNext } from "./__mocks__/bridge.mock";
-import { accountsSelector, BTC_ACCOUNT } from "./__mocks__/accounts.mock";
-import { Account } from "@ledgerhq/types-live";
-import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const store = createStore(() => ({
   accounts: [],

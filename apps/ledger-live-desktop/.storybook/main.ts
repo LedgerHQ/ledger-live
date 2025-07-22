@@ -10,11 +10,13 @@ function getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, "package.json")));
 }
 
+const featuresDir = "./src/newArch/features";
 const madDir = "./src/newArch/features/ModularDrawer";
-const detailedAccountsMockDir = `${madDir}/__mocks__/accounts.mock.ts`;
+const aaDir = "./src/newArch/features/AddAccountDrawer";
+const detailedAccountsMockDir = `${featuresDir}/__mocks__/accounts.mock.ts`;
+const bridge = `${aaDir}/__mocks__/bridge.mock.tsx`;
 const selectAssetFlowHookMockDir = `${madDir}/__mocks__/useSelectAssetFlow.mock.ts`;
 const useGroupedCurrenciesByProvider = `${madDir}/__mocks__/useGroupedCurrenciesByProvider.mock.ts`;
-const bridge = `${madDir}/__mocks__/bridge.mock.tsx`;
 const useConnectAppAction = `${madDir}/__mocks__/useConnectAppAction.mock.ts`;
 
 const config: StorybookConfig = {

@@ -9,14 +9,14 @@ import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import createStore from "~/renderer/createStore";
 import { State } from "~/renderer/reducers";
-import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
+import { ARB_ACCOUNT, BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
   hederaCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import { mockDomMeasurements } from "../../__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
-import { mockDomMeasurements } from "./shared";
 
 beforeEach(async () => {
   mockDomMeasurements();

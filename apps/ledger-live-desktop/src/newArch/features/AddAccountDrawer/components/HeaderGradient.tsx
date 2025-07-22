@@ -6,7 +6,7 @@ import {
   WARNING_REASON,
   type ModularDrawerAddAccountStep,
   type WarningReason,
-} from "../types";
+} from "../domain";
 
 const GradientContainer = styled.div`
   width: 500px;

@@ -1,5 +1,5 @@
-import React from "react";
 import { Box, Flex } from "@ledgerhq/react-ui/index";
+import React from "react";
 
 type Props = {
   children: React.ReactNode;
