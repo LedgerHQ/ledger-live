@@ -8,8 +8,8 @@ export type CW20Token  = [
   string?, // live signature
 ];
 
-import tokens from "./CW20.json";
+import tokens from "./cw20.json";
 
-export { default as hash } from "./CW20-hash.json";
+export { default as hash } from "./cw20-hash.json";
 
 export default tokens as CW20Token[];
