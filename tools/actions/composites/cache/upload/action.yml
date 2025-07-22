@@ -37,7 +37,11 @@ runs:
         touch /tmp/cache-path.txt
         
         echo "${{ inputs.path }}" | while IFS= read -r filePath; do
-          find $filePath -type f > /tmp/cache-path.txt
+          if [ -d "$filePath" ] || [ -f "$filePath" ]; then
+              find $filePath -type f > /tmp/cache-path.txt
+          else
+            echo "Warning: Path $filePath not found, skipping."
+          fi
         done
              
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
@@ -49,7 +53,11 @@ runs:
         touch /tmp/cache-path.txt
         
         echo "${{ inputs.path }}" | while IFS= read -r filePath; do
-          find $filePath -type f > /tmp/cache-path.txt
+          if [ -d "$filePath" ] || [ -f "$filePath" ]; then
+              find $filePath -type f > /tmp/cache-path.txt
+          else
+            echo "Warning: Path $filePath not found, skipping."
+          fi
         done
         
         gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
