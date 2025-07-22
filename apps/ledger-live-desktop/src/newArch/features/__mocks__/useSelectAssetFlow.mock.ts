@@ -78,3 +78,7 @@ export const mockNetworksConfiguration: EnhancedModularDrawerConfiguration["netw
   leftElement: "numberOfAccounts",
   rightElement: "balance",
 };
+
+export enum LoadingStatus {
+  Success = "success",
+}
