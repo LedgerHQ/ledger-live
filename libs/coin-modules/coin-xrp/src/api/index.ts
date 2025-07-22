@@ -18,6 +18,7 @@ import {
   lastBlock,
   listOperations,
   getTransactionStatus,
+  MemoInput,
 } from "../logic";
 import { ListOperationsOptions, XrpAsset, XrpMapMemo } from "../types";
 
@@ -53,7 +54,7 @@ async function craft(
 
   const memoStrings = memosMap.get("memos") as string[] | undefined;
 
-  let memoEntries: { type: string; data: string }[] = [];
+  let memoEntries: MemoInput[] | undefined = undefined;
 
   if (Array.isArray(memoStrings) && memoStrings.length > 0) {
     memoEntries = memoStrings.map(value => ({ type: "memo", data: value }));
