@@ -1328,12 +1328,51 @@ describe("filterOperations", () => {
       ]);
     });
 
-    test("toBlockOperation should ignore transfers from unsupported owner types", () => {
+    test("toBlockOperation should ignore transfers from shared owner", () => {
       expect(
         sdk.toBlockOperation({
           owner: {
             Shared: {
               initial_shared_version: "0",
+            },
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from object owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            ObjectOwner: "test",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from immutable owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: "Immutable",
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from consensus owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            ConsensusV2: {
+              authenticator: {
+                SingleOwner: "test",
+              },
+              start_version: "1",
             },
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
