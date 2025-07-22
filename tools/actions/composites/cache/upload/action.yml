@@ -34,10 +34,10 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        # Check if inputs.path is a single file path or a newline-delimited list
+        touch /tmp/cache-path.txt
+        
         echo "${{ inputs.path }}" | while IFS= read -r filePath; do
-          echo "Processing: $filePath"
-          find $filePath -type f -print
+          find $filePath -type f > /tmp/cache-path.txt
         done
              
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
