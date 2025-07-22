@@ -32,6 +32,7 @@ describe("craftTransaction", () => {
       recipient,
       mode: type,
       coinType: "0x2::sui::SUI",
+      asset: { type: "native" },
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -55,6 +56,7 @@ describe("craftTransaction", () => {
       recipient,
       mode: type,
       coinType: "0x2::sui::SUI",
+      asset: { type: "native" },
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -78,6 +80,7 @@ describe("craftTransaction", () => {
       recipient,
       mode: type,
       coinType: "0x2::sui::SUI",
+      asset: { type: "native" },
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -101,6 +104,7 @@ describe("craftTransaction", () => {
       recipient,
       mode: type,
       coinType: "0x2::sui::SUI",
+      asset: { type: "native" },
     });
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });

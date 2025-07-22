@@ -5,3 +5,4 @@ export { combine } from "./combine";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { canStake } from "./stake";

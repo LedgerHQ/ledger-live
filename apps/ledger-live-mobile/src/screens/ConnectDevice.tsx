@@ -57,6 +57,8 @@ import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
+import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -112,6 +114,8 @@ type Props =
   | StackNavigatorProps<AptosRestakingFlowParamList, ScreenName.AptosRestakingConnectDevice>
   | StackNavigatorProps<AptosUnstakingFlowParamList, ScreenName.AptosUnstakingConnectDevice>
   | StackNavigatorProps<AptosWithdrawingFlowParamList, ScreenName.AptosWithdrawingConnectDevice>
+  | StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingConnectDevice>
+  | StackNavigatorProps<SuiUnstakingFlowParamList, ScreenName.SuiUnstakingConnectDevice>
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>

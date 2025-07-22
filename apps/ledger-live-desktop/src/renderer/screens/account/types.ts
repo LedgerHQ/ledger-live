@@ -23,4 +23,7 @@ export type StakeAccountBannerParams = {
     redelegate: boolean;
     delegate: boolean;
   };
+  sui?: {
+    delegate: boolean;
+  };
 };

@@ -3925,11 +3925,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.2.10
-        version: 0.2.10(typescript@5.4.3)
+        specifier: 0.3.0
+        version: 0.3.0(typescript@5.4.3)
       '@mysten/sui':
-        specifier: 1.30.1
-        version: 1.30.1(typescript@5.4.3)
+        specifier: 1.36.0
+        version: 1.36.0(typescript@5.4.3)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -6540,8 +6540,8 @@ importers:
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
       '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.5.0
-        version: 0.5.0
+        specifier: 0.5.2
+        version: 0.5.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -13700,10 +13700,6 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@grpc/grpc-js@1.13.3':
-    resolution: {integrity: sha512-FTXHdOoPbZrBjlVLHuKbDZnsTxXv2BlHF57xw6LuThXacXvtkahEPED0CKMk6obZDf65Hv4k3z62eyPNpvinIg==}
-    engines: {node: '>=12.10.0'}
-
   '@grpc/grpc-js@1.13.4':
     resolution: {integrity: sha512-GsFaMXCkMqkKIvwCQjCrwH+GHbPKBjhwo/8ZuUkWHqbI73Kky9I+pQltrlT0+MWpedCoosda53lgjYfyEPgxBg==}
     engines: {node: '>=12.10.0'}
@@ -13722,11 +13718,6 @@ packages:
 
   '@grpc/proto-loader@0.6.13':
     resolution: {integrity: sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==}
-    engines: {node: '>=6'}
-    hasBin: true
-
-  '@grpc/proto-loader@0.7.12':
-    resolution: {integrity: sha512-DCVwMxqYzpUCiDMl7hQ384FqP4T3DbNpXU8pt681l3UWCip1WUiD5JrkImUwCB9a7f2cq4CUTmi5r/xIMRPY1Q==}
     engines: {node: '>=6'}
     hasBin: true
 
@@ -14385,22 +14376,22 @@ packages:
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
 
-  '@mysten/bcs@1.6.1':
-    resolution: {integrity: sha512-pywsl2+jxbib5CbteAjMpmJpnj1pcUco2ff+lXCK3hfppPbkyWEMbZDQn1jNngV6ADQ3IFIvPs0FaS7fKWPOLA==}
+  '@mysten/bcs@1.6.4':
+    resolution: {integrity: sha512-HBBrqMtnVp5vy12efJYhj/HnOYGu+x5SqRQpnOJEHEkxypGZ01WNFoCNw7USzDSyJvPauhqdzUXzR+lYM1D5/g==}
 
-  '@mysten/ledgerjs-hw-app-sui@0.5.0':
-    resolution: {integrity: sha512-1isN9cUrixLG73uMOB08SamY7YnZ0jtzIUTTKjgbzvLv1/FucF27EOLYSAwItu6je+UW5FtVh3MtRWl8hBp9uQ==}
+  '@mysten/ledgerjs-hw-app-sui@0.5.2':
+    resolution: {integrity: sha512-qLLODXIZ7FZLqbxeSACGfOlN0jk9DYTQgE4GJDYyGFratVvthtSTg3/YjG+AkTPVzmOnZjiwWE3VyqDQ2qlSCA==}
 
-  '@mysten/signers@0.2.10':
-    resolution: {integrity: sha512-4yjnoYgqZORcwXdyOQ7jgUoHAn6kzy5VJZP43tzFezu/gv2D+i1cmJML8S+yzrbdaHMMv1vJe4rAPVUMDeC71Q==}
+  '@mysten/signers@0.3.0':
+    resolution: {integrity: sha512-+VUYqJqJPE4oQ52CTBo1erDewNGTAqE58OCgCwnfBCRhVdsHjU/EmtReHJt3DP2tlHtElnOQsoSzUmloPVkU2g==}
     engines: {node: '>=20'}
 
-  '@mysten/sui@1.30.1':
-    resolution: {integrity: sha512-WnyDpc5Fw6cvkJwXXmPWV80LA5YhvUgrKf86Pix0KLBSIc7aqwZi0GTPRWqiCedvayR6C3TkZqEhoDrVMusL7A==}
+  '@mysten/sui@1.36.0':
+    resolution: {integrity: sha512-BHJatlqZir4pD1SRBjxh+SGg0BOTX1y9OxgX66e8rhEqZj33TztwpsSG2s+luLD+ugXDBAWt18/1Bk4/D1SwSg==}
     engines: {node: '>=18'}
 
-  '@mysten/utils@0.0.0':
-    resolution: {integrity: sha512-KRI57Qow3E7TGqczimazwGf7+fwukdOi+6a31igSCzz0kPjAXbyK1a1gXaxeLMF8xEZ07ouW3RnsWt+EaUuHUw==}
+  '@mysten/utils@0.1.1':
+    resolution: {integrity: sha512-jvhJC6/2la1QHltukQXzfyTZ+VVHxe187JjPx+mEXRUWyAo6jCSdioOQJIfaGu4K4i+37KeiydXRwV/bq/7UJQ==}
 
   '@ndelangen/get-tarball@3.0.9':
     resolution: {integrity: sha512-9JKTEik4vq+yGosHYhZ1tiH/3WpUS0Nh0kej4Agndhox8pAdWhEx5knFVRcb/ya9knCRCs1rPxNrSXTDdfVqpA==}
@@ -14603,6 +14594,10 @@ packages:
 
   '@noble/curves@1.9.0':
     resolution: {integrity: sha512-7YDlXiNMdO1YZeH6t/kvopHHbIZzlxrCV9WLqCY6QhcXOoXiNCMDqJIglZ9Yjx5+w7Dz30TITFrlTjnRg7sKEg==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/curves@1.9.4':
+    resolution: {integrity: sha512-2bKONnuM53lINoDrSmK8qP8W271ms7pygDhZt4SiLOoLwBtoHqeCFi6RG42V8zd3mLHuJFhU/Bmaqo4nX0/kBw==}
     engines: {node: ^14.21.3 || >=16}
 
   '@noble/ed25519@1.7.3':
@@ -16200,8 +16195,8 @@ packages:
   '@scure/base@1.1.6':
     resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
 
-  '@scure/base@1.2.5':
-    resolution: {integrity: sha512-9rE6EOVeIQzt5TSu4v+K523F8u6DhBsoZWPGKlnCshhlDhy0kJzUX4V+tr2dWmzF1GdekvThABoEQBGBQI7xZw==}
+  '@scure/base@1.2.6':
+    resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
   '@scure/bip32@1.1.5':
     resolution: {integrity: sha512-XyNh1rB0SkEqd3tXcXMi+Xe1fvg+kUIcoRIEujP1Jgv7DqW2r9lg3Ah0NkFaCs9sTkQAQA8kw7xiRXzENi9Rtw==}
@@ -25030,10 +25025,6 @@ packages:
     resolution: {integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==}
     engines: {node: '>=14'}
 
-  google-gax@4.6.0:
-    resolution: {integrity: sha512-zKKLeLfcYBVOzzM48Brtn4EQkKcTli9w6c1ilzFK2NbJvcd4ATD8/XqFExImvE/W5IwMlKKwa5qqVufji3ioNQ==}
-    engines: {node: '>=14'}
-
   google-gax@4.6.1:
     resolution: {integrity: sha512-V6eky/xz2mcKfAd1Ioxyd6nmA61gao3n01C+YeuIwu3vzM9EDR6wcVzMSIbLMDXWeoi9SHYctXuKYC5uJUT3eQ==}
     engines: {node: '>=14'}
@@ -25081,6 +25072,10 @@ packages:
 
   graphql@16.10.0:
     resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  graphql@16.11.0:
+    resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   graphql@16.8.1:
@@ -34852,14 +34847,14 @@ snapshots:
 
   '@0no-co/graphql.web@1.0.11': {}
 
-  '@0no-co/graphql.web@1.0.11(graphql@16.10.0)':
+  '@0no-co/graphql.web@1.0.11(graphql@16.11.0)':
     optionalDependencies:
-      graphql: 16.10.0
+      graphql: 16.11.0
 
-  '@0no-co/graphqlsp@1.12.16(graphql@16.10.0)(typescript@5.4.3)':
+  '@0no-co/graphqlsp@1.12.16(graphql@16.11.0)(typescript@5.4.3)':
     dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.4.3)
-      graphql: 16.10.0
+      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.4.3)
+      graphql: 16.11.0
       typescript: 5.4.3
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
@@ -41582,7 +41577,7 @@ snapshots:
       '@firebase/util': 1.10.3
       '@firebase/webchannel-wrapper': 1.0.3
       '@grpc/grpc-js': 1.9.15
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.7.15
       tslib: 2.6.2
 
   '@firebase/functions-compat@0.3.19(@firebase/app-compat@0.2.50)(@firebase/app@0.11.1)':
@@ -41989,7 +41984,7 @@ snapshots:
 
   '@google-cloud/kms@4.5.0':
     dependencies:
-      google-gax: 4.6.0
+      google-gax: 4.6.1
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -42032,27 +42027,26 @@ snapshots:
       - encoding
       - supports-color
 
-  '@gql.tada/cli-utils@1.6.3(graphql@16.10.0)(typescript@5.4.3)':
+  '@gql.tada/cli-utils@1.6.3(graphql@16.11.0)(typescript@5.4.3)':
     dependencies:
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)(typescript@5.4.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.4.3)
-      graphql: 16.10.0
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@5.4.3)
+      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.4.3)
+      graphql: 16.11.0
       typescript: 5.4.3
 
-  '@gql.tada/internal@1.0.8(graphql@16.10.0)(typescript@5.4.3)':
+  '@gql.tada/internal@1.0.8(graphql@16.11.0)(typescript@5.4.3)':
     dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.10.0)
-      graphql: 16.10.0
+      '@0no-co/graphql.web': 1.0.11(graphql@16.11.0)
+      graphql: 16.11.0
       typescript: 5.4.3
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
       graphql: 16.10.0
 
-  '@grpc/grpc-js@1.13.3':
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.11.0)':
     dependencies:
-      '@grpc/proto-loader': 0.7.15
-      '@js-sdsl/ordered-map': 4.4.2
+      graphql: 16.11.0
 
   '@grpc/grpc-js@1.13.4':
     dependencies:
@@ -42066,12 +42060,12 @@ snapshots:
 
   '@grpc/grpc-js@1.7.3':
     dependencies:
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.7.15
       '@types/node': 22.10.10
 
   '@grpc/grpc-js@1.9.15':
     dependencies:
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.7.15
       '@types/node': 22.10.10
 
   '@grpc/proto-loader@0.6.13':
@@ -42081,13 +42075,6 @@ snapshots:
       long: 4.0.0
       protobufjs: 6.11.4
       yargs: 16.2.0
-
-  '@grpc/proto-loader@0.7.12':
-    dependencies:
-      lodash.camelcase: 4.3.0
-      long: 5.2.3
-      protobufjs: 7.3.2
-      yargs: 17.7.2
 
   '@grpc/proto-loader@0.7.15':
     dependencies:
@@ -43670,22 +43657,22 @@ snapshots:
     dependencies:
       bech32: 2.0.0
 
-  '@mysten/bcs@1.6.1':
+  '@mysten/bcs@1.6.4':
     dependencies:
-      '@mysten/utils': 0.0.0
-      '@scure/base': 1.2.5
+      '@mysten/utils': 0.1.1
+      '@scure/base': 1.2.6
 
-  '@mysten/ledgerjs-hw-app-sui@0.5.0':
+  '@mysten/ledgerjs-hw-app-sui@0.5.2':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       fast-sha256: 1.3.0
 
-  '@mysten/signers@0.2.10(typescript@5.4.3)':
+  '@mysten/signers@0.3.0(typescript@5.4.3)':
     dependencies:
       '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.5.0
-      '@mysten/sui': 1.30.1(typescript@5.4.3)
-      '@noble/curves': 1.9.0
+      '@mysten/ledgerjs-hw-app-sui': 0.5.2
+      '@mysten/sui': 1.36.0(typescript@5.4.3)
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
       asn1-ts: 8.0.5
     transitivePeerDependencies:
@@ -43695,18 +43682,18 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mysten/sui@1.30.1(typescript@5.4.3)':
+  '@mysten/sui@1.36.0(typescript@5.4.3)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
-      '@mysten/bcs': 1.6.1
-      '@mysten/utils': 0.0.0
-      '@noble/curves': 1.9.0
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
+      '@mysten/bcs': 1.6.4
+      '@mysten/utils': 0.1.1
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      gql.tada: 1.8.10(graphql@16.10.0)(typescript@5.4.3)
-      graphql: 16.10.0
+      gql.tada: 1.8.10(graphql@16.11.0)(typescript@5.4.3)
+      graphql: 16.11.0
       poseidon-lite: 0.2.1
       valibot: 0.36.0
     transitivePeerDependencies:
@@ -43714,9 +43701,9 @@ snapshots:
       - '@gql.tada/vue-support'
       - typescript
 
-  '@mysten/utils@0.0.0':
+  '@mysten/utils@0.1.1':
     dependencies:
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
 
   '@ndelangen/get-tarball@3.0.9':
     dependencies:
@@ -43922,6 +43909,10 @@ snapshots:
       '@noble/hashes': 1.5.0
 
   '@noble/curves@1.9.0':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
+  '@noble/curves@1.9.4':
     dependencies:
       '@noble/hashes': 1.8.0
 
@@ -44584,7 +44575,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.7.0
       '@polkadot-api/utils': 0.0.1
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
       scale-ts: 1.6.0
     optional: true
 
@@ -46210,7 +46201,7 @@ snapshots:
 
   '@scure/base@1.1.6': {}
 
-  '@scure/base@1.2.5': {}
+  '@scure/base@1.2.6': {}
 
   '@scure/bip32@1.1.5':
     dependencies:
@@ -46232,9 +46223,9 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.0
+      '@noble/curves': 1.9.4
       '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
 
   '@scure/bip39@1.1.1':
     dependencies:
@@ -46254,7 +46245,7 @@ snapshots:
   '@scure/bip39@1.6.0':
     dependencies:
       '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
 
   '@sec-ant/readable-stream@0.4.1': {}
 
@@ -59166,24 +59157,6 @@ snapshots:
       - encoding
       - supports-color
 
-  google-gax@4.6.0:
-    dependencies:
-      '@grpc/grpc-js': 1.13.3
-      '@grpc/proto-loader': 0.7.15
-      '@types/long': 4.0.2
-      abort-controller: 3.0.0
-      duplexify: 4.1.3
-      google-auth-library: 9.15.1
-      node-fetch: 2.7.0
-      object-hash: 3.0.0
-      proto3-json-serializer: 2.0.2
-      protobufjs: 7.3.2
-      retry-request: 7.0.2
-      uuid: 9.0.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-
   google-gax@4.6.1:
     dependencies:
       '@grpc/grpc-js': 1.13.4
@@ -59254,12 +59227,12 @@ snapshots:
       responselike: 3.0.0
       type-fest: 4.40.0
 
-  gql.tada@1.8.10(graphql@16.10.0)(typescript@5.4.3):
+  gql.tada@1.8.10(graphql@16.11.0)(typescript@5.4.3):
     dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.10.0)
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)(typescript@5.4.3)
-      '@gql.tada/cli-utils': 1.6.3(graphql@16.10.0)(typescript@5.4.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.4.3)
+      '@0no-co/graphql.web': 1.0.11(graphql@16.11.0)
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@5.4.3)
+      '@gql.tada/cli-utils': 1.6.3(graphql@16.11.0)(typescript@5.4.3)
+      '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.4.3)
       typescript: 5.4.3
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
@@ -59276,6 +59249,8 @@ snapshots:
       tslib: 2.6.2
 
   graphql@16.10.0: {}
+
+  graphql@16.11.0: {}
 
   graphql@16.8.1: {}
 
@@ -59752,7 +59727,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -69850,7 +69825,7 @@ snapshots:
 
   spdy@4.0.2:
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
       handle-thing: 2.0.1
       http-deceiver: 1.2.7
       select-hose: 2.0.0
