@@ -72,6 +72,7 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+    "terraclassic",
   "sui",
   "mina",
   "babylon",
