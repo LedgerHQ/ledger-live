@@ -86,6 +86,19 @@ export const groupCurrenciesByProvider = (
     /// FIXME(LIVE-10508) drop usage of toLowerCase
     assetsByLedgerId.set(asset.ledgerId.toLowerCase(), asset);
   }
+  assetsByLedgerId.set("mina", {
+    providerId: "mina",
+    ledgerId: "mina",
+    name: "Mina",
+    ticker: "MINA",
+    status: "active",
+    reason: null,
+    data: {
+      img: "",
+      marketCapRank: null,
+    },
+    $type: "Coin",
+  });
   const assetsByProviderId: Map<string, CurrenciesByProviderId> = new Map();
   const sortedCryptoCurrencies: CryptoOrTokenCurrency[] = [];
   // iterate over currencies by preserving their order

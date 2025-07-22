@@ -3,7 +3,7 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 
 // set by user side effect to precise which currencies are considered supported (typically by live)
-let userSupportedCurrencies: CryptoCurrency[] = [];
+let userSupportedCurrencies: CryptoCurrency[] = [getCryptoCurrencyById("mina")];
 
 export function setSupportedCurrencies(ids: CryptoCurrencyId[]) {
   userSupportedCurrencies = Array.from(new Set(ids)) // Make sure to remove duplicates
