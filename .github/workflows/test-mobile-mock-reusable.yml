@@ -435,7 +435,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v1
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v2
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
@@ -466,9 +466,10 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
+            ${{ runner.home }}/.android/avd/*
             /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
             /usr/local/lib/android/sdk/emulator/*
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v1
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v2
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
