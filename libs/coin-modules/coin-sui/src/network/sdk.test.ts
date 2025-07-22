@@ -1307,4 +1307,175 @@ describe("filterOperations", () => {
       expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT + 2);
     });
   });
+
+  describe("conversion methods", () => {
+    test("toBlockOperation should map native transfers correctly", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            AddressOwner: "0x65449f57946938c84c5127",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([
+        {
+          type: "transfer",
+          address: "0x65449f57946938c84c5127",
+          amount: -10000000000n,
+          asset: { type: "native" },
+        },
+      ]);
+    });
+
+    test("toBlockOperation should ignore transfers from shared owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            Shared: {
+              initial_shared_version: "0",
+            },
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from object owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            ObjectOwner: "test",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from immutable owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: "Immutable",
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should ignore transfers from consensus owner", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            ConsensusV2: {
+              authenticator: {
+                SingleOwner: "test",
+              },
+              start_version: "1",
+            },
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-10000000000",
+        }),
+      ).toEqual([]);
+    });
+
+    test("toBlockOperation should map token transfers correctly", () => {
+      expect(
+        sdk.toBlockOperation({
+          owner: {
+            AddressOwner: "0x65449f57946938c84c5127",
+          },
+          coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+          amount: "8824",
+        }),
+      ).toEqual([
+        {
+          type: "transfer",
+          address: "0x65449f57946938c84c5127",
+          amount: 8824n,
+          asset: {
+            type: "token",
+            coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+          },
+        },
+      ]);
+    });
+
+    test("toBlockInfo should map checkpoints correctly", () => {
+      expect(
+        sdk.toBlockInfo({
+          checkpointCommitments: [],
+          digest: "0xaaaaaaaaa",
+          previousDigest: "0xbbbbbbbbbb",
+          epoch: "",
+          epochRollingGasCostSummary: {
+            computationCost: "",
+            nonRefundableStorageFee: "",
+            storageCost: "",
+            storageRebate: "",
+          },
+          networkTotalTransactions: "",
+          sequenceNumber: "42",
+          timestampMs: "1751696298663",
+          transactions: [],
+          validatorSignature: "",
+        }),
+      ).toEqual({
+        height: 42,
+        hash: "0xaaaaaaaaa",
+        time: new Date(1751696298663),
+        parent: {
+          height: 41,
+          hash: "0xbbbbbbbbbb",
+        },
+      });
+    });
+
+    test("toBlockTransaction should map transactions correctly", () => {
+      expect(
+        sdk.toBlockTransaction(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          mockTransaction as unknown as SuiTransactionBlockResponse,
+        ),
+      ).toEqual({
+        hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
+        failed: false,
+        fees: 1009880n,
+        feesPayer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+        operations: [
+          {
+            address: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+            amount: -10000000000n,
+            asset: { type: "native" },
+            type: "transfer",
+          },
+          {
+            address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            amount: 9998990120n,
+            asset: { type: "native" },
+            type: "transfer",
+          },
+          {
+            address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            amount: 500000n,
+            asset: { type: "token", coinType: "0x123::test::TOKEN" },
+            type: "transfer",
+          },
+        ],
+      });
+    });
+
+    test("toSuiAsset should map native coin correctly", () => {
+      expect(sdk.toSuiAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
+    });
+
+    test("suiCoinTypeToAsset should map tokens correctly", () => {
+      expect(sdk.toSuiAsset("0x123::test::TOKEN")).toEqual({
+        type: "token",
+        coinType: "0x123::test::TOKEN",
+      });
+    });
+  });
 });
