@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.22.0-nightly.5
+
+### Minor Changes
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
 ## 13.22.0-nightly.4
 
 ### Minor Changes

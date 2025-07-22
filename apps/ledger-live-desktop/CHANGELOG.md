@@ -1,5 +1,40 @@
 # ledger-live-desktop
 
+## 2.122.0-nightly.2
+
+### Minor Changes
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+- [#11021](https://github.com/LedgerHQ/ledger-live/pull/11021) [`e8e2d60`](https://github.com/LedgerHQ/ledger-live/commit/e8e2d60ada3e9508f416fe41e313acd9ff0ad1b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove grid accounts tool tip
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11025](https://github.com/LedgerHQ/ledger-live/pull/11025) [`85b6f2d`](https://github.com/LedgerHQ/ledger-live/commit/85b6f2d270f877ce899f013f77448f7e85233aab) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - edit account name on MAD already existing new account
+
+### Patch Changes
+
+- [#10948](https://github.com/LedgerHQ/ledger-live/pull/10948) [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Refactor useScanAccounts hook
+  stopPropagation on Checkbox's onChange
+- Updated dependencies [[`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b), [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e), [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4)]:
+  - @ledgerhq/live-common@34.42.0-nightly.2
+  - @ledgerhq/types-live@6.78.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.0
+  - @ledgerhq/cryptoassets@13.22.0-nightly.5
+  - @ledgerhq/coin-framework@5.7.0-nightly.1
+  - @ledgerhq/react-ui@0.34.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.7.2-nightly.2
+  - @ledgerhq/coin-bitcoin@0.17.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.3-nightly.1
+  - @ledgerhq/coin-evm@2.23.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.14-nightly.1
+  - @ledgerhq/domain-service@1.2.37-nightly.0
+  - @ledgerhq/live-countervalues@0.5.14-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.43-nightly.1
+  - @ledgerhq/live-nft@0.8.14-nightly.1
+  - @ledgerhq/live-nft-react@0.9.14-nightly.1
+  - @ledgerhq/live-wallet@0.11.5-nightly.2
+
 ## 2.121.1-nightly.1
 
 ### Patch Changes

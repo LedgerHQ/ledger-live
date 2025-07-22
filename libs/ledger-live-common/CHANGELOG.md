@@ -1,5 +1,58 @@
 # @ledgerhq/live-common
 
+## 34.42.0-nightly.2
+
+### Minor Changes
+
+- [#11006](https://github.com/LedgerHQ/ledger-live/pull/11006) [`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - map families in custom.exchange.swap
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+- [#10992](https://github.com/LedgerHQ/ledger-live/pull/10992) [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add CoinFmk setup function
+
+### Patch Changes
+
+- [#10948](https://github.com/LedgerHQ/ledger-live/pull/10948) [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Refactor useScanAccounts hook
+  stopPropagation on Checkbox's onChange
+- Updated dependencies [[`cc50885`](https://github.com/LedgerHQ/ledger-live/commit/cc508857db6743756dae3d8914b6563104f831d0), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/coin-solana@0.28.0-nightly.1
+  - @ledgerhq/cryptoassets@13.22.0-nightly.5
+  - @ledgerhq/coin-framework@5.7.0-nightly.1
+  - @ledgerhq/coin-algorand@0.9.14-nightly.1
+  - @ledgerhq/coin-aptos@2.5.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.17.1-nightly.1
+  - @ledgerhq/coin-cardano@0.9.1-nightly.1
+  - @ledgerhq/coin-casper@2.0.5-nightly.1
+  - @ledgerhq/coin-celo@1.1.12-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.3-nightly.1
+  - @ledgerhq/coin-evm@2.23.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.14-nightly.1
+  - @ledgerhq/coin-hedera@1.8.3-nightly.1
+  - @ledgerhq/coin-icon@0.11.1-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.14-nightly.1
+  - @ledgerhq/coin-mina@1.1.13-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.14-nightly.1
+  - @ledgerhq/coin-near@0.11.14-nightly.1
+  - @ledgerhq/coin-polkadot@6.3.2-nightly.1
+  - @ledgerhq/coin-stacks@0.8.14-nightly.1
+  - @ledgerhq/coin-stellar@5.3.2-nightly.1
+  - @ledgerhq/coin-sui@0.7.0-nightly.1
+  - @ledgerhq/coin-tezos@5.6.1-nightly.1
+  - @ledgerhq/coin-ton@0.13.3-nightly.1
+  - @ledgerhq/coin-tron@4.4.2-nightly.1
+  - @ledgerhq/coin-vechain@2.7.14-nightly.1
+  - @ledgerhq/coin-xrp@6.4.1-nightly.1
+  - @ledgerhq/device-core@0.5.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.12-nightly.0
+  - @ledgerhq/live-countervalues@0.5.14-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.43-nightly.1
+  - @ledgerhq/live-nft@0.8.14-nightly.1
+  - @ledgerhq/live-signer-evm@0.5.7-nightly.1
+  - @ledgerhq/live-signer-solana@0.4.2-nightly.1
+  - @ledgerhq/live-wallet@0.11.5-nightly.2
+  - @ledgerhq/hw-app-vet@0.5.10-nightly.5
+  - @ledgerhq/hw-app-celo@6.33.10-nightly.0
+
 ## 34.42.0-nightly.1
 
 ### Patch Changes

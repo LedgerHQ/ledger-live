@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.34.0-nightly.1
+
+### Patch Changes
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
 ## 0.34.0-nightly.0
 
 ### Minor Changes

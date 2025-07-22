@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.87.0-nightly.2
+
+### Minor Changes
+
+- [#10935](https://github.com/LedgerHQ/ledger-live/pull/10935) [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix reporting not sending currency
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/types-live@6.78.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.7.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.3-nightly.1
+  - @ledgerhq/coin-evm@2.23.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.14-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.14-nightly.1
+  - @ledgerhq/coin-stacks@0.8.14-nightly.1
+  - @ledgerhq/domain-service@1.2.37-nightly.0
+  - @ledgerhq/live-countervalues@0.5.14-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.43-nightly.1
+  - @ledgerhq/live-nft@0.8.14-nightly.1
+  - @ledgerhq/live-nft-react@0.9.14-nightly.1
+  - @ledgerhq/live-wallet@0.11.5-nightly.2
+
 ## 3.87.0-nightly.1
 
 ### Minor Changes

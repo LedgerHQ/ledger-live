@@ -1,5 +1,19 @@
 # @ledgerhq/coin-solana
 
+## 0.28.0-nightly.1
+
+### Minor Changes
+
+- [#11013](https://github.com/LedgerHQ/ledger-live/pull/11013) [`cc50885`](https://github.com/LedgerHQ/ledger-live/commit/cc508857db6743756dae3d8914b6563104f831d0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - bugfix(coin-solana): do not reject unknown SPL 2022 extensions
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/types-live@6.78.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.0
+  - @ledgerhq/cryptoassets@13.22.0-nightly.5
+  - @ledgerhq/coin-framework@5.7.0-nightly.1
+
 ## 0.27.3-nightly.0
 
 ### Patch Changes
