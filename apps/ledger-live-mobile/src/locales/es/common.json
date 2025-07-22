@@ -728,6 +728,11 @@
       "title" : "No es posible enviar aún desde subcuentas",
       "description" : "Esta característica se agregará en una etapa posterior debido a los cambios introducidos recientemente por la actualización Babylon."
     },
+    "UnavailableTezosOriginatedAccountSend" : {
+    "title": "Aún no es posible enviar desde subcuentas",
+    "description": "Esta función se añadirá posteriormente debido a cambios introducidos recientemente por la actualización de Terra Classic."
+    },
+
     "RecommendUndelegation" : {
       "title" : "Desdelega la cuenta antes de vaciarla"
     },
