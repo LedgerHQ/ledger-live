@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "2.5.2-nightly.1",
+  "version": "2.6.0-nightly.2",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
