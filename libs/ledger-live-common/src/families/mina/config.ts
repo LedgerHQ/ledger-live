@@ -6,8 +6,8 @@ const minaConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       infra: {
-        API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
-        API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/graphql",
+        API_MINA_ROSETTA_NODE: "https://hel1-mina-rosetta-api-mainnet.zondax.ch",
+        API_MINA_GRAPHQL_NODE: "https://hel1-mina-rosetta-api-mainnet.zondax.ch/graphql",
       },
     },
   },

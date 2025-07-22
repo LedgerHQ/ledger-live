@@ -521,6 +521,13 @@ export enum ScreenName {
   AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
   AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
   AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
+  // mina
+  MinaStakingValidator = "MinaStakingValidator",
+  MinaStakingSummary = "MinaStakingSummary",
+  MinaStakingSelectDevice = "MinaStakingSelectDevice",
+  MinaStakingConnectDevice = "MinaStakingConnectDevice",
+  MinaStakingValidationError = "MinaStakingValidationError",
+  MinaStakingValidationSuccess = "MinaStakingValidationSuccess",
 
   Newsfeed = "Newsfeed",
 
@@ -676,6 +683,8 @@ export enum NavigatorName {
   AptosUnstakingFlow = "AptosUnstakingFlow",
   AptosWithdrawingFlow = "AptosWithdrawingFlow",
   AptosRestakingFlow = "AptosRestakingFlow",
+  // MINA
+  MinaStakingFlow = "MinaStakingFlow",
 
   // Tab
   Main = "Main",
