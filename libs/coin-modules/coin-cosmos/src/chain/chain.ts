@@ -21,6 +21,7 @@ import CryptoOrg from "./CryptoOrg";
 import Xion from "./Xion";
 import Zenrock from "./Zenrock";
 import Babylon from "./Babylon";
+import Terraclassic from "./Terraclassic";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -93,6 +94,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "babylon":
         cosmosChainParams[currencyId] = new Babylon();
+        break;
+      case "Terraclassic":
+        cosmosChainParams[currencyId] = new Terraclassic();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);
