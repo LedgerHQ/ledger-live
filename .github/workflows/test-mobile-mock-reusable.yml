@@ -77,11 +77,8 @@ jobs:
       - name: Test Create
         run: |
           mkdir test-files
-          mkdir test-files2
           echo "This is a test file" > test-files/test.txt
           echo "This is a test file" > test-files/test2.txt
-          echo "Another String here" > test-files2/test.txt
-          echo "This is a test file" > test-files2/test2.txt
 
       - name: Upload Test
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
