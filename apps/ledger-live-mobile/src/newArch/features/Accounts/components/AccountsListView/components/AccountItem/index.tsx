@@ -20,7 +20,7 @@ const View: React.FC<ViewProps> = ({
   withPlaceholder,
   accountId,
 }) => (
-  <>
+  <Flex testID={`account-item-container-${accountId}`}>
     <Flex flex={1} rowGap={2} flexShrink={1} testID={`account-item-${accountId}`}>
       <Flex flexDirection="row" columnGap={8} alignItems="center" maxWidth="70%">
         <Text
@@ -65,7 +65,7 @@ const View: React.FC<ViewProps> = ({
         )}
       </Flex>
     )}
-  </>
+  </Flex>
 );
 
 const AccountItem: React.FC<AccountItemProps> = props => <View {...useAccountItemModel(props)} />;

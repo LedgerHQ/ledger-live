@@ -4,6 +4,7 @@ import CommonPage from "../common.page";
 export default class AccountsPage extends CommonPage {
   private baseLink = "accounts";
   private listTitle = "accounts-list-title";
+  private accountItemContainerRegExp = new RegExp("account-item-container-.*");
 
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
 
@@ -19,20 +20,10 @@ export default class AccountsPage extends CommonPage {
 
   @Step("Expect accounts number")
   async expectAccountsNumber(expected: number) {
-    const listEl = getElementsById(this.accountItemRegExp());
-    const attrs = await listEl.getAttributes();
+    const accountItemElements = getElementsById(this.accountItemContainerRegExp);
+    const attrs = await accountItemElements.getAttributes();
     if ("elements" in attrs) {
-      // Count unique account names to handle duplicates in view hierarchy
-      const uniqueLabels = new Set();
-      attrs.elements.forEach((element: { label?: string }) => {
-        if (element.label) {
-          // Extract the account name from the label (before the address part)
-          const accountName = element.label.split(" ")[0] + " " + element.label.split(" ")[1];
-          uniqueLabels.add(accountName);
-        }
-      });
-
-      jestExpect(uniqueLabels.size).toBe(expected);
+      jestExpect(attrs.elements.length).toBe(expected);
     } else {
       jestExpect(1).toBe(expected);
     }
