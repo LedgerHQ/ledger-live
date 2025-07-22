@@ -74,58 +74,6 @@ jobs:
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
     steps:
-      - name: Test Create
-        run: |
-          mkdir test-files
-          echo "This is a test file" > test-files/test.txt
-          echo "This is a test file" > test-files/test2.txt
-
-      - name: Upload Test
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
-        with:
-          key: test-files1${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          path: |
-            test-files/*
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
-
-      - run: cat /tmp/cache-path.txt
-        shell: bash
-
-      - run: rm -rf test-files test-files2
-        shell: bash
-
-      - name: Cache Test
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
-        with:
-          key: test-files1${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
-
-      - name: List Test Files
-        run: |
-          echo "Listing test files"
-          ls -la test-files
-          ls -la test-files2
-
-#      - name: Cache Test
-#        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
-#        with:
-#          path: |
-#            test-files/*
-#            test-files2/*
-#          key: test-files${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-#          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-#          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-#          bucket: ledger-live-cache
-#          endpoint: ${{ secrets.R2_ENDPOINT }}
-#          region: auto
 
       - uses: actions/checkout@v4
         with:
@@ -487,7 +435,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
@@ -516,9 +464,11 @@ jobs:
         if: steps.detox-avd.outputs.cache-hit != 'true'
         with:
           path: |
+            ~/.android/avd/*
+            ~/.android/adb*
             /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
             /usr/local/lib/android/sdk/emulator/*
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
