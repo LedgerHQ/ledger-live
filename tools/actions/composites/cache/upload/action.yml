@@ -30,37 +30,38 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Compressing files (Linux)
+    - name: Create tempfile
       shell: bash
-      if: runner.os == 'Linux'
+      id: create_tempfile
+      run: |
+        export FILE_LIST=$(mktemp /tmp/file-list.XXXXXX)
+        echo "Temporary file created at $FILE_LIST"
+        echo "file-list=$FILE_LIST" >> $GITHUB_OUTPUT
+        
+    - name: Compile file list
+      shell: bash
       run: |
         touch /tmp/cache-path.txt
-        
+
         echo "${{ inputs.path }}" | while IFS= read -r filePath; do
           if [ -d "$filePath" ] || [ -f "$filePath" ]; then
-              find $filePath -type f > /tmp/cache-path.txt
+              find $filePath -type f > ${{ steps.create_tempfile.outputs.file-list }}
           else
             echo "Warning: Path $filePath not found, skipping."
           fi
         done
-             
-        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
+
+    - name: Compressing files (Linux)
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program zstdmt
 
     - name: Compressing files (macOS)
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        touch /tmp/cache-path.txt
-        
-        echo "${{ inputs.path }}" | while IFS= read -r filePath; do
-          if [ -d "$filePath" ] || [ -f "$filePath" ]; then
-              find $filePath -type f > /tmp/cache-path.txt
-          else
-            echo "Warning: Path $filePath not found, skipping."
-          fi
-        done
-        
-        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
 
     - name: Uploading to S3
       shell: bash
@@ -79,4 +80,4 @@ runs:
       run: |
           echo "Cleaning up temporary files"
           rm -f /tmp/cache.tzst
-#          rm -f /tmp/cache-path.txt
+          rm -f ${{ steps.create_tempfile.outputs.file-list }}
