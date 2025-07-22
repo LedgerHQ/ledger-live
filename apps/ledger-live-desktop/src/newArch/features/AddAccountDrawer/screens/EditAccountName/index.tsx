@@ -21,6 +21,8 @@ interface Props {
   source: string;
 }
 
+const MAX_ACCOUNT_NAME_LENGTH = 50;
+
 const EditAccountName = ({ account, navigateBack, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -78,6 +80,7 @@ const EditAccountName = ({ account, navigateBack, source }: Props) => {
           style={{
             width: "100%",
           }}
+          maxLength={MAX_ACCOUNT_NAME_LENGTH}
         />
       </Flex>
       <Flex
