@@ -86,17 +86,26 @@ jobs:
       - name: Upload Test
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
         with:
-          key: test-files${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          key: test-files1${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          path: |
+            test-files/*
+            test-files2/*
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
 
+      - run: cat /tmp/cache-path.txt
+        shell: bash
+
+      - run: rm -rf test-files test-files2
+        shell: bash
+
       - name: Cache Test
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/r2-for-avd-storage
         with:
-          key: test-files${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
+          key: test-files1${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache

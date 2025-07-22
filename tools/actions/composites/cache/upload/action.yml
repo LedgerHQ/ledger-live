@@ -36,10 +36,11 @@ runs:
       run: |
         echo "Compressing files in ${{ inputs.path }}"
         touch /tmp/cache-path.txt
-        echo "${{ inputs.path }}" | tr -d '\n' | while IFS= read -r path; do
-          find "$path" -type f >> /tmp/cache-path.txt
+        echo "${{ inputs.path }}" | tr -d '\n' | while IFS= read -r filePath; do
+          echo "$filePath"
+          find "$filePath" -type f >> /tmp/cache-path.txt
         done
-        cat /tmp/cache-path.txt
+       
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Cat
@@ -71,5 +72,5 @@ runs:
       shell: bash
       run: |
           echo "Cleaning up temporary files"
-          rm -f /tmp/cache.tzst
-          rm -f /tmp/cache-path.txt
+#          rm -f /tmp/cache.tzst
+#          rm -f /tmp/cache-path.txt
