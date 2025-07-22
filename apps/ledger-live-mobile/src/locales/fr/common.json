@@ -728,6 +728,10 @@
       "title" : "Impossible d’envoyer depuis des sous-comptes pour l’instant",
       "description" : "Cette fonctionnalité sera ajoutée ultérieurement suite aux changements introduits par la mise à jour Babylon."
     },
+      "UnavailableTezosOriginatedAccountSend" : {
+      "title" : "Impossible d’envoyer depuis des sous-comptes pour l’instant",
+      "description" : "Cette fonctionnalité sera ajoutée ultérieurement suite aux changements introduits par la mise à jour Terra Classic."
+    },
     "RecommendUndelegation" : {
       "title" : "Arrêtez la délégation du compte avant de le vider."
     },
