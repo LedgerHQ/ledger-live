@@ -1,18 +1,7 @@
-import {
-  Account,
-  BlockhashWithExpiryBlockHeight,
-  DecodedTransferInstruction,
-  MessageCompiledInstruction,
-  PublicKey,
-  SystemInstruction,
-  SystemProgram,
-  TransactionInstruction,
-  VersionedMessage,
-  VersionedTransaction,
-} from "@solana/web3.js";
+import { Account, VersionedMessage } from "@solana/web3.js";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
-import { SolanaAccount, Transaction, TransferCommand } from "./types";
+import { SolanaAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { NotEnoughGas } from "@ledgerhq/errors";
@@ -33,6 +22,7 @@ jest.mock("./estimateMaxSpendable", () => {
 describe("testing prepareTransaction", () => {
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
         currency: { units: [{ magnitude: 2 }] },
         subAccounts: [
@@ -44,6 +34,7 @@ describe("testing prepareTransaction", () => {
         ],
       } as unknown as SolanaAccount,
       transaction({ kind: "token.transfer", subAccountId: "subAccountId" }),
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
         getAccountInfo: () => ({
           data: {
@@ -70,44 +61,16 @@ describe("testing prepareTransaction", () => {
 
   it("should return a new transaction from the raw transaction when user provide it", async () => {
     // Given
-    const solanaTransaction = {
-      message: {
-        staticAccountKeys: [SystemProgram.programId],
-        compiledInstructions: [
-          {
-            programIdIndex: 0,
-            data: "some random data",
-            accountKeyIndexes: [0],
-          },
-        ] as unknown as MessageCompiledInstruction[],
-        isAccountSigner: (_index: number) => true,
-        isAccountWritable: (_index: number) => true,
-      } as unknown as VersionedMessage,
-    } as VersionedTransaction;
-    const deserializeSpy = jest.spyOn(VersionedTransaction, "deserialize");
-    deserializeSpy.mockImplementationOnce(
-      (_serializedTransaction: Uint8Array) => solanaTransaction,
-    );
-
-    const sender = PublicKey.unique();
-    const recipient = PublicKey.unique();
-    const decodeTransferSpy = jest.spyOn(SystemInstruction, "decodeTransfer");
-    decodeTransferSpy.mockImplementationOnce(
-      (_instruction: TransactionInstruction) =>
-        ({
-          lamports: BigInt(1),
-          fromPubkey: sender,
-          toPubkey: recipient,
-        }) as DecodedTransferInstruction,
-    );
-
     const estimatedFees = 0.00005;
-    const rawTransaction = transaction({ raw: "any random value" });
+    const rawTransaction = transaction({
+      raw: "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDNzWs4isgmR+LEHY8ZcgBBLMnC4ckD1iuhSa2/Y+69I91oyGFaAZ/9w4srgx9KoqiHtPM6Vur7h4D6XVoSgrEhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALt5JNk+MAN8BXYrlkxMEL1C/sM3+ZFYwZw4eofBOKp4BAgIAAQwCAAAAgJaYAAAAAAA=",
+    });
     const chainAPI = api(estimatedFees);
     const getFeeForMessageSpy = jest.spyOn(chainAPI, "getFeeForMessage");
 
     // When
     const preparedTransaction = await prepareTransaction(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as SolanaAccount,
       rawTransaction,
       chainAPI,
@@ -116,40 +79,36 @@ describe("testing prepareTransaction", () => {
     // Then
     expect(preparedTransaction).not.toBe(rawTransaction);
 
-    expect(deserializeSpy).toHaveBeenCalledTimes(1);
-    expect(deserializeSpy).toHaveBeenCalledWith(Buffer.from("any random value", "base64"));
-
-    expect(decodeTransferSpy).toHaveBeenCalledTimes(1);
-    expect(decodeTransferSpy).toHaveBeenCalledWith({
-      data: Buffer.from("some random data"),
-      programId: SystemProgram.programId,
-      keys: [{ pubkey: SystemProgram.programId, isSigner: true, isWritable: true }],
-    });
-
     expect(getFeeForMessageSpy).toHaveBeenCalledTimes(1);
-    expect(getFeeForMessageSpy).toHaveBeenCalledWith(solanaTransaction.message);
 
-    expect(preparedTransaction.family).toEqual("solana");
-    expect(preparedTransaction.amount).toEqual(BigNumber(1));
-    expect(preparedTransaction.recipient).toEqual(recipient.toString());
-    expect(preparedTransaction.model.kind).toEqual("transfer");
-    expect(preparedTransaction.model.uiState).toEqual({});
-    expect(preparedTransaction.model.commandDescriptor!.fee).toEqual(estimatedFees);
-    expect(preparedTransaction.model.commandDescriptor!.warnings).toEqual({});
-    expect(preparedTransaction.model.commandDescriptor!.errors).toEqual({});
-
-    const transferCommand = preparedTransaction.model.commandDescriptor!.command as TransferCommand;
-    expect(transferCommand.kind).toEqual("transfer");
-    expect(transferCommand.amount).toEqual(1);
-    expect(transferCommand.sender).toEqual(sender.toString());
-    expect(transferCommand.recipient).toEqual(recipient.toString());
+    expect(preparedTransaction).toMatchObject({
+      raw: rawTransaction.raw,
+      family: "solana",
+      amount: BigNumber(0),
+      recipient: "",
+      model: {
+        kind: "raw",
+        uiState: {},
+        commandDescriptor: {
+          command: {
+            kind: "raw",
+            raw: rawTransaction.raw,
+          },
+          fee: estimatedFees,
+          warnings: {},
+          errors: {},
+        },
+      },
+    });
   });
 
   it("should return a new transaction when user does not provide a raw one", async () => {
     const nonRawTransaction = transaction();
     const preparedTransaction = await prepareTransaction(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as SolanaAccount,
       nonRawTransaction,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as ChainAPI,
     );
 
@@ -158,12 +117,13 @@ describe("testing prepareTransaction", () => {
 });
 
 function api(estimatedFees?: number) {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     getLatestBlockhash: () => {
       return Promise.resolve({
         blockhash: "blockhash",
         lastValidBlockHeight: 1,
-      } as BlockhashWithExpiryBlockHeight);
+      });
     },
 
     getFeeForMessage: (_message: VersionedMessage) => Promise.resolve(estimatedFees),
