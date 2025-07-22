@@ -36,7 +36,7 @@ runs:
       shell: bash
       continue-on-error: true
       run: |
-        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}
+        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }} --no-progress
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
