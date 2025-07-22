@@ -459,10 +459,6 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
 
-      - run: |
-          ls -alh /home/runner/.android/avd/
-          ls -alh /home/runner/.android/adb*
-
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-for-avd-storage
         if: steps.detox-avd.outputs.cache-hit != 'true'
