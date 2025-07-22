@@ -148,6 +148,66 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  terra_classic: {
+    type: "CryptoCurrency",
+    id: "terra_classic",
+    coinType: 330, // SLIP-44 for Terra
+    name: "Terra Classic",
+    managerAppName: "Terra",
+    ticker: "LUNC",
+    scheme: "terra_classic",
+    color: "#2E2D6A",
+    family: "terra",
+    units: [
+      {
+        name: "LUNC",
+        code: "LUNC",
+        magnitude: 6,
+      },
+      {
+        name: "microluna",
+        code: "uluna",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://finder.terra.money/classic/tx/$hash",
+        address: "https://finder.terra.money/classic/address/$address",
+      },
+    ],
+    keywords: ["lunc", "terra classic", "terra"],
+  },
+  terrausd_classic: {
+    type: "CryptoCurrency",
+    id: "terrausd_classic",
+    coinType: 330, // SLIP-44 for Terra
+    name: "TerraUSD Classic",
+    managerAppName: "Terra",
+    ticker: "USTC",
+    scheme: "terrausd_classic",
+    color: "#1D6BE3",
+    family: "terra",
+    units: [
+      {
+        name: "USTC",
+        code: "USTC",
+        magnitude: 6,
+      },
+      {
+        name: "microust",
+        code: "uusd",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://finder.terra.money/classic/tx/$hash",
+        address: "https://finder.terra.money/classic/address/$address",
+      },
+    ],
+    keywords: ["ustc", "terrausd classic", "terrausd"],
+  },  
   near: {
     type: "CryptoCurrency",
     id: "near",
