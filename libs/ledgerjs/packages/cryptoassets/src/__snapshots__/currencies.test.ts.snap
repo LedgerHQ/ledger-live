@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`all USDT are countervalue enabled 1`] = `
 [
@@ -13,5 +13,7 @@ exports[`all USDT are countervalue enabled 1`] = `
   "sui/coin/tether_usd_0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::coin",
   "ton/jetton/eqcxe6mutqjkfngfarotkot1lzbdiix1kcixrv7nw2id_sds",
   "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+  "terra_classic/ibc/386A4031D68DE6370B85F9FF7E89CEF8DE7CDE01CC193CBD87BD3ED60F6662CE",
+
 ]
 `;
