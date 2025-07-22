@@ -848,6 +848,10 @@
       "title": "Cannot send from subaccounts yet",
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon update."
     },
+    "UnavailableTezosOriginatedAccountSend": {
+   "title": "Unable to send from subaccounts yet",
+    "description": "This feature will be added later due to recent changes introduced by the Terra Classic upgrade."
+    },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
     },
