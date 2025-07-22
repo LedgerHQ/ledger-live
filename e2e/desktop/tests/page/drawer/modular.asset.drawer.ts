@@ -8,7 +8,7 @@ export class ModularAssetDrawer extends Drawer {
     "modular-asset-selection-container",
   );
   private searchInput = this.page.getByTestId(this.searchInputTestId);
-  private closeButton = this.page.getByTestId("mad-close-button");
+  private drawerCloseButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
   private assetItemByTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
@@ -22,7 +22,7 @@ export class ModularAssetDrawer extends Drawer {
   async validateDrawerItems() {
     await this.modularAssetSelectorContainer.waitFor();
     await this.searchInput.waitFor();
-    await this.closeButton.waitFor();
+    await this.drawerCloseButton.waitFor();
     await this.assetListContainer.waitFor();
   }
 

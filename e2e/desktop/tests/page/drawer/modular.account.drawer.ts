@@ -6,7 +6,6 @@ export class ModularAccountDrawer extends Drawer {
   private drawerContent = this.page.getByTestId("modular-account-selection-container");
   private accountRowByName = (accountName: string) =>
     this.page.locator("[data-testid^='account-row-']").filter({ hasText: accountName });
-  private addAccountButton = this.page.getByTestId("add-account-button");
 
   @step("Validate modular account drawer is visible")
   async isModularAccountDrawerVisible(): Promise<boolean> {
@@ -23,6 +22,6 @@ export class ModularAccountDrawer extends Drawer {
 
   @step("Click on add and existing account button")
   async clickOnAddAndExistingAccountButton() {
-    await this.addAccountButton.click();
+    await this.clickOnAddAccountButton();
   }
 }
