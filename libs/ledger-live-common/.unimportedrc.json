@@ -369,6 +369,7 @@
     "src/market/utils/types.ts",
     "src/modularDrawer/enums.ts",
     "src/modularDrawer/utils/index.ts",
+    "src/modularDrawer/utils/haveOneCommonProvider.ts",
     "src/modularDrawer/useModularDrawerVisibility.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",

@@ -34,6 +34,7 @@ type Props = {
     isLoading: boolean;
     pinCode: string | null;
   };
+  onShowModularDrawer?: () => void;
 };
 
 const StepFlow = ({
@@ -46,6 +47,7 @@ const StepFlow = ({
   onQrCodeScanned,
   qrProcess,
   onCreateKey,
+  onShowModularDrawer,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
@@ -71,9 +73,10 @@ const StepFlow = ({
             <SelectAddAccountMethod
               doesNotHaveAccount={doesNotHaveAccount}
               currency={currency}
-              setWalletSyncDrawerVisible={
+              onShowWalletSyncDrawer={
                 trustchain?.rootId ? navigateToQrCodeMethod : navigateToChooseSyncMethod
               }
+              onShowModularDrawer={onShowModularDrawer}
             />
           </>
         );
