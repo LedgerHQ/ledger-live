@@ -1,6 +1,6 @@
 import CosmosBase from "./cosmosBase";
 
-class Axelar extends CosmosBase {
+class Terraclassic extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   prefix: string;
@@ -12,8 +12,8 @@ class Axelar extends CosmosBase {
     super();
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/9603789661085-zd?support=true";
-    this.unbondingPeriod = 7;
-    this.prefix = "uluna";
+    this.unbondingPeriod = 21;
+    this.prefix = "terra";
     this.validatorPrefix = `${this.prefix}valoper`;
   }
 }
