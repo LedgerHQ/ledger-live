@@ -1,18 +1,18 @@
-import { useCallback } from "react";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { Account } from "@ledgerhq/types-live";
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { CloseButton } from "../components/CloseButton";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { Account } from "@ledgerhq/types-live";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData } from "~/renderer/modals/types";
+import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
+import { CloseButton } from "../components/CloseButton";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
