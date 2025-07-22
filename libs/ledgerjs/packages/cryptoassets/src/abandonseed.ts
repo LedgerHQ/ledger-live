@@ -14,6 +14,7 @@ const EVM_RAND_ADDRESS = "0x123000000000000000000000000000000000dEaD";
  */
 const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
+  terra_classic: "terra1sk06e3dyexuq4shw77y3dsv480xv42mq73anxu",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
   aptos: EVM_DEAD_ADDRESS,
