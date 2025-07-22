@@ -15,7 +15,7 @@ const madDir = "./src/newArch/features/ModularDrawer";
 const aaDir = "./src/newArch/features/AddAccountDrawer";
 const detailedAccountsMockDir = `${featuresDir}/__mocks__/accounts.mock.ts`;
 const bridge = `${aaDir}/__mocks__/bridge.mock.tsx`;
-const selectAssetFlowHookMockDir = `${madDir}/__mocks__/useSelectAssetFlow.mock.ts`;
+const selectAssetFlowHookMockDir = `${featuresDir}/__mocks__/useSelectAssetFlow.mock.ts`;
 const useGroupedCurrenciesByProvider = `${madDir}/__mocks__/useGroupedCurrenciesByProvider.mock.ts`;
 const useConnectAppAction = `${madDir}/__mocks__/useConnectAppAction.mock.ts`;
 
@@ -59,6 +59,7 @@ const config: StorybookConfig = {
 
           "@ledgerhq/live-common/deposit/index": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/deposit/helper": resolve(selectAssetFlowHookMockDir),
+          "@ledgerhq/live-common/deposit/type": resolve(selectAssetFlowHookMockDir),
           "@ledgerhq/live-common/currencies/index": resolve(selectAssetFlowHookMockDir),
 
           "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook": resolve(
