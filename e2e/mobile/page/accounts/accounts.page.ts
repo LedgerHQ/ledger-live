@@ -1,10 +1,10 @@
+import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 
 export default class AccountsPage extends CommonPage {
   private baseLink = "accounts";
   private listTitle = "accounts-list-title";
-  private accountItemContainerRegExp = new RegExp("account-item-container-.*");
 
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
 
@@ -19,14 +19,26 @@ export default class AccountsPage extends CommonPage {
   }
 
   @Step("Expect accounts number")
-  async expectAccountsNumber(expected: number) {
-    const accountItemElements = getElementsById(this.accountItemContainerRegExp);
-    const attrs = await accountItemElements.getAttributes();
-    if ("elements" in attrs) {
-      jestExpect(attrs.elements.length).toBe(expected);
-    } else {
-      jestExpect(1).toBe(expected);
+  async expectAccountsNumber(expected: number, testDataJson?: string) {
+    let expectedAccountIds: string[] = [];
+
+    if (testDataJson) {
+      try {
+        const testData = JSON.parse(testDataJson);
+        expectedAccountIds = testData.accounts.map((account: { id: string }) => account.id);
+      } catch (error) {
+        log.error("Failed to parse test data JSON:", error);
+      }
     }
+
+    let foundAccounts = 0;
+
+    for (const accountId of expectedAccountIds) {
+      const element = getElementById(`account-item-${accountId}`);
+      await detoxExpect(element).toBeVisible();
+      foundAccounts++;
+    }
+    jestExpect(foundAccounts).toBe(expected);
   }
 
   @Step("Expect no accounts screen")
