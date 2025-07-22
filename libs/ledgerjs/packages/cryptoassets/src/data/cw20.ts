@@ -1,11 +1,9 @@
 export type CW20Token  = [
-  string, // id
+  string, // token identifier
   string, // ticker
   string, // name
-  string, // contractAddress
+  string, // contract address
   number, // decimals
-  boolean?, // delisted
-  string?, // live signature
 ];
 
 import tokens from "./cw20.json";
