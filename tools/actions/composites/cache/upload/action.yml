@@ -42,17 +42,16 @@ runs:
              
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
-    - name: Cat
-      shell: bash
-      run: |
-        cat /tmp/cache-path.txt
-
     - name: Compressing files (macOS)
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        echo "Compressing files in ${{ inputs.path }}"
-        echo "${{ inputs.path }}" > /tmp/cache-path.txt
+        touch /tmp/cache-path.txt
+        
+        echo "${{ inputs.path }}" | while IFS= read -r filePath; do
+          find $filePath -type f > /tmp/cache-path.txt
+        done
+        
         gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T /tmp/cache-path.txt
 
     - name: Uploading to S3
@@ -71,5 +70,5 @@ runs:
       shell: bash
       run: |
           echo "Cleaning up temporary files"
-#          rm -f /tmp/cache.tzst
+          rm -f /tmp/cache.tzst
 #          rm -f /tmp/cache-path.txt
