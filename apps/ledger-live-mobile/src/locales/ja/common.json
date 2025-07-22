@@ -728,6 +728,10 @@
       "title" : "まだサブアカウントから送金することはできません。",
       "description" : "この機能は、最近のBabylonアップデートで導入された変更のため、後から追加される予定です。"
     },
+    "UnavailableTezosOriginatedAccountSend" : {
+   "title": "サブアカウントからの送信はまだ利用できません",
+    "description": "この機能は、Terra Classic アップグレードによる最近の変更により、後で追加される予定です。"
+    },
     "RecommendUndelegation" : {
       "title" : "アカウントを空にする前に、デリゲートを解除してください。"
     },
