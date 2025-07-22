@@ -41,7 +41,7 @@ async function azureSign(filePath) {
     filePath,
   ];
 
-  await execa("azuresigntool", args, { stdio: "inherit" });
+  // await execa("azuresigntool", args, { stdio: "inherit" });
 }
 
 async function signWindows(context) {
