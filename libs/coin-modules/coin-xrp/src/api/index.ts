@@ -1,5 +1,7 @@
-import type {
+import {
   Api,
+  Block,
+  BlockInfo,
   FeeEstimation,
   Operation,
   Pagination,
@@ -35,6 +37,12 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     listOperations: operations,
     validateIntent: getTransactionStatus,
     getAccountInfo,
+    getBlock(_height): Promise<Block<XrpAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 
