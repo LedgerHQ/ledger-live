@@ -51,6 +51,10 @@ runs:
           fi
         done
 
+    - shell: bash
+      run: |
+        cat ${{ steps.create_tempfile.outputs.file-list }}
+
     - name: Compressing files (Linux)
       shell: bash
       if: runner.os == 'Linux'

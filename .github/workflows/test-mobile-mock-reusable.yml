@@ -474,6 +474,9 @@ jobs:
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
 
+      - run: |
+          ls -alh /home/runner/.android/
+
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
