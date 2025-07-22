@@ -34,13 +34,11 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        echo "Compressing files in ${{ inputs.path }}"
-        touch /tmp/cache-path.txt
-        echo "${{ inputs.path }}" | tr -d '\n' | while IFS= read -r filePath; do
-          echo "$filePath"
-          find "$filePath" -type f >> /tmp/cache-path.txt
+        # Check if inputs.path is a single file path or a newline-delimited list
+        echo "${{ inputs.path }}" | while IFS= read -r filePath; do
+          echo "Processing: $filePath"
         done
-       
+             
         /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from /tmp/cache-path.txt --use-compress-program zstdmt
 
     - name: Cat
