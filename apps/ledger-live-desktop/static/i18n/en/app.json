@@ -7307,6 +7307,15 @@
       "addAccountSelection": "Choose account to add funds",
       "addAccountSelectionPtxFlow": "Select account"
     },
+    "editAccountName": {
+      "title": "Edit account name",
+      "input": {
+        "name": "Name"
+      },
+      "cta": {
+        "save": "Save"
+      }
+    },
     "fundAccount": {
       "receive": "Receive",
       "receiveDescription": "Receive crypto from another wallet",

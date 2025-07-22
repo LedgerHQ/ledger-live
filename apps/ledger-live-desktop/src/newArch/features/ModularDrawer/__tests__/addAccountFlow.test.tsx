@@ -1,22 +1,22 @@
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import React from "react";
+import { act } from "react-dom/test-utils";
+import { Provider } from "react-redux";
+import { render, screen, userEvent } from "tests/testSetup";
+import { formatAddress } from "~/newArch/utils/formatAddress";
+import { openModal } from "~/renderer/actions/modals";
+import { track, trackPage } from "~/renderer/analytics/segment";
+import createStore from "~/renderer/createStore";
+import { State } from "~/renderer/reducers";
+import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
   hederaCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { ARB_ACCOUNT, BTC_ACCOUNT } from "../__mocks__/accounts.mock";
-import BigNumber from "bignumber.js";
 import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
-import { Provider } from "react-redux";
-import createStore from "~/renderer/createStore";
-import { userEvent, render, screen } from "tests/testSetup";
-import { Account } from "@ledgerhq/types-live";
-import { act } from "react-dom/test-utils";
-import { State } from "~/renderer/reducers";
-import { openModal } from "~/renderer/actions/modals";
-import { track, trackPage } from "~/renderer/analytics/segment";
 import { mockDomMeasurements } from "./shared";
-import { formatAddress } from "~/newArch/utils/formatAddress";
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -36,23 +36,25 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   }),
 }));
 
-let triggerNext: (account: Account) => void = () => null;
+let triggerNext: (accounts: Account[]) => void = () => null;
 let triggerComplete: () => void = () => null;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
   getCurrencyBridge: () => ({
     scanAccounts: () => ({
-      subscribe: ({
-        next,
-        complete,
-      }: {
-        next: ({ account }: { account: Account }) => void;
-        complete: () => void;
-      }) => {
-        triggerNext = account => next({ account });
-        triggerComplete = () => complete();
-      },
+      pipe: () => ({
+        subscribe: ({
+          next,
+          complete,
+        }: {
+          next: (accounts: Account[]) => void;
+          complete: () => void;
+        }) => {
+          triggerNext = accounts => next(accounts);
+          triggerComplete = () => complete();
+        },
+      }),
     }),
     preload: () => true,
     hydrate: () => true,
@@ -60,7 +62,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
-  await Promise.all(accounts.map(account => act(() => triggerNext(account))));
+  await Promise.all(accounts.map((_, i) => act(() => triggerNext(accounts.slice(0, i + 1)))));
   await act(() => triggerComplete());
 };
 
@@ -253,9 +255,6 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.queryByText(/we found 1 account/i)).not.toBeInTheDocument();
 
     const confirm = screen.getByRole("button", { name: "Confirm" });
-    expect(confirm).toBeDisabled();
-
-    await userEvent.click(screen.getByRole("checkbox"));
     expect(confirm).not.toBeDisabled();
 
     await userEvent.click(confirm);
@@ -283,6 +282,39 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
   });
 
+  it("should show both existing and new accounts and flow to edit account name", async () => {
+    const OLD_NAME = "Arbitrum 2";
+    const NEW_NAME = "My Edited Account";
+
+    setup(arbitrumCurrency);
+
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+
+    expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("checkbox", { checked: false }));
+    const confirm = screen.getByRole("button", { name: "Confirm" });
+    await userEvent.click(confirm);
+    expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
+
+    expect(screen.getAllByText(OLD_NAME).length).toEqual(2);
+
+    await userEvent.click(screen.getAllByRole("button", { name: /Edit account item/i })[0]);
+
+    expect(screen.getByText(/Edit account name/i)).toBeInTheDocument();
+
+    const input = screen.getByRole("textbox", { name: "account name" });
+    expect(input).toHaveValue(OLD_NAME);
+    await userEvent.clear(input);
+    await userEvent.type(input, NEW_NAME);
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
+    expect(screen.getAllByText(OLD_NAME).length).toEqual(1);
+  });
+
   it("should error on already imported empty account", async () => {
     setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
 
@@ -294,6 +326,27 @@ describe("ModularDrawerAddAccountFlowManager", () => {
       ),
     ).toBeInTheDocument();
     expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
+  });
+
+  it("should allow name edit on already imported empty account", async () => {
+    const OLD_NAME = "Arbitrum 2";
+    const NEW_NAME = "My Edited Account";
+
+    setup(arbitrumCurrency, { accounts: [ARB_ACCOUNT, NEW_ARB_ACCOUNT] } as State);
+
+    await mockScanAccountsSubscription([ARB_ACCOUNT, NEW_ARB_ACCOUNT]);
+    await userEvent.click(screen.getByRole("button", { name: /Edit account item/i }));
+
+    expect(screen.getByText(/Edit account name/i)).toBeInTheDocument();
+
+    const input = screen.getByRole("textbox", { name: "account name" });
+    expect(input).toHaveValue(OLD_NAME);
+    await userEvent.clear(input);
+    await userEvent.type(input, NEW_NAME);
+
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(screen.getByText(NEW_NAME)).toBeInTheDocument();
   });
 
   it("should error on a Hedera account with no associated accounts", async () => {

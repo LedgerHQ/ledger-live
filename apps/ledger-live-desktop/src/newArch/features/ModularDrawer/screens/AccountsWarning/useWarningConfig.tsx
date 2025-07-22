@@ -15,6 +15,7 @@ import { openURL } from "~/renderer/linking";
 
 export const useWarningConfig = (
   currency: CryptoCurrency,
+  navigateToEditAccountName: (account: Account) => void,
   navigateToFundAccount: (account: Account) => void,
   emptyAccount?: Account,
 ) => {
@@ -50,13 +51,18 @@ export const useWarningConfig = (
     description: t("modularAssetDrawer.scanAccounts.warning.description", {
       account: emptyAccountName,
     }),
-    accountRow: formattedAccount ? (
-      <AccountItem
-        account={formattedAccount}
-        onClick={() => handleAccountClick(formattedAccount.id)}
-        backgroundColor={colors.opacityDefault.c05}
-      />
-    ) : null,
+    accountRow:
+      formattedAccount && emptyAccount ? (
+        <AccountItem
+          account={formattedAccount}
+          onClick={() => handleAccountClick(formattedAccount.id)}
+          backgroundColor={colors.opacityDefault.c05}
+          rightElement={{
+            type: "edit",
+            onClick: () => navigateToEditAccountName(emptyAccount),
+          }}
+        />
+      ) : null,
     primaryAction: {
       text: t("modularAssetDrawer.scanAccounts.warning.cta"),
       onClick: handleFundAccount,
