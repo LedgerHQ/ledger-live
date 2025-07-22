@@ -22,7 +22,17 @@ export default class AccountsPage extends CommonPage {
     const listEl = getElementsById(this.accountItemRegExp());
     const attrs = await listEl.getAttributes();
     if ("elements" in attrs) {
-      jestExpect(attrs.elements.length).toBe(expected);
+      // Count unique account names to handle duplicates in view hierarchy
+      const uniqueLabels = new Set();
+      attrs.elements.forEach((element: { label?: string }) => {
+        if (element.label) {
+          // Extract the account name from the label (before the address part)
+          const accountName = element.label.split(" ")[0] + " " + element.label.split(" ")[1];
+          uniqueLabels.add(accountName);
+        }
+      });
+
+      jestExpect(uniqueLabels.size).toBe(expected);
     } else {
       jestExpect(1).toBe(expected);
     }

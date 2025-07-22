@@ -394,7 +394,8 @@ export function runSwapWithSendMaxTest(
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await checkSwapInfosOnDeviceVerificationStep(swap, selectedProvider, amountToSend);
 
-      await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
+      await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });
