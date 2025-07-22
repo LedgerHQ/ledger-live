@@ -26,9 +26,11 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError } from "@ledgerhq/errors";
+import { HwTransportError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
+import { isPeerRemovedPairingError } from "../errors";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 export const tracer = new LocalTracer("live-dmk-tracer", {
   function: "DeviceManagementKitTransport",
@@ -162,10 +164,20 @@ export class DeviceManagementKitTransport extends Transport {
           tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
 
           await getDeviceManagementKit().close();
-          const sessionId = await getDeviceManagementKit().connect({
-            device: found,
-            sessionRefresherOptions: { isRefresherDisabled: true },
-          });
+          const sessionId = await getDeviceManagementKit()
+            .connect({
+              device: found,
+              sessionRefresherOptions: { isRefresherDisabled: true },
+            })
+            .catch(error => {
+              if (isPeerRemovedPairingError(error)) {
+                throw new PeerRemovedPairing(undefined, {
+                  productName: getDeviceModel(dmkToLedgerDeviceIdMap[found.deviceModel.model])
+                    ?.productName,
+                });
+              }
+              throw error;
+            });
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
 
           activeDeviceSessionSubject.next({ sessionId, transport });
@@ -178,7 +190,7 @@ export class DeviceManagementKitTransport extends Transport {
             getDeviceManagementKit().stopDiscovering();
 
             tracer.trace("[DMKTransport] [open2] error", error);
-            if (error instanceof OpeningConnectionError) {
+            if (error instanceof PeerRemovedPairing || error instanceof OpeningConnectionError) {
               return throwError(() => error);
             }
 

@@ -4,6 +4,7 @@ import {
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
+import { PeerRemovedPairingError } from "@ledgerhq/device-transport-kit-react-native-ble";
 
 export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
 
@@ -17,6 +18,16 @@ export const isiOSPeerRemovedPairingError = (error: any): boolean => {
     "reason" in error.originalError &&
     error.originalError.reason === "Peer removed pairing information"
   );
+};
+
+export const isPeerRemovedPairingError = (error: unknown): boolean => {
+  if (error instanceof PeerRemovedPairingError) {
+    return true;
+  }
+  if (isiOSPeerRemovedPairingError(error)) {
+    return true;
+  }
+  return false;
 };
 
 export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean => {
