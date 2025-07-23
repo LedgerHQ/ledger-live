@@ -108,6 +108,29 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(ethereumBalance).toBeVisible();
     const usdBalance = screen.getByText(/\$65,081.79/i);
     expect(usdBalance).toBeVisible();
+
+    const apyTags = screen.queryAllByText(/% APY/i);
+    expect(apyTags).toHaveLength(0);
+  });
+
+  it("should display APY tag at assetSelection step", () => {
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{
+          assets: {
+            leftElement: "apy",
+          },
+        }}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    const apyTag = screen.getAllByText(/% APY/i)[0];
+    expect(apyTag).toBeVisible();
   });
 
   it("should not display balance on the right at assetSelection step when enableModularization is false ", () => {
