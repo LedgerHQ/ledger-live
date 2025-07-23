@@ -11,8 +11,9 @@ class Balance extends PureComponent<{
   render() {
     const { unit, balance, disableRounding } = this.props;
     return (
-      <Box flex="30%" justifyContent="center" fontSize={4}>
+      <Box flex="30%" horizontal justifyContent="flex-end" fontSize={4}>
         <FormattedVal
+          inline
           alwaysShowSign={false}
           animateTicker={false}
           ellipsis

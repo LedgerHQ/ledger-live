@@ -18,9 +18,10 @@ export default function Countervalue({ account, range, currency }: Props) {
   const balanceEnd = histo.history[histo.history.length - 1].value;
   const placeholder = <PlaceholderLine width={16} height={2} />;
   return (
-    <Box flex="20%">
+    <Box flex="20%" horizontal justifyContent="flex-end">
       {histo.countervalueAvailable ? (
         <CounterValue
+          inline
           currency={currency}
           value={balanceEnd}
           animateTicker={false}
