@@ -40,6 +40,7 @@ on:
           - Mocked
           - E2E - Android Only
           - E2E - iOS & Android
+          - E2E - iOS Only
         default: Mocked
         type: choice
       enable_broadcast:
@@ -90,14 +91,14 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
 
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
-    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    runs-on: [ "${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64 ]
     if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -112,8 +113,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
@@ -135,6 +136,18 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Boot iOS Simulator in Background
+        run: |
+          (
+            UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
+            echo "🛫 Booting simulator with UDID: $UDID"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID"
+            echo "✅ Simulator $UDID is now fully booted"
+          ) &
+        shell: bash
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: aws
@@ -272,9 +285,9 @@ jobs:
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'E2E - Android Only' }}
-    needs: [detox-tests-ios]
+    needs: [ detox-tests-ios ]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -320,7 +333,8 @@ jobs:
 
   detox-tests-android:
     name: "Android Detox"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    if: ${{ !cancelled() && inputs.tests_type != 'E2E - iOS Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -342,8 +356,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
@@ -496,13 +510,13 @@ jobs:
 
   allure-report-android:
     name: "Android Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
-    needs: [detox-tests-android]
+    needs: [ detox-tests-android ]
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -544,7 +558,7 @@ jobs:
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     strategy:
       matrix:
         platform:
@@ -560,7 +574,7 @@ jobs:
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
       TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [detox-tests-android, detox-tests-ios]
+    needs: [ detox-tests-android, detox-tests-ios ]
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@v4
@@ -611,7 +625,7 @@ jobs:
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
-    needs: [allure-report-android, allure-report-ios]
+    needs: [ allure-report-android, allure-report-ios ]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}

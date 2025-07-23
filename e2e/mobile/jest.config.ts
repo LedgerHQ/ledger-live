@@ -53,6 +53,17 @@ const config: Config = {
   reporters: [
     "detox/runners/jest/reporter",
     ["jest-allure2-reporter", jestAllure2ReporterOptions as Record<string, unknown>],
+    [
+      "jest-junit",
+      {
+        outputDirectory: "./artifacts",
+        outputName: process.env.JUNIT_OUTPUT_NAME || "e2e-test-results.xml",
+        classNameTemplate: "{classname}",
+        titleTemplate: "{title}",
+        ancestorSeparator: " › ",
+        usePathForSuiteName: true,
+      },
+    ],
   ],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",

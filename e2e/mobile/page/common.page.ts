@@ -1,7 +1,9 @@
-import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
+import { deleteSpeculos, launchSpeculos } from "../utils/speculosUtils";
+import { startProxy } from "../bridge/proxy";
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { setEnv } from "@ledgerhq/live-env";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 
@@ -14,9 +16,9 @@ export default class CommonPage {
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
-  deviceRowRegex = /device-item-.*/;
+  deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
+  deviceItemRegex = /device-item-.*/;
   parentCurrencyIcon = "parent-currency-icon";
-
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
   backButton = () => getElementById("navigation-header-back-button");
@@ -103,25 +105,41 @@ export default class CommonPage {
   async addSpeculos(nanoApp: string) {
     unregisterAllTransportModules();
     const proxyPort = await findFreePort();
-    const speculosPort = await launchSpeculos(nanoApp);
+    const device = await launchSpeculos(nanoApp);
     const speculosAddress = process.env.SPECULOS_ADDRESS;
-    await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
-    return speculosPort;
+    const proxyAddress = await startProxy(proxyPort, speculosAddress, device.port);
+    await addKnownSpeculos(proxyAddress);
+    process.env.DEVICE_PROXY_URL = `ws://${proxyAddress}`;
+    CLI.registerSpeculosTransport(device.port.toString(), speculosAddress);
+    return device.port;
   }
 
-  async removeSpeculos(apiPort?: number) {
-    const proxyPort = await deleteSpeculos(apiPort);
+  async addRegisterSpeculos(speculosPort: number, proxyPort: number) {
+    unregisterAllTransportModules();
+    const speculosAddress = process.env.SPECULOS_ADDRESS;
+    const proxyAddress = await startProxy(proxyPort, speculosAddress, speculosPort);
+    await addKnownSpeculos(proxyAddress);
+    process.env.DEVICE_PROXY_URL = `ws://${proxyAddress}`;
+    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
+    setEnv("SPECULOS_API_PORT", speculosPort);
+  }
+
+  async removeSpeculos(apiPortOrRunId?: number | string) {
+    const proxyPort = await deleteSpeculos(apiPortOrRunId);
     proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
   }
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
     if (isIos()) await device.disableSynchronization();
-    await waitForElementById(this.deviceRowRegex);
-    await tapById(this.deviceRowRegex, index);
+    const proxyUrl = process.env.DEVICE_PROXY_URL;
+    if (proxyUrl) {
+      const deviceId = this.deviceItem(`httpdebug|${proxyUrl}`);
+      await waitForElementById(deviceId);
+      await tapById(deviceId);
+    } else {
+      await tapById(this.deviceItemRegex, index);
+    }
   }
 
   @Step("Tap proceed button")
