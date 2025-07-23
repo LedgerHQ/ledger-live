@@ -109,14 +109,14 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 2`] = `
       "extra": {},
       "fee": "365180000000000000",
       "hash": "0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10",
-      "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho-0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10-IN",
+      "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho-0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10-OUT",
       "recipients": [
-        "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
+        "0x0fe6688548f0C303932bB197B0A96034f1d74dba",
       ],
       "senders": [
-        "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
+        "0xCF130b42Ae31C4931298B4B1c0F1D974B8732957",
       ],
-      "type": "IN",
+      "type": "OUT",
       "value": "10000000000000000000",
     },
   ],

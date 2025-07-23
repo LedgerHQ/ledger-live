@@ -1,8 +1,7 @@
-import { Transaction as VeChainThorTransaction } from "thor-devkit";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 
-import { Transaction } from "../types";
+import { Transaction, VechainSDKTransaction } from "../types";
 import { submit } from "../network";
 
 /**
@@ -11,10 +10,10 @@ import { submit } from "../network";
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { signature, operation, rawData },
 }) => {
-  const transaction = new VeChainThorTransaction(
-    (rawData as unknown as VeChainThorTransaction).body,
+  const transaction = VechainSDKTransaction.of(
+    (rawData as unknown as VechainSDKTransaction).body,
+    Buffer.from(signature, "hex"),
   );
-  transaction.signature = Buffer.from(signature, "hex");
   const hash = await submit(transaction);
 
   return patchOperationWithHash(operation, hash);
