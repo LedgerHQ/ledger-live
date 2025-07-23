@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { Base } from "~/renderer/components/Button";
+
 import Text from "~/renderer/components/Text";
 const Tab = styled(Base)<{
   active: boolean;
