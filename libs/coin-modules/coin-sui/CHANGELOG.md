@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.7.0-nightly.3
+
+### Minor Changes
+
+- [#11041](https://github.com/LedgerHQ/ledger-live/pull/11041) [`8e60ac2`](https://github.com/LedgerHQ/ledger-live/commit/8e60ac2fa6b6152c1665e9e43b7e33d0774daeb2) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Remove height pagination for alpaca
+
 ## 0.7.0-nightly.2
 
 ### Minor Changes

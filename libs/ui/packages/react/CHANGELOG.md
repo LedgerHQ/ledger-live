@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.34.0-nightly.2
+
+### Minor Changes
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
 ## 0.34.0-nightly.1
 
 ### Patch Changes

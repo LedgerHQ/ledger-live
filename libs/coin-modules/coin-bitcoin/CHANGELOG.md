@@ -1,5 +1,11 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.18.0-nightly.3
+
+### Minor Changes
+
+- [#11020](https://github.com/LedgerHQ/ledger-live/pull/11020) [`6ff7f97`](https://github.com/LedgerHQ/ledger-live/commit/6ff7f9750c4cfdf7706ddcdfb16ed6dc78172fb6) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: utxo cleanup logic more robust when handling txs with multiple utxos with different addresses
+
 ## 0.17.1-nightly.2
 
 ### Patch Changes

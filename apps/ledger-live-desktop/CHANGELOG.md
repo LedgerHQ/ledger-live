@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.122.0-nightly.4
+
+### Minor Changes
+
+- [#10983](https://github.com/LedgerHQ/ledger-live/pull/10983) [`22121f5`](https://github.com/LedgerHQ/ledger-live/commit/22121f537fe1b01f2014f96db0cdc7fc7bcfd82b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - [LLD] Post-Onboarding Screen Does not Scroll - Buttons Hidden depending on Screen Size and LL Language
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
+- [#11044](https://github.com/LedgerHQ/ledger-live/pull/11044) [`a726911`](https://github.com/LedgerHQ/ledger-live/commit/a7269118c85a7866e2c16348cb857650e8741570) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add max character limit to LLD edit name
+
+### Patch Changes
+
+- [#11031](https://github.com/LedgerHQ/ledger-live/pull/11031) [`bcaed1a`](https://github.com/LedgerHQ/ledger-live/commit/bcaed1a2f0eb8024aefd71992bcd7e17fc815ef8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Extract Add Account Drawer into its own folder
+
+- Updated dependencies [[`6ff7f97`](https://github.com/LedgerHQ/ledger-live/commit/6ff7f9750c4cfdf7706ddcdfb16ed6dc78172fb6), [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95), [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e)]:
+  - @ledgerhq/coin-bitcoin@0.18.0-nightly.3
+  - @ledgerhq/coin-evm@2.24.0-nightly.3
+  - @ledgerhq/react-ui@0.34.0-nightly.2
+  - @ledgerhq/live-common@34.42.0-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.7.2-nightly.4
+
 ## 2.122.0-nightly.3
 
 ### Minor Changes

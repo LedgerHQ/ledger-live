@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 34.42.0-nightly.4
+
+### Minor Changes
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
+### Patch Changes
+
+- Updated dependencies [[`6ff7f97`](https://github.com/LedgerHQ/ledger-live/commit/6ff7f9750c4cfdf7706ddcdfb16ed6dc78172fb6), [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`8e60ac2`](https://github.com/LedgerHQ/ledger-live/commit/8e60ac2fa6b6152c1665e9e43b7e33d0774daeb2), [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e)]:
+  - @ledgerhq/coin-bitcoin@0.18.0-nightly.3
+  - @ledgerhq/coin-evm@2.24.0-nightly.3
+  - @ledgerhq/coin-sui@0.7.0-nightly.3
+  - @ledgerhq/hw-app-exchange@0.11.0-nightly.1
+  - @ledgerhq/coin-celo@1.1.12-nightly.3
+  - @ledgerhq/live-signer-evm@0.5.7-nightly.3
+
 ## 34.42.0-nightly.3
 
 ### Minor Changes

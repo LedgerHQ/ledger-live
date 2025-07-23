@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.24.0-nightly.3
+
+### Minor Changes
+
+- [#11022](https://github.com/LedgerHQ/ledger-live/pull/11022) [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): support EIP-1559 in `craftTransaction`
+
 ## 2.24.0-nightly.2
 
 ### Minor Changes

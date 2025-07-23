@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.87.0-nightly.4
+
+### Minor Changes
+
+- [#11040](https://github.com/LedgerHQ/ledger-live/pull/11040) [`bc9868a`](https://github.com/LedgerHQ/ledger-live/commit/bc9868a6f221488dcd8ff1d2819cff919913b17a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework MAD debug screen
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
+### Patch Changes
+
+- Updated dependencies [[`820b163`](https://github.com/LedgerHQ/ledger-live/commit/820b16316a9b0a87bb1157617c96ae7b1d6ca1d2), [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff)]:
+  - @ledgerhq/native-ui@0.40.0-nightly.1
+  - @ledgerhq/coin-evm@2.24.0-nightly.3
+
 ## 3.87.0-nightly.3
 
 ### Minor Changes
