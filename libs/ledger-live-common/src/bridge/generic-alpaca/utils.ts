@@ -12,6 +12,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     assetIssuer?: string;
     assetAmount?: string | undefined;
     ledgerOpType?: string | undefined;
+    memo?: string | undefined;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -25,6 +26,9 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.asset?.type === "token") {
     extra.assetCode = op.asset.assetReference;
     extra.assetIssuer = op.asset.assetOwner;
+  }
+  if (op.details?.memo) {
+    extra.memo = op.details.memo as string;
   }
   const res = {
     id: extra.ledgerOpType
