@@ -1,5 +1,20 @@
 # @ledgerhq/react-ui
 
+## 0.34.0
+
+### Minor Changes
+
+- [#10860](https://github.com/LedgerHQ/ledger-live/pull/10860) [`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add checkbox to pre-LDLS with correct purple
+
+- [#10883](https://github.com/LedgerHQ/ledger-live/pull/10883) [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds new TextInput component and stories
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0
+
 ## 0.34.0-next.0
 
 ### Minor Changes

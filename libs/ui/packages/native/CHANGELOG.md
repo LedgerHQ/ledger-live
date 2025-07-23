@@ -1,5 +1,22 @@
 # @ledgerhq/native-ui
 
+## 0.40.0
+
+### Minor Changes
+
+- [#10858](https://github.com/LedgerHQ/ledger-live/pull/10858) [`7883393`](https://github.com/LedgerHQ/ledger-live/commit/788339359ad9b7fafbf74c0788b1e2d8f7e3bc19) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD NetworkList Component
+
+- [#10835](https://github.com/LedgerHQ/ledger-live/pull/10835) [`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Add AssetList component in LLM ldls
+
+- [#10950](https://github.com/LedgerHQ/ledger-live/pull/10950) [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add search Input to LLM ui pre ldls
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0
+
 ## 0.40.0-next.0
 
 ### Minor Changes

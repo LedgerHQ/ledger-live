@@ -1,5 +1,26 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0
+
+### Minor Changes
+
+- [#10820](https://github.com/LedgerHQ/ledger-live/pull/10820) [`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - 🔍✨ Improve detection of legacy import base64 strings and invalid address scans
+
+  - Better handling of legacy `Qrcode` base64 imports using stricter format and header checks
+  - Improved error resilience when scanning addresses (ETH, BTC, etc.) instead of base64
+  - Ignores invalid or malformed input early, reducing false positives
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/errors@6.23.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.10
+  - @ledgerhq/live-network@2.0.13
+  - @ledgerhq/speculos-transport@0.2.6
+  - @ledgerhq/hw-transport@6.31.8
+  - @ledgerhq/hw-transport-mocker@6.29.8
+
 ## 0.6.0-next.0
 
 ### Minor Changes
