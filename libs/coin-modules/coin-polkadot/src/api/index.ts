@@ -32,7 +32,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block<PolkadotAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

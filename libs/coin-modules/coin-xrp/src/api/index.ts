@@ -37,7 +37,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     listOperations: operations,
     validateIntent: getTransactionStatus,
     getAccountInfo,
-    getBlock(_height): Promise<Block<XrpAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

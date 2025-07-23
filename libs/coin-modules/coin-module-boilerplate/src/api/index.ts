@@ -29,7 +29,7 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
     getBalance,
     lastBlock,
     listOperations,
-    getBlock(_height): Promise<Block<BoilerplateAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

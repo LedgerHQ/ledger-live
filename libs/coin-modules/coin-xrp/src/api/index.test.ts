@@ -343,7 +343,7 @@ describe("Testing craftTransaction function", () => {
   it("should not pass memos when user does not provide it for crafting a transaction", async () => {
     await api.craftTransaction({
       sender: "foo",
-    } as TransactionIntent<XrpAsset, XrpMapMemo>);
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
@@ -361,7 +361,7 @@ describe("Testing craftTransaction function", () => {
         type: "map",
         memos: new Map(),
       },
-    } as TransactionIntent<XrpAsset, XrpMapMemo>);
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),

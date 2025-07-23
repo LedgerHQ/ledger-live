@@ -20,6 +20,7 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
@@ -311,9 +312,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  *
  * @param transaction SUI RPC transaction block response
  */
-export function toBlockTransaction(
-  transaction: SuiTransactionBlockResponse,
-): BlockTransaction<SuiAsset> {
+export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status != "success",
@@ -328,7 +327,7 @@ export function toBlockTransaction(
  *
  * @param change balance change
  */
-export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
+export function toBlockOperation(change: BalanceChange): BlockOperation[] {
   if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
   return [
     {
@@ -345,12 +344,12 @@ export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset
  *
  * @param coinType coin type, as returned from SUI RPC
  */
-export function toSuiAsset(coinType: string): SuiAsset {
+export function toSuiAsset(coinType: string): AssetInfo {
   switch (coinType) {
     case DEFAULT_COIN_TYPE:
       return { type: "native" };
     default:
-      return { type: "token", coinType };
+      return { type: coinType };
   }
 }
 
@@ -474,7 +473,7 @@ export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlockInfo}
  */
-export const getBlock = async (id: string): Promise<Block<SuiAsset>> =>
+export const getBlock = async (id: string): Promise<Block> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });

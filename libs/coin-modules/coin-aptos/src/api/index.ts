@@ -22,7 +22,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, pagination: Pagination) =>
       client.listOperations(address, pagination),
-    getBlock(_height): Promise<Block<AptosAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

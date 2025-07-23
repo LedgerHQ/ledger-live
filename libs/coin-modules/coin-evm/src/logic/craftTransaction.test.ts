@@ -92,7 +92,7 @@ describe("craftTransaction", () => {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
-            asset: { type: "token", contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
+            asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
           } as TransactionIntent,
         }),
       ).toEqual(

@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { TransactionTypes } from "ethers/lib/utils";
-import { EvmAsset, isNative } from "../types";
+import { isNative } from "../types";
 import { getNodeApi } from "../network/node";
 import ERC20ABI from "../abis/erc20.abi.json";
 

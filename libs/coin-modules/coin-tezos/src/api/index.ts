@@ -34,7 +34,7 @@ export function createApi(config: TezosConfig): TezosApi {
     getBalance: balance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block<TezosAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

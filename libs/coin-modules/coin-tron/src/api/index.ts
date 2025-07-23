@@ -31,7 +31,7 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     getBalance,
     lastBlock,
     listOperations,
-    getBlock(_height): Promise<Block<TronAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {

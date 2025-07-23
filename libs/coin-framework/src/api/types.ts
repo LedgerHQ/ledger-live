@@ -62,7 +62,7 @@ export type Transaction = {
 /**
  * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
  */
-export type Block<AssetType extends Asset<TokenInfoCommon>> = {
+export type Block = {
   /** The block metadata. */
   info: BlockInfo;
 
@@ -72,13 +72,13 @@ export type Block<AssetType extends Asset<TokenInfoCommon>> = {
    * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
    * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
    */
-  transactions: BlockTransaction<AssetType>[];
+  transactions: BlockTransaction[];
 };
 
 /**
  * A transaction belonging to a {@link Block}, not specific to a particular account/address.
  */
-export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+export type BlockTransaction = {
   /** The transaction hash/digest (globally unique identifier). */
   hash: string;
 
@@ -93,7 +93,7 @@ export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
    *
    * Note that fees are accounted for separately, so operations must not represent fees.
    */
-  operations: BlockOperation<AssetType>[];
+  operations: BlockOperation[];
 
   /** Network specific details for this transaction. */
   details?: Record<string, unknown>;
@@ -106,12 +106,10 @@ export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
 };
 
 /** An operation belonging to a {@link BlockTransaction}. */
-export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> =
-  | TransferBlockOperation<AssetType>
-  | OtherBlockOperation;
+export type BlockOperation = TransferBlockOperation | OtherBlockOperation;
 
 /** A asset transfer that occurred in a {@link BlockTransaction}. */
-export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
+export type TransferBlockOperation = {
   /** Operation type discriminator. */
   type: "transfer";
 
@@ -122,7 +120,7 @@ export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
   peer?: string;
 
   /** The transferred asset. */
-  asset: AssetType;
+  asset: AssetInfo;
 
   /**
    * The signed amount of the transfer, i.e. impact of the transfer on <code>address</code> balance (positive for
@@ -239,7 +237,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;
-  getBlock: (height: number) => Promise<Block<AssetInfo>>;
+  getBlock: (height: number) => Promise<Block>;
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
