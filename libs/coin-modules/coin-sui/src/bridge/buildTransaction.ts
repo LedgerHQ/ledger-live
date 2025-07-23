@@ -14,7 +14,7 @@ export const buildTransaction = async (
   { freshAddress }: SuiAccount,
   { recipient, mode, amount, coinType }: Transaction,
 ) => {
-  let NATIVE_COIN_TYPE = "0x2::sui::SUI"; // <-- NOTE: unusure, double check
+  const NATIVE_COIN_TYPE = "0x2::sui::SUI"; // <-- NOTE: unusure, double check
   let asset: AssetInfo = {
     type: "native",
   };
