@@ -12,7 +12,7 @@ const toOperation = (
   assetType: "native" | "token",
   op: LiveOperation,
 ): Operation<MemoNotSupported> => {
-  let assetInfo: AssetInfo = { type: assetType };
+  const assetInfo: AssetInfo = { type: assetType };
 
   if (assetType !== "native") {
     assetInfo.assetReference = op.contract ?? "";
