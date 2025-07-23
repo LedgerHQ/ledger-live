@@ -349,7 +349,7 @@ export function toSuiAsset(coinType: string): AssetInfo {
     case DEFAULT_COIN_TYPE:
       return { type: "native" };
     default:
-      return { type: coinType };
+      return { type: "token", assetReference: coinType };
   }
 }
 
