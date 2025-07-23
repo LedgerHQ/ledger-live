@@ -2018,6 +2018,9 @@ importers:
       jest-environment-node:
         specifier: 29.7.0
         version: 29.7.0
+      jest-junit:
+        specifier: 16.0.0
+        version: 16.0.0
       jest-metadata:
         specifier: 1.5.3
         version: 1.5.3(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
@@ -26382,6 +26385,10 @@ packages:
     resolution: {integrity: sha512-jtq7VVyG8SqAorDpApwiJJImd0V2wv1xzdheGHRGyuT7gZm6gG47QEskOlzsN1PG/6WNaCo5pmwMHDf3AkG2pQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
 
+  jest-junit@16.0.0:
+    resolution: {integrity: sha512-A94mmw6NfJab4Fg/BlvVOUXzXgF0XIH6EmTgJ5NDPp4xoKq0Kr7sErb+4Xs9nZvu58pJojz5RFGpqnZYJTrRfQ==}
+    engines: {node: '>=10.12.0'}
+
   jest-leak-detector@27.5.1:
     resolution: {integrity: sha512-POXfWAMvfU6WMUXftV4HolnJfnPOGEu10fscNCA76KBpRRhcMN2c8d3iT2pxQS3HLbA+5X4sOUPzYO2NUyIlHQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -34672,6 +34679,9 @@ packages:
   xml2js@0.6.0:
     resolution: {integrity: sha512-eLTh0kA8uHceqesPqSE+VvO1CDDJWMwlQfB6LuN6T8w6MaDJ8Txm8P7s5cHD0miF0V+GGTZrDQfxPZQVsur33w==}
     engines: {node: '>=4.0.0'}
+
+  xml@1.0.1:
+    resolution: {integrity: sha512-huCv9IH9Tcf95zuYCsQraZtWnJvBtLVE0QHMOs8bWyZAFZNDcYjsPq1nEx8jKA9y+Beo9v+7OBPRisQTjinQMw==}
 
   xmlbuilder@11.0.1:
     resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
@@ -61772,6 +61782,13 @@ snapshots:
       - metro
       - supports-color
 
+  jest-junit@16.0.0:
+    dependencies:
+      mkdirp: 1.0.4
+      strip-ansi: 6.0.1
+      uuid: 8.3.2
+      xml: 1.0.1
+
   jest-leak-detector@27.5.1:
     dependencies:
       jest-get-type: 27.5.1
@@ -73918,6 +73935,8 @@ snapshots:
     dependencies:
       sax: 1.2.4
       xmlbuilder: 11.0.1
+
+  xml@1.0.1: {}
 
   xmlbuilder@11.0.1: {}
 

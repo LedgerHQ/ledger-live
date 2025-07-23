@@ -7,6 +7,7 @@ let cache = true;
 let shard = "";
 let target = "release";
 let filter = "";
+let outputFile = "";
 
 $.verbose = true; // everything works like in v7
 
@@ -44,7 +45,7 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`;
     await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
@@ -62,7 +63,7 @@ const test_ios = async () => {
     --runInBand \
     --cleanup \
     --shard ${shard} \
-    ${filter.split(" ")}`;
+    ${filteredArgs}`;
 };
 
 const build_android = async () => {
@@ -81,7 +82,7 @@ const test_android = async () => {
     --runInBand \\
     --cleanup \\
     --shard ${shard} \\
-    ${filter.split(" ")}`;
+    ${filteredArgs}`;
 };
 
 const getTasksFrom = {
@@ -92,7 +93,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: async () =>  await bundle_android(),
+    bundle: async () => await bundle_android(),
     test: test_android,
   },
 };
@@ -139,10 +140,34 @@ for (const argName in argv) {
     case "filter":
       filter = argv[argName];
       break;
+    case "outputFile":
+    case "o":
+      outputFile = argv[argName];
+      break;
     default:
       usage(42);
       break;
   }
+}
+
+const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
+const filteredArgs = extraArgs.filter(arg => {
+  return (
+    arg !== "./scripts/e2e-ci.mjs" &&
+    arg !== "ios" &&
+    arg !== "android" &&
+    !arg.match(/^\d+\/\d+$/) &&
+    arg !== filter
+  );
+});
+
+if (filter) {
+  filteredArgs.push(...filter.split(" "));
+}
+
+if (outputFile) {
+  filteredArgs.push("--json");
+  filteredArgs.push(`--outputFile=${outputFile}`);
 }
 
 within(async () => {
