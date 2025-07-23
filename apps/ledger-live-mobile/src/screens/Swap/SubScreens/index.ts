@@ -4,3 +4,4 @@ export * from "./SelectProvider";
 export * from "./SelectFees";
 export * from "./PendingOperation";
 export * from "./OperationDetails";
+export * from "./SwapCustomError";

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
-import type { ModularDrawerAddAccountStep, ModularDrawerStep, NavigationDirection } from "../types";
+import type { ModularDrawerAddAccountStep } from "../../AddAccountDrawer/domain";
+import type { ModularDrawerStep, NavigationDirection } from "../types";
 
 const TOP_BAR = 62;
 

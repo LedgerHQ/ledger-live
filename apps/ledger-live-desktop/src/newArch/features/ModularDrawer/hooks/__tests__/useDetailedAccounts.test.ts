@@ -1,10 +1,10 @@
-import { renderHook } from "tests/testSetup";
-import { useDetailedAccounts } from "../useDetailedAccounts";
-import { ETH_ACCOUNT } from "../../__mocks__/accounts.mock";
-import { ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import * as reactRedux from "react-redux";
-import { mockDispatch } from "../../__tests__/shared";
+import { renderHook } from "tests/testSetup";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
+import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
+import { mockDispatch } from "../../../__tests__/shared";
+import { useDetailedAccounts } from "../useDetailedAccounts";
 
 jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 

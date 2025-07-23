@@ -120,6 +120,7 @@ export default class CommonPage {
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
     if (isIos()) await device.disableSynchronization();
+    await waitForElementById(this.deviceRowRegex);
     await tapById(this.deviceRowRegex, index);
   }
 

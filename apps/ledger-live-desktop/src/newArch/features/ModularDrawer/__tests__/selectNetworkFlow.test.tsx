@@ -1,15 +1,15 @@
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import {
-  bitcoinCurrency,
   arbitrumCurrency,
   baseCurrency,
+  bitcoinCurrency,
   injectiveCurrency,
   scrollCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
-import { mockOnAssetSelected, currencies, mockDomMeasurements } from "./shared";
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),

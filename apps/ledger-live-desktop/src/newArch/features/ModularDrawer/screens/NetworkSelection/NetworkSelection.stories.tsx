@@ -1,16 +1,16 @@
-import React from "react";
-import { NetworkSelection } from ".";
+import { res } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { NetworkSelection } from ".";
+import { ARB_ACCOUNT, ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   ethereumCurrency,
   mockNetworksConfiguration,
-} from "../../__mocks__/useSelectAssetFlow.mock";
-import { legacy_createStore as createStore } from "redux";
-import { Provider } from "react-redux";
-import { fn } from "@storybook/test";
-import { res } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
-import { ETH_ACCOUNT, ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+} from "../../../__mocks__/useSelectAssetFlow.mock";
 
 const networks = [ethereumCurrency, arbitrumCurrency];
 

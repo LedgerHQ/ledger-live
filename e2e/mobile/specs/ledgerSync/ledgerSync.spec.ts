@@ -97,7 +97,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeActivationSuccessPage();
     await app.accounts.openViaDeeplink();
-    await app.accounts.expectAccountsNumber(2);
+    await app.accounts.expectAccountsNumber(2, ledgerSyncPushDataArgs.data);
     await goToLedgerSync(true);
     await app.ledgerSync.openDeleteSync();
     await app.ledgerSync.confirmDeleteSync();

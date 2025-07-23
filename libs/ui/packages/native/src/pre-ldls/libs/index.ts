@@ -1,7 +1,7 @@
 import memoize from "lodash/memoize";
 import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens";
 
-// Override manquants
+// Missing overrides
 const overrideOther = {
   "radius-s": "8px",
   "radius-xs": "4px",
@@ -28,27 +28,31 @@ const overrideColor = {
 } as const;
 
 export type Tokens = Record<string, string | number>;
-
 type ColorToken =
   | `colors-${keyof ModeColors}`
   | `colors-${keyof typeof overrideColor.light}`
   | `colors-${keyof typeof overrideColor.dark}`;
+
 type OtherToken = keyof (SpacingScale & typeof overrideOther);
+type Theme = "dark" | "light";
 
 function pxToNumber(value: string): number {
   return Number(value.replace("px", ""));
 }
 
+function getThemeColors(theme: Theme) {
+  const baseColors = theme === "dark" ? dark : light;
+  const overrides = overrideColor[theme];
+  return { ...baseColors, ...overrides };
+}
+
 export const useTokens = memoize(
-  (theme: "dark" | "light", usedTokens: Array<ColorToken | OtherToken>) => {
+  (theme: Theme, usedTokens: Array<ColorToken | OtherToken>) => {
+    if (!usedTokens.length) return {};
+
     const usedSet = new Set(usedTokens);
-
-    const colors = {
-      dark: { ...dark, ...overrideColor.dark },
-      light: { ...light, ...overrideColor.light },
-    }[theme];
-
     const tokens: Tokens = {};
+    const colors = getThemeColors(theme);
 
     Object.entries(colors).forEach(([key, value]) => {
       const colorKey = `colors-${key}` as ColorToken;
@@ -57,6 +61,7 @@ export const useTokens = memoize(
       }
     });
 
+    // Add spacing and other tokens
     [spacing, overrideOther].forEach((obj) => {
       Object.entries(obj).forEach(([key, value]) => {
         if (usedSet.has(key as OtherToken)) {
@@ -67,4 +72,6 @@ export const useTokens = memoize(
 
     return tokens;
   },
+  // Simple cache key
+  (theme, usedTokens) => `${theme}-${usedTokens.sort().join(",")}`,
 );

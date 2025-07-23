@@ -1,27 +1,32 @@
-import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import {
-  ethereumCurrency,
-  bitcoinCurrency,
-  arbitrumCurrency,
-  usdcToken,
-  baseCurrency,
-  scrollCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import React from "react";
+import * as reactRedux from "react-redux";
+import { render, screen, waitFor } from "tests/testSetup";
+import ModalsLayer from "~/renderer/ModalsLayer";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
-} from "../__mocks__/accounts.mock";
-import { mockOnAccountSelected, mockDispatch, currencies, mockDomMeasurements } from "./shared";
-import * as reactRedux from "react-redux";
-import { track, trackPage } from "~/renderer/analytics/segment";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import ModalsLayer from "~/renderer/ModalsLayer";
+} from "../../__mocks__/accounts.mock";
+import {
+  arbitrumCurrency,
+  baseCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  scrollCurrency,
+  usdcToken,
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import {
+  currencies,
+  mockDispatch,
+  mockDomMeasurements,
+  mockOnAccountSelected,
+} from "../../__tests__/shared";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),

@@ -46,10 +46,20 @@ export function useSwapCustomHandlers(
     [navigation],
   );
 
+  const navigateToSwapCustomError = useCallback(
+    (error: Error) => {
+      navigation.navigate(ScreenName.SwapCustomError, {
+        error,
+      });
+    },
+    [navigation],
+  );
+
   const walletAPISwapHandlers = useCustomExchangeHandlers({
     manifest,
     accounts,
     onCompleteResult: navigateToSwapPendingOperation,
+    onCompleteError: navigateToSwapCustomError,
     sendAppReady: sendSwapLiveAppReady,
   });
 
