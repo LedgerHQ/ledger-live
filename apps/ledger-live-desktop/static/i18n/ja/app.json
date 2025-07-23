@@ -3844,6 +3844,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "ステーキング済み残高",
+      "stakedBalanceTooltip" : "この量は現在、バリデーターにステーキングされています。",
+      "withdrawableBalance" : "出金可能残高",
+      "withdrawableBalanceTooltip" : "この数量はステーキング解除されており、現在出金可能です。",
+      "pendingBalance" : "保留中残高",
+      "pendingBalanceTooltip" : "この量はステーキング解除されており、現在利用可能待ちです。"
+    },
+    "common" : {
+      "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
+      "viewDetails" : "詳細を表示",
+      "connectDevice" : {
+        "title" : "デバイス"
+      },
+      "confirmation" : {
+        "title" : "確認"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "ステーキング済み量",
+        "unstakedAmount" : "ステーキング解除済み数量",
+        "withdrawnAmount" : "引き出し数量"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "資産をステーキングして、Aptosの報酬を獲得できます。",
+        "info" : "ステーキングの仕組み",
+        "earnRewards" : "報酬を獲得する"
+      },
+      "table" : {
+        "header" : "ステーキングポジション",
+        "stake" : "追加",
+        "active" : "ステーキング済み",
+        "pendingInactive" : "リリース保留中",
+        "inactive" : "引き出し可能",
+        "nextUnlock" : "次のロック解除"
+      },
+      "nextUnlockIn" : "次のロック解除まで",
+      "unstake" : "ステーキングの解除",
+      "withdraw" : "出金",
+      "restake" : "再有効化",
+      "activeTooltip" : "ステーキングされた量は報酬を生みます",
+      "inactiveTooltip" : "ステーキング解除された量は報酬を生みません",
+      "commission" : "コミッション",
+      "totalStake" : "合計ステーキング量",
+      "minSafeWarning" : "資金不足",
+      "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}APTを確保してください。",
+      "flow" : {
+        "title" : "ステーキング",
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos資産をバリデーターにステーキングすることで、報酬を獲得できる可能性があります。",
+            "bullet" : ["ステーキングされた資産の所有権はお客様が保持します", "Ledgerデバイスを使用してステーキング", "資産は、ステーキング解除後0～14日以内に利用可能になります"],
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            }
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "validator" : {
+            "title" : "バリデーター",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One利用規約",
+            "ledgerByFigmentTC" : "Ledger by Figment利用規約"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "ステーキングを再有効化",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "再ステーキングプロセスにより、引き出し可能な残高が再ステーキングされます。",
+            "warning" : "利用可能な残高がすべて再ステーキングされます。再ステーキングされた数量は、ステーキング解除操作とロック解除時間の後に、引き出し可能になります。",
+            "fields" : {
+              "validator" : "バリデータ",
+              "amount" : "再ステーキング数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産の再ステーキングに成功しました。",
+              "description" : "{{amount}}が{{validator}}によって再ステーキングされました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ステーキングを解除するのに十分なステーキング済みの資産がありません",
+      "flow" : {
+        "title" : "ステーキングの解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "ステーキング解除のプロセスが完了するまでに{{timeToUnlock}}かかります。",
+            "subtitle2" : "ステーキング解除のプロセスが完了するまでに、最大30日かかる可能性があります。",
+            "warning" : "報酬はすぐにキャッシュイン（獲得）されます。ステーキングされていない数量は、ロック解除時間後に引き出し可能になります。",
+            "fields" : {
+              "validator" : "バリデータ",
+              "amount" : "ステーキングを解除する数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました",
+              "description" : "{{amount}}が{{validator}}によってステーキング解除されました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "引き出しに十分な資産がありません",
+      "flow" : {
+        "title" : "出金",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "fields" : {
+              "validator" : "バリデータ",
+              "amount" : "引き出す数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産の引き出しに成功しました。",
+              "description" : "{{amount}}が{{validator}}によって引き出されました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "所有するETHを運用",
@@ -4410,6 +4579,10 @@
             "cta" : "適用"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "モジュラードロワー開発ツール",
+        "description" : "モジュラードロワーを簡単にテストできます"
       },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
@@ -5884,9 +6057,29 @@
       "title" : "手数料の概算に失敗しました。",
       "description" : "ネットワーク上で手数料の見積もりに失敗しました。入力を確認してください。トランザクションは失敗する可能性が高いです"
     },
+    "NotEnoughToStake" : {
+      "title" : "{{minStake}}{{currency}}未満のステーキングはできません",
+      "description" : "ステーキングには、最低{{minStake}} {{currency}}が必要です。"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。",
+      "description" : "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}}を超えるリステーキングが行われると、ステーキング合計{{totalAmount}}がリステーキングされます。",
+      "description" : "{{maxAmount}}を超えるリステーキングが行われると、ステーキング合計{{totalAmount}}がリステーキングされます。"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "{{minAmount}}未満のリステーキングはできません",
+      "description" : "{{minAmount}}未満のリステーキングはできません"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "{{minAmount}}未満のステーキング解除はできません",
+      "description" : "{{minAmount}}未満のステーキング解除はできません"
     },
     "NotEnoughBalanceFees" : {
       "title" : "申し訳ございませんが、手数料のための資金が不足しています",
@@ -7090,6 +7283,15 @@
       "newAccount" : "新しいアカウント",
       "addAccountSelection" : "資金を追加するアカウントを選択",
       "addAccountSelectionPtxFlow" : "アカウントを選択"
+    },
+    "editAccountName" : {
+      "title" : "アカウント名を編集",
+      "input" : {
+        "name" : "名前"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "受け取る",
