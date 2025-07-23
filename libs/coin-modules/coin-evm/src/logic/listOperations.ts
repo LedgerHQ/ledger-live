@@ -15,24 +15,17 @@ const toOperation = (
   let assetInfo: AssetInfo = { type: assetType };
 
   if (assetType !== "native") {
+    assetInfo.assetReference = op.contract ?? "";
     if (op.standard) {
       if (op.standard === "ERC721") {
-        assetInfo = {
-          type: "erc721",
-        };
+        assetInfo.type = "erc721";
       } else if (op.standard === "ERC1155") {
-        assetInfo = {
-          type: "erc1155",
-        };
+        assetInfo.type = "erc1155";
       } else {
-        assetInfo = {
-          type: "token", // NOTE: default
-        };
+        assetInfo.type = "token"; // NOTE: old default
       }
     } else {
-      assetInfo = {
-        type: "erc20",
-      };
+      assetInfo.type = "erc20";
     }
   }
 
