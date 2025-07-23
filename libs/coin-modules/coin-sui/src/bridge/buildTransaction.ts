@@ -1,24 +1,27 @@
-import pick from "lodash/pick";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { SuiAccount, Transaction } from "../types";
-import { craftTransaction, type CreateExtrinsicArg } from "../logic";
-
-export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicArg =>
-  pick(transaction, ["mode", "amount", "recipient", "useAllAmount", "coinType"]);
+import { craftTransaction } from "../logic";
 
 /**
  * @param {Account} account
  * @param {Transaction} transaction
  */
 export const buildTransaction = async (
-  { freshAddress }: SuiAccount,
-  { recipient, mode, amount, coinType }: Transaction,
+  account: SuiAccount,
+  { recipient, mode, amount, coinType, subAccountId }: Transaction,
 ) => {
+  const { freshAddress } = account;
+  const subAccount = findSubAccountById(account, subAccountId ?? "");
+  const asset = subAccount
+    ? { type: "token" as const, coinType: subAccount?.token.contractAddress }
+    : { type: "native" as const };
+
   return craftTransaction({
     sender: freshAddress,
     recipient,
     type: mode,
     coinType,
     amount: BigInt(amount.toString()),
-    asset: { type: "native" },
+    asset,
   });
 };
