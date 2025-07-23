@@ -177,6 +177,9 @@ async function executeAppCommandWithRetry(
 
       if (attempt < maxRetries) {
         // Create fresh instance for next retry attempt
+        await commonPage.removeSpeculos(
+          isRemoteIos() && entry.runId ? entry.runId : entry.speculosPort,
+        );
         entry = await createNewSpeculosInstance(app, entry);
         entryMap[app.name] = entry;
       }
