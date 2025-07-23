@@ -24,7 +24,7 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "ผู้ให้บริการ",
       "section" : {
         "recentlyUsed" : "ใช้ล่าสุด",
         "locallyLoaded" : "แอป Live ที่โหลดมาแบบออฟไลน์",
@@ -159,7 +159,7 @@
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
     "stax" : "Stax",
-    "blue" : "Blue"
+    "blue" : "สีน้ำเงิน"
   },
   "operation" : {
     "type" : {
@@ -289,12 +289,12 @@
     "stars" : "บัญชีที่ติดดาว",
     "accounts" : "บัญชี",
     "manager" : "Ledger ของฉัน",
-    "earn" : "Earn",
+    "earn" : "สร้างรายได้",
     "exchange" : "ซื้อ / ขาย",
-    "swap" : "Swap",
+    "swap" : "สวอป",
     "refer" : "แนะนำเพื่อน",
     "lend" : "ให้ยืม",
-    "catalog" : "Discover",
+    "catalog" : "ผู้ให้บริการ",
     "market" : "ตลาด",
     "recover" : "[L] Recover"
   },
@@ -309,9 +309,9 @@
     "closeButton" : "ปิด"
   },
   "swap2" : {
-    "title" : "Swap",
+    "title" : "สวอป",
     "tabs" : {
-      "exchange" : "Swap",
+      "exchange" : "สวอป",
       "history" : "ประวัติ"
     },
     "form" : {
@@ -404,13 +404,13 @@
     }
   },
   "swap" : {
-    "title" : "Swap",
+    "title" : "สวอป",
     "titleCrypto" : "Swap {{currency}}",
     "whatIsSwap" : "Swap คืออะไร",
     "decentralizedSwapAvailable" : "สำหรับธุรกรรมบางรายการ คุณอาจต้องพิจารณาใช้ SWAP แบบกระจายศูนย์ ค้นพบ <0>ParaSwap</0> และ <1>1inch</1>",
     "paraswap" : {
       "cta" : " ลองดูเลย",
-      "description" : "กำลังมองหา Paraswap หรือเปล่า? ตอนนี้ได้ย้ายไปยังแท็บ Discover แล้ว"
+      "description" : "มองหา Paraswap อยู่หรือเปล่า? ตอนนี้ได้ย้ายไปยังแท็บ 'ผู้ให้บริการ' แล้ว"
     },
     "tabs" : {
       "exchange" : "แลกเปลี่ยน",
@@ -470,7 +470,7 @@
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
-      "learnMore" : "Swap คืออะไร?",
+      "learnMore" : "สวอปคืออะไร?",
       "cta" : "ดำเนินการต่อ",
       "filter" : {
         "centralised" : "รวมศูนย์",
@@ -512,7 +512,7 @@
         "by" : "ให้บริการโดย"
       },
       "exchange" : "แลกเปลี่ยน",
-      "helpCTA" : "Swap คืออะไร?",
+      "helpCTA" : "สวอปคืออะไร?",
       "bubble" : "เราใช้อัตราคงที่ นี่คือจำนวนที่คุณจะได้รับ",
       "noAccounts" : "คุณไม่มีบัญชี {{currencyName}} ที่มียอดคงเหลือ",
       "noApp" : "ยังไม่ได้ติดตั้งแอป {{currencyName}}",
@@ -520,7 +520,7 @@
       "loadingRates" : "กำลังโหลดอัตรา..."
     },
     "modal" : {
-      "title" : "Swap",
+      "title" : "สวอป",
       "steps" : {
         "summary" : {
           "title" : "สรุป",
@@ -560,7 +560,7 @@
       }
     },
     "operationDetailsModal" : {
-      "title" : "Swap",
+      "title" : "สวอป",
       "provider" : "ผู้ให้บริการ",
       "txid" : "Swap ID",
       "status" : "สถานะ",
@@ -593,7 +593,7 @@
           "body" : "ซื้อกับผู้ให้บริการที่ได้รับความไว้วางใจ"
         },
         "swap" : {
-          "title" : "Swap",
+          "title" : "สวอป",
           "label" : "ยอดนิยม",
           "body" : "แลกเปลี่ยนคริปโตกับคริปโตได้อย่างปลอดภัย"
         },
@@ -786,7 +786,7 @@
       "title" : "ฟีเจอร์ต่อไปนี้ไม่พร้อมใช้งานในขณะนี้: {{feature}} หากต้องการทราบข้อมูลเพิ่มเติม โปรดดูที่ {{support}}",
       "feature" : {
         "history" : "ประวัติ",
-        "swap" : "Swap",
+        "swap" : "สวอป",
         "token_history" : "ประวัติโทเคน",
         "send_and_receive" : "ส่งและรับ",
         "send" : "ส่ง",
@@ -1184,9 +1184,9 @@
       "star" : "ติดดาว",
       "receive" : "รับ",
       "send" : "ส่ง",
-      "swap" : "Swap",
+      "swap" : "สวอป",
       "stake" : "Stake",
-      "earn" : "Earn",
+      "earn" : "สร้างรายได้",
       "yield" : "ผลตอบแทน",
       "buy" : "ซื้อ",
       "sell" : "ขาย",
@@ -1537,7 +1537,7 @@
         "description" : "ซื้อและขายกับผู้ให้บริการที่น่าเชื่อถือของเรา"
       },
       "swap" : {
-        "title" : "Swap",
+        "title" : "สวอป",
         "description" : "แปลงคริปโตเป็นคริปโต",
         "label" : "ยอดนิยม"
       },
@@ -1569,7 +1569,7 @@
     "marketPerformanceWidget" : {
       "title" : "แนวโน้ม {{time}}",
       "buy" : "ซื้อ",
-      "swap" : "Swap",
+      "swap" : "สวอป",
       "gainers" : "Gainers",
       "losers" : "Losers",
       "error" : {
@@ -2039,7 +2039,7 @@
         "goToAccounts" : "ไปที่บัญชี",
         "intallParentApp" : "ติดตั้งแอป {{appName}}",
         "plugin" : "ไปที่แอป",
-        "swap" : "Swap",
+        "swap" : "สวอป",
         "tool" : "เรียนรู้เพิ่มเติม",
         "currency" : "เรียนรู้เพิ่มเติม"
       },
@@ -3840,6 +3840,175 @@
           "accruedDelta" : "รวม {{delta}}",
           "interestRateNotSetup" : "อัตราดอกเบี้ยปัจจุบันตั้งไว้ที่ 0%",
           "description" : "โทเคนที่มีมูลค่าเพิ่มขึ้นหรือลดลงอย่างต่อเนื่องตามอัตราดอกเบี้ย ไม่ได้มีการสร้างโทเค็นใหม่แต่อย่างใด ฟีเจอร์นี้เป็นเพียงแค่การแสดงผลเท่านั้น"
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "ยอดที่สเตคแล้ว",
+      "stakedBalanceTooltip" : "จำนวนที่กำลังสเตคกับผู้ตรวจสอบในขณะนี้",
+      "withdrawableBalance" : "ยอดคงเหลือที่ถอนได้",
+      "withdrawableBalanceTooltip" : "จำนวนนี้ถูกยกเลิกการสเตคแล้ว และสามารถถอนออกได้ทันที",
+      "pendingBalance" : "ยอดคงเหลือที่รอดำเนินการ",
+      "pendingBalanceTooltip" : "จำนวนนี้ถูกยกเลิกการสเตคแล้ว และอยู่ระหว่างรอก่อนการถอน"
+    },
+    "common" : {
+      "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง",
+      "viewDetails" : "ดูรายละเอียด",
+      "connectDevice" : {
+        "title" : "อุปกรณ์"
+      },
+      "confirmation" : {
+        "title" : "การยืนยัน"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "จำนวนที่สเตคแล้ว",
+        "unstakedAmount" : "จำนวนที่ Unstake",
+        "withdrawnAmount" : "จำนวนที่ถอน"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "คุณสามารถรับ Aptos Reward ได้ด้วยการสเตคกิ้งสินทรัพย์ของคุณ",
+        "info" : "วิธีการสเตคกิ้ง",
+        "earnRewards" : "สร้าง Reward"
+      },
+      "table" : {
+        "header" : "Staking Position",
+        "stake" : "เพิ่ม",
+        "active" : "ทำการสเตคแล้ว",
+        "pendingInactive" : "รอการเผยแพร่",
+        "inactive" : "สามารถถอนได้",
+        "nextUnlock" : "ปลดล็อกครั้งถัดไป"
+      },
+      "nextUnlockIn" : "ปลดล็อกครั้งถัดไปในอีก",
+      "unstake" : "Unstake",
+      "withdraw" : "ถอน",
+      "restake" : "เปิดใช้งานอีกครั้ง",
+      "activeTooltip" : "จำนวนที่ Stake ที่สามารถสร้าง Reward",
+      "inactiveTooltip" : "จำนวนที่ Unstake ที่จะไม่สร้าง Reward",
+      "commission" : "คอมมิชชัน",
+      "totalStake" : "จำนวนที่สเตคทั้งหมด",
+      "minSafeWarning" : "เงินทุนไม่เพียงพอ",
+      "reserveWarning" : "โปรดสำรองไว้อย่างน้อย {{amount}} APT ในวอลเล็ตของคุณ เพื่อคุณสามารถชำระค่าธรรมเนียมเครือข่ายสำหรับการถอนและการยกเลิกการสเตคได้",
+      "flow" : {
+        "title" : "สเตค",
+        "steps" : {
+          "starter" : {
+            "description" : "คุณสามารถรับ Reward ได้ด้วยการสเตคกิ้งสินทรัพย์ Aptos ของคุณกับผู้ตรวจสอบ",
+            "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่สเตคไว้", "สเตคโดยใช้อุปกรณ์ Ledger", "สินทรัพย์จะพร้อมใช้งานใน 0-14 วันหลังจากทำการ Unstake"],
+            "warning" : {
+              "description" : "เลือกผู้ตรวจสอบของคุณอย่างรอบคอบ: สินทรัพย์ที่คุณสเตคบางส่วนอาจสูญหายไปอย่างถาวร หากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
+            }
+          },
+          "amount" : {
+            "title" : "จำนวน"
+          },
+          "validator" : {
+            "title" : "ผู้ตรวจสอบ",
+            "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+            "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ทำการสเตคสินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนยืนยันธุรกรรม",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "เปิดใช้งานการสเตคอีกครั้ง",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน",
+            "subtitle" : "กระบวนการ Restake จะนำยอดคงเหลือที่สามารถถอนได้ของคุณกลับไปสเตคอีกครั้ง",
+            "warning" : "ยอดคงเหลือทั้งหมดที่มีอยู่จะถูกนำไป Restake จำนวนที่นำไป Restake จะสามารถถอนได้หลังผ่านขั้นตอนการ Unstake และครบกำหนดเวลาปลดล็อกแล้ว",
+            "fields" : {
+              "validator" : "ผู้ตรวจสอบ",
+              "amount" : "จำนวนที่จะ Restake"
+            }
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ทำการ Restake สินทรัพย์สำเร็จแล้ว",
+              "description" : "Restake {{amount}} ออกจาก {{validator}}",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ไม่มีสินทรัพย์ที่จะสเตคเพียงพอที่จะ Unstake",
+      "flow" : {
+        "title" : "Unstake",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน",
+            "subtitle" : "กระบวนการ Unstake จะใช้เวลา {{timeToUnlock}} จึงจะแล้วเสร็จ",
+            "subtitle2" : "กระบวนการ Unstake อาจใช้เวลาถึง 30 วันจึงจะแล้วเสร็จ",
+            "warning" : "Reward จะได้รับการส่งไปให้ทันที จำนวนที่ Unstake ไว้จะพร้อมให้ถอนได้หลังจากระยะเวลาล็อกสิ้นสุดลง",
+            "fields" : {
+              "validator" : "ผู้ตรวจสอบ",
+              "amount" : "จำนวนที่จะ Unstake"
+            }
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ Unstake สินทรัพย์ของคุณสำเร็จแล้ว",
+              "description" : "Unstake {{amount}} ออกจาก {{validator}}",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "ไม่มีสินทรัพย์เพียงพอที่จะถอน",
+      "flow" : {
+        "title" : "ถอน",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน",
+            "fields" : {
+              "validator" : "ผู้ตรวจสอบ",
+              "amount" : "จำนวนที่จะถอน"
+            }
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ถอนสินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "description" : "ถอน {{amount}} ออกจาก {{validator}}",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
         }
       }
     }
@@ -5884,9 +6053,29 @@
       "title" : "ขออภัย การประเมินค่าธรรมเนียมล้มเหลว",
       "description" : "การประมาณค่าธรรมเนียมบนเครือข่ายล้มเหลว ตรวจสอบข้อมูลอินพุต ธุรกรรมที่มีแนวโน้มจะล้มเหลวมากที่สุด"
     },
+    "NotEnoughToStake" : {
+      "title" : "คุณไม่สามารถสเตค (Stake) ต่ำกว่า {{minStake}} {{currency}} ได้",
+      "description" : "จำนวนขั้นต่ำสำหรับการสเตคคือ {{minStake}} {{currency}}"
+    },
     "NotEnoughBalance" : {
       "title" : "ขออภัย เงินทุนไม่พอ",
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake",
+      "description" : "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "หากคุณ Restake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Restake",
+      "description" : "หากคุณ Restake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Restake"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "คุณต้อง Restake ขั้นต่ำ {{minAmount}}",
+      "description" : "คุณต้อง Restake ขั้นต่ำ {{minAmount}}"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "คุณต้อง Unstake ขั้นต่ำ {{minAmount}}",
+      "description" : "คุณต้อง Unstake ขั้นต่ำ {{minAmount}}"
     },
     "NotEnoughBalanceFees" : {
       "title" : "ขออภัย เงินทุนไม่เพียงพอสำหรับการชำระค่าธรรมเนียม",
@@ -6600,7 +6789,7 @@
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> หรือ <cta3>{{cta3Label}}</cta3> {{assetName}} ลงในบัญชีของคุณ",
       "ctas" : {
         "buy" : "ซื้อ",
-        "swap" : "Swap",
+        "swap" : "สวอป",
         "deposit" : "ฝาก"
       }
     },
@@ -7090,6 +7279,15 @@
       "newAccount" : "บัญชีใหม่",
       "addAccountSelection" : "เลือกบัญชีเพื่อเติมเงินทุน",
       "addAccountSelectionPtxFlow" : "เลือกบัญชี"
+    },
+    "editAccountName" : {
+      "title" : "แก้ไขชื่อบัญชี",
+      "input" : {
+        "name" : "ชื่อ"
+      },
+      "cta" : {
+        "save" : "บันทึก"
+      }
     },
     "fundAccount" : {
       "receive" : "รับ",
