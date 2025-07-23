@@ -1,9 +1,8 @@
-import React, { useCallback, memo, useContext, useMemo } from "react";
+import React, { useCallback, memo, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
 import type { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
-import ButtonUseTouchableContext from "~/context/ButtonUseTouchableContext";
 import { track } from "~/analytics";
 
 const inferType = (type?: string): ButtonProps["type"] => {
@@ -55,8 +54,7 @@ type Props = BaseButtonProps & {
  */
 function ButtonWrapped(props: BaseButtonProps) {
   const isFocused = useIsFocused(); // @Warning be careful not to import the wrapped button outside of navigation context
-  const useTouchable = useContext(ButtonUseTouchableContext);
-  return <BaseButton {...props} useTouchable={useTouchable} isFocused={isFocused} />;
+  return <BaseButton {...props} useTouchable={true} isFocused={isFocused} />;
 }
 
 export function BaseButton({
