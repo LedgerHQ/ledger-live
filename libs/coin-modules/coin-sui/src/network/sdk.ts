@@ -1,26 +1,16 @@
 import {
-  Checkpoint,
   ExecuteTransactionBlockParams,
   PaginatedTransactionResponse,
+  QueryTransactionBlocksParams,
   SuiCallArg,
   SuiClient,
   SuiTransactionBlockResponse,
   TransactionBlockData,
-  SuiHTTPTransport,
   TransactionEffects,
-  QueryTransactionBlocksParams,
-  BalanceChange,
-  SuiTransactionBlockResponseOptions,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
-import type {
-  Block,
-  BlockInfo,
-  BlockTransaction,
-  BlockOperation,
-  Operation as Op,
-} from "@ledgerhq/coin-framework/api/index";
+import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -31,7 +21,6 @@ import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { SuiAsset } from "../api/types";
-import { getEnv } from "@ledgerhq/live-env";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -43,39 +32,15 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
-/** Default options for querying transactions. */
-const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
-  showInput: true,
-  showBalanceChanges: true,
-  showEffects: true, // To get transaction status and gas fee details
-};
-
-type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
-type Inputs = GenericInput<typeof fetch>;
-
-const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
-  if (options) {
-    options.headers = {
-      ...options.headers,
-      "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
-    };
-  }
-  if (retry === 1) return fetch(url, options);
-
-  return fetch(url, options).catch(() => fetcher(url, options, retry - 1));
-};
-
 /**
  * Connects to Sui Api
  */
 export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
-  const transport = new SuiHTTPTransport({
-    url,
-    fetch: fetcher,
-  });
 
-  apiMap[url] ??= new SuiClient({ transport });
+  if (!apiMap[url]) {
+    apiMap[url] = new SuiClient({ url });
+  }
 
   const result = await execute(apiMap[url]);
   return result;
@@ -202,7 +167,7 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
-  return new Date(parseInt(transaction.timestampMs!));
+  return new Date(transaction.timestampMs!);
 };
 
 /**
@@ -266,8 +231,6 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
       block: {
         // agreed to return bigint
         height: BigInt(transaction.checkpoint || "") as unknown as number,
-        hash,
-        time: getOperationDate(transaction),
       },
     },
     asset: { type: "native" },
@@ -276,83 +239,6 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
     type,
     value: BigInt(getOperationAmount(address, transaction, coinType).toString()),
   };
-}
-
-/**
- * Convert a SUI RPC checkpoint info to a {@link BlockInfo}.
- *
- * @param checkpoint SUI RPC checkpoint info
- */
-export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
-  const info: BlockInfo = {
-    height: Number(checkpoint.sequenceNumber),
-    hash: checkpoint.digest,
-    time: new Date(parseInt(checkpoint.timestampMs)),
-  };
-
-  if (typeof checkpoint.previousDigest == "string")
-    return {
-      ...info,
-      parent: {
-        height: Number(checkpoint.sequenceNumber) - 1,
-        hash: checkpoint.previousDigest,
-      },
-    };
-
-  return info;
-}
-
-/**
- * Convert a SUI RPC transaction block response to a {@link BlockTransaction}.
- *
- * Notes:
- *  - transfers are generated from balance changes rather than effects,
- * therefore the peer is not populated.
- *  - all other operation types are ignored
- *
- * @param transaction SUI RPC transaction block response
- */
-export function toBlockTransaction(
-  transaction: SuiTransactionBlockResponse,
-): BlockTransaction<SuiAsset> {
-  return {
-    hash: transaction.digest,
-    failed: transaction.effects?.status.status != "success",
-    operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
-    fees: BigInt(getOperationFee(transaction).toString()),
-    feesPayer: transaction.transaction?.data.sender || "",
-  };
-}
-
-/**
- * Convert a SUI RPC transaction balance change to a {@link BlockOperation}.
- *
- * @param change balance change
- */
-export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
-  if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
-  return [
-    {
-      type: "transfer",
-      address: change.owner.AddressOwner,
-      asset: toSuiAsset(change.coinType),
-      amount: BigInt(change.amount),
-    },
-  ];
-}
-
-/**
- * Convert a SUI coin type to a {@link SuiAsset}.
- *
- * @param coinType coin type, as returned from SUI RPC
- */
-export function toSuiAsset(coinType: string): SuiAsset {
-  switch (coinType) {
-    case DEFAULT_COIN_TYPE:
-      return { type: "native" };
-    default:
-      return { type: "token", coinType };
-  }
 }
 
 export const getLastBlock = () =>
@@ -372,117 +258,25 @@ export const getOperations = async (
   cursor?: QueryTransactionBlocksParams["cursor"],
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: cursor ? "ascending" : "descending",
-      operations: [],
-    });
-    const receivedOps = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: cursor ? "ascending" : "descending",
-      operations: [],
-    });
-    const rawTransactions = filterOperations(sentOps, receivedOps, cursor);
+    const sentOps = await loadOperations({ api, addr, type: "OUT", cursor });
+    const receivedOps = await loadOperations({ api, addr, type: "IN", cursor });
+    const rawTransactions = [...sentOps, ...receivedOps].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
 
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
-export const filterOperations = (
-  operationList1: SuiTransactionBlockResponse[],
-  operationList2: SuiTransactionBlockResponse[],
-  cursor: string | null | undefined,
-) => {
-  let filterTimestamp = 0;
+export const getListOperations = async (addr: string, cursor = ""): Promise<Op<SuiAsset>[]> =>
+  withApi(async api => {
+    const opsOut = await loadOperations({ api, addr, type: "OUT", cursor });
+    const opsIn = await loadOperations({ api, addr, type: "IN", cursor });
 
-  // When restoring state (no cursor provided) and we've reached the limit for either sent or received operations,
-  // we filter out extra operations to maintain correct chronological order
-  if (
-    !cursor &&
-    operationList1.length &&
-    operationList2.length &&
-    (operationList1.length === TRANSACTIONS_LIMIT || operationList2.length === TRANSACTIONS_LIMIT)
-  ) {
-    const aTime = operationList1[operationList1.length - 1].timestampMs ?? 0;
-    const bTime = operationList2[operationList2.length - 1].timestampMs ?? 0;
-    filterTimestamp = Math.max(Number(aTime), Number(bTime));
-  }
-  const result = [...operationList1, ...operationList2]
-    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= filterTimestamp);
-
-  return uniqBy(result, tx => tx.digest);
-};
-
-/**
- * Fetch operations for Alpaca
- */
-export const getListOperations = async (
-  addr: string,
-  cursor: QueryTransactionBlocksParams["cursor"] = null,
-  withApiImpl: typeof withApi = withApi,
-): Promise<Op<SuiAsset>[]> =>
-  withApiImpl(async api => {
-    const opsOut = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: cursor ? "ascending" : "descending",
-      operations: [],
-    });
-    const opsIn = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: cursor ? "ascending" : "descending",
-      operations: [],
-    });
-    const list = filterOperations(opsIn, opsOut, cursor);
-
+    const rawTransactions = [...opsIn, ...opsOut].sort(
+      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
+    );
+    const list = uniqBy(rawTransactions, tx => tx.digest);
     return list.map(t => transactionToOp(addr, t));
-  });
-
-/**
- * Get a checkpoint (a.k.a, a block) metadata.
- *
- * @param id the checkpoint digest or sequence number (as a string)
- */
-export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
-  withApi(async api => api.getCheckpoint({ id }));
-
-/**
- * Get a checkpoint (a.k.a, a block) metadata only.
- *
- * @param id the checkpoint digest or sequence number (as a string)
- * @see {@link getBlock}
- */
-export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
-  withApi(async api => {
-    const checkpoint = await api.getCheckpoint({ id });
-    return toBlockInfo(checkpoint);
-  });
-
-/**
- * Get a checkpoint (a.k.a, a block) metadata with all transactions.
- *
- * @param id the checkpoint digest or sequence number (as a string)
- * @see {@link getBlockInfo}
- */
-export const getBlock = async (id: string): Promise<Block<SuiAsset>> =>
-  withApi(async api => {
-    const checkpoint = await api.getCheckpoint({ id });
-    const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
-    return {
-      info: toBlockInfo(checkpoint),
-      transactions: rawTxs.map(toBlockTransaction),
-    };
   });
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
@@ -506,10 +300,17 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
     tx.setSender(ensureAddressFormat(sender));
     const coinObjects = await getCoinObjectIds(sender, fakeTransaction);
 
-    const [coin] = tx.splitCoins(Array.isArray(coinObjects) ? coinObjects[0] : tx.gas, [
-      fakeTransaction.amount.toNumber(),
-    ]);
-    tx.transferObjects([coin], fakeTransaction.recipient);
+    if (Array.isArray(coinObjects) && fakeTransaction.coinType !== DEFAULT_COIN_TYPE) {
+      const coins = coinObjects.map(coinId => tx.object(coinId));
+      if (coins.length > 1) {
+        tx.mergeCoins(coins[0], coins.slice(1));
+      }
+      const [coin] = tx.splitCoins(coins[0], [fakeTransaction.amount.toNumber()]);
+      tx.transferObjects([coin], fakeTransaction.recipient);
+    } else {
+      const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
+      tx.transferObjects([coin], fakeTransaction.recipient);
+    }
 
     try {
       const txb = await tx.build({ client: api });
@@ -581,44 +382,45 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
-export const loadOperations = async ({
-  cursor,
-  operations,
-  order,
-  ...params
-}: {
+export const loadOperations = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  operations: PaginatedTransactionResponse["data"];
-  order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse["data"]> => {
-  try {
-    if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
-      return operations;
-    }
+  const operations: PaginatedTransactionResponse["data"] = [];
+  let currentCursor = params.cursor;
 
-    const { data, nextCursor, hasNextPage } = await queryTransactions({
-      ...params,
-      order,
-      cursor,
-    });
-
-    operations.push(...data);
-    if (!hasNextPage) {
-      return operations;
-    }
-
-    await loadOperations({ ...params, cursor: nextCursor, operations, order });
-  } catch (error: any) {
-    if (error.type === "InvalidParams") {
-      log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
-        error,
-        params,
+  while (operations.length < TRANSACTIONS_LIMIT) {
+    try {
+      const { data, nextCursor, hasNextPage } = await queryTransactions({
+        ...params,
+        cursor: currentCursor,
       });
-    } else {
-      log("coin:sui", "(network/sdk): loadOperations error", { error, params });
+
+      operations.push(...data);
+
+      // If we got fewer results than the query limit or no more data, we've reached the end
+      if (data.length < TRANSACTIONS_LIMIT_PER_QUERY || !hasNextPage) {
+        break;
+      }
+
+      currentCursor = nextCursor;
+    } catch (error: any) {
+      if (error.type === "InvalidParams") {
+        log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
+          error,
+          params,
+        });
+
+        currentCursor = null;
+
+        continue;
+      } else {
+        log("coin:sui", "(network/sdk): loadOperations error", { error, params });
+
+        break;
+      }
     }
   }
 
@@ -632,43 +434,21 @@ export const queryTransactions = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
-  const { api, addr, type, cursor, order } = params;
+  const { api, addr, type, cursor } = params;
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
   return await api.queryTransactionBlocks({
     filter,
     cursor,
-    order,
-    options: TRANSACTIONS_QUERY_OPTIONS,
+    order: "descending",
+    options: {
+      showInput: true,
+      showBalanceChanges: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
   });
-};
-
-/**
- * Query transactions by digest from the RPC.
- *
- * Note that transaction limit per query applies (usually {@link TRANSACTIONS_LIMIT_PER_QUERY}, but can vary
- * depending on the RPC settings).
- */
-export const queryTransactionsByDigest = async (params: {
-  api: SuiClient;
-  digests: string[];
-}): Promise<SuiTransactionBlockResponse[]> => {
-  const { api, digests } = params;
-  const chunkSize = TRANSACTIONS_LIMIT_PER_QUERY;
-  const responses: SuiTransactionBlockResponse[] = [];
-
-  for (let i = 0; i < digests.length; i += chunkSize) {
-    const chunk = await api.multiGetTransactionBlocks({
-      digests: digests.slice(i, i + chunkSize),
-      options: TRANSACTIONS_QUERY_OPTIONS,
-    });
-    responses.push(...chunk);
-  }
-
-  return responses;
 };
