@@ -41,7 +41,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
-    const paginationParams: any = { minHeight: 0 };
+    const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
+    const paginationParams: any = { minHeight: blockHeight };
     if (lastPagingToken) {
       paginationParams.lastPagingToken = lastPagingToken;
     }
