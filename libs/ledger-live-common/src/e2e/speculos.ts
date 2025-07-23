@@ -38,6 +38,7 @@ import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
+import { delegateOsmosis } from "./families/osmosis";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -414,7 +415,7 @@ interface ResponseData {
   events: Event[];
 }
 
-export async function waitFor(text: string, maxAttempts = 10): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
@@ -656,8 +657,10 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.ATOM_1.currency.name:
     case Account.INJ_1.currency.name:
-    case Account.OSMO_1.currency.name:
       await delegateCosmos(delegatingAccount);
+      break;
+    case Account.OSMO_1.currency.name:
+      await delegateOsmosis(delegatingAccount);
       break;
     case Account.MULTIVERS_X_1.currency.name:
       await delegateMultiversX();

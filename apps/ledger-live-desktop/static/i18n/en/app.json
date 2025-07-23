@@ -4604,6 +4604,10 @@
           }
         }
       },
+      "modularDrawerDevTool": {
+        "title": "Modular Drawer Dev Tool",
+        "description": "Allows you to test the Modular Drawer easily"
+      },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "mockAppUpdate": "Mock app update",
@@ -7306,6 +7310,15 @@
       "newAccount": "New account",
       "addAccountSelection": "Choose account to add funds",
       "addAccountSelectionPtxFlow": "Select account"
+    },
+    "editAccountName": {
+      "title": "Edit account name",
+      "input": {
+        "name": "Name"
+      },
+      "cta": {
+        "save": "Save"
+      }
     },
     "fundAccount": {
       "receive": "Receive",

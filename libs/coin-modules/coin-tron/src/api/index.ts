@@ -1,5 +1,7 @@
-import type {
+import {
   AlpacaApi,
+  Block,
+  BlockInfo,
   FeeEstimation,
   Operation,
   Pagination,
@@ -29,6 +31,12 @@ export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
     getBalance,
     lastBlock,
     listOperations,
+    getBlock(_height): Promise<Block<TronAsset>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   };
 }
 

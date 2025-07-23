@@ -1,8 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import {
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP,
   MODULAR_DRAWER_STEP,
-  ModularDrawerAddAccountStep,
   ModularDrawerStep,
   NAVIGATION_DIRECTION,
   NavigationDirection,
@@ -14,15 +12,6 @@ const ACCOUNT_SELECTION_STEP_ORDER: ModularDrawerStep[] = [
   "ACCOUNT_SELECTION",
 ];
 
-const ADD_ACCOUNT_STEP_ORDER: ModularDrawerAddAccountStep[] = [
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT,
-  MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT,
-];
-
 interface UseGenericNavigationProps<T> {
   stepOrder: T[];
   initialStep: T;
@@ -30,7 +19,7 @@ interface UseGenericNavigationProps<T> {
   backwardDirection: NavigationDirection;
 }
 
-function useGenericNavigation<T>({
+export function useGenericNavigation<T>({
   stepOrder,
   initialStep,
   forwardDirection,
@@ -70,15 +59,6 @@ export function useModularDrawerNavigation(
   return useGenericNavigation({
     stepOrder: ACCOUNT_SELECTION_STEP_ORDER,
     initialStep,
-    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
-    backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
-  });
-}
-
-export function useAddAccountNavigation() {
-  return useGenericNavigation({
-    stepOrder: ADD_ACCOUNT_STEP_ORDER,
-    initialStep: MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
     forwardDirection: NAVIGATION_DIRECTION.FORWARD,
     backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
   });

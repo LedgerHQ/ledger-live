@@ -1,5 +1,9 @@
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
-import { ExchangeRate, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeRate,
+  SwapDataType,
+  SwapLiveError,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -40,7 +44,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
-  SwapOperation,
+  SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
 } from "../../../screens/Swap/types";
@@ -88,7 +92,7 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
-    swapOperation: SwapOperation;
+    swapOperation: SwapOperationDetails;
     fromPendingOperation?: true;
   };
   [ScreenName.AlgorandEditMemo]: {
@@ -312,4 +316,7 @@ export type SwapNavigatorParamList = {
   [NavigatorName.AssetSelection]?: Partial<
     NavigatorScreenParams<AssetSelectionNavigatorParamsList>
   >;
+  [ScreenName.SwapCustomError]: {
+    error?: SwapLiveError | Error;
+  };
 };

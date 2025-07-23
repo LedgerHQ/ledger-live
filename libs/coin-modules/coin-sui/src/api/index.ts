@@ -6,6 +6,8 @@ import {
   getBalance,
   listOperations,
   lastBlock,
+  getBlock,
+  getBlockInfo,
   craftTransaction,
 } from "../logic";
 import type { SuiAsset } from "./types";
@@ -27,6 +29,8 @@ export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
     estimateFees: estimate,
     getBalance,
     lastBlock,
+    getBlock,
+    getBlockInfo,
     listOperations: list,
   };
 }
@@ -34,7 +38,7 @@ export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
 async function craft(transactionIntent: TransactionIntent<SuiAsset>): Promise<string> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
-  return Buffer.from(unsigned).toString("hex");
+  return Array.from(unsigned, byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
 async function estimate(transactionIntent: TransactionIntent<SuiAsset>): Promise<FeeEstimation> {

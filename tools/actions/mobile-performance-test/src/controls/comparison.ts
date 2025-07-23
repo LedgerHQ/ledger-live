@@ -10,7 +10,6 @@ import type { BaselineMetadata } from "../models/github";
 import {
   CONFIDENCE_LEVEL_THRESHOLDS,
   CONFIDENCE_LEVEL_TYPE,
-  CONFIDENCE_THRESHOLD,
   CONFIDENCE_SCORE_WEIGHTS,
   PERFORMANCE_TREND_TYPE,
   SIGNIFICANCE_THRESHOLD,
@@ -60,13 +59,40 @@ export class PerformanceComparisonReporter {
    * The formatted performance comparison report
    */
   format(report: PerformanceComparisonReport): string {
-    return [
-      `Performance trend analysis:`,
-      `  - Overall trend: ${report.trendAnalysis.overallTrend.toUpperCase()}`,
-      `  - Confidence score: ${report.trendAnalysis.confidenceScore}%`,
-      ...formatDynamicTrendAnalysis(report),
-      `  - Recommendation: ${report.trendAnalysis.recommendation}`,
-    ].join("\n");
+    const { trendAnalysis } = report;
+    const { overallTrend, confidenceScore, recommendation, comparisons } = trendAnalysis;
+
+    // Separate key metrics from secondary metrics
+    const keyMetrics = ["mean", "median"];
+    const keyComparisons = comparisons.filter(comp => keyMetrics.includes(comp.metric));
+    const secondaryComparisons = comparisons.filter(comp => !keyMetrics.includes(comp.metric));
+
+    // Apply specific thresholds for secondary metrics
+    const significantSecondaryComparisons = secondaryComparisons.filter(
+      isSignificantSecondaryComparison,
+    );
+
+    const lines = [
+      "*Performance trend analysis:*",
+      `  - Overall trend: ${overallTrend.toUpperCase()}`,
+      `  - Confidence score: ${confidenceScore}%`,
+    ];
+
+    if (keyComparisons.length > 0) {
+      lines.push("");
+      lines.push(...formatKeyComparisons(keyComparisons));
+    }
+
+    if (significantSecondaryComparisons.length > 0) {
+      lines.push("");
+      lines.push(...formatSecondaryComparisons(significantSecondaryComparisons));
+    }
+
+    lines.push("");
+    lines.push("*Recommendation:*");
+    lines.push(recommendation);
+
+    return lines.join("\n");
   }
 }
 
@@ -331,32 +357,112 @@ function calculateConfidenceScore(
 }
 
 /**
- * Formats the dynamic trend analysis
+ * Formats the key comparisons
  *
- * @param report
- * The performance comparison report
+ * @param comparisons
+ * The comparisons between the current and baseline reports
  *
  * @returns
- * The formatted dynamic trend analysis
+ * The key comparisons
  */
-function formatDynamicTrendAnalysis({
-  trendAnalysis: trend,
-}: PerformanceComparisonReport): string[] {
-  const { improvements, degradations, overallTrend, confidenceScore } = trend;
-  const out = [];
+function formatKeyComparisons(keyComparisons: PerformanceComparison[]): string[] {
+  return [
+    "*Key metrics:*",
+    ...keyComparisons.map(comp => {
+      const changeEmoji = formatTrendToEmoji(comp.trend);
+      const changeText = formatTrendToText(comp.trend);
+      const percentage = Math.abs(comp.percentageChange).toFixed(1);
+      const difference = Math.abs(comp.difference).toFixed(0);
+      const significance = comp.isSignificant ? " (significant)" : " (stable)";
+      return `  - *${changeEmoji} ${comp.metric}:* ${percentage}% ${changeText} (${difference}ms)${significance}`;
+    }),
+  ];
+}
 
-  if (improvements.length > 0) {
-    out.push(`  - ✅ Improvements: ${improvements.length}`);
-    improvements.forEach(improvement => out.push(`    • ${improvement}`));
+/**
+ * Formats the secondary comparisons
+ *
+ * @param secondaryComparisons
+ * The secondary comparisons
+ *
+ * @returns
+ * The secondary comparisons
+ */
+function formatSecondaryComparisons(secondaryComparisons: PerformanceComparison[]): string[] {
+  return [
+    "*Secondary metrics (threshold-based):*",
+    ...secondaryComparisons.map(comp => {
+      const changeEmoji = formatTrendToEmoji(comp.trend);
+      const changeText = formatTrendToText(comp.trend);
+      const percentage = Math.abs(comp.percentageChange).toFixed(1);
+      const difference = Math.abs(comp.difference).toFixed(0);
+      return `  - *${changeEmoji} ${comp.metric}:* ${percentage}% ${changeText} (${difference}ms)`;
+    }),
+  ];
+}
+
+/**
+ * Formats the trend
+ *
+ * @param trend
+ * The trend
+ *
+ * @returns
+ * The formatted trend
+ */
+function formatTrendToEmoji(trend: PerformanceTrend): string {
+  switch (trend) {
+    case PERFORMANCE_TREND_TYPE.IMPROVED:
+      return "📈";
+    case PERFORMANCE_TREND_TYPE.DEGRADED:
+      return "📉";
+    default:
+      return "➡️";
   }
-  if (degradations.length > 0) {
-    out.push(`  - ❌ Degradations: ${degradations.length}`);
-    degradations.forEach(degradation => out.push(`    • ${degradation}`));
+}
+
+/**
+ * Formats the trend to text
+ *
+ * @param trend
+ * The trend
+ *
+ * @returns
+ * The formatted trend
+ */
+function formatTrendToText(trend: PerformanceTrend): string {
+  switch (trend) {
+    case PERFORMANCE_TREND_TYPE.IMPROVED:
+      return "faster";
+    case PERFORMANCE_TREND_TYPE.DEGRADED:
+      return "slower";
+    default:
+      return "stable";
   }
-  if (overallTrend === PERFORMANCE_TREND_TYPE.DEGRADED && confidenceScore >= CONFIDENCE_THRESHOLD) {
-    out.push(`  - ❌ Performance degradation detected with high confidence (${confidenceScore}%)`);
+}
+
+/**
+ * Checks if a secondary comparison is significant
+ *
+ * @param comp
+ * The comparison
+ *
+ * @returns
+ * True if the comparison is significant, false otherwise
+ */
+function isSignificantSecondaryComparison(comp: PerformanceComparison): boolean {
+  const absPercentage = Math.abs(comp.percentageChange);
+  switch (comp.metric) {
+    case "p75":
+      return absPercentage > 10;
+    case "p95":
+      return absPercentage > 20;
+    case "p99":
+      return absPercentage > 30;
+    default:
+      // For min, max, use original significance
+      return comp.isSignificant;
   }
-  return out;
 }
 
 /**
@@ -385,41 +491,41 @@ function formatRecommendation(
 ): string {
   const confidenceLevel = formatConfidenceLevel(confidenceScore);
   const recommendation = [
-    `Performance trend: ${overallTrend} (${confidenceLevel} confidence, ${confidenceScore}% score). `,
+    `  - *Performance trend:* ${overallTrend} (${confidenceLevel} confidence, ${confidenceScore}% score). `,
   ];
 
   switch (overallTrend) {
     case PERFORMANCE_TREND_TYPE.IMPROVED:
       recommendation.push(
-        `Great job! Performance has improved across ${improvements.length} metrics. `,
+        `  - Great job! Performance has improved across ${improvements.length} metrics. `,
       );
       if (degradations.length > 0) {
         recommendation.push(
-          `However, monitor the ${degradations.length} degraded metrics for potential regressions. `,
+          `  - However, monitor the ${degradations.length} degraded metrics for potential regressions. `,
         );
       }
       break;
     case PERFORMANCE_TREND_TYPE.DEGRADED:
-      recommendation.push(`Performance has degraded across ${degradations.length} metrics. `);
+      recommendation.push(`  - Performance has degraded across ${degradations.length} metrics.`);
       recommendation.push(
-        `Investigate the root causes and consider rolling back changes that may have caused this regression. `,
+        "  - Investigate the root causes and consider rolling back changes that may have caused this regression.",
       );
       if (improvements.length > 0) {
-        recommendation.push(`Note: ${improvements.length} metrics showed improvement. `);
+        recommendation.push(`  - *Note:* ${improvements.length} metrics showed improvement. `);
       }
       break;
     case PERFORMANCE_TREND_TYPE.STABLE:
-      recommendation.push(`Performance is stable with no significant changes detected. `);
+      recommendation.push("  - Performance is stable with no significant changes detected.");
       break;
   }
 
   if (confidenceScore < 60) {
     recommendation.push(
-      `Low confidence score suggests high variability or small sample size - consider running more tests for better accuracy.`,
+      "  - Low confidence score suggests high variability or small sample size - consider running more tests for better accuracy.",
     );
   }
 
-  return recommendation.join("");
+  return recommendation.join("\n");
 }
 
 /**

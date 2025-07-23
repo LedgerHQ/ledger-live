@@ -16,6 +16,8 @@ import {
   performSwapUntilQuoteSelectionStep,
   performSwapUntilDeviceVerificationStep,
 } from "../utils/swapUtils";
+import { getEnv } from "@ledgerhq/live-env";
+import { overrideNetworkPayload } from "../utils/networkUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -34,13 +36,12 @@ const checkProviders = [
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
-  //ToDo: Enable when Paraswap is migrated to Velora
-  // {
-  //   fromAccount: Account.ETH_1,
-  //   toAccount: TokenAccount.ETH_USDC_1,
-  //   xrayTicket: "B2CQA-3119",
-  //   provider: Provider.PARASWAP,
-  // },
+  {
+    fromAccount: Account.ETH_1,
+    toAccount: TokenAccount.ETH_USDC_1,
+    xrayTicket: "B2CQA-3119",
+    provider: Provider.VELORA,
+  },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
@@ -601,6 +602,81 @@ for (const swap of tooLowAmountForQuoteSwaps) {
   });
 }
 
+const swapNetworkFeesAboveAccountBalanceTestConfig = {
+  swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
+  errorMessage: new RegExp(
+    `You need \\d+\\.\\d+ ETH in your account to pay for transaction fees on the Ethereum network. {2}Buy ETH or deposit more into your account. Learn more`,
+  ),
+  xrayTicket: "B2CQA-2363",
+  tags: ["@NanoSP", "@LNS", "@NanoX"],
+};
+
+test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
+  setupEnv(true);
+
+  const accPair: string[] = [
+    swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit,
+    swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit,
+  ].map(acc => acc.currency.speculosApp.name.replace(/ /g, "_"));
+
+  const { accountToDebit, accountToCredit } = swapNetworkFeesAboveAccountBalanceTestConfig.swap;
+
+  test.beforeEach(async () => {
+    setExchangeDependencies(
+      accPair.map(appName => ({
+        name: appName,
+      })),
+    );
+  });
+
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: app,
+
+    cliCommandsOnApp: [
+      [
+        {
+          app: accountToDebit.currency.speculosApp,
+          cmd: liveDataCommand(accountToDebit.currency.speculosApp, accountToDebit.index),
+        },
+        {
+          app: accountToCredit.currency.speculosApp,
+          cmd: liveDataCommand(accountToCredit.currency.speculosApp, accountToCredit.index),
+        },
+      ],
+      { scope: "test" },
+    ],
+  });
+
+  test(
+    `Swap - Network fees above account balance`,
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,
+      },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
+
+      await performSwapUntilQuoteSelectionStep(
+        app,
+        electronApp,
+        swapNetworkFeesAboveAccountBalanceTestConfig.swap,
+        minAmount,
+      );
+      await app.swap.checkQuotes(electronApp);
+      await app.swap.selectExchange(electronApp);
+      await app.swap.tapQuoteInfosFeesSelector(electronApp);
+      await app.swap.checkFeeDrawerErrorMessage(
+        swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
+      );
+    },
+  );
+});
+
 test.describe("Swap - Switch You send and You receive currency", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03");
   setupEnv(true);
@@ -955,31 +1031,30 @@ test.describe("Swap history", () => {
 });
 
 test.describe("Swap - Block blacklisted addresses", () => {
+  const fromAccount = Account.ETH_1;
+  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
 
-  const fromAccount = Account.BTC_NATIVE_SEGWIT_1;
-  const toAccount = Account.SANCTIONED_ETH;
-
-  const accPair: string[] = [fromAccount, toAccount].map(acc =>
-    acc.currency.speculosApp.name.replace(/ /g, "_"),
-  );
-
   test.beforeEach(async () => {
-    setExchangeDependencies(
-      accPair.map(appName => ({
-        name: appName,
-      })),
+    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
     );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
   });
 
   test.use({
-    userdata: "speculos-sanctioned-eth",
+    userdata: "skip-onboarding",
     speculosApp: app,
+
     cliCommandsOnApp: [
       [
         {
           app: fromAccount.currency.speculosApp,
           cmd: liveDataCommand(fromAccount.currency.speculosApp, fromAccount.index),
+        },
+        {
+          app: toAccount.currency.speculosApp,
+          cmd: liveDataCommand(toAccount.currency.speculosApp, toAccount.index),
         },
       ],
       { scope: "test" },
@@ -998,14 +1073,21 @@ test.describe("Swap - Block blacklisted addresses", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
+      const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
+      await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
+        json.bannedAddresses = [fromAccount.address];
+        return json;
+      });
+
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
       await app.swap.clickExchangeButton(electronApp, selectedProvider);
+
       await app.swapDrawer.checkErrorMessage(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${toAccount.address} Learn more`,
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
       );
     },
   );

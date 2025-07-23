@@ -1,19 +1,19 @@
-import { useGroupedCurrenciesByProvider } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
   usdcToken,
-} from "../../__mocks__/useSelectAssetFlow.mock";
+} from "../../../__mocks__/useSelectAssetFlow.mock";
 import {
-  safeCurrencyLookup,
-  isProviderToken,
-  getProviderCurrency,
   buildProviderCoverageMap,
-  filterProvidersByIds,
   extractProviderCurrencies,
+  filterProvidersByIds,
+  getProviderCurrency,
+  isProviderToken,
+  safeCurrencyLookup,
 } from "../currencyUtils";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("safeCurrencyLookup", () => {
   it("should return the currency if it is found", () => {
@@ -57,12 +57,12 @@ describe("getProviderCurrency", () => {
   it("should return the currency if it is a provider currency", () => {
     const { result } = useGroupedCurrenciesByProvider();
     const currency = getProviderCurrency(result.currenciesByProvider[0]);
-    expect(currency).toBe(bitcoinCurrency);
+    expect(currency).toEqual(bitcoinCurrency);
   });
   it("should return the currency if it is a provider token", () => {
     const { result } = useGroupedCurrenciesByProvider();
     const currency = getProviderCurrency(result.currenciesByProvider[3]);
-    expect(currency).toBe(usdcToken);
+    expect(currency).toEqual(usdcToken);
   });
 });
 
@@ -118,7 +118,7 @@ describe("extractProviderCurrencies", () => {
     const { result } = useGroupedCurrenciesByProvider();
     const providerCurrencies = extractProviderCurrencies(result.currenciesByProvider);
     expect(providerCurrencies).toHaveLength(5);
-    expect(providerCurrencies[0]).toBe(bitcoinCurrency);
+    expect(providerCurrencies[0]).toEqual(bitcoinCurrency);
     expect(providerCurrencies[1].id).toBe("ethereum");
     expect(providerCurrencies[2].id).toBe("arbitrum/erc20/arbitrum");
   });

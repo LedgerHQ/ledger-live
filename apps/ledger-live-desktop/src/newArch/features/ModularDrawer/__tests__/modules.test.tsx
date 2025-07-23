@@ -1,18 +1,10 @@
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { mockOnAssetSelected, mockDomMeasurements } from "./shared";
-import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
-import {
-  arbitrumCurrency,
-  baseCurrency,
-  bitcoinCurrency,
-  ethereumCurrency,
-  scrollCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
@@ -20,8 +12,16 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
-} from "../__mocks__/accounts.mock";
-import BigNumber from "bignumber.js";
+} from "../../__mocks__/accounts.mock";
+import {
+  arbitrumCurrency,
+  baseCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  scrollCurrency,
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import { mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),

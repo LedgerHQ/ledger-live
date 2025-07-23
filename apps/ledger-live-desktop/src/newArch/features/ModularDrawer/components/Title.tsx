@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui/index";
-import { ModularDrawerStep, MODULAR_DRAWER_STEP } from "../types";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { MODULAR_DRAWER_STEP, ModularDrawerStep } from "../types";
 
 const TranslationKeyMap: Record<ModularDrawerStep, string> = {
   [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
