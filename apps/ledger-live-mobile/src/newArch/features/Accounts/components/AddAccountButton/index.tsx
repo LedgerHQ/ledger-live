@@ -98,6 +98,8 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
         currencies={cryptoCurrency ? [cryptoCurrency] : currencies}
+        flow="add_account"
+        source="add_account_button"
       />
     </>
   );
