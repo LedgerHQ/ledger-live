@@ -132,7 +132,7 @@ async function createNewSpeculosInstance(app: AppInfosType, currentEntry: Entry)
   return {
     name: app.name,
     speculosPort: device.port,
-    proxyPort: currentEntry.proxyPort, // Reuse proxy port
+    proxyPort: currentEntry.proxyPort,
     runId: newRunId,
   };
 }
@@ -323,23 +323,23 @@ export class InitializationManager {
     );
 
     // Setup all required Speculos devices in parallel
-    const toStart = uniqueOnApp.map(x => x.app).concat(speculosApp ? [speculosApp] : []);
-    const entryMap = await setupSpeculosDevices(toStart);
+    const appsToLaunch = uniqueOnApp.map(x => x.app).concat(speculosApp ? [speculosApp] : []);
+    const speculosDevices = await setupSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeAppCommands(uniqueOnApp, entryMap, userdataPath, commonPage);
+    await executeAppCommands(uniqueOnApp, speculosDevices, userdataPath, commonPage);
 
     // Setup main Speculos app if specified
     if (speculosApp) {
-      await setupMainSpeculosApp(speculosApp, entryMap, commonPage);
-      const mainEntry = entryMap[speculosApp.name];
+      await setupMainSpeculosApp(speculosApp, speculosDevices, commonPage);
+      const mainEntry = speculosDevices[speculosApp.name];
       log.info(
         `✅ Main Speculos app [${speculosApp.name}] setup complete. Port: ${mainEntry.speculosPort}, RunId: ${mainEntry.runId || "N/A"}`,
       );
     }
 
     // Execute global commands and finalize setup
-    await executeGlobalCommands(cliCommands, userdataPath, speculosApp, entryMap);
+    await executeGlobalCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
     await loadConfig(userdataSpeculos, true);
     if (featureFlags) await setFeatureFlags(featureFlags);
   }

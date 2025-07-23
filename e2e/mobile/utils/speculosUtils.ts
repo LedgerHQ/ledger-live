@@ -39,13 +39,13 @@ export async function launchSpeculos(appName: string, runId?: string) {
   });
 
   // Store the runId if provided, otherwise fall back to device.id
-  speculosDevices.set(device.port, runId || device.id);
+  speculosDevices.set(runId || device.id, device.port);
 
   log.info(
     "e2e",
     "Current speculosDevices map after set:",
     Array.from(speculosDevices.entries())
-      .map(([port, id]) => `${port} -> ${id}`)
+      .map(([runId, port]) => `${runId} -> ${port}`)
       .join(", "),
   );
 
@@ -81,14 +81,12 @@ async function findPortByRunId(
       "e2e",
       `Current speculosDevices map (attempt ${attempt}/${maxAttempts}):`,
       Array.from(speculosDevices.entries())
-        .map(([port, deviceId]) => `${port} -> ${deviceId}`)
+        .map(([runId, port]) => `${runId} -> ${port}`)
         .join(", "),
     );
 
-    for (const [port, deviceId] of speculosDevices.entries()) {
-      if (deviceId === runId) {
-        return port;
-      }
+    if (speculosDevices.has(runId)) {
+      return speculosDevices.get(runId);
     }
 
     if (attempt < maxAttempts) {
@@ -109,17 +107,17 @@ export async function deleteSpeculos(apiPortOrRunId?: number | string) {
       log.info("e2e", "[E2E Teardown] No active Speculos instances to stop.");
     } else {
       log.info("e2e", `[E2E Teardown] Stopping ${speculosDevices.size} Speculos instances:`);
-      for (const [port, deviceId] of speculosDevices.entries()) {
-        log.info("e2e", `  Port ${port} -> DeviceId ${deviceId}`);
+      for (const [runId, port] of speculosDevices.entries()) {
+        log.info("e2e", `  RunId ${runId} -> Port ${port}`);
       }
     }
-    const ports = Array.from(speculosDevices.keys());
+    const runIds = Array.from(speculosDevices.keys());
     await Promise.all(
-      ports.map(async port => {
+      runIds.map(async runId => {
         try {
-          await deleteSpeculos(port);
+          await deleteSpeculos(runId);
         } catch (err) {
-          log.error("e2e", `Failed to stop Speculos on port ${port}: ${String(err)}`);
+          log.error("e2e", `Failed to stop Speculos with runId ${runId}: ${String(err)}`);
         }
       }),
     );
@@ -132,7 +130,7 @@ export async function deleteSpeculos(apiPortOrRunId?: number | string) {
 
     if (foundPort) {
       await stopSpeculos(runId);
-      speculosDevices.delete(foundPort);
+      speculosDevices.delete(runId);
       log.info("e2e", `Remote Speculos successfully stopped with runId ${runId}`);
       return closeProxy(foundPort);
     } else {
@@ -148,11 +146,18 @@ export async function deleteSpeculos(apiPortOrRunId?: number | string) {
   }
 
   const apiPort = apiPortOrRunId as number;
-  if (speculosDevices.has(apiPort)) {
-    const speculosId = speculosDevices.get(apiPort);
-    if (speculosId) await stopSpeculos(speculosId);
-    speculosDevices.delete(apiPort);
-    log.info("e2e", `Speculos successfully stopped on port ${apiPort}`);
+  let foundRunId: string | undefined;
+  for (const [runId, port] of speculosDevices.entries()) {
+    if (port === apiPort) {
+      foundRunId = runId;
+      break;
+    }
+  }
+
+  if (foundRunId) {
+    await stopSpeculos(foundRunId);
+    speculosDevices.delete(foundRunId);
+    log.info("e2e", `Speculos successfully stopped on port ${apiPort} (runId: ${foundRunId})`);
   } else {
     log.warn("e2e", `Speculos not found on port ${apiPort}`);
   }
@@ -162,7 +167,7 @@ export async function deleteSpeculos(apiPortOrRunId?: number | string) {
 }
 
 export async function takeSpeculosScreenshot() {
-  for (const apiPort of speculosDevices.keys()) {
+  for (const [, apiPort] of speculosDevices.entries()) {
     if (isRemoteIos()) {
       try {
         await waitForSpeculosReady(
