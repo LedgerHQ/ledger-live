@@ -7,6 +7,6 @@ export async function lastBlock(): Promise<BlockInfo> {
   return {
     height: Number(sequenceNumber),
     hash: digest,
-    time: new Date(parseInt(timestampMs)),
+    time: new Date(timestampMs),
   };
 }

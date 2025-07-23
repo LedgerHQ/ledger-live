@@ -1,11 +1,13 @@
 import {
-  PaginatedTransactionResponse,
-  SuiClient,
   ExecuteTransactionBlockParams,
-  TransactionEffects,
+  PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  SuiCallArg,
+  SuiClient,
+  SuiTransactionBlockResponse,
+  TransactionBlockData,
+  TransactionEffects,
 } from "@mysten/sui/client";
-import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation as Op } from "@ledgerhq/coin-framework/api/index";
@@ -165,7 +167,7 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
-  return new Date(parseInt(transaction.timestampMs!));
+  return new Date(transaction.timestampMs!);
 };
 
 /**
@@ -253,7 +255,7 @@ export const getLastBlock = () =>
 export const getOperations = async (
   accountId: string,
   addr: string,
-  cursor?: string | null | undefined,
+  cursor?: QueryTransactionBlocksParams["cursor"],
 ): Promise<Operation[]> =>
   withApi(async api => {
     const sentOps = await loadOperations({ api, addr, type: "OUT", cursor });
@@ -366,7 +368,7 @@ export const loadOperations = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  cursor?: string | null | undefined;
+  cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse["data"]> => {
   const operations: PaginatedTransactionResponse["data"] = [];
   let currentCursor = params.cursor;
@@ -414,7 +416,7 @@ export const queryTransactions = async (params: {
   api: SuiClient;
   addr: string;
   type: OperationType;
-  cursor?: string | null | undefined;
+  cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor } = params;
   const filter: QueryTransactionBlocksParams["filter"] =
