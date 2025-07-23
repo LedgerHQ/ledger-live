@@ -1,7 +1,7 @@
 ---
-"live-mobile": minor
-"@ledgerhq/live-signer-evm": minor
-"ledger-live-desktop": minor
+"live-mobile": patch
+"@ledgerhq/live-signer-evm": patch
+"ledger-live-desktop": patch
 ---
 
 Fix exchanges from USDT, and remove hardcoded plugins
