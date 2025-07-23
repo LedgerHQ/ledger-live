@@ -3844,6 +3844,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Stake bakiyesi",
+      "stakedBalanceTooltip" : "Doğrulayıcılarla stake edilmiş olan güncel miktar.",
+      "withdrawableBalance" : "Çekilebilir bakiye",
+      "withdrawableBalanceTooltip" : "Stake’i durdurulmuş ve çekilebilecek olan güncel miktar.",
+      "pendingBalance" : "Bekleyen bakiye",
+      "pendingBalanceTooltip" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar."
+    },
+    "common" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "viewDetails" : "Ayrıntıları gör",
+      "connectDevice" : {
+        "title" : "Cihaz"
+      },
+      "confirmation" : {
+        "title" : "Onaylayın"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Stake edilmiş miktar",
+        "unstakedAmount" : "Staking’i durdurulan tutar",
+        "withdrawnAmount" : "Çekilen tutar"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Varlıklarınızı stake ederek Aptos ödülleri kazanabilirsiniz.",
+        "info" : "Staking Nasıl Çalışır?",
+        "earnRewards" : "Ödüller kazanın"
+      },
+      "table" : {
+        "header" : "Staking Pozisyonları",
+        "stake" : "Ekle",
+        "active" : "Stake edildi",
+        "pendingInactive" : "Açılmayı bekleyen",
+        "inactive" : "Çekilebilir bakiye",
+        "nextUnlock" : "Bir sonraki kilit açım zamanı:"
+      },
+      "nextUnlockIn" : "Bir sonraki kilit açımına kalan süre:",
+      "unstake" : "Staking'i durdur",
+      "withdraw" : "Çek",
+      "restake" : "Yeniden etkinleştir",
+      "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
+      "inactiveTooltip" : "Stake’i durdurulan miktarlar ödül kazandırmaz",
+      "commission" : "Komisyon",
+      "totalStake" : "Toplam Stake",
+      "minSafeWarning" : "Yetersiz fon miktarı",
+      "reserveWarning" : "Gelecekte staking’inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} APT bulundurduğunuzdan lütfen emin olun",
+      "flow" : {
+        "title" : "Stake edin",
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Staking’i durdurulan varlıklar 0-14 gün sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            }
+          },
+          "amount" : {
+            "title" : "Tutar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Staking’i yeniden etkinleştirin",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Yeniden stake etme işlemi kapsamında, çekilebilir bakiyeniz yeniden stake edilecektir.",
+            "warning" : "Kullanılabilir bakiyenin tamamı yeniden stake edilecektir. Yeniden stake edilen tutar, staking’i durdurma işleminden ve kilit açım zamanından sonra çekilebilir.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Yeniden stake edilecek tutar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla yeniden stake ettiniz.",
+              "description" : "{{validator}} adlı doğrulayıcı ile {{amount}} yeniden stake edildi",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Stake edilen varlık miktarı stake durdurma için yeterli değil",
+      "flow" : {
+        "title" : "Staking'i durdur",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Staking’i durdurma işleminin tamamlanması {{timeToUnlock}} sürecektir.",
+            "subtitle2" : "Staking’i durdurma işleminin tamamlanması 30 gün kadar sürebilir.",
+            "warning" : "Ödüller anında hesaba alınır. Staking’i durdurulan tutar, kilit açım zamanından sonra çekilebilir.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Staking'i durdurulacak miktar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı stake etmeyi başarıyla durdurdunuz.",
+              "description" : "{{validator}} adlı doğrulayıcı ile stake edilen {{amount}} durduruldu",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Varlık miktarı çekim için yeterli değil",
+      "flow" : {
+        "title" : "Çekim",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Çekilecek tutar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz.",
+              "description" : "{{validator}} adlı doğrulayıcıdan {{amount}} çekildi",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "ETH bakiyenizi artırın",
@@ -4410,6 +4579,10 @@
             "cta" : "Uygula"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Dev Tool",
+        "description" : "Allows you to test the Modular Drawer easily"
       },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
@@ -5884,9 +6057,29 @@
       "title" : "Üzgünüz, ücret tahmini başarısız oldu",
       "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
     },
+    "NotEnoughToStake" : {
+      "title" : "Stake edeceğiniz varlıkların miktarı en az {{minStake}} {{currency}} olmalıdır",
+      "description" : "En az {{minStake}} {{currency}} stake etmeniz gerekir."
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır",
+      "description" : "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} miktarından fazla varlığı yeniden stake ederseniz, toplamda {{totalAmount}} miktarında varlığınız yeniden stake edilecektir",
+      "description" : "{{maxAmount}} miktarından fazla varlığı yeniden stake ederseniz, toplamda {{totalAmount}} miktarında varlığınız yeniden stake edilecektir"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Yeniden stake edeceğiniz varlıkların miktarı en az {{minAmount}} olmalıdır",
+      "description" : "Yeniden stake edeceğiniz varlıkların miktarı en az {{minAmount}} olmalıdır."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Stake etmeyi durduracağınız varlıkların miktarı en az {{minAmount}} olmalıdır",
+      "description" : "Stake etmeyi durduracağınız varlıkların miktarı en az {{minAmount}} olmalıdır."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
@@ -7090,6 +7283,15 @@
       "newAccount" : "Yeni hesap",
       "addAccountSelection" : "Fonların ekleneceği hesabı seçin",
       "addAccountSelectionPtxFlow" : "Hesap seçin"
+    },
+    "editAccountName" : {
+      "title" : "Hesap adını düzenleyin",
+      "input" : {
+        "name" : "İsim"
+      },
+      "cta" : {
+        "save" : "Kaydet"
+      }
     },
     "fundAccount" : {
       "receive" : "Al",
