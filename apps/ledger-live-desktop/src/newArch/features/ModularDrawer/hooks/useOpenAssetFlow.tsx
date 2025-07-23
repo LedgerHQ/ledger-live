@@ -13,6 +13,7 @@ import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDr
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { CloseButton } from "../components/CloseButton";
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -22,6 +23,7 @@ function selectCurrency(
   includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
+  drawerConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
   const filteredCurrencies =
     currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
@@ -33,7 +35,7 @@ function selectCurrency(
       onAssetSelected,
       source,
       flow,
-      drawerConfiguration: {
+      drawerConfiguration: drawerConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "undefined" },
         networks: { leftElement: "undefined", rightElement: "undefined" },
       },
@@ -121,7 +123,7 @@ export function useOpenAssetFlow(
   );
 
   const openAssetFlow = useCallback(
-    (includeTokens: boolean) => {
+    (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerLocation)) {
         selectCurrency(
           openAddAccountFlow,
@@ -131,6 +133,7 @@ export function useOpenAssetFlow(
           includeTokens,
           undefined,
           handleClose,
+          drawerConfiguration,
         );
       } else {
         dispatch(
