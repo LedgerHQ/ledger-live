@@ -2134,9 +2134,18 @@ importers:
         specifier: ^1.40
         version: 1.40.0
     devDependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
