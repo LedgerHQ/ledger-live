@@ -2,13 +2,14 @@ import { getTypedTransaction } from "@ledgerhq/coin-evm/lib/transaction";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { SafeAreaView } from "react-native";
 import { FeesNavigatorParamsList } from "~/components/RootNavigator/types/FeesNavigator";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { FeeContainer } from "./FeeContainer";
+import { useTranslation } from "react-i18next";
 
 export type Props = RootComposite<
   StackNavigatorProps<FeesNavigatorParamsList, ScreenName.FeeHomePage>
@@ -19,10 +20,13 @@ export function FeesScreen({ route: { params } }: Props) {
     currency: params.feePayingAccount.currency,
     transaction: params.transaction as EvmTransaction,
   });
-
+  const { t } = useTranslation();
   return (
     <SafeAreaView>
       <Flex flexDirection="column" rowGap={12} margin={16} alignItems="stretch">
+        <Text color={"neutral.c70"} fontSize={14} fontWeight="500">
+          {t("transfer.swap2.form.details.label.feesDescription")}
+        </Text>
         <FeeContainer
           feePayingAccount={params.feePayingAccount}
           strategy="slow"
