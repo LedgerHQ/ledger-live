@@ -15,12 +15,16 @@ export function getAmountValue(
   // Asset
   if (transaction.subAccountId) {
     const asset = findSubAccountById(account, transaction.subAccountId) as TokenAccount;
-    return transaction.useAllAmount ? new BigNumber(asset.spendableBalance) : transaction.amount;
+    if (!asset) {
+      throw new Error(`Sub-account with ID ${transaction.subAccountId} not found`);
+    }
+    return transaction.useAllAmount
+      ? new BigNumber(asset.spendableBalance.toString())
+      : transaction.amount;
   }
-
   // Native
   return transaction.useAllAmount && transaction.networkInfo
-    ? BigNumber.max(account.spendableBalance.minus(fees), 0)
+    ? BigNumber.max(new BigNumber(account.spendableBalance.toString()).minus(fees), 0)
     : transaction.amount;
 }
 
@@ -61,7 +65,7 @@ export function isMemoValid(memoType: string, memoValue: string): boolean {
   return true;
 }
 
-export async function isAccountMultiSign(account: Account): Promise<boolean> {
+export async function isAccountMultiSign(account: string): Promise<boolean> {
   const signers = await fetchSigners(account);
   return signers.length > 1;
 }

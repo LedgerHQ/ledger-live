@@ -28,19 +28,23 @@ export async function listOperations(
   options: Options,
 ): Promise<[Operation[], string]> {
   // there is a possible optimisation here: when height is 0, set the minTimestamp to 0
-  const block = await getBlock(options.minHeight);
+  const minHeight = options?.minHeight ?? defaultOptions.minHeight;
+  const order = options?.order ?? defaultOptions.order;
+  const softLimit = options?.softLimit ?? defaultOptions.softLimit;
+
+  const block = await getBlock(minHeight);
   const minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
   const fetchParams = {
     ...defaultFetchParams,
     minTimestamp: minTimestamp,
-    order: options.order,
-    hintGlobalLimit: options.softLimit,
+    order: order,
+    hintGlobalLimit: softLimit,
   };
 
   // under the hood, the network fetches native transactions and trc20 transactions separately
   // that same predicate is used to stop fetching both calls
   // that's why we have a "soft" limit, with the guarantee of total number of transactions to be less than 2 * softLimit
-  const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < options.softLimit;
+  const untilLimitReached: FetchTxsContinuePredicate = ops => ops.length < softLimit;
 
   const txs = await fetchTronAccountTxs(address, untilLimitReached, {}, fetchParams);
   return [
