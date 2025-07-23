@@ -61,6 +61,7 @@
     "jest-allure2-reporter": "2.0.0",
     "jest-docblock": "29.7.0",
     "jest-environment-node": "29.7.0",
+    "jest-junit": "16.0.0",
     "jest-metadata": "1.5.3",
     "lodash": "4.17.21",
     "ts-jest": "29.1.2",
