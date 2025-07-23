@@ -188,7 +188,10 @@ const OperationD = (props: Props) => {
     ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
     : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
 
+  const OpDetailsPostAccountSection =
+    specific?.operationDetails?.OperationDetailsPostAccountSection;
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
+  const OpDetailsPostAlert = specific?.operationDetails?.OperationDetailsPostAlert;
   const { hasFailed } = operation;
   const subOperations: Operation[] = useMemo(
     () => operation.subOperations || [],
@@ -640,6 +643,13 @@ const OperationD = (props: Props) => {
           </Box>
         </OpDetailsData>
       </OpDetailsSection>
+      {OpDetailsPostAccountSection && (
+        <OpDetailsPostAccountSection
+          operation={operation}
+          type={type}
+          account={account as Account}
+        />
+      )}
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
@@ -691,6 +701,9 @@ const OperationD = (props: Props) => {
         <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
       <B />
+      {OpDetailsPostAlert && (
+        <OpDetailsPostAlert operation={operation} type={type} account={account as Account} />
+      )}
     </Box>
   );
 };
