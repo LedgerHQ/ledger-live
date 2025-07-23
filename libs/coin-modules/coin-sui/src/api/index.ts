@@ -38,7 +38,7 @@ export function createApi(config: SuiConfig): AlpacaApi<SuiAsset> {
 async function craft(transactionIntent: TransactionIntent<SuiAsset>): Promise<string> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
-  return Array.from(unsigned, byte => byte.toString(16).padStart(2, "0")).join("");
+  return Buffer.from(unsigned).toString("hex");
 }
 
 async function estimate(transactionIntent: TransactionIntent<SuiAsset>): Promise<FeeEstimation> {
