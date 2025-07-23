@@ -17,12 +17,18 @@ const createAccountsCount = ({ label }: { label: string }) => (
   </Text>
 );
 
-const createAccountsCountAndApy = ({ label, value }: { label: string; value: number }) => (
+const createAccountsCountAndApy = ({
+  label,
+  value,
+  type,
+}: {
+  label: string;
+  value: number;
+  type: "APY" | "APR";
+}) => (
   <>
-    <Text fontSize="12px" fontWeight="500" color="var(--colors-content-subdued-default-default)">
-      {label}
-    </Text>
-    <ApyIndicator value={value} type="APY" />
+    {createAccountsCount({ label })}
+    <ApyIndicator value={value} type={type} />
   </>
 );
 
@@ -72,10 +78,11 @@ export const useLeftAccountsApyModule = ({
 }: AccountModuleParams): NetworkWithCount[] => {
   const accountData = useAccountData({ assets, accounts$ });
   const value = 5.11; // TODO to be retrieved from DADA
+  const type = "APY"; // TODO to be retrieved from DADA
 
   return accountData.map(({ asset, label, count }) => ({
     ...asset,
-    leftElement: count > 0 ? createAccountsCountAndApy({ label, value }) : undefined,
+    leftElement: count > 0 ? createAccountsCountAndApy({ label, value, type }) : undefined,
     count,
   }));
 };

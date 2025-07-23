@@ -169,6 +169,31 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     [accountCountArbitrum, accountCountEthereum].forEach(accountCount => {
       expect(accountCount).toBeVisible();
     });
+
+    const apyTags = screen.queryAllByText(/% APY/);
+    expect(apyTags).toHaveLength(0);
+  });
+
+  it("should display number of accounts and APY for network with numberOfAccountsAndApy flag", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+        drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
+      />,
+      mockedInitialState,
+    );
+
+    const ethereum = screen.getByText(/ethereum/i);
+    await user.click(ethereum);
+
+    const accountCountArbitrum = screen.getByText(/1 account/i);
+    expect(accountCountArbitrum).toBeVisible();
+
+    const apyTag = screen.getAllByText(/% APY/)[0];
+    expect(apyTag).toBeVisible();
   });
 
   it("should display the total balance of an asset a specific network", async () => {
