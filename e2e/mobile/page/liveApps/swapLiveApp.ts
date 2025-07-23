@@ -11,10 +11,12 @@ export default class SwapLiveAppPage {
   toSelector = "to-account-coin-selector";
   toAmountInput = "to-account-amount-input";
   getQuotesButton = "mobile-get-quotes-button";
+  quotesButtonDisabled = "mobile-get-quotes-button-disabled";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
+  executeSwapButtonDisabled = "execute-button-disabled";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
   showDetailslink = "show-details-link";
@@ -26,14 +28,14 @@ export default class SwapLiveAppPage {
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
-    await waitWebElementByTestId(this.getQuotesButton);
+    await waitWebElementByTestId(this.quotesButtonDisabled);
   }
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
-    await detoxExpect(getWebElementByTestId(this.getQuotesButton)).toExist();
+    await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
   }
 
   @Step("Tap from currency")
@@ -94,6 +96,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
+    await detoxExpect(getWebElementByTestId(this.executeSwapButtonDisabled)).not.toExist();
     await tapWebElementByTestId(this.executeSwapButton, 1);
   }
 
