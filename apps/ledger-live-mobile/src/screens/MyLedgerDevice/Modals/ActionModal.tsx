@@ -21,6 +21,7 @@ const ActionModal = ({ isOpened, onClose, children, actions = [], ...rest }: Pro
     preventBackdropClick={false}
     containerStyle={{
       paddingBottom: 116,
+      minHeight: 200,
     }}
   >
     <View style={styles.root}>
