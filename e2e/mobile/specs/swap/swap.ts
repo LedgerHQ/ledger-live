@@ -82,6 +82,7 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
       await app.common.selectKnownDevice();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, minAmount);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });

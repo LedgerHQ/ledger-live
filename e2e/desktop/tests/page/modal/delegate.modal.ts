@@ -57,7 +57,7 @@ export class DelegateModal extends Modal {
   @step("Verify first provider name is $0")
   async verifyFirstProviderName(provider: string) {
     const providerName = await this.getTitleProvider(1);
-    expect(providerName).toBe(provider);
+    expect(providerName).toContain(provider);
   }
 
   @step("Select provider on row $0")

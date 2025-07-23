@@ -290,8 +290,13 @@ export const WebElementHelpers = {
   },
 
   async getValueByWebTestId(id: string): Promise<string> {
-    return await retryUntilTimeout(async () =>
+    const raw = await retryUntilTimeout(() =>
       WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
     );
+
+    if (raw != null && typeof raw === "object" && "result" in raw) {
+      return String(raw["result"]);
+    }
+    return String(raw);
   },
 };

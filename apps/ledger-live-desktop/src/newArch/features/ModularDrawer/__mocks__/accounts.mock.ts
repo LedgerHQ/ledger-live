@@ -61,3 +61,23 @@ export const SCROLL_ACCOUNT = genAccount("scroll-1", {
   currency: scrollCurrency,
   operationsSize: 100,
 });
+
+export const useCountervaluesPolling = () => ({
+  wipe: () => {},
+  poll: () => {},
+  start: () => {},
+  stop: () => {},
+  pending: false,
+  error: null,
+});
+
+export const useCountervaluesUserSettingsContext = () => ({ trackingPairs: [] });
+
+export const userThemeSelector = () => "light";
+
+export const blacklistedTokenIdsSelector = () => {};
+
+export const getLLDCoinFamily = () => ({});
+export const isAccountEmpty = () => false;
+export const languageSelector = () => ({});
+export const openURL = () => {};

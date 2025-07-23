@@ -33,6 +33,7 @@ import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
+import { delegateAptos } from "./families/aptos";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
@@ -413,26 +414,23 @@ interface ResponseData {
   events: Event[];
 }
 
-export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  let attempts = 0;
-  let textFound: boolean = false;
-  while (attempts < maxAttempts && !textFound) {
-    const response = await axios.get<ResponseData>(
-      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
-    );
-    const responseData = response.data;
-    const texts = responseData.events.map(event => event.text);
+export async function waitFor(text: string, maxAttempts = 10): Promise<string[]> {
+  const port = getEnv("SPECULOS_API_PORT");
+  const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
 
-    if (texts?.[0]?.includes(text)) {
-      textFound = true;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const { data } = await axios.get<ResponseData>(url);
+    const texts = data.events.map(event => event.text);
+
+    if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
       return texts;
     }
-    attempts++;
+
     await waitForTimeOut(500);
   }
-  return [];
+
+  throw new Error(`Text "${text}" not found on device screen after ${maxAttempts} attempts.`);
 }
 
 export async function pressBoth() {
@@ -558,6 +556,11 @@ export async function activateContractData() {
   await pressBoth();
 }
 
+export async function goToSettings() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+}
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   let deviceLabels: string[];
 
@@ -567,7 +570,11 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
       break;
     case Currency.DOT:
     case Currency.ATOM:
-      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT];
+      deviceLabels = [
+        DeviceLabels.PLEASE_REVIEW,
+        DeviceLabels.CAPS_APPROVE,
+        DeviceLabels.CAPS_REJECT,
+      ];
       break;
     case Currency.BTC:
       deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.CANCEL];
@@ -631,12 +638,10 @@ export async function signSendTransaction(tx: Transaction) {
 
 export async function signSendNFTTransaction(tx: NFTTransaction) {
   const currencyName = tx.accountToDebit.currency;
-  switch (currencyName) {
-    case Currency.ETH:
-      await sendEvmNFT(tx);
-      break;
-    default:
-      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
+  if (currencyName === Currency.ETH) {
+    await sendEvmNFT(tx);
+  } else {
+    throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
@@ -666,18 +671,23 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
     case Account.CELO_1.currency.name:
       await delegateCelo(delegatingAccount);
       break;
+    case Account.APTOS_1.currency.name:
+      await delegateAptos(delegatingAccount);
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
   }
 }
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
   await verifySwapData(swap, events, amount);
   await pressBoth();

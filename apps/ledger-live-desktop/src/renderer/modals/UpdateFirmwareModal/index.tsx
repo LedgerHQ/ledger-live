@@ -14,7 +14,7 @@ import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 import { createFirmwareUpdateSteps } from "./helpers/createFirmwareUpdateSteps";
 import { StepId, STEPS } from "./types";
-import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
+import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 type MaybeError = Error | undefined | null;
 
@@ -64,7 +64,7 @@ const UpdateModal = ({
   const isDeviceDisconnected =
     isDisconnectedDeviceError ||
     isDisconnectedDeviceDuringOperationError ||
-    isWebHidSendReportError(err);
+    isDisconnectedWhileSendingApduError(err);
 
   const onRequestCancel = useCallback(() => {
     (showDisclaimer && !isDeviceDisconnected) || stateStepId === STEPS.FINISH || cancel

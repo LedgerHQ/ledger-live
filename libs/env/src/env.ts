@@ -87,6 +87,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable tokens on Aptos",
   },
+  APTOS_ENABLE_STAKING: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable staking for Aptos",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -196,6 +201,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
+  },
+  API_SUI_NODE_PROXY_TEST: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger-test.com",
+    desc: "reverse proxy url for sui node",
   },
   API_SUI_NODE_PROXY: {
     parser: stringParser,

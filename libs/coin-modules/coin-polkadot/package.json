@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "6.3.1",
+  "version": "6.4.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -151,8 +151,6 @@
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
-    "chalk": "^4.1.2",
-    "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
     "eslint-plugin-jest": "^27.4.2",
     "jest": "^29.7.0",

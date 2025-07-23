@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -69,6 +69,10 @@
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
+    "./utils": {
+      "require": "./lib/utils/index.js",
+      "default": "./lib-es/utils/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -85,6 +89,7 @@
     "@aptos-labs/ts-sdk": "^1.33.1",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",

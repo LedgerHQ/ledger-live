@@ -1,5 +1,39 @@
 # @ledgerhq/coin-aptos
 
+## 2.6.0
+
+### Minor Changes
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/cryptoassets@13.22.0
+  - @ledgerhq/coin-framework@5.7.0
+  - @ledgerhq/types-live@6.78.0
+  - @ledgerhq/errors@6.23.0
+  - @ledgerhq/live-network@2.0.13
+  - @ledgerhq/devices@8.4.8
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/cryptoassets@13.22.0-next.0
+  - @ledgerhq/coin-framework@5.7.0-next.0
+  - @ledgerhq/types-live@6.78.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+  - @ledgerhq/devices@8.4.8-next.0
+
 ## 2.5.1
 
 ### Patch Changes

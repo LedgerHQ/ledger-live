@@ -1,4 +1,4 @@
-import type { AptosAccount, Transaction } from "../types";
+import type { AptosAccount, AptosOperation, Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
@@ -15,6 +15,21 @@ export const getAddress = (a: Account) => ({
   address: a.freshAddress,
   derivationPath: a.freshAddressPath,
 });
+
+const getOperationType = (transaction: Transaction): OperationType => {
+  switch (transaction.mode) {
+    case "stake":
+      return "STAKE";
+    case "restake":
+      return "STAKE";
+    case "unstake":
+      return "UNSTAKE";
+    case "withdraw":
+      return "WITHDRAW";
+    default:
+      return "OUT";
+  }
+};
 
 const buildSignOperation =
   (
@@ -35,22 +50,20 @@ const buildSignOperation =
 
         const accountId = account.id;
         const hash = "";
-        const type: OperationType = "OUT";
+        const type: OperationType = getOperationType(transaction);
         const fee = transaction.fees || new BigNumber(0);
         const extra = {};
         const senders: string[] = [];
         const recipients: string[] = [];
 
-        if (transaction.mode === "send") {
-          senders.push(account.freshAddress);
-          recipients.push(transaction.recipient);
-        }
+        senders.push(account.freshAddress);
+        recipients.push(transaction.recipient);
 
         const subAccount =
           !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);
 
         // build optimistic operation
-        const operation: Operation = {
+        const operation: AptosOperation = {
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,

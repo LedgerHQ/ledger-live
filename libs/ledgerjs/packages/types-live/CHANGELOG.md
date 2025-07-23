@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.78.0
+
+### Minor Changes
+
+- [#10839](https://github.com/LedgerHQ/ledger-live/pull/10839) [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a) Thanks [@themooneer](https://github.com/themooneer)! - chore: toggle sentry initialization based on llmSentry
+
+## 6.78.0-next.0
+
+### Minor Changes
+
+- [#10839](https://github.com/LedgerHQ/ledger-live/pull/10839) [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a) Thanks [@themooneer](https://github.com/themooneer)! - chore: toggle sentry initialization based on llmSentry
+
 ## 6.77.0
 
 ### Minor Changes
