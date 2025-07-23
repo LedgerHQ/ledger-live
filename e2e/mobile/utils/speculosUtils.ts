@@ -31,8 +31,34 @@ export async function launchSpeculos(appName: string, runId?: string) {
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
-  speculosDevices.set(device.port, device.id);
-  log.warn(`Speculos ${device.id} started on ${device.port}`);
+
+  log.info("e2e", "Device info before map set:", {
+    port: device.port,
+    deviceId: device.id,
+    providedRunId: runId,
+  });
+
+  // Store the runId if provided, otherwise fall back to device.id
+  speculosDevices.set(device.port, runId || device.id);
+
+  log.info(
+    "e2e",
+    "Current speculosDevices map after set:",
+    Array.from(speculosDevices.entries())
+      .map(([port, id]) => `${port} -> ${id}`)
+      .join(", "),
+  );
+
+  console.log(
+    "[E2E SPECULOS_PID] Started",
+    device.port,
+    "with runId",
+    runId || "N/A",
+    "running on",
+    device.id,
+  );
+
+  log.info(`Speculos ${device.id} started on ${device.port}`);
   return device;
 }
 
@@ -51,6 +77,14 @@ async function findPortByRunId(
   delay = 1000,
 ): Promise<number | undefined> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    log.info(
+      "e2e",
+      `Current speculosDevices map (attempt ${attempt}/${maxAttempts}):`,
+      Array.from(speculosDevices.entries())
+        .map(([port, deviceId]) => `${port} -> ${deviceId}`)
+        .join(", "),
+    );
+
     for (const [port, deviceId] of speculosDevices.entries()) {
       if (deviceId === runId) {
         return port;
