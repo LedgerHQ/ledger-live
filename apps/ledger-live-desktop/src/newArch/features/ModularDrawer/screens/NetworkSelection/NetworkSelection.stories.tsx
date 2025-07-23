@@ -1,4 +1,4 @@
-import { res } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { res } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import React from "react";
@@ -74,6 +74,14 @@ export const WithAccounts: Story = {
   args: {
     networksConfiguration: {
       leftElement: "numberOfAccounts",
+    },
+  },
+};
+
+export const WithAccountsAndApy: Story = {
+  args: {
+    networksConfiguration: {
+      leftElement: "numberOfAccountsAndApy",
     },
   },
 };
