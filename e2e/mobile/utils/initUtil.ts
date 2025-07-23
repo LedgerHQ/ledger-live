@@ -196,7 +196,7 @@ async function executeAppCommandWithRetry(
 }
 
 // Execute commands for each app with retry mechanism
-async function executeAppCommands(
+async function executeCliCommandsOnApp(
   uniqueOnApp: Array<{ app: AppInfosType; cmd: CliCommand }>,
   entryMap: Record<string, Entry>,
   userdataPath: string,
@@ -286,7 +286,7 @@ async function setupMainSpeculosApp(
 }
 
 // Execute global commands after all app-specific setup is complete
-async function executeGlobalCommands(
+async function executeCliCommands(
   cliCommands: CliCommand[],
   userdataPath: string,
   speculosApp?: AppInfosType,
@@ -327,7 +327,7 @@ export class InitializationManager {
     const speculosDevices = await setupSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeAppCommands(uniqueOnApp, speculosDevices, userdataPath, commonPage);
+    await executeCliCommandsOnApp(uniqueOnApp, speculosDevices, userdataPath, commonPage);
 
     // Setup main Speculos app if specified
     if (speculosApp) {
@@ -339,7 +339,7 @@ export class InitializationManager {
     }
 
     // Execute global commands and finalize setup
-    await executeGlobalCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
+    await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
     await loadConfig(userdataSpeculos, true);
     if (featureFlags) await setFeatureFlags(featureFlags);
   }
