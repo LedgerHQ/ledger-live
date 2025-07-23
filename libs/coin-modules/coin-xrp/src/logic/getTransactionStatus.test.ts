@@ -20,17 +20,17 @@ const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
-const account = {
-  address: SENDER,
-  balance: 50_000_000n,
-  currencyUnit: {
-    code: "XRP",
-    magnitude: 6,
-    name: "XRP",
-    symbol: "XRP",
-  },
-  currencyName: "XRP",
-};
+// const account = {
+//   address: SENDER,
+//   balance: 50_000_000n,
+//   currencyUnit: {
+//     code: "XRP",
+//     magnitude: 6,
+//     name: "XRP",
+//     symbol: "XRP",
+//   },
+//   currencyName: "XRP",
+// };
 
 describe("getTransactionStatus", () => {
   afterEach(() => {
@@ -47,7 +47,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 20_000_000n,
         fee: 10_000n,
@@ -70,7 +70,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 200_000n, // 20%
@@ -92,7 +92,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 10_000_000n,
         recipient: RECIPIENT,
@@ -112,7 +112,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 10_000_000n,
         fee: 10_000n,
@@ -133,7 +133,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 5_000_000n,
         fee: 10_000n,
@@ -154,7 +154,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 0n,
         fee: 10_000n,
@@ -175,7 +175,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 10_000n,
@@ -196,7 +196,7 @@ describe("getTransactionStatus", () => {
     });
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
         amount: 1_000_000n,
         fee: 10_000n,

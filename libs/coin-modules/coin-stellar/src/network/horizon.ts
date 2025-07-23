@@ -4,7 +4,6 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account } from "@ledgerhq/types-live";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
@@ -33,6 +32,7 @@ import {
   rawOperationsToOperations,
 } from "./serialization";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
+import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
@@ -187,6 +187,41 @@ export async function fetchAccount(addr: string): Promise<{
     spendableBalance,
     assets,
   };
+}
+
+export async function fetchSellingLiabilities(
+  addr: string,
+  currentAsset: AssetInfo,
+): Promise<BigNumber> {
+  try {
+    const account = await getServer().accounts().accountId(addr).call();
+    const nativeAsset = account.balances?.find(b => b.asset_type === "native") as BalanceAsset;
+
+    if (currentAsset.type === "native" && nativeAsset) {
+      return parseCurrencyUnit(currency.units[0], nativeAsset.selling_liabilities || "0");
+    }
+    const assets = account.balances?.filter(balance => {
+      return balance.asset_type !== "native";
+    }) as BalanceAsset[];
+    if (assets && assets.length > 0) {
+      const assetSellingLiabilities = assets
+        .filter(asset => {
+          return (
+            currentAsset.type !== "native" &&
+            "assetReference" in currentAsset &&
+            asset.asset_code === currentAsset?.assetReference &&
+            asset.asset_issuer === currentAsset?.assetOwner
+          );
+        })
+        .map(asset => {
+          return parseCurrencyUnit(currency.units[0], asset.selling_liabilities || "0");
+        });
+      return assetSellingLiabilities[0];
+    }
+    return new BigNumber(0);
+  } catch (e) {
+    return new BigNumber(0);
+  }
 }
 
 /**
@@ -359,9 +394,9 @@ export async function fetchOperations({
   }
 }
 
-export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
+export async function fetchAccountNetworkInfo(account: string): Promise<NetworkInfo> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account).call();
     const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
@@ -382,14 +417,14 @@ export async function fetchAccountNetworkInfo(account: Account): Promise<Network
   }
 }
 
-export async function fetchSequence(account: Account): Promise<BigNumber> {
-  const extendedAccount = await loadAccount(account.freshAddress);
+export async function fetchSequence(address: string): Promise<BigNumber> {
+  const extendedAccount = await loadAccount(address);
   return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
 }
 
-export async function fetchSigners(account: Account): Promise<Signer[]> {
+export async function fetchSigners(account: string): Promise<Signer[]> {
   try {
-    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];

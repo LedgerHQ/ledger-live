@@ -2,7 +2,8 @@ import invariant from "invariant";
 import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import type { Transaction } from "../types";
-import { getAssetIdFromTokenId } from "../bridge/tokens";
+
+const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
 const options = [
   {
