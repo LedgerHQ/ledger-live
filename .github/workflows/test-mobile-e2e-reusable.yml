@@ -113,13 +113,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
-        exclude:
-          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ github.event.inputs.tests_type != 'Mocked' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
+        shardIndex: [1]
+        shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
         with:
