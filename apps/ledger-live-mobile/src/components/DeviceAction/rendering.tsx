@@ -21,14 +21,18 @@ import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import {
+  Box,
+  Button as ButtonV3,
   BoxedIcon,
   Flex,
   Icons,
   IconsLegacy,
   InfiniteLoader,
   Log,
+  rgba,
   Tag,
   Text,
+  Link,
 } from "@ledgerhq/native-ui";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -37,11 +41,11 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import BigNumber from "bignumber.js";
-import React, { useEffect, useState } from "react";
-import { TFunction } from "react-i18next";
-import { Image, Linking, Platform, ScrollView } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { TFunction, Trans } from "react-i18next";
+import { Image, Linking, Platform, ScrollView, TextStyle, TouchableOpacity } from "react-native";
 import Config from "react-native-config";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -65,6 +69,9 @@ import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
+import CheckBox from "../CheckBox";
+import { DeviceDeprecationError } from "@ledgerhq/live-common/errors";
+import { SettingsActionTypes } from "~/actions/types";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -128,6 +135,16 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
   mb: 8,
 })``;
 
+const CircleIcon = styled(Flex).attrs({
+  padding: 16,
+  borderRadius: 100,
+  backgroundColor: (p: { theme: { colors: { palette: { primary: { c80: string } } } } }) =>
+    rgba(p.theme.colors.palette.primary.c80, 0.1),
+  alignItems: "center",
+  justifyContent: "center",
+  alignSelf: "center",
+})``;
+
 export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
@@ -153,6 +170,164 @@ export function renderRequestQuitApp({
     </Wrapper>
   );
 }
+
+export const DeprecationClearSigningWarning = ({ onContinue }: { onContinue: () => void }) => {
+  return (
+    <Box mx={40}>
+      <CircleIcon>
+        <Icons.WarningFill size="L" color="palette.warning.c70" />
+      </CircleIcon>
+      <Text fontWeight="semiBold" textAlign="center" fontSize={24}>
+        <Trans i18nKey={`lnsDeprecation.warning.title`} />
+      </Text>
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="medium" fontSize={14}>
+        <Trans i18nKey={`lnsDeprecation.warning.subtitle`} />
+      </Text>
+      <ButtonV3
+        type="main"
+        size="large"
+        onPressIn={(e: { preventDefault: () => void }) => {
+          e.preventDefault();
+          Linking.openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.update`} />
+      </ButtonV3>
+      <ButtonV3
+        size="large"
+        type="shade"
+        onPress={() => {
+          onContinue();
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.warning.continue`} />
+      </ButtonV3>
+      <Link
+        onPress={() =>
+          Linking.openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations")
+        }
+        style={{ color: "palette.text.shade60" } as TextStyle}
+      >
+        <Trans i18nKey={`lnsDeprecation.learnMore`} />
+      </Link>
+    </Box>
+  );
+};
+
+export const DeprecationWarning = ({
+  coinName,
+  date,
+  onContinue,
+}: {
+  coinName: string;
+  date: string;
+  onContinue: () => void;
+}) => {
+  const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(false);
+
+  const toggleCheck = useCallback(() => {
+    setIsChecked(prev => !prev);
+  }, []);
+
+  const handleContinue = useCallback(() => {
+    if (isChecked) {
+      dispatch({
+        type: SettingsActionTypes.DEPRECATION_DO_NOT_REMIND,
+        payload: coinName,
+      });
+    }
+    onContinue();
+  }, [isChecked, coinName, dispatch, onContinue]);
+
+  const openURL = useCallback((url: string) => {
+    Linking.openURL(url).catch(err => {
+      console.error("Failed to open URL:", err);
+    });
+  }, []);
+
+  return (
+    <Box mx={40}>
+      <CircleIcon>
+        <Icons.InformationFill size="L" color="primary.c80" />
+      </CircleIcon>
+
+      <Text fontWeight="semiBold" textAlign="center" fontSize={24}>
+        <Trans i18nKey="lnsDeprecation.info.title" values={{ date, coinName }} />
+      </Text>
+
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="medium" fontSize={14}>
+        <Trans i18nKey="lnsDeprecation.info.subtitle" />
+      </Text>
+
+      <ButtonV3
+        type="main"
+        size="large"
+        onPress={(e: { preventDefault: () => void }) => {
+          e.preventDefault();
+          openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+        data-testid="update-button"
+      >
+        <Trans i18nKey="lnsDeprecation.update" />
+      </ButtonV3>
+
+      <ButtonV3 size="large" type="default" onPress={handleContinue} data-testid="continue-button">
+        <Trans i18nKey="lnsDeprecation.continue" />
+      </ButtonV3>
+
+      <Link
+        onPress={() => openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations")}
+        style={{ color: "palette.text.shade60" } as TextStyle}
+        data-testid="learn-more-link"
+      >
+        <Trans i18nKey="lnsDeprecation.learnMore" />
+      </Link>
+      <TouchableOpacity onPress={toggleCheck} activeOpacity={0.7} testID="reminder-toggle">
+        <Box flexDirection="row" alignItems="center" mt={6}>
+          <CheckBox isChecked={isChecked} data-testid="dismiss-disclaimer" />
+          <Text fontFamily="Inter|SemiBold" fontSize={4} marginLeft={2} flexShrink={1}>
+            <Trans i18nKey="lnsDeprecation.info.reminder" />
+          </Text>
+        </Box>
+      </TouchableOpacity>
+    </Box>
+  );
+};
+
+export const DeprecationDeviceError = () => {
+  return (
+    <Box mx={40}>
+      <CircleIcon>
+        <IconsLegacy.CircledCrossSolidMedium size={40} color="error.c60" />
+      </CircleIcon>
+      <Text fontWeight="semiBold" textAlign="center" fontSize={24}>
+        <Trans i18nKey={`lnsDeprecation.error.title`} />
+      </Text>
+      <Text color="palette.text.shade60" textAlign="center" fontWeight="medium" fontSize={14}>
+        <Trans i18nKey={`lnsDeprecation.error.subtitle`} />
+      </Text>
+      <ButtonV3
+        type="main"
+        size="large"
+        onPress={e => {
+          e.preventDefault();
+          Linking.openURL("https://shop.ledger.com/pages/ledger-nano-s-upgrade-program");
+        }}
+      >
+        <Trans i18nKey={`lnsDeprecation.update`} />
+      </ButtonV3>
+      <Link
+        onPress={() =>
+          Linking.openURL("https://support.ledger.com/article/Ledger-Nano-S-Limitations")
+        }
+        style={{ color: "palette.text.shade60" } as TextStyle}
+      >
+        <Trans i18nKey={`lnsDeprecation.learnMore`} />
+      </Link>
+    </Box>
+  );
+};
 
 export function renderRequiresAppInstallation({
   t,
@@ -662,6 +837,7 @@ export function renderError({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device });
   }
+  if (error instanceof DeviceDeprecationError) return <DeprecationDeviceError />;
 
   // TODO Once we have the aligned Error renderings, the CTA list should be determined
   // by the error class, not patched like here.

@@ -24,6 +24,22 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "25.10100.0",
+      deviceDeprecated: [
+        {
+          deviceModelId: "flex",
+          infoScreen: {
+            date: "2025-01-10",
+          },
+          errorScreen: {
+            date: "2025-10-31",
+          },
+          warningClearSigningScreen: {
+            date: "2025-10-01",
+            features: ["swap"],
+            tokenExceptions: ["WINK"],
+          },
+        },
+      ],
     },
   },
   config_nanoapp_ethereum: {
@@ -42,6 +58,22 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "1.1.8",
+      deviceDeprecated: [
+        {
+          deviceModelId: "flex",
+          infoScreen: {
+            date: "2025-01-10",
+          },
+          errorScreen: {
+            date: "2025-10-31",
+          },
+          warningClearSigningScreen: {
+            date: "2025-01-01",
+            features: ["swap"],
+            tokenExceptions: ["WINK"],
+          },
+        },
+      ],
     },
   },
   config_nanoapp_cardano_ada: {
@@ -72,6 +104,28 @@ const appConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       minVersion: "3.0.7",
+    },
+  },
+  config_nanoapp_tron: {
+    type: "object",
+    default: {
+      deviceDeprecated: [
+        {
+          deviceModelId: "flex",
+          infoScreen: {
+            date: "2025-01-10",
+          },
+          errorScreen: {
+            date: "2025-10-31",
+          },
+          warningClearSigningScreen: {
+            date: "2025-01-01",
+            features: ["swap"],
+            tokenExceptions: ["WINK"],
+            warningClearSigningScreen: ["send", "swap", "stake", "receive"],
+          },
+        },
+      ],
     },
   },
 };

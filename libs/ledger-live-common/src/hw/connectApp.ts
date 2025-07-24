@@ -39,6 +39,16 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { DeviceDeprecationError } from "../errors";
+import { throwErrorWhenDeviceDeprecated } from "./deviceDeprecation";
+
+type DeviceDeprecationErrorType = Error & {
+  modelId: DeviceModelId;
+  date: string;
+  tokenExceptions?: string[];
+  deprecatedFlowExceptions?: string[];
+};
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -57,6 +67,16 @@ export type ConnectAppRequest = {
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
   allowPartialDependencies: boolean;
+  passDeprecation: boolean;
+};
+
+export type DeviceDeprecation = {
+  warningClearSigning: boolean;
+  modelId: DeviceModelId;
+  date: string;
+  coin: CryptoCurrencyId;
+  tokenExceptions: string[];
+  deprecatedFlowExceptions: string[];
 };
 
 export type AppAndVersion = {
@@ -94,6 +114,11 @@ export type ConnectAppEvent =
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
+    }
+  | {
+      type: "deprecation";
+      deprecate: DeviceDeprecation;
+      onContinue: () => void;
     }
   | {
       type: "some-apps-skipped";
@@ -302,6 +327,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       appName,
       dependencies,
       requireLatestFirmware,
+      passDeprecation,
     }: ConnectAppRequest): Observable<ConnectAppEvent> =>
       defer(() => from(getAppAndVersion(transport))).pipe(
         concatMap((appAndVersion): Observable<ConnectAppEvent> => {
@@ -350,6 +376,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                           appName,
                           dependencies,
                           allowPartialDependencies,
+                          passDeprecation,
                           // requireLatestFirmware // Resolved!.
                         });
                       } else {
@@ -379,6 +406,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                   return innerSub({
                     appName,
                     allowPartialDependencies,
+                    passDeprecation,
                     // dependencies // Resolved!
                   });
                 },
@@ -476,6 +504,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies,
+      passDeprecation: false,
     }).subscribe(o);
 
     return () => {
@@ -534,36 +563,100 @@ export default function connectAppFactory(
       dependencies,
       requireLatestFirmware,
       allowPartialDependencies = false,
+      passDeprecation = false,
     } = request;
     return withDevice(deviceId)(transport => {
       if (!isDmkTransport(transport)) {
         return cmd(transport, { deviceId, request });
       }
       const { dmk, sessionId } = transport;
-      const deviceAction = new ConnectAppDeviceAction({
-        input: {
-          application: appNameToDependency(appName),
-          dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
-          requireLatestFirmware,
-          allowMissingApplication: allowPartialDependencies,
-          unlockTimeout: 0, // Expect to fail immediately when device is locked
-          requiredDerivation: requiresDerivation
-            ? async () => {
-                const { currencyId, ...derivationRest } = requiresDerivation;
-                const derivation = await getAddress(transport, {
-                  currency: getCryptoCurrencyById(currencyId),
-                  ...derivationRest,
-                });
-                return derivation.address;
-              }
-            : undefined,
-        },
-      });
-      const observable = dmk.executeDeviceAction({
-        sessionId,
-        deviceAction,
-      });
-      return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+      let hasContinued = false;
+      const connectAppFlow = (): Observable<ConnectAppEvent> => {
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: appNameToDependency(appName),
+            dependencies: dependencies ? dependencies.map(name => ({ name })) : [],
+            requireLatestFirmware,
+            allowMissingApplication: allowPartialDependencies,
+            unlockTimeout: 0,
+            requiredDerivation: requiresDerivation
+              ? async () => {
+                  const { currencyId, ...derivationRest } = requiresDerivation;
+                  const derivation = await getAddress(transport, {
+                    currency: getCryptoCurrencyById(currencyId),
+                    ...derivationRest,
+                  });
+                  return derivation.address;
+                }
+              : undefined,
+          },
+        });
+
+        const observable = dmk.executeDeviceAction({
+          sessionId,
+          deviceAction,
+        });
+
+        return new ConnectAppEventMapper(dmk, sessionId, appName, observable).map();
+      };
+      try {
+        throwErrorWhenDeviceDeprecated(dmk, sessionId, passDeprecation, appName, dependencies);
+      } catch (error) {
+        if (error instanceof DeviceDeprecationError) {
+          const deviceError = error as DeviceDeprecationErrorType;
+          if (deviceError.message === "warning") {
+            return new Observable<ConnectAppEvent>(subscriber => {
+              const continueOnce = () => {
+                if (hasContinued) return;
+                hasContinued = true;
+
+                connectAppFlow().subscribe(subscriber);
+              };
+              const deprecationEvent: ConnectAppEvent = {
+                type: "deprecation",
+                deprecate: {
+                  warningClearSigning: true,
+                  date: deviceError.date,
+                  modelId: deviceError.modelId,
+                  coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
+                  tokenExceptions: deviceError.tokenExceptions || [],
+                  deprecatedFlowExceptions: deviceError.tokenExceptions || [],
+                },
+                onContinue: continueOnce,
+              };
+
+              subscriber.next(deprecationEvent);
+            });
+          } else if (error.message === "info") {
+            return new Observable<ConnectAppEvent>(subscriber => {
+              const continueOnce = () => {
+                if (hasContinued) return;
+                hasContinued = true;
+
+                connectAppFlow().subscribe(subscriber);
+              };
+
+              const deprecationEvent: ConnectAppEvent = {
+                type: "deprecation",
+                deprecate: {
+                  warningClearSigning: false,
+                  date: deviceError.date,
+                  modelId: deviceError.modelId,
+                  coin: appName.toLocaleLowerCase() as CryptoCurrencyId,
+                  tokenExceptions: [],
+                  deprecatedFlowExceptions: [],
+                },
+                onContinue: continueOnce,
+              };
+
+              subscriber.next(deprecationEvent);
+            });
+          } else {
+            return throwError(error);
+          }
+        }
+      }
+      return connectAppFlow();
     });
   };
 }
