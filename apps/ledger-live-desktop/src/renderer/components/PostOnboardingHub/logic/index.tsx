@@ -181,6 +181,8 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   recoverMock,
 ];
 
+const apexPostOnboardingActionsMock: PostOnboardingAction[] = [customImageMock];
+
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
 ): PostOnboardingAction | undefined {

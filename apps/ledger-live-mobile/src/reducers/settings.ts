@@ -153,6 +153,7 @@ export const INITIAL_STATE: SettingsState = {
     nanoX: false,
     stax: false,
     europa: false,
+    apex: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
   lastConnectedDevice: null,
