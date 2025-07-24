@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
@@ -17,6 +16,8 @@ import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useDispatch } from "react-redux";
+import { pushToast } from "~/actions/toast";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -53,7 +54,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     referral = undefined,
   } = props;
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
+  const dispatch = useDispatch();
   const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -112,13 +113,15 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       setDeviceHasImage(false);
     }
     wrappedOnClose();
-    pushToast({
-      id: "customImage.remove",
-      type: "success",
-      icon: "success",
-      title: t("customImage.toastRemove"),
-    });
-  }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
+    dispatch(
+      pushToast({
+        id: "customImage.remove",
+        type: "success",
+        icon: "success",
+        title: t("customImage.toastRemove"),
+      }),
+    );
+  }, [setDeviceHasImage, wrappedOnClose, dispatch, t]);
 
   const onError = useCallback(
     (error: Error) => {

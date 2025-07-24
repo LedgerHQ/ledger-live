@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { Linking, StyleProp, ViewStyle } from "react-native";
@@ -18,13 +18,13 @@ import BuyDeviceBanner, {
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { track, useAnalytics } from "~/analytics";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "~/hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { EntryOf } from "~/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { dismissToast, pushToast } from "~/actions/toast";
 
 type ButtonItem = {
   title: string;
@@ -47,7 +47,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   } = useQuickActions();
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
-  const { pushToast, dismissToast } = useToasts();
+  const dispatch = useDispatch();
 
   const { page } = useAnalytics();
 
@@ -119,13 +119,15 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dismissToast(PTX_SERVICES_TOAST_ID);
-          pushToast({
-            id: PTX_SERVICES_TOAST_ID,
-            type: "success",
-            title: t("notifications.ptxServices.toast.title"),
-            icon: "info",
-          });
+          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
+          dispatch(
+            pushToast({
+              id: PTX_SERVICES_TOAST_ID,
+              type: "success",
+              title: t("notifications.ptxServices.toast.title"),
+              icon: "info",
+            }),
+          );
         }
       },
       disabled: BUY.disabled,
@@ -144,13 +146,15 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dismissToast(PTX_SERVICES_TOAST_ID);
-          pushToast({
-            id: PTX_SERVICES_TOAST_ID,
-            type: "success",
-            title: t("notifications.ptxServices.toast.title"),
-            icon: "info",
-          });
+          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
+          dispatch(
+            pushToast({
+              id: PTX_SERVICES_TOAST_ID,
+              type: "success",
+              title: t("notifications.ptxServices.toast.title"),
+              icon: "info",
+            }),
+          );
         }
       },
       disabled: SELL.disabled,
@@ -182,13 +186,15 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dismissToast(PTX_SERVICES_TOAST_ID);
-          pushToast({
-            id: PTX_SERVICES_TOAST_ID,
-            type: "success",
-            title: t("notifications.ptxServices.toast.title"),
-            icon: "info",
-          });
+          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
+          dispatch(
+            pushToast({
+              id: PTX_SERVICES_TOAST_ID,
+              type: "success",
+              title: t("notifications.ptxServices.toast.title"),
+              icon: "info",
+            }),
+          );
         }
       },
       disabled: SWAP.disabled,

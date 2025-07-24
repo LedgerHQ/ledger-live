@@ -8,7 +8,6 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from "react-native-reanimated";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
@@ -16,6 +15,7 @@ import {
   WarningMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import getWindowDimensions from "~/logic/getWindowDimensions";
+import { ToastData } from "~/reducers/toast";
 
 const { width } = getWindowDimensions();
 
