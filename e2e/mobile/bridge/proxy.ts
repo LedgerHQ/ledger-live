@@ -265,9 +265,9 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
     const proxyUrls = ["localhost", ...ips].map(ip => `ws://${ip}:${port || "8435"}`);
     proxyUrls.forEach(url => log("proxy", `DEVICE_PROXY_URL=${url}`));
 
-    server.listen(port, "localhost", () => {
-      log("proxy", `\nNano S proxy started on localhost:${port}\n`);
-      observer.next(["localhost"]);
+    server.listen(port, () => {
+      log("proxy", `\nNano S proxy started on ${ips[0]}\n`);
+      observer.next(ips);
     });
 
     return () => {

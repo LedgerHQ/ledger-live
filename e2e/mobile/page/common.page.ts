@@ -1,6 +1,5 @@
-import { deleteSpeculos, launchSpeculos } from "../utils/speculosUtils";
-import { startProxy } from "../bridge/proxy";
-import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
+import { deleteSpeculos, launchProxy } from "../utils/speculosUtils";
+import { addKnownSpeculos, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
@@ -102,24 +101,12 @@ export default class CommonPage {
     await tapByElement(accountTitle);
   }
 
-  async addSpeculos(nanoApp: string) {
-    unregisterAllTransportModules();
-    const proxyPort = await findFreePort();
-    const device = await launchSpeculos(nanoApp);
-    const speculosAddress = process.env.SPECULOS_ADDRESS;
-    const proxyAddress = await startProxy(proxyPort, speculosAddress, device.port);
-    await addKnownSpeculos(proxyAddress);
-    process.env.DEVICE_PROXY_URL = `ws://${proxyAddress}`;
-    CLI.registerSpeculosTransport(device.port.toString(), speculosAddress);
-    return device.port;
-  }
-
   async addRegisterSpeculos(speculosPort: number, proxyPort: number) {
     unregisterAllTransportModules();
     const speculosAddress = process.env.SPECULOS_ADDRESS;
-    const proxyAddress = await startProxy(proxyPort, speculosAddress, speculosPort);
-    await addKnownSpeculos(proxyAddress);
-    process.env.DEVICE_PROXY_URL = `ws://${proxyAddress}`;
+    await launchProxy(proxyPort, speculosAddress, speculosPort);
+    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
     CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
     setEnv("SPECULOS_API_PORT", speculosPort);
   }
