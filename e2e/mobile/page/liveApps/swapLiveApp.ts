@@ -28,7 +28,6 @@ export default class SwapLiveAppPage {
   quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
 
   feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
-  quoteContainerId = (provider: string) => `quote-container-${provider}`;
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
