@@ -110,9 +110,7 @@ setCryptoAssetsStore({
 
     return undefined;
   },
-  findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
-    return undefined;
-  },
+  findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
 } as unknown as CryptoAssetsStore);
 
 export const tokenOperations = [

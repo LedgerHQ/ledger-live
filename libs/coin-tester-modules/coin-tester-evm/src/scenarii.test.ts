@@ -6,9 +6,14 @@ import { scenarioPolygon } from "./scenarii/polygon";
 import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 global.console = require("console");
 jest.setTimeout(100_000);
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStoreForCoinFramework({} as unknown as CryptoAssetsStore);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml

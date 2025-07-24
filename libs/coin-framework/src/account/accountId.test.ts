@@ -12,14 +12,6 @@ import { CryptoAssetsStore } from "../crypto-assets/type";
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as unknown as TokenCurrency;
 
-jest
-  .spyOn(cryptoAssets, "getCryptoAssetsStore")
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  .mockReturnValue({
-    findTokenById: (_: unknown) => TOKEN,
-    findTokenByAddressInCurrency: jest.fn(),
-  } as unknown as CryptoAssetsStore);
-
 describe("coin-framework", () => {
   describe("accountId", () => {
     describe("safeEncodeTokenId", () => {
@@ -72,6 +64,13 @@ describe("coin-framework", () => {
 
     describe("decodeTokenAccountId", () => {
       it("should return an accountId and a token", () => {
+        jest
+          .spyOn(cryptoAssets, "getCryptoAssetsStore")
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          .mockReturnValue({
+            findTokenById: (_: unknown) => TOKEN,
+          } as unknown as CryptoAssetsStore);
+
         expect(
           decodeTokenAccountId(
             "js:2:0xkvn:+bsc%2Fbep20%2Fbinance~!dash!~peg~!underscore!~dai~!underscore!~token",
