@@ -2,37 +2,40 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { useDispatch, useSelector } from "react-redux";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
-import { useSelector } from "react-redux";
 import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { toastSelector } from "~/reducers/toast";
+import { dismissToast } from "~/actions/toast";
 
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const { dismissToast, toasts } = useToasts();
+  const dispatch = useDispatch();
+  const { toasts } = useSelector(toastSelector);
+
   const { t } = useTranslation();
   const [nonce, setNonce] = useState(0);
 
   const navigate = useCallback(
     (toast: ToastData) => {
       if (toast.type === "announcement" || !toast.type) {
-        toasts.forEach(({ id }) => dismissToast(id));
+        toasts.forEach(({ id }) => dispatch(dismissToast(id)));
         RootNavigation.navigate(NavigatorName.NotificationCenter, {
           screen: ScreenName.NotificationCenter,
         });
       }
     },
-    [dismissToast, toasts],
+    [dispatch, toasts],
   );
 
   const handleDismissToast = useCallback(
     (toast: ToastData) => {
-      dismissToast(toast.id);
+      dispatch(dismissToast(toast.id));
     },
-    [dismissToast],
+    [dispatch],
   );
 
   const groupedSnackbarsItems = {

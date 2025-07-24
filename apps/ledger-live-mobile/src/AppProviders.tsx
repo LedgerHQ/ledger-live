@@ -2,7 +2,6 @@ import React from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
@@ -37,14 +36,12 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                 <AppDataStorageProvider>
                   <OnboardingContextProvider>
                     <PostOnboardingProviderWrapped>
-                      <ToastProvider>
-                        <NotificationsProvider>
-                          <SnackbarContainer />
-                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                            <InViewContextProvider>{children}</InViewContextProvider>
-                          </NftMetadataProvider>
-                        </NotificationsProvider>
-                      </ToastProvider>
+                      <NotificationsProvider>
+                        <SnackbarContainer />
+                        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                          <InViewContextProvider>{children}</InViewContextProvider>
+                        </NftMetadataProvider>
+                      </NotificationsProvider>
                     </PostOnboardingProviderWrapped>
                   </OnboardingContextProvider>
                 </AppDataStorageProvider>

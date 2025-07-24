@@ -1,10 +1,9 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "~/analytics";
@@ -21,6 +20,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { pushToast } from "~/actions/toast";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -44,7 +44,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const textInputRef = useRef<NativeTextInput | null>(null);
 
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
+  const dispatch = useDispatch();
 
   const maxDeviceName = useMemo(
     () =>
@@ -91,15 +91,17 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     saveBleDeviceName({ deviceId: device.deviceId, name });
     onNameChange(name);
 
-    pushToast({
-      id: "rename-device-success",
-      type: "success",
-      icon: "success",
-      title: t("EditDeviceName.success", { deviceName: name }),
-    });
+    dispatch(
+      pushToast({
+        id: "rename-device-success",
+        type: "success",
+        icon: "success",
+        title: t("EditDeviceName.success", { deviceName: name }),
+      }),
+    );
 
     navigation.goBack();
-  }, [device.deviceId, name, navigation, onNameChange, pushToast, saveBleDeviceName, t]);
+  }, [device.deviceId, dispatch, name, navigation, onNameChange, saveBleDeviceName, t]);
 
   const onClose = useCallback(() => {
     if (completed) {
