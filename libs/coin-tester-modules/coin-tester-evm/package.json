@@ -64,7 +64,6 @@
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bluebird": "^3.7.2",
     "dotenv": "^16.4.5",
