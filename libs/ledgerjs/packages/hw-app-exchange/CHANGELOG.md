@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
 ## 0.10.4
 
 ### Patch Changes
