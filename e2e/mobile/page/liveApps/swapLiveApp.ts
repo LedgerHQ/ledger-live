@@ -28,7 +28,6 @@ export default class SwapLiveAppPage {
   quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
 
   feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
-  quoteContainerId = (provider: string) => `quote-container-${provider}`;
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
@@ -95,6 +94,7 @@ export default class SwapLiveAppPage {
         );
 
         if (provider && !provider.kyc && provider.isNative) {
+          await waitWebElementByTestId(this.quoteProviderName);
           await getWebElementByTestId(this.quoteProviderName, index).tap();
           await allure.attachment("Selected provider: ", providerName, "text/plain");
           return { providerName, index };
@@ -179,9 +179,7 @@ export default class SwapLiveAppPage {
       : `Swap with ${provider}`;
 
     const actualButtonText = await getWebElementText(this.executeSwapButton);
-    if (actualButtonText !== expectedButtonText) {
-      await tapWebElementByElement(getWebElementById(this.executeSwapButton));
-    }
+    jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
