@@ -67,7 +67,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
+      spawnSpeculos(`/${defaultNanoApp.firmware}/Sonic/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://sonic-rpc.publicnode.com"),
     ]);
 
