@@ -344,6 +344,7 @@
           "provider": "provider",
           "rate": "rate",
           "fees": "Network Fees",
+          "feesDescription": "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target": "target account"
         },
         "tooltip": {

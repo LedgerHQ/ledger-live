@@ -3720,6 +3720,7 @@
             "provider": "Provider",
             "rate": "Rate",
             "fees": "Network fees",
+            "feesDescription": "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
             "target": "Target account"
           },
           "noAccount": "Create an account to receive {{name}}",
@@ -7837,7 +7838,7 @@
       "description": "Unexpected instruction"
     },
     "classNotSupported": {
-      "title": "Something went wrong", 
+      "title": "Something went wrong",
       "description": "Class not supported"
     },
     "invalidInstruction": {

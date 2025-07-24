@@ -1,47 +1,62 @@
 # @ledgerhq/coin-sui
 
-## 0.7.0-nightly.3
+## 0.7.0
 
 ### Minor Changes
 
-- [#11041](https://github.com/LedgerHQ/ledger-live/pull/11041) [`8e60ac2`](https://github.com/LedgerHQ/ledger-live/commit/8e60ac2fa6b6152c1665e9e43b7e33d0774daeb2) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Remove height pagination for alpaca
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
 
-## 0.7.0-nightly.2
+- [#10901](https://github.com/LedgerHQ/ledger-live/pull/10901) [`6385b56`](https://github.com/LedgerHQ/ledger-live/commit/6385b564624bdcc0d12e96a9730d1baa3849ed56) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - sui: fixed send token issue
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`948dcc4`](https://github.com/LedgerHQ/ledger-live/commit/948dcc4e8de83985d8dbeb0af5538a5ff25c80d2) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Fix sui swap device disconnected error
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`0318e2b`](https://github.com/LedgerHQ/ledger-live/commit/0318e2bee721ec12156be9f12530743a4c169396) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: sui pending operation sync
+
+- [#10844](https://github.com/LedgerHQ/ledger-live/pull/10844) [`f72b7ae`](https://github.com/LedgerHQ/ledger-live/commit/f72b7ae31d2329028f6ef86e89f67e563500e23b) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Coin:SUI listOperation uses minHeight parameter
+
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`d56a4ba`](https://github.com/LedgerHQ/ledger-live/commit/d56a4ba6ae09a2e90fc9034a04b62e490d5ef4e6) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: alpaca operation sync and time
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/cryptoassets@13.22.0
+  - @ledgerhq/coin-framework@5.7.0
+  - @ledgerhq/types-live@6.78.0
+  - @ledgerhq/errors@6.23.0
+  - @ledgerhq/live-network@2.0.13
+  - @ledgerhq/hw-app-sui@1.2.0
+
+## 0.7.0-next.1
 
 ### Minor Changes
 
-- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`948dcc4`](https://github.com/LedgerHQ/ledger-live/commit/948dcc4e8de83985d8dbeb0af5538a5ff25c80d2) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Fix sui swap device disconnected error
 
-### Patch Changes
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`0318e2b`](https://github.com/LedgerHQ/ledger-live/commit/0318e2bee721ec12156be9f12530743a4c169396) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: sui pending operation sync
 
-- Updated dependencies [[`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8)]:
-  - @ledgerhq/coin-framework@5.7.0-nightly.2
+- [#11019](https://github.com/LedgerHQ/ledger-live/pull/11019) [`d56a4ba`](https://github.com/LedgerHQ/ledger-live/commit/d56a4ba6ae09a2e90fc9034a04b62e490d5ef4e6) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: alpaca operation sync and time
 
-## 0.7.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
-  - @ledgerhq/types-live@6.78.0-nightly.0
-  - @ledgerhq/types-cryptoassets@7.24.0-nightly.0
-  - @ledgerhq/cryptoassets@13.22.0-nightly.5
-  - @ledgerhq/coin-framework@5.7.0-nightly.1
-
-## 0.7.0-nightly.0
+## 0.7.0-next.0
 
 ### Minor Changes
 
-- [#11002](https://github.com/LedgerHQ/ledger-live/pull/11002) [`7e092b1`](https://github.com/LedgerHQ/ledger-live/commit/7e092b187406dc30a0e205c2ed5de4aab5880a95) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Fix sui swap device disconnected error
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+- [#10901](https://github.com/LedgerHQ/ledger-live/pull/10901) [`6385b56`](https://github.com/LedgerHQ/ledger-live/commit/6385b564624bdcc0d12e96a9730d1baa3849ed56) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - sui: fixed send token issue
+
+- [#10844](https://github.com/LedgerHQ/ledger-live/pull/10844) [`f72b7ae`](https://github.com/LedgerHQ/ledger-live/commit/f72b7ae31d2329028f6ef86e89f67e563500e23b) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Coin:SUI listOperation uses minHeight parameter
 
 ### Patch Changes
 
-- [#10933](https://github.com/LedgerHQ/ledger-live/pull/10933) [`16f057e`](https://github.com/LedgerHQ/ledger-live/commit/16f057ea9cd1332856f74dafecf0a175fb2eb300) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: sui pending operation sync
-
-- [#10932](https://github.com/LedgerHQ/ledger-live/pull/10932) [`72baa62`](https://github.com/LedgerHQ/ledger-live/commit/72baa62633401447dd1e9414defa8d1a69eb0b78) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix: alpaca operation sync and time
-
-- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf)]:
-  - @ledgerhq/cryptoassets@13.22.0-nightly.4
-  - @ledgerhq/coin-framework@5.6.1-nightly.0
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/cryptoassets@13.22.0-next.0
+  - @ledgerhq/coin-framework@5.7.0-next.0
+  - @ledgerhq/types-live@6.78.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+  - @ledgerhq/hw-app-sui@1.2.0
 
 ## 0.6.1
 

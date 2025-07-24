@@ -1,42 +1,30 @@
 # @ledgerhq/cryptoassets
 
-## 13.22.0-nightly.5
-
-### Minor Changes
-
-- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
-
-## 13.22.0-nightly.4
-
-### Minor Changes
-
-- [#10965](https://github.com/LedgerHQ/ledger-live/pull/10965) [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf) Thanks [@joaoccmartins](https://github.com/joaoccmartins)! - Added Celo tokens
-
-## 13.22.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b)]:
-  - @ledgerhq/live-env@2.12.0-nightly.1
-
-## 13.22.0-nightly.2
+## 13.22.0
 
 ### Minor Changes
 
 - [#10951](https://github.com/LedgerHQ/ledger-live/pull/10951) [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - sync Cardano tokens list with nano app
 
-## 13.22.0-nightly.1
-
-### Minor Changes
-
 - [#10864](https://github.com/LedgerHQ/ledger-live/pull/10864) [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update evm dead addr for zksync
-
-## 13.21.1-nightly.0
 
 ### Patch Changes
 
-- Updated dependencies [[`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
-  - @ledgerhq/live-env@2.12.0-nightly.0
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+
+## 13.22.0-next.0
+
+### Minor Changes
+
+- [#10951](https://github.com/LedgerHQ/ledger-live/pull/10951) [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - sync Cardano tokens list with nano app
+
+- [#10864](https://github.com/LedgerHQ/ledger-live/pull/10864) [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update evm dead addr for zksync
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
 
 ## 13.21.0
 

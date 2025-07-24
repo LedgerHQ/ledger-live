@@ -1,54 +1,86 @@
 # ledger-live-desktop-e2e-tests
 
-## 0.3.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e)]:
-  - @ledgerhq/live-common@34.42.0-nightly.4
-  - @ledgerhq/live-cli@24.20.0-nightly.4
-
-## 0.3.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8)]:
-  - @ledgerhq/live-common@34.42.0-nightly.3
-  - @ledgerhq/live-cli@24.20.0-nightly.3
-  - @ledgerhq/live-wallet@0.11.5-nightly.3
-
-## 0.3.0-nightly.2
-
-### Minor Changes
-
-- [#10952](https://github.com/LedgerHQ/ledger-live/pull/10952) [`ede3a08`](https://github.com/LedgerHQ/ledger-live/commit/ede3a08e9f1ba85aa687688d343003504063e767) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - fix account for e2e swap test
-
-### Patch Changes
-
-- Updated dependencies [[`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b), [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
-  - @ledgerhq/live-common@34.42.0-nightly.2
-  - @ledgerhq/types-live@6.78.0-nightly.0
-  - @ledgerhq/live-cli@24.20.0-nightly.2
-  - @ledgerhq/live-wallet@0.11.5-nightly.2
-
-## 0.2.1-nightly.1
+## 0.3.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-cli@24.19.5-nightly.1
-  - @ledgerhq/live-common@34.42.0-nightly.1
-  - @ledgerhq/live-wallet@0.11.5-nightly.1
+  - @ledgerhq/live-common@34.42.1
+  - @ledgerhq/live-cli@24.19.6
 
-## 0.2.1-nightly.0
+## 0.3.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`3e32d52`](https://github.com/LedgerHQ/ledger-live/commit/3e32d522e0589a8356d222e0dbd3a87551d26e79), [`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee)]:
-  - @ledgerhq/live-common@34.42.0-nightly.0
-  - @ledgerhq/ledger-key-ring-protocol@0.6.0-nightly.2
-  - @ledgerhq/live-cli@24.19.5-nightly.0
-  - @ledgerhq/live-wallet@0.11.5-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.1-hotfix.0
+  - @ledgerhq/live-cli@24.19.6-hotfix.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#10945](https://github.com/LedgerHQ/ledger-live/pull/10945) [`43ac7db`](https://github.com/LedgerHQ/ledger-live/commit/43ac7dbf45e13bb741d670b7ea3803f38da42432) Thanks [@semeano](https://github.com/semeano)! - Fix E2E delegation tests for Aptos
+
+- [#10865](https://github.com/LedgerHQ/ledger-live/pull/10865) [`e4a663a`](https://github.com/LedgerHQ/ledger-live/commit/e4a663a2c00c90ba51c9fcc71f17f51f2cb7a83f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add missing app.json for swap test
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3), [`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`96fab35`](https://github.com/LedgerHQ/ledger-live/commit/96fab3530589225719814280ab47d26ffbd88a5e), [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/live-common@34.42.0
+  - @ledgerhq/types-live@6.78.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.0
+  - @ledgerhq/live-cli@24.19.5
+  - @ledgerhq/live-wallet@0.11.5
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8
+
+## 0.3.0-next.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.19.5-next.3
+  - @ledgerhq/live-common@34.42.0-next.3
+
+## 0.3.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.0-next.2
+  - @ledgerhq/live-cli@24.19.5-next.2
+
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.0-next.1
+  - @ledgerhq/live-cli@24.19.5-next.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#10945](https://github.com/LedgerHQ/ledger-live/pull/10945) [`43ac7db`](https://github.com/LedgerHQ/ledger-live/commit/43ac7dbf45e13bb741d670b7ea3803f38da42432) Thanks [@semeano](https://github.com/semeano)! - Fix E2E delegation tests for Aptos
+
+- [#10865](https://github.com/LedgerHQ/ledger-live/pull/10865) [`e4a663a`](https://github.com/LedgerHQ/ledger-live/commit/e4a663a2c00c90ba51c9fcc71f17f51f2cb7a83f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add missing app.json for swap test
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`2f38af0`](https://github.com/LedgerHQ/ledger-live/commit/2f38af097dec70393364c59fb50bb9d456bc8eb3), [`d4d84c8`](https://github.com/LedgerHQ/ledger-live/commit/d4d84c802b6824a52575bbb7e8e25acb465e402c), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`8b02f09`](https://github.com/LedgerHQ/ledger-live/commit/8b02f096a5e55b17df13cbb77ff0b6a7f4e03aee), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac), [`96fab35`](https://github.com/LedgerHQ/ledger-live/commit/96fab3530589225719814280ab47d26ffbd88a5e), [`e3f9174`](https://github.com/LedgerHQ/ledger-live/commit/e3f9174fac32d40eb9993b223d7ee032e6dbc789)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/live-common@34.42.0-next.0
+  - @ledgerhq/types-live@6.78.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.0-next.0
+  - @ledgerhq/live-cli@24.19.5-next.0
+  - @ledgerhq/live-wallet@0.11.5-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8-next.0
 
 ## 0.2.0
 

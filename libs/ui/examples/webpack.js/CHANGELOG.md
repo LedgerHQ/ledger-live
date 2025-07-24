@@ -1,32 +1,18 @@
 # webpack.js-example
 
-## 0.2.4-nightly.3
+## 0.2.4
 
 ### Patch Changes
 
-- Updated dependencies [[`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1)]:
-  - @ledgerhq/react-ui@0.34.0-nightly.3
+- Updated dependencies [[`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a), [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2), [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5)]:
+  - @ledgerhq/react-ui@0.34.0
 
-## 0.2.4-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95)]:
-  - @ledgerhq/react-ui@0.34.0-nightly.2
-
-## 0.2.4-nightly.1
+## 0.2.4-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4)]:
-  - @ledgerhq/react-ui@0.34.0-nightly.1
-
-## 0.2.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5)]:
-  - @ledgerhq/react-ui@0.34.0-nightly.0
+- Updated dependencies [[`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a), [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2), [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5)]:
+  - @ledgerhq/react-ui@0.34.0-next.0
 
 ## 0.2.3
 
