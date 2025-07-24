@@ -7,7 +7,7 @@ import {
   useModularDrawerAnalytics,
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
-} from "../../../../analytics";
+} from "LLM/features/ModularDrawer/analytics";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;

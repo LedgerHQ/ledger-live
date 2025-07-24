@@ -86,18 +86,21 @@ export function ModularDrawer({
   /**
    * Get the current page name for analytics based on the current step
    */
+  const PAGE_NAME_MAP = useMemo(
+    () => ({
+      [ModularDrawerStep.Asset]: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+      [ModularDrawerStep.Network]: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+      [ModularDrawerStep.Account]: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+    }),
+    [],
+  );
+
   const getCurrentPageName = useCallback(() => {
-    switch (navigationStepManager.currentStep) {
-      case ModularDrawerStep.Asset:
-        return MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
-      case ModularDrawerStep.Network:
-        return MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION;
-      case ModularDrawerStep.Account:
-        return MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION;
-      default:
-        return MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
-    }
-  }, [navigationStepManager.currentStep]);
+    return (
+      PAGE_NAME_MAP[navigationStepManager.currentStep] ??
+      MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION
+    );
+  }, [PAGE_NAME_MAP, navigationStepManager.currentStep]);
 
   /**
    * Handlers for the back & close button in the drawer.
@@ -132,10 +135,8 @@ export function ModularDrawer({
     });
 
     onClose?.();
-    setTimeout(() => {
-      navigationStepManager.reset();
-      reset();
-    }, 0);
+    navigationStepManager.reset();
+    reset();
   };
 
   const hasOneCurrency = useMemo(() => {

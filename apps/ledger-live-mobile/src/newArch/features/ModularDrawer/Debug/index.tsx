@@ -14,15 +14,15 @@ function ModularDrawerScreenDebug() {
   const currencies = listAndFilterCurrencies({ includeTokens: true });
 
   const assetsConfiguration = {
-    filter: "topNetworks" as const,
-    leftElement: "apy" as const,
-    rightElement: "balance" as const,
-  };
+    filter: "topNetworks",
+    leftElement: "apy",
+    rightElement: "balance",
+  } as const;
 
   const networksConfiguration = {
-    leftElement: "numberOfAccounts" as const,
-    rightElement: "balance" as const,
-  };
+    leftElement: "numberOfAccounts",
+    rightElement: "balance",
+  } as const;
 
   return (
     <Flex flexDirection="column" rowGap={4} px={6}>
