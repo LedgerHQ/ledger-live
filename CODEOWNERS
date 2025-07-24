@@ -60,6 +60,9 @@ libs/live-network/                                       @ledgerhq/coin-integrat
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 
+# Cloud Wallet team
+libs/coin-framework/src/api/                             @ledgerhq/cloud-wallet
+
 # Shared with partners
 ## Blockchain support
 libs/coin-modules/coin-aptos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
