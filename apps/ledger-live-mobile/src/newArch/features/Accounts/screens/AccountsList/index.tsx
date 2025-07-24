@@ -34,6 +34,7 @@ function View({
   specificAccounts,
   isAddAccountCtaDisabled,
   currencyToTrack,
+  currency,
   ticker,
   onClick,
 }: ViewProps) {
@@ -65,7 +66,7 @@ function View({
             <AddAccountButton
               disabled={isAddAccountCtaDisabled}
               sourceScreenName={pageTrackingEvent}
-              currency={currencyToTrack}
+              currency={currency}
               onClick={onClick}
             />
           )}
@@ -108,6 +109,7 @@ const SpecificAccountsList = ({
 
 const AccountsList = (props: Props) => {
   const { params } = props.route;
+
   const hasSpecificAccounts = params?.specificAccounts && params?.specificAccounts.length > 0;
   return hasSpecificAccounts ? (
     <SpecificAccountsList props={props} specificAccounts={params.specificAccounts} />

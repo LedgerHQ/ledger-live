@@ -1,8 +1,8 @@
-import { useOpenAssetFlow } from "../useOpenAssetFlow";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook } from "tests/testSetup";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ModularDrawerFlowManager from "../../ModularDrawerFlowManager";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useOpenAssetFlow } from "../useOpenAssetFlow";
 
 jest.mock("~/renderer/drawers/Provider", () => ({
   setDrawer: jest.fn(),

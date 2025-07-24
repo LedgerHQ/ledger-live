@@ -1,3 +1,5 @@
+// For LLD Storybook
+
 import { fn, Mock } from "@storybook/test";
 import {
   arbitrumCurrency,
@@ -8,7 +10,7 @@ import {
   injectiveCurrency,
   scrollCurrency,
   usdcToken,
-} from "./useSelectAssetFlow.mock";
+} from "../../__mocks__/useSelectAssetFlow.mock";
 
 export const res = {
   result: {

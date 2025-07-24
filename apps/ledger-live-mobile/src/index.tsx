@@ -103,10 +103,14 @@ import {
   TrackingConsent,
   DatadogProvider,
   AutoInstrumentationConfiguration,
+  DdSdkReactNative,
+  PropagatorType,
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
 import { initSentry } from "./sentry";
+import getOrCreateUser from "./user";
+import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -153,6 +157,12 @@ function App() {
       trackInteractions: datadogFF?.params?.trackInteractions ?? false,
       trackResources: datadogFF?.params?.trackResources ?? false,
       errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+      firstPartyHosts: [
+        {
+          match: FIRST_PARTY_MAIN_HOST_DOMAIN,
+          propagatorTypes: [PropagatorType.DATADOG, PropagatorType.TRACECONTEXT],
+        },
+      ],
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
@@ -186,10 +196,23 @@ function App() {
 
   useEffect(() => {
     if (!datadogFF?.enabled) return;
+    const setUserEquipmentId = async () => {
+      const { user } = await getOrCreateUser();
+      if (!user) return;
+      const { id } = user; // id is the user uuid aka equipment ID (used
+      // in segment)
+      DdSdkReactNative.setUserInfo({
+        id,
+      });
+    };
     initializeDatadogProvider(
       datadogFF?.params as Partial<PartialInitializationConfiguration>,
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
-    );
+    )
+      .then(setUserEquipmentId)
+      .catch(e => {
+        console.error("Datadog initialization failed", e);
+      });
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
 
   useEffect(() => {

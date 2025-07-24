@@ -6,6 +6,7 @@
       }
     },
     "settings": {
+      "readOnlyModeEnabled": false,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
@@ -24,6 +25,7 @@
       "sharePersonalizedRecommandations": false,
       "hasSeenAnalyticsOptInPrompt": true,
       "sentryLogs": true,
+      "readOnlyModeEnabled": false,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
       "accountsViewMode": "list",

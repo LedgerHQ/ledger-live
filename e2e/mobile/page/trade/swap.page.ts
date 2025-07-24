@@ -96,9 +96,15 @@ export default class SwapPage {
     jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/Pending|Finished/);
     await detoxExpect(getElementByText("Swap ID")).toBeVisible();
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
-      normalizeText(provider.uiName),
-    );
+    if (await IsIdVisible(this.operationDetails.providerLink)) {
+      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
+        normalizeText(provider.uiName),
+      );
+    } else {
+      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.provider))).toEqual(
+        normalizeText(provider.uiName),
+      );
+    }
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(
       /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
     );

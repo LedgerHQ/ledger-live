@@ -1,18 +1,10 @@
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { mockOnAssetSelected, mockDomMeasurements } from "./shared";
-import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { useGroupedCurrenciesByProvider } from "../__mocks__/useGroupedCurrenciesByProvider.mock";
-import {
-  arbitrumCurrency,
-  baseCurrency,
-  bitcoinCurrency,
-  ethereumCurrency,
-  scrollCurrency,
-} from "../__mocks__/useSelectAssetFlow.mock";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
@@ -20,8 +12,16 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
-} from "../__mocks__/accounts.mock";
-import BigNumber from "bignumber.js";
+} from "../../__mocks__/accounts.mock";
+import {
+  arbitrumCurrency,
+  baseCurrency,
+  bitcoinCurrency,
+  ethereumCurrency,
+  scrollCurrency,
+} from "../../__mocks__/useSelectAssetFlow.mock";
+import { mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
@@ -108,6 +108,29 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(ethereumBalance).toBeVisible();
     const usdBalance = screen.getByText(/\$65,081.79/i);
     expect(usdBalance).toBeVisible();
+
+    const apyTags = screen.queryAllByText(/% APY/i);
+    expect(apyTags).toHaveLength(0);
+  });
+
+  it("should display APY tag at assetSelection step", () => {
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{
+          assets: {
+            leftElement: "apy",
+          },
+        }}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    const apyTag = screen.getAllByText(/% APY/i)[0];
+    expect(apyTag).toBeVisible();
   });
 
   it("should not display balance on the right at assetSelection step when enableModularization is false ", () => {
@@ -169,6 +192,31 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     [accountCountArbitrum, accountCountEthereum].forEach(accountCount => {
       expect(accountCount).toBeVisible();
     });
+
+    const apyTags = screen.queryAllByText(/% APY/);
+    expect(apyTags).toHaveLength(0);
+  });
+
+  it("should display number of accounts and APY for network with numberOfAccountsAndApy flag", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        source="sourceTest"
+        flow="flowTest"
+        drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
+      />,
+      mockedInitialState,
+    );
+
+    const ethereum = screen.getByText(/ethereum/i);
+    await user.click(ethereum);
+
+    const accountCountArbitrum = screen.getByText(/1 account/i);
+    expect(accountCountArbitrum).toBeVisible();
+
+    const apyTag = screen.getAllByText(/% APY/)[0];
+    expect(apyTag).toBeVisible();
   });
 
   it("should display the total balance of an asset a specific network", async () => {

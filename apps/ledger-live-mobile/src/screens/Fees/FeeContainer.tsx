@@ -30,7 +30,7 @@ export function FeeContainer({ strategy, active, onSelect, gasOption, feePayingA
   if (!gasOption) return null;
 
   return (
-    <TouchableOpacity onPress={onSelect}>
+    <TouchableOpacity onPress={onSelect} testID={`fee-container-${strategy}`}>
       <Flex
         flexDirection="column"
         border={1.5}

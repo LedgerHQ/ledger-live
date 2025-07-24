@@ -344,6 +344,7 @@
           "provider": "provider",
           "rate": "rate",
           "fees": "Network Fees",
+          "feesDescription": "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target": "target account"
         },
         "tooltip": {
@@ -4604,6 +4605,10 @@
           }
         }
       },
+      "modularDrawerDevTool": {
+        "title": "Modular Drawer Dev Tool",
+        "description": "Allows you to test the Modular Drawer easily"
+      },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "mockAppUpdate": "Mock app update",
@@ -7306,6 +7311,15 @@
       "newAccount": "New account",
       "addAccountSelection": "Choose account to add funds",
       "addAccountSelectionPtxFlow": "Select account"
+    },
+    "editAccountName": {
+      "title": "Edit account name",
+      "input": {
+        "name": "Name"
+      },
+      "cta": {
+        "save": "Save"
+      }
     },
     "fundAccount": {
       "receive": "Receive",

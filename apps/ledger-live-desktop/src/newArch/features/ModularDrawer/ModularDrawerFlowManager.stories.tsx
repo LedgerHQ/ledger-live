@@ -1,19 +1,3 @@
-import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
-import { legacy_createStore as createStore } from "redux";
-import { Provider } from "react-redux";
-import ModularDrawerFlowManager, {
-  ModularDrawerFlowManagerProps,
-} from "./ModularDrawerFlowManager";
-import {
-  arbitrumCurrency,
-  arbitrumToken,
-  bitcoinCurrency,
-  ethereumCurrency,
-} from "./__mocks__/useSelectAssetFlow.mock";
-import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
-import { track } from "~/renderer/analytics/__mocks__/segment";
-import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "./__mocks__/accounts.mock";
 import {
   FeatureFlagsContextValue,
   FeatureFlagsProvider,
@@ -25,6 +9,22 @@ import {
   networksLeftElementOptions,
   networksRightElementOptions,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import type { Meta, StoryObj } from "@storybook/react";
+import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { track } from "~/renderer/analytics/__mocks__/segment";
+import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
+import {
+  arbitrumCurrency,
+  arbitrumToken,
+  bitcoinCurrency,
+  ethereumCurrency,
+} from "../__mocks__/useSelectAssetFlow.mock";
+import ModularDrawerFlowManager, {
+  ModularDrawerFlowManagerProps,
+} from "./ModularDrawerFlowManager";
 
 const store = createStore(() => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],

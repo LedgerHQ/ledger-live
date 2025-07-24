@@ -1,6 +1,6 @@
 import axios from "axios";
 import { isAddressSanctioned } from ".";
-import { LiveConfig } from "@ledgerhq/live-config/lib/LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setEnv } from "@ledgerhq/live-env";
 
