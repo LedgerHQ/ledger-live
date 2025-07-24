@@ -287,20 +287,120 @@
       "description" : "もう一度お試しください。"
     },
     "DisconnectedDevice" : {
-      "title" : "デバイスが切断されました",
-      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "デバイスが切断されました",
-      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "デバイスが切断されました",
-      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DisconnectError" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "デバイスが切断されました",
-      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "TransportNotSupportedError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "NoTransportProvidedError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ConnectionOpeningError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "デバイスが初期設定されていません",
+      "description" : "デバイスは、使用準備が整っていません。初期設定手順を完了後に、もう一度お試しください。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "デバイスが初期設定されていません",
+      "description" : "デバイスは、使用準備が整っていません。初期設定手順を完了後に、もう一度お試しください。"
+    },
+    "DeviceLockedError" : {
+      "title" : "デバイスがロックされました",
+      "description" : "デバイスがロックされています。ロックを解除してもう一度お試しください。"
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "メモリが足りません",
+      "description" : "デバイスのメモリが不足しています。アプリをアンインストールしてもう一度お試しください。"
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OSはサポートされていません",
+      "description" : "お使いのデバイスのオペレーティングシステムはサポートされていません。Ledger Liveから更新していただくか、問題が発生した場合はLedgerサポートにご連絡ください。"
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "バッテリーエラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "バッテリーエラー",
+      "description" : "バッテリー状態エラー。Ledgerサポートにご連絡ください。"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDAError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDeviceError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ReceiverApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "FramerApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "SendApduTimeoutError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "AlreadySendingApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "CasperInvalidTransferId" : {
       "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
@@ -517,9 +617,29 @@
       "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
     },
+    "NotEnoughToStake" : {
+      "title" : "ステーキングを有効にするには、少なくとも{{minStake}}{{currency}}が必要です",
+      "description" : "ステーキングを有効にするには、少なくとも{{minStake}}{{currency}}が必要です"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。",
+      "description" : "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}}を超えるリステーキングが行われると、ステーキング合計{{totalAmount}}がリステーキングされます。",
+      "description" : "{{maxAmount}}を超えるリステーキングが行われると、ステーキング合計{{totalAmount}}がリステーキングされます。"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "{{minAmount}}未満のリステーキングはできません",
+      "description" : "{{minAmount}}未満のリステーキングはできません"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "{{minAmount}}未満のステーキング解除はできません",
+      "description" : "{{minAmount}}未満のステーキング解除はできません"
     },
     "NotEnoughBalanceFees" : {
       "title" : "申し訳ございませんが、手数料のための資金が不足しています",
@@ -1084,6 +1204,10 @@
     },
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "お客様の安全を確保",
+      "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3400,7 +3524,13 @@
         "verify" : "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
       },
       "noResultsFound" : "暗号資産が見つかりません",
-      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
+      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。",
+      "sanctionedAddress" : {
+        "title" : "お客様の安全を維持",
+        "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "閉じる",
+        "learnMore" : "詳細はこちら"
+      }
     },
     "buy" : {
       "title" : "購入",
@@ -6317,6 +6447,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "利用可能なAptos",
+        "description" : "これは利用可能額です。"
+      },
+      "storageUsage" : {
+        "title" : "最低残高",
+        "description" : "この数量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
+      },
+      "staked" : {
+        "title" : "ステーキング済み残高",
+        "description" : "この量は現在、バリデーターにステーキングされています。"
+      },
+      "pending" : {
+        "title" : "保留中残高",
+        "description" : "この量はステーキング解除されており、現在利用可能待ちです。"
+      },
+      "withdrawable" : {
+        "title" : "出金可能残高",
+        "description" : "この数量はステーキング解除されており、現在出金可能です。"
+      },
+      "stakingUnavailable" : {
+        "title" : "ステーキングは利用できません",
+        "description" : "アカウントに、ステーキング、ステーキング解除、および引き出しに十分な残高がありません。"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "ステーキング済み量",
+        "unstakedAmount" : "ステーキング解除済み数量",
+        "withdrawnAmount" : "引き出し数量"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングを解除する数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "引き出す数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産の引き出しに成功しました"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "再ステーキング数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産の再ステーキングに成功しました"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "ステーキングポジション",
+      "info" : "ステーキングの仕組み",
+      "add" : "追加",
+      "stakingEarn" : "資産をステーキングして、Aptosの報酬を獲得できます。",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "comm" : "コミット",
+      "timeToUnlock" : "ロック解除まで",
+      "iStake" : "ステーキングします",
+      "actions" : {
+        "unstake" : "ステーキングの解除",
+        "withdraw" : "出金",
+        "restake" : "再ステーキング"
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "pending" : "保留中",
+        "available" : "引き出し可能"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングする数量",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、Aptosをステーキングして、安全に報酬を獲得しましょう。",
+            "steps" : {
+              "0" : "資産をステーキングしても、資産の所有者はお客様のままです。",
+              "1" : "ステーキング解除が完了するまで最大2時間待つ必要があります。",
+              "2" : "Ledgerデバイスを使って安全にステーキングできます。"
+            },
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            },
+            "cta" : "続行"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。"
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "デリゲート超過",
     "delegationSendWarnDesc" : "送付額は、デリゲートアカウントから差し引かれます。",
@@ -6717,8 +6982,8 @@
       "7d" : "7日間",
       "30d" : "30日間",
       "1y" : "1年",
-      "1D_label" : "1日",
       "1H_label" : "1時間",
+      "1D_label" : "1日",
       "1W_label" : "1週",
       "1M_label" : "1月",
       "1Y_label" : "1年"
@@ -7505,5 +7770,10 @@
     "title" : "Ledger Liveのアップデートが必要です",
     "description" : "このバージョンのLedger Liveは、最新デバイスのオペレーティングシステムに対応していません。今すぐアップデートして、接続性の向上をお楽しみください。",
     "openStore" : "アップデート"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "暗号資産を選択",
+    "selectNetwork" : "ネットワークを選択",
+    "selectAccount" : "アカウントを選択"
   }
 }
