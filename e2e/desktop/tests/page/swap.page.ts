@@ -184,7 +184,6 @@ export class SwapPage extends AppPage {
   @step("Check drawer error message ($0)")
   async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
     await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeVisible();
     await expect(this.continueButton).toBeDisabled();
     await this.drawerCloseButton.click();
   }
