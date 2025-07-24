@@ -173,7 +173,7 @@ type ProcessImageArgs = {
    *  - >1: more contrasted than the original
    * */
   contrast: number;
-  bitsPerPixel: 1 | 2 | 4;
+  bitsPerPixel: 1 | 4;
 };
 
 function processImage(args: ProcessImageArgs): ProcessorResult {
