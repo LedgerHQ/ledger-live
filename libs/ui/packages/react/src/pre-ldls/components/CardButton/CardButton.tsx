@@ -56,14 +56,19 @@ export const CardButton = ({
   title,
   iconRight,
   variant = "default",
+  ...rest
 }: {
   onClick: () => void;
   title: string;
   iconRight?: JSX.Element;
   variant?: "default" | "dashed";
-}) => {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <Button onClick={onClick} style={{ borderStyle: variant === "default" ? "solid" : "dashed" }}>
+    <Button
+      onClick={onClick}
+      style={{ borderStyle: variant === "default" ? "solid" : "dashed" }}
+      {...rest}
+    >
       {title} {iconRight}
     </Button>
   );
