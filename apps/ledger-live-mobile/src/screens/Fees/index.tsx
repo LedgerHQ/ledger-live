@@ -24,7 +24,7 @@ export function FeesScreen({ route: { params } }: Props) {
   return (
     <SafeAreaView>
       <Flex flexDirection="column" rowGap={12} margin={16} alignItems="stretch">
-        <Text color={"neutral.c70"} fontSize={14} fontWeight="500">
+        <Text color={"neutral.c70"} fontSize={14} fontWeight="medium">
           {t("transfer.swap2.form.details.label.feesDescription")}
         </Text>
         <FeeContainer
