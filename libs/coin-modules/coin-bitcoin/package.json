@@ -74,6 +74,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bchaddrjs": "^0.4.3",
     "@types/bs58": "^4.0.1",
@@ -107,6 +108,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test-monitor": "jest --config=jest.monitor.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

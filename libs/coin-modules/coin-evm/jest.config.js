@@ -11,7 +11,12 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
+  testPathIgnorePatterns: [
+    "lib/",
+    "lib-es/",
+    ".*\\.(integ|integration)\\.test\\.ts",
+    ".monitor.test.ts",
+  ],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/coin-tester",
