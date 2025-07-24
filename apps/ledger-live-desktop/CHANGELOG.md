@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.123.0-nightly.0
+
+### Minor Changes
+
+- [#11051](https://github.com/LedgerHQ/ledger-live/pull/11051) [`62919c6`](https://github.com/LedgerHQ/ledger-live/commit/62919c6303fa149cd1351685a4aab771dcc3b12c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add left APY component for MAD asset selection screen
+
+- [#11057](https://github.com/LedgerHQ/ledger-live/pull/11057) [`4b2bbf7`](https://github.com/LedgerHQ/ledger-live/commit/4b2bbf79fc6e5479752372f3ceea3937ad639420) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY component to network selection page
+
+### Patch Changes
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- Updated dependencies [[`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118)]:
+  - @ledgerhq/types-live@6.78.1-nightly.0
+  - @ledgerhq/live-common@34.42.2-nightly.0
+  - @ledgerhq/coin-framework@5.7.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.18.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.0
+  - @ledgerhq/coin-evm@2.24.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.0
+  - @ledgerhq/domain-service@1.2.38-nightly.0
+  - @ledgerhq/live-countervalues@0.5.15-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.0
+  - @ledgerhq/live-nft@0.8.15-nightly.0
+  - @ledgerhq/live-nft-react@0.9.15-nightly.0
+  - @ledgerhq/live-wallet@0.11.6-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.8.2-nightly.0
+
 ## 2.122.1
 
 ### Patch Changes

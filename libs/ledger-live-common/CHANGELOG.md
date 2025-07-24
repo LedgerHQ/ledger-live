@@ -1,5 +1,48 @@
 # @ledgerhq/live-common
 
+## 34.42.2-nightly.0
+
+### Patch Changes
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- Updated dependencies [[`d235ec0`](https://github.com/LedgerHQ/ledger-live/commit/d235ec0b843b94de81642952c322e2a3b3adedaf)]:
+  - @ledgerhq/live-signer-solana@0.5.0-nightly.0
+  - @ledgerhq/coin-framework@5.7.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.15-nightly.0
+  - @ledgerhq/coin-aptos@2.6.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.18.1-nightly.0
+  - @ledgerhq/coin-cardano@0.10.1-nightly.0
+  - @ledgerhq/coin-casper@2.0.6-nightly.0
+  - @ledgerhq/coin-celo@1.1.13-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.0
+  - @ledgerhq/coin-evm@2.24.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.0
+  - @ledgerhq/coin-hedera@1.9.1-nightly.0
+  - @ledgerhq/coin-icon@0.11.2-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.15-nightly.0
+  - @ledgerhq/coin-mina@1.1.14-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.15-nightly.0
+  - @ledgerhq/coin-near@0.11.15-nightly.0
+  - @ledgerhq/coin-polkadot@6.4.1-nightly.0
+  - @ledgerhq/coin-solana@0.28.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.15-nightly.0
+  - @ledgerhq/coin-stellar@5.3.3-nightly.0
+  - @ledgerhq/coin-sui@0.7.1-nightly.0
+  - @ledgerhq/coin-tezos@5.6.2-nightly.0
+  - @ledgerhq/coin-ton@0.13.4-nightly.0
+  - @ledgerhq/coin-tron@4.4.3-nightly.0
+  - @ledgerhq/coin-vechain@2.7.15-nightly.0
+  - @ledgerhq/coin-xrp@6.4.2-nightly.0
+  - @ledgerhq/device-core@0.5.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.13-nightly.0
+  - @ledgerhq/live-countervalues@0.5.15-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.0
+  - @ledgerhq/live-nft@0.8.15-nightly.0
+  - @ledgerhq/live-signer-evm@0.6.2-nightly.0
+  - @ledgerhq/live-wallet@0.11.6-nightly.0
+  - @ledgerhq/hw-app-celo@6.33.11-nightly.0
+
 ## 34.42.1
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-solana
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#11029](https://github.com/LedgerHQ/ledger-live/pull/11029) [`d235ec0`](https://github.com/LedgerHQ/ledger-live/commit/d235ec0b843b94de81642952c322e2a3b3adedaf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(live-signer-solana): do not check min version on LNS
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@0.28.1-nightly.0
+
 ## 0.4.2
 
 ### Patch Changes

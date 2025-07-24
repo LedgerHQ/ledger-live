@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.78.1-nightly.0
+
+### Patch Changes
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
 ## 6.78.0
 
 ### Minor Changes
