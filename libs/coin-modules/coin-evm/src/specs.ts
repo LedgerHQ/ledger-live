@@ -48,6 +48,9 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   linea_sepolia: 0.001,
   blast: 0.001,
   blast_sepolia: 0.001,
+  hyperevm: 0.001,
+  berachain: 0.001,
+  sei_network_evm: 0.001,
 };
 
 /**

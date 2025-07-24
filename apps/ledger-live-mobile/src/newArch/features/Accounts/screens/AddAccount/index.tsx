@@ -15,6 +15,7 @@ type AddAccountProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
   onClose: () => void;
+  onShowModularDrawer?: () => void;
 };
 
 function View({
@@ -30,6 +31,7 @@ function View({
   qrProcess,
   onQrCodeScanned,
   onCreateKey,
+  onShowModularDrawer,
 }: ViewProps) {
   const { currentStep } = useCurrentStep();
   const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
@@ -44,6 +46,7 @@ function View({
     >
       <Flex maxHeight={"90%"}>
         <StepFlow
+          onShowModularDrawer={onShowModularDrawer}
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
           setCurrentOption={setCurrentOption}

@@ -14,6 +14,8 @@ describe("sdk integration test", () => {
 //   DEFAULT_COIN_TYPE,
 //   getAccountBalances,
 //   getOperations,
+//   getCheckpoint,
+//   getCheckpointWithTransactions,
 //   paymentInfo,
 // } from "./sdk";
 
@@ -180,4 +182,65 @@ describe("sdk integration test", () => {
 //       expect(info).toHaveProperty("fees");
 //     });
 //   });
+// });
+
+//   describe("getCheckpoint", () => {
+//     test("getCheckpoint", async () => {
+//       const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//       const checkpointBySequenceNumber = await getCheckpoint("164167623");
+//       expect(checkpointById.epoch).toEqual("814");
+//       expect(checkpointById.sequenceNumber).toEqual("164167623");
+//       expect(checkpointById.timestampMs).toEqual("1751696298663");
+//       expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//       expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+//       expect(checkpointById.transactions.length).toEqual(19);
+//       expect(checkpointById).toEqual(checkpointBySequenceNumber);
+//     });
+
+//     test("getCheckpointWithTransactions", async () => {
+//       const { checkpoint: checkpointById, transactions: checkpointByIdTransactions } =
+//         await getCheckpointWithTransactions("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//       const {
+//         checkpoint: checkpointBySequenceNumber,
+//         transactions: checkpointBySequenceNumberTransactions,
+//       } = await getCheckpointWithTransactions("164167623");
+//       expect(checkpointById.epoch).toEqual("814");
+//       expect(checkpointById.sequenceNumber).toEqual("164167623");
+//       expect(checkpointById.timestampMs).toEqual("1751696298663");
+//       expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//       expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+//       expect(checkpointById.transactions.length).toEqual(19);
+//       expect(checkpointById).toEqual(checkpointBySequenceNumber);
+//       expect(checkpointByIdTransactions.length).toEqual(19);
+//       expect(checkpointBySequenceNumberTransactions.length).toEqual(19);
+//       expect(checkpointByIdTransactions).toEqual(checkpointBySequenceNumberTransactions);
+//     });
+//   });
+
+//  describe("getBlockInfo", () => {
+//    test("getBlockInfo should get block info by id or sequence number", async () => {
+//      const blockById = await getBlockInfo("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      const blockBySequenceNumber = await getBlockInfo("164167623");
+//      expect(blockById.height).toEqual(164167623);
+//      expect(blockById.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      expect(blockById.time).toEqual(new Date(1751696298663));
+//      expect(blockById.parent?.height).toEqual(164167622);
+//      expect(blockById.parent?.hash).toEqual("TODO");
+//      expect(blockById).toEqual(blockBySequenceNumber);
+//    });
+//  });
+
+//  describe("getBlock", () => {
+//    test("getBlock should get block by id or sequence number", async () => {
+//      const blockById = await getBlock("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      const blockBySequenceNumber = await getBlock("164167623");
+//      expect(blockById.info.height).toEqual(164167623);
+//      expect(blockById.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//      expect(blockById.info.time).toEqual(new Date(1751696298663));
+//      expect(blockById.info.parent?.height).toEqual(164167622);
+//      expect(blockById.info.parent?.hash).toEqual("TODO");
+//      expect(blockById.transactions.length).toEqual(19);
+//      expect(blockById).toEqual(blockBySequenceNumber);
+//    });
+//  });
 // });

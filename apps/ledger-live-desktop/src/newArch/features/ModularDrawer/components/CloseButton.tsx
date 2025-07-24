@@ -1,6 +1,6 @@
+import { Icons } from "@ledgerhq/react-ui/index";
 import React from "react";
 import styled from "styled-components";
-import { Icons } from "@ledgerhq/react-ui/index";
 
 type Props = {
   onRequestClose: (mouseEvent: React.MouseEvent<Element, MouseEvent>) => void;

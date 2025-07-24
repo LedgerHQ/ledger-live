@@ -24,6 +24,7 @@ import polygon_zk_evm_testnet_tokens from "./1442/erc20.json";
 import klaytn_tokens from "./8217/erc20.json";
 import base_tokens from "./8453/erc20.json";
 import arbitrum_tokens from "./42161/erc20.json";
+import celo_tokens from "./42220/erc20.json";
 import etherlink_tokens from "./42793/erc20.json";
 import avalanche_c_chain_tokens from "./43114/erc20.json";
 import linea_tokens from "./59144/erc20.json";
@@ -61,6 +62,7 @@ import polygon_zk_evm_testnet_tokens_hash from "./1442/erc20-hash.json";
 import klaytn_tokens_hash from "./8217/erc20-hash.json";
 import base_tokens_hash from "./8453/erc20-hash.json";
 import arbitrum_tokens_hash from "./42161/erc20-hash.json";
+import celo_tokens_hash from "./42220/erc20-hash.json";
 import etherlink_tokens_hash from "./42793/erc20-hash.json";
 import avalanche_c_chain_tokens_hash from "./43114/erc20-hash.json";
 import linea_tokens_hash from "./59144/erc20-hash.json";
@@ -98,6 +100,7 @@ import polygon_zk_evm_testnet_signatures from "./1442/erc20-signatures.json";
 import klaytn_signatures from "./8217/erc20-signatures.json";
 import base_signatures from "./8453/erc20-signatures.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
+import celo_signatures from "./42220/erc20-signatures.json";
 import etherlink_signatures from "./42793/erc20-signatures.json";
 import avalanche_c_chain_signatures from "./43114/erc20-signatures.json";
 import linea_signatures from "./59144/erc20-signatures.json";
@@ -136,6 +139,7 @@ export const tokens = {
   8217: klaytn_tokens as ERC20Token[],
   8453: base_tokens as ERC20Token[],
   42161: arbitrum_tokens as ERC20Token[],
+  42220: celo_tokens as ERC20Token[],
   42793: etherlink_tokens as ERC20Token[],
   43114: avalanche_c_chain_tokens as ERC20Token[],
   59144: linea_tokens as ERC20Token[],
@@ -175,6 +179,7 @@ export const signatures = {
   8217: klaytn_signatures,
   8453: base_signatures,
   42161: arbitrum_signatures,
+  42220: celo_signatures,
   42793: etherlink_signatures,
   43114: avalanche_c_chain_signatures,
   59144: linea_signatures,
@@ -214,6 +219,7 @@ export const hashes = {
   8217: klaytn_tokens_hash,
   8453: base_tokens_hash,
   42161: arbitrum_tokens_hash,
+  42220: celo_tokens_hash,
   42793: etherlink_tokens_hash,
   43114: avalanche_c_chain_tokens_hash,
   59144: linea_tokens_hash,

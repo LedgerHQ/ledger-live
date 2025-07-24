@@ -50,19 +50,20 @@ export class PerformanceReporter {
    */
   format(report: PerformanceReport): string {
     return [
-      `Performance report for test ${this.testId}:`,
-      `  - Total runs: ${report.individualRuns.totalRuns}`,
-      `  - Mean duration: ${report.current.mean.toFixed(0)}ms`,
-      `  - Median duration: ${report.current.median.toFixed(0)}ms`,
-      `  - 75th percentile duration: ${report.current.p75.toFixed(0)}ms`,
-      `  - 95th percentile duration: ${report.current.p95.toFixed(0)}ms`,
-      `  - 99th percentile duration: ${report.current.p99.toFixed(0)}ms`,
-      "Relevance analysis:",
-      `  - Variability analysis: ${report.variabilityAnalysis.isVariationSignificant ? "Significant" : "Not significant"}`,
-      `  - Relevance score: ${report.variabilityAnalysis.relevanceScore.toFixed(0)}%`,
-      `  - Coefficient of variation: ${report.variabilityAnalysis.coefficientOfVariation.toFixed(0)}%`,
-      `  - Max delta between runs: ${report.variabilityAnalysis.maxDeltaBetweenRuns.toFixed(0)}ms`,
-      `  - Recommendation: ${report.variabilityAnalysis.recommendation}`,
+      `*Performance report for test ${this.testId}:*`,
+      `  - *Total runs:* ${report.individualRuns.totalRuns}`,
+      `  - *Mean duration:* ${report.current.mean.toFixed(0)}ms`,
+      `  - *Median duration:* ${report.current.median.toFixed(0)}ms`,
+      `  - *75th percentile duration:* ${report.current.p75.toFixed(0)}ms`,
+      `  - *95th percentile duration:* ${report.current.p95.toFixed(0)}ms`,
+      `  - *99th percentile duration:* ${report.current.p99.toFixed(0)}ms`,
+      "",
+      "*Relevance analysis:*",
+      `  - *Variability analysis:* ${report.variabilityAnalysis.isVariationSignificant ? "Significant" : "Not significant"}`,
+      `  - *Relevance score:* ${report.variabilityAnalysis.relevanceScore.toFixed(0)}%`,
+      `  - *Coefficient of variation:* ${report.variabilityAnalysis.coefficientOfVariation.toFixed(0)}%`,
+      `  - *Max delta between runs:* ${report.variabilityAnalysis.maxDeltaBetweenRuns.toFixed(0)}ms`,
+      `  - *Recommendation:* ${report.variabilityAnalysis.recommendation}`,
     ].join("\n");
   }
 }

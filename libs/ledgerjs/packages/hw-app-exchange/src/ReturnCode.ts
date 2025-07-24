@@ -21,44 +21,61 @@ export const ErrorStatus = {
   SIGN_VERIFICATION_FAIL: 0x9d1a,
 } as const;
 
-export function getExchangeErrorMessage(errorCode: number, step?: string): string | undefined {
+export function getExchangeErrorMessage(
+  errorCode: number,
+  step?: string,
+): { errorName?: string; errorMessage?: string } {
   switch (errorCode) {
     case ErrorStatus.INCORRECT_COMMAND_DATA:
-      return "Incorrect command data";
+      return { errorName: "incorrectCommandData", errorMessage: "Incorrect command data" };
     case ErrorStatus.DESERIALIZATION_FAILED:
-      return "Payload deserialzation failed";
+      return { errorName: "deserializationFailed", errorMessage: "Payload deserialzation failed" };
     case ErrorStatus.WRONG_TRANSACTION_ID:
-      return "Wrong transaction id";
+      return { errorName: "wrongTransactionId", errorMessage: "Wrong transaction id" };
     case ErrorStatus.INVALID_ADDRESS:
       if (step === "CHECK_PAYOUT_ADDRESS")
-        return "This receiving account does not belong to the device you have connected. Please change and retry";
+        return {
+          errorName: "checkPayoutAddress",
+          errorMessage:
+            "This receiving account does not belong to the device you have connected. Please change and retry",
+        };
       else if (step === "CHECK_REFUND_ADDRESS")
-        return "This sending account does not belong to the device you have connected. Please change and retry";
-      return "Invalid address";
+        return {
+          errorName: "checkRefundAddress",
+          errorMessage:
+            "This sending account does not belong to the device you have connected. Please change and retry",
+        };
+      return { errorName: "invalidAddress", errorMessage: "Invalid address" };
     case ErrorStatus.USER_REFUSED:
-      return "User refused";
+      return { errorName: "userRefused", errorMessage: "User refused" };
     case ErrorStatus.INTERNAL_ERROR:
-      return "Internal error";
+      return { errorName: "internalError", errorMessage: "Internal error" };
     case ErrorStatus.WRONG_P1:
-      return "Wrong P1";
+      return { errorName: "wrongP1", errorMessage: "Wrong P1" };
     case ErrorStatus.WRONG_P2:
-      return "Wrong P2";
+      return { errorName: "wrongP2", errorMessage: "Wrong P2" };
     case ErrorStatus.WRONG_P2_EXTENSION:
-      return "Wrong P2 extension";
+      return { errorName: "wrongP2Extension", errorMessage: "Wrong P2 extension" };
     case ErrorStatus.INVALID_P2_EXTENSION:
-      return "Invalid P2 with current context";
+      return { errorName: "invalidP2Extension", errorMessage: "Invalid P2 with current context" };
     case ErrorStatus.UNEXPECTED_INSTRUCTION:
-      return "Unexpected instruction with current context";
+      return {
+        errorName: "unexpectedInstruction",
+        errorMessage: "Unexpected instruction with current context",
+      };
     case ErrorStatus.CLASS_NOT_SUPPORTED:
-      return "Class not supported";
+      return { errorName: "classNotSupported", errorMessage: "Class not supported" };
     case ErrorStatus.INVALID_INSTRUCTION:
-      return "Invalid instruction";
+      return { errorName: "invalidInstruction", errorMessage: "Invalid instruction" };
     case ErrorStatus.MALFORMED_APDU:
-      return "APDU header malformed";
+      return { errorName: "malformedApdu", errorMessage: "APDU header malformed" };
     case ErrorStatus.INVALID_DATA_LENGTH:
-      return "The length of this data is refused for this command";
+      return {
+        errorName: "invalidDataLength",
+        errorMessage: "The length of this data is refused for this command",
+      };
     case ErrorStatus.SIGN_VERIFICATION_FAIL:
-      return "Signature verification failed";
+      return { errorName: "signVerificationFail", errorMessage: "Signature verification failed" };
   }
-  return undefined;
+  return { errorName: undefined, errorMessage: undefined };
 }

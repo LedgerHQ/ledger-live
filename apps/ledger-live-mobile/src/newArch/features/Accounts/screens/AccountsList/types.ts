@@ -8,5 +8,6 @@ export type AccountsListNavigator = {
     canAddAccount?: boolean | string;
     isSyncEnabled?: boolean | string;
     specificAccounts?: Account[] | TokenAccount[];
+    currencyId?: string;
   };
 };

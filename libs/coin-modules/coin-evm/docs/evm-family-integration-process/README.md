@@ -48,11 +48,11 @@ _Common steps for all new EVM currency integration_
 _Optional / extra steps that might be needed on a case-by-case basis depending on the integration_
 
 - If the related currency public explorer is not an etherscan-like, you might need to add a new implementation for this currency explorer
-  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-evm/src/network/explorer`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-evm/src/network/explorer) folder
+  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-modules/coin-evm/src/network/explorer`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-evm/src/network/explorer) folder
   - Add the new explorer type to:
-    - the `getExplorerApi` function under [`libs/coin-evm/src/network/explorer/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/network/explorer/index.ts)
+    - the `getExplorerApi` function under [`libs/coin-modules/coin-evm/src/network/explorer/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/network/explorer/index.ts)
     - the `EthereumLikeInfo.explorer.type` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
-    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
+    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/coin-modules/coin-evm/src/network/explorer/types.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
 
 ## Tokens support
 
@@ -80,7 +80,7 @@ Make sure the network being added is present under the `network_info_t` mapping 
 
 In Ledger Live, make sure the ethereum nano app version requirements match the latest version of the ethereum app handling the network being added:
 
-- `appVersion` in `getAppQuery` under [`libs/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/specs.ts)
+- `appVersion` in `getAppQuery` under [`libs/coin-modules/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/specs.ts)
 - `Ethereum` in `appVersionsRequired` under [`libs/ledger-live-common/src/apps/support.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/apps/support.ts)
 - related tests for the ethereum app version under [`libs/ledger-live-common/src/apps/support.test.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/apps/support.test.ts)
 
@@ -90,7 +90,7 @@ In Ledger Live, make sure the ethereum nano app version requirements match the l
 
 - Make sure to fund the appropriate bot(s) with coins and tokens of the new network being added (cf. [The different bots](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot#the-different-bots))
 - Make sure to make the bot run multiple times on your PR to make sure everything works fine with the new network
-- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-evm/src/specs.ts)
+- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-modules/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/specs.ts)
 
 ### Manual testing
 

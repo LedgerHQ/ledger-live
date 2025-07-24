@@ -17,7 +17,7 @@ import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
-import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { BackButtonArrow } from "./components/BackButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {

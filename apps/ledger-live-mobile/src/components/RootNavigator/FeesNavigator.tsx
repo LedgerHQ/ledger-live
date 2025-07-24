@@ -23,7 +23,7 @@ export default function FeesNavigator() {
         component={FeesScreen}
         options={{
           headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.title")} subtitle={undefined} />
+            <StepHeader title={t("transfer.swap2.form.details.label.fees")} subtitle={undefined} />
           ),
         }}
       />

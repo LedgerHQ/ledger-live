@@ -6,6 +6,10 @@ export abstract class PageHolder {
     protected page: Page,
     protected readonly electronApp?: ElectronApplication,
   ) {}
+
+  getPage() {
+    return this.page;
+  }
 }
 
 export abstract class Component extends PageHolder {

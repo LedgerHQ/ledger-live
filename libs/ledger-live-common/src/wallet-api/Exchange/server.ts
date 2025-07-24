@@ -51,6 +51,7 @@ import { getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
+import { FAMILIES_MAPPING_LL_TO_WAPI } from "../constants";
 
 export { ExchangeType };
 
@@ -485,7 +486,9 @@ export const handlers = ({
       });
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-      const mainFromAccountFamily = mainFromAccount.currency.family;
+      const mainFromAccountFamily =
+        FAMILIES_MAPPING_LL_TO_WAPI[mainFromAccount.currency.family] ||
+        mainFromAccount.currency.family;
 
       if (transaction.family !== mainFromAccountFamily) {
         return Promise.reject(
@@ -741,9 +744,7 @@ async function getStrategy(
   customErrorType?: any,
 ): Promise<Transaction> {
   const family =
-    currency.type === "TokenCurrency"
-      ? (currency.parentCurrency?.family as Transaction["family"])
-      : (currency.family as Transaction["family"]);
+    currency.type === "TokenCurrency" ? currency.parentCurrency?.family : currency.family;
 
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
@@ -755,7 +756,7 @@ async function getStrategy(
   }
 
   // Normalize family key for strategy lookup
-  const familyKey = family === "evm" ? "ethereum" : family;
+  const familyKey = FAMILIES_MAPPING_LL_TO_WAPI[family] || family;
   const strategy = transactionStrategy?.[familyKey];
 
   if (!strategy) {
@@ -764,7 +765,7 @@ async function getStrategy(
 
   try {
     return await strategy({
-      family,
+      family: familyKey,
       amount,
       recipient,
       customFeeConfig: customFeeConfig || {},

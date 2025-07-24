@@ -1,12 +1,12 @@
-import React from "react";
-import { AccountSelection } from ".";
 import type { Meta, StoryObj } from "@storybook/react";
-import { bitcoinCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
-import BigNumber from "bignumber.js";
-import { legacy_createStore as createStore } from "redux";
-import { Provider } from "react-redux";
 import { expect, fn, userEvent, within } from "@storybook/test";
+import BigNumber from "bignumber.js";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
 import { track } from "~/renderer/analytics/__mocks__/segment";
+import { AccountSelection } from ".";
+import { bitcoinCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 
 const detailedAccount = {
   balance: new BigNumber(31918),

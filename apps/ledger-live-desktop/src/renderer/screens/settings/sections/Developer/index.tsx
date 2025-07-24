@@ -29,6 +29,7 @@ import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import NftsTools from "./NftsTools";
 import CustomCALRefInput from "./CustomCALRefInput";
+import ModularDrawerDevTool from "./ModularDrawer";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -130,6 +131,7 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <ModularDrawerDevTool />
     </Body>
   );
 };

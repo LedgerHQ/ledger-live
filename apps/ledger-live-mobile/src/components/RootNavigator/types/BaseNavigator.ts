@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
-import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -210,6 +210,9 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.MarketDetail]: {
     currencyId: string;
     resetSearchOnUmount?: boolean;
+  };
+  [ScreenName.SwapCustomError]: {
+    error: SwapLiveError | Error;
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;

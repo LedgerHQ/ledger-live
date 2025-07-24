@@ -130,7 +130,6 @@ export function runSwapWithDifferentSeedTest(
         swap.accountToCredit,
         minAmount,
       );
-
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
@@ -279,14 +278,14 @@ export function runUserRefusesTransactionTest(
         rejectedSwap.accountToCredit,
         minAmount,
       );
-      const selectedProvider: string = await app.swapLiveApp.selectExchange();
+      const { providerName } = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 
-      await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, selectedProvider, minAmount);
+      await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, providerName, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
-      await app.swapLiveApp.checkErrorMessage("User refused");
+      await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
     });
   });
 }
@@ -388,14 +387,15 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.tapGetQuotesButton();
       await app.swapLiveApp.waitForQuotes();
 
-      const selectedProvider = await app.swapLiveApp.selectExchange();
+      const { providerName } = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await checkSwapInfosOnDeviceVerificationStep(swap, selectedProvider, amountToSend);
+      await checkSwapInfosOnDeviceVerificationStep(swap, providerName, amountToSend);
 
-      await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
+      await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
+      await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });
   });
@@ -508,6 +508,61 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
       await app.portfolio.goToSpecificAsset(account.currency.name);
       await app.assetAccountsPage.tapSwap();
       await handleSwapPageFlow(account);
+    });
+  });
+}
+
+export function runSwapNetworkFeesAboveAccountBalanceTest(
+  swap: SwapType,
+  errorMessage: string | RegExp,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
+    beforeAll(async () => {
+      await app.speculos.setExchangeDependencies(swap);
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: AppInfos.EXCHANGE,
+        cliCommandsOnApp: [
+          {
+            app: swap.accountToDebit.currency.speculosApp,
+            cmd: liveDataCommand(
+              swap.accountToDebit.currency.speculosApp,
+              swap.accountToDebit.index,
+            ),
+          },
+          {
+            app: swap.accountToCredit.currency.speculosApp,
+            cmd: liveDataCommand(
+              swap.accountToCredit.currency.speculosApp,
+              swap.accountToCredit.index,
+            ),
+          },
+        ],
+      });
+    });
+
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`Swap - Network fees above account balance - LLM`, async () => {
+      const minAmount = await app.swapLiveApp.getMinimumAmount(
+        swap.accountToDebit,
+        swap.accountToCredit,
+      );
+
+      const actualAmount = swap.amount === "USE_MIN_AMOUNT" ? minAmount : swap.amount;
+
+      await performSwapUntilQuoteSelectionStep(
+        swap.accountToDebit,
+        swap.accountToCredit,
+        actualAmount,
+      );
+      await app.swapLiveApp.checkQuotes();
+      const { index } = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.tapQuoteInfosFeesSelector(index);
+      await app.swapLiveApp.tapFeeContainer("fast");
+      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
     });
   });
 }

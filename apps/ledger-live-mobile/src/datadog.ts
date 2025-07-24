@@ -3,9 +3,6 @@ import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
-
-export const PORTFOLIO_VIEW_ID = "Portfolio";
-
 import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 
@@ -108,11 +105,12 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
  */
 export const viewNamePredicate: ViewNamePredicate = ({ name, params }, trackedName) => {
   // If the route is the Portfolio screen, we stop the native navigation tracking as we will manually track the view
-  if (ScreenName.Portfolio === name) {
+  if ([ScreenName.Portfolio, ScreenName.MarketList].includes(name as ScreenName)) {
     return null;
   }
   if ([ScreenName.Asset].includes(name as ScreenName) && params?.currency?.id) {
     return `${trackedName}/${params?.currency?.id}`;
   }
+  // For other routes,
   return trackedName;
 };

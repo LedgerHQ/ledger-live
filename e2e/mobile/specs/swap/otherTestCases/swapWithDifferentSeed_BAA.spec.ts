@@ -5,7 +5,7 @@ const swapTestConfig = {
   tmsLinks: ["B2CQA-3091"],
   userData: "speculos-x-other-account",
   errorMessage:
-    "This sending account does not belong to the device you have connected. Please change and retry",
+    "This sending account does not belong to the connected device. Please change and retry.",
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 

@@ -8,6 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import { v4, v5, parse } from "uuid";
 import { Transaction } from "../../types";
+import { TokenAccountExtensions } from "../../network/chain/account/tokenExtensions";
 
 const seed = v4();
 
@@ -99,6 +100,7 @@ export function parsedTokenInfo({
   isNative,
   amount,
   decimals,
+  extensions,
 }: {
   state?: "initialized" | "uninitialized" | "frozen";
   owner?: PublicKey;
@@ -106,6 +108,7 @@ export function parsedTokenInfo({
   isNative?: boolean;
   amount?: number;
   decimals?: number;
+  extensions?: TokenAccountExtensions;
 }) {
   const amountOrDefault = amount ?? 2000;
   const decimalsOrDefault = decimals ?? 3;
@@ -115,6 +118,7 @@ export function parsedTokenInfo({
     owner: owner ?? publicKeyOf("owner"),
     mint: mint ?? publicKeyOf("mint"),
     state: state ?? "initialized",
+    extensions: extensions ?? [],
     tokenAmount: {
       amount: amountOrDefault.toString(),
       decimals: decimalsOrDefault,

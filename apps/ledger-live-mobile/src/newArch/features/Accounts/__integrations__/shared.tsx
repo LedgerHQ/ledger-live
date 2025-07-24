@@ -8,13 +8,31 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import ImportAccountsNavigator from "~/components/RootNavigator/ImportAccountsNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ModularDrawer } from "../../ModularDrawer";
+import {
+  mockEthCryptoCurrency,
+  mockBtcCryptoCurrency,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
-const MockComponent = () => {
+type Props = {
+  shouldShowModularDrawer?: boolean;
+};
+
+const MockComponent = ({ shouldShowModularDrawer }: Props) => {
   const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = React.useState<boolean>(false);
 
   const openAddModal = () => setAddModalOpened(true);
   const closeAddModal = () => setAddModalOpened(false);
+
+  const [isModularDrawerVisible, setModularDrawerVisible] = React.useState<boolean>(false);
+
+  const handleOpenModularDrawer = () => setModularDrawerVisible(true);
+
+  const onShowModularDrawer = React.useCallback(() => {
+    closeAddModal();
+    handleOpenModularDrawer();
+  }, []);
 
   return (
     <>
@@ -30,18 +48,28 @@ const MockComponent = () => {
       >
         {t("portfolio.emptyState.buttons.import")}
       </Button>
-      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
+      <AddAccountDrawer
+        isOpened={isAddModalOpened}
+        onClose={closeAddModal}
+        onShowModularDrawer={shouldShowModularDrawer ? onShowModularDrawer : undefined}
+      />
+      <ModularDrawer
+        isOpen={isModularDrawerVisible}
+        currencies={[mockEthCryptoCurrency, mockBtcCryptoCurrency]}
+      />
     </>
   );
 };
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
-export function TestButtonPage() {
+export function TestButtonPage(props: Props) {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <Stack.Navigator initialRouteName={ScreenName.MockedAddAssetButton}>
-        <Stack.Screen name={ScreenName.MockedAddAssetButton} component={MockComponent} />
+        <Stack.Screen name={ScreenName.MockedAddAssetButton}>
+          {() => <MockComponent shouldShowModularDrawer={props.shouldShowModularDrawer} />}
+        </Stack.Screen>
         <Stack.Screen name={NavigatorName.AssetSelection} component={AssetSelectionNavigator} />
         <Stack.Screen name={NavigatorName.ImportAccounts} component={ImportAccountsNavigator} />
       </Stack.Navigator>

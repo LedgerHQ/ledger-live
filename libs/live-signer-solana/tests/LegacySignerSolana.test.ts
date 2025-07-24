@@ -284,6 +284,37 @@ describe("LegacySignerSolana", () => {
         expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
       },
     );
+
+    it("does not check for a minimum version on LNS", async () => {
+      jest.spyOn(Solana.prototype, "getAppConfiguration").mockResolvedValue({
+        blindSigningEnabled: false,
+        pubKeyDisplayMode: PubKeyDisplayMode.SHORT,
+        version: "1.5.2",
+      });
+      const getCertificate = jest.spyOn(calService, "getCertificate").mockResolvedValue({
+        descriptor: "certificateDescriptor",
+        signature: "certificateSignature",
+      });
+      const provideTrustedDynamicDescriptor = jest.spyOn(
+        Solana.prototype,
+        "provideTrustedDynamicDescriptor",
+      );
+      const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
+        signature: Buffer.from("0102", "hex"),
+      });
+
+      expect(
+        await signer.signTransaction("path", Buffer.from("transaction"), {
+          deviceModelId: DeviceModelId.nanoS,
+          tokenInternalId: "tokenInternalId",
+        }),
+      ).toEqual({
+        signature: Buffer.from("0102", "hex"),
+      });
+      expect(getCertificate).not.toHaveBeenCalled();
+      expect(provideTrustedDynamicDescriptor).not.toHaveBeenCalled();
+      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+    });
   });
 
   describe("signMessage", () => {

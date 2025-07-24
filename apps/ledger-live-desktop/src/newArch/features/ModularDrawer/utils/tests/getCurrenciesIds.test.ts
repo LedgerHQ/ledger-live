@@ -1,6 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrenciesIds } from "../getCurrenciesIds";
-import { res as GroupedCurrencies } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { res as GroupedCurrencies } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 
 const MOCK_CURRENCY_BY_PROVIDER_ID = GroupedCurrencies.result.currenciesByProvider;
 

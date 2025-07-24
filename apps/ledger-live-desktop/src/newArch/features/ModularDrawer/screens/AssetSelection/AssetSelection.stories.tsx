@@ -1,16 +1,17 @@
-import React from "react";
-import AssetSelection from "../AssetSelection";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { ARB_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
   ethereumCurrency,
   mockAssetsConfiguration,
-} from "../../__mocks__/useSelectAssetFlow.mock";
-import { fn } from "@storybook/test";
-import { Provider } from "react-redux";
-import { legacy_createStore as createStore } from "redux";
-import { ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+} from "../../../__mocks__/useSelectAssetFlow.mock";
+import AssetSelection from "../AssetSelection";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
 const sortedCryptoCurrencies = [bitcoinCurrency, ethereumCurrency, arbitrumCurrency];
@@ -63,6 +64,7 @@ const meta: Meta<typeof AssetSelection> = {
     setSearchedValue: setSearchedValue,
     flow: "test",
     source: "storybook",
+    providersLoadingStatus: LoadingStatus.Success,
   },
   decorators: [
     Story => (
@@ -87,7 +89,7 @@ export const WithDefaultSearchValue: Story = {
   },
 };
 
-export const WithBalance: Story = {
+export const WithBalanceAndApy: Story = {
   args: {
     assetsConfiguration: {
       ...mockAssetsConfiguration,
