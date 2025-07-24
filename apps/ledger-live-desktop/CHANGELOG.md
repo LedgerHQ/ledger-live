@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.122.0-nightly.5
+
+### Patch Changes
+
+- [#11043](https://github.com/LedgerHQ/ledger-live/pull/11043) [`8141f8c`](https://github.com/LedgerHQ/ledger-live/commit/8141f8ce042493be518ebbe22ff2e97cd1797c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add a devtool for the Modular Drawer
+
+- Updated dependencies [[`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1)]:
+  - @ledgerhq/react-ui@0.34.0-nightly.3
+
 ## 2.122.0-nightly.4
 
 ### Minor Changes

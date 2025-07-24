@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.34.0-nightly.3
+
+### Minor Changes
+
+- [#10968](https://github.com/LedgerHQ/ledger-live/pull/10968) [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update chip design
+
 ## 0.34.0-nightly.2
 
 ### Minor Changes
