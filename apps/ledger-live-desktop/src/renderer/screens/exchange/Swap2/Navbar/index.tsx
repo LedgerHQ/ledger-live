@@ -2,21 +2,21 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { Chip, Text } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
-import TabBar, { TabBarRootStyled } from "~/renderer/components/TabBar";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import swapRoutes from "./routes.json";
 
 const Nav = styled.nav`
-  background-color: ${p => p.theme.colors.palette.background.paper};
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
-  ${TabBarRootStyled} {
-    height: auto;
-    margin-top: 3px;
-  }
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1em;
 `;
 
 /*
@@ -55,7 +55,13 @@ const Navbar = () => {
 
   return (
     <Nav>
-      <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} fontSize={14} />
+      <Chip onTabChange={onWrappedTabChange} initialActiveIndex={currentIndex}>
+        {tabs.map((tab, idx) => (
+          <Text key={tab} data-testid={`${tab}-tab-button`} data-active={currentIndex === idx}>
+            {tab}
+          </Text>
+        ))}
+      </Chip>
     </Nav>
   );
 };
