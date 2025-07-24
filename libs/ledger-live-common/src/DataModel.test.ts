@@ -7,6 +7,8 @@ import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
 import { getCurrencyConfiguration } from "./config";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 jest.mock("./config", () => ({
   getCurrencyConfiguration: jest.fn(),
@@ -62,6 +64,12 @@ const evmAccount = {
 };
 
 describe("DataModel", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  setCryptoAssetsStoreForCoinFramework({
+    findTokenById: (_: string) => undefined,
+    findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  } as unknown as CryptoAssetsStore);
+
   test("createDataModel for crypto.org account", () => {
     const migratedCryptoOrgAccount = createDataModel(schema).decode(cryptoOrgAccount);
     expect(migratedCryptoOrgAccount.length).toBeGreaterThan(0);

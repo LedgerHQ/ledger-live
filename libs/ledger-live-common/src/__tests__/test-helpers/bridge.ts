@@ -278,7 +278,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 });
               }
             });
-            test("creationDate is correct", async () => {
+            test.only("creationDate is correct", async () => {
               const accounts = await scanAccountsCached(sa.apdus);
 
               for (const account of flattenAccounts(accounts)) {

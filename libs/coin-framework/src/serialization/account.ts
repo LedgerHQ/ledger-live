@@ -9,7 +9,11 @@ import type {
   TokenAccountRaw,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import {
+  findCryptoCurrencyById,
+  findTokenById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/cryptoassets/index";
 import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import { isAccountEmpty } from "../account/helpers";
 import { fromNFTRaw, toNFTRaw } from "./nft";
@@ -58,13 +62,13 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
-  const store = getCryptoAssetsStore();
+  //const store = getCryptoAssetsStore();
   const subAccounts =
     subAccountsRaw &&
     subAccountsRaw
       .map(ta => {
         if (ta.type === "TokenAccountRaw") {
-          if (store.findTokenById(ta.tokenId)) {
+          if (findTokenById(ta.tokenId)) {
             return fromTokenAccountRaw(ta);
           }
         }
@@ -72,7 +76,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
       .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || store.findTokenById(feesCurrencyId)
+    ? findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId)
     : undefined;
 
   const res: Account = {
