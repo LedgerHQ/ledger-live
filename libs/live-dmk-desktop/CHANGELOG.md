@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.1
+
+## 0.8.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.1-hotfix.0
+
 ## 0.8.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.42.1
+
+### Patch Changes
+
+- Updated dependencies [[`f4e4632`](https://github.com/LedgerHQ/ledger-live/commit/f4e4632119cc0c33e327df9faa9d4951128818c0)]:
+  - @ledgerhq/live-signer-evm@0.6.1
+
+## 34.42.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`f4e4632`](https://github.com/LedgerHQ/ledger-live/commit/f4e4632119cc0c33e327df9faa9d4951128818c0)]:
+  - @ledgerhq/live-signer-evm@0.6.1-hotfix.0
+
 ## 34.42.0
 
 ### Minor Changes

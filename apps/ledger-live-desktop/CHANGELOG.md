@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.122.1
+
+### Patch Changes
+
+- [#11067](https://github.com/LedgerHQ/ledger-live/pull/11067) [`f4e4632`](https://github.com/LedgerHQ/ledger-live/commit/f4e4632119cc0c33e327df9faa9d4951128818c0) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix exchanges from USDT, and remove hardcoded plugins
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.1
+  - @ledgerhq/live-dmk-desktop@0.8.1
+
+## 2.122.1-hotfix.0
+
+### Patch Changes
+
+- [#11067](https://github.com/LedgerHQ/ledger-live/pull/11067) [`f4e4632`](https://github.com/LedgerHQ/ledger-live/commit/f4e4632119cc0c33e327df9faa9d4951128818c0) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - Fix exchanges from USDT, and remove hardcoded plugins
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.42.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.8.1-hotfix.0
+
 ## 2.122.0
 
 ### Minor Changes
