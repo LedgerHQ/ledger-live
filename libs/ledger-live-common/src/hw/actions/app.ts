@@ -563,7 +563,7 @@ export const createAction = (
 
     const onContinue = useCallback(() => {
       setState(currState => {
-        currState.onContinue?.(); // ✅ appelle la fonction transmise par l'observable
+        currState.onContinue?.();
         return {
           ...currState,
           displayDeprecateWarning: false,

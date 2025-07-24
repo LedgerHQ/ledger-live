@@ -28,7 +28,7 @@ const mockTheme = {
         c50: "#ff3333",
       },
       neutral: {
-        c100: "#000000", // 👈 requis par Button
+        c100: "#000000",
       },
       primary: {
         c80: "#0055ff",
@@ -39,8 +39,7 @@ const mockTheme = {
       c50: "#ff3333",
     },
     neutral: {
-      c100: "#000000", // 👈 requis par Button
-    },
+      c100: "#000000",
     primary: {
       c80: "#0055ff",
       c60: "#3366ff",
@@ -50,7 +49,7 @@ const mockTheme = {
     c50: "#ff3333",
   },
   neutral: {
-    c100: "#000000", // 👈 requis par Button
+    c100: "#000000",
   },
   primary: {
     c80: "#0055ff",
