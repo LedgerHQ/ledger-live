@@ -14,11 +14,6 @@ const Main = styled.main`
   display: flex;
   justify-content: center;
   flex: 1;
-  background-color: ${p => p.theme.colors.palette.background.paper};
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-  box-shadow: 0 4px 6px rgba(20, 37, 51, 0.04);
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
 
   & > * {
     width: 100%;

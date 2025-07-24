@@ -285,7 +285,7 @@ export function runUserRefusesTransactionTest(
       await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, providerName, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
-      await app.swapLiveApp.checkErrorMessage("User refused");
+      await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
     });
   });
 }

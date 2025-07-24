@@ -23,7 +23,7 @@ const Container = styled(Flex).attrs({
   columnGap: 1,
 })`
   border: 1px solid ${p => p.theme.colors.opacityDefault.c10};
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 4px;
 `;
 
@@ -34,7 +34,7 @@ const Item = styled(Flex).attrs({
 })<ItemProps>`
   cursor: pointer;
   padding: 8px 12px 8px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c50)};
   background-color: ${p => (p.active ? p.theme.colors.opacityDefault.c10 : "unset")};
 `;

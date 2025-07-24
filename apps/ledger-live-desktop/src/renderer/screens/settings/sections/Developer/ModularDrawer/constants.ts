@@ -1,7 +1,10 @@
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { FeatureId } from "@ledgerhq/types-live";
 
-export const MODULAR_DRAWER_FEATURE_FLAGS: FeatureId[] = ["lldModularDrawer", "llmModularDrawer"];
+export const MODULAR_DRAWER_FEATURE_FLAGS: FeatureId[] = [
+  "lldModularDrawer",
+  "lldModularDrawerBackendData",
+];
 
 export const ENTRY_POINTS: { value: ModularDrawerLocation; label: string }[] = [
   {
