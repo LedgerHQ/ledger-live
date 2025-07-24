@@ -172,6 +172,7 @@ export const AccountItem = ({
           <NameRow>
             <NameDiv>
               <Text
+                data-testid={`account-row-${name}`}
                 variant="largeLineHeight"
                 fontWeight="semiBold"
                 color="var(--colors-content-default-default)"
