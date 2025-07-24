@@ -959,8 +959,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -4968,11 +4968,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.9.0
-        version: 1.9.0(@ton/crypto@3.3.0)
+        specifier: ^1.9.1
+        version: 1.9.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.21.0
-        version: 1.21.0(@ton/crypto@3.3.0)
+        specifier: ^1.21.1
+        version: 1.21.1(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5193,8 +5193,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -5316,17 +5316,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.9.0
-        version: 1.9.0(@ton/crypto@3.3.0)
+        specifier: ^1.9.1
+        version: 1.9.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.21.0
-        version: 1.21.0(@ton/crypto@3.3.0)
+        specifier: ^1.21.1
+        version: 1.21.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.10.0
-        version: 1.10.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+        specifier: ^1.10.1
+        version: 1.10.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -6275,8 +6275,8 @@ importers:
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -7862,11 +7862,11 @@ importers:
   libs/live-dmk-desktop:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
-        specifier: 0.0.0-io-revamp-20250630141416
-        version: 0.0.0-io-revamp-20250630141416(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -7926,11 +7926,11 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 0.0.0-io-revamp-20250630141416
-        version: 0.0.0-io-revamp-20250630141416(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8021,8 +8021,8 @@ importers:
         version: 5.19.2
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -8259,14 +8259,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 0.0.0-io-revamp-20250716091938
-        version: 0.0.0-io-revamp-20250716091938(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-io-revamp-20250711135456
-        version: 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 0.0.0-io-revamp-20250716091938
-        version: 0.0.0-io-revamp-20250716091938(@ledgerhq/context-module@0.0.0-io-revamp-20250716091938(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))
+        specifier: 0.0.0-apex-support-20250721132630
+        version: 0.0.0-apex-support-20250721132630(@ledgerhq/context-module@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -9309,11 +9309,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.9.0
-        version: 1.9.0(@ton/crypto@3.3.0)
+        specifier: ^1.9.1
+        version: 1.9.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.21.0
-        version: 1.21.0(@ton/crypto@3.3.0)
+        specifier: ^1.21.1
+        version: 1.21.1(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -9371,14 +9371,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.9.0
-        version: 1.9.0(@ton/crypto@3.3.0)
+        specifier: ^1.9.1
+        version: 1.9.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.4.10
-        version: 1.4.10(@ton/crypto@3.3.0)(react@18.3.1)
+        specifier: ^1.4.12
+        version: 1.4.12(@ton/crypto@3.3.0)(react@18.3.1)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.2.11
-        version: 1.2.11(@ton/crypto@3.3.0)(react@18.3.1)
+        specifier: ^1.2.12
+        version: 1.2.12(@ton/crypto@3.3.0)(react@18.3.1)
       '@solana/web3.js':
         specifier: 1.95.4
         version: 1.95.4
@@ -14029,14 +14029,22 @@ packages:
       '@types/node':
         optional: true
 
-  '@inversifyjs/common@1.4.0':
-    resolution: {integrity: sha512-qfRJ/3iOlCL/VfJq8+4o5X4oA14cZSBbpAmHsYj8EsIit1xDndoOl0xKOyglKtQD4u4gdNVxMHx4RWARk/I4QA==}
+  '@inversifyjs/common@1.5.0':
+    resolution: {integrity: sha512-Qj5BELk11AfI2rgZEAaLPmOftmQRLLmoCXgAjmaF0IngQN5vHomVT5ML7DZ3+CA5fgGcEVMcGbUDAun+Rz+oNg==}
 
-  '@inversifyjs/core@1.3.5':
-    resolution: {integrity: sha512-B4MFXabhNTAmrfgB+yeD6wd/GIvmvWC6IQ8Rh/j2C3Ix69kmqwz9pr8Jt3E+Nho9aEHOQCZaGmrALgtqRd+oEQ==}
+  '@inversifyjs/container@1.9.1':
+    resolution: {integrity: sha512-8EhjFoAx1LoD7TpCuP9ptitwc+7kVXEpZB0IeoEsCQb9sWaNYYaBi+7Lommu3/1nYxdMbX2t7AJhQnryT1EEsg==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
 
-  '@inversifyjs/reflect-metadata-utils@0.2.4':
-    resolution: {integrity: sha512-u95rV3lKfG+NT2Uy/5vNzoDujos8vN8O18SSA5UyhxsGYd4GLQn/eUsGXfOsfa7m34eKrDelTKRUX1m/BcNX5w==}
+  '@inversifyjs/core@5.2.0':
+    resolution: {integrity: sha512-MMaHGGRjQWT9uAof63sbZyEhRl4XptEAE17DJwrgUcN9LsdIEvecKP3r53pE9VF88PFR41knUKKzagUBvWLHmw==}
+
+  '@inversifyjs/prototype-utils@0.1.0':
+    resolution: {integrity: sha512-lNz1yyajMRDXBHLvJsYYX81FcmeD15e5Qz1zAZ/3zeYTl+u7ZF/GxNRKJzNOloeMPMtuR8BnvzHA1SZxjR+J9w==}
+
+  '@inversifyjs/reflect-metadata-utils@1.1.0':
+    resolution: {integrity: sha512-jmuAuC3eL1GnFAYfJGJOMKRDL9q1mgzOyrban6zxfM8Yg1FUHsj25h27bW2G7p8X1Amvhg3MLkaOuogszkrofA==}
     peerDependencies:
       reflect-metadata: 0.2.2
 
@@ -14346,10 +14354,10 @@ packages:
     version: 1.3.1
     hasBin: true
 
-  '@ledgerhq/context-module@0.0.0-io-revamp-20250716091938':
-    resolution: {integrity: sha512-ITb7mckyaJAyajlFbDCEn22JaPkLWK7GzAMhRE89tI4QWweWow6ph3+jedRIslic5tfpRXvng08AUlZIChEt/A==}
+  '@ledgerhq/context-module@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-YvykzbfpUImbcTMWchtuuJ/jA0NnBT79rxocy4ZSL/JeK44cUGC55HJ5+Y59GI8qrOQb1v/qyhjJEXyKf4qgjA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.7.0
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -14391,29 +14399,29 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456':
-    resolution: {integrity: sha512-41RZeO9oM+xUIbuEM9nid0tpqiv52knUVbLcqfHzJcTbaZEmRnbvmaFekSx+AuZ3SWlsmo8nC+dnfDD+Fh6inQ==}
+  '@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-I8X0WC5VT0c1yKOzD8VMIkRlzRDHxJVIWhVELUrIfmytklO60Cf0t87Rn3sICWrVtNpp1TZJSZzVBageP6xQZg==}
     peerDependencies:
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-io-revamp-20250716091938':
-    resolution: {integrity: sha512-F5Msdrh6hXGIeE1bDgEzp5L+4ovGQ2lMRjHBLRlgm1yyEy32Qw4GfmsPg377lVxdWkZlSkuQPudWRl8opo9rEg==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-2Nsq4jm6W27zKitcPJGCrm9QxCWw7E3z3ZaYneAXstctJx+mccXzQ9our0C1PcbU466JdJinHdS2CjC7lzhAKg==}
     peerDependencies:
-      '@ledgerhq/context-module': ^1.4.0
-      '@ledgerhq/device-management-kit': ^0.7.0
+      '@ledgerhq/context-module': 0.0.0-apex-support-20250721132630
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-io-revamp-20250630141416':
-    resolution: {integrity: sha512-BKNDv8/GL/EoUw+GGfE+9pq4j+ufwz4eetBmFC7CvwFaEMyLAPYdw4yydlrKmrsBMQ93oDGK8h9R2BHBONOTxg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-TZLWtqo8CSqOzRfmyV1t79VncRsbzJzCF/jd+FRYPYCp7lJHysXRU8lc3fd4mlqZ5N7Q4am6HfeT8Lxzbmrq2w==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.7.0
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-io-revamp-20250630141416':
-    resolution: {integrity: sha512-kJqcXbLfBh/Z/5iOWKMSM4hy8EiYhWnl4lAi4YH3ztaMpSkIZxvvVFPK2p5WnsQ9C3Qjls49MrMVl8Xou/ua8A==}
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-HrkxOfynZPo1mTo2nX/tcjVrck091fwJ/KLbyNs3cisvlA5x7c3ewPnKnmqw/+MZHlXF6s+jRWo9FvQzpBo5tQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250630141416
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
       rxjs: ^7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
@@ -14462,10 +14470,10 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/signer-utils@1.0.5':
-    resolution: {integrity: sha512-h8VWPxHUBa6aWXshMC6+e/txKzdw8KhvaGqV3LQnTOxVw4NVrb0pI4SzXQz48CcoyWPQYeS+/JD/WQgLEswyAg==}
+  '@ledgerhq/signer-utils@0.0.0-apex-support-20250721132630':
+    resolution: {integrity: sha512-Glmqs62mm3vrh2LupElpI7K6o+KYj10sv6dJEqMt7UR5AICZ/ghsHZxISwcByA7rfPWJ2MPtMaVzSZd1QKTCbQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.7.0
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -14473,19 +14481,19 @@ packages:
   '@ledgerhq/ui-shared@0.2.2':
     resolution: {integrity: sha512-3ASYnyqnZFMRnySADZziM3IIJ2SRQ7lKrRPwpihhf+SsyP7TIo6o4UXMY8eYOupdTARlElS4Qpk4nRL/Ln62Ng==}
 
-  '@ledgerhq/wallet-api-client-react@1.4.10':
-    resolution: {integrity: sha512-aTGTgOg4L1FflexEYkDntVySA+10dv7BiCBe/ateS8sN0L2vGZzbccLCCNoWUJvEBoXUoqs6aW/zd24DX2XkDA==}
+  '@ledgerhq/wallet-api-client-react@1.4.12':
+    resolution: {integrity: sha512-T8CdYZ5cqluEhEY0exQedNHJlabNycv41a49z4wm6Fo2nc23oYeiRL31qlvG3Wkcjw9DMwQW0ZCqHikeJGFQ4g==}
     peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
+      react: ^16.8.0 || ^17 || ^18 || ^19
 
-  '@ledgerhq/wallet-api-client@1.9.0':
-    resolution: {integrity: sha512-WAnXW4MAU+NddAB+a+Qus8vgId0wkmTSBBRWy5ZaV2LWpv3kbtsoCzW371qQsNmXehYgDPLXBPJSGj5ngAzhYA==}
+  '@ledgerhq/wallet-api-client@1.9.1':
+    resolution: {integrity: sha512-qvcSXhfXQOIE4wqgiWJniOWi0z7hdoo+/neUgbhpVh5l0J254Kn1Slw90ikvYGgQTK+qeKXoPxkRC3+LpQ5ZVw==}
 
-  '@ledgerhq/wallet-api-core@1.21.0':
-    resolution: {integrity: sha512-YBwPM4Iv6rlJLUtstn+ftdg0x3QPHaXcQmqL6BQZ+ap0W4m+tXP2LAkdQpDKjegyEDYUWp5uK1LI/OxRibenzQ==}
+  '@ledgerhq/wallet-api-core@1.21.1':
+    resolution: {integrity: sha512-aKAdN0hfphPLgjHeDA4MMSJgCxA4xjWpWR2DuM903ikmVJkYJecHMbupe+3n7eByTzRjB2SwhymHQlXJMxBRTA==}
 
-  '@ledgerhq/wallet-api-server@1.10.0':
-    resolution: {integrity: sha512-T93IsvnMqwEFBS3q0xAcDOnxPtEuZE2xpBqJKj4dKtTR6v1w5sQQLc2LApBIODcP6Za9j2mT4Je1czChMkEnqw==}
+  '@ledgerhq/wallet-api-server@1.10.1':
+    resolution: {integrity: sha512-s+q1w4I7e+BVqgw21aOm7yu/qtzdYZSdo4b1CBj8fWkac05CzgdevNAO8dXDRBxAp9k7kEyrvCyiF4RlEQo9gg==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -14493,8 +14501,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-simulator@1.2.11':
-    resolution: {integrity: sha512-Sov/scl2y7PfEuuCuqBXHwrk+iS8oeGacU5wUxZ/41TwbWYL5Adqu9GhZuz7QtFdOaX6oBSrVdX9sE/VRh3Vyg==}
+  '@ledgerhq/wallet-api-simulator@1.2.12':
+    resolution: {integrity: sha512-OywvuMblij/jq2KnxZQyccF+C9vP0v7jrsIehmDPKLvShoHY1hhrNwQpI8MZzP9Uw77dH6CLlrzmRkojNXi1Ow==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -21721,10 +21729,6 @@ packages:
     resolution: {integrity: sha512-U3lRVLMSlsCfjqYPbLyVv11M9CPW4I728d6TCKMAOJueEeB9/8o+eSsMnxPJD+Q+K909sdESg7C+tIkoH6on1A==}
     engines: {node: '>=0.10.0'}
 
-  chalk@2.3.0:
-    resolution: {integrity: sha512-Az5zJR2CBujap2rqXGaJKaPHyJ0IrUimvYNX+ncCy8PJP4ltOGTrHUIo097ZaL2zMeKYpiCdqDvS6zdrTFok3Q==}
-    engines: {node: '>=4'}
-
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -24031,6 +24035,10 @@ packages:
     resolution: {integrity: sha512-21YtnZVg4/zKkCQPjrDj38B1r4nQvTZLopUGMLQ1ePU2zV/joCfDC3t3iKQjWRzjjjbzR+mdAIoikeBRNkdllA==}
     engines: {node: '>=14.0.0'}
 
+  ethers@6.14.1:
+    resolution: {integrity: sha512-JnFiPFi3sK2Z6y7jZ3qrafDMwiXmU+6cNZ0M+kPq+mTy9skqEzwqAdFW3nb/em2xjlIVXX6Lz8ID6i3LmS4+fQ==}
+    engines: {node: '>=14.0.0'}
+
   ethjs-unit@0.1.6:
     resolution: {integrity: sha512-/Sn9Y0oKl0uqQuvgFk/zQgR7aw1g36qX/jzSQ5lSwlO0GigPymk4eGQfeNTD03w1dPOqfz8V77Cy43jH56pagw==}
     engines: {node: '>=6.5.0', npm: '>=3'}
@@ -25331,10 +25339,6 @@ packages:
   has-bigints@1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
 
-  has-flag@2.0.0:
-    resolution: {integrity: sha512-P+1n3MnwjR/Epg9BBo1KT8qbye2g2Ou4sFumihwt6I4tsUX7jnLcX4BTOSKg/B1ZrIYMN9FcEnG4x5a7NB8Eng==}
-    engines: {node: '>=0.10.0'}
-
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -25826,11 +25830,8 @@ packages:
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
-  inversify-logger-middleware@3.1.0:
-    resolution: {integrity: sha512-jKwwuQ3cDwCasgSdgUyF3DTlIvcfAVqcs3ViMXrKj5L7AqVP5hd2dnrHr3v8XZf984t6fsj+1Wic43A5WDtkEA==}
-
-  inversify@6.2.2:
-    resolution: {integrity: sha512-KB836KHbZ9WrUnB8ax5MtadOwnqQYa+ZJO3KWbPFgcr4RIEnHM621VaqFZzOZd9+U7ln6upt9n0wJei7x2BNqw==}
+  inversify@7.5.1:
+    resolution: {integrity: sha512-oWWFDU2BXiuqZynGcLDDD4tqiWAeaEUCALlCj0vk/QwHGgZY/tzDFPuTmWMY3jwRmDIHxVDkcj9SL3MFTlCEDw==}
     peerDependencies:
       reflect-metadata: ~0.2.2
 
@@ -32613,10 +32614,6 @@ packages:
   supports-color@2.0.0:
     resolution: {integrity: sha512-KKNVtd6pCYgPIKU4cp2733HWYCpplQhddZLBUryaAHou723x+FRzQ5Df824Fj+IyyuiQTRoub4SnIFfIcrp70g==}
     engines: {node: '>=0.8.0'}
-
-  supports-color@4.5.0:
-    resolution: {integrity: sha512-ycQR/UbvI9xIlEdQT1TQqwoXtEldExbCEAJgRo5YXlmSKjv6ThHnP9/vwGa1gr19Gfw+LkFd7KqYMhzrRC5JYw==}
-    engines: {node: '>=4'}
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -42438,16 +42435,28 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.10.10
 
-  '@inversifyjs/common@1.4.0': {}
+  '@inversifyjs/common@1.5.0': {}
 
-  '@inversifyjs/core@1.3.5(reflect-metadata@0.2.2)':
+  '@inversifyjs/container@1.9.1(reflect-metadata@0.2.2)':
     dependencies:
-      '@inversifyjs/common': 1.4.0
-      '@inversifyjs/reflect-metadata-utils': 0.2.4(reflect-metadata@0.2.2)
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
+      '@inversifyjs/reflect-metadata-utils': 1.1.0(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/core@5.2.0(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/prototype-utils': 0.1.0
+      '@inversifyjs/reflect-metadata-utils': 1.1.0(reflect-metadata@0.2.2)
     transitivePeerDependencies:
       - reflect-metadata
 
-  '@inversifyjs/reflect-metadata-utils@0.2.4(reflect-metadata@0.2.2)':
+  '@inversifyjs/prototype-utils@0.1.0':
+    dependencies:
+      '@inversifyjs/common': 1.5.0
+
+  '@inversifyjs/reflect-metadata-utils@1.1.0(reflect-metadata@0.2.2)':
     dependencies:
       reflect-metadata: 0.2.2
 
@@ -43455,13 +43464,13 @@ snapshots:
     dependencies:
       commander: 2.20.3
 
-  '@ledgerhq/context-module@0.0.0-io-revamp-20250716091938(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))':
+  '@ledgerhq/context-module@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
-      ethers: 6.13.4
-      inversify: 6.2.2(reflect-metadata@0.2.2)
+      ethers: 6.14.1
+      inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
     transitivePeerDependencies:
@@ -43501,12 +43510,11 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456':
+  '@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
-      inversify: 6.2.2(reflect-metadata@0.2.2)
-      inversify-logger-middleware: 3.1.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
       isomorphic-ws: 5.0.0(ws@8.18.0)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -43519,12 +43527,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
-      inversify: 6.2.2(reflect-metadata@0.2.2)
-      inversify-logger-middleware: 3.1.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
       isomorphic-ws: 5.0.0(ws@8.18.0)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -43538,14 +43545,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-io-revamp-20250716091938(@ledgerhq/context-module@0.0.0-io-revamp-20250716091938(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-apex-support-20250721132630(@ledgerhq/context-module@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-io-revamp-20250716091938(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 1.0.5(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))
-      ethers: 6.13.4
-      inversify: 6.2.2(reflect-metadata@0.2.2)
-      inversify-logger-middleware: 3.1.0
+      '@ledgerhq/context-module': 0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))
+      ethers: 6.14.1
+      inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       semver: 7.7.0
@@ -43554,9 +43560,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-io-revamp-20250630141416(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
       purify-ts: 2.1.0
@@ -43565,9 +43571,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-io-revamp-20250630141416(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -43643,9 +43649,9 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/signer-utils@1.0.5(@ledgerhq/device-management-kit@0.0.0-io-revamp-20250711135456(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-io-revamp-20250711135456(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
@@ -43654,24 +43660,24 @@ snapshots:
 
   '@ledgerhq/ui-shared@0.2.2': {}
 
-  '@ledgerhq/wallet-api-client-react@1.4.10(@ton/crypto@3.3.0)(react@18.3.1)':
+  '@ledgerhq/wallet-api-client-react@1.4.12(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.9.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-client': 1.9.1(@ton/crypto@3.3.0)
       react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-client@1.9.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-client@1.9.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.21.1(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-core@1.21.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-core@1.21.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/errors': 6.19.1
       '@stacks/transactions': 6.17.0
@@ -43684,9 +43690,9 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-server@1.10.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)':
+  '@ledgerhq/wallet-api-server@1.10.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.21.1(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
@@ -43696,12 +43702,12 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-simulator@1.2.11(@ton/crypto@3.3.0)(react@18.3.1)':
+  '@ledgerhq/wallet-api-simulator@1.2.12(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-client': 1.9.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-core': 1.21.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-server': 1.10.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.9.1(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.21.1(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-server': 1.10.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
@@ -54596,12 +54602,6 @@ snapshots:
       strip-ansi: 3.0.1
       supports-color: 2.0.0
 
-  chalk@2.3.0:
-    dependencies:
-      ansi-styles: 3.2.1
-      escape-string-regexp: 1.0.5
-      supports-color: 4.5.0
-
   chalk@2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -57873,6 +57873,19 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  ethers@6.14.1:
+    dependencies:
+      '@adraffy/ens-normalize': 1.10.1
+      '@noble/curves': 1.2.0
+      '@noble/hashes': 1.3.2
+      '@types/node': 22.7.5
+      aes-js: 4.0.0-beta.5
+      tslib: 2.6.2
+      ws: 8.17.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   ethjs-unit@0.1.6:
     dependencies:
       bn.js: 4.11.6
@@ -59532,8 +59545,6 @@ snapshots:
 
   has-bigints@1.0.2: {}
 
-  has-flag@2.0.0: {}
-
   has-flag@3.0.0: {}
 
   has-flag@4.0.0: {}
@@ -60175,14 +60186,11 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  inversify-logger-middleware@3.1.0:
+  inversify@7.5.1(reflect-metadata@0.2.2):
     dependencies:
-      chalk: 2.3.0
-
-  inversify@6.2.2(reflect-metadata@0.2.2):
-    dependencies:
-      '@inversifyjs/common': 1.4.0
-      '@inversifyjs/core': 1.3.5(reflect-metadata@0.2.2)
+      '@inversifyjs/common': 1.5.0
+      '@inversifyjs/container': 1.9.1(reflect-metadata@0.2.2)
+      '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
   io-ts@2.0.1(fp-ts@2.1.1):
@@ -70730,10 +70738,6 @@ snapshots:
   superstruct@2.0.2: {}
 
   supports-color@2.0.0: {}
-
-  supports-color@4.5.0:
-    dependencies:
-      has-flag: 2.0.0
 
   supports-color@5.5.0:
     dependencies:
