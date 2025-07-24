@@ -3,8 +3,8 @@ import { hashes as localTokensHashesByChainId } from "@ledgerhq/cryptoassets/dat
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/lib/crypto-assets/type";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/lib/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import usdtTokenData from "../../__fixtures__/scroll_sepolia-erc20-mock_usdt.json";
 import newTokenData from "../../__fixtures__/scroll_sepolia-erc20-new_token_mock.json";
 import { makeOperation } from "./common.fixtures";

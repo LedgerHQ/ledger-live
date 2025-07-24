@@ -3,8 +3,8 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/lib/crypto-assets/type";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/lib/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
