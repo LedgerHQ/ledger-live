@@ -82,3 +82,5 @@ export const mockNetworksConfiguration: EnhancedModularDrawerConfiguration["netw
 export enum LoadingStatus {
   Success = "success",
 }
+
+export { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
