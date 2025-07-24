@@ -9,6 +9,7 @@ import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
+import { ModularDrawer } from "./drawer/modular.drawer";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -39,6 +40,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   private showMoreQuotes = "SHOW MORE QUOTES";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+  private modularDrawer = new ModularDrawer(this.page);
 
   private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
     cryptoAmount: buySell => buySell.amount,
@@ -104,17 +106,43 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
-    const isCryptoAssetSelected = await this.getWebViewElementByTestId(
-      this.cryptoCurrencySelector,
-    ).then(element => {
-      return element.getByText(account.currency.ticker).isVisible();
-    });
-
-    if (!isCryptoAssetSelected) {
-      await this.clickElement(this.cryptoCurrencySelector);
-      await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
-      await this.chooseAssetDrawer.selectAccountByName(account);
+    if (await this.isCorrectAssetAlreadySelected(account)) {
+      return;
     }
+
+    await this.clickElement(this.cryptoCurrencySelector);
+    await this.selectAssetInDrawer(account);
+  }
+
+  private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
+    const selectedTicker = await this.getWebViewElementByTestId(this.cryptoCurrencySelector);
+    const selectedTickerText = (await selectedTicker.textContent()) || "";
+
+    return (
+      selectedTickerText.includes(account.currency.ticker) ||
+      selectedTickerText.includes(account.currency.name)
+    );
+  }
+
+  private async selectAssetInDrawer(account: AccountType) {
+    const isModularDrawer = await this.modularDrawer.isModularAssetsDrawerVisible();
+    if (isModularDrawer) {
+      await this.selectAssetInModularDrawer(account);
+    } else {
+      await this.selectAssetInLegacyDrawer(account);
+    }
+  }
+
+  private async selectAssetInModularDrawer(account: AccountType) {
+    await this.modularDrawer.validateAssetsDrawerItems();
+    await this.modularDrawer.selectAssetByTicker(account.currency);
+    await this.modularDrawer.selectNetwork(account.currency);
+    await this.modularDrawer.selectAccountByName(account);
+  }
+
+  private async selectAssetInLegacyDrawer(account: AccountType) {
+    await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
+    await this.chooseAssetDrawer.selectAccountByName(account);
   }
 
   @step("Change region and currency")
