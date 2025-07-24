@@ -1,5 +1,47 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.18.0
+
+### Minor Changes
+
+- [#11034](https://github.com/LedgerHQ/ledger-live/pull/11034) [`08461e7`](https://github.com/LedgerHQ/ledger-live/commit/08461e7d8dee96c538b68a1effb04a16a6b29afc) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: utxo cleanup logic more robust when handling txs with multiple utxos with different addresses
+
+- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/cryptoassets@13.22.0
+  - @ledgerhq/coin-framework@5.7.0
+  - @ledgerhq/types-live@6.78.0
+  - @ledgerhq/errors@6.23.0
+  - @ledgerhq/live-network@2.0.13
+  - @ledgerhq/devices@8.4.8
+
+## 0.18.0-next.1
+
+### Minor Changes
+
+- [#11034](https://github.com/LedgerHQ/ledger-live/pull/11034) [`08461e7`](https://github.com/LedgerHQ/ledger-live/commit/08461e7d8dee96c538b68a1effb04a16a6b29afc) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: utxo cleanup logic more robust when handling txs with multiple utxos with different addresses
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/cryptoassets@13.22.0-next.0
+  - @ledgerhq/coin-framework@5.7.0-next.0
+  - @ledgerhq/types-live@6.78.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+  - @ledgerhq/devices@8.4.8-next.0
+
 ## 0.17.0
 
 ### Minor Changes
