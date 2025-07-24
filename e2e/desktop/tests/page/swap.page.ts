@@ -57,6 +57,7 @@ export class SwapPage extends AppPage {
     "insufficient-funds-warning",
   );
   private continueButton = this.drawerContent.getByTestId("continue-button");
+  private drawerContinueButton = this.drawerContent.locator("xpath=./div[2]/div/div/div[4]/button");
   private drawerCloseButton = this.drawerContent.getByTestId("drawer-close-button");
 
   async sendMax() {
@@ -184,8 +185,8 @@ export class SwapPage extends AppPage {
   @step("Check drawer error message ($0)")
   async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
     await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeVisible();
-    await expect(this.continueButton).toBeDisabled();
+    await expect(this.drawerContinueButton).toHaveText("Continue");
+    await expect(this.drawerContinueButton).toBeDisabled();
     await this.drawerCloseButton.click();
   }
 
