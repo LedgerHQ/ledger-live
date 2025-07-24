@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#11046](https://github.com/LedgerHQ/ledger-live/pull/11046) [`820b163`](https://github.com/LedgerHQ/ledger-live/commit/820b16316a9b0a87bb1157617c96ae7b1d6ca1d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix colors for dark & light mode using pre-ldls
+
 ## 0.40.0
 
 ### Minor Changes

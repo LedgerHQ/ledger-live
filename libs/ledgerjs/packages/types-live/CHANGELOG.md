@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.79.0-next.0
+
+### Minor Changes
+
+- [#10935](https://github.com/LedgerHQ/ledger-live/pull/10935) [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix reporting not sending currency
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
 ## 6.78.0
 
 ### Minor Changes

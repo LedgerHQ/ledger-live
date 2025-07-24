@@ -1,5 +1,20 @@
 # @ledgerhq/coin-xrp
 
+## 6.5.0-next.0
+
+### Minor Changes
+
+- [#11038](https://github.com/LedgerHQ/ledger-live/pull/11038) [`4961f64`](https://github.com/LedgerHQ/ledger-live/commit/4961f64cf4821e92b137a85f11d6c9a6aea2ecd4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [alpaca][xrp] fix impossibility to craft a XRP without memos
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/types-live@6.79.0-next.0
+  - @ledgerhq/cryptoassets@13.23.0-next.0
+  - @ledgerhq/coin-framework@5.8.0-next.0
+
 ## 6.4.1
 
 ### Patch Changes
