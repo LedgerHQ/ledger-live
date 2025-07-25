@@ -13,7 +13,7 @@ import { LogoWrapper } from "../../components/LogoWrapper";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { openURL } from "~/renderer/linking";
 import { ArrowUp, Spinner } from "@ldls/ui-react/symbols";
-import { Button as LdlsButton } from "@ldls/ui-react";
+import { LdlsButton } from "LLD/components";
 
 type Props = {
   goToCreateBackup: () => void;

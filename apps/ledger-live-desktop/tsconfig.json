@@ -6,15 +6,14 @@
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",
-    "module": "ESNext",
+    "module": "ESnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
       "tests/*": ["tests/*"],
-      "LLD/*": ["src/newArch/*"],
-      "@ldls/ui-react/*": ["./node_modules/@ldls/ui-react/dist/lib/**/*.{js,ts,jsx,tsx}"]
+      "LLD/*": ["src/newArch/*"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]
@@ -31,6 +30,7 @@
     "tests",
     "tests/handlers/**/*.json",
     "index-types.d.ts",
-    "tests/jestSetup.ts"
+    "tests/jestSetup.ts",
+    "tailwind.config.ts"
   ]
 }

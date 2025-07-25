@@ -38,6 +38,27 @@ const livecommonRules = {
   },
 };
 
+// This rule is used to prevent importing components directly from @ldls/ui-react
+// We want to use the LLD/components index file to import components
+const ldlsUiReactRules = {
+  files: ["src/**"],
+  excludedFiles: ["src/newArch/components/index.tsx"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            name: "@ldls/ui-react",
+            message:
+              "Please import components from 'LLD/components' instead of directly from '@ldls/ui-react'.",
+          },
+        ],
+      },
+    ],
+  },
+};
+
 module.exports = {
   env: {
     browser: true,
@@ -90,6 +111,7 @@ module.exports = {
   overrides: [
     currencyFamiliesRules,
     livecommonRules,
+    ldlsUiReactRules,
     {
       files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
       env: {
