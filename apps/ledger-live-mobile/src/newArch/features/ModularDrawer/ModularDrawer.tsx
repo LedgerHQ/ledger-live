@@ -8,7 +8,7 @@ import { useAssets } from "./hooks/useAssets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
 
@@ -52,8 +52,11 @@ type ModularDrawerProps = {
   /**
    * Callback fired when an account is selected.
    */
-  readonly onAccountSelected?: (account: Account) => void;
+  readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
 
+  /**
+   * Observable of Accounts
+   */
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
@@ -84,15 +87,15 @@ export function ModularDrawer({
   const { availableAssets, currencyIdsArray } = useAssets(currencies, sortedCryptoCurrencies);
 
   const {
-    availableNetworks,
-    hasOneCurrency,
-    navigationStepManager,
-    shouldShowBackButton,
-    handleBackButton,
-    handleCloseButton,
     handleAsset,
     handleNetwork,
+    handleBackButton,
+    handleCloseButton,
+    shouldShowBackButton,
+    availableNetworks,
     asset,
+    hasOneCurrency,
+    navigationStepManager,
   } = useModularDrawerState({
     currencyIds: currencyIdsArray,
     currenciesByProvider,

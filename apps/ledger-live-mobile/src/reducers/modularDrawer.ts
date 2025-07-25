@@ -1,23 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;
   preselectedCurrencies: CryptoOrTokenCurrency[];
-  onAccountSelected?: (account: Account) => void;
+  callbackId?: string; // Replace function with callback ID
   enableAccountSelection?: boolean;
-  accounts$?: Observable<WalletAPIAccount[]>;
+  accountsObservableId?: string; // Replace Observable with ID
 }
 
 const initialState: ModularDrawerState = {
   isOpen: false,
   preselectedCurrencies: [],
-  onAccountSelected: undefined,
+  callbackId: undefined,
   enableAccountSelection: false,
-  accounts$: undefined,
+  accountsObservableId: undefined,
 };
 
 const modularDrawerSlice = createSlice({
@@ -28,45 +25,43 @@ const modularDrawerSlice = createSlice({
       state,
       action: PayloadAction<{
         currencies?: CryptoOrTokenCurrency[];
-        onAccountSelected?: (account: Account) => void;
+        callbackId?: string; // Replace function with callback ID
         enableAccountSelection?: boolean;
-        accounts$?: Observable<WalletAPIAccount[]>;
+        accountsObservableId?: string; // Replace Observable with ID
       }>,
     ) => {
       state.isOpen = true;
       if (action.payload.currencies) {
         state.preselectedCurrencies = action.payload.currencies;
       }
-      if (action.payload.onAccountSelected) {
-        state.onAccountSelected = action.payload.onAccountSelected;
+      if (action.payload.callbackId) {
+        state.callbackId = action.payload.callbackId;
       }
       if (action.payload.enableAccountSelection !== undefined) {
         state.enableAccountSelection = action.payload.enableAccountSelection;
       }
-      if (action.payload.accounts$) {
-        state.accounts$ = action.payload.accounts$;
+      if (action.payload.accountsObservableId) {
+        state.accountsObservableId = action.payload.accountsObservableId;
       }
     },
     closeModularDrawer: state => {
       state.isOpen = false;
       state.preselectedCurrencies = [];
-      state.onAccountSelected = undefined;
+      state.callbackId = undefined;
       state.enableAccountSelection = false;
+      state.accountsObservableId = undefined;
     },
     setPreselectedCurrencies: (state, action: PayloadAction<CryptoOrTokenCurrency[]>) => {
       state.preselectedCurrencies = action.payload;
     },
-    setOnAccountSelected: (
-      state,
-      action: PayloadAction<((account: Account) => void) | undefined>,
-    ) => {
-      state.onAccountSelected = action.payload;
+    setCallbackId: (state, action: PayloadAction<string | undefined>) => {
+      state.callbackId = action.payload;
     },
     setEnableAccountSelection: (state, action: PayloadAction<boolean>) => {
       state.enableAccountSelection = action.payload;
     },
-    setAccounts$: (state, action: PayloadAction<Observable<WalletAPIAccount[]> | undefined>) => {
-      state.accounts$ = action.payload;
+    setAccountsObservableId: (state, action: PayloadAction<string | undefined>) => {
+      state.accountsObservableId = action.payload;
     },
   },
 });
@@ -75,9 +70,9 @@ export const {
   openModularDrawer,
   closeModularDrawer,
   setPreselectedCurrencies,
-  setOnAccountSelected,
+  setCallbackId,
   setEnableAccountSelection,
-  setAccounts$,
+  setAccountsObservableId,
 } = modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;

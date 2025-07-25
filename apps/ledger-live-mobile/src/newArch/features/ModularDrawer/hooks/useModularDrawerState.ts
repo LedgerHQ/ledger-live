@@ -1,5 +1,4 @@
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -8,6 +7,7 @@ import { getProvider, useProviders } from "./useProviders";
 import { useModularDrawerFlowStepManager } from "./useModularDrawerFlowStepManager";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   getEffectiveCurrency,
   haveOneCommonProvider,

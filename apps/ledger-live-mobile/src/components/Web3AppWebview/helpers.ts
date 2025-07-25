@@ -11,7 +11,7 @@ import {
   useCacheBustedLiveApps,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -398,7 +398,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook
           openModularDrawer?.({
             currencies,
             enableAccountSelection: true,
-            onAccountSelected: (account: AccountLike) => onSuccess(account, undefined),
+            onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
+              onSuccess(account, parentAccount),
             accounts$,
           });
         } else {

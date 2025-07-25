@@ -1,75 +1,99 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
-import { Observable } from "rxjs";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { AccountLike } from "@ledgerhq/types-live";
 import { State } from "~/reducers/types";
-import {
-  openModularDrawer,
-  closeModularDrawer,
-  setPreselectedCurrencies,
-  setOnAccountSelected,
-  setEnableAccountSelection,
-  setAccounts$,
-} from "~/reducers/modularDrawer";
-import { OpenModularDrawerParams } from "../types";
+import { openModularDrawer, closeModularDrawer } from "~/reducers/modularDrawer";
+import { OpenModularDrawerParams, OpenModularDrawerParamsWithCallbackId } from "../types";
+import { useCallbackRegistry } from "./useCallbackRegistry";
+import { generateCallbackId } from "../utils/callbackIdGenerator";
 
 export const useModularDrawerStore = () => {
   const dispatch = useDispatch();
-  const { isOpen, preselectedCurrencies, onAccountSelected, enableAccountSelection, accounts$ } =
-    useSelector((state: State) => state.modularDrawer);
+  const {
+    isOpen,
+    preselectedCurrencies,
+    callbackId,
+    enableAccountSelection,
+    accountsObservableId,
+  } = useSelector((state: State) => state.modularDrawer);
+
+  const {
+    registerCallback,
+    executeCallback,
+    registerObservable,
+    getObservable,
+    unregisterCallback,
+  } = useCallbackRegistry();
 
   const openDrawer = useCallback(
     (params?: OpenModularDrawerParams) => {
-      dispatch(openModularDrawer(params || {}));
+      const { onAccountSelected, accounts$, ...otherParams } = params || {};
+
+      let callbackIdToUse: string | undefined;
+      if (onAccountSelected) {
+        callbackIdToUse = generateCallbackId();
+        // Adapt the callback to match the expected AccountCallback type
+        const adaptedCallback = (account: AccountLike, parentAccount?: AccountLike) => {
+          // Type guard to ensure parentAccount is Account or undefined
+          const typedParentAccount =
+            parentAccount && "derivationMode" in parentAccount ? parentAccount : undefined;
+          onAccountSelected(account, typedParentAccount);
+        };
+        registerCallback(callbackIdToUse, adaptedCallback);
+      }
+
+      let observableIdToUse: string | undefined;
+      if (accounts$) {
+        observableIdToUse = generateCallbackId();
+        registerObservable(observableIdToUse, accounts$);
+      }
+
+      const paramsWithCallbackId: OpenModularDrawerParamsWithCallbackId = {
+        ...otherParams,
+        callbackId: callbackIdToUse,
+        accountsObservableId: observableIdToUse,
+      };
+
+      dispatch(openModularDrawer(paramsWithCallbackId));
     },
-    [dispatch],
+    [dispatch, registerCallback, registerObservable],
   );
 
   const closeDrawer = useCallback(() => {
+    if (callbackId) {
+      // Unregister callback associated with this drawer instance
+      unregisterCallback(callbackId);
+    }
     dispatch(closeModularDrawer());
-  }, [dispatch]);
+  }, [dispatch, unregisterCallback, callbackId]);
 
-  const updatePreselectedCurrencies = useCallback(
-    (currencies: CryptoOrTokenCurrency[]) => {
-      dispatch(setPreselectedCurrencies(currencies));
+  // Function to execute the callback when an account is selected
+  const handleAccountSelected = useCallback(
+    (account: AccountLike, parentAccount?: AccountLike) => {
+      if (callbackId) {
+        executeCallback(callbackId, account, parentAccount);
+      }
+      // Close the drawer after account selection
+      closeDrawer();
     },
-    [dispatch],
+    [callbackId, executeCallback, closeDrawer],
   );
 
-  const updateOnAccountSelected = useCallback(
-    (callback: ((account: Account) => void) | undefined) => {
-      dispatch(setOnAccountSelected(callback));
-    },
-    [dispatch],
-  );
-
-  const updateEnableAccountSelection = useCallback(
-    (enable: boolean) => {
-      dispatch(setEnableAccountSelection(enable));
-    },
-    [dispatch],
-  );
-
-  const updateAccounts$ = useCallback(
-    (accounts$: Observable<WalletAPIAccount[]> | undefined) => {
-      dispatch(setAccounts$(accounts$));
-    },
-    [dispatch],
-  );
+  // Function to get the observable when needed
+  const getAccountsObservable = useCallback(() => {
+    if (accountsObservableId) {
+      return getObservable(accountsObservableId);
+    }
+    return undefined;
+  }, [accountsObservableId, getObservable]);
 
   return {
     isOpen,
     preselectedCurrencies,
-    onAccountSelected,
     enableAccountSelection,
-    accounts$,
     openDrawer,
     closeDrawer,
-    updatePreselectedCurrencies,
-    updateOnAccountSelected,
-    updateEnableAccountSelection,
-    updateAccounts$,
+    handleAccountSelected,
+    getAccountsObservable,
   };
 };

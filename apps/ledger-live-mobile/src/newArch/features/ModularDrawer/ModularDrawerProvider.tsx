@@ -12,8 +12,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
     preselectedCurrencies,
     enableAccountSelection,
     closeDrawer,
-    onAccountSelected,
-    accounts$,
+    handleAccountSelected,
+    getAccountsObservable,
   } = useModularDrawerStore();
 
   return (
@@ -24,8 +24,11 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         currencies={preselectedCurrencies}
         onClose={closeDrawer}
         enableAccountSelection={enableAccountSelection}
-        onAccountSelected={onAccountSelected}
-        accounts$={accounts$}
+        onAccountSelected={handleAccountSelected}
+        accounts$={getAccountsObservable()}
+        // TODO FIX with flow and source
+        flow="default_flow"
+        source="default_source"
       />
     </>
   );
