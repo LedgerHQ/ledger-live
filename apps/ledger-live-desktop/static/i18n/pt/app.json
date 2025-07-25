@@ -344,6 +344,7 @@
           "provider" : "provedor",
           "rate" : "taxa",
           "fees" : "Taxas de Rede",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "conta de destino"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Ferramenta de Desenvolvedor do Menu Modular",
+        "description" : "Permite que você teste o menu modular facilmente"
+      },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "mockAppUpdate" : "Atualização simulada do aplicativo",
@@ -7279,6 +7284,15 @@
       "newAccount" : "Nova conta",
       "addAccountSelection" : "Escolha uma conta para adicionar fundos",
       "addAccountSelectionPtxFlow" : "Selecionar conta"
+    },
+    "editAccountName" : {
+      "title" : "Editar nome da conta",
+      "input" : {
+        "name" : "Nome"
+      },
+      "cta" : {
+        "save" : "Salvar"
+      }
     },
     "fundAccount" : {
       "receive" : "Receber",
