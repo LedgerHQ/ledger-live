@@ -344,6 +344,7 @@
           "provider" : "提供方",
           "rate" : "费率",
           "fees" : "网络费用",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "目标账户"
         },
         "tooltip" : {
@@ -2385,6 +2386,10 @@
         "title" : "设备"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "需要盲签名",
+          "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+        },
         "utxoLag" : "由于该账户持有大量硬币，本次交易可能需要花费较长时间来验证和签署。",
         "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
         "from" : "从",
@@ -4579,6 +4584,10 @@
             "cta" : "应用"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "模块化抽屉开发工具",
+        "description" : "助您轻松测试模块化抽屉"
       },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
@@ -7279,6 +7288,15 @@
       "newAccount" : "新账户",
       "addAccountSelection" : "选择账户用于添加资金",
       "addAccountSelectionPtxFlow" : "选择账户"
+    },
+    "editAccountName" : {
+      "title" : "编辑账户名称",
+      "input" : {
+        "name" : "名称"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "接收",
