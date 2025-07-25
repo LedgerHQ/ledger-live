@@ -344,6 +344,7 @@
           "provider" : "プロバイダー",
           "rate" : "レート",
           "fees" : "ネットワーク手数料",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "ターゲットアカウント"
         },
         "tooltip" : {
@@ -2385,6 +2386,10 @@
         "title" : "デバイス"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "ブラインド署名が必要です",
+          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -4579,6 +4584,10 @@
             "cta" : "適用"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "モジュラードロワー開発ツール",
+        "description" : "モジュラードロワーを簡単にテストできます"
       },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
@@ -7279,6 +7288,15 @@
       "newAccount" : "新しいアカウント",
       "addAccountSelection" : "資金を追加するアカウントを選択",
       "addAccountSelectionPtxFlow" : "アカウントを選択"
+    },
+    "editAccountName" : {
+      "title" : "アカウント名を編集",
+      "input" : {
+        "name" : "名前"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "受け取る",
