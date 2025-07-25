@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
@@ -52,6 +51,7 @@ import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";
+import { pushToast } from "~/actions/toast";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -83,7 +83,6 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
@@ -236,14 +235,16 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }, 3000);
 
       ReactNativeHapticFeedback.trigger("soft", options);
-      pushToast({
-        id: `copy-receive`,
-        type: "success",
-        icon: "success",
-        title: t("transfer.receive.addressCopied"),
-      });
+      dispatch(
+        pushToast({
+          id: `copy-receive`,
+          type: "success",
+          icon: "success",
+          title: t("transfer.receive.addressCopied"),
+        }),
+      );
     },
-    [mainAccount?.freshAddress, pushToast, t],
+    [mainAccount?.freshAddress, dispatch, t],
   );
 
   const mainAccountName = useMaybeAccountName(mainAccount);
