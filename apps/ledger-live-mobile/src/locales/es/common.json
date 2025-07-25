@@ -287,20 +287,120 @@
       "description" : "Inténtalo de nuevo."
     },
     "DisconnectedDevice" : {
-      "title" : "Dispositivo desconectado",
-      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Dispositivo desconectado",
-      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "Dispositivo desconectado",
-      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "DisconnectError" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "Dispositivo desconectado",
-      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Error en el método de conexión",
+      "description" : "Se ha producido un problema con el método de conexión del dispositivo utilizado. Prueba con otro método de conexión o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Error en el método de conexión",
+      "description" : "Se ha producido un problema con el método de conexión del dispositivo utilizado. Prueba con otro método de conexión o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Error en el método de conexión",
+      "description" : "Se ha producido un problema con el método de conexión del dispositivo utilizado. Prueba con otro método de conexión o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Error en el método de conexión",
+      "description" : "Se ha producido un problema con el método de conexión del dispositivo utilizado. Prueba con otro método de conexión o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Error en el método de conexión",
+      "description" : "Se ha producido un problema con el método de conexión del dispositivo utilizado. Prueba con otro método de conexión o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Dispositivo no configurado",
+      "description" : "Tu dispositivo no está listo para usarlo. Sigue las instrucciones de configuración e inténtalo de nuevo una vez las hayas completado."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Dispositivo no configurado",
+      "description" : "Tu dispositivo no está listo para usarlo. Sigue las instrucciones de configuración e inténtalo de nuevo una vez las hayas completado."
+    },
+    "DeviceLockedError" : {
+      "title" : "Dispositivo bloqueado",
+      "description" : "Tu dispositivo está bloqueado. Desbloquéalo e inténtalo de nuevo."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "No hay memoria suficiente",
+      "description" : "Tu dispositivo no tiene suficiente memoria. Desinstala aplicaciones e inténtalo de nuevo."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "El SO no es compatible",
+      "description" : "El sistema operativo de tu dispositivo no es compatible. Actualízalo desde Ledger Live o, si el problema persiste, ponte en contacto con el Soporte de Ledger para solicitar ayuda."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Error de batería",
+      "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Error de batería",
+      "description" : "Error en el estado de la batería. Ponte en contacto con el Soporte de Ledger."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Error de conexión del dispositivo",
+      "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Error de conexión del dispositivo",
+      "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "UnknownDAError" : {
+      "title" : "Error de conexión del dispositivo",
+      "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Dispositivo no reconocido",
+      "description" : "Ledger Live no ha podido reconocer tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Dispositivo no reconocido",
+      "description" : "Ledger Live no ha podido reconocer tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Dispositivo no reconocido",
+      "description" : "Ledger Live no ha podido reconocer tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "ReceiverApduError" : {
+      "title" : "Error de comunicación",
+      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "FramerApduError" : {
+      "title" : "Error de comunicación",
+      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Error de comunicación",
+      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Error de comunicación",
+      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Error de comunicación",
+      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "CasperInvalidTransferId" : {
       "title" : "El ID de transferencia debe ser un número positivo menor que {{maxTransferId}}"
@@ -517,9 +617,29 @@
       "title" : "EGLD insuficientes para pagar las tarifas de transacción",
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
+    "NotEnoughToStake" : {
+      "title" : "Necesitas un mínimo de {{minStake}} {{currency}} para activar tu puesta en participación",
+      "description" : "Necesitas un mínimo de {{minStake}} {{currency}} para activar tu puesta en participación"
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}",
+      "description" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}",
+      "description" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "No puedes volver a poner en participación menos de {{minAmount}}",
+      "description" : "No puedes volver a poner en participación menos de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}",
+      "description" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fondos insuficientes para cubrir las tarifas",
@@ -1086,7 +1206,7 @@
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     },
     "AddressesSanctionedError" : {
-      "title" : "Garantiza tu seguridad",
+      "title" : "Queremos garantizar tu seguridad",
       "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
     }
   },
@@ -3116,8 +3236,8 @@
         "desc" : "Recibe novedades importantes sobre Ledger Live"
       },
       "largeMover" : {
-        "title" : "Grandes movimientos",
-        "desc" : "Te notificaremos si ocurren variaciones importantes en los precios de BTC, ETH, SOL, ADA o XRP."
+        "title" : "Alertas de precios",
+        "desc" : "Te notificaremos si ocurren variaciones de precio importantes en los tokens populares que tienes"
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
@@ -3924,6 +4044,10 @@
       "quantityAvailable" : "Cantidad disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Firma a ciegas requerida",
+        "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+      },
       "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
       "tag" : "Etiqueta (opcional)",
       "validateTag" : "Validar etiqueta",
@@ -6327,6 +6451,141 @@
       }
     }
   },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos disponibles",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Saldo en participación",
+        "description" : "Esta cantidad está en participación con validadores."
+      },
+      "pending" : {
+        "title" : "Saldo pendiente",
+        "description" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad."
+      },
+      "withdrawable" : {
+        "title" : "Saldo retirable",
+        "description" : "Esta cantidad se ha quitado de participación y se puede retirar."
+      },
+      "stakingUnavailable" : {
+        "title" : "Puesta en participación no disponible",
+        "description" : "No tienes en tu cuenta saldo suficiente para poner en participación, quitar de participación y retirar."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Cantidad en participación",
+        "unstakedAmount" : "Cantidad retirada de la puesta en participación",
+        "withdrawnAmount" : "Importe retirado"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe de la cancelación de la puesta en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Cantidad que volver a poner en participación"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has vuelto a poner en participación tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones en participación",
+      "info" : "Cómo funciona la participación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes conseguir recompensas de Aptos al poner tus activos en participación.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "comm" : "Com.",
+      "timeToUnlock" : "Unlock en",
+      "iStake" : "Pongo en participación",
+      "actions" : {
+        "unstake" : "Cancelar la puesta en participación",
+        "withdraw" : "Retirar",
+        "restake" : "Volver a poner en participación"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a poner en participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Pon en participación tus Aptos para recibir recompensas de forma segura sin perder el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos puestos en participación siguen siendo tuyos.",
+              "1" : "Deberás esperar aproximadamente 2 horas para que el proceso de cancelar la puesta en participación finalice.",
+              "2" : "Pon en participación de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "overdelegated" : "Sobredelegado",
     "delegationSendWarnDesc" : "El importe a enviar se deducirá de tu cuenta delegada.",
@@ -6727,8 +6986,8 @@
       "7d" : "7D",
       "30d" : "30D",
       "1y" : "1 A",
-      "1D_label" : "1D",
       "1H_label" : "1H",
+      "1D_label" : "1D",
       "1W_label" : "1S",
       "1M_label" : "1M",
       "1Y_label" : "1A"
@@ -7519,6 +7778,7 @@
   "modularDrawer" : {
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
-    "selectAccount" : "Seleccionar cuenta"
+    "selectAccount" : "Seleccionar cuenta",
+    "searchPlaceholder" : "Buscar"
   }
 }
