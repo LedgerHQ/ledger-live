@@ -20,7 +20,10 @@ import { NFTResource } from "@ledgerhq/live-nft/types";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getScreenSpecs,
+  getScreenVisibleAreaDimensions,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,
@@ -40,7 +43,7 @@ import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageToDeviceProcessor";
 import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
@@ -394,6 +397,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
           onError={handleError}
           onRawResult={handleRawResult}
           contrast={DEFAULT_CONTRAST}
+          bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
         />
       )}
       {previewLoading ? (

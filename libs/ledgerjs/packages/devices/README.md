@@ -31,6 +31,8 @@ Logic for all Ledger devices.
 *   [nanoX](#nanox)
 *   [stax](#stax)
 *   [europa](#europa)
+*   [apex](#apex)
+*   [serviceUuid](#serviceuuid)
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
     *   [Parameters](#parameters-7)
@@ -181,6 +183,16 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 Ledger Flex ("europa" is the internal name)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### apex
+
+Apex
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### serviceUuid
+
+13D63400-2C97-6004-0001-4C6564676572, 13D63400-2C97-6004-0002-4C6564676572, and 13D63400-2C97-6004-0003-4C6564676572 Characteristics for Service 13D63400-2C97-6004-0000-4C6564676572
 
 ### ledgerUSBVendorId
 

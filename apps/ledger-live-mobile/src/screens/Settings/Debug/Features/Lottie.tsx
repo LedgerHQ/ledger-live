@@ -30,7 +30,8 @@ type EnabledDeviceModelIds =
   | DeviceModelId.nanoSP
   | DeviceModelId.nanoX
   | DeviceModelId.stax
-  | DeviceModelId.europa;
+  | DeviceModelId.europa
+  | DeviceModelId.apex;
 
 const deviceModelIds: Array<EnabledDeviceModelIds> = [
   DeviceModelId.nanoS,
@@ -38,6 +39,7 @@ const deviceModelIds: Array<EnabledDeviceModelIds> = [
   DeviceModelId.nanoX,
   DeviceModelId.stax,
   DeviceModelId.europa,
+  DeviceModelId.apex,
 ];
 
 function getAllAnimations(selectedModelId: DeviceModelId) {

@@ -2,41 +2,64 @@ import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
-import { injectedCode, htmlPage } from "./injectedCode/imageHexToBase64Processing";
+import { injectedCode, htmlPage } from "./injectedCode/imageToDeviceProcessing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
+import { ImageBase64Data, ImageDimensions } from "./types";
 
-export type Props = ProcessorRawResult & {
+export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
+
+export type ProcessorRawResult = { hexData: string } & ImageDimensions;
+
+export type Props = ImageBase64Data & {
   onError: (_: Error) => void;
   onPreviewResult: (_: ProcessorPreviewResult) => void;
+  onRawResult: (_: ProcessorRawResult) => void;
+  /**
+   * number >= 0
+   *  - 0:  full black
+   *  - 1:  original contrast
+   *  - >1: more contrasted than the original
+   * */
+  contrast: number;
   debug?: boolean;
+  bitsPerPixel: 1 | 4;
 };
 
 /**
- * Component to do reconstruct a 16 levels of gray image from an hexadecimal
- * representation of it.
+ * Component to do some processing on an image (apply grayscale with 16 gray
+ * levels, apply some contrast, output a preview and a hex reprensentation of
+ * the result)
  *
  * It:
- *  - takes as an input an image hex representation.
+ *
+ *  - takes as an input an image base64 data & a contrast value as an input
  *  - displays nothing (except for a warning in __DEV__ if the injected code is
  *  not correctly injected)
  *  - outputs a preview of the result in base64 data uri
+ *  - on user confirmation (call `ref.requestRawResult()`) it outputs the raw
+ *  result which is a hex representation of the 16 levels of gray image.
+ *
  *
  * Under the hood, this is implemented with a webview and some code injected in
  * it as it gives access to some web APIs (Canvas & Image) to do the processing.
  *
  * */
-export default class ImageHexProcessor extends React.Component<Props> {
+export default class ImageProcessor extends React.Component<Props> {
+  /**
+   *
+   * NB: We are a class component here because we need to access some methods from
+   * the parent using a ref.
+   */
+
   webViewRef: WebView | null = null;
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.hexData !== this.props.hexData) {
-      this.computeResult();
-    }
+    if (prevProps.contrast !== this.props.contrast) this.setAndApplyContrast();
+    if (prevProps.imageBase64DataUri !== this.props.imageBase64DataUri) this.computeResult();
   }
 
   handleWebViewMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
-    const { onError, onPreviewResult } = this.props;
+    const { onError, onPreviewResult, onRawResult } = this.props;
     const { type, payload } = JSON.parse(data);
     switch (type) {
       case "LOG":
@@ -57,6 +80,17 @@ export default class ImageHexProcessor extends React.Component<Props> {
           imageBase64DataUri: payload.base64Data,
         });
         break;
+      case "RAW_RESULT":
+        if (!payload.width || !payload.height || !payload.hexData) {
+          onError(new ImageProcessingError());
+          break;
+        }
+        onRawResult({
+          width: payload.width,
+          height: payload.height,
+          hexData: payload.hexData,
+        });
+        break;
       default:
         break;
     }
@@ -67,11 +101,26 @@ export default class ImageHexProcessor extends React.Component<Props> {
   };
 
   processImage = () => {
-    const { hexData, width, height } = this.props;
-    this.injectJavaScript(`window.reconstructImage(${width}, ${height}, "${hexData}");`);
+    const { imageBase64DataUri, bitsPerPixel } = this.props;
+    this.injectJavaScript(`window.processImage("${imageBase64DataUri}", ${bitsPerPixel});`);
+  };
+
+  setContrast = () => {
+    const { contrast } = this.props;
+    this.injectJavaScript(`window.setImageContrast(${contrast});`);
+  };
+
+  setAndApplyContrast = () => {
+    const { contrast } = this.props;
+    this.injectJavaScript(`window.setAndApplyImageContrast(${contrast})`);
+  };
+
+  requestRawResult = () => {
+    this.injectJavaScript("window.requestRawResult();");
   };
 
   computeResult = () => {
+    this.setContrast();
     this.processImage();
   };
 
@@ -95,7 +144,7 @@ export default class ImageHexProcessor extends React.Component<Props> {
         <InjectedCodeDebugger
           debug={debug}
           injectedCode={injectedCode}
-          filename="imageHexToBase64Processing.ts"
+          filename="imageToDeviceProcessing.ts"
         />
         <Flex flex={0}>
           <WebView

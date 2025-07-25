@@ -65,6 +65,7 @@ type BlueKeys = CommonKeys;
 type NanoXKeys = CommonKeys | BleKeys;
 type StaxKeys = CommonKeys | BleKeys;
 type FlexKeys = CommonKeys | BleKeys;
+type ApexKeys = CommonKeys | BleKeys;
 
 const commonKeysArray = [
   "plugAndPinCode",
@@ -88,6 +89,7 @@ const deviceModelIdToKeys = {
   [DeviceModelId.nanoX]: [...commonKeysArray, ...bleKeysArray],
   [DeviceModelId.stax]: [...commonKeysArray, ...bleKeysArray],
   [DeviceModelId.europa]: [...commonKeysArray, ...bleKeysArray],
+  [DeviceModelId.apex]: [...commonKeysArray, ...bleKeysArray],
 } as const;
 
 // Function implementation
@@ -104,6 +106,7 @@ type DeviceModelIdToKeys = {
   [DeviceModelId.nanoX]: NanoXKeys;
   [DeviceModelId.stax]: StaxKeys;
   [DeviceModelId.europa]: FlexKeys;
+  [DeviceModelId.apex]: ApexKeys;
 };
 
 type AnimationsCollection = {
@@ -298,6 +301,48 @@ const animations: AnimationsCollection = {
     },
   },
   europa: {
+    plugAndPinCode: {
+      light: FlexPinLight,
+      dark: FlexPinDark,
+    },
+    enterPinCode: {
+      light: FlexPinLight,
+      dark: FlexPinDark,
+    },
+    quitApp: {
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+    allowManager: {
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+    openApp: {
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+    verify: {
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+    sign: {
+      light: FlexSignLight,
+      dark: FlexSignDark,
+    },
+    allowUpdate: {
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+    blePairing: {
+      light: FlexPairingLight,
+      dark: FlexPairingDark,
+    },
+    blePaired: {
+      light: FlexPairedLight,
+      dark: FlexPairedDark,
+    },
+  },
+  apex: {
     plugAndPinCode: {
       light: FlexPinLight,
       dark: FlexPinDark,

@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isRecoverSupported } from "./isRecoverSupported";
 
-const { nanoS, nanoX, stax, europa, nanoSP } = DeviceModelId;
+const { nanoS, nanoX, stax, europa, nanoSP, apex } = DeviceModelId;
 
 test("isRecoverSupported", () => {
   /**
@@ -57,4 +57,10 @@ test("isRecoverSupported", () => {
 
   expect(isRecoverSupported("1.4.0", europa)).toBe(true);
   expect(isRecoverSupported("1.4.0-whatever0", europa)).toBe(true);
+
+  /**
+   * Apex
+   * */
+  expect(isRecoverSupported("0.0.0", apex)).toBe(true);
+  expect(isRecoverSupported("0.0.0-whatever0", apex)).toBe(true);
 });

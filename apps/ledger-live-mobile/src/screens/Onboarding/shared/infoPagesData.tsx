@@ -70,6 +70,7 @@ const deviceModelIdToAnimationKeys = {
   [DeviceModelId.blue]: [],
   [DeviceModelId.stax]: [],
   [DeviceModelId.europa]: [],
+  [DeviceModelId.apex]: [],
 } as const;
 
 // Function implementation
@@ -86,6 +87,7 @@ type DeviceModelIdToKeys = {
   [DeviceModelId.blue]: never;
   [DeviceModelId.stax]: never;
   [DeviceModelId.europa]: never;
+  [DeviceModelId.apex]: never;
 };
 
 type AnimationsCollection = {
@@ -182,6 +184,7 @@ export const lottieAnimations: AnimationsCollection = {
   blue: {},
   stax: {},
   europa: {},
+  apex: {},
 };
 
 export type GetDeviceAnimationArgs<M extends DeviceModelId = DeviceModelId> = {

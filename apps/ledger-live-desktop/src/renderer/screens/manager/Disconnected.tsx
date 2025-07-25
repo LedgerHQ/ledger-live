@@ -69,6 +69,12 @@ const illustrations: Record<
     width: 64,
     height: 64,
   },
+  apex: {
+    light: europa,
+    dark: europa,
+    width: 141,
+    height: 223,
+  },
 };
 
 const Illustration = styled.div<{
