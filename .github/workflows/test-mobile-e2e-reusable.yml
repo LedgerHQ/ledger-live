@@ -4,7 +4,8 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 3 * * 1-5"
+    # Run at 10 AM today (July 25, 2025)
+    - cron: "0 10 25 7 *"
   workflow_dispatch:
     inputs:
       ref:

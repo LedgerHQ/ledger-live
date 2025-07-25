@@ -51,7 +51,9 @@ async function initializeLedgerSync() {
     }
     return out;
   });
+  console.log("Ledger Sync Push Data Args:");
   await app.ledgerSync.activateLedgerSyncOnSpeculos();
+  console.log("Ledger sync activated on Speculos");
   return output;
 }
 describeIfNotNanoS(`Ledger Sync Accounts`, () => {

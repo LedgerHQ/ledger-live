@@ -51,19 +51,26 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  await $`pnpm mobile ${testType}:test\
+  try {
+    await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
-      --loglevel error \
+      --loglevel info \
       --record-logs failing \
       --record-videos failing \
       --take-screenshots failing \
       --forceExit \
+      --bail 0 \
       --headless \
       --retries 2 \
       --runInBand \
       --cleanup \
       --shard ${shard} \
       ${filteredArgs}`;
+  } catch (error) {
+    console.log('Test failed but continuing...', error.message);
+    // Return a non-zero exit code but don't throw
+    process.exitCode = 1;
+  }
 };
 
 const build_android = async () => {
@@ -71,18 +78,25 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  await $`pnpm mobile ${testType}:test \\
+  try {
+    await $`pnpm mobile ${testType}:test \\
       -c android.emu.${target} \\
       --loglevel error \\
       --record-logs failing \\
       --take-screenshots failing \\
       --forceExit \\
+      --bail 0 \\
       --headless \\
       --retries 2 \\
       --runInBand \\
       --cleanup \\
       --shard ${shard} \\
       ${filteredArgs}`;
+  } catch (error) {
+    console.log('Test failed but continuing...', error.message);
+    // Return a non-zero exit code but don't throw
+    process.exitCode = 1;
+  }
 };
 
 const getTasksFrom = {
