@@ -1,0 +1,17 @@
+{
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.test.{ts,tsx}"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/live-common",
+    "react-dom"
+  ],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [
+    "@ledgerhq/live-common/featureFlags/index"
+  ]
+}

@@ -5,14 +5,15 @@ import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
-import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
 import { LOG_TYPE_INTERNAL } from "./logger";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
+import { createStaticProxyTransport } from "@ledgerhq/live-dmk-proxy";
 
 /* eslint-disable guard-for-in */
 for (const k in process.env) {
@@ -42,11 +43,15 @@ if (getEnv("SPECULOS_API_PORT")) {
 
   registerTransportModule({
     id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    open: async () => {
+      return retry(() =>
+        DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts),
+      );
+    },
     disconnect: () => Promise.resolve(),
   });
 } else if (getEnv("DEVICE_PROXY_URL")) {
-  const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));
+  const Tr = createStaticProxyTransport(getEnv("DEVICE_PROXY_URL").split("|"));
   registerTransportModule({
     id: "proxy",
     open: () => retry(() => Tr.create(3000, 5000)),

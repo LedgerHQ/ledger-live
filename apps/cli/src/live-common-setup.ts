@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
 import {
   registerTransportModule,
@@ -14,9 +13,11 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
+import { createStaticProxyTransport } from "@ledgerhq/live-dmk-proxy";
 
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
@@ -61,7 +62,7 @@ const {
 } = process.env;
 
 if (DEVICE_PROXY_URL) {
-  const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
+  const Tr = createStaticProxyTransport(DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
     open: () =>
@@ -133,7 +134,8 @@ export function registerSpeculosTransport(apiPort: number) {
 
   registerTransportModule({
     id: "speculos-http",
-    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    open: () =>
+      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
     disconnect: () => Promise.resolve(),
   });
 }
