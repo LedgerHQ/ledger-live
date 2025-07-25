@@ -344,6 +344,7 @@
           "provider" : "Оператор",
           "rate" : "Курс",
           "fees" : "Комиссия сети",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Целевой счёт"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+      "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
       "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Инструмент разработчика Modular Drawer",
+        "description" : "Позволяет легко протестировать работу Modular Drawer"
+      },
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
       "mockAppUpdate" : "Фиктивное обновление приложения",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Новый счёт",
       "addAccountSelection" : "Выберите счёт для пополнения",
       "addAccountSelectionPtxFlow" : "Выберите счёт"
+    },
+    "editAccountName" : {
+      "title" : "Название счёта",
+      "input" : {
+        "name" : "Название"
+      },
+      "cta" : {
+        "save" : "Сохранить"
+      }
     },
     "fundAccount" : {
       "receive" : "Получить",
