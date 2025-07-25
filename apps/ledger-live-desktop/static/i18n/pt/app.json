@@ -461,6 +461,8 @@
       "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
       "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "A Ledger Nano S™ não é compatível com trocas de Hedera",
+      "hedera_description" : "Para trocar o ativo Hedera, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "A Ledger Nano S™ não é compatível com a troca de Osmosis",
       "osmo_description" : "Para trocar Osmosis, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "A Ledger Nano S™ não é compatível com trocas de dYdX",
@@ -3844,6 +3846,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Saldo em staking",
+      "stakedBalanceTooltip" : "Esta quantia está atualmente em staking com validadores.",
+      "withdrawableBalance" : "Saldo disponível para saque",
+      "withdrawableBalanceTooltip" : "Esta quantia foi desaplicada e pode ser sacada no momento.",
+      "pendingBalance" : "Saldo pendente",
+      "pendingBalanceTooltip" : "Esta quantia foi desaplicada e está atualmente com disponibilidade pendente."
+    },
+    "common" : {
+      "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+      "viewDetails" : "Ver detalhes",
+      "connectDevice" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmação"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Quantia aplicada",
+        "unstakedAmount" : "Quantia fora de staking",
+        "withdrawnAmount" : "Quantia sacada"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas em Aptos fazendo staking.",
+        "info" : "Como Staking Funciona",
+        "earnRewards" : "Receber recompensas"
+      },
+      "table" : {
+        "header" : "Posições de Staking",
+        "stake" : "Adicionar",
+        "active" : "Em staking",
+        "pendingInactive" : "Liberação pendente",
+        "inactive" : "Disponíveis para saque",
+        "nextUnlock" : "Próximo desbloqueio"
+      },
+      "nextUnlockIn" : "Próximo desbloqueio em",
+      "unstake" : "Desaplicar",
+      "withdraw" : "Sacar",
+      "restake" : "Reativar",
+      "activeTooltip" : "Quantias aplicadas geram recompensas",
+      "inactiveTooltip" : "Quantias desaplicadas não geram recompensas",
+      "commission" : "Comissão",
+      "totalStake" : "Total Aplicado",
+      "minSafeWarning" : "Fundos Insuficientes",
+      "reserveWarning" : "Deixe sempre {{amount}} APT reservados em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking",
+      "flow" : {
+        "title" : "Aplicar",
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas fazendo staking de seus ativos Aptos com um validador.",
+            "bullet" : ["Você mantém a propriedade dos ativos em staking.", "Faça staking usando seu dispositivo Ledger", "Os ativos estarão disponíveis de 0 a 14 dias após a desaplicação"],
+            "warning" : {
+              "description" : "Escolha cuidadosamente o seu validador: parte de seus ativos aplicados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Reativar staking",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "No processo de reaplicação, seu saldo disponível será aplicado em staking.",
+            "warning" : "Todo o saldo disponível será reaplicado. A quantia reaplicada estará disponível para saque após a operação de desaplicação e o tempo de desbloqueio.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia para reaplicar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você reaplicou seus ativos com sucesso.",
+              "description" : "{{amount}} foram reaplicados em {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Não há ativos aplicados o suficiente para desaplicar",
+      "flow" : {
+        "title" : "Desaplicar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "O processo de desaplicação levará {{timeToUnlock}} para ser finalizado.",
+            "subtitle2" : "O processo de desaplicação pode levar 30 dias para ser finalizado.",
+            "warning" : "Recompensas serão imediatamente depositadas. A quantia não reaplicada estará disponível para saque após o tempo de desbloqueio.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a desaplicar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você desaplicou seus ativos com sucesso",
+              "description" : "{{amount}} foram desaplicados de {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Não há ativos suficientes para sacar",
+      "flow" : {
+        "title" : "Sacar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a sacar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você sacou seus ativos com sucesso.",
+              "description" : "{{amount}} foram sacados de {{validator}}",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Multiplique suas posições de ETH",
@@ -5884,9 +6055,29 @@
       "title" : "Desculpe, falha na estimativa de taxas",
       "description" : "A estimativa de taxa falhou na rede. Verifique suas entradas, é provável que a transação vá falhar"
     },
+    "NotEnoughToStake" : {
+      "title" : "Você não pode aplicar menos de {{minStake}} {{currency}} em staking",
+      "description" : "Uma quantia mínima de {{currency}} {{minStake}} é necessária para fazer staking."
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Se você desaplicar mais do que {{maxAmount}}, sua participação total de {{totalAmount}} será desaplicada de staking",
+      "description" : "Se você desaplicar mais do que {{maxAmount}}, sua participação total de {{totalAmount}} será desaplicada de staking"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Se você reaplicar mais do que {{maxAmount}}, sua participação total de {{totalAmount}} será reaplicada em staking",
+      "description" : "Se você reaplicar mais do que {{maxAmount}}, sua participação total de {{totalAmount}} será reaplicada em staking"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Você não pode reaplicar menos de {{minAmount}}",
+      "description" : "Você não pode reaplicar menos de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Você não pode desaplicar menos de {{minAmount}}",
+      "description" : "Você não pode desaplicar menos de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fundos insuficientes para cobrir as taxas",
@@ -7090,6 +7281,15 @@
       "newAccount" : "Nova conta",
       "addAccountSelection" : "Escolha uma conta para adicionar fundos",
       "addAccountSelectionPtxFlow" : "Selecionar conta"
+    },
+    "editAccountName" : {
+      "title" : "Editar nome da conta",
+      "input" : {
+        "name" : "Nome"
+      },
+      "cta" : {
+        "save" : "Salvar"
+      }
     },
     "fundAccount" : {
       "receive" : "Receber",
