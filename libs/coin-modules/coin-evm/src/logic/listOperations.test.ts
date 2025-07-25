@@ -105,7 +105,7 @@ describe("listOperations", () => {
           senders: ["address"],
           recipients: ["address1"],
           value: 1n,
-          asset: { type: "token", standard: "erc", contractAddress: "contract-address" },
+          asset: { type: "erc20", assetReference: "contract-address" },
           tx: {
             hash: "token-op-1-tx-hash",
             block: {

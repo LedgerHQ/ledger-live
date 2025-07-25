@@ -20,7 +20,7 @@ import {
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosOperationMode } from "../types";
-import type { TezosApi, TezosAsset, TezosFeeEstimation } from "./types";
+import type { TezosApi, TezosFeeEstimation } from "./types";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 export function createApi(config: TezosConfig): TezosApi {
@@ -34,7 +34,7 @@ export function createApi(config: TezosConfig): TezosApi {
     getBalance: balance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block<TezosAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -47,7 +47,7 @@ function isTezosTransactionType(type: string): type is "send" | "delegate" | "un
   return ["send", "delegate", "undelegate"].includes(type);
 }
 
-async function balance(address: string): Promise<Balance<TezosAsset>[]> {
+async function balance(address: string): Promise<Balance[]> {
   const value = await getBalance(address);
   return [
     {
@@ -57,10 +57,7 @@ async function balance(address: string): Promise<Balance<TezosAsset>[]> {
   ];
 }
 
-async function craft(
-  transactionIntent: TransactionIntent<TezosAsset>,
-  customFees?: bigint,
-): Promise<string> {
+async function craft(transactionIntent: TransactionIntent, customFees?: bigint): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
@@ -84,9 +81,7 @@ async function craft(
   return rawEncode(contents);
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<TezosAsset>,
-): Promise<TezosFeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
@@ -130,7 +125,7 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   nextCursor?: string;
-  accumulator: Operation<TezosAsset>[];
+  accumulator: Operation[];
 };
 
 async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
@@ -159,7 +154,7 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
 async function operationsFromHeight(
   address: string,
   start: number,
-): Promise<[Operation<TezosAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const firstState: PaginationState = {
     pageSize: 200,
     maxIterations: 10,
@@ -179,6 +174,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<TezosAsset>[], string]> {
+): Promise<[Operation[], string]> {
   return operationsFromHeight(address, minHeight);
 }
