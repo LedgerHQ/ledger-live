@@ -344,6 +344,7 @@
           "provider" : "공급자",
           "rate" : "요율",
           "fees" : "네트워크 수수료",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "보내는 계정"
         },
         "tooltip" : {
@@ -4354,7 +4355,7 @@
       "currencies" : "암호화폐",
       "help" : "도움말",
       "about" : "소개",
-      "experimental" : "실험적 특징",
+      "experimental" : "실험적 기능",
       "accounts" : "계정",
       "developer" : "개발자"
     },
@@ -4579,6 +4580,10 @@
             "cta" : "적용"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Dev Tool",
+        "description" : "Modular Drawer를 간편하게 테스트할 수 있는 개발자 도구입니다."
       },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
@@ -7279,6 +7284,15 @@
       "newAccount" : "새 계정",
       "addAccountSelection" : "자산을 추가할 계정을 선택하세요",
       "addAccountSelectionPtxFlow" : "계정 선택"
+    },
+    "editAccountName" : {
+      "title" : "계정 이름 변경",
+      "input" : {
+        "name" : "이름"
+      },
+      "cta" : {
+        "save" : "저장"
+      }
     },
     "fundAccount" : {
       "receive" : "수령",
