@@ -7886,8 +7886,8 @@ importers:
         specifier: 0.0.0-connect-app-20250609094118
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-proxy':
-        specifier: 0.0.0-proxy-transport-20250724091920
-        version: 0.0.0-proxy-transport-20250724091920(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-proxy-transport-20250725091641
+        version: 0.0.0-proxy-transport-20250725091641(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: 6.22.0
         version: 6.22.0
@@ -14385,10 +14385,10 @@ packages:
       '@ledgerhq/context-module': ^1.4.0
       '@ledgerhq/device-management-kit': ^0.7.0
 
-  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250724091920':
-    resolution: {integrity: sha512-Yd0wgts8NAarNLADatarhe32dw5eIN8m3OUktW+q4O4bSsjyHHliHInIT7M3BP0QkikPl35KyUH/Jyk9REQhhQ==}
+  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250725091641':
+    resolution: {integrity: sha512-3SMIqoPFy80lXPP63WNHP+qe+crGm0KWeB4sOwUKzC8ZVI5YnwphdQ0Fl29CkjzrYtj+QzV52XYbB5cH5LG/Rg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-proxy-transport-20250724091920
+      '@ledgerhq/device-management-kit': 0.0.0-proxy-transport-20250725091641
       rxjs: ^7.8.2
 
   '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-io-revamp-20250630141416':
@@ -43568,7 +43568,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250724091920(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250725091641(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7

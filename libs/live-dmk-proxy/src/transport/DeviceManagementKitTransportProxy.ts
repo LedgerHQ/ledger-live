@@ -22,7 +22,7 @@ export type ProxyOpts = {
 type UrlInput = string | string[] | (() => Promise<string[]>);
 
 /**
- * Base class to wire up DMK disconnect-Transport.disconnect
+ * Base class to wire up
  */
 export class BaseProxyTransport extends Transport {
   public tracer = new LocalTracer("ProxyTransport");
