@@ -6,7 +6,7 @@
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",
-    "module": "ESNext",
+    "module": "ESnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "rootDir": ".",
@@ -30,6 +30,7 @@
     "tests",
     "tests/handlers/**/*.json",
     "index-types.d.ts",
-    "tests/jestSetup.ts"
+    "tests/jestSetup.ts",
+    "tailwind.config.ts"
   ]
 }
