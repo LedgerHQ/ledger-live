@@ -1,12 +1,15 @@
 /* instanbul ignore file: don't test fixtures */
 
 import BigNumber from "bignumber.js";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
+import usdTetherTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
 import {
   makeAccount,
   makeNft,
@@ -55,8 +58,10 @@ export const swapHistory = [
 ];
 
 export const tokenCurrencies = [
-  Object.freeze(getTokenById("ethereum/erc20/usd__coin")),
-  Object.freeze(getTokenById("ethereum/erc20/usd_tether__erc20_")),
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  Object.freeze(usdCoinTokenData as unknown as TokenCurrency),
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  Object.freeze(usdTetherTokenData as unknown as TokenCurrency),
 ];
 
 export const tokenAccount = {
@@ -93,6 +98,20 @@ export const coinOperations = [
     blockHeight: 1000,
   }),
 ];
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({
+  findTokenById: (id: string) => {
+    if (id === "ethereum/erc20/usd__coin") {
+      return usdCoinTokenData;
+    } else if (id === "ethereum/erc20/usd_tether__erc20_") {
+      return usdTetherTokenData;
+    }
+
+    return undefined;
+  },
+  findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
+} as unknown as CryptoAssetsStore);
 
 export const tokenOperations = [
   makeOperation({
@@ -268,14 +287,6 @@ export const internalOperations = [
     id: encodeSubOperationId(coinOperations[2].accountId, coinOperations[2].hash, "IN", 0),
   }),
 ];
-
-export const ignoredTokenOperation = makeOperation({
-  hash: "0xigN0r3Me",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd_tether__erc20_",
-  contract: "0xUnknownContract",
-  date: new Date(Date.now() + 4),
-  blockHeight: 12000,
-});
 
 export const pendingOperation = makeOperation({
   hash: "123",
