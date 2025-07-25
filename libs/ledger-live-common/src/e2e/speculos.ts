@@ -11,7 +11,7 @@ import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "../e2e/enum/DeviceLabels";
@@ -388,9 +388,9 @@ export async function startSpeculos(
     const device = isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
-          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return { id: device.id, port: device.ports.apiPort };
-        });
+        invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+        return { id: device.id, port: device.ports.apiPort };
+      });
     return device;
   } catch (e: unknown) {
     console.error(e);
@@ -415,13 +415,66 @@ interface ResponseData {
   events: Event[];
 }
 
+function getSpeculosAddress(): string {
+  const speculosAddress = process.env.SPECULOS_ADDRESS;
+  return speculosAddress || "http://127.0.0.1";
+}
+
+/**
+ * Retry axios request with exponential backoff
+ * @param requestFn - Function that returns axios request
+ * @param maxRetries - Maximum number of retries (default: 3)
+ * @param baseDelay - Base delay in ms (default: 1000)
+ * @param retryableStatusCodes - HTTP status codes to retry (default: [500, 502, 503, 504])
+ */
+async function retryAxiosRequest<T>(
+  requestFn: () => Promise<AxiosResponse<T>>,
+  maxRetries: number = 5,
+  baseDelay: number = 1000,
+  retryableStatusCodes: number[] = [500, 502, 503, 504],
+): Promise<AxiosResponse<T>> {
+  let lastError: AxiosError | Error;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await requestFn();
+    } catch (error) {
+      lastError = error as AxiosError | Error;
+
+      const isRetryable =
+        axios.isAxiosError(error) &&
+        error.response &&
+        retryableStatusCodes.includes(error.response.status);
+
+      const isNetworkError = axios.isAxiosError(error) && !error.response;
+
+      if ((isRetryable || isNetworkError) && attempt < maxRetries) {
+        const delay = baseDelay * (attempt + 1);
+        console.warn(
+          `Axios request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms...`,
+          {
+            status: axios.isAxiosError(error) ? error.response?.status : "network error",
+            message: error.message,
+          },
+        );
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      throw lastError;
+    }
+  }
+
+  throw lastError!;
+}
+
 export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
-  const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  const address = getSpeculosAddress();
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const { data } = await axios.get<ResponseData>(url);
+    const { data } = await retryAxiosRequest(() => axios.get<ResponseData>(url));
     const texts = data.events.map(event => event.text);
 
     if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
@@ -436,10 +489,12 @@ export async function waitFor(text: string, maxAttempts = 15): Promise<string[]>
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  await axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
-    action: "press-and-release",
-  });
+  const speculosAddress = getSpeculosAddress();
+  await retryAxiosRequest(() =>
+    axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
+      action: "press-and-release",
+    }),
+  );
 }
 
 export async function pressUntilTextFound(
@@ -465,27 +520,33 @@ export async function pressUntilTextFound(
 }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  const response = await axios.get<ResponseData>(
-    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    ),
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  const response = await axios.get<ResponseData>(
-    `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+  const speculosAddress = getSpeculosAddress();
+  const response = await retryAxiosRequest(() =>
+    axios.get<ResponseData>(
+      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    ),
   );
   return response.data.events.map(event => event.text);
 }
 
 export async function pressRightButton(): Promise<void> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
-  await axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
-    action: "press-and-release",
-  });
+  const speculosAddress = getSpeculosAddress();
+  await retryAxiosRequest(() =>
+    axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
+      action: "press-and-release",
+    }),
+  );
 }
 
 export function containsSubstringInEvent(targetString: string, events: string[]): boolean {
@@ -503,12 +564,14 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
-  const speculosAddress = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  const speculosAddress = getSpeculosAddress();
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
-      responseType: "arraybuffer",
-    });
+    const response = await retryAxiosRequest(() =>
+      axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
+        responseType: "arraybuffer",
+      }),
+    );
     return response.data;
   } catch (error) {
     console.error("Error downloading speculos screenshot:", error);

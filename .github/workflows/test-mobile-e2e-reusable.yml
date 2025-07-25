@@ -413,7 +413,7 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
 
       - name: cache android emulator
-        timeout-minutes: 5
+        timeout-minutes: 10
         uses: tespkg/actions-cache@v1
         id: detox-avd
         with:
