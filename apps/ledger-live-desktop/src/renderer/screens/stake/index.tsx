@@ -146,7 +146,7 @@ const useStakeFlow = () => {
           currencies: cryptoCurrencies,
           onSuccess,
           onCancel: handleRequestClose,
-          flow: "Stake",
+          flow: "stake",
           source: source ?? "",
         });
       } else {
