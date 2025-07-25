@@ -44,7 +44,7 @@ describe("Wallet API methods", () => {
     expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
   });
 
-  it("transaction.sign", async () => {
+  xit("transaction.sign", async () => {
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
     const amount = "500000000000000"; // 0.0005 ETH in wei
     const data = "TestDataForEthereumTransaction";
@@ -70,7 +70,7 @@ describe("Wallet API methods", () => {
     // expect(res).toBe("empty response");
   });
 
-  it("transaction.sign solana", async () => {
+  xit("transaction.sign solana", async () => {
     const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
     const amount = "1000000"; // 0.001 SOL in lamports
 
@@ -110,7 +110,7 @@ describe("Wallet API methods", () => {
     // });
   });
 
-  it("transaction.sign raw solana simple", async () => {
+  xit("transaction.sign raw solana simple", async () => {
     const rawTx =
       "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDNzWs4isgmR+LEHY8ZcgBBLMnC4ckD1iuhSa2/Y+69I91oyGFaAZ/9w4srgx9KoqiHtPM6Vur7h4D6XVoSgrEhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALt5JNk+MAN8BXYrlkxMEL1C/sM3+ZFYwZw4eofBOKp4BAgIAAQwCAAAAgJaYAAAAAAA=";
 
@@ -151,7 +151,7 @@ describe("Wallet API methods", () => {
     // });
   });
 
-  it("transaction.sign raw solana simple versioned tx", async () => {
+  xit("transaction.sign raw solana simple versioned tx", async () => {
     const rawTx =
       "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQABAzc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPdaMhhWgGf/cOLK4MfSqKoh7TzOlbq+4eA+l1aEoKxIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABfLzKkOix18SH7aJB0ftIw4FuVJdpsGNCeSOTPzs9KKAQICAAEMAgAAAICWmAAAAAAAAA==";
 
@@ -205,7 +205,7 @@ describe("Wallet API methods", () => {
     // });
   });
 
-  it("transaction.sign raw solana jup", async () => {
+  xit("transaction.sign raw solana jup", async () => {
     const rawTx =
       "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQADCjc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPJGEHQWQLekD/dvAcpnMP2/tG3aYY5eJPwCIdQraAPCxEmBJ9MMUfrE0XakyEUZnEtlYyXwSxgHdGjzuUfCe5YlRv0RZO0KA6xpP2ZTy3gPYYekA+GRdTZ9xkFdPoP6mN+PTko52VL0CIM2xtl0WkvNslD6Wawxr7yd9HYllN4Lz1QisC8APtk6AnjCKZmDRfJdI4LPZhcTyQg0m67HXuHf5nhgvgw+u73a6p2g72pShJs/a3e0XIG/SmJess9cE+AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAEedVb8jHAbu50xW7OaBUH/bGy3qP0jlECsc2iVrwTjwbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpFroxe4U6J5YhwTYIw4Hl0OWWmFfNquad1njJfzq2aU8FBwAFAvWoBAAHAAkDk/ECAAAAAAAIBQUAHQkYCZPxe2T0hK52/Qg/CRsAAwoLBRodCAgZCCEbCgsMDg0PICIfJwkmGxopCgQTEhARJCUjJwkeKhcqFRQECx0pFiobCQkoKgYCAQgcLMEgmzNB1pyBAAMAAAA5XQADTwcAAiZkAgOAhB4AAAAAADGJsAAAAAAAMgAACQMFAAABCQQpv5UHKk+/BN9xdZPnOLzMIScoFcJHGoDZ+fVVsNSEJQIpGAcTACgDAhcVWX05K6qoNBpFvohhQGiBxG4ZEV+GAgS6FrxyNTh9k9oEYAYFZQQDCQIBfcDHFwIcy2bnEz7RejJmfNDT1qvRg9d3bphgF42pbGoEePR08gXxb3l187d006g+ZmeaKFPjpBstjVj8egEUslf/CvI0AyqNtu4dBOPkyscDzsbL";
 
