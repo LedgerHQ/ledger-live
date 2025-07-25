@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // speculos.test.ts
@@ -128,8 +129,23 @@ describe("WsProxyTransport", () => {
 describe("SpeculosStaticTransport", () => {
   const Static = createStaticProxyTransport(async () => ["http://1", "ws://2"]);
 
-  it("list()", async () => {
-    expect(await Static.list()).toEqual(["http://1", "ws://2"]);
+  it("list() filters unreachable URLs by checking connectivity", async () => {
+    // given
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true } as any));
+    class MockWebSocket {
+      onopen!: () => void;
+      onerror!: (err: any) => void;
+      constructor(url: string) {
+        setTimeout(() => this.onopen(), 0);
+      }
+      close() {}
+    }
+    vi.stubGlobal("WebSocket", MockWebSocket);
+    // when
+    const result = await Static.list();
+
+    // then
+    expect(result).toEqual(["http://1", "ws://2"]);
   });
 
   it("open() picks correct adaptor", async () => {

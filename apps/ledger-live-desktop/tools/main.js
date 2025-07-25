@@ -110,6 +110,7 @@ const build = async argv => {
     esbuild.build({
       ...mainConfig,
       define: buildMainEnv("production", argv),
+      external: ["ws"],
       plugins: [
         ...(mainConfig.plugins || []),
         ...(!mappedNativeModules

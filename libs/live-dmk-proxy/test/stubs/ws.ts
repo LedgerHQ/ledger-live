@@ -1,5 +1,5 @@
 export default class WebSocketStub {
-  readyState = 1; // OPEN
+  readyState = 1;
   onopen = () => {};
   onmessage = (_: any) => {};
   onerror = (_: any) => {};

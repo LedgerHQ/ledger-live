@@ -40,15 +40,10 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118",
-    "@ledgerhq/device-transport-kit-proxy": "0.0.0-proxy-transport-20250724091920",
-    "@ledgerhq/errors": "6.22.0",
+    "@ledgerhq/device-transport-kit-proxy": "0.0.0-proxy-transport-20250725091641",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-dmk-shared": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^",
-    "axios": "1.10.0",
-    "net": "1.0.2"
+    "@ledgerhq/logs": "workspace:^"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",

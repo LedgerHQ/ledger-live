@@ -402,15 +402,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-http':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-http
       '@ledgerhq/hw-transport-node-hid-singleton':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-hid-singleton
-      '@ledgerhq/hw-transport-node-speculos-http':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
@@ -991,9 +985,6 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-http':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-http
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/icons
@@ -7889,32 +7880,17 @@ importers:
         specifier: 0.0.0-connect-app-20250609094118
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-proxy':
-        specifier: 0.0.0-proxy-transport-20250724091920
-        version: 0.0.0-proxy-transport-20250724091920(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
-      '@ledgerhq/errors':
-        specifier: 6.22.0
-        version: 6.22.0
+        specifier: 0.0.0-proxy-transport-20250725091641
+        version: 0.0.0-proxy-transport-20250725091641(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
-      '@ledgerhq/live-dmk-shared':
-        specifier: workspace:^
-        version: link:../live-dmk-shared
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-devices
-      axios:
-        specifier: 1.10.0
-        version: 1.10.0
-      net:
-        specifier: 1.0.2
-        version: 1.0.2
     devDependencies:
       '@testing-library/dom':
         specifier: ^9.3.4
@@ -8040,21 +8016,12 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
-      '@ledgerhq/live-dmk-shared':
-        specifier: workspace:^
-        version: link:../live-dmk-shared
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-devices
       axios:
         specifier: 1.10.0
         version: 1.10.0
-      net:
-        specifier: 1.0.2
-        version: 1.0.2
     devDependencies:
       '@testing-library/dom':
         specifier: ^9.3.4
@@ -14409,10 +14376,10 @@ packages:
       '@ledgerhq/context-module': ^1.4.0
       '@ledgerhq/device-management-kit': ^0.7.0
 
-  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250724091920':
-    resolution: {integrity: sha512-Yd0wgts8NAarNLADatarhe32dw5eIN8m3OUktW+q4O4bSsjyHHliHInIT7M3BP0QkikPl35KyUH/Jyk9REQhhQ==}
+  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250725091641':
+    resolution: {integrity: sha512-3SMIqoPFy80lXPP63WNHP+qe+crGm0KWeB4sOwUKzC8ZVI5YnwphdQ0Fl29CkjzrYtj+QzV52XYbB5cH5LG/Rg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-proxy-transport-20250724091920
+      '@ledgerhq/device-management-kit': 0.0.0-proxy-transport-20250725091641
       rxjs: ^7.8.2
 
   '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-io-revamp-20250630141416':
@@ -28685,9 +28652,6 @@ packages:
 
   nested-error-stacks@2.0.1:
     resolution: {integrity: sha512-SrQrok4CATudVzBS7coSz26QRSmlK9TzzoFbeKfcPBUFPjcQM9Rqvr/DlJkOrwI/0KcgvMub1n1g5Jt9EgRn4A==}
-
-  net@1.0.2:
-    resolution: {integrity: sha512-kbhcj2SVVR4caaVnGLJKmlk2+f+oLkjqdKeQlmUtz6nGzOpbcobwVIeSURNgraV/v3tlmGIX82OcPCl0K6RbHQ==}
 
   netmask@2.0.2:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
@@ -43615,7 +43579,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250724091920(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-proxy@0.0.0-proxy-transport-20250725091641(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
@@ -65465,8 +65429,6 @@ snapshots:
   neo-async@2.6.2: {}
 
   nested-error-stacks@2.0.1: {}
-
-  net@1.0.2: {}
 
   netmask@2.0.2: {}
 
