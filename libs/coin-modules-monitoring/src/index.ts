@@ -1,7 +1,7 @@
 import { client, v2 } from "@datadog/datadog-api-client";
 import type { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 const configuration = client.createConfiguration({
   authMethods: {
@@ -22,11 +22,12 @@ export interface LogEntry {
   operationType: "scan" | "sync";
   accountType: "pristine" | "average" | "big";
   transactions: number;
-  accountAddress: string;
+  accountAddressOrXpub: string;
 }
 
 export interface AccountInfo<A extends Account> {
   address: string;
+  derivationMode?: DerivationMode;
   initialAccount?: Partial<A>;
   rest?: unknown;
 }
@@ -68,7 +69,7 @@ export async function monitor<A extends Account>(
         operationType: "scan",
         accountType: accountType as LogEntry["accountType"],
         transactions: initialAccount.operationsCount,
-        accountAddress: accountAddress.address,
+        accountAddressOrXpub: initialAccount.xpub ?? accountAddress.address,
       },
       {
         duration: endSync - startSync,
@@ -77,7 +78,7 @@ export async function monitor<A extends Account>(
         operationType: "sync",
         accountType: accountType as LogEntry["accountType"],
         transactions: initialAccount.operationsCount,
-        accountAddress: accountAddress.address,
+        accountAddressOrXpub: initialAccount.xpub ?? accountAddress.address,
       },
     );
   }
