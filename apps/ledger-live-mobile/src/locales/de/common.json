@@ -848,6 +848,10 @@
       "title" : "Kann noch nicht von Unterkonten senden",
       "description" : "Diese Funktion wird zu einem späteren Zeitpunkt aufgrund von Änderungen, die kürzlich durch das Babylon-Update eingeführt wurden, hinzugefügt."
     },
+      "UnavailableTezosOriginatedAccountSend" : {
+    "title": "Senden von Unterkonten derzeit nicht möglich",
+    "description": "Diese Funktion wird später aufgrund kürzlich durch das Terra Classic-Upgrade eingeführter Änderungen hinzugefügt."
+    },
     "RecommendUndelegation" : {
       "title" : "Bitte heben Sie die Übertragung des Kontos auf, bevor Sie es leeren"
     },

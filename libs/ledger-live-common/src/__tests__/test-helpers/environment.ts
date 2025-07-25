@@ -116,6 +116,7 @@ setSupportedCurrencies([
   "sonic_blaze",
   "mina",
   "babylon",
+    "terraclassic",
 ]);
 LiveConfig.setConfig(liveConfig);
 

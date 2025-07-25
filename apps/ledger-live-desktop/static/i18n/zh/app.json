@@ -6351,6 +6351,10 @@
       "title" : "尚无法从子账户发送",
       "description" : "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
     },
+    "UnavailableTezosOriginatedAccountSend" : {
+      "title" : "尚无法从子账户发送",
+      "description" : "由于近期 Terra Classic 更新而引入的变化，此功能将在稍后阶段被添加。"
+    },
     "RecommendUndelegation" : {
       "title" : "请在清空账户之前将其解除委托"
     },

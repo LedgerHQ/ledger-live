@@ -3849,3 +3849,5 @@ exports[`formatCurrencyUnit with default options should correctly format dYdX un
 exports[`formatCurrencyUnit with default options should correctly format lisk unit (LSK) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Terra Classic unit (LUNC) 1`] = `"12.345.678.900,000000- -LUNC"`;

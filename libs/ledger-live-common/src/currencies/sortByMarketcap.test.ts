@@ -36,6 +36,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "xion",
     "zenrock",
     "babylon",
+        "terraclassic",
     "quicksilver",
   ]);
 });

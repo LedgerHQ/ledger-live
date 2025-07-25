@@ -20,6 +20,7 @@ import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_ass
 import suitokens, { SuiToken } from "./data/sui";
 import { ERC20Token } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import cw20Tokens from "./data/cw20";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -61,6 +62,8 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+// Terra Classic
+addTokens(cw20Tokens.map(convertCw20Tokens));
 
 if (getEnv("SUI_ENABLE_TOKENS")) {
   // Sui tokens

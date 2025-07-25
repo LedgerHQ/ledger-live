@@ -94,6 +94,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const sui = useFeature("currencySui");
   const mina = useFeature("currencyMina");
   const babylon = useFeature("currencyBabylon");
+  const terraclassic = useFeature("currencyTerraclassic");
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
@@ -162,6 +163,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       sui,
       mina,
       babylon,
+      terraclassic,
     }),
     [
       aptos,
@@ -223,6 +225,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       sui,
       mina,
       babylon,
+      terraclassic,
       berachain,
       hyperevm,
       seiNetworkEvm,

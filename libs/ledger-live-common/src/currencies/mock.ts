@@ -44,6 +44,7 @@ export const IDS = [
   "xion",
   "zenrock",
   "babylon",
+    "terraclassic",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -656,4 +657,52 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       },
     ],
   },
+    {
+  type: "CryptoCurrency",
+  id: "terraclassic",
+  coinType: 118,
+  name: "Terra Classic",
+  managerAppName: "Cosmos",
+  ticker: "LUNC",
+  scheme: "LUNC",
+  color: "#CE6533",
+  family: "cosmos",
+    units: [
+      {
+        name: "LUNC",
+        code: "uluna",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://finder.terraclassic.community/$hash",
+        address: "https://finder.terraclassic.community/$address",
+      },
+    ],
+  },
+{
+  type: "CryptoCurrency",
+  id: "terraclassicusd",
+  coinType: 118,
+  name: "TerraClassicUSD",
+  managerAppName: "Cosmos",
+  ticker: "USTC",
+  scheme: "USTC",
+  color: "#1B9AF7",
+  family: "cosmos",
+  units: [
+    {
+      name: "USTC",
+      code: "uusd",
+      magnitude: 6,
+    }, 
+  ],
+  explorerViews: [
+    {
+      tx: "https://finder.terraclassic.community/$hash",
+      address: "https://finder.terraclassic.community/$address",
+    },
+  ],
+}
 ];

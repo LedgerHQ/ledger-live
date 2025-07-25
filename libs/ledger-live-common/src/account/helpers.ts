@@ -100,6 +100,7 @@ export const getVotesCount = (
     case "xion":
     case "zenrock":
     case "babylon":
+    case "terraclassic":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;

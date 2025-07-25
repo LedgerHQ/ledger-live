@@ -116,6 +116,7 @@ setSupportedCurrencies([
   "sonic_blaze",
   "mina",
   "babylon",
+  "terraclassic",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
