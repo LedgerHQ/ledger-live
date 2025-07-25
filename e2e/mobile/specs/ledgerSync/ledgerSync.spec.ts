@@ -39,6 +39,28 @@ async function initializeLedgerKeyRingProtocol() {
   });
 }
 
+function initializeThenDeleteTrustChain() {
+  return [
+    async () => initializeLedgerKeyRingProtocol(),
+    async () => initializeLedgerSync(),
+    async () => deleteLedgerSyncData(),
+  ];
+}
+
+async function deleteLedgerSyncData() {
+  await CLI.ledgerSync({
+    deleteData: true,
+    ...ledgerKeyRingProtocolArgs,
+    ...ledgerSyncPushDataArgs,
+  });
+
+  await CLI.ledgerKeyRingProtocol({
+    destroyKeyRingTree: true,
+    ...ledgerKeyRingProtocolArgs,
+    ...ledgerSyncPushDataArgs,
+  });
+}
+
 async function initializeLedgerSync() {
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
@@ -54,11 +76,13 @@ async function initializeLedgerSync() {
   await app.ledgerSync.activateLedgerSyncOnSpeculos();
   return output;
 }
+
 describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.LS,
       cliCommands: [
+        ...initializeThenDeleteTrustChain(),
         async () => {
           return initializeLedgerKeyRingProtocol();
         },
@@ -104,24 +128,5 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeDeletionSuccessPage();
     await device.enableSynchronization();
-  });
-
-  afterAll(async () => {
-    try {
-      await CLI.ledgerSync({
-        deleteData: true,
-        ...ledgerKeyRingProtocolArgs,
-        ...ledgerSyncPushDataArgs,
-      });
-
-      await CLI.ledgerKeyRingProtocol({
-        destroyKeyRingTree: true,
-        ...ledgerKeyRingProtocolArgs,
-        ...ledgerSyncPushDataArgs,
-      });
-    } catch (error) {
-      if ((error as Error).message?.includes("Not a member of trustchain") && !IS_FAILED) return; // Not logging error as trustchain was deleted within the test
-      console.error("AfterAll Hook: Error deleting trustchain\n", error);
-    }
   });
 });
