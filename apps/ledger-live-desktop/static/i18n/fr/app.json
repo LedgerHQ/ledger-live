@@ -344,6 +344,7 @@
           "provider" : "Prestataire",
           "rate" : "Taux",
           "fees" : "Frais de réseau",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Compte bénéficiaire"
         },
         "tooltip" : {
@@ -2385,6 +2386,10 @@
         "title" : "Appareil"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Demande de signature aveugle",
+          "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        },
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
         "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
         "from" : "De",
@@ -4579,6 +4584,10 @@
             "cta" : "Appliquer"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Outil développeur pour le Modular Drawer",
+        "description" : "Testez facilement le Modular Drawer."
       },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
@@ -7279,6 +7288,15 @@
       "newAccount" : "Nouveau compte",
       "addAccountSelection" : "Choisissez le compte à approvisionner",
       "addAccountSelectionPtxFlow" : "Sélectionner un compte"
+    },
+    "editAccountName" : {
+      "title" : "Modifier le nom du compte",
+      "input" : {
+        "name" : "Nom"
+      },
+      "cta" : {
+        "save" : "Enregistrer"
+      }
     },
     "fundAccount" : {
       "receive" : "Recevoir",
