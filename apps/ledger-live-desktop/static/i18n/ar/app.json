@@ -344,6 +344,7 @@
           "provider" : "مزود",
           "rate" : "مُعدل",
           "fees" : "رسوم الشبكة",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "الحساب المستهدف"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
       "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+      "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
       "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "أداة تطوير الشريط النموذجي",
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
       "mockAppUpdate" : "تحديث صوري للتطبيق",
@@ -7279,6 +7286,15 @@
       "newAccount" : "حساب جديد",
       "addAccountSelection" : "اختر الحساب لإضافة الأموال",
       "addAccountSelectionPtxFlow" : "اختر حساب"
+    },
+    "editAccountName" : {
+      "title" : "تعديل اسم الحساب",
+      "input" : {
+        "name" : "الاسم"
+      },
+      "cta" : {
+        "save" : "حفظ"
+      }
     },
     "fundAccount" : {
       "receive" : "تلقي",
