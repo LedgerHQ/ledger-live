@@ -3,7 +3,15 @@ import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
+import {
+  StyleSheet,
+  LogBox,
+  Appearance,
+  AppState,
+  Platform,
+  NativeModules,
+  NativeEventEmitter,
+} from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
@@ -105,6 +113,8 @@ import {
   AutoInstrumentationConfiguration,
   DdSdkReactNative,
   PropagatorType,
+  DdRum,
+  RumActionType,
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
@@ -137,6 +147,10 @@ const styles = StyleSheet.create({
 function walletExportSelector(state: State) {
   return exportWalletState(walletSelector(state));
 }
+
+const { StartupInfoModule } = NativeModules;
+
+const startupInfoEventEmitter = new NativeEventEmitter(StartupInfoModule);
 
 function App() {
   const accounts = useSelector(accountsSelector);
@@ -194,6 +208,38 @@ function App() {
     hasSeenAnalyticsOptInPrompt,
     hasCompletedOnboarding,
   ]);
+
+  useEffect(() => {
+    if (Platform.OS === "ios" && StartupInfoModule) {
+      // 1. Get initial startup info (for cold start or external warm start)
+      StartupInfoModule.getInitialStartupInfo() // Use the new method name
+        .then(info => {
+          console.log(">>>>> Initial Native Startup Info:", info);
+          DdRum.addAction(RumActionType.CUSTOM, "application_start", info);
+        })
+        .catch(err => {
+          console.error(">>>>> Error getting initial native startup info:", err);
+        });
+
+      // 2. Subscribe to subsequent updates (for hot/warm from background)
+      const subscription = startupInfoEventEmitter.addListener(
+        "NativeStartupInfoUpdate", // Event name from supportedEvents in .mm
+        info => {
+          console.log(">>>>> Received Native Startup Info Update:", info);
+          DdRum.addAction(RumActionType.CUSTOM, "application_start", info);
+        },
+      );
+
+      // Clean up the subscription when the component unmounts
+      return () => {
+        subscription.remove();
+      };
+    } else if (Platform.OS !== "ios") {
+      console.error(">>>>> Native startup info module only available on iOS.");
+    } else {
+      console.error(">>>>> StartupInfoModule is not available.");
+    }
+  }, []); // Run once on component mount
 
   useEffect(() => {
     if (!datadogFF?.enabled) return;
