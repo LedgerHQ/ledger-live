@@ -1,25 +1,14 @@
-import { BigNumber } from "bignumber.js";
-import React, {
-  createContext,
-  useMemo,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-  useCallback,
-  ReactElement,
-} from "react";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import api from "@ledgerhq/live-countervalues/api/index";
 import {
-  initialState,
   calculate,
-  loadCountervalues,
   exportCountervalues,
   importCountervalues,
   inferTrackingPairForAccounts,
+  initialState,
+  loadCountervalues,
   trackingPairForTopCoins,
 } from "@ledgerhq/live-countervalues/logic";
-import api from "@ledgerhq/live-countervalues/api/index";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -28,8 +17,28 @@ import type {
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import { log } from "@ledgerhq/logs";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import React, {
+  ReactElement,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+
+/** Bridge enabling platform-specific persistence of market-cap ids. */
+export interface CountervaluesMarketcapBridge {
+  useIds(): string[];
+  useLastUpdated(): number | undefined;
+  setLoading(loading: boolean): void;
+  setIds(ids: string[]): void;
+  setError(message: string): void;
+}
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
@@ -48,6 +57,7 @@ export type Polling = {
   // if the last polling failed, there will be an error
   error: Error | null | undefined;
 };
+
 export type Props = {
   children: React.ReactNode;
   userSettings: CountervaluesSettings;
@@ -78,7 +88,6 @@ const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
 });
 
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
-
 const CountervaluesMarketcapIdsContext = createContext<string[]>([]);
 
 function trackingPairsHash(a: TrackingPair[]) {
@@ -90,35 +99,271 @@ function trackingPairsHash(a: TrackingPair[]) {
 
 const marketcapRefresh = 30 * 60000;
 const marketcapRefreshOnError = 60000;
-const initialIds: string[] = [];
-/**
- * Internal only. fetch the marketcap and keep it in sync.
- * the data is shared through a context, you can useMarketcapIds to get it.
- */
-function useMarketcap() {
-  const [ids, setIds] = useState<string[]>(initialIds);
-  const [fetchNonce, setFetchNonce] = useState(0);
+
+/** Provides market-cap ids via the supplied bridge. */
+export function CountervaluesMarketcapProvider({
+  children,
+  bridge,
+}: {
+  children: React.ReactNode;
+  bridge: CountervaluesMarketcapBridge;
+}): ReactElement {
+  const ids = bridge.useIds();
+  const lastUpdated = bridge.useLastUpdated();
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
-    api.fetchIdsSortedByMarketcap().then(
-      ids => {
-        setIds(ids);
-        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefresh);
-      },
-      error => {
-        log("countervalues", "error fetching marketcap ids " + error);
-        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefreshOnError);
-      },
-    );
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [fetchNonce]);
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    const now = Date.now();
 
-  return ids;
+    if (!lastUpdated || now - lastUpdated > marketcapRefresh) {
+      bridge.setLoading(true);
+      api.fetchIdsSortedByMarketcap().then(
+        fetchedIds => {
+          bridge.setIds(fetchedIds);
+          timeout = setTimeout(() => forceUpdate(), marketcapRefresh);
+        },
+        error => {
+          log("countervalues", "error fetching marketcap ids " + error);
+          bridge.setError(error.message);
+          timeout = setTimeout(() => forceUpdate(), marketcapRefreshOnError);
+        },
+      );
+    } else {
+      timeout = setTimeout(() => forceUpdate(), marketcapRefresh - (now - lastUpdated));
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [lastUpdated, bridge]);
+
+  return (
+    <CountervaluesMarketcapIdsContext.Provider value={ids}>
+      {children}
+    </CountervaluesMarketcapIdsContext.Provider>
+  );
+}
+
+/**
+ * Root countervalues provider (polling + calculation).
+ */
+export function CountervaluesProvider({
+  children,
+  userSettings,
+  pollInitDelay = 3 * 1000,
+  debounceDelay = 1000,
+  savedState,
+}: Props): ReactElement {
+  const autopollInterval = userSettings.refreshRate;
+  const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
+  const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
+
+  // TODO this is always using the initial value, doesn't react to changes.
+  const marketcapIds = useContext(CountervaluesMarketcapIdsContext);
+  const { marketCapBatchingAfterRank } = userSettings;
+
+  const batchStrategySolver = useMemo(
+    () => ({
+      shouldBatchCurrencyFrom: (currency: Currency) => {
+        if (currency.type === "FiatCurrency") return false;
+        const i = marketcapIds.indexOf(currency.id);
+        return i === -1 || i > marketCapBatchingAfterRank;
+      },
+    }),
+    [marketCapBatchingAfterRank, marketcapIds],
+  );
+
+  // flag used to trigger a loadCountervalues
+  const [triggerLoad, setTriggerLoad] = useState(false);
+  // trigger poll only when userSettings changes. in a debounced way.
+  useEffect(() => {
+    setTriggerLoad(true);
+  }, [debouncedUserSettings]);
+
+  // loadCountervalues logic
+  useEffect(() => {
+    if (pending || !triggerLoad) return;
+    setTriggerLoad(false);
+    dispatch({ type: "pending" });
+    loadCountervalues(
+      state,
+      userSettings,
+      batchStrategySolver,
+      userSettings.granularitiesRates,
+    ).then(
+      newState => dispatch({ type: "success", payload: newState }),
+      e => dispatch({ type: "error", payload: e }),
+    );
+  }, [pending, state, userSettings, triggerLoad, batchStrategySolver]);
+
+  // save the state when it changes
+  useEffect(() => {
+    if (!savedState?.status || !Object.keys(savedState.status).length) return;
+    dispatch({
+      type: "setCounterValueState",
+      payload: importCountervalues(savedState, userSettings),
+    });
+  }, [savedState, userSettings]);
+
+  // manage the auto polling loop and the interface for user land to trigger a reload
+  const [isPolling, setIsPolling] = useState(true);
+  useEffect(() => {
+    if (!isPolling) return;
+    let pollingTimeout: ReturnType<typeof setTimeout>;
+    function pollingLoop() {
+      setTriggerLoad(true);
+      pollingTimeout = setTimeout(pollingLoop, autopollInterval);
+    }
+    pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
+    return () => clearTimeout(pollingTimeout);
+  }, [autopollInterval, pollInitDelay, isPolling]);
+
+  const polling = useMemo<Polling>(
+    () => ({
+      wipe: () => dispatch({ type: "wipe" }),
+      poll: () => setTriggerLoad(true),
+      start: () => setIsPolling(true),
+      stop: () => setIsPolling(false),
+      pending,
+      error,
+    }),
+    [pending, error],
+  );
+
+  return (
+    <CountervaluesPollingContext.Provider value={polling}>
+      <CountervaluesUserSettingsContext.Provider value={userSettings}>
+        <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
+      </CountervaluesUserSettingsContext.Provider>
+    </CountervaluesPollingContext.Provider>
+  );
+}
+
+type Action =
+  | { type: "success"; payload: CounterValuesState }
+  | { type: "error"; payload: Error }
+  | { type: "pending" }
+  | { type: "wipe" }
+  | { type: "setCounterValueState"; payload: CounterValuesState };
+
+type FetchState = { state: CounterValuesState; pending: boolean; error?: Error };
+const initialFetchState: FetchState = { state: initialState, pending: false };
+
+function fetchReducer(state: FetchState, action: Action): FetchState {
+  switch (action.type) {
+    case "success":
+      return { state: action.payload, pending: false, error: undefined };
+    case "error":
+      return { ...state, pending: false, error: action.payload };
+    case "pending":
+      return { ...state, pending: true, error: undefined };
+    case "wipe":
+      return { state: initialState, pending: false, error: undefined };
+    case "setCounterValueState":
+      return { ...state, state: action.payload };
+    default:
+      return state;
+  }
+}
+
+/** Returns market-cap ids. */
+export function useMarketcapIds(): string[] {
+  return useContext(CountervaluesMarketcapIdsContext);
+}
+
+/** Returns the full countervalues state. */
+export function useCountervaluesState(): CounterValuesState {
+  return useContext(CountervaluesContext);
+}
+
+// allows consumer to access the countervalues polling control object
+export function useCountervaluesPolling(): Polling {
+  return useContext(CountervaluesPollingContext);
+}
+
+// allows consumer to access the user settings that was used to fetch the countervalues
+export function useCountervaluesUserSettingsContext(): CountervaluesSettings {
+  return useContext(CountervaluesUserSettingsContext);
+}
+
+// provides an export of the countervalues state
+export function useCountervaluesExport(): CounterValuesStateRaw {
+  const state = useCountervaluesState();
+  return useMemo(() => exportCountervalues(state), [state]);
+}
+
+// provides a way to calculate a countervalue from a value
+export function useCalculate(query: {
+  value: number;
+  from: Currency;
+  to: Currency;
+  disableRounding?: boolean;
+  date?: Date | null | undefined;
+  reverse?: boolean;
+}): number | null | undefined {
+  const state = useCountervaluesState();
+  return calculate(state, query);
+}
+
+// provides a way to calculate a countervalue from a value using a callback
+export function useCalculateCountervalueCallback({
+  to,
+}: {
+  to: Currency;
+}): (from: Currency, value: BigNumber) => BigNumber | null | undefined {
+  const state = useCountervaluesState();
+  return useCallback(
+    (from: Currency, value: BigNumber) => {
+      const countervalue = calculate(state, {
+        value: value.toNumber(),
+        from,
+        to,
+        disableRounding: true,
+      });
+      return typeof countervalue === "number" ? new BigNumber(countervalue) : countervalue;
+    },
+    [to, state],
+  );
+}
+
+/** Helper for send-flow: returns fiat amount and reverse calculation. */
+export function useSendAmount({
+  account,
+  fiatCurrency,
+  cryptoAmount,
+}: {
+  account: AccountLike;
+  fiatCurrency: Currency;
+  cryptoAmount: BigNumber;
+}): {
+  fiatAmount: BigNumber;
+  fiatUnit: Unit;
+  calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
+} {
+  const cryptoCurrency = getAccountCurrency(account);
+  const fiatCountervalue = useCalculate({
+    from: cryptoCurrency,
+    to: fiatCurrency,
+    value: cryptoAmount.toNumber(),
+    disableRounding: true,
+  });
+  const fiatAmount = new BigNumber(fiatCountervalue ?? 0);
+  const fiatUnit = fiatCurrency.units[0];
+  const state = useCountervaluesState();
+  const calculateCryptoAmount = useCallback(
+    (fiatAmount: BigNumber) =>
+      new BigNumber(
+        calculate(state, {
+          from: cryptoCurrency,
+          to: fiatCurrency,
+          value: fiatAmount.toNumber(),
+          reverse: true,
+        }) ?? 0,
+      ),
+    [state, cryptoCurrency, fiatCurrency],
+  );
+  return { fiatAmount, fiatUnit, calculateCryptoAmount };
 }
 
 // infer the tracking pairs for the top coins that the portfolio needs to display itself
@@ -152,286 +397,4 @@ export function useTrackingPairForAccounts(
   // to not recalculate pairs as fast as accounts resynchronizes
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => c.pairs, [c.hash]);
-}
-
-export function CountervaluesMarketcap({ children }: { children: React.ReactNode }): ReactElement {
-  const marketcapIds = useMarketcap();
-  return (
-    <CountervaluesMarketcapIdsContext.Provider value={marketcapIds}>
-      {children}
-    </CountervaluesMarketcapIdsContext.Provider>
-  );
-}
-
-export function Countervalues({
-  children,
-  userSettings,
-  pollInitDelay = 3 * 1000,
-  debounceDelay = 1000,
-  savedState,
-}: Props): ReactElement {
-  const autopollInterval = userSettings.refreshRate;
-  const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
-  const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
-
-  const marketcapIds = useContext(CountervaluesMarketcapIdsContext);
-
-  const { marketCapBatchingAfterRank } = userSettings;
-  const batchStrategySolver = useMemo(() => {
-    return {
-      shouldBatchCurrencyFrom: (currency: Currency) => {
-        if (currency.type === "FiatCurrency") return false;
-        const i = marketcapIds.indexOf(currency.id);
-        return i === -1 || i > marketCapBatchingAfterRank;
-      },
-    };
-  }, [marketCapBatchingAfterRank, marketcapIds]);
-
-  // flag used to trigger a loadCountervalues
-  const [triggerLoad, setTriggerLoad] = useState(false);
-  // trigger poll only when userSettings changes. in a debounced way.
-  useEffect(() => {
-    setTriggerLoad(true);
-  }, [debouncedUserSettings]);
-
-  // loadCountervalues logic
-  useEffect(() => {
-    if (pending || !triggerLoad) return;
-    setTriggerLoad(false);
-    dispatch({
-      type: "pending",
-    });
-
-    loadCountervalues(
-      state,
-      userSettings,
-      batchStrategySolver,
-      userSettings.granularitiesRates,
-    ).then(
-      state => {
-        dispatch({
-          type: "success",
-          payload: state,
-        });
-      },
-      error => {
-        dispatch({
-          type: "error",
-          payload: error,
-        });
-      },
-    );
-  }, [pending, state, userSettings, triggerLoad, batchStrategySolver]);
-
-  // save the state when it changes
-  useEffect(() => {
-    if (!savedState?.status || !Object.keys(savedState.status).length) return;
-    dispatch({
-      type: "setCounterValueState",
-      payload: importCountervalues(savedState, userSettings),
-    }); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [savedState]);
-
-  // manage the auto polling loop and the interface for user land to trigger a reload
-  const [isPolling, setIsPolling] = useState(true);
-  useEffect(() => {
-    if (!isPolling) return;
-    let pollingTimeout: NodeJS.Timeout;
-
-    function pollingLoop() {
-      setTriggerLoad(true);
-      pollingTimeout = setTimeout(pollingLoop, autopollInterval);
-    }
-
-    pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
-    return () => clearTimeout(pollingTimeout);
-  }, [autopollInterval, pollInitDelay, isPolling]);
-
-  const polling = useMemo<Polling>(
-    () => ({
-      wipe: () => {
-        dispatch({
-          type: "wipe",
-        });
-      },
-      poll: () => setTriggerLoad(true),
-      start: () => setIsPolling(true),
-      stop: () => setIsPolling(false),
-      pending,
-      error,
-    }),
-    [pending, error],
-  );
-
-  return (
-    <CountervaluesPollingContext.Provider value={polling}>
-      <CountervaluesUserSettingsContext.Provider value={userSettings}>
-        <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
-      </CountervaluesUserSettingsContext.Provider>
-    </CountervaluesPollingContext.Provider>
-  );
-}
-
-type Action =
-  | {
-      type: "success";
-      payload: CounterValuesState;
-    }
-  | {
-      type: "error";
-      payload: Error;
-    }
-  | {
-      type: "pending";
-    }
-  | {
-      type: "wipe";
-    }
-  | {
-      type: "setCounterValueState";
-      payload: CounterValuesState;
-    };
-
-type FetchState = {
-  state: CounterValuesState;
-  pending: boolean;
-  error?: Error;
-};
-const initialFetchState: FetchState = {
-  state: initialState,
-  pending: false,
-};
-
-function fetchReducer(state: FetchState, action: Action): FetchState {
-  switch (action.type) {
-    case "success":
-      return {
-        state: action.payload,
-        pending: false,
-        error: undefined,
-      };
-
-    case "error":
-      return { ...state, pending: false, error: action.payload };
-
-    case "pending":
-      return { ...state, pending: true, error: undefined };
-
-    case "wipe":
-      return {
-        state: initialState,
-        pending: false,
-        error: undefined,
-      };
-
-    case "setCounterValueState":
-      return { ...state, state: action.payload };
-
-    default:
-      return state;
-  }
-}
-
-// allows consumer to access the countervalues polling control object
-export function useCountervaluesPolling(): Polling {
-  return useContext(CountervaluesPollingContext);
-}
-
-// allows consumer to access the user settings that was used to fetch the countervalues
-export function useCountervaluesUserSettingsContext(): CountervaluesSettings {
-  return useContext(CountervaluesUserSettingsContext);
-}
-
-// allows consumer to access the countervalues state
-export function useCountervaluesState(): CounterValuesState {
-  return useContext(CountervaluesContext);
-}
-
-// allows consumer to access the coins ids sorted by marketcap. It's basically all the coins that the API supports.
-export function useMarketcapIds(): string[] {
-  return useContext(CountervaluesMarketcapIdsContext);
-}
-
-// provides an export of the countervalues state
-export function useCountervaluesExport(): CounterValuesStateRaw {
-  const state = useContext(CountervaluesContext);
-  return useMemo(() => exportCountervalues(state), [state]);
-}
-
-// provides a way to calculate a countervalue from a value
-export function useCalculate(query: {
-  value: number;
-  from: Currency;
-  to: Currency;
-  disableRounding?: boolean;
-  date?: Date | null | undefined;
-  reverse?: boolean;
-}): number | null | undefined {
-  const state = useCountervaluesState();
-  return calculate(state, query);
-}
-
-// provides a way to calculate a countervalue from a value using a callback
-export function useCalculateCountervalueCallback({
-  to,
-}: {
-  to: Currency;
-}): (from: Currency, value: BigNumber) => BigNumber | null | undefined {
-  const state = useCountervaluesState();
-  return useCallback(
-    (from: Currency, value: BigNumber): BigNumber | null | undefined => {
-      const countervalue = calculate(state, {
-        value: value.toNumber(),
-        from,
-        to,
-        disableRounding: true,
-      });
-      return typeof countervalue === "number" ? new BigNumber(countervalue) : countervalue;
-    },
-    [to, state],
-  );
-}
-
-export function useSendAmount({
-  account,
-  fiatCurrency,
-  cryptoAmount,
-}: {
-  account: AccountLike;
-  fiatCurrency: Currency;
-  cryptoAmount: BigNumber;
-}): {
-  fiatAmount: BigNumber;
-  fiatUnit: Unit;
-  calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
-} {
-  const cryptoCurrency = getAccountCurrency(account);
-  const fiatCountervalue = useCalculate({
-    from: cryptoCurrency,
-    to: fiatCurrency,
-    value: cryptoAmount.toNumber(),
-    disableRounding: true,
-  });
-  const fiatAmount = new BigNumber(fiatCountervalue ?? 0);
-  const fiatUnit = fiatCurrency.units[0];
-  const state = useCountervaluesState();
-  const calculateCryptoAmount = useCallback(
-    (fiatAmount: BigNumber) => {
-      const cryptoAmount = new BigNumber(
-        calculate(state, {
-          from: cryptoCurrency,
-          to: fiatCurrency,
-          value: fiatAmount.toNumber(),
-          reverse: true,
-        }) ?? 0,
-      );
-      return cryptoAmount;
-    },
-    [state, cryptoCurrency, fiatCurrency],
-  );
-  return {
-    fiatAmount,
-    fiatUnit,
-    calculateCryptoAmount,
-  };
 }

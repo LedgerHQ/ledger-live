@@ -1,0 +1,28 @@
+import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react";
+import React, { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setCountervaluesMarketcapError,
+  setCountervaluesMarketcapIds,
+  setCountervaluesMarketcapLoading,
+} from "../actions/countervalues";
+import { marketcapIdsSelector, marketcapLastUpdatedSelector } from "../reducers/countervalues";
+
+export function CountervaluesMarketcapBridgedProvider({ children }: { children: React.ReactNode }) {
+  const dispatch = useDispatch();
+
+  const bridge = useMemo(
+    () => ({
+      useIds: () => useSelector(marketcapIdsSelector),
+      useLastUpdated: () => useSelector(marketcapLastUpdatedSelector),
+      setLoading: (loading: boolean) => dispatch(setCountervaluesMarketcapLoading(loading)),
+      setIds: (next: string[]) => dispatch(setCountervaluesMarketcapIds(next)),
+      setError: (msg: string) => dispatch(setCountervaluesMarketcapError(msg)),
+    }),
+    [dispatch],
+  );
+
+  return (
+    <CountervaluesMarketcapProvider bridge={bridge}>{children}</CountervaluesMarketcapProvider>
+  );
+}

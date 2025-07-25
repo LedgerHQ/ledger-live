@@ -22,7 +22,7 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesManagedProvider } from "~/renderer/components/CountervaluesProvider";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
 
 config.disabled = true;
@@ -137,9 +137,10 @@ function renderWithMockedCounterValuesProvider(
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
         <Providers store={store}>
-          <CountervaluesProvider initialState={initialCountervaluesMock}>
+          {/* TODO requires CountervaluesMarketcapProvider */}
+          <CountervaluesManagedProvider initialState={initialCountervaluesMock}>
             {children}
-          </CountervaluesProvider>
+          </CountervaluesManagedProvider>
         </Providers>
       ),
       ...renderOptions,
