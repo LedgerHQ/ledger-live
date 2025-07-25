@@ -344,6 +344,7 @@
           "provider" : "Prestataire",
           "rate" : "Taux",
           "fees" : "Frais de réseau",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Compte bénéficiaire"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
       "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+      "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
       "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Outil développeur pour le Modular Drawer",
+        "description" : "Testez facilement le Modular Drawer."
+      },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
       "mockAppUpdate" : "Simuler des mises à jour d’app",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Nouveau compte",
       "addAccountSelection" : "Choisissez le compte à approvisionner",
       "addAccountSelectionPtxFlow" : "Sélectionner un compte"
+    },
+    "editAccountName" : {
+      "title" : "Modifier le nom du compte",
+      "input" : {
+        "name" : "Nom"
+      },
+      "cta" : {
+        "save" : "Enregistrer"
+      }
     },
     "fundAccount" : {
       "receive" : "Recevoir",
