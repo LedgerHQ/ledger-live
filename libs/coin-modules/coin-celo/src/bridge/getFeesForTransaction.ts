@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { CeloAccount, Transaction } from "../types";
 import { celoKit } from "../network/sdk";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
+import buildTransaction from "./buildTransaction";
 
 const getFeesForTransaction = async ({
   account,
@@ -97,15 +98,9 @@ const getFeesForTransaction = async ({
 
     gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
   } else {
-    const celoToken = await kit.contracts.getGoldToken();
-
-    const celoTransaction = {
-      from: account.freshAddress,
-      to: celoToken.address,
-      data: celoToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-    };
-
-    gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+    // Send
+    const tx = await buildTransaction(account, transaction);
+    gas = tx.gas ? Number(tx.gas) : 0;
   }
 
   const gasPrice = new BigNumber(await kit.connection.gasPrice());
