@@ -385,6 +385,7 @@
         "onhold": "Onhold",
         "expired": "Expired",
         "finished": "Finished",
+        "unknown": "Processing",
         "refunded": "Refunded"
       }
     },
@@ -571,7 +572,7 @@
         "pending": "Please wait while the swap provider is processing the transaction.",
         "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
         "finished": "Your swap was completed successfully.",
-        "unknown": "Please contact the swap provider with your swap ID for more information."
+        "unknown": "We are awaiting information from the provider."
       },
       "date": "Date",
       "from": "From",

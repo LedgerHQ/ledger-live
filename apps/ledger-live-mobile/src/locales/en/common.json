@@ -3659,7 +3659,8 @@
           "refunded": "Please contact the swap provider with your swap ID for more information.",
           "pending": "Please wait while the swap provider is processing the transaction.",
           "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
-          "finished": "Your swap was completed successfully."
+          "finished": "Your swap was completed successfully.",
+          "unknown": "We are awaiting information from the provider."
         }
       },
       "missingApp": {
