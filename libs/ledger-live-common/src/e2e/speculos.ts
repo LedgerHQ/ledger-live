@@ -420,13 +420,6 @@ function getSpeculosAddress(): string {
   return speculosAddress || "http://127.0.0.1";
 }
 
-/**
- * Retry axios request with exponential backoff
- * @param requestFn - Function that returns axios request
- * @param maxRetries - Maximum number of retries (default: 3)
- * @param baseDelay - Base delay in ms (default: 1000)
- * @param retryableStatusCodes - HTTP status codes to retry (default: [500, 502, 503, 504])
- */
 async function retryAxiosRequest<T>(
   requestFn: () => Promise<AxiosResponse<T>>,
   maxRetries: number = 5,
