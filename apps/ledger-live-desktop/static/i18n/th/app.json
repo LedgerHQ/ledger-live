@@ -24,7 +24,7 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "ผู้ให้บริการ",
       "section" : {
         "recentlyUsed" : "ใช้ล่าสุด",
         "locallyLoaded" : "แอป Live ที่โหลดมาแบบออฟไลน์",
@@ -289,12 +289,12 @@
     "stars" : "บัญชีที่ติดดาว",
     "accounts" : "บัญชี",
     "manager" : "Ledger ของฉัน",
-    "earn" : "Earn",
+    "earn" : "สร้างรายได้",
     "exchange" : "ซื้อ / ขาย",
     "swap" : "สวอป",
     "refer" : "แนะนำเพื่อน",
     "lend" : "ให้ยืม",
-    "catalog" : "Discover",
+    "catalog" : "ผู้ให้บริการ",
     "market" : "ตลาด",
     "recover" : "[L] Recover"
   },
@@ -344,6 +344,7 @@
           "provider" : "ผู้ให้บริการ",
           "rate" : "อัตรา",
           "fees" : "ค่าธรรมเนียมเครือข่าย",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "บัญชีเป้าหมาย"
         },
         "tooltip" : {
@@ -410,7 +411,7 @@
     "decentralizedSwapAvailable" : "สำหรับธุรกรรมบางรายการ คุณอาจต้องพิจารณาใช้ SWAP แบบกระจายศูนย์ ค้นพบ <0>ParaSwap</0> และ <1>1inch</1>",
     "paraswap" : {
       "cta" : " ลองดูเลย",
-      "description" : "กำลังมองหา Paraswap หรือเปล่า? ตอนนี้ได้ย้ายไปยังแท็บ Discover แล้ว"
+      "description" : "มองหา Paraswap อยู่หรือเปล่า? ตอนนี้ได้ย้ายไปยังแท็บ 'ผู้ให้บริการ' แล้ว"
     },
     "tabs" : {
       "exchange" : "แลกเปลี่ยน",
@@ -1186,7 +1187,7 @@
       "send" : "ส่ง",
       "swap" : "สวอป",
       "stake" : "Stake",
-      "earn" : "Earn",
+      "earn" : "สร้างรายได้",
       "yield" : "ผลตอบแทน",
       "buy" : "ซื้อ",
       "sell" : "ขาย",
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Dev Tool",
+        "description" : "ช่วยให้คุณสามารถทดสอบ Modular Drawer ได้ง่ายขึ้น"
+      },
       "experimentalApps" : "อนุญาตแอป Experimental",
       "experimentalAppsDesc" : "แสดงและอนุญาตให้เปิดแอปแพลตฟอร์มที่ติดแท็ก Experimental",
       "mockAppUpdate" : "การอัปเดตแอปจำลอง",
@@ -7279,6 +7284,15 @@
       "newAccount" : "บัญชีใหม่",
       "addAccountSelection" : "เลือกบัญชีเพื่อเติมเงินทุน",
       "addAccountSelectionPtxFlow" : "เลือกบัญชี"
+    },
+    "editAccountName" : {
+      "title" : "แก้ไขชื่อบัญชี",
+      "input" : {
+        "name" : "ชื่อ"
+      },
+      "cta" : {
+        "save" : "บันทึก"
+      }
     },
     "fundAccount" : {
       "receive" : "รับ",
