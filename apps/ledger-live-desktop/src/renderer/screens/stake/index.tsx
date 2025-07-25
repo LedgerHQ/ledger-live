@@ -147,7 +147,7 @@ const useStakeFlow = () => {
           onSuccess,
           onCancel: handleRequestClose,
           flow: "Stake",
-          source: "Staking",
+          source: source ?? "",
         });
       } else {
         setDrawer(
