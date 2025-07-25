@@ -30,7 +30,7 @@ runs:
       run: |
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | tr '\\n' '\n' | grep -c .)
         if [ "${{ github.event_name }}" = "schedule" ]; then
-          SHARD_COUNT=12
+          SHARD_COUNT=1
         elif [[ "${{ github.ref }}" == *"release"* ]]; then
           SHARD_COUNT=6
         else

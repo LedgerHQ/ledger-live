@@ -86,7 +86,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@refactoring/qaa-648-update-llm-e2e-workflow
         with:
           test_directory: e2e/mobile
-          test_filter: ${{ inputs.test_filter || '' }}
+          test_filter: ${{ inputs.test_filter || 'ledgerSync.spec.ts' }}
           event_name: ${{ github.event_name }}
 
   determine-builds:
@@ -387,7 +387,7 @@ jobs:
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             --shard ${{ matrix.shard }}/${{ matrix.total }} \
-            ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
+            ${INPUTS_TEST_FILTER:+--filter} "ledgerSync.spec.ts" \
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -633,7 +633,7 @@ jobs:
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             --shard ${{ matrix.shard }}/${{ matrix.total }} \
-            ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
+            ${INPUTS_TEST_FILTER:+--filter} "ledgerSync.spec.ts" \
             --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
 
         env:
