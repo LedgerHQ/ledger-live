@@ -28,7 +28,7 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@ldls\\+ui-react", "@ldls\\+design-core"];
 
 const commonConfig = {
   testEnvironment: "jsdom",

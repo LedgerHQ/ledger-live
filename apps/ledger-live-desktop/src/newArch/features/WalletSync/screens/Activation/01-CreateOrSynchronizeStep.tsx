@@ -1,8 +1,7 @@
-import { Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
+import { Icons, Link, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
-import ButtonV3 from "~/renderer/components/ButtonV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import {
   AnalyticsFlow,
@@ -12,8 +11,7 @@ import {
 import { LogoWrapper } from "../../components/LogoWrapper";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { openURL } from "~/renderer/linking";
-import { ArrowUp, Spinner } from "@ldls/ui-react/symbols";
-import { Button as LdlsButton } from "@ldls/ui-react";
+import { LdlsButton } from "LLD/components";
 
 type Props = {
   goToCreateBackup: () => void;
@@ -42,22 +40,10 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, so
   };
 
   return (
-    <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
+    <div className="flex flex-col items-center justify-center gap-24">
       <TrackPage category={AnalyticsPage.Activation} source={sourcePage} />
 
-      <LdlsButton appearance="gray" icon={ArrowUp} className="font-serif">
-        Click me
-      </LdlsButton>
-      <LdlsButton appearance="red" icon={ArrowUp} loading>
-        Click me
-      </LdlsButton>
-      <div className="flex items-center justify-between gap-2 p-4 bg-crypto-avax ">
-        <div className="font-mono text-clip size-14 ">Some text</div>
-        <ArrowUp size={40} />
-        <Spinner />
-      </div>
-
-      <Flex justifyContent="center" alignItems="center">
+      <div className="flex items-center justify-center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />
         </LogoWrapper>
@@ -69,7 +55,7 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, so
         <LogoWrapper>
           <Icons.Desktop color={colors.constant.purple} />
         </LogoWrapper>
-      </Flex>
+      </div>
 
       <Text fontSize={24} variant="h4Inter" textAlign="center">
         {t("walletSync.activate.title")}
@@ -77,21 +63,21 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, so
       <Text fontSize={14} variant="body" color="hsla(0, 0%, 58%, 1)" textAlign="center">
         {t("walletSync.activate.description")}
       </Text>
-      <Flex justifyContent="center" width="100%">
-        <ButtonV3 variant="main" width="100%" onClick={goToCreateBackup}>
+      <div className="flex w-full justify-center">
+        <LdlsButton appearance="gray" className="w-full flex-1" onClick={goToCreateBackup}>
           <Text variant="body" color="neutral.c00" fontSize={14} flexShrink={1}>
             {t("walletSync.activate.cta")}
           </Text>
-        </ButtonV3>
-      </Flex>
+        </LdlsButton>
+      </div>
 
-      <Flex justifyContent="center" width="100%">
-        <ButtonV3 variant="shade" width="100%" onClick={goToSync}>
+      <div className="flex w-full justify-center">
+        <LdlsButton appearance="base" className="w-full flex-1" onClick={goToSync}>
           <Text variant="body" fontSize={14} flexShrink={1}>
             {t("walletSync.activate.alreadySync")}
           </Text>
-        </ButtonV3>
-      </Flex>
+        </LdlsButton>
+      </div>
       {hasLearnMoreLink && (
         <Link onClick={onLearnMore}>
           <Text variant="body" fontSize={14} flexShrink={1}>
@@ -99,6 +85,6 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync, so
           </Text>
         </Link>
       )}
-    </Flex>
+    </div>
   );
 }

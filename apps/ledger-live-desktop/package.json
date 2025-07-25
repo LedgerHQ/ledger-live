@@ -237,6 +237,7 @@
     "nock": "13.5.4",
     "postcss": "8.5.6",
     "prebuild-install": "7.1.2",
+    "prettier-plugin-tailwindcss": "0.6.14",
     "react-refresh": "0.14.0",
     "react-test-renderer": "18.3.1",
     "serve-handler": "6.1.5",
