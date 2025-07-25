@@ -1,5 +1,5 @@
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
-import { useTrack } from "~/renderer/analytics/segment";
+import { trackPage } from "~/renderer/analytics/segment";
 
 const ErrorEvents = [
   {
@@ -64,13 +64,11 @@ const ErrorEvents = [
 
 export const useTrackDmkErrorsEvents = ({
   error,
-  useTrack: useTrackHook = useTrack,
+  trackPage: trackPageFn = trackPage,
 }: {
   error: unknown;
-  useTrack?: typeof useTrack;
+  trackPage?: typeof trackPage;
 }) => {
-  const track = useTrackHook();
-
   if (!isDmkError(error)) {
     return;
   }
@@ -78,7 +76,7 @@ export const useTrackDmkErrorsEvents = ({
 
   const groupedError = ErrorEvents.find(({ tags }) => tags.includes(error._tag));
 
-  track("DeviceErrorTracking", {
+  trackPageFn("DeviceErrorTracking", undefined, {
     ...properties,
     error: groupedError ? groupedError.name : error._tag,
   });

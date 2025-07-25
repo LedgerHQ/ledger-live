@@ -1,5 +1,5 @@
 import { useTrackDmkErrorsEvents } from "./useTrackDmkErrorsEvents";
-import { useTrack } from "~/renderer/analytics/segment";
+import { trackPage } from "~/renderer/analytics/segment";
 
 describe("useTrackDmkErrorsEvents", () => {
   describe.each([
@@ -120,14 +120,14 @@ describe("useTrackDmkErrorsEvents", () => {
   ])("$expectedErrorName event", ({ expectedErrorName, errors }) => {
     it.each(errors)(`should be event name ${expectedErrorName} with error %j`, error => {
       // given
-      const track = jest.fn();
+      const mockedTrackPage = jest.fn();
       // when
       useTrackDmkErrorsEvents({
         error,
-        useTrack: (() => track) as unknown as typeof useTrack,
+        trackPage: mockedTrackPage,
       });
       // then
-      expect(track).toHaveBeenCalledWith("DeviceErrorTracking", {
+      expect(mockedTrackPage).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
         error: expectedErrorName,
         subError: error._tag,
       });
@@ -136,29 +136,29 @@ describe("useTrackDmkErrorsEvents", () => {
 
   it("should not track any event if error is not a DMK error", () => {
     // given
-    const track = jest.fn();
+    const mockedTrackPage = jest.fn();
     const error = new Error("test");
     // when
     useTrackDmkErrorsEvents({
       error,
-      useTrack: (() => track) as unknown as typeof useTrack,
+      trackPage: mockedTrackPage,
     });
     // then
-    expect(track).not.toHaveBeenCalled();
+    expect(mockedTrackPage).not.toHaveBeenCalled();
   });
   it("should track event if dmk error is not grouped", () => {
     // given
-    const track = jest.fn();
+    const mockedTrackPage = jest.fn();
     const error = {
       _tag: "UnregisteredDmkErrorEvent",
     };
     // when
     useTrackDmkErrorsEvents({
       error,
-      useTrack: (() => track) as unknown as typeof useTrack,
+      trackPage: mockedTrackPage,
     });
     // then
-    expect(track).toHaveBeenCalledWith("DeviceErrorTracking", {
+    expect(mockedTrackPage).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
       error: "UnregisteredDmkErrorEvent",
       subError: "UnregisteredDmkErrorEvent",
     });
