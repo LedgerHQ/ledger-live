@@ -344,6 +344,7 @@
           "provider" : "Оператор",
           "rate" : "Курс",
           "fees" : "Комиссия сети",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Целевой счёт"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Инструмент разработчика Modular Drawer",
+        "description" : "Позволяет легко протестировать работу Modular Drawer"
+      },
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
       "mockAppUpdate" : "Фиктивное обновление приложения",
@@ -7279,6 +7284,15 @@
       "newAccount" : "Новый счёт",
       "addAccountSelection" : "Выберите счёт для пополнения",
       "addAccountSelectionPtxFlow" : "Выберите счёт"
+    },
+    "editAccountName" : {
+      "title" : "Название счёта",
+      "input" : {
+        "name" : "Название"
+      },
+      "cta" : {
+        "save" : "Сохранить"
+      }
     },
     "fundAccount" : {
       "receive" : "Получить",
