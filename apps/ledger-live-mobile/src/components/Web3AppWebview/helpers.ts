@@ -1,4 +1,8 @@
-import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
+import {
+  AppManifest,
+  WalletAPIAccount,
+  WalletAPIServer,
+} from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   safeGetRefValue,
@@ -11,7 +15,7 @@ import {
   useCacheBustedLiveApps,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import type { Operation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -38,6 +42,13 @@ import { walletSelector } from "~/reducers/wallet";
 import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
+import {
+  ModularDrawerLocation,
+  useModularDrawerStore,
+  useModularDrawerVisibility,
+} from "LLM/features/ModularDrawer";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Observable } from "rxjs";
 
 export function useWebView(
   {
@@ -67,7 +78,7 @@ export function useWebView(
 
   const { webviewProps, webviewRef } = useWebviewState(
     {
-      manifest: manifest as AppManifest,
+      manifest: manifest satisfies AppManifest,
       inputs,
     },
     ref,
@@ -78,7 +89,17 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const uiHook = useUiHook();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
+  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+
+  const { openDrawer: openModularDrawer } = useModularDrawerStore();
+
+  const uiHook = useUiHook({
+    isModularDrawerVisible: modularDrawerVisible,
+    openModularDrawer,
+  });
   const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -119,7 +140,7 @@ export function useWebView(
     server,
   } = useWalletAPIServer({
     walletState,
-    manifest: manifest as AppManifest,
+    manifest: manifest satisfies AppManifest,
     accounts,
     tracking,
     config,
@@ -202,7 +223,7 @@ export function useWebView(
     if (manifest.nocache) {
       return {
         cacheEnabled: false,
-        cacheMode: "LOAD_NO_CACHE" as CacheMode,
+        cacheMode: "LOAD_NO_CACHE" satisfies CacheMode,
         incognito: true,
       };
     } else {
@@ -218,6 +239,8 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
+    isModularDrawerVisible: modularDrawerVisible,
+    openModularDrawer,
   };
 }
 
@@ -364,35 +387,54 @@ export function useWebviewState(
   };
 }
 
-function useUiHook(): UiHook {
+export interface Props {
+  isModularDrawerVisible: boolean;
+  openModularDrawer?: (params?: {
+    currencies?: CryptoOrTokenCurrency[];
+    enableAccountSelection?: boolean;
+    onAccountSelected?: (account: AccountLike) => void;
+    accounts$?: Observable<WalletAPIAccount[]>;
+  }) => void;
+}
+
+function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
   return useMemo(
     () => ({
       "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
-        if (currencies.length === 1) {
-          navigation.navigate(NavigatorName.RequestAccount, {
-            screen: ScreenName.RequestAccountsSelectAccount,
-            params: {
-              accounts$,
-              currency: currencies[0],
-              allowAddAccount: true,
-              onSuccess,
-            },
-            onClose: onCancel,
+        if (isModularDrawerVisible) {
+          openModularDrawer?.({
+            currencies,
+            enableAccountSelection: true,
+            onAccountSelected: (account: AccountLike) => onSuccess(account, undefined),
+            accounts$,
           });
         } else {
-          navigation.navigate(NavigatorName.RequestAccount, {
-            screen: ScreenName.RequestAccountsSelectCrypto,
-            params: {
-              accounts$,
-              currencies,
-              allowAddAccount: true,
-              onSuccess,
-            },
-            onClose: onCancel,
-          });
+          if (currencies.length === 1) {
+            navigation.navigate(NavigatorName.RequestAccount, {
+              screen: ScreenName.RequestAccountsSelectAccount,
+              params: {
+                accounts$,
+                currency: currencies[0],
+                allowAddAccount: true,
+                onSuccess,
+              },
+              onClose: onCancel,
+            });
+          } else {
+            navigation.navigate(NavigatorName.RequestAccount, {
+              screen: ScreenName.RequestAccountsSelectCrypto,
+              params: {
+                accounts$,
+                currencies,
+                allowAddAccount: true,
+                onSuccess,
+              },
+              onClose: onCancel,
+            });
+          }
         }
       },
       "account.receive": ({
@@ -507,7 +549,7 @@ function useUiHook(): UiHook {
               exchangeType: exchangeParams.exchangeType,
               provider: exchangeParams.provider,
               exchange: exchangeParams.exchange,
-              transaction: exchangeParams.transaction as Transaction,
+              transaction: exchangeParams.transaction satisfies Transaction,
               binaryPayload: exchangeParams.binaryPayload,
               signature: exchangeParams.signature,
               feesStrategy: exchangeParams.feesStrategy,
@@ -530,7 +572,7 @@ function useUiHook(): UiHook {
         });
       },
     }),
-    [navigation, device],
+    [isModularDrawerVisible, openModularDrawer, navigation, device],
   );
 }
 
@@ -567,6 +609,14 @@ export function useSelectAccount({
     useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
 
+  const onSelectAccountSuccess = useCallback(
+    (account: AccountLike) => {
+      setCurrentAccountHist(manifest.id, account);
+      setCurrentAccount(account);
+    },
+    [manifest.id, setCurrentAccountHist, setCurrentAccount],
+  );
+
   const onSelectAccount = useCallback(() => {
     if (currencies.length === 1) {
       navigation.navigate(NavigatorName.RequestAccount, {
@@ -574,10 +624,7 @@ export function useSelectAccount({
         params: {
           currency: currencies[0],
           allowAddAccount: true,
-          onSuccess: account => {
-            setCurrentAccountHist(manifest.id, account);
-            setCurrentAccount(account);
-          },
+          onSuccess: onSelectAccountSuccess,
         },
       });
     } else {
@@ -586,14 +633,11 @@ export function useSelectAccount({
         params: {
           currencies,
           allowAddAccount: true,
-          onSuccess: account => {
-            setCurrentAccountHist(manifest.id, account);
-            setCurrentAccount(account);
-          },
+          onSuccess: onSelectAccountSuccess,
         },
       });
     }
-  }, [currencies, navigation, setCurrentAccountHist, manifest.id, setCurrentAccount]);
+  }, [currencies, navigation, onSelectAccountSuccess]);
 
-  return { onSelectAccount, currentAccount };
+  return { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess };
 }
