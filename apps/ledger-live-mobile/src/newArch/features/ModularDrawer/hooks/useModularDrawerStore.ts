@@ -13,6 +13,7 @@ import {
   setEnableAccountSelection,
   setAccounts$,
 } from "~/reducers/modularDrawer";
+import { OpenModularDrawerParams } from "../types";
 
 export const useModularDrawerStore = () => {
   const dispatch = useDispatch();
@@ -20,12 +21,7 @@ export const useModularDrawerStore = () => {
     useSelector((state: State) => state.modularDrawer);
 
   const openDrawer = useCallback(
-    (params?: {
-      currencies?: CryptoOrTokenCurrency[];
-      onAccountSelected?: (account: Account) => void;
-      enableAccountSelection?: boolean;
-      accounts$?: Observable<WalletAPIAccount[]>;
-    }) => {
+    (params?: OpenModularDrawerParams) => {
       dispatch(openModularDrawer(params || {}));
     },
     [dispatch],

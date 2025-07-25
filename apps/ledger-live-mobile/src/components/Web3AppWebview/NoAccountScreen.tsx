@@ -6,16 +6,11 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "../Button";
 import { useSelectAccount } from "./helpers";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
+import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
 type NoAccountScreenProps = {
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
-  openModularDrawer?: (params?: {
-    currencies?: CryptoOrTokenCurrency[];
-    enableAccountSelection?: boolean;
-    onAccountSelected?: (account: AccountLike) => void;
-  }) => void;
+  openModularDrawer?: OpenModularDrawerFunction;
 };
 
 export function NoAccountScreen({

@@ -1,8 +1,4 @@
-import {
-  AppManifest,
-  WalletAPIAccount,
-  WalletAPIServer,
-} from "@ledgerhq/live-common/wallet-api/types";
+import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   safeGetRefValue,
@@ -47,8 +43,7 @@ import {
   useModularDrawerStore,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Observable } from "rxjs";
+import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
 
 export function useWebView(
   {
@@ -389,12 +384,7 @@ export function useWebviewState(
 
 export interface Props {
   isModularDrawerVisible: boolean;
-  openModularDrawer?: (params?: {
-    currencies?: CryptoOrTokenCurrency[];
-    enableAccountSelection?: boolean;
-    onAccountSelected?: (account: AccountLike) => void;
-    accounts$?: Observable<WalletAPIAccount[]>;
-  }) => void;
+  openModularDrawer?: OpenModularDrawerFunction;
 }
 
 function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook {

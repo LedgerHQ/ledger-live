@@ -54,7 +54,7 @@ import {
   ModularDrawerLocation,
   useModularDrawerStore,
   useModularDrawerVisibility,
-} from "~/newArch/features/ModularDrawer";
+} from "LLM/features/ModularDrawer";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 const currencies = listAndFilterCurrencies({ includeTokens: true });

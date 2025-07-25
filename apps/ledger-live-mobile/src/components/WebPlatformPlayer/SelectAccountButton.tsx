@@ -6,18 +6,13 @@ import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import { useMaybeAccountName } from "~/reducers/wallet";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
-import { AccountLike } from "@ledgerhq/types-live";
+import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
   currentAccountHistDb: CurrentAccountHistDB;
-  openModularDrawer?: (params?: {
-    currencies?: CryptoOrTokenCurrency[];
-    enableAccountSelection?: boolean;
-    onAccountSelected?: (account: AccountLike) => void;
-  }) => void;
+  openModularDrawer?: OpenModularDrawerFunction;
 };
 
 export default function SelectAccountButton({
