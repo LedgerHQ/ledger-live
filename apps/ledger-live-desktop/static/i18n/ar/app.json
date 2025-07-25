@@ -344,6 +344,7 @@
           "provider" : "مزود",
           "rate" : "مُعدل",
           "fees" : "رسوم الشبكة",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "الحساب المستهدف"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "أداة تطوير الشريط النموذجي",
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
       "mockAppUpdate" : "تحديث صوري للتطبيق",
@@ -7279,6 +7284,15 @@
       "newAccount" : "حساب جديد",
       "addAccountSelection" : "اختر الحساب لإضافة الأموال",
       "addAccountSelectionPtxFlow" : "اختر حساب"
+    },
+    "editAccountName" : {
+      "title" : "تعديل اسم الحساب",
+      "input" : {
+        "name" : "الاسم"
+      },
+      "cta" : {
+        "save" : "حفظ"
+      }
     },
     "fundAccount" : {
       "receive" : "تلقي",
