@@ -344,6 +344,7 @@
           "provider" : "提供方",
           "rate" : "费率",
           "fees" : "网络费用",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "目标账户"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
       "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+      "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
       "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "模块化抽屉开发工具",
+        "description" : "助您轻松测试模块化抽屉"
+      },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
       "mockAppUpdate" : "Mock 应用程序更新",
@@ -7279,6 +7286,15 @@
       "newAccount" : "新账户",
       "addAccountSelection" : "选择账户用于添加资金",
       "addAccountSelectionPtxFlow" : "选择账户"
+    },
+    "editAccountName" : {
+      "title" : "编辑账户名称",
+      "input" : {
+        "name" : "名称"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "接收",
