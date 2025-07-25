@@ -51,7 +51,7 @@ async function initializeLedgerSync() {
     }
     return out;
   });
-  console.log("Ledger Sync Push Data Args:");
+  console.log("Ledger Sync Push Data Args:" + JSON.stringify(ledgerSyncPushDataArgs, null, 2));
   await app.ledgerSync.activateLedgerSyncOnSpeculos();
   console.log("Ledger sync activated on Speculos");
   return output;

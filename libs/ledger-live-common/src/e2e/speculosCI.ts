@@ -67,6 +67,7 @@ function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 
         .get(url, res => {
           if (res.statusCode && res.statusCode >= 200 && res.statusCode < 400) {
             process.env.SPECULOS_ADDRESS = url;
+            console.warn("Speculos is ready at", url);
             resolve(true);
           } else {
             retry();
@@ -79,6 +80,7 @@ function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 
       if (Date.now() - startTime >= timeout) {
         reject(new Error(`Timeout: ${url} did not become available within ${timeout}ms`));
       } else {
+        console.warn("Waiting for speculos to be ready at", url);
         setTimeout(check, interval);
       }
     }

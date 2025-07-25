@@ -59,7 +59,6 @@ const test_ios = async () => {
       --record-videos failing \
       --take-screenshots failing \
       --forceExit \
-      --bail 0 \
       --headless \
       --retries 2 \
       --runInBand \

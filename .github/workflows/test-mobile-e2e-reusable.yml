@@ -387,7 +387,7 @@ jobs:
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
             --shard ${{ matrix.shard }}/${{ matrix.total }} \
-            ${INPUTS_TEST_FILTER:+--filter} "ledgerSync.spec.ts" \
+            ${INPUTS_TEST_FILTER:+--filter} "ledgerSync.spec.ts swapBTC_NATIVE_SEGWIT_LTC.spec.ts" \
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
