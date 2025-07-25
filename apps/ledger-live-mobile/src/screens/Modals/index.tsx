@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from "react";
+import { View } from "react-native";
 import { NavigationState, useNavigation } from "@react-navigation/native";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import PushNotificationsModal from "../PushNotificationsModal";
@@ -78,7 +79,9 @@ const Modals = () => {
   return (
     <>
       <FeatureToggle featureId="brazePushNotifications">
-        <PushNotificationsModal />
+        <View>
+          <PushNotificationsModal />
+        </View>
       </FeatureToggle>
       {activeRatings === "no-nps" && <RatingsModal />}
       {activeRatings === "nps" && <NpsRatingsModal />}
