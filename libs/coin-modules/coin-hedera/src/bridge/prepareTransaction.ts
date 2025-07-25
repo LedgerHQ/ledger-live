@@ -1,6 +1,6 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import { calculateAmount } from "./utils";
+import { calculateAmount, getEstimatedFees } from "./utils";
 
 /**
  * Gather any more neccessary information for a transaction,
@@ -17,7 +17,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   // explicitly calculate transaction amount to account for `useAllAmount` flag (send max flow)
   // i.e. if `useAllAmount` has been toggled to true, this is where it will update the transaction to reflect that action
-  const { amount } = await calculateAmount({ account, transaction });
+  const [{ amount }, estimatedFees] = await Promise.all([
+    calculateAmount({ account, transaction }),
+    getEstimatedFees(account),
+  ]);
+
+  // `maxFee` must be explicitly set to avoid the @hashgraph/sdk default fallback
+  // this ensures device app validation passes (e.g. during swap flow)
+  // it's applied via `tx.setMaxTransactionFee` when building the transaction
+  transaction.maxFee = estimatedFees;
+
   transaction.amount = amount;
 
   return transaction;

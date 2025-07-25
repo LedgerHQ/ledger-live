@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -16,11 +17,13 @@ export type NetworkInfoRaw = {
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
+  maxFee?: BigNumber;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
+  maxFee?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
