@@ -40,6 +40,7 @@ describe("Coin Modules Monitoring", () => {
           };
           const xPubs: Record<string, string> = {
             "0x9abc": "0xpub",
+            "0x5678": "",
           };
           return {
             xpub: xPubs[info.address],

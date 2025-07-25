@@ -69,7 +69,7 @@ export async function monitor<A extends Account>(
         operationType: "scan",
         accountType: accountType as LogEntry["accountType"],
         transactions: initialAccount.operationsCount,
-        accountAddressOrXpub: initialAccount.xpub ?? accountAddress.address,
+        accountAddressOrXpub: initialAccount.xpub || accountAddress.address,
       },
       {
         duration: endSync - startSync,
@@ -78,7 +78,7 @@ export async function monitor<A extends Account>(
         operationType: "sync",
         accountType: accountType as LogEntry["accountType"],
         transactions: initialAccount.operationsCount,
-        accountAddressOrXpub: initialAccount.xpub ?? accountAddress.address,
+        accountAddressOrXpub: initialAccount.xpub || accountAddress.address,
       },
     );
   }
