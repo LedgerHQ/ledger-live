@@ -51,6 +51,19 @@ process.once("exit", async () => {
 });
 
 export default async function setup(): Promise<void> {
+  // Create artifacts directory if it doesn't exist
+  const artifactsDir = path.join(__dirname, "artifacts");
+  if (!fs.existsSync(artifactsDir)) {
+    fs.mkdirSync(artifactsDir, { recursive: true });
+  }
+
+  // Ensure artifacts directory has proper permissions
+  try {
+    fs.chmodSync(artifactsDir, 0o755);
+  } catch (error) {
+    log.warn(`Could not set permissions on artifacts directory: ${error}`);
+  }
+
   // Validate .env.mock file
   const envFileName = process.env.ENV_FILE || ".env.mock";
   const envFile = path.join(__dirname, "../../apps/ledger-live-mobile", envFileName);
