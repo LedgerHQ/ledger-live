@@ -388,9 +388,9 @@ export async function startSpeculos(
     const device = isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
-        invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-        return { id: device.id, port: device.ports.apiPort };
-      });
+          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+          return { id: device.id, port: device.ports.apiPort };
+        });
     return device;
   } catch (e: unknown) {
     console.error(e);
