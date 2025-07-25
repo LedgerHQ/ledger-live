@@ -344,6 +344,7 @@
           "provider" : "Anbieter",
           "rate" : "Kurs",
           "fees" : "Netzgebühren",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Zielkonto"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer-Entwicklungstool",
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
+      },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "mockAppUpdate" : "Mock-App-Update",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Neues Konto",
       "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
       "addAccountSelectionPtxFlow" : "Konto auswählen"
+    },
+    "editAccountName" : {
+      "title" : "Kontonamen bearbeiten",
+      "input" : {
+        "name" : "Name"
+      },
+      "cta" : {
+        "save" : "Speichern"
+      }
     },
     "fundAccount" : {
       "receive" : "Empfangen",
