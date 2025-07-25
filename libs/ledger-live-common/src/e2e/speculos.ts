@@ -7,7 +7,11 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
-import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
+import {
+  createSpeculosDeviceCI,
+  releaseSpeculosDeviceCI,
+  waitForSpeculosReady,
+} from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -418,6 +422,9 @@ interface ResponseData {
 export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = process.env.SPECULOS_ADDRESS || "http://127.0.0.1";
+  console.warn("Print address:", process.env.SPECULOS_ADDRESS);
+  await waitForSpeculosReady(address);
+  console.warn("Waiting for text:", text);
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {

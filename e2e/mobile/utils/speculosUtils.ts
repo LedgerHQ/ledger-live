@@ -76,8 +76,10 @@ export async function deleteSpeculos(apiPort?: number) {
 
 export async function takeSpeculosScreenshot() {
   for (const [apiPort] of speculosDevices) {
+    console.log("Taking screenshot for Speculos on port:", apiPort);
     const speculosScreenshot = await takeScreenshot(apiPort);
     if (speculosScreenshot) {
+      console.log("Screenshot taken for Speculos on port:", speculosScreenshot);
       await allure.attachment(`Speculos Screenshot - ${apiPort}`, speculosScreenshot, "image/png");
     }
   }
