@@ -121,6 +121,11 @@ export type TokenTransferCommand = {
   };
 };
 
+export type RawCommand = {
+  kind: "raw";
+  raw: string;
+};
+
 export type Command =
   | TransferCommand
   | TokenTransferCommand
@@ -131,7 +136,8 @@ export type Command =
   | StakeDelegateCommand
   | StakeUndelegateCommand
   | StakeWithdrawCommand
-  | StakeSplitCommand;
+  | StakeSplitCommand
+  | RawCommand;
 
 export type CommandDescriptor = {
   command: Command;
@@ -214,6 +220,11 @@ export type StakeSplitTransaction = {
   };
 };
 
+export type RawTransaction = {
+  kind: "raw";
+  uiState: object;
+};
+
 export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | TransferTransaction
   | TokenTransferTransaction
@@ -225,6 +236,7 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | StakeUndelegateTransaction
   | StakeWithdrawTransaction
   | StakeSplitTransaction
+  | RawTransaction
 );
 
 export type Transaction = TransactionCommon & {
