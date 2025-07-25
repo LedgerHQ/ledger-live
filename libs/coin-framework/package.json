@@ -101,7 +101,7 @@
     "prando": "^6.0.1",
     "rxjs": "^7.8.1",
     "uuid": "11.1.0",
-    "axios": "1.7.7"
+    "axios": "1.8.2"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
