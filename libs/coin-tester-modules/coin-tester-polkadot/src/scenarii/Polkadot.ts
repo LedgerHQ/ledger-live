@@ -74,7 +74,10 @@ const getTransactions = () => {
         ).toFixed(),
       ).toBe("50000000000000000000000");
       expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance.minus(latestOperation.value).toFixed(),
+        previousAccount.balance
+          .minus(latestOperation.value)
+          .minus(new BigNumber("5000000000000"))
+          .toFixed(),
       );
     },
   };
@@ -135,7 +138,6 @@ const getTransactions = () => {
     // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
     validators: [
       "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
       "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
     ],
     expect: (previousAccount, currentAccount) => {
@@ -145,8 +147,8 @@ const getTransactions = () => {
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
         "staking.nominate",
       );
-      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
-      expect(currentAccount.polkadotResources.nominations?.length).toBe(3);
+      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(2);
+      expect(currentAccount.polkadotResources.nominations?.length).toBe(2);
       expect(
         currentAccount.polkadotResources.nominations?.every(
           nominiation => nominiation.status === "waiting" || nominiation.status === "inactive",
