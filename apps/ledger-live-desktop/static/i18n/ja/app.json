@@ -344,6 +344,7 @@
           "provider" : "プロバイダー",
           "rate" : "レート",
           "fees" : "ネットワーク手数料",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "ターゲットアカウント"
         },
         "tooltip" : {
@@ -461,6 +462,8 @@
       "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
       "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+      "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
       "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
@@ -4580,6 +4583,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "モジュラードロワー開発ツール",
+        "description" : "モジュラードロワーを簡単にテストできます"
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "mockAppUpdate" : "Mockアプリのアップデート",
@@ -7279,6 +7286,15 @@
       "newAccount" : "新しいアカウント",
       "addAccountSelection" : "資金を追加するアカウントを選択",
       "addAccountSelectionPtxFlow" : "アカウントを選択"
+    },
+    "editAccountName" : {
+      "title" : "アカウント名を編集",
+      "input" : {
+        "name" : "名前"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "受け取る",
