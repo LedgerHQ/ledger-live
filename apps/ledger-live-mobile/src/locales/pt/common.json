@@ -3720,6 +3720,7 @@
             "provider" : "Provedor",
             "rate" : "Taxa",
             "fees" : "Taxas de rede",
+            "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
             "target" : "Conta de destino"
           },
           "noAccount" : "Crie uma conta para receber {{name}}",
@@ -3763,6 +3764,8 @@
         "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
         "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "hedera_title" : "A Ledger Nano S™ não é compatível com trocas de Hedera",
+        "hedera_description" : "Para trocar o ativo Hedera, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "osmo_title" : "A Ledger Nano S™ não é compatível com a troca de Osmosis",
         "osmo_description" : "Para trocar Osmosis, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "dydx_title" : "A Ledger Nano S™ não é compatível com trocas de dYdX",
@@ -4825,7 +4828,7 @@
         "restoreLanguage" : "Restaurando o idioma",
         "imageLoadRequested" : "Clique em “Carregar imagem” para restaurar a imagem da tela de bloqueio",
         "imageCommitRequested" : "Clique em “manter” para confirmar a sua imagem da tela de bloqueio",
-        "allowLanguageInstallation" : "Clique em “Permitir” para restaurar o idioma",
+        "allowLanguageInstallation" : "Clique em “Install” para restaurar o idioma",
         "allowAppsRestoration" : "Clique em “Permitir” para restaurar os aplicativos",
         "errors" : {
           "description" : "Se isso foi um erro, tente novamente agora.",
@@ -6949,7 +6952,7 @@
         "desc" : "Posição desc. (valor de mercado)"
       },
       "currency" : "Moeda",
-      "time" : "Alteração",
+      "time" : "Tempo",
       "apply" : "Aplicar"
     },
     "marketList" : {
@@ -7776,5 +7779,83 @@
     "selectNetwork" : "Selecionar rede",
     "selectAccount" : "Selecionar conta",
     "searchPlaceholder" : "Buscar"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Dados de comando incorretos",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "deserializationFailed" : {
+      "title" : "Falha na desserialização do payload",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transação incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidAddress" : {
+      "title" : "Endereço inválido",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao dispositivo conectado. Mude e tente novamente."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao dispositivo conectado. Mude e tente novamente."
+    },
+    "userRefused" : {
+      "title" : "Operação negada no dispositivo",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "internalError" : {
+      "title" : "Erro interno",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensão P2 incorreta",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo deu errado",
+      "description" : "Extensão P2 inválida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo deu errado",
+      "description" : "Instrução inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo deu errado",
+      "description" : "Classe não suportada"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrução inválida",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "malformedApdu" : {
+      "title" : "Cabeçalho APDU mal formulado",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidDataLength" : {
+      "title" : "Comprimento de dados inválido",
+      "description" : "Este comando não aceita dados com esse comprimento"
+    },
+    "signatureVerificationFail" : {
+      "title" : "Falha na verificação da assinatura",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "default" : {
+      "title" : "Algo deu errado",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    }
   }
 }
