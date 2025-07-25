@@ -56,6 +56,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
+    "test-monitor": "jest --config=jest.monitor.config.js",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -82,6 +83,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

@@ -12,7 +12,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", ".monitor.test.ts"],
   transform: {
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",

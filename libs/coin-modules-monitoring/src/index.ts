@@ -35,9 +35,9 @@ export interface AccountInfo<A extends Account> {
 export async function monitor<A extends Account>(
   currency: CryptoCurrency,
   accounts: {
-    pristine: AccountInfo<A>;
-    average: AccountInfo<A>;
-    big: AccountInfo<A>;
+    pristine?: AccountInfo<A>;
+    average?: AccountInfo<A>;
+    big?: AccountInfo<A>;
   },
   getAccountShape: GetAccountShape<A>,
 ) {
