@@ -7,6 +7,11 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import SelectAccountButton from "./SelectAccountButton";
+import {
+  ModularDrawerLocation,
+  useModularDrawerStore,
+  useModularDrawerVisibility,
+} from "LLM/features/ModularDrawer";
 
 type BottomBarProps = {
   manifest: AppManifest;
@@ -45,6 +50,14 @@ export function BottomBar({
   const { colors } = useTheme();
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
+
+  const canOpenModularDrawer = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+
+  const { openDrawer } = useModularDrawerStore();
+
   const handleForward = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
 
@@ -82,7 +95,16 @@ export function BottomBar({
       </Flex>
 
       {shouldDisplaySelectAccount ? (
-        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
+        <SelectAccountButton
+          manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
+          openModularDrawer={
+            canOpenModularDrawer
+              ? params =>
+                  openDrawer({ currencies: params?.currencies, enableAccountSelection: true })
+              : undefined
+          }
+        />
       ) : null}
 
       <IconButton onPress={handleReload} alignSelf="flex-end">

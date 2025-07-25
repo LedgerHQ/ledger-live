@@ -5,21 +5,44 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import { useSelectAccount } from "~/components/Web3AppWebview/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
+import { AccountLike } from "@ledgerhq/types-live";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
   currentAccountHistDb: CurrentAccountHistDB;
+  openModularDrawer?: (params?: {
+    currencies?: CryptoOrTokenCurrency[];
+    enableAccountSelection?: boolean;
+    onAccountSelected?: (account: AccountLike) => void;
+  }) => void;
 };
 
 export default function SelectAccountButton({
   manifest,
   currentAccountHistDb,
+  openModularDrawer,
 }: SelectAccountButtonProps) {
-  const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess } = useSelectAccount({
+    manifest,
+    currentAccountHistDb,
+  });
 
   const currentAccountName = useMaybeAccountName(currentAccount);
+
+  const handleAddAccountPress = () => {
+    if (openModularDrawer) {
+      openModularDrawer({
+        currencies,
+        enableAccountSelection: false,
+        onAccountSelected: onSelectAccountSuccess,
+      });
+    } else {
+      onSelectAccount();
+    }
+  };
 
   return (
     <Button
@@ -37,7 +60,7 @@ export default function SelectAccountButton({
       }
       iconPosition={"left"}
       type="primary"
-      onPress={onSelectAccount}
+      onPress={handleAddAccountPress}
       isNewIcon
     >
       {!currentAccount ? (
