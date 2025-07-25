@@ -20,7 +20,7 @@ describe("ModularDrawer integration", () => {
     await user.press(getByText(/ethereum/i));
     expect(getByText(/select network/i)).toBeVisible();
 
-    await user.press(getByTestId("modal-back-button"));
+    await user.press(getByTestId("drawer-back-button"));
     expect(getByText(/select asset/i)).toBeVisible();
 
     await user.press(getByText(/ethereum/i));
