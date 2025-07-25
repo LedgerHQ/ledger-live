@@ -22,7 +22,6 @@ import {
   UnsupportedFirmwareDAError,
 } from "@ledgerhq/device-management-kit";
 import { useTrackDmkErrorsEvents } from "./useTrackDmkErrorsEvents";
-import { useAnalytics } from "~/analytics";
 
 describe("useTrackDmkErrorsEvents", () => {
   describe.each([
@@ -113,14 +112,14 @@ describe("useTrackDmkErrorsEvents", () => {
   ])("$expectedErrorName event", ({ expectedErrorName, errors }) => {
     it.each(errors)(`should be event name ${expectedErrorName} with error %j`, error => {
       // given
-      const track = jest.fn();
+      const mockedTrackScreen = jest.fn();
       // when
       useTrackDmkErrorsEvents({
         error,
-        useAnalytics: (() => ({ track })) as unknown as typeof useAnalytics,
+        trackScreen: mockedTrackScreen,
       });
       // then
-      expect(track).toHaveBeenCalledWith("DeviceErrorTracking", {
+      expect(mockedTrackScreen).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
         error: expectedErrorName,
         subError: error._tag,
       });
@@ -129,29 +128,29 @@ describe("useTrackDmkErrorsEvents", () => {
 
   it("should not track any event if error is not a DMK error", () => {
     // given
-    const track = jest.fn();
+    const mockedTrackScreen = jest.fn();
     const error = new Error("test");
     // when
     useTrackDmkErrorsEvents({
       error,
-      useAnalytics: (() => ({ track })) as unknown as typeof useAnalytics,
+      trackScreen: mockedTrackScreen,
     });
     // then
-    expect(track).not.toHaveBeenCalled();
+    expect(mockedTrackScreen).not.toHaveBeenCalled();
   });
   it("should track event if dmk error is not grouped", () => {
     // given
-    const track = jest.fn();
+    const mockedTrackScreen = jest.fn();
     const error = {
       _tag: "UnregisteredDmkErrorEvent",
     };
     // when
     useTrackDmkErrorsEvents({
       error,
-      useAnalytics: (() => ({ track })) as unknown as typeof useAnalytics,
+      trackScreen: mockedTrackScreen,
     });
     // then
-    expect(track).toHaveBeenCalledWith("DeviceErrorTracking", {
+    expect(mockedTrackScreen).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
       error: "UnregisteredDmkErrorEvent",
       subError: "UnregisteredDmkErrorEvent",
     });
