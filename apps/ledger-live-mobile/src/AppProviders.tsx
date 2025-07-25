@@ -5,12 +5,12 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
-import CounterValuesProvider from "~/components/CounterValuesProvider";
+import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
+import { CountervaluesManagedProvider } from "~/components/CountervaluesProvider";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index";
 import { InViewContextProvider } from "LLM/contexts/InViewContext";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
@@ -26,13 +26,14 @@ const queryClient = new QueryClient();
 
 function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   const dmkEnabled = useLdmkFeatureFlagInitiallyEnabled();
+
   return (
     <QueryClientProvider client={queryClient}>
       <BridgeSyncProvider>
         <WalletSyncProvider>
           <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
-            <CountervaluesMarketcap>
-              <CounterValuesProvider initialState={initialCountervalues}>
+            <CountervaluesMarketcapBridgedProvider>
+              <CountervaluesManagedProvider initialState={initialCountervalues}>
                 <AppDataStorageProvider>
                   <OnboardingContextProvider>
                     <PostOnboardingProviderWrapped>
@@ -47,8 +48,8 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                     </PostOnboardingProviderWrapped>
                   </OnboardingContextProvider>
                 </AppDataStorageProvider>
-              </CounterValuesProvider>
-            </CountervaluesMarketcap>
+              </CountervaluesManagedProvider>
+            </CountervaluesMarketcapBridgedProvider>
           </DeviceManagementKitProvider>
         </WalletSyncProvider>
       </BridgeSyncProvider>

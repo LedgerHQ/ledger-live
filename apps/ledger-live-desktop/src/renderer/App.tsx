@@ -18,8 +18,8 @@ import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
-import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
+import { CountervaluesManagedProvider } from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
@@ -81,8 +81,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <UpdaterProvider>
               <AppDataStorageProvider>
                 <DeviceManagementKitProvider>
-                  <CountervaluesMarketcap>
-                    <CountervaluesProvider initialState={initialCountervalues}>
+                  <CountervaluesMarketcapBridgedProvider>
+                    <CountervaluesManagedProvider initialState={initialCountervalues}>
                       <ToastProvider>
                         <AnnouncementProviderWrapper>
                           <Router>
@@ -103,8 +103,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           </Router>
                         </AnnouncementProviderWrapper>
                       </ToastProvider>
-                    </CountervaluesProvider>
-                  </CountervaluesMarketcap>
+                    </CountervaluesManagedProvider>
+                  </CountervaluesMarketcapBridgedProvider>
                 </DeviceManagementKitProvider>
               </AppDataStorageProvider>
             </UpdaterProvider>

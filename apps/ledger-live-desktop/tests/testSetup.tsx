@@ -1,28 +1,29 @@
-import React from "react";
-import userEvent from "@testing-library/user-event";
-import { Provider } from "react-redux";
-import StyleProvider from "~/renderer/styles/StyleProvider";
-import { MemoryRouter } from "react-router-dom";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
+  RenderHookResult,
   render as rtlRender,
   renderHook as rtlRenderHook,
-  RenderHookResult,
 } from "@testing-library/react";
-import { type State } from "~/renderer/reducers";
-import createStore from "~/renderer/createStore";
-import dbMiddleware from "~/renderer/middlewares/db";
+import userEvent from "@testing-library/user-event";
+import React from "react";
 import { I18nextProvider } from "react-i18next";
-import i18n from "~/renderer/i18n/init";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
 import { config } from "react-transition-group";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import DrawerProvider from "~/renderer/drawers/Provider";
-import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
+import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
+import { CountervaluesManagedProvider } from "~/renderer/components/CountervaluesProvider";
+import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import createStore from "~/renderer/createStore";
+import DrawerProvider from "~/renderer/drawers/Provider";
+import i18n from "~/renderer/i18n/init";
+import dbMiddleware from "~/renderer/middlewares/db";
+import { type State } from "~/renderer/reducers";
+import StyleProvider from "~/renderer/styles/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
-import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
+import { getFeature } from "./featureFlags";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
 
 config.disabled = true;
@@ -137,9 +138,11 @@ function renderWithMockedCounterValuesProvider(
     ...rtlRender(ui, {
       wrapper: ({ children }) => (
         <Providers store={store}>
-          <CountervaluesProvider initialState={initialCountervaluesMock}>
-            {children}
-          </CountervaluesProvider>
+          <CountervaluesMarketcapBridgedProvider>
+            <CountervaluesManagedProvider initialState={initialCountervaluesMock}>
+              {children}
+            </CountervaluesManagedProvider>
+          </CountervaluesMarketcapBridgedProvider>
         </Providers>
       ),
       ...renderOptions,
@@ -246,9 +249,9 @@ function renderHookWithLiveAppProvider<Result, Props>(
 
 export * from "@testing-library/react";
 export {
-  userEvent,
   render,
   renderHook,
   renderHookWithLiveAppProvider,
   renderWithMockedCounterValuesProvider,
+  userEvent,
 };

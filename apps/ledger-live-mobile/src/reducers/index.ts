@@ -19,11 +19,13 @@ import walletSync from "./walletSync";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
 import largeMover from "./largeMover";
+import countervalues from "./countervalues";
 
 export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  countervalues,
   settings,
   appstate,
   ble,

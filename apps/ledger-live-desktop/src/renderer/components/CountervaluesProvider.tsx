@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
 import {
-  Countervalues,
-  useCountervaluesPolling,
+  CountervaluesProvider,
   useCountervaluesExport,
+  useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import {
   CountervaluesSettings,
   CounterValuesStateRaw,
   RateMapRaw,
 } from "@ledgerhq/live-countervalues/types";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import React, { useEffect } from "react";
 import { setKey } from "~/renderer/storage";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
 
-export default function CountervaluesProvider({
+export function CountervaluesManagedProvider({
   children,
   initialState,
 }: {
@@ -21,10 +21,11 @@ export default function CountervaluesProvider({
   initialState: CounterValuesStateRaw;
 }) {
   const userSettings = useCalculateCountervaluesUserSettings();
+
   return (
-    <Countervalues userSettings={userSettings} savedState={initialState}>
+    <CountervaluesProvider userSettings={userSettings} savedState={initialState}>
       <CountervaluesManager userSettings={userSettings}>{children}</CountervaluesManager>
-    </Countervalues>
+    </CountervaluesProvider>
   );
 }
 
@@ -39,6 +40,7 @@ function CountervaluesManager({
   usePollingManager();
   return <>{children}</>;
 }
+
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();
   useEffect(() => {
