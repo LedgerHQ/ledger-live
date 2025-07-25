@@ -344,6 +344,7 @@
           "provider" : "Anbieter",
           "rate" : "Kurs",
           "fees" : "Netzgebühren",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "Zielkonto"
         },
         "tooltip" : {
@@ -2385,6 +2386,10 @@
         "title" : "Gerät"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Blindsignatur erforderlich",
+          "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
         "from" : "Von",
@@ -4579,6 +4584,10 @@
             "cta" : "Anwenden"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer-Entwicklungstool",
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
       },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
@@ -7279,6 +7288,15 @@
       "newAccount" : "Neues Konto",
       "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
       "addAccountSelectionPtxFlow" : "Konto auswählen"
+    },
+    "editAccountName" : {
+      "title" : "Kontonamen bearbeiten",
+      "input" : {
+        "name" : "Name"
+      },
+      "cta" : {
+        "save" : "Speichern"
+      }
     },
     "fundAccount" : {
       "receive" : "Empfangen",
