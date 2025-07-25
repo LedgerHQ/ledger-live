@@ -16,6 +16,7 @@ import market from "./market";
 import wallet from "./wallet";
 import trustchain from "./trustchain";
 import walletSync from "./walletSync";
+import modularDrawer from "./modularDrawer";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
 import largeMover from "./largeMover";
@@ -40,6 +41,7 @@ const appReducer = combineReducers({
   market,
   trustchain,
   walletSync,
+  modularDrawer,
   largeMover,
 });
 

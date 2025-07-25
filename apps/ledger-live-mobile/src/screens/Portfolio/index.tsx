@@ -51,11 +51,10 @@ import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID } from "~/utils/constants";
 import {
-  ModularDrawer,
   ModularDrawerLocation,
-  useModularDrawer,
+  useModularDrawerStore,
   useModularDrawerVisibility,
-} from "~/newArch/features/ModularDrawer";
+} from "LLM/features/ModularDrawer";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 const currencies = listAndFilterCurrencies({ includeTokens: true });
@@ -99,7 +98,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   usePortfolioAnalyticsOptInPrompt();
 
-  const { isDrawerOpen, openDrawer, closeDrawer } = useModularDrawer();
+  const { openDrawer } = useModularDrawerStore();
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
@@ -107,7 +106,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const handleOpenModularDrawer = useCallback(() => {
     setAddModalOpened(false);
-    return openDrawer();
+    return openDrawer({ currencies, enableAccountSelection: false });
   }, [openDrawer]);
 
   const openAddModal = useCallback(() => {
@@ -271,13 +270,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
               ? handleOpenModularDrawer
               : undefined
           }
-        />
-        <ModularDrawer
-          isOpen={isDrawerOpen}
-          currencies={currencies}
-          onClose={closeDrawer}
-          flow="portfolio"
-          source="portfolio_screen"
         />
       </Animated.View>
     </ReactNavigationPerformanceView>
