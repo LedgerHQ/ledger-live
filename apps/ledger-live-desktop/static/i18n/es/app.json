@@ -461,6 +461,8 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
@@ -3844,6 +3846,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Saldo en participación",
+      "stakedBalanceTooltip" : "Esta cantidad está en participación con validadores.",
+      "withdrawableBalance" : "Saldo retirable",
+      "withdrawableBalanceTooltip" : "Esta cantidad se ha quitado de participación y se puede retirar.",
+      "pendingBalance" : "Saldo pendiente",
+      "pendingBalanceTooltip" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad."
+    },
+    "common" : {
+      "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo.",
+      "viewDetails" : "Ver detalles",
+      "connectDevice" : {
+        "title" : "Dispositivo"
+      },
+      "confirmation" : {
+        "title" : "Confirmación"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Cantidad en participación",
+        "unstakedAmount" : "Cantidad retirada de la puesta en participación",
+        "withdrawnAmount" : "Importe retirado"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Puedes conseguir recompensas de Aptos al poner tus activos en participación.",
+        "info" : "Cómo funciona la participación",
+        "earnRewards" : "Ganar recompensas"
+      },
+      "table" : {
+        "header" : "Posiciones en participación",
+        "stake" : "Agregar",
+        "active" : "En participación",
+        "pendingInactive" : "Pendiente de liberación",
+        "inactive" : "Puede retirarse",
+        "nextUnlock" : "Siguiente unlock"
+      },
+      "nextUnlockIn" : "Siguiente unlock en",
+      "unstake" : "Cancelar la puesta en participación",
+      "withdraw" : "Retirar",
+      "restake" : "Reactivar",
+      "activeTooltip" : "Las cantidades en participación generan recompensas",
+      "inactiveTooltip" : "Las cantidades quitadas de participación no generan recompensas",
+      "commission" : "Comisión",
+      "totalStake" : "Participación total",
+      "minSafeWarning" : "No hay fondos suficientes",
+      "reserveWarning" : "Asegúrate de contar con al menos {{amount}} APT en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos.",
+      "flow" : {
+        "title" : "Participar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes recibir recompensas poniendo en participación tus activos de Aptos con un validador.",
+            "bullet" : ["Conservas la propiedad de los activos puestos en participación.", "Pon en participación con tu dispositivo Ledger.", "Los activos estarán disponibles luego de entre 0 y 14 días tras cancelar la puesta en participación"],
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Reactivar puesta en participación",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de volver a poner en participación pondrá tu saldo retirable de nuevo en participación.",
+            "warning" : "Se volverá a poner en participación todo el saldo disponible. La cantidad que se vuelva a poner en participación estará disponible para su retirada tras cancelar la puesta en participación y pasado el tiempo de unlock.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Cantidad que volver a poner en participación"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has vuelto a poner en participación tus activos correctamente.",
+              "description" : "Se han vuelto a poner en participación {{amount}} en {{validator}}",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "No hay activos en participación suficientes para quitarlos de participación",
+      "flow" : {
+        "title" : "Cancelar la puesta en participación",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de retirada de participación tarda {{timeToUnlock}} en finalizar.",
+            "subtitle2" : "El proceso de retirada de participación podría tardar hasta 30 días en finalizar.",
+            "warning" : "Las recompensas se cobran inmediatamente. La cantidad quitada de participación estará disponible para su retirada tras el tiempo de unlock.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe de la cancelación de la puesta en participación"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente",
+              "description" : "Se han retirado de la puesta en participación {{amount}} de {{validator}}",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "No hay activos suficientes para retirar",
+      "flow" : {
+        "title" : "Retirar",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe a retirar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has retirado con éxito tus activos.",
+              "description" : "Se han retirado {{amount}} de {{validator}}",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "Rentabiliza tus tenencias en ETH",
@@ -5884,9 +6055,29 @@
       "title" : "El cálculo de tarifas ha fallado",
       "description" : "La estimación de tarifas falló en la red. Comprueba la información aportada; lo más probable es que la transacción falle"
     },
+    "NotEnoughToStake" : {
+      "title" : "No puedes poner en participación menos de {{minStake}} {{currency}}",
+      "description" : "Para la puesta en participación se requiere una cantidad mínima de {{minStake}} {{currency}}."
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}",
+      "description" : "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}",
+      "description" : "Si vuelves a poner en participación más de {{maxAmount}}, se volverá a poner en participación tu total de {{totalAmount}}"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "No puedes volver a poner en participación menos de {{minAmount}}",
+      "description" : "No puedes volver a poner en participación menos de {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}",
+      "description" : "No puedes cancelar la puesta en participación de menos de {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Fondos insuficientes para cubrir las tarifas",
@@ -7090,6 +7281,15 @@
       "newAccount" : "Nueva cuenta",
       "addAccountSelection" : "Elige la cuenta a la que quieres añadir los fondos",
       "addAccountSelectionPtxFlow" : "Seleccionar cuenta"
+    },
+    "editAccountName" : {
+      "title" : "Editar nombre de la cuenta",
+      "input" : {
+        "name" : "Nombre"
+      },
+      "cta" : {
+        "save" : "Guardar"
+      }
     },
     "fundAccount" : {
       "receive" : "Recibir",
