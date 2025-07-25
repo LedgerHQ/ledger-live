@@ -2407,6 +2407,7 @@
         "nextBlock" : "다음 블록",
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "수량",
         "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."

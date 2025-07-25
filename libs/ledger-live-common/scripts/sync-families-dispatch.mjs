@@ -37,6 +37,7 @@ const familiesWPackage = [
   "filecoin",
   "internet_computer",
   "icon",
+  "kaspa",
   "multiversx",
   "near",
   "polkadot",

@@ -152,6 +152,11 @@ const envDefinitions = {
     def: "https://delegations-elrond.coin.ledger.com",
     desc: "MultiversX DELEGATION API url",
   },
+  API_KASPA_ENDPOINT: {
+    parser: stringParser,
+    def: "https://api.kaspa.org",
+    desc: "Kaspa API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",

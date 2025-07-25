@@ -10,6 +10,7 @@ import { resolver as hedera } from "../families/hedera/setup";
 import { resolver as filecoin } from "../families/filecoin/setup";
 import { resolver as internet_computer } from "../families/internet_computer/setup";
 import { resolver as icon } from "../families/icon/setup";
+import { resolver as kaspa } from "../families/kaspa/setup";
 import { resolver as multiversx } from "../families/multiversx/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
@@ -37,6 +38,7 @@ export default {
   filecoin,
   internet_computer,
   icon,
+  kaspa,
   multiversx,
   near,
   polkadot,

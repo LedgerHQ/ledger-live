@@ -478,6 +478,8 @@ export enum ScreenName {
   CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
+  // kaspa
+  KaspaEditCustomFees = "KaspaEditCustomFees",
   // near
   NearStakingValidator = "NearStakingValidator",
   NearStakingValidatorSelect = "NearStakingValidatorSelect",

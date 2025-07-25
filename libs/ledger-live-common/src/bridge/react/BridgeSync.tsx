@@ -1,14 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import shuffle from "lodash/shuffle";
 import priorityQueue from "async/priorityQueue";
-import { concat, from } from "rxjs";
-import { ignoreElements } from "rxjs/operators";
-import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
-import { getVotesCount, isUpToDateAccount } from "../../account";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getAccountCurrency, getVotesCount, isUpToDateAccount } from "../../account";
 import { getAccountBridge } from "..";
-import { getAccountCurrency } from "../../account";
 import { getEnv } from "@ledgerhq/live-env";
-import type { SyncAction, SyncState, BridgeSyncState } from "./types";
+import type { BridgeSyncState, SyncAction, SyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -191,10 +188,7 @@ function useSyncQueue({
           paginationConfig: {},
           blacklistedTokenIds,
         };
-        concat(
-          from(prepareCurrency(account.currency)).pipe(ignoreElements()),
-          bridge.sync(account, syncConfig),
-        ).subscribe({
+        bridge.sync(account, syncConfig).subscribe({
           next: accountUpdater => {
             updateAccountWithUpdater(accountId, accountUpdater);
           },

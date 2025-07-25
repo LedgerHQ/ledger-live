@@ -2407,6 +2407,7 @@
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "Miktar",
         "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."

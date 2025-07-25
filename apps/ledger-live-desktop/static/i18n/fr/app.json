@@ -2407,6 +2407,7 @@
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
         "unitVByte" : "{{unit}}/vByte",
+        "unitPerByte" : "{{unit}}/Byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre",
         "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."

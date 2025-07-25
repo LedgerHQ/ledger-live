@@ -2407,6 +2407,7 @@
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "数量",
         "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"

@@ -2407,6 +2407,7 @@
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ",
         "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
