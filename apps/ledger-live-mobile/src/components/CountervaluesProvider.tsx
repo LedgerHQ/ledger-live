@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
-import { AppState, AppStateStatus } from "react-native";
-import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState, AppStateStatus } from "react-native";
 import { useUserSettings } from "~/actions/general";
 
-export default function CountervaluesProvider({
+export function CountervaluesManagedProvider({
   children,
   initialState,
 }: {
@@ -12,10 +13,11 @@ export default function CountervaluesProvider({
   initialState?: CounterValuesStateRaw;
 }) {
   const userSettings = useUserSettings();
+
   return (
-    <Countervalues userSettings={userSettings} savedState={initialState}>
+    <CountervaluesProvider savedState={initialState} userSettings={userSettings}>
       <CountervaluesManager>{children}</CountervaluesManager>
-    </Countervalues>
+    </CountervaluesProvider>
   );
 }
 
