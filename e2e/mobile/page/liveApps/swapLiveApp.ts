@@ -101,7 +101,6 @@ export default class SwapLiveAppPage {
         if (provider && !provider.kyc && provider.isNative) {
           await waitWebElementByTestId(this.quoteProviderName);
           await getWebElementByTestId(this.quoteProviderName, index).tap();
-          await waitWebElementByTestId(this.executeSwapButton);
           await allure.attachment("Selected provider: ", providerName, "text/plain");
           return { providerName, index };
         }
@@ -184,6 +183,7 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
+    await waitWebElementByTestId(this.executeSwapButton);
     const actualButtonText = await getWebElementText(this.executeSwapButton);
     jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
