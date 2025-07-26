@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.3.0-nightly.1
+
+### Minor Changes
+
+- [#11097](https://github.com/LedgerHQ/ledger-live/pull/11097) [`cb5cde8`](https://github.com/LedgerHQ/ledger-live/commit/cb5cde824e4a57a3febe2631313d13beece39a21) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tester-polkadot): repair Polkadot coin tester
+
 ## 1.2.6-nightly.0
 
 ### Patch Changes

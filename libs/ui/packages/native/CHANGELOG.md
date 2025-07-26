@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.41.0-nightly.0
+
+### Minor Changes
+
+- [#11055](https://github.com/LedgerHQ/ledger-live/pull/11055) [`6612a57`](https://github.com/LedgerHQ/ledger-live/commit/6612a57f47fa25e43fb933e5eec523069aa86a70) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD Analytics
+
 ## 0.40.0
 
 ### Minor Changes
