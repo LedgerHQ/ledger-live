@@ -40,6 +40,7 @@ on:
           - Mocked
           - E2E - Android Only
           - E2E - iOS & Android
+          - E2E - iOS Only
         default: Mocked
         type: choice
       enable_broadcast:
@@ -90,14 +91,14 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
-  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
+  E2E_RUN: ${{ inputs.tests_type == 'E2E - Android Only' || inputs.tests_type == 'E2E - iOS Only' || inputs.tests_type == 'E2E - iOS & Android' || github.event_name == 'schedule' }}
   SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
 
 jobs:
   detox-tests-ios:
     name: "iOS Detox"
-    runs-on: ["${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64]
+    runs-on: [ "${{ inputs.macos-specificity-runner-label || 'general-pool' }}", macOS, ARM64 ]
     if: ${{ !cancelled() && inputs.tests_type != 'E2E - Android Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -112,8 +113,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
@@ -135,6 +136,18 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Boot iOS Simulator in Background
+        run: |
+          (
+            UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
+            echo "🛫 Booting simulator with UDID: $UDID"
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID"
+            echo "✅ Simulator $UDID is now fully booted"
+          ) &
+        shell: bash
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: aws
@@ -272,9 +285,9 @@ jobs:
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'E2E - Android Only' }}
-    needs: [detox-tests-ios]
+    needs: [ detox-tests-ios ]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -320,7 +333,8 @@ jobs:
 
   detox-tests-android:
     name: "Android Detox"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    if: ${{ !cancelled() && inputs.tests_type != 'E2E - iOS Only' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -342,8 +356,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3, 1]
+        shardIndex: [ 1, 2, 3 ]
+        shardTotal: [ 3, 1 ]
         exclude:
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
           - shardIndex: ${{ (github.event.inputs.tests_type == 'Mocked' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
@@ -496,13 +510,13 @@ jobs:
 
   allure-report-android:
     name: "Android Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
-    needs: [detox-tests-android]
+    needs: [ detox-tests-android ]
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -544,7 +558,7 @@ jobs:
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ledger-live-medium ]
     strategy:
       matrix:
         platform:
@@ -560,7 +574,7 @@ jobs:
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
       TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [detox-tests-android, detox-tests-ios]
+    needs: [ detox-tests-android, detox-tests-ios ]
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@v4
@@ -608,132 +622,132 @@ jobs:
         shell: bash
         run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
-  report-on-slack:
-    name: "Test Mobile E2E > Slack Report"
-    runs-on: ubuntu-22.04
-    needs: [allure-report-android, allure-report-ios]
-    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
-    env:
-      IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
-      IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
-      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
-      ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
-      ANDROID_ONLY: ${{ inputs.tests_type == 'E2E - Android Only' }}
-    steps:
-      - name: format message
-        uses: actions/github-script@v7
-        id: message
-        with:
-          script: |
-            const fs = require("fs");
-            const text = "Ledger Live Mobile E2E tests finished";
-            const header = [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": process.env.E2E_RUN == 'false'
-                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
-                  "emoji": true
-                }
-              },
-              {
-                "type": "divider"
-              }
-            ];
-
-            const iOSResult = [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `- 🍏 iOS: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
-                }
-              }
-            ];
-
-            const androidResult = [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
-                }
-              }
-            ];
-
-            const iOSInfo = [
-              {
-                "type": "mrkdwn",
-                "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
-              }
-            ];
-
-            const androidInfo = [
-              {
-                "type": "mrkdwn",
-                "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
-              }
-            ];
-
-            const infoFields = []
-              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
-              .concat(androidInfo)
-              .concat([
-              {
-                "type": "mrkdwn",
-                "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
-              }
-            ]);
-
-            const infoBlock = [
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": infoFields
-              }
-            ];
-
-            const blocks = []
-              .concat(header)
-              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
-              .concat(androidResult)
-              .concat(infoBlock);
-
-            const result = process.env.E2E_RUN === 'false'
-              ? {
-                  text,
-                  blocks,
-                }
-              : {
-                  attachments: [
-                    {
-                      color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
-                        ? "#FF333C"
-                        : "#33FF39",
-                      blocks,
-                    },
-                  ],
-                };
-
-
-            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: "CTMQ0S5SB"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-      - name: post to a Slack channel
-        if: ${{ (failure() && github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) || contains(fromJson('["release"]'), github.ref_name) || github.event_name == 'schedule' }}
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: "C05FKJ7DFAP"
-          payload-file-path: "./payload-slack-content.json"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#  report-on-slack:
+#    name: "Test Mobile E2E > Slack Report"
+#    runs-on: ubuntu-22.04
+#    needs: [ allure-report-android, allure-report-ios ]
+#    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
+#    env:
+#      IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
+#      IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
+#      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
+#      ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
+#      ANDROID_ONLY: ${{ inputs.tests_type == 'E2E - Android Only' }}
+#    steps:
+#      - name: format message
+#        uses: actions/github-script@v7
+#        id: message
+#        with:
+#          script: |
+#            const fs = require("fs");
+#            const text = "Ledger Live Mobile E2E tests finished";
+#            const header = [
+#              {
+#                "type": "header",
+#                "text": {
+#                  "type": "plain_text",
+#                  "text": process.env.E2E_RUN == 'false'
+#                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
+#                    : ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}",
+#                  "emoji": true
+#                }
+#              },
+#              {
+#                "type": "divider"
+#              }
+#            ];
+#
+#            const iOSResult = [
+#              {
+#                "type": "section",
+#                "text": {
+#                  "type": "mrkdwn",
+#                  "text": `- 🍏 iOS: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
+#                }
+#              }
+#            ];
+#
+#            const androidResult = [
+#              {
+#                "type": "section",
+#                "text": {
+#                  "type": "mrkdwn",
+#                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+#                }
+#              }
+#            ];
+#
+#            const iOSInfo = [
+#              {
+#                "type": "mrkdwn",
+#                "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
+#              }
+#            ];
+#
+#            const androidInfo = [
+#              {
+#                "type": "mrkdwn",
+#                "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
+#              }
+#            ];
+#
+#            const infoFields = []
+#              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
+#              .concat(androidInfo)
+#              .concat([
+#              {
+#                "type": "mrkdwn",
+#                "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
+#              }
+#            ]);
+#
+#            const infoBlock = [
+#              {
+#                "type": "divider"
+#              },
+#              {
+#                "type": "section",
+#                "fields": infoFields
+#              }
+#            ];
+#
+#            const blocks = []
+#              .concat(header)
+#              .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
+#              .concat(androidResult)
+#              .concat(infoBlock);
+#
+#            const result = process.env.E2E_RUN === 'false'
+#              ? {
+#                  text,
+#                  blocks,
+#                }
+#              : {
+#                  attachments: [
+#                    {
+#                      color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
+#                        ? "#FF333C"
+#                        : "#33FF39",
+#                      blocks,
+#                    },
+#                  ],
+#                };
+#
+#
+#            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+#      - name: post to a Slack channel
+#        id: slack
+#        uses: slackapi/slack-github-action@v1.23.0
+#        with:
+#          channel-id: "CTMQ0S5SB"
+#          payload-file-path: "./payload-slack-content.json"
+#        env:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+#      - name: post to a Slack channel
+#        if: ${{ (failure() && github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) || contains(fromJson('["release"]'), github.ref_name) || github.event_name == 'schedule' }}
+#        uses: slackapi/slack-github-action@v1.23.0
+#        with:
+#          channel-id: "C05FKJ7DFAP"
+#          payload-file-path: "./payload-slack-content.json"
+#        env:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}

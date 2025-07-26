@@ -16,7 +16,6 @@ export default class SwapLiveAppPage {
   quotesCountDown = "quotes-countdown";
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
-  executeSwapButtonDisabled = "execute-button-disabled";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
   showDetailslink = "show-details-link";
@@ -39,6 +38,11 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
+  }
+
+  @Step("Check if the from currency is already selected")
+  async getFromCurrencyTexts() {
+    return await getWebElementText(this.fromSelector);
   }
 
   @Step("Tap from currency")
@@ -110,7 +114,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
-    await detoxExpect(getWebElementByTestId(this.executeSwapButtonDisabled)).not.toExist();
+    await waitWebElementByTestId(this.executeSwapButton);
     await tapWebElementByTestId(this.executeSwapButton, 1);
   }
 
@@ -178,6 +182,7 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
+    await waitWebElementByTestId(this.executeSwapButton);
     const actualButtonText = await getWebElementText(this.executeSwapButton);
     jestExpect(actualButtonText).toEqual(expectedButtonText);
   }

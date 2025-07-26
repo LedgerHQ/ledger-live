@@ -24,7 +24,7 @@ import { CLI as CLIType } from "./utils/cliUtils";
 
 declare global {
   var IS_FAILED: boolean;
-  var speculosDevices: Map<number, string>;
+  var speculosDevices: Map<string, number>;
   var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
   var webSocket: {
     wss: Server | undefined;
