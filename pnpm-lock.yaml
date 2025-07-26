@@ -54,7 +54,7 @@ patchedDependencies:
     hash: bmot5xcuajv3pdpobflt4ufvae
     path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-fast-pbkdf2@0.3.1:
-    hash: hsxraxacbj7ixutjkwcickkwma
+    hash: wbvgqbzrhkn4r62in5uz4ok7im
     path: patches/react-native-fast-pbkdf2@0.3.1.patch
   react-native-image-crop-tools@1.6.4:
     hash: p6wzwon3gzjcspjalwhmuroog4
@@ -1251,7 +1251,7 @@ importers:
         version: 8.6.3(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-fast-pbkdf2:
         specifier: 0.3.1
-        version: 0.3.1(patch_hash=hsxraxacbj7ixutjkwcickkwma)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        version: 0.3.1(patch_hash=wbvgqbzrhkn4r62in5uz4ok7im)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-fast-shadow:
         specifier: 0.1.1
         version: 0.1.1(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -67686,7 +67686,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
-  react-native-fast-pbkdf2@0.3.1(patch_hash=hsxraxacbj7ixutjkwcickkwma)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+  react-native-fast-pbkdf2@0.3.1(patch_hash=wbvgqbzrhkn4r62in5uz4ok7im)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)

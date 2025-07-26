@@ -54,7 +54,7 @@ export function runCliCommand(command: string): Promise<string> {
  */
 export async function runCliCommandWithRetry(
   command: string,
-  retries = 3,
+  retries = 5,
   delayMs = 1000,
 ): Promise<string> {
   let lastError: Error | null = null;

@@ -1,12 +1,13 @@
 import React from "react";
 import { ColorPalette, Flex } from "@ledgerhq/native-ui";
-import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import styled from "styled-components/native";
 import Svg, { Path, Stop } from "react-native-svg";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { TAB_BAR_HEIGHT, GRADIENT_HEIGHT } from "./shared";
 import BackgroundGradient from "./BackgroundGradient";
+import { useKeyboardVisible } from "~/logic/keyboardVisible";
 
 type SvgProps = {
   color: string;
@@ -103,13 +104,28 @@ const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): JSX.
   const bgColor = getBgColor(colors);
   const gradients = colors.type === "light" ? lightGradients : darkGradients;
   const { bottom: bottomInset } = insets;
+  const { keyboardHeight } = useKeyboardVisible();
+
+  // Calculate the adjusted bottom position
+  // On Android:
+  // - we always show the tab bar even when the keyboard is visible.
+  // On iOS:
+  // - for now the tab bar remains hidden when the keyboard is visible.
+  // - remove the platform check if we want same behavior on iOS,
+  //   but re-positioning it is lagging on iOS.
+  let adjustedBottom = 0;
+  if (Platform.OS === "android" && Platform.Version >= 35) {
+    adjustedBottom = bottomInset + keyboardHeight;
+  } else {
+    adjustedBottom = bottomInset;
+  }
 
   return (
     <Flex
       width="100%"
       flexDirection="row"
       height={TAB_BAR_HEIGHT}
-      bottom={bottomInset}
+      bottom={adjustedBottom}
       position="absolute"
       overflow="visible"
     >
@@ -130,6 +146,7 @@ const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): JSX.
       </Flex>
       {state.routes.map((route: { key: keyof typeof descriptors; name: string }, index: number) => {
         const { options } = descriptors[route.key];
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const Icon = options.tabBarIcon as React.ElementType<{
           color: string;
         }>;

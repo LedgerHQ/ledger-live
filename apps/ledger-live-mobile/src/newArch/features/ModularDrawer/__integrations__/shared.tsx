@@ -52,6 +52,8 @@ const MockModularDrawerComponent = () => {
         onClose={handleCloseDrawer}
         currencies={currencies}
         selectedStep={ModularDrawerStep.Asset}
+        flow="integration_test"
+        source="modular_drawer_shared"
       />
     </>
   );

@@ -56,6 +56,8 @@ const MockComponent = ({ shouldShowModularDrawer }: Props) => {
       <ModularDrawer
         isOpen={isModularDrawerVisible}
         currencies={[mockEthCryptoCurrency, mockBtcCryptoCurrency]}
+        flow="integration_test"
+        source="accounts_shared"
       />
     </>
   );

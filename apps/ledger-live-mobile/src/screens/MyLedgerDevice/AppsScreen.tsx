@@ -52,7 +52,6 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
 import { useTheme } from "styled-components/native";
-import KeyboardView from "~/components/KeyboardView";
 import { getEnv } from "@ledgerhq/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
@@ -155,16 +154,14 @@ const AppsScreen = ({
 
   const parentInstalled = useMemo(
     () =>
-      found &&
-      found.parentCurrency &&
+      found?.parentCurrency &&
       installed.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, installed],
   );
 
   const parent = useMemo(
     () =>
-      found &&
-      found.parentCurrency &&
+      found?.parentCurrency &&
       apps.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, apps],
   );
@@ -382,23 +379,21 @@ const AppsScreen = ({
 
   const renderList = useCallback(
     (items?: App[]) => (
-      <KeyboardView behavior="padding">
-        <SectionList
-          style={{ width: "100%", height: "100%" }}
-          ref={sectionListRef}
-          testID="manager-deviceInfo-scrollView"
-          sections={[{ data: items ?? [], title: "" }]}
-          renderItem={renderRow}
-          renderSectionHeader={renderSearchBar}
-          stickySectionHeadersEnabled
-          onScroll={onScroll}
-          ListHeaderComponent={listHeader}
-          ListFooterComponent={renderFooter(items)}
-          keyExtractor={item => item.name}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.list}
-        />
-      </KeyboardView>
+      <SectionList
+        style={{ width: "100%", height: "100%" }}
+        ref={sectionListRef}
+        testID="manager-deviceInfo-scrollView"
+        sections={[{ data: items ?? [], title: "" }]}
+        renderItem={renderRow}
+        renderSectionHeader={renderSearchBar}
+        stickySectionHeadersEnabled
+        onScroll={onScroll}
+        ListHeaderComponent={listHeader}
+        ListFooterComponent={renderFooter(items)}
+        keyExtractor={item => item.name}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+      />
     ),
     [listHeader, onScroll, renderFooter, renderRow, renderSearchBar],
   );

@@ -56,7 +56,7 @@ export class SwapPage extends AppPage {
   private insufficientFundsWarningElem = this.drawerContent.getByTestId(
     "insufficient-funds-warning",
   );
-  private continueButton = this.drawerContent.getByTestId("continue-button");
+  private continueButton = this.drawerContent.getByRole("button", { name: "Continue" });
   private drawerCloseButton = this.drawerContent.getByTestId("drawer-close-button");
 
   async sendMax() {
@@ -82,12 +82,13 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-infoIcon")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-value")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-fiat-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-infoIcon")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "rate-heading")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "rate-value")).toBeVisible();
     await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "slippage-infoIcon")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
       provider === Provider.VELORA.name ||
@@ -188,50 +189,62 @@ export class SwapPage extends AppPage {
     await this.drawerCloseButton.click();
   }
 
-  @step("Get all swap providers available")
-  async getAllSwapProviders(electronApp: ElectronApplication) {
+  @step('Check "Best Offer" corresponds to the best quote')
+  async checkBestOffer(electronApp: ElectronApplication) {
+    const allQuoteTexts = await this.getAllSwapProviderTexts(electronApp);
+    const parsedQuotes = this.parseQuotes(allQuoteTexts);
+
+    const bestQuote = this.getBestQuote(parsedQuotes);
+    const bestOfferText = await this.getBestOfferQuoteText(electronApp);
+
+    expect(this.normalizeText(bestOfferText)).toContain(this.normalizeText(bestQuote.quote));
+  }
+
+  @step("Get all swap provider texts")
+  private async getAllSwapProviderTexts(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    return await webview
+    return webview
       .locator(
         '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
       )
       .allTextContents();
   }
 
-  @step("Extract quotes and fees")
-  async extractQuotesAndFees(quoteContainers: string[]) {
-    const quotes = quoteContainers
+  private parseQuotes(quotes: string[]) {
+    const parsed = quotes
       .map(quote => {
-        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
-        if (match) {
-          const rate = parseFloat(match[1]);
-          const fees = parseFloat(match[2]);
-          return { rate, fees, quote };
-        }
-        return undefined;
+        const match = quote.match(/Network Fees\s*\$([\d.]+).*?\$(\d+\.\d+)/);
+        if (!match) return undefined;
+        const [, fees, rate] = match.map(Number);
+        return { rate, fees, quote };
       })
-      .filter(quote => quote !== undefined);
+      .filter((q): q is { rate: number; fees: number; quote: string } => q !== undefined);
 
-    if (quotes.length === 0) {
+    if (parsed.length === 0) {
       throw new Error("No quotes found");
     }
-    return quotes;
+
+    return parsed;
   }
 
-  @step('Check "Best Offer" corresponds to the best quote')
-  async checkBestOffer(electronApp: ElectronApplication) {
-    const quoteContainers = await this.getAllSwapProviders(electronApp);
-    try {
-      const quotes = await this.extractQuotesAndFees(quoteContainers);
-      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
-        (max, current) =>
-          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
-        null,
-      );
-      expect(bestOffer?.quote).toContain("Best Offer");
-    } catch (error) {
-      console.error("Error checking Best offer:", error);
-    }
+  private getBestQuote(quotes: { rate: number; fees: number; quote: string }[]) {
+    return quotes.reduce((best, current) =>
+      !best || current.rate - current.fees > best.rate - best.fees ? current : best,
+    );
+  }
+
+  private async getBestOfferQuoteText(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    return webview
+      .locator(
+        'section:has-text("Best offer") [data-testid^="quote-container-"][data-testid$="-fixed"], section:has-text("Best offer") [data-testid^="quote-container-"][data-testid$="-float"]',
+      )
+      .first()
+      .innerText();
+  }
+
+  private normalizeText(text: string) {
+    return text.replace(/\s+/g, "").trim();
   }
 
   @step("Wait for exchange to be available")

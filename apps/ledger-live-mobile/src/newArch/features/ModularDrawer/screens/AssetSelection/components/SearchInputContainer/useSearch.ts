@@ -2,6 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import Fuse from "fuse.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import {
+  useModularDrawerAnalytics,
+  EVENTS_NAME,
+  MODULAR_DRAWER_PAGE_NAME,
+} from "LLM/features/ModularDrawer/analytics";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
@@ -12,6 +18,8 @@ export type SearchProps = {
   source: string;
   flow: string;
   items: CryptoOrTokenCurrency[];
+  assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  formatAssetConfig?: boolean;
 };
 
 export type SearchResult = {
@@ -34,10 +42,12 @@ export const useSearch = ({
   originalAssets,
   defaultValue,
   items: _items,
-  // source,
-  // flow,
+  source,
+  flow,
+  assetsConfiguration,
+  formatAssetConfig,
 }: SearchProps): SearchResult => {
-  // const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const [displayedValue, setDisplayedValue] = useState(defaultValue);
 
   const fuse = useMemo(() => new Fuse(originalAssets, FUSE_OPTIONS), [originalAssets]);
@@ -57,18 +67,19 @@ export const useSearch = ({
         return;
       }
 
-      // trackModularDrawerEvent(
-      //   "asset_searched",
-      //   {
-      //     flow,
-      //     source,
-      //     page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-      //     searched_value: query,
-      //   },
-      //   {
-      //     formatAssetConfig: true,
-      //   },
-      // );
+      trackModularDrawerEvent(
+        EVENTS_NAME.ASSET_SEARCHED,
+        {
+          flow,
+          source,
+          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+          searched_value: query,
+        },
+        {
+          formatAssetConfig: !!formatAssetConfig,
+          assetsConfig: assetsConfiguration,
+        },
+      );
 
       const results = fuse
         .search(query)
@@ -77,13 +88,15 @@ export const useSearch = ({
       setItemsToDisplay(results);
     },
     [
-      //  trackModularDrawerEvent,
-      //    flow,
-      //   source,
+      trackModularDrawerEvent,
+      flow,
+      source,
       originalAssets,
       fuse,
       setItemsToDisplay,
       setSearchedValue,
+      assetsConfiguration,
+      formatAssetConfig,
     ],
   );
 

@@ -15,6 +15,8 @@ const SearchInputContainer = ({
   source,
   flow,
   items,
+  assetsConfiguration,
+  formatAssetConfig,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -27,6 +29,8 @@ const SearchInputContainer = ({
     flow,
     assetsToDisplay,
     originalAssets,
+    assetsConfiguration,
+    formatAssetConfig,
   });
 
   return (

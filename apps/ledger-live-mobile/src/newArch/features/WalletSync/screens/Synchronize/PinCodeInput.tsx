@@ -9,9 +9,10 @@ import { NativeSyntheticEvent, TextInput, TextInputKeyPressEventData } from "rea
 type Props = {
   handleSendDigits: (input: string) => void;
   nbDigits: number;
+  focusOnMount?: boolean;
 };
 
-export default function PinCodeInput({ nbDigits, handleSendDigits }: Props) {
+export default function PinCodeInput({ nbDigits, handleSendDigits, focusOnMount = false }: Props) {
   const { t } = useTranslation();
 
   // Dynamically create refs based on the number of digits
@@ -23,6 +24,12 @@ export default function PinCodeInput({ nbDigits, handleSendDigits }: Props) {
       handleSendDigits(digits.join(""));
     }
   }, [digits, handleSendDigits]);
+
+  useEffect(() => {
+    if (focusOnMount) {
+      inputRefs.current[0]?.focus();
+    }
+  }, [focusOnMount]);
 
   const handleChange = (value: string, index: number) => {
     const newDigits = [...digits];
@@ -82,7 +89,7 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<TextInput>(null);
 
-    useImperativeHandle(forwardedRef, () => inputRef.current as TextInput);
+    useImperativeHandle(forwardedRef, () => inputRef.current!);
 
     const handleChange = (text: string) => {
       if (text.length <= 1 && /^\d*$/.test(text)) {

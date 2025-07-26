@@ -272,7 +272,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
               : undefined
           }
         />
-        <ModularDrawer isOpen={isDrawerOpen} currencies={currencies} onClose={closeDrawer} />
+        <ModularDrawer
+          isOpen={isDrawerOpen}
+          currencies={currencies}
+          onClose={closeDrawer}
+          flow="portfolio"
+          source="portfolio_screen"
+        />
       </Animated.View>
     </ReactNavigationPerformanceView>
   );

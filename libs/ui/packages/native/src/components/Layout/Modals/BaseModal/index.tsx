@@ -182,9 +182,8 @@ export default function BaseModal({
   // The real fix would be to have onModalHide={onModalHide} and make sure every usage on onClose in the consumers of this component
   // expect the correct behavior
   const onModalHideWithClose = useCallback(() => {
-    onClose();
-    onModalHide && onModalHide();
-  }, [onClose, onModalHide]);
+    onModalHide?.();
+  }, [onModalHide]);
 
   return (
     <ReactNativeModal
