@@ -5,7 +5,7 @@
   "scripts": {
     "lint:fix": "pnpm lint --fix",
     "test:detox": "pnpm detox test",
-    "test:ios": "pnpm test:detox --configuration ios.sim.release",
+    "test:ios": "pnpm test:detox --configuration ios.sim.release swapETH_USDT_ETH.spec.ts",
     "test:android": "pnpm test:detox --configuration android.emu.release",
     "build:ios": "pnpm --filter live-mobile run e2e:build --configuration ios.sim.release",
     "build:android": "pnpm --filter live-mobile run e2e:build --configuration android.emu.release",

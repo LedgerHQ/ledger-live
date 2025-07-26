@@ -59,7 +59,7 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
+export function waitForSpeculosReady(url: string, { interval = 2_000, timeout = 150_000 } = {}) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     let currentRequest: ReturnType<typeof https.get> | null = null;
