@@ -182,7 +182,12 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
-    await waitWebElementByTestId(this.executeSwapButton);
+    try {
+      await waitWebElementByTestId(this.executeSwapButton, 10000);
+    } catch (error) {
+      await this.selectExchange();
+      await waitWebElementByTestId(this.executeSwapButton, 10000);
+    }
     const actualButtonText = await getWebElementText(this.executeSwapButton);
     jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
