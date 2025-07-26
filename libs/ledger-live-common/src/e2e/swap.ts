@@ -38,7 +38,8 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
       throw new Error("No valid minimum amounts returned from swap quote API.");
     }
 
-    return Math.max(...validMinimumAmounts);
+    const maxAmount = Math.max(...validMinimumAmounts);
+    return parseFloat(maxAmount.toFixed(6));
   } catch (error) {
     console.error(error);
   }

@@ -100,7 +100,6 @@ export default class SwapLiveAppPage {
         if (provider && !provider.kyc && provider.isNative) {
           await waitWebElementByTestId(this.quoteProviderName);
           await getWebElementByTestId(this.quoteProviderName, index).tap();
-          await waitWebElementByTestId(this.executeSwapButton);
           await allure.attachment("Selected provider: ", providerName, "text/plain");
           return { providerName, index };
         }
