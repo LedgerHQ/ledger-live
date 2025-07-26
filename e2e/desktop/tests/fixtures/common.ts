@@ -106,7 +106,7 @@ export const test = base.extend<TestFixtures>({
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
-    let speculos: SpeculosDevice;
+    let speculos: SpeculosDevice | undefined;
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);

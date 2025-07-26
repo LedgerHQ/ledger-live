@@ -93,7 +93,7 @@ export const SelectAssetList = ({
   }
 
   return (
-    <ListWrapper customHeight={LIST_HEIGHT}>
+    <ListWrapper data-testid="asset-selector-list-container" customHeight={LIST_HEIGHT}>
       <AssetList
         scrollToTop={scrollToTop}
         assets={formattedAssets}

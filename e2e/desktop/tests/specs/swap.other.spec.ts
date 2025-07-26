@@ -445,15 +445,33 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
         const debitAccount = speculosApp ? account1 : account2;
         const creditAccount = speculosApp ? account2 : account1;
 
-        await app.swap.selectAssetFrom(electronApp, debitAccount);
-        await app.swapDrawer.selectAccountByName(debitAccount);
+        await app.swap.selectFromAccountCoinSelector(electronApp);
 
-        await app.swap.selectAssetTo(electronApp, creditAccount.currency.name);
-        await app.swapDrawer.clickOnAddAccountButton();
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularDrawer.selectAssetByTicker(debitAccount.currency);
+          await app.modularDrawer.selectNetwork(debitAccount.currency);
+          await app.modularDrawer.selectAccountByName(debitAccount);
 
-        await app.addAccount.addAccounts();
-        await app.addAccount.done();
-        await app.swapDrawer.selectAccountByName(creditAccount);
+          await app.swap.selectToAccountCoinSelector(electronApp);
+          await app.modularDrawer.selectAssetByTicker(creditAccount.currency);
+          await app.modularDrawer.selectNetwork(creditAccount.currency);
+          await app.modularDrawer.clickOnAddAndExistingAccountButton();
+
+          await app.addAccount.addAccounts();
+          await app.addAccount.done();
+          await app.modularDrawer.selectAccountByName(creditAccount);
+        } else {
+          await app.swap.chooseFromAsset(account1.currency.name);
+          await app.swapDrawer.selectAccountByName(debitAccount);
+
+          await app.swap.selectAssetTo(electronApp, creditAccount.currency.name);
+          await app.swapDrawer.clickOnAddAccountButton();
+
+          await app.addAccount.addAccounts();
+          await app.addAccount.done();
+          await app.swapDrawer.selectAccountByName(creditAccount);
+        }
       },
     );
   });
@@ -462,7 +480,7 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
 test.describe("Swap a coin for which you have no account yet", () => {
   const account1 = Account.ETH_1;
   const account2 = Account.BSC_1;
-  const xrayTicket = "B2CQA-3355";
+  const xrayTicket = "B2CQA-3355, B2CQA-3282, B2CQA-3288";
 
   setupEnv(true);
 
@@ -481,17 +499,39 @@ test.describe("Swap a coin for which you have no account yet", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
-      await app.swap.selectAssetFrom(electronApp, account1);
-      await app.swapDrawer.clickOnAddAccountButton();
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-      await app.swapDrawer.selectAccountByName(account1);
+      await app.swap.selectFromAccountCoinSelector(electronApp);
 
-      await app.swap.selectAssetTo(electronApp, account2.currency.name);
-      await app.swapDrawer.clickOnAddAccountButton();
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-      await app.swapDrawer.selectAccountByName(account2);
+      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+      if (isModularDrawer) {
+        await app.modularDrawer.selectAssetByTicker(account1.currency);
+        await app.modularDrawer.selectNetwork(account1.currency);
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.modularDrawer.selectAccountByName(account1);
+
+        await app.swap.selectToAccountCoinSelector(electronApp);
+        await app.modularDrawer.selectAssetByTicker(account2.currency);
+        await app.modularDrawer.selectNetwork(account2.currency);
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.modularDrawer.selectAccountByName(account2);
+      } else {
+        await app.swap.chooseFromAsset(account1.currency.name);
+        await app.swapDrawer.clickOnAddAccountButton();
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.swapDrawer.selectAccountByName(account1);
+
+        await app.swap.selectAssetTo(electronApp, account2.currency.name);
+        await app.swapDrawer.clickOnAddAccountButton();
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.swapDrawer.selectAccountByName(account2);
+      }
     },
   );
 });
@@ -882,12 +922,12 @@ const swapMax = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3365",
+    xrayTicket: "B2CQA-3365, B2CQA-3450, B2CQA-3281",
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3366",
+    xrayTicket: "B2CQA-3366, B2CQA-3450, B2CQA-3281",
   },
 ];
 
@@ -939,10 +979,24 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
-        await app.swap.selectAssetFrom(electronApp, fromAccount);
-        await app.swapDrawer.selectAccountByName(fromAccount);
-        await app.swap.selectAssetTo(electronApp, toAccount.currency.name);
-        await app.swapDrawer.selectAccountByName(toAccount);
+        await app.swap.selectFromAccountCoinSelector(electronApp);
+
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularDrawer.selectAssetByTicker(fromAccount.currency);
+          await app.modularDrawer.selectNetwork(fromAccount.currency);
+          await app.modularDrawer.selectAccountByName(fromAccount);
+
+          await app.swap.selectToAccountCoinSelector(electronApp);
+          await app.modularDrawer.selectAssetByTicker(toAccount.currency);
+          await app.modularDrawer.selectNetwork(toAccount.currency);
+          await app.modularDrawer.selectAccountByName(toAccount);
+        } else {
+          await app.swap.chooseFromAsset(fromAccount.currency.name);
+          await app.swapDrawer.selectAccountByName(fromAccount);
+          await app.swap.selectAssetTo(electronApp, toAccount.currency.name);
+          await app.swapDrawer.selectAccountByName(toAccount);
+        }
 
         await app.swap.clickSwapMax(electronApp);
 
