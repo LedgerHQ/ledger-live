@@ -3844,6 +3844,175 @@
       }
     }
   },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "已质押余额",
+      "stakedBalanceTooltip" : "此数额目前已质押给验证者。",
+      "withdrawableBalance" : "可提取余额",
+      "withdrawableBalanceTooltip" : "此数额已解除权益质押，现已可以提取。",
+      "pendingBalance" : "待处理余额",
+      "pendingBalanceTooltip" : "此数额已解除质押，目前正在等待成为可用余额。"
+    },
+    "common" : {
+      "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。",
+      "viewDetails" : "查看详情",
+      "connectDevice" : {
+        "title" : "设备"
+      },
+      "confirmation" : {
+        "title" : "确认"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "已质押数额",
+        "unstakedAmount" : "已解除质押的数额",
+        "withdrawnAmount" : "已提取数额"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "您可以通过质押资产来赚取 Aptos 奖励。",
+        "info" : "权益质押的运作方式",
+        "earnRewards" : "赚取奖励"
+      },
+      "table" : {
+        "header" : "权益质押持仓",
+        "stake" : "添加",
+        "active" : "已质押",
+        "pendingInactive" : "等待解除",
+        "inactive" : "可提取",
+        "nextUnlock" : "下次解锁"
+      },
+      "nextUnlockIn" : "下次解锁剩余时间",
+      "unstake" : "解除质押",
+      "withdraw" : "提取",
+      "restake" : "重新激活",
+      "activeTooltip" : "权益质押的数额可以产生奖励",
+      "inactiveTooltip" : "解除权益质押的数额不会产生奖励",
+      "commission" : "佣金",
+      "totalStake" : "质押总额",
+      "minSafeWarning" : "资金不足",
+      "reserveWarning" : "请确保您的钱包中至少保留 {{amount}} APT，用来支付未来停用和撤回质押所需的网络费用",
+      "flow" : {
+        "title" : "质押",
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 Aptos 资产质押给验证者来赚取奖励。",
+            "bullet" : ["您仍然保持对已权益质押资产的所有权", "使用 Ledger 设备进行权益质押", "资产将在取消权益质押 0 至 14 天后可用"],
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
+            }
+          },
+          "amount" : {
+            "title" : "数额"
+          },
+          "validator" : {
+            "title" : "验证者",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+            "ledgerByFigmentTC" : "Ledger by Figment 条款与条件"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功权益质押资产",
+              "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "重新激活质押",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "subtitle" : "再质押流程会将您的可提取余额再次质押。",
+            "warning" : "所有可用余额都将再次质押。完成解除质押操作且解锁期结束后，才能提取再质押的数额。",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "再质押的数额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功再质押资产。",
+              "description" : "已从 {{validator}} 再质押 {{amount}}",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "没有足够的质押资产可以解除权益质押",
+      "flow" : {
+        "title" : "解除质押",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "subtitle" : "解除质押流程需要 {{timeToUnlock}} 才能完成。",
+            "subtitle2" : "解除质押流程最多可能需要 30 天才能完成。",
+            "warning" : "奖励将立即兑现。解除质押的数额将在解锁期结束后才能提取。",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要取消权益质押的数额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功解除权益质押资产。",
+              "description" : "已从 {{validator}} 解除质押 {{amount}}",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "没有足够的资产可以提取",
+      "flow" : {
+        "title" : "提取",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要提取的数额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已成功提取。",
+              "description" : "已从 {{validator}} 提取 {{amount}}",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    }
+  },
   "ethereum" : {
     "stake_deprecated" : {
       "title" : "增长您的以太币持有量",
@@ -4410,6 +4579,10 @@
             "cta" : "应用"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "模块化抽屉开发工具",
+        "description" : "助您轻松测试模块化抽屉"
       },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
@@ -5884,9 +6057,29 @@
       "title" : "抱歉，费用估算失败",
       "description" : "网络费用估算失败。检查输入，交易最有可能失败"
     },
+    "NotEnoughToStake" : {
+      "title" : "您质押的数额不能少于 {{minStake}} {{currency}}",
+      "description" : "最少必须质押 {{minStake}} {{currency}}。"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
+      "description" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押",
+      "description" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "您再质押的数额不能少于 {{minAmount}}",
+      "description" : "您再质押的数额不能少于 {{minAmount}}。"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "您解除质押的数额不能少于 {{minAmount}}",
+      "description" : "您解除质押的数额不能少于 {{minAmount}}。"
     },
     "NotEnoughBalanceFees" : {
       "title" : "抱歉，资金不够支付费用",
@@ -7090,6 +7283,15 @@
       "newAccount" : "新账户",
       "addAccountSelection" : "选择账户用于添加资金",
       "addAccountSelectionPtxFlow" : "选择账户"
+    },
+    "editAccountName" : {
+      "title" : "编辑账户名称",
+      "input" : {
+        "name" : "名称"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "接收",
