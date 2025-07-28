@@ -152,7 +152,7 @@ jobs:
 
   report-to-allure:
     name: "Create Allure Report and upload it"
-    runs-on: [ledger-live-medium]
+    runs-on: [ubuntu-24.04]
     needs: e2e-tests-linux
     outputs:
       test_result: ${{ steps.summary.outputs.test_result }}
@@ -189,7 +189,7 @@ jobs:
 
   upload-to-xray:
     name: "Upload to Xray"
-    runs-on: [ledger-live-medium]
+    runs-on: [ubuntu-24.04]
     env:
       XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
@@ -239,7 +239,7 @@ jobs:
 
   notify-to-slack:
     name: "Notify to slack"
-    runs-on: [ledger-live-medium]
+    runs-on: [ubuntu-24.04]
     needs: report-to-allure
     if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
     steps:

@@ -666,7 +666,7 @@ jobs:
 
   allure-report-ios:
     name: Allure Report iOS
-    runs-on: [ ledger-live-medium ]
+    runs-on: [ ubuntu-24.04 ]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
     needs: [ detox-tests-ios ]
     outputs:
@@ -722,8 +722,8 @@ jobs:
           echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
 
   allure-report-android:
-    name: Allure Report Android
-    runs-on: [ ledger-live-medium ]
+    name: "Android Detox > Allure Report"
+    runs-on: [ubuntu-24.04]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -780,7 +780,7 @@ jobs:
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ ledger-live-medium ]
+    runs-on: [ubuntu-24.04]
     strategy:
       matrix:
         platform:

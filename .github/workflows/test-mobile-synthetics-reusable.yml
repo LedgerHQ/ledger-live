@@ -62,7 +62,7 @@ permissions:
 
 jobs:
   run-tests:
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-24.04
     steps:
       - name: Download mobile application file
         uses: actions/download-artifact@v4
@@ -169,7 +169,7 @@ jobs:
           path: ./slack-report.txt
 
   report-on-slack:
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-24.04
     needs: run-tests
     if: ${{ inputs.enable-comparison }} && ${{ inputs.enable-comparison-notification }} && (success() || failure())
     steps:

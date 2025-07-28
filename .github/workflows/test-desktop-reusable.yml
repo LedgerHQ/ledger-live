@@ -437,7 +437,7 @@ jobs:
   allure-report:
     name: "Ubuntu E2E > Allure Report"
     needs: e2e-tests-linux
-    runs-on: [ledger-live-medium]
+    runs-on: [ubuntu-24.04]
     if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: Download Allure Report
