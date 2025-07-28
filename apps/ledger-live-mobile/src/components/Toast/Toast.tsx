@@ -1,14 +1,14 @@
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { dismissToast, pushToast } from "~/actions/toast";
-import { toastSelector } from "~/reducers/toast";
+import { useToasts } from "~/reducers/toast";
 
 type Props = Omit<ToastData, "id"> & { id: string; onClose(): void };
 
 export function Toast({ onClose, ...props }: Props) {
   const dispatch = useDispatch();
-  const { toasts } = useSelector(toastSelector);
+  const toasts = useToasts();
 
   const [hasPushedToast, setHasPushedToast] = useState(false);
 

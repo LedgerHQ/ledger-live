@@ -2,6 +2,7 @@ import { handleActions } from "redux-actions";
 import type { ReducerMap, Action } from "redux-actions";
 import { State } from "./types";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
+import { shallowEqual, useSelector } from "react-redux";
 
 export type ToastState = { toasts: ToastData[] };
 
@@ -25,7 +26,6 @@ const handlers: ReducerMap<ToastState, Payload> = {
   }),
 };
 
-// Selectors
-export const toastSelector = (s: State) => s.toasts;
+export const useToasts = () => useSelector((state: State) => state.toasts.toasts, shallowEqual);
 
 export default handleActions<ToastState, Payload>(handlers, INITIAL_STATE);

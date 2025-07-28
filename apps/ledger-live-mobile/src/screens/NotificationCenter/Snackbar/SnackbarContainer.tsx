@@ -8,13 +8,13 @@ import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { toastSelector } from "~/reducers/toast";
+import { useToasts } from "~/reducers/toast";
 import { dismissToast } from "~/actions/toast";
 
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
-  const { toasts } = useSelector(toastSelector);
+  const toasts = useToasts();
 
   const { t } = useTranslation();
   const [nonce, setNonce] = useState(0);
