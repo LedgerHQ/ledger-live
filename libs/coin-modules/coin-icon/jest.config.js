@@ -3,7 +3,7 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   passWithNoTests: true,
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration|monitor)\\.test\\.[tj]s"],
   modulePathIgnorePatterns: [
     "/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
