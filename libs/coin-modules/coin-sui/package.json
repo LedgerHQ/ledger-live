@@ -121,6 +121,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
+    "test-monitor": "jest --config=jest.monitoring.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
     "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
@@ -146,6 +147,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

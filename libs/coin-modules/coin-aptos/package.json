@@ -108,6 +108,7 @@
     "@faker-js/faker": "^9.4.0",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.14",
@@ -128,6 +129,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
+    "test-monitor": "jest --config=jest.monitoring.config.js",
     "unimported": "unimported"
   }
 }

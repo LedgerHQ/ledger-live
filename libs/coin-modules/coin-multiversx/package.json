@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.17.7",
@@ -82,6 +83,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "test-monitor": "jest --config=jest.monitoring.config.js"
   }
 }

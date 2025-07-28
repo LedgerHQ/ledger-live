@@ -11,7 +11,7 @@ module.exports = {
   prettierPath: null,
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration|monitor)\\.test\\.[tj]s"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
