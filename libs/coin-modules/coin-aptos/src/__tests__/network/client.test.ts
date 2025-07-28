@@ -868,6 +868,7 @@ describe("Aptos API", () => {
       const txs: AptosTransaction[] = [
         {
           version: "2532591427",
+          replay_protection_nonce: "replay_protection_nonce",
           hash: "0x3f35",
           state_change_hash: "0xb480",
           event_root_hash: "0x3fa1",
@@ -1081,6 +1082,7 @@ describe("Aptos API", () => {
         },
         {
           version: "2532549325",
+          replay_protection_nonce: "replay_protection_nonce",
           hash: "0x9a6b",
           state_change_hash: "0xa424",
           event_root_hash: "0x0321",
