@@ -179,7 +179,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ubuntu-22.04 ]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -247,6 +247,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ubuntu-22.04 ]
     steps:
       - run: echo "Skipping"

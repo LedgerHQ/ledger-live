@@ -165,7 +165,7 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ubuntu-22.04 ]
     if: ${{ inputs.build-android-js == true }}
     outputs:
         js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
@@ -235,6 +235,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ ledger-live-4xlarge ]
+    runs-on: [ ubuntu-22.04 ]
     steps:
       - run: echo "Skipping"
