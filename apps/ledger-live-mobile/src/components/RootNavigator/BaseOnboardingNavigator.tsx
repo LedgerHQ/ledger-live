@@ -58,7 +58,10 @@ export const ErrorHeaderInfo = ({ route, navigation }: ErrorHeaderInfoNavigatorP
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true, undefined, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       screenOptions={{

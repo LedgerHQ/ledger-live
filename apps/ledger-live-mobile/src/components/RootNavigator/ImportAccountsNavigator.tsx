@@ -9,11 +9,17 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import type { ImportAccountsNavigatorParamList } from "./types/ImportAccountsNavigator";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
+import { useSelector } from "react-redux";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 export default function ImportAccountsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true, undefined, !hasCompletedOnboarding),
+    [colors, hasCompletedOnboarding],
+  );
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
       <Stack.Screen
