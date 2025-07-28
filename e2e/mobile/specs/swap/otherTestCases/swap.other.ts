@@ -507,7 +507,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
-      await app.assetAccountsPage.tapSwap();
+      await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
       await handleSwapPageFlow(account);
     });
   });

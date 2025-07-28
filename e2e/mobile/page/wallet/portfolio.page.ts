@@ -26,6 +26,7 @@ export default class PortfolioPage {
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
+  walletTabSelectorBase = "wallet-tab-";
   selectAssetsPageTitle = "select-crypto-header-step1-title";
   baseBigCurrency = "big-currency";
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
@@ -35,6 +36,8 @@ export default class PortfolioPage {
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
+  walletTabSelector = (id: "Wallet" | "Market") =>
+    getElementById(`${this.walletTabSelectorBase}${id}`);
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -176,9 +179,11 @@ export default class PortfolioPage {
 
   @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
-    await scrollToId(this.showAllAssetsButton);
-    await tapById(this.showAllAssetsButton);
-    await scrollToId(this.assetItemId(currencyName));
+    await scrollToId(this.allocationSectionTitleId);
+    if (await IsIdVisible(this.showAllAssetsButton)) {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName));
+    }
     await tapById(this.assetItemId(currencyName));
   }
 
@@ -201,6 +206,11 @@ export default class PortfolioPage {
   @Step("Tap on tab selector")
   async tapTabSelector(id: "Accounts" | "Assets") {
     await tapByElement(this.tabSelector(id));
+  }
+
+  @Step("Tap on $0 tab selector")
+  async tapWalletTabSelector(id: "Wallet" | "Market") {
+    await tapByElement(this.walletTabSelector(id));
   }
 
   @Step("Tap on (Show All Accounts) button")
