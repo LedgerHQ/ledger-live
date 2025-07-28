@@ -14,6 +14,8 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import orderBy from "lodash/orderBy";
+import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -53,6 +55,15 @@ const NetworkSelection = ({
     }
   };
 
+  const transformNetworks = createNetworkConfigurationHook({
+    networksConfig: networksConfiguration,
+    accounts$: undefined,
+  });
+
+  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
+
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
   return (
@@ -66,7 +77,7 @@ const NetworkSelection = ({
       />
       <BottomSheetFlatList
         scrollEnabled={true}
-        data={availableNetworks}
+        data={formattedNetworks}
         keyExtractor={keyExtractor}
         renderItem={({ item }: { item: NetworkType }) => (
           <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />

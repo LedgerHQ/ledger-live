@@ -1,26 +1,26 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Text } from "@ledgerhq/react-ui/index";
+import { Text } from "@ledgerhq/native-ui/index";
+
 import { useTranslation } from "react-i18next";
-import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
+import { type Network } from "@ledgerhq/native-ui/pre-ldls/index";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import ApyIndicator from "../../../components/ApyIndicator";
+import { accountsSelector } from "~/reducers/accounts";
 import { getAccountTuplesForCurrency } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 const createAccountsCount = ({ label }: { label: string }) => (
-  <Text fontSize="12px" fontWeight="500" color="var(--colors-content-subdued-default-default)">
+  <Text variant="body" fontSize="12px" color="neutral.c80">
     {label}
   </Text>
 );
 
 const createAccountsCountAndApy = ({
   label,
-  value,
-  type,
+  // value,
+  // type,
 }: {
   label: string;
   value: number;
@@ -28,7 +28,7 @@ const createAccountsCountAndApy = ({
 }) => (
   <>
     {createAccountsCount({ label })}
-    <ApyIndicator value={value} type={type} />
+    {/* <ApyIndicator value={value} type={type} /> */}
   </>
 );
 
@@ -49,7 +49,7 @@ const useAccountData = ({ assets, accounts$ }: AccountModuleParams) => {
   return assets
     .map(asset => {
       const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
-      const label = t("modularAssetDrawer.accountCount", { count: length });
+      const label = t("modularDrawer.accountCount", { count: length });
 
       return {
         asset,
