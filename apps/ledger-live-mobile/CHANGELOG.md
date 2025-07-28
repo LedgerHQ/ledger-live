@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.88.0-next.1
+
+### Minor Changes
+
+- [#11106](https://github.com/LedgerHQ/ledger-live/pull/11106) [`7678d05`](https://github.com/LedgerHQ/ledger-live/commit/7678d050508272b9f42412ff9ac75f6cdb9400c5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle AddAccount flow correclty when not in ModularDrawer state
+
 ## 3.88.0-next.0
 
 ### Minor Changes
