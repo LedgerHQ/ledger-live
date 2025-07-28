@@ -1,5 +1,8 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
+import { shallowEqual, useSelector } from "react-redux";
+
+// State
 
 export type CountervaluesState = {
   marketcap: {
@@ -10,7 +13,7 @@ export type CountervaluesState = {
   };
 };
 
-const state: CountervaluesState = {
+const INITIAL_STATE: CountervaluesState = {
   marketcap: {
     ids: [],
     lastUpdated: 0,
@@ -18,6 +21,23 @@ const state: CountervaluesState = {
     error: null,
   },
 };
+
+// Selectors
+
+export type RootState = { countervalues: CountervaluesState };
+
+export const countervaluesMarketcapIdsSelector = (s: RootState) => s.countervalues.marketcap.ids;
+export const countervaluesMarketcapLastUpdatedSelector = (s: RootState) =>
+  s.countervalues.marketcap.lastUpdated;
+
+// Hooks
+
+export const useCountervaluesMarketcapIds = () =>
+  useSelector(countervaluesMarketcapIdsSelector, shallowEqual);
+export const useCountervaluesMarketcapLastUpdated = () =>
+  useSelector(countervaluesMarketcapLastUpdatedSelector);
+
+// Handlers
 
 type HandlersPayloads = {
   FETCH_COUNTERVALUES_MARKETCAP_IDS: undefined;
@@ -76,15 +96,7 @@ const handlers: CountervaluesHandlers = {
   }),
 };
 
-// Selectors
-export const marketcapIdsSelector = (s: { countervalues: CountervaluesState }) =>
-  s.countervalues.marketcap.ids;
-
-export const marketcapLastUpdatedSelector = (s: { countervalues: CountervaluesState }) =>
-  s.countervalues.marketcap.lastUpdated;
-
-// Reducer export
 export default handleActions<CountervaluesState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as CountervaluesHandlers<false>,
-  state,
+  INITIAL_STATE,
 );

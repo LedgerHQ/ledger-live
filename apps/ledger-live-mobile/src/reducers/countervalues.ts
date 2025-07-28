@@ -1,10 +1,11 @@
+import { shallowEqual, useSelector } from "react-redux";
 import { Action, handleActions, ReducerMap } from "redux-actions";
 import {
   CountervaluesActionTypes,
+  CountervaluesMarketcapSetErrorPayload,
+  CountervaluesMarketcapSetIdsPayload,
+  CountervaluesMarketcapSetLoadingPayload,
   CountervaluesPayload,
-  CountervaluesSetErrorPayload,
-  CountervaluesSetIdsPayload,
-  CountervaluesSetLoadingPayload,
 } from "~/actions/types";
 import { State } from "./types";
 
@@ -30,8 +31,16 @@ export const INITIAL_STATE: CountervaluesState = {
 
 /// Selectors
 
-export const marketcapIdsSelector = (s: State) => s.countervalues.marketcap.ids;
-export const marketcapLastUpdatedSelector = (s: State) => s.countervalues.marketcap.lastUpdated;
+export const countervaluesMarketcapIdsSelector = (s: State) => s.countervalues.marketcap.ids;
+export const countervaluesMarketcapLastUpdatedSelector = (s: State) =>
+  s.countervalues.marketcap.lastUpdated;
+
+// Hooks
+
+export const useCountervaluesMarketcapIds = () =>
+  useSelector(countervaluesMarketcapIdsSelector, shallowEqual);
+export const useCountervaluesMarketcapLastUpdated = () =>
+  useSelector(countervaluesMarketcapLastUpdatedSelector);
 
 /// Handlers
 
@@ -49,7 +58,7 @@ const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
     marketcap: {
       ...state.marketcap,
       error: null,
-      ids: (action as Action<CountervaluesSetIdsPayload>).payload,
+      ids: (action as Action<CountervaluesMarketcapSetIdsPayload>).payload,
       isLoading: false,
       lastUpdated: Date.now(),
     },
@@ -59,14 +68,14 @@ const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
     marketcap: {
       ...state.marketcap,
       error: null,
-      isLoading: (action as Action<CountervaluesSetLoadingPayload>).payload,
+      isLoading: (action as Action<CountervaluesMarketcapSetLoadingPayload>).payload,
     },
   }),
   [CountervaluesActionTypes.SET_COUNTERVALUES_MARKETCAP_ERROR]: (state, action) => ({
     ...state,
     marketcap: {
       ...state.marketcap,
-      error: (action as Action<CountervaluesSetErrorPayload>).payload,
+      error: (action as Action<CountervaluesMarketcapSetErrorPayload>).payload,
       isLoading: false,
     },
   }),

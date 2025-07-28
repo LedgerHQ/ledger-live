@@ -134,16 +134,16 @@ export enum CountervaluesActionTypes {
   SET_COUNTERVALUES_MARKETCAP_ERROR = "SET_COUNTERVALUES_MARKETCAP_ERROR",
 }
 
-export type CountervaluesFetchIdsPayload = void;
-export type CountervaluesSetIdsPayload = string[];
-export type CountervaluesSetLoadingPayload = boolean;
-export type CountervaluesSetErrorPayload = string | null;
+export type CountervaluesMarketcapFetchIdsPayload = void;
+export type CountervaluesMarketcapSetIdsPayload = string[];
+export type CountervaluesMarketcapSetLoadingPayload = boolean;
+export type CountervaluesMarketcapSetErrorPayload = string | null;
 
 export type CountervaluesPayload =
-  | CountervaluesFetchIdsPayload
-  | CountervaluesSetIdsPayload
-  | CountervaluesSetLoadingPayload
-  | CountervaluesSetErrorPayload;
+  | CountervaluesMarketcapFetchIdsPayload
+  | CountervaluesMarketcapSetIdsPayload
+  | CountervaluesMarketcapSetLoadingPayload
+  | CountervaluesMarketcapSetErrorPayload;
 
 // === NOTIFICATIONS ACTIONS ===
 
