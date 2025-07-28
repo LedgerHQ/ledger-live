@@ -253,7 +253,10 @@ export function transactionToOperation(
   };
 }
 
-export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+export function transactionToOp(
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+): Op<SuiAsset> {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
