@@ -2136,6 +2136,15 @@ importers:
       '@datadog/datadog-api-client':
         specifier: ^1.40
         version: 1.40.0
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../live-config
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
@@ -2149,12 +2158,21 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@swc/core':
+        specifier: 1.4.11
+        version: 1.4.11
+      '@swc/jest':
+        specifier: 0.2.36
+        version: 0.2.36(@swc/core@1.4.11)
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.14
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)

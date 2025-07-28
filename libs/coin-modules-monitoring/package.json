@@ -11,15 +11,21 @@
     "test": "jest"
   },
   "dependencies": {
-    "@datadog/datadog-api-client": "^1.40"
+    "@datadog/datadog-api-client": "^1.40",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/core": "1.4.11",
+    "@swc/jest": "0.2.36",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
+    "bignumber.js": "^9.1.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },
