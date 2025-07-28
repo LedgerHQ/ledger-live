@@ -65,4 +65,21 @@ describe("ModularDrawer integration", () => {
 
     expect(getByText(/arbitrum/i)).toBeVisible();
   });
+
+  it("should show the empty state when no assets are found", async () => {
+    const { getByText, queryByText, getByPlaceholderText, user } = render(
+      <ModularDrawerSharedNavigator />,
+    );
+
+    await user.press(getByText(/open drawer/i));
+
+    const searchInput = getByPlaceholderText(/search/i);
+    expect(searchInput).toBeVisible();
+
+    await user.type(searchInput, "ttttttt");
+
+    await waitFor(() => {
+      expect(queryByText(/no assets found/i)).toBeVisible();
+    });
+  });
 });
