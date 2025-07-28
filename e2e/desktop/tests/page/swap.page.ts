@@ -513,7 +513,7 @@ export class SwapPage extends AppPage {
 
   @step("Check minimum amount for swap")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
+    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
   }
 
   @step("Click on swap max")
