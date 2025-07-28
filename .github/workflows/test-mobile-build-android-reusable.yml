@@ -189,7 +189,7 @@ jobs:
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           install-proto: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
