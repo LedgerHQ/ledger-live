@@ -62,7 +62,11 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
   const handleOpenAddAccountModal = () => {
     track("button_clicked", { button: "Add a new account", page: sourceScreenName, currency });
     if (onClick) {
-      handleOnclick();
+      if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
+        handleOpenModularDrawer();
+      } else {
+        onClick();
+      }
 
       return;
     }

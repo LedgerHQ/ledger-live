@@ -8,14 +8,7 @@ import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "../../enums";
-import {
-  useModularDrawerController,
-  useModularDrawerVisibility,
-  ModularDrawerLocation,
-} from "LLM/features/ModularDrawer";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-
-const currencies = listAndFilterCurrencies({ includeTokens: true });
+import { ModularDrawerLocation, useModularDrawerVisibility } from "LLM/features/ModularDrawer";
 
 type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -39,6 +32,10 @@ const useSelectAddAccountMethodViewModel = ({
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
   const route = useRoute();
   const hasCurrency = !!currency;
+
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
 
   const navigationParams = useMemo(() => {
     if (hasCurrency) {
@@ -92,11 +89,9 @@ const useSelectAddAccountMethodViewModel = ({
 
   const handleAddAccount = useCallback(() => {
     trackButtonClick("With your Ledger");
-
-    onCloseAddAccountDrawer?.();
-
-    if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
-      handleOpenModularDrawer();
+    onClose?.();
+    if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT) && onShowModularDrawer) {
+      onShowModularDrawer();
     } else {
       const entryNavigatorName = NavigatorName.AssetSelection;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -105,9 +100,9 @@ const useSelectAddAccountMethodViewModel = ({
     }
   }, [
     trackButtonClick,
-    onCloseAddAccountDrawer,
+    onClose,
     isModularDrawerVisible,
-    handleOpenModularDrawer,
+    onShowModularDrawer,
     navigation,
     navigationParams,
   ]);
