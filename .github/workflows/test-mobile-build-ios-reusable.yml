@@ -179,7 +179,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ ledger-live-4-8-lp-test ]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
