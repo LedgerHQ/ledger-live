@@ -122,9 +122,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported",
-    "coin-tester:build": "make build -f src/test/coin-tester/Makefile",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
