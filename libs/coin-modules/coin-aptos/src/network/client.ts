@@ -18,6 +18,7 @@ import {
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
+  Network,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -59,6 +60,8 @@ const getIndexerEndpoint = (currencyId: string) =>
   isTestnet(currencyId)
     ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
     : getEnv("APTOS_INDEXER_ENDPOINT");
+const getNetwork = (currencyId: string) =>
+  isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
 
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
@@ -67,10 +70,18 @@ export class AptosAPI {
   readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
+    const appVersion = getEnv("LEDGER_CLIENT_VERSION");
+
     if (typeof currencyIdOrSettings === "string") {
       this.aptosConfig = new AptosConfig({
+        network: getNetwork(currencyIdOrSettings),
         fullnode: getApiEndpoint(currencyIdOrSettings),
         indexer: getIndexerEndpoint(currencyIdOrSettings),
+        clientConfig: {
+          HEADERS: {
+            "X-Ledger-Client-Version": appVersion,
+          },
+        },
       });
     } else {
       this.aptosConfig = new AptosConfig(currencyIdOrSettings);
@@ -81,7 +92,7 @@ export class AptosAPI {
       uri: this.aptosConfig.indexer ?? "",
       cache: new InMemoryCache(),
       headers: {
-        "x-client": "ledger-live",
+        "X-Ledger-Client-Version": appVersion,
       },
     });
   }

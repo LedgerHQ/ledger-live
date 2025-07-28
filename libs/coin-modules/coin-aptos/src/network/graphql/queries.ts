@@ -8,8 +8,6 @@ export const GetDelegatedStakingActivities = gql`
     ) {
       amount
       delegator_address
-      event_index
-      event_type
       pool_address
       transaction_version
     }

@@ -2265,8 +2265,8 @@ importers:
         specifier: ^3.12.6
         version: 3.12.6(graphql@16.10.0)(react@18.3.1)
       '@aptos-labs/ts-sdk':
-        specifier: ^1.33.1
-        version: 1.33.1
+        specifier: ^3.1.3
+        version: 3.1.3(got@11.8.2)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -2303,6 +2303,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      got:
+        specifier: 11.8.2
+        version: 11.8.2
       graphql:
         specifier: ^16.10.0
         version: 16.10.0
@@ -9817,14 +9820,15 @@ packages:
     resolution: {integrity: sha512-PYPsd0Kk3ynkxNfe3S4fanI3DiUICCoh4ibQderbvjPFL5A0oK6F4lPEO2t0MDsQySTk2t4vh99Xjy6Bd9y+aQ==}
     hasBin: true
 
-  '@aptos-labs/aptos-client@0.1.1':
-    resolution: {integrity: sha512-kJsoy4fAPTOhzVr7Vwq8s/AUg6BQiJDa7WOqRzev4zsuIS3+JCuIZ6vUd7UBsjnxtmguJJulMRs9qWCzVBt2XA==}
-    engines: {node: '>=15.10.0'}
-    deprecated: <1.0.0 is no longer supported please upgrade to the latest version
+  '@aptos-labs/aptos-client@2.0.0':
+    resolution: {integrity: sha512-A23T3zTCRXEKURodp00dkadVtIrhWjC9uo08dRDBkh69OhCnBAxkENmUy/rcBarfLoFr60nRWt7cBkc8wxr1mg==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      got: ^11.8.6
 
-  '@aptos-labs/ts-sdk@1.33.1':
-    resolution: {integrity: sha512-d6nWtUI//fyEN8DeLjm3+ro87Ad6+IKwR9pCqfrs/Azahso1xR1Llxd/O6fj/m1DDsuDj/HAsCsy5TC/aKD6Eg==}
-    engines: {node: '>=11.0.0'}
+  '@aptos-labs/ts-sdk@3.1.3':
+    resolution: {integrity: sha512-42CiChUnHzsZXE25p3gPiETFUTlchTd20zl9vAiq6es1vQaaf95LvVQ0q3GxeOgmW9ENn2q72gAsuGLIOYRohg==}
+    engines: {node: '>=20.0.0'}
 
   '@asamuzakjp/css-color@2.8.3':
     resolution: {integrity: sha512-GIc76d9UI1hCvOATjZPyHFmE5qhRccp3/zGfMPapK3jBi+yocEzp6BBB0UnfRYP9NP4FANqUZYb0hnfs3TM3hw==}
@@ -20844,9 +20848,6 @@ packages:
   axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
-  axios@1.7.4:
-    resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
-
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
@@ -25208,6 +25209,10 @@ packages:
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
+
+  got@11.8.2:
+    resolution: {integrity: sha512-D0QywKgIe30ODs+fm8wMZiAcZjypcCodPNuMz5H9Mny7RJ+IjJ10BdmGW7OM7fHXP+O7r6ZwapQ/YQmMSvB0UQ==}
+    engines: {node: '>=10.19.0'}
 
   got@11.8.6:
     resolution: {integrity: sha512-6tfZ91bOr7bOXnK7PRDCGBLa1H4U080YHNaAQ2KsMGlLEzRbk44nsZF2E1IeRc3vtJHPVbKCYgdFbaGO2ljd8g==}
@@ -35143,24 +35148,25 @@ snapshots:
     dependencies:
       commander: 12.1.0
 
-  '@aptos-labs/aptos-client@0.1.1':
+  '@aptos-labs/aptos-client@2.0.0(got@11.8.2)':
     dependencies:
-      axios: 1.7.4
-      got: 11.8.6
+      got: 11.8.2
 
-  '@aptos-labs/ts-sdk@1.33.1':
+  '@aptos-labs/ts-sdk@3.1.3(got@11.8.2)':
     dependencies:
       '@aptos-labs/aptos-cli': 1.0.2
-      '@aptos-labs/aptos-client': 0.1.1
-      '@noble/curves': 1.6.0
+      '@aptos-labs/aptos-client': 2.0.0(got@11.8.2)
+      '@noble/curves': 1.9.0
       '@noble/hashes': 1.7.0
-      '@scure/bip32': 1.4.0
-      '@scure/bip39': 1.3.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
       eventemitter3: 5.0.1
-      form-data: 4.0.0
+      form-data: 4.0.2
       js-base64: 3.7.7
       jwt-decode: 4.0.0
       poseidon-lite: 0.2.1
+    transitivePeerDependencies:
+      - got
 
   '@asamuzakjp/css-color@2.8.3':
     dependencies:
@@ -53248,12 +53254,6 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.6
 
-  axios@1.7.4:
-    dependencies:
-      follow-redirects: 1.15.6
-      form-data: 4.0.2
-      proxy-from-env: 1.1.0
-
   axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.6
@@ -59392,6 +59392,20 @@ snapshots:
       get-intrinsic: 1.3.0
 
   gopd@1.2.0: {}
+
+  got@11.8.2:
+    dependencies:
+      '@sindresorhus/is': 4.6.0
+      '@szmarczak/http-timer': 4.0.6
+      '@types/cacheable-request': 6.0.3
+      '@types/responselike': 1.0.3
+      cacheable-lookup: 5.0.4
+      cacheable-request: 7.0.4
+      decompress-response: 6.0.0
+      http2-wrapper: 1.0.3
+      lowercase-keys: 2.0.0
+      p-cancelable: 2.1.1
+      responselike: 2.0.1
 
   got@11.8.6:
     dependencies:
