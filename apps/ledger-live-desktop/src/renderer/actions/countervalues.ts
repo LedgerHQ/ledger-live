@@ -1,7 +1,3 @@
-export const fetchCountervaluesMarketcapIds = () => ({
-  type: "FETCH_COUNTERVALUES_MARKETCAP_IDS" as const,
-});
-
 export const setCountervaluesMarketcapIds = (payload: string[]) => ({
   type: "SET_COUNTERVALUES_MARKETCAP_IDS" as const,
   payload,

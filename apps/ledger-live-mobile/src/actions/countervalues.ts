@@ -1,15 +1,10 @@
 import { createAction } from "redux-actions";
 import {
   CountervaluesActionTypes,
-  CountervaluesMarketcapFetchIdsPayload,
   CountervaluesMarketcapSetErrorPayload,
   CountervaluesMarketcapSetIdsPayload,
   CountervaluesMarketcapSetLoadingPayload,
 } from "./types";
-
-export const fetchCountervaluesMarketcapIds = createAction<CountervaluesMarketcapFetchIdsPayload>(
-  CountervaluesActionTypes.FETCH_COUNTERVALUES_MARKETCAP_IDS,
-);
 
 export const setCountervaluesMarketcapIds = createAction<CountervaluesMarketcapSetIdsPayload>(
   CountervaluesActionTypes.SET_COUNTERVALUES_MARKETCAP_IDS,

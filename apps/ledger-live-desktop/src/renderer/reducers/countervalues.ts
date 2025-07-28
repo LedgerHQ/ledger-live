@@ -40,7 +40,6 @@ export const useCountervaluesMarketcapLastUpdated = () =>
 // Handlers
 
 type HandlersPayloads = {
-  FETCH_COUNTERVALUES_MARKETCAP_IDS: undefined;
   SET_COUNTERVALUES_MARKETCAP_IDS: string[];
   SET_COUNTERVALUES_MARKETCAP_LOADING: boolean;
   SET_COUNTERVALUES_MARKETCAP_ERROR: string;
@@ -52,14 +51,6 @@ type CountervaluesHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: CountervaluesHandlers = {
-  FETCH_COUNTERVALUES_MARKETCAP_IDS: (state: CountervaluesState) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      isLoading: true,
-      error: null,
-    },
-  }),
   SET_COUNTERVALUES_MARKETCAP_IDS: (
     state: CountervaluesState,
     { payload }: { payload: string[] },
