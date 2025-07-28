@@ -111,6 +111,7 @@ import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -325,24 +326,26 @@ function App() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <SyncNewAccounts priority={5} />
-      <TransactionsAlerts />
-      <ExperimentalHeader />
-      {datadogFF?.enabled ? (
-        <DatadogProvider configuration={datadogAutoInstrumentation}>
+      <BottomSheetModalProvider>
+        <SyncNewAccounts priority={5} />
+        <TransactionsAlerts />
+        <ExperimentalHeader />
+        {datadogFF?.enabled ? (
+          <DatadogProvider configuration={datadogAutoInstrumentation}>
+            <RootNavigator />
+          </DatadogProvider>
+        ) : (
           <RootNavigator />
-        </DatadogProvider>
-      ) : (
-        <RootNavigator />
-      )}
+        )}
 
-      <AnalyticsConsole />
-      <PerformanceConsole />
-      <DebugTheme />
-      <Modals />
-      <FeatureToggle featureId="llmMmkvMigration">
-        <StoragePerformanceOverlay />
-      </FeatureToggle>
+        <AnalyticsConsole />
+        <PerformanceConsole />
+        <DebugTheme />
+        <Modals />
+        <FeatureToggle featureId="llmMmkvMigration">
+          <StoragePerformanceOverlay />
+        </FeatureToggle>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
