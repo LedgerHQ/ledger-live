@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@taquito/local-forging": "21.0.3",
     "@types/blake2b": "^2.1.3",
@@ -115,7 +116,8 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "test-monitor": "jest --config=jest.monitoring.config.js"
   },
   "overrides": {
     "@taquito/ledger-signer": {

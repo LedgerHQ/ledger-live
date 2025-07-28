@@ -32,7 +32,8 @@
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "test-monitor": "jest --config=jest.monitoring.config.js"
   },
   "publishConfig": {
     "access": "public"
@@ -137,6 +138,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
