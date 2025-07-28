@@ -33,7 +33,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ubuntu-22.04]
     steps:
       - uses: actions/checkout@v4
         with:
