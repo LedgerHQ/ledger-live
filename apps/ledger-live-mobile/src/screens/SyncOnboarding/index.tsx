@@ -14,10 +14,10 @@ import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "~/analytics";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -74,8 +74,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
-              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
+            <Flex my={5} flexDirection="row" justifyContent="flex-start" alignItems="center">
+              <NavigationHeaderBackButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />

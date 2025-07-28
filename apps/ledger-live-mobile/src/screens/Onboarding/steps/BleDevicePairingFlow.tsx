@@ -59,6 +59,7 @@ const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) 
           filterByDeviceModelId={filterByDeviceModelId}
           onPairingSuccess={onPairingSuccess}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          isOnboarding
         />
       </Flex>
     </SafeAreaView>
