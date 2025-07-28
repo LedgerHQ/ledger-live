@@ -45,14 +45,6 @@ export const useCountervaluesMarketcapLastUpdated = () =>
 /// Handlers
 
 const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
-  [CountervaluesActionTypes.FETCH_COUNTERVALUES_MARKETCAP_IDS]: (state, _) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      isLoading: true,
-      error: null,
-    },
-  }),
   [CountervaluesActionTypes.SET_COUNTERVALUES_MARKETCAP_IDS]: (state, action) => ({
     ...state,
     marketcap: {
