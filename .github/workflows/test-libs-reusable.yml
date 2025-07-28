@@ -33,7 +33,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
-    runs-on: [ledger-live-4-8-lp-test]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     steps:
       - uses: actions/checkout@v4
         with:
