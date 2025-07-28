@@ -253,7 +253,7 @@ export function transactionToOperation(
   };
 }
 
-function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -270,7 +270,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
         time: getOperationDate(transaction),
       },
     },
-    asset: { type: "native" },
+    asset: toSuiAsset(coinType),
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
