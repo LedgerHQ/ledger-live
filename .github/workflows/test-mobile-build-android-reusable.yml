@@ -165,7 +165,7 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ ledger-live-4-8-lp-test ]
     if: ${{ inputs.build-android-js == true }}
     outputs:
         js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
