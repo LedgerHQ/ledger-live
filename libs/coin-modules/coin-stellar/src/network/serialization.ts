@@ -94,24 +94,16 @@ async function formatOperation(
   let memo: StellarMemo | undefined = undefined;
   switch (transaction.memo_type) {
     case "none":
-      memo = {
-        type: "NO_MEMO",
-      };
+      memo = { type: "NO_MEMO" };
       break;
     case "id":
       if (transaction.memo) {
-        memo = {
-          type: "MEMO_ID",
-          value: transaction.memo,
-        };
+        memo = { type: "MEMO_ID", value: transaction.memo };
       }
       break;
     case "text":
       if (transaction.memo) {
-        memo = {
-          type: "MEMO_TEXT",
-          value: transaction.memo,
-        };
+        memo = { type: "MEMO_TEXT", value: transaction.memo };
       }
       break;
     case "return":
