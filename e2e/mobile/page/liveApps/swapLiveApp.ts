@@ -63,6 +63,7 @@ export default class SwapLiveAppPage {
 
   @Step("Input amount")
   async inputAmount(amount: string) {
+    await tapWebElementByTestId(this.fromAmountInput);
     await typeTextByWebTestId(this.fromAmountInput, amount);
   }
 
