@@ -1,36 +1,34 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
+import { type Network } from "@ledgerhq/native-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useLeftAccountsApyModule, useLeftAccountsModule } from "./useLeftAccountsModule";
-import { useRightBalanceModule } from "./useRightBalanceModule";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
+import { useLeftAccountsModule } from "./useLeftAccountsModule";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  currenciesByProvider: CurrenciesByProviderId[];
-  selectedAssetId: string;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-const getLeftElement = (leftElement: string) => {
+type NetworksConfiguration = EnhancedModularDrawerConfiguration["networks"];
+type LeftElement = NonNullable<NetworksConfiguration>["leftElement"];
+type RightElement = NonNullable<NetworksConfiguration>["rightElement"];
+
+const getLeftElement = (leftElement: LeftElement) => {
   switch (leftElement) {
     case "numberOfAccounts":
       return useLeftAccountsModule;
     case "numberOfAccountsAndApy":
-      return useLeftAccountsApyModule;
     case "undefined":
     default:
       return undefined;
   }
 };
 
-const getRightElement = (rightElement: string) => {
+const getRightElement = (rightElement: RightElement) => {
   switch (rightElement) {
     case "balance":
-      return useRightBalanceModule;
     case "undefined":
     default:
       return undefined;
@@ -39,8 +37,6 @@ const getRightElement = (rightElement: string) => {
 
 const createNetworkConfigurationHook = ({
   networksConfig,
-  selectedAssetId,
-  currenciesByProvider,
   accounts$,
 }: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
   const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
@@ -54,10 +50,7 @@ const createNetworkConfigurationHook = ({
 
   return (assets: CryptoOrTokenCurrency[]) => {
     const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
-      ...hooks.map(
-        hook => (assets: CryptoOrTokenCurrency[]) =>
-          hook({ assets, selectedAssetId, currenciesByProvider, accounts$ }),
-      ),
+      ...hooks.map(hook => (assets: CryptoOrTokenCurrency[]) => hook({ assets, accounts$ })),
     );
     return composedHook(assets);
   };
