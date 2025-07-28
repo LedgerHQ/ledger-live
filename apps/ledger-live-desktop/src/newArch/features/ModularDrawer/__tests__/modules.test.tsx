@@ -12,7 +12,7 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
-} from "../../__mocks__/accounts.mock";
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   baseCurrency,
