@@ -161,6 +161,14 @@ export const NativeElementHelpers = {
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
+  async getFirstTextByCssSelector(selector: string): Promise<string> {
+    const base = web.element(by.web.cssSelector(selector)) as unknown as IndexedWebElement;
+    const element = base.atIndex(0);
+    return await element.runScript((node: HTMLElement) =>
+      (node.innerText || node.textContent || "").trim(),
+    );
+  },
+
   async getIdOfElement(elem: NativeElement, index = 0): Promise<string> {
     const attributes = await retryUntilTimeout(async () => elem.getAttributes());
     return (

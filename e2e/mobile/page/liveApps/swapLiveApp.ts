@@ -145,13 +145,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "fiatAmount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-heading")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-infoIcon"),
-    ).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-value")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-fiat-value"),
-    ).toExist();
+    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-infoIcon")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-heading")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-value")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-fiat-value")).toExist();
@@ -163,6 +157,7 @@ export default class SwapLiveAppPage {
     ) {
       await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-heading")).toExist();
       await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-value")).toExist();
+      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-infoIcon")).toExist();
     }
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
@@ -184,45 +179,54 @@ export default class SwapLiveAppPage {
 
   @Step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer() {
-    const quoteContainers = await this.getAllSwapProviders();
-    try {
-      const quotes = await this.extractQuotesAndFees(quoteContainers);
-      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
-        (max, current) =>
-          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
-        null,
-      );
-      jestExpect(bestOffer?.quote).toContain("Best Offer");
-    } catch (error) {
-      console.error("Error checking Best offer:", error);
-    }
+    const allQuoteTexts = await this.getAllSwapProviderTexts();
+    const parsedQuotes = this.parseQuotes(allQuoteTexts);
+
+    const bestQuote = this.getBestQuote(parsedQuotes);
+    const bestOfferText = await this.getBestOfferQuoteText();
+
+    jestExpect(this.normalizeText(bestOfferText)).toContain(this.normalizeText(bestQuote.quote));
   }
 
-  @Step("Get all swap providers available")
-  async getAllSwapProviders() {
+  @Step("Get all swap provider texts")
+  private async getAllSwapProviderTexts() {
     return await getWebElementsByCssSelector(
       '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
     );
   }
 
-  @Step("Extract quotes and fees")
-  async extractQuotesAndFees(quoteContainers: string[]) {
-    const quotePattern = /\$(\d+\.\d+)[\s\S]*?Network Fees[\s\S]*?\$(\d+\.\d+)/;
-
-    const quotes = quoteContainers
-      .map(q => {
-        const match = q.match(quotePattern);
-        if (match) {
-          return { rate: parseFloat(match[1]), fees: parseFloat(match[2]), quote: q };
-        }
-        return undefined;
+  private parseQuotes(quotes: string[]) {
+    const parsed = quotes
+      .map(quote => {
+        const match = quote.match(/Network Fees\s*\$([\d.]+).*?\$(\d+\.\d+)/);
+        if (!match) return undefined;
+        const [, fees, rate] = match.map(Number);
+        return { rate, fees, quote };
       })
-      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
+      .filter((q): q is { rate: number; fees: number; quote: string } => q !== undefined);
 
-    if (quotes.length === 0) {
+    if (parsed.length === 0) {
       throw new Error("No quotes found");
     }
-    return quotes;
+
+    return parsed;
+  }
+
+  private getBestQuote(quotes: { rate: number; fees: number; quote: string }[]) {
+    return quotes.reduce((best, current) =>
+      !best || current.rate - current.fees > best.rate - best.fees ? current : best,
+    );
+  }
+
+  @Step("Get best offer quote text")
+  private async getBestOfferQuoteText(): Promise<string> {
+    return await getFirstTextByCssSelector(
+      'section:has-text("Best offer") [data-testid^="quote-container-"][data-testid$="-fixed"], section:has-text("Best offer") [data-testid^="quote-container-"][data-testid$="-float"]',
+    );
+  }
+
+  private normalizeText(text: string) {
+    return text.replace(/\s+/g, "").trim();
   }
 
   @Step("Verify swap amount error message match: $0")
