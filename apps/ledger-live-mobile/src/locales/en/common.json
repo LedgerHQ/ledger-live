@@ -7783,7 +7783,8 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
-    "searchPlaceholder": "Search"
+    "searchPlaceholder": "Search",
+    "emptyAssetList": "No assets found"
   },
   "swapErrors": {
     "incorrectCommandData": {

@@ -15,6 +15,7 @@ import {
   useBottomSheetInternal,
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
+import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -142,6 +143,7 @@ const AssetSelection = ({
         getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: MARGIN_BOTTOM,
           marginTop: 16,
