@@ -152,7 +152,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/migrating-github-runners
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -166,7 +166,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/migrating-github-runners
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
