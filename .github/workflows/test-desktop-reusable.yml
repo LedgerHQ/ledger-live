@@ -126,7 +126,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ ledger-live-4-8-lp-test ]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     steps:
       - uses: actions/checkout@v4
         with:
