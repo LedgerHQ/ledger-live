@@ -1,8 +1,13 @@
 import { useCallback } from "react";
 import { track } from "~/analytics/segment";
-import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDrawer.types";
+import {
+  MODULAR_DRAWER_PAGE_NAME,
+  ModularDrawerEventName,
+  ModularDrawerEventParams,
+} from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
+import { ModularDrawerStep } from "../types";
 
 type DrawerConfig = {
   formatNetworkConfig?: boolean;
@@ -36,4 +41,17 @@ export const useModularDrawerAnalytics = () => {
   );
 
   return { trackModularDrawerEvent };
+};
+
+/**
+ * Get the current page name for analytics based on the current step
+ */
+export const PAGE_NAME_MAP = {
+  [ModularDrawerStep.Asset]: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
+  [ModularDrawerStep.Network]: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+  [ModularDrawerStep.Account]: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+};
+
+export const getCurrentPageName = (currentStep: ModularDrawerStep) => {
+  return PAGE_NAME_MAP[currentStep] ?? MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
 };

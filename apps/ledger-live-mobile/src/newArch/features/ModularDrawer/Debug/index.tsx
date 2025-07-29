@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";
 import { ModularDrawer } from "../ModularDrawer";
-import { ModularDrawerStep } from "../types";
+import { useModularDrawerStore } from "../hooks/useModularDrawerStore";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 function ModularDrawerScreenDebug() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
-  const handleDrawerClose = () => setIsDrawerOpen(false);
-
+  const { openDrawer, isOpen, closeDrawer, preselectedCurrencies } = useModularDrawerStore();
   const currencies = listAndFilterCurrencies({ includeTokens: true });
+  const handleToggleDrawer = () => {
+    openDrawer({ currencies, enableAccountSelection: true });
+  };
 
   const assetsConfiguration = {
     filter: "topNetworks",
@@ -29,10 +28,9 @@ function ModularDrawerScreenDebug() {
       <Button size="small" type="main" title="Open MAD Drawer" onPress={handleToggleDrawer} />
 
       <ModularDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleDrawerClose}
-        selectedStep={ModularDrawerStep.Asset}
-        currencies={currencies}
+        isOpen={isOpen}
+        onClose={closeDrawer}
+        currencies={preselectedCurrencies}
         flow="debug_flow"
         source="debug_screen"
         assetsConfiguration={assetsConfiguration}

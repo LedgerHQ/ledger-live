@@ -1,10 +1,10 @@
 import React from "react";
-import { Text } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { ModularDrawerStep } from "../types";
 import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
+import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
 import SkeletonList from "../components/Skeleton/SkeletonList";
 import useScreenTransition from "./useScreenTransition";
@@ -13,6 +13,7 @@ export function ModularDrawerFlowView({
   navigationStepViewModel,
   assetsViewModel,
   networksViewModel,
+  accountsViewModel,
   isReadyToBeDisplayed,
 }: ModularDrawerFlowProps) {
   const { currentStep } = navigationStepViewModel;
@@ -26,7 +27,8 @@ export function ModularDrawerFlowView({
       case ModularDrawerStep.Network:
         return <NetworkSelection {...networksViewModel} />;
       case ModularDrawerStep.Account:
-        return <Text>{"Account Selection Step Content"}</Text>;
+        if (!accountsViewModel.asset) return null;
+        return <AccountSelection {...accountsViewModel} />;
       default:
         return null;
     }

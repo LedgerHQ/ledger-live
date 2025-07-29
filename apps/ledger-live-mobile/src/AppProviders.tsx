@@ -12,6 +12,7 @@ import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboarding
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { InViewContextProvider } from "LLM/contexts/InViewContext";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
 import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
@@ -39,7 +40,9 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                       <NotificationsProvider>
                         <SnackbarContainer />
                         <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                          <InViewContextProvider>{children}</InViewContextProvider>
+                          <InViewContextProvider>
+                            <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                          </InViewContextProvider>
                         </NftMetadataProvider>
                       </NotificationsProvider>
                     </PostOnboardingProviderWrapped>

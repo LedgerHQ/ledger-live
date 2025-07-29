@@ -6,9 +6,8 @@ import styled from "styled-components/native";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { track } from "~/analytics";
 import {
-  ModularDrawer,
   ModularDrawerLocation,
-  useModularDrawer,
+  useModularDrawerStore,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
@@ -65,7 +64,7 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
 
   const handleCloseAddAccountModal = () => setIsAddAccountModalOpen(false);
 
-  const { isDrawerOpen, closeDrawer, openDrawer } = useModularDrawer();
+  const { openDrawer } = useModularDrawerStore();
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
   });
@@ -73,11 +72,12 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
   const handleOpenModularDrawer = useCallback(() => {
     if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
       handleCloseAddAccountModal();
-      return openDrawer();
+      const currenciesToUse = cryptoCurrency ? [cryptoCurrency] : currencies;
+      return openDrawer({ currencies: currenciesToUse, enableAccountSelection: false });
     } else {
       return onClick?.();
     }
-  }, [isModularDrawerVisible, onClick, openDrawer]);
+  }, [isModularDrawerVisible, onClick, openDrawer, cryptoCurrency]);
 
   return (
     <>
@@ -98,13 +98,6 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
         isOpened={isAddAccountModalOpen}
         onClose={handleCloseAddAccountModal}
         onShowModularDrawer={handleOpenModularDrawer}
-      />
-      <ModularDrawer
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
-        currencies={cryptoCurrency ? [cryptoCurrency] : currencies}
-        flow="add_account"
-        source="add_account_button"
       />
     </>
   );
