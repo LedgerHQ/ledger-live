@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
@@ -7,7 +7,7 @@ import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
   transactionIntent: TransactionIntent<TronMemo>,
-  customFees?: bigint,
+  customFees?: FeeEstimation,
 ): Promise<string> {
   const { asset, recipient, sender, amount, expiration } = transactionIntent;
   const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
@@ -17,7 +17,8 @@ export async function craftTransaction(
   const senderAddress = decode58Check(sender);
 
   if (asset.type === "trc20" && asset.assetReference) {
-    if (customFees !== undefined && (customFees <= 0 || customFees > Number.MAX_SAFE_INTEGER)) {
+    const fees = customFees?.value;
+    if (fees !== undefined && (fees <= 0 || fees > Number.MAX_SAFE_INTEGER)) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
       );
@@ -32,7 +33,7 @@ export async function craftTransaction(
       recipientAddress,
       senderAddress,
       new BigNumber(amount.toString()),
-      feesToNumber(customFees),
+      feesToNumber(fees),
       expiration,
     );
     return rawDataHex as string;

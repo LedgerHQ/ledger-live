@@ -140,7 +140,7 @@ describe.skip("Stellar Api", () => {
           amount: AMOUNT,
           memo: { type: "NO_MEMO" },
         },
-        customFees,
+        { value: customFees },
       );
 
       const fees = readFees(transactionXdr);

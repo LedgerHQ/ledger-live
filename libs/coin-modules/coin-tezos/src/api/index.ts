@@ -19,9 +19,9 @@ import {
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
-import type { TezosOperationMode } from "../types";
 import type { TezosApi, TezosFeeEstimation } from "./types";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TezosOperationMode } from "../types";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -57,14 +57,17 @@ async function balance(address: string): Promise<Balance[]> {
   ];
 }
 
-async function craft(transactionIntent: TransactionIntent, customFees?: bigint): Promise<string> {
+async function craft(
+  transactionIntent: TransactionIntent,
+  customFees?: FeeEstimation,
+): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
 
   // note that an estimation is always necessary to get gasLimit and storageLimit, if even using custom fees
   const fee = await estimate(transactionIntent).then(fees => ({
-    fees: (customFees ?? fees.value).toString(),
+    fees: (customFees?.value ?? fees.value).toString(),
     gasLimit: fees.parameters?.gasLimit?.toString(),
     storageLimit: fees.parameters?.storageLimit?.toString(),
   }));
