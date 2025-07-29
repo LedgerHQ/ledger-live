@@ -15,6 +15,16 @@ import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
 const OperationDetailsExtra = ({
   operation: { extra },
 }: OperationDetailsExtraProps<Account, StellarOperation>) => {
+  let memo = undefined;
+  switch (extra.memo?.type) {
+    case "MEMO_ID":
+    case "MEMO_TEXT":
+    case "MEMO_HASH":
+    case "MEMO_RETURN":
+      memo = extra.memo.value;
+      break;
+  }
+
   return (
     <>
       {Object.keys(extra).map(key => {
@@ -31,7 +41,7 @@ const OperationDetailsExtra = ({
                   </HashContainer>
                 ) : null}
                 {key === "assetCode" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
-                {key === "memo" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
+                {key === "memo" ? <Ellipsis>{memo}</Ellipsis> : null}
               </OpDetailsData>
             </OpDetailsSection>
           );

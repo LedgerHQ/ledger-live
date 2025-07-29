@@ -9,11 +9,22 @@ type Props = {
 
 function OperationDetailsExtra({ operation: { extra } }: Props) {
   const { t } = useTranslation();
+
+  let memo = undefined;
+  switch (extra.memo?.type) {
+    case "MEMO_ID":
+    case "MEMO_TEXT":
+    case "MEMO_HASH":
+    case "MEMO_RETURN":
+      memo = extra.memo.value;
+      break;
+  }
+
   return (
     <>
       {extra.assetCode && <Section title={t("stellar.assetCode")} value={extra.assetCode} />}
       {extra.assetIssuer && <Section title={t("stellar.assetIssuer")} value={extra.assetIssuer} />}
-      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
+      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={memo} />}
     </>
   );
 }
