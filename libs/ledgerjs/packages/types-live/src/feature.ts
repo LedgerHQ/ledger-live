@@ -1,3 +1,4 @@
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
@@ -262,6 +263,7 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmSentry: DefaultFeature;
+  onboardingIgnoredOSUpdates: Feature_OnboardingIgnoredOSUpdates;
 };
 
 /**
@@ -697,6 +699,16 @@ export type Feature_LldNanoSUpsellBanners = Feature<{
 export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
+}>;
+
+type IgnoredOSUpdates = { [M in DeviceModelId]?: Array<string> };
+
+export type Feature_OnboardingIgnoredOSUpdates = Feature<{
+  ios?: IgnoredOSUpdates;
+  android?: IgnoredOSUpdates;
+  macos?: IgnoredOSUpdates;
+  windows?: IgnoredOSUpdates;
+  linux?: IgnoredOSUpdates;
 }>;
 
 /**
