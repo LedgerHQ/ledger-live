@@ -35,6 +35,7 @@ export default function ClearCacheRow() {
         desc={t("settings.help.clearCacheDesc")}
         onPress={onPress}
         arrowRight
+        testID="clear-cache-row"
       />
       <QueuedDrawer
         isRequestingToBeOpened={isModalOpened}
@@ -44,7 +45,13 @@ export default function ClearCacheRow() {
         title={t("settings.help.clearCache")}
         description={t("settings.help.clearCacheModalDesc")}
       >
-        <Button type={"main"} mt={4} onPress={onClearCache} event="DoClearCache">
+        <Button
+          type={"main"}
+          mt={4}
+          onPress={onClearCache}
+          event="DoClearCache"
+          testID="clear-cache-button"
+        >
           {t("settings.help.clearCacheButton")}
         </Button>
         <Button type={"default"} mt={4} onPress={onRequestClose} event="CancelClearCache">
