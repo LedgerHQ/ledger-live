@@ -344,6 +344,7 @@
           "provider" : "مزود",
           "rate" : "مُعدل",
           "fees" : "رسوم الشبكة",
+          "feesDescription" : "يتم فرض هذه الرسوم من قِبل شبكة سلسلة الكتل (بلوكتشين) لمعالجة المبادلة. يتم فرض رسوم الإرسال فقط بالإضافة إلى عرض السعر المُقدّر. رسوم التلقي مشمولة",
           "target" : "الحساب المستهدف"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "معلّق",
         "expired" : "منتهي الصلاحية",
         "finished" : "مكتمل",
+        "unknown" : "جارٍ المعالجة",
         "refunded" : "مُسترد"
       }
     },
@@ -461,6 +463,8 @@
       "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
       "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+      "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
       "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -570,7 +574,7 @@
         "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
         "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
         "finished" : "تم تنفيذ مبادلتك بنجاح.",
-        "unknown" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات."
+        "unknown" : "نحن بانتظار معلومات من المزود."
       },
       "date" : "التاريخ",
       "from" : "من",
@@ -2385,6 +2389,10 @@
         "title" : "جهاز"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "التوقيع بدون اطلاع مطلوب",
+          "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+        },
         "utxoLag" : "قد يستغرق التحقق من هذه المعاملة وتوقيعها وقتاً طويلاً لأن الحساب يحتوي على عدد كبير من العملات.",
         "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
         "from" : "من",
@@ -4579,6 +4587,10 @@
             "cta" : "تطبيق"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "أداة تطوير الشريط النموذجي",
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
       },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
@@ -7279,6 +7291,15 @@
       "newAccount" : "حساب جديد",
       "addAccountSelection" : "اختر الحساب لإضافة الأموال",
       "addAccountSelectionPtxFlow" : "اختر حساب"
+    },
+    "editAccountName" : {
+      "title" : "تعديل اسم الحساب",
+      "input" : {
+        "name" : "الاسم"
+      },
+      "cta" : {
+        "save" : "حفظ"
+      }
     },
     "fundAccount" : {
       "receive" : "تلقي",
