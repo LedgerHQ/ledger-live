@@ -16,6 +16,8 @@ export type OpenModularDrawerParams = {
   enableAccountSelection?: boolean;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
+  flow?: string;
+  source?: string;
 };
 
 export type OpenModularDrawerParamsWithCallbackId = {
@@ -23,6 +25,8 @@ export type OpenModularDrawerParamsWithCallbackId = {
   enableAccountSelection?: boolean;
   callbackId?: string;
   accountsObservableId?: string;
+  flow?: string;
+  source?: string;
 };
 
 export type OpenModularDrawerFunction = (params?: OpenModularDrawerParams) => void;

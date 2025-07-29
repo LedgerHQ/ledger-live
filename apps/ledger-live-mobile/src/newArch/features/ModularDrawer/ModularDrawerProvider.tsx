@@ -1,6 +1,6 @@
 import React from "react";
 import { ModularDrawer } from "./ModularDrawer";
-import { useModularDrawerStore } from "./hooks/useModularDrawerStore";
+import { useModularDrawerController } from "./hooks/useModularDrawerController";
 
 type ModularDrawerProviderProps = {
   children: React.ReactNode;
@@ -14,7 +14,9 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
     closeDrawer,
     handleAccountSelected,
     getAccountsObservable,
-  } = useModularDrawerStore();
+    flow,
+    source,
+  } = useModularDrawerController();
 
   return (
     <>
@@ -26,9 +28,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         enableAccountSelection={enableAccountSelection}
         onAccountSelected={handleAccountSelected}
         accounts$={getAccountsObservable()}
-        // TODO FIX with flow and source
-        flow="default_flow"
-        source="default_source"
+        flow={flow ?? ""}
+        source={source ?? ""}
       />
     </>
   );
