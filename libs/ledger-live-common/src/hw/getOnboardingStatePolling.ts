@@ -66,12 +66,16 @@ export const getOnboardingStatePolling = ({
       timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {
+        console.log("[getOnboardingStatePolling] error caught in withDevice", error);
         if (
           isAllowedOnboardingStatePollingError(error) ||
           allowedErrorChecks?.some(fn => fn(error))
         ) {
+          console.log("[getOnboardingStatePolling] error is allowed", error);
           // Pushes the error to the next step to be processed (no retry from the beginning)
           return of(error as Error);
+        } else {
+          console.log("[getOnboardingStatePolling] error is not allowed", error);
         }
 
         return throwError(() => error);
@@ -89,6 +93,10 @@ export const getOnboardingStatePolling = ({
           try {
             onboardingState = extractOnboardingState(firmwareInfo.flags, firmwareInfo.charonState);
           } catch (error: unknown) {
+            console.log(
+              "[getOnboardingStatePolling] error caught in extractOnboardingState",
+              error,
+            );
             if (error instanceof DeviceExtractOnboardingStateError) {
               return {
                 onboardingState: null,

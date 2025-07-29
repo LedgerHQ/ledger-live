@@ -55,11 +55,10 @@ export class ConsoleLogger {
    * Refreshes the logger config from the `VERBOSE` env variable
    */
   refreshSetup() {
-    const logVerbose = getEnv("VERBOSE");
+    const logVerbose = "true"; //getEnv("VERBOSE");
 
     if (logVerbose) {
-      this.everyLogs =
-        logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
+      this.everyLogs = true;
       this.filters = this.everyLogs ? [] : logVerbose;
 
       // eslint-disable-next-line no-console

@@ -242,13 +242,13 @@ export const withDevice =
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
           tracer.trace(`Error while opening Transport: ${e}`, { error: e });
+          console.log("[withDevice] error caught", e);
           resolveQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
           if (e instanceof PeerRemovedPairing) throw e;
           if (e instanceof PairingFailed) throw e;
-          console.error(e);
           throw new CantOpenDevice(e.message);
         })
         // Executes the job

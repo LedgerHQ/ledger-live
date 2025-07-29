@@ -299,7 +299,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     if (!fatalError) {
       return;
     }
+    console.log("[SyncOnboardingCompanion] fatalError", fatalError);
     setIsPollingOn(false);
+    // Maybe if it's a PeerRemovedPairing error, we should not call onLostDevice but instead open a specific error drawer with a retry button
     onLostDevice();
   }, [fatalError, onLostDevice]);
 
@@ -948,12 +950,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <Text variant="h4" fontWeight="semiBold">
                   {t("syncOnboarding.title", { productName })}
                 </Text>
-                {/* TODO: disabled for now but will be used in the future */}
-                {/* <Button
-                    ml={2}
-                    Icon={Question}
-                    onPress={() => setHelpDrawerOpen(true)}
-                  /> */}
               </Flex>
             }
           />

@@ -94,6 +94,7 @@ export const useOnboardingStatePolling = ({
           }
         },
         error: error => {
+          console.log("[useOnboardingStatePolling] error caught", error);
           setAllowedError(null);
           setLockedDevice(false);
           setFatalError(

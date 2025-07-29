@@ -193,21 +193,32 @@ export class DeviceManagementKitTransport extends Transport {
           delay: (error, retryAttempt) => {
             getDeviceManagementKit().stopDiscovering();
 
-            tracer.trace("[DMKTransport] [open2] error", error);
+            tracer.trace("[DMKTransport] error caught in open, maybe retrying", error);
             if (error instanceof PairingRefusedError) {
               // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
+              tracer.trace("[DMKTransport] error is PairingRefusedError, throwing PairingFailed", {
+                error,
+              });
               return throwError(() => new PairingFailed());
             } else if (
               error instanceof PeerRemovedPairing ||
               error instanceof OpeningConnectionError
             ) {
+              tracer.trace(
+                "[DMKTransport] error is PeerRemovedPairing or OpeningConnectionError, throwing instead of retrying",
+                {
+                  error,
+                },
+              );
               return throwError(() => error);
             }
 
             if (retryAttempt < 5) {
+              tracer.trace("[DMKTransport] retrying open in 500ms", { retryAttempt });
               return timer(500);
             }
 
+            tracer.trace("[DMKTransport] retried 5 times, throwing", { error });
             return throwError(() => error);
           },
         }),
@@ -220,7 +231,7 @@ export class DeviceManagementKitTransport extends Transport {
         }
         return transport;
       } catch (error) {
-        tracer.trace("[DMKTransport] [open2] error", { error });
+        tracer.trace("[DMKTransport] error thrown in open subscription", { error });
         throw error;
       }
     } else {
