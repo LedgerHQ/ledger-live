@@ -1,5 +1,16 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.2.44-nightly.1
+
+### Patch Changes
+
+- [#11082](https://github.com/LedgerHQ/ledger-live/pull/11082) [`59c65db`](https://github.com/LedgerHQ/ledger-live/commit/59c65dbee3008fbd8283d0625f7448a2e558f77c) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - implement countervalues marketcaps' reducer
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.7.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.1-nightly.0
+  - @ledgerhq/live-countervalues@0.5.15-nightly.1
+
 ## 0.2.44-nightly.0
 
 ### Patch Changes

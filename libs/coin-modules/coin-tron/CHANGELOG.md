@@ -1,5 +1,14 @@
 # @ledgerhq/coin-tron
 
+## 4.4.3-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.7.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.1-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.0
+
 ## 4.4.3-nightly.0
 
 ### Patch Changes

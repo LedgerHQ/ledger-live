@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.4.0-nightly.1
+
+### Minor Changes
+
+- [#11109](https://github.com/LedgerHQ/ledger-live/pull/11109) [`20321d1`](https://github.com/LedgerHQ/ledger-live/commit/20321d178231b09811df1da758f07f6516a91448) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-tester-evm): unskip Polygon scenarii
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.7.1-nightly.1
+  - @ledgerhq/coin-evm@2.24.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.6.2-nightly.1
+
 ## 1.3.3-nightly.0
 
 ### Patch Changes

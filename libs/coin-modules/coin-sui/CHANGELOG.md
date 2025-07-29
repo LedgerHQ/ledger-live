@@ -1,5 +1,17 @@
 # @ledgerhq/coin-sui
 
+## 0.7.1-nightly.1
+
+### Patch Changes
+
+- [#11107](https://github.com/LedgerHQ/ledger-live/pull/11107) [`9fbb5d2`](https://github.com/LedgerHQ/ledger-live/commit/9fbb5d25c71b7ff07a919e51418696e15c321347) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][SUI] fix token mapped to native coin in ALPACA listOperations
+
+- Updated dependencies [[`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/live-env@2.13.0-nightly.0
+  - @ledgerhq/coin-framework@5.7.1-nightly.1
+  - @ledgerhq/cryptoassets@13.22.1-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.0
+
 ## 0.7.1-nightly.0
 
 ### Patch Changes

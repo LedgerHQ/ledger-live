@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.41.0-nightly.1
+
+### Minor Changes
+
+- [#11064](https://github.com/LedgerHQ/ledger-live/pull/11064) [`8ec356e`](https://github.com/LedgerHQ/ledger-live/commit/8ec356efa497953c99e3591df001a68200889718) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add new drawer library, add MAD animations and fix some UI issues
+
 ## 0.41.0-nightly.0
 
 ### Minor Changes
