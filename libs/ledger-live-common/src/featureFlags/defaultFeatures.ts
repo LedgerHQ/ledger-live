@@ -673,6 +673,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmSentry: { enabled: true },
+  onboardingIgnoredOSUpdates: {
+    ...DEFAULT_FEATURE,
+    params: {},
+  },
 };
 
 // Firebase SDK treat JSON values as strings
