@@ -35,7 +35,6 @@ import {
   calculateAmount,
   getMinimumAmountToBond,
   getMinimumBalance,
-  EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
 } from "./utils";
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
@@ -85,11 +84,7 @@ const getSendTransactionStatus: AccountBridge<
         showCode: true,
       }),
     });
-  } else if (
-    !errors.amount &&
-    !transaction.useAllAmount &&
-    account.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
-  ) {
+  } else if (!errors.amount && !transaction.useAllAmount && account.spendableBalance.isZero()) {
     errors.amount = new NotEnoughBalance();
   } else if (totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
