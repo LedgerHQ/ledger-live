@@ -7,18 +7,20 @@ import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
-import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+import {
+  ModularDrawerLocation,
+  useModularDrawerVisibility,
+  useModularDrawerController,
+} from "LLM/features/ModularDrawer";
 
 type SelectAccountButtonProps = {
   manifest: AppManifest;
   currentAccountHistDb: CurrentAccountHistDB;
-  openModularDrawer?: OpenModularDrawerFunction;
 };
 
 export default function SelectAccountButton({
   manifest,
   currentAccountHistDb,
-  openModularDrawer,
 }: SelectAccountButtonProps) {
   const { onSelectAccount, currentAccount, currencies, onSelectAccountSuccess } = useSelectAccount({
     manifest,
@@ -27,11 +29,19 @@ export default function SelectAccountButton({
 
   const currentAccountName = useMaybeAccountName(currentAccount);
 
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
+
+  const canOpenModularDrawer = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+
+  const { openDrawer } = useModularDrawerController();
+
   const handleAddAccountPress = () => {
-    if (openModularDrawer) {
-      openModularDrawer({
+    if (canOpenModularDrawer) {
+      openDrawer({
         currencies,
-        enableAccountSelection: false,
+        enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
       });
     } else {

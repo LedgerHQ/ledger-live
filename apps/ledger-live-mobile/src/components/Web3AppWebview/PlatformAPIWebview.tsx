@@ -52,7 +52,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import {
   ModularDrawerLocation,
-  useModularDrawerStore,
+  useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
 
@@ -106,7 +106,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     });
     const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
-    const { openDrawer: openModularDrawer } = useModularDrawerStore();
+    const { openDrawer: openModularDrawer } = useModularDrawerController();
 
     const requestAccount = useCallback(
       ({
