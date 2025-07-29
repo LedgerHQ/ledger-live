@@ -4,9 +4,9 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
-import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import React, { useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
@@ -17,10 +17,19 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { openModal } from "~/renderer/actions/modals";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
+import { useStake } from "~/newArch/hooks/useStake";
+import { StakeFlowProps } from "~/renderer/screens/stake";
+import { useHistory } from "react-router";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
+  const { getRouteToPlatformApp } = useStake();
+  const history = useHistory();
+  const walletState = useSelector(walletSelector);
+
   const tracking = useMemo(
     () =>
       trackingWrapper(
@@ -42,6 +51,66 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           ),
       ),
     [],
+  );
+
+  const startStakeFlow = useCallback(
+    (props: {
+      account: AccountLike;
+      parentAccount: Account | undefined;
+      alwaysShowNoFunds: StakeFlowProps["alwaysShowNoFunds"];
+      entryPoint: StakeFlowProps["entryPoint"];
+      source: StakeFlowProps["source"];
+      shouldRedirect: StakeFlowProps["shouldRedirect"];
+      returnTo?: string;
+    }) => {
+      const {
+        account,
+        parentAccount,
+        alwaysShowNoFunds,
+        entryPoint,
+        source,
+        shouldRedirect,
+        returnTo,
+      } = props;
+      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
+
+      if (alwaysShowNoFunds || account.spendableBalance.isZero()) {
+        dispatch(
+          openModal("MODAL_NO_FUNDS_STAKE", {
+            account,
+            parentAccount,
+            entryPoint,
+          }),
+        );
+      } else if (platformAppRoute) {
+        // Convert state object to query parameters to trigger middleware in child app
+        const stateObj = {
+          ...platformAppRoute.state,
+          returnTo,
+        };
+        const queryParams = objectToURLSearchParams(stateObj);
+
+        // Push to history with both state and query params
+        const searchStr = `?${queryParams.toString() ?? ""}`;
+
+        history.push({
+          pathname: platformAppRoute.pathname.toString(),
+          search: searchStr,
+          state: stateObj, // Keep state object for components that rely on it
+        });
+      } else {
+        dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
+      }
+
+      const isNoFundsFlow = account.spendableBalance.isZero();
+
+      if (shouldRedirect && !platformAppRoute && !isNoFundsFlow) {
+        history.push({
+          pathname: returnTo ?? `/account/${account.id}`,
+        });
+      }
+    },
+    [dispatch, getRouteToPlatformApp, history, walletState],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
@@ -112,11 +181,68 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
         },
       }),
+      "custom.navigate": async request => {
+        const { action, queryParams, currencyId, accountId } = request.params || {};
+
+        if (!action) {
+          throw new Error("Missing action parameter");
+        }
+
+        if (action === "go-back") {
+          // Handle back navigation using history
+          history.goBack();
+          return { success: true };
+        } else if (action === "redirect-provider") {
+          if (!currencyId) {
+            throw new Error("Missing currencyId parameter");
+          }
+
+          const source = queryParams?.source;
+          const shouldRedirect = queryParams?.shouldRedirect === "true";
+
+          if (!accountId) {
+            throw new Error("Missing accountId parameter");
+          }
+
+          // Find the account that matches the accountId
+          const matchingAccountId = getAccountIdFromWalletAccountId(accountId);
+          if (!matchingAccountId) {
+            throw new Error("Invalid accountId format");
+          }
+
+          const matchingAccount = accounts.find(acc => acc.id === matchingAccountId);
+          if (!matchingAccount) {
+            throw new Error(`No matching account found for currency ${currencyId}`);
+          }
+
+          let parentAccount: Account | undefined;
+
+          // Get parent account if it's a token account
+          if (matchingAccount.type === "TokenAccount") {
+            const tokenAccount = matchingAccount;
+            const foundParentAccount = accounts.find(
+              a => a.type === "Account" && a.id === tokenAccount.parentId,
+            );
+            parentAccount = foundParentAccount?.type === "Account" ? foundParentAccount : undefined;
+          }
+
+          startStakeFlow({
+            account: matchingAccount,
+            parentAccount,
+            shouldRedirect,
+            alwaysShowNoFunds: false,
+            entryPoint: "get-funds",
+            source,
+            returnTo: "",
+          });
+          return { success: true };
+        }
+        throw new Error("Unknown navigation action");
+      },
       "custom.getFunds": request => {
         const accountId = request.params?.accountId;
 
         if (!accountId) {
-          logger.warn("accountId is missing for custom.getFunds");
           throw new Error("accountId is required");
         }
 
@@ -125,7 +251,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           const account = accounts.find(acc => acc.id === id);
 
           if (!account) {
-            logger.warn("Account not found for custom.getFunds", { accountId });
             throw new Error("Account not found");
           }
 
@@ -145,5 +270,5 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }
       },
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer, history, startStakeFlow]);
 }
