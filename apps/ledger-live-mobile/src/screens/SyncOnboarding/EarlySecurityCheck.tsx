@@ -127,7 +127,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
-  const ignoredOSUpdatesConfig = useFeature("onboardingIgnoredOSUpdates")?.params;
+  const ignoredOSUpdatesConfig = useFeature("onboardingIgnoredOsUpdates")?.params;
   const ignoredOSUpdatesForDeviceModelAndPlatform = useMemo(() => {
     return getIgnoredOSUpdatesForDeviceModelAndPlatform(
       ignoredOSUpdatesConfig,

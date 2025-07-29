@@ -263,7 +263,7 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmSentry: DefaultFeature;
-  onboardingIgnoredOSUpdates: Feature_OnboardingIgnoredOSUpdates;
+  onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
 };
 
 /**
