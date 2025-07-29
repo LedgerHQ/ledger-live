@@ -1,52 +1,39 @@
 import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View, AppState } from "react-native";
-import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import { compose } from "redux";
-import { setPrivacy } from "~/actions/settings";
+import { useDispatch, useSelector } from "react-redux";
 import { privacySelector } from "~/reducers/settings";
-import { isPasswordLockBlocked } from "~/reducers/appstate";
+import { setPrivacy as setPrivacyAction } from "~/actions/settings";
+import { isPasswordLockBlocked as isPasswordLockBlockedState } from "~/reducers/appstate";
 import { SkipLockContext } from "~/components/behaviour/SkipLock";
-import type { Privacy, State as GlobalState, AppState as EventState } from "~/reducers/types";
+import type { Privacy } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
 import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
 import { useAuthState, useAppStateHandler, usePrivacyInitialization } from "./auth.hooks";
 
-const mapDispatchToProps = {
-  setPrivacy,
-};
-
-const mapStateToProps = createStructuredSelector<
-  GlobalState,
-  {
-    privacy: Privacy | null | undefined;
-    isPasswordLockBlocked: EventState["isPasswordLockBlocked"]; // skips screen lock for internal deeplinks from ptx web player.
-  }
->({
-  privacy: privacySelector,
-  isPasswordLockBlocked: isPasswordLockBlocked,
-});
-
 type OwnProps = {
   children: JSX.Element;
 };
 
-type Props = OwnProps & {
-  privacy: Privacy | null | undefined;
-  setPrivacy: (_: Privacy) => void;
-  isPasswordLockBlocked: EventState["isPasswordLockBlocked"];
-  closeAllDrawers: () => void;
-};
+const AuthPass: React.FC<OwnProps> = ({ children }) => {
+  const dispatch = useDispatch();
 
-const AuthPass: React.FC<Props> = ({
-  privacy,
-  setPrivacy,
-  isPasswordLockBlocked,
-  closeAllDrawers,
-  children,
-}) => {
+  const privacy = useSelector(privacySelector);
+  const setPrivacy = useCallback(
+    (privacy: Privacy) => {
+      dispatch(setPrivacyAction(privacy));
+    },
+    [dispatch],
+  ); // TODO does this need to be a callback?
+
+  // TODO is withTranslation needed?
+
+  // TODO needs to be tested (isPasswordLockBlocked and closeAllDrawers)
+
+  const isPasswordLockBlocked = useSelector(isPasswordLockBlockedState);
+
+  const { closeAllDrawers } = useQueuedDrawerContext();
+
   const {
     isLocked,
     biometricsError,
@@ -155,13 +142,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose<React.ComponentType<OwnProps>>(
-  withTranslation(),
-  connect(mapStateToProps, mapDispatchToProps),
-  (Component: React.FC<{ closeAllDrawers(): void }>) => {
-    return (props: Props) => {
-      const { closeAllDrawers } = useQueuedDrawerContext();
-      return <Component {...props} closeAllDrawers={closeAllDrawers} />;
-    };
-  },
-)(AuthPass);
+export default AuthPass;
