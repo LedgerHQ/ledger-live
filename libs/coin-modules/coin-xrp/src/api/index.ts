@@ -48,10 +48,10 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
 
 async function craft(
   transactionIntent: TransactionIntent<XrpMapMemo>,
-  customFees?: bigint,
+  customFees?: FeeEstimation,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
+  const estimatedFees = customFees?.value ?? (await estimateFees()).fee;
 
   const memosMap =
     transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
