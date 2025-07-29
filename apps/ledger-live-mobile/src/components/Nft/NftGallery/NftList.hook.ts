@@ -16,7 +16,7 @@ import { NftGalleryChainFiltersState } from "~/reducers/types";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { useChains } from "~/screens/Nft/hooks/useChains";
-import { pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 const TOAST_ID = "SUCCESS_HIDE";
 
@@ -28,6 +28,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const [multiSelectModeEnabled, setMultiSelectMode] = useState<boolean>(false);
   const isFilterDrawerVisible = useSelector(galleryFilterDrawerVisibleSelector);
   const { chainFilters } = useChains();
+  const { pushToast } = useToastsActions();
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
@@ -76,17 +77,15 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
       );
     });
 
-    dispatch(
-      pushToast({
-        id: `${TOAST_ID}-${uuid()}`,
-        type: "success",
-        icon: "success",
-        title: t("wallet.nftGallery.filters.alertHide", {
-          count: nftsToHide.length,
-        }),
+    pushToast({
+      id: `${TOAST_ID}-${uuid()}`,
+      type: "success",
+      icon: "success",
+      title: t("wallet.nftGallery.filters.alertHide", {
+        count: nftsToHide.length,
       }),
-    );
-  }, [exitMultiSelectMode, nftsToHide, t, dispatch]);
+    });
+  }, [exitMultiSelectMode, nftsToHide, pushToast, t, dispatch]);
 
   const triggerMultiSelectMode = useCallback(() => {
     setNftsToHide([]);

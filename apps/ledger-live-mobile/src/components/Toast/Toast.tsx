@@ -1,14 +1,13 @@
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { dismissToast, pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 import { useToasts } from "~/reducers/toast";
 
 type Props = Omit<ToastData, "id"> & { id: string; onClose(): void };
 
 export function Toast({ onClose, ...props }: Props) {
-  const dispatch = useDispatch();
   const toasts = useToasts();
+  const { pushToast, dismissToast } = useToastsActions();
 
   const [hasPushedToast, setHasPushedToast] = useState(false);
 
@@ -22,14 +21,12 @@ export function Toast({ onClose, ...props }: Props) {
   }, [toasts, props.id, hasPushedToast, onClose]);
 
   useEffect(() => {
-    dispatch(
-      pushToast({
-        ...props,
-      }),
-    );
+    pushToast({
+      ...props,
+    });
     setHasPushedToast(true);
     return () => {
-      dispatch(dismissToast(props.id));
+      dismissToast(props.id);
       onClose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

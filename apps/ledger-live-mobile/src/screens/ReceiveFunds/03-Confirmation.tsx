@@ -51,7 +51,7 @@ import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";
-import { pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -94,6 +94,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
+  const { pushToast } = useToastsActions();
 
   const onClose = useCallback(() => {
     const mainAccount = account && getMainAccount(account, parentAccount);
@@ -235,16 +236,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }, 3000);
 
       ReactNativeHapticFeedback.trigger("soft", options);
-      dispatch(
-        pushToast({
-          id: `copy-receive`,
-          type: "success",
-          icon: "success",
-          title: t("transfer.receive.addressCopied"),
-        }),
-      );
+      pushToast({
+        id: `copy-receive`,
+        type: "success",
+        icon: "success",
+        title: t("transfer.receive.addressCopied"),
+      });
     },
-    [mainAccount?.freshAddress, dispatch, t],
+    [mainAccount?.freshAddress, pushToast, t],
   );
 
   const mainAccountName = useMaybeAccountName(mainAccount);
