@@ -139,7 +139,7 @@ export class SwapPage extends AppPage {
         const providerLocator = webview
           .getByTestId(this.quoteCardProviderName)
           .getByText(providerName)
-          .first();
+          .nth(1);
 
         await providerLocator.isVisible();
         await providerLocator.click();
@@ -165,7 +165,7 @@ export class SwapPage extends AppPage {
       const providerLocator = webview
         .getByTestId(this.quoteCardProviderName)
         .getByText(providerName)
-        .first();
+        .nth(1);
 
       if (await providerLocator.isVisible()) {
         await providerLocator.click();
