@@ -88,7 +88,9 @@ const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
 });
 
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
-const CountervaluesMarketcapIdsContext = createContext<string[]>([]);
+const CountervaluesMarketcapBridgeContext = createContext<CountervaluesMarketcapBridge | null>(
+  null,
+);
 
 function trackingPairsHash(a: TrackingPair[]) {
   return a
@@ -108,7 +110,6 @@ export function CountervaluesMarketcapProvider({
   children: React.ReactNode;
   bridge: CountervaluesMarketcapBridge;
 }): ReactElement {
-  const ids = bridge.useIds();
   const lastUpdated = bridge.useLastUpdated();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -139,10 +140,26 @@ export function CountervaluesMarketcapProvider({
   }, [lastUpdated, bridge]);
 
   return (
-    <CountervaluesMarketcapIdsContext.Provider value={ids}>
+    <CountervaluesMarketcapBridgeContext.Provider value={bridge}>
       {children}
-    </CountervaluesMarketcapIdsContext.Provider>
+    </CountervaluesMarketcapBridgeContext.Provider>
   );
+}
+
+function useCountervaluesMarketcapBridgeContext() {
+  const bridge = useContext(CountervaluesMarketcapBridgeContext);
+  if (!bridge) {
+    throw new Error(
+      "useCountervaluesMarketcapBridgeContext must be used within a CountervaluesMarketcapProvider",
+    );
+  }
+  return bridge;
+}
+
+/** Returns market-cap ids. */
+export function useMarketcapIds(): string[] {
+  const bridge = useCountervaluesMarketcapBridgeContext();
+  return bridge.useIds();
 }
 
 /**
@@ -160,7 +177,7 @@ export function CountervaluesProvider({
   const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
 
   // TODO this is always using the initial value, doesn't react to changes.
-  const marketcapIds = useContext(CountervaluesMarketcapIdsContext);
+  const marketcapIds = useMarketcapIds();
   const { marketCapBatchingAfterRank } = userSettings;
 
   const batchStrategySolver = useMemo(
@@ -265,11 +282,6 @@ function fetchReducer(state: FetchState, action: Action): FetchState {
     default:
       return state;
   }
-}
-
-/** Returns market-cap ids. */
-export function useMarketcapIds(): string[] {
-  return useContext(CountervaluesMarketcapIdsContext);
 }
 
 /** Returns the full countervalues state. */
