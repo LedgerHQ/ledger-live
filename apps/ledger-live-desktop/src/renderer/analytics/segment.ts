@@ -212,6 +212,9 @@ const extraProperties = (store: ReduxStore) => {
   const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
     : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -273,6 +276,7 @@ const extraProperties = (store: ReduxStore) => {
     // For tracking receive flow events during onboarding
     ...(isOnboardingReceiveFlow ? { flow: "Onboarding" } : {}),
     ...(postOnboardingInProgress ? { flow: "post-onboarding" } : {}),
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
   };
 };
 

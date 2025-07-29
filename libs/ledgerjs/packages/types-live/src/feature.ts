@@ -235,6 +235,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
+  ldmkSolanaSigner: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmOfacGeoBlocking: DefaultFeature;
   lldOfacGeoBlocking: DefaultFeature;
