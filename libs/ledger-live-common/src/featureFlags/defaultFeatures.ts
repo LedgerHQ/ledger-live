@@ -673,7 +673,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmSentry: { enabled: true },
-  onboardingIgnoredOSUpdates: {
+  onboardingIgnoredOsUpdates: {
     ...DEFAULT_FEATURE,
     params: {},
   },
