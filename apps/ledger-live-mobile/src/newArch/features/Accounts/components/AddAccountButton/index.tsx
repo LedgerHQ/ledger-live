@@ -10,7 +10,8 @@ import {
   ModularDrawerLocation,
   useModularDrawerController,
   useModularDrawerVisibility,
-} from "~/newArch/features/ModularDrawer";
+} from "LLM/features/ModularDrawer";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 const StyledPressable = styled(Pressable)`
   border-width: 1px;
@@ -36,6 +37,8 @@ type Props = {
 const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onClick }) => {
   const { t } = useTranslation();
 
+  const currencyToUse = typeof currency === "string" ? findCryptoCurrencyById(currency) : currency;
+
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState<boolean>(false);
 
   const { openDrawer } = useModularDrawerController();
@@ -46,11 +49,15 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
   const handleOnclick = useCallback(() => {
     if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
       handleCloseAddAccountModal();
-      return openDrawer();
+      return openDrawer({
+        currencies: currencyToUse ? [currencyToUse] : [],
+        flow: "add_account",
+        source: sourceScreenName,
+      });
     } else {
       return onClick?.();
     }
-  }, [isModularDrawerVisible, onClick, openDrawer]);
+  }, [currencyToUse, isModularDrawerVisible, onClick, openDrawer, sourceScreenName]);
 
   const handleOpenAddAccountModal = () => {
     track("button_clicked", { button: "Add a new account", page: sourceScreenName, currency });

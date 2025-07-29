@@ -93,7 +93,7 @@ export function ModularDrawer({
 
   return (
     <QueuedDrawerGorhom
-      isRequestingToBeOpened={!hasOneCurrency && isOpen}
+      isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
       onClose={handleCloseButton}
       enableBlurKeyboardOnGesture={true}
       snapPoints={SNAP_POINTS}
