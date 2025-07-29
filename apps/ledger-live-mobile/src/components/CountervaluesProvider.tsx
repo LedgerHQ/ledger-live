@@ -1,9 +1,21 @@
-import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import {
+  CountervaluesBridge,
+  CountervaluesProvider,
+  useCountervaluesPolling,
+} from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import React, { useEffect, useRef, useState } from "react";
+import { flow } from "lodash/fp";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
+import { useDispatch } from "react-redux";
 import { useUserSettings } from "~/actions/general";
+import {
+  setCountervaluesError,
+  setCountervaluesPending,
+  setCountervaluesState,
+  wipeCountervalues,
+} from "../actions/countervalues";
+import { useCountervaluesError, useCountervaluesState } from "../reducers/countervalues";
 
 export function CountervaluesManagedProvider({
   children,
@@ -14,8 +26,26 @@ export function CountervaluesManagedProvider({
 }) {
   const userSettings = useUserSettings();
 
+  const dispatch = useDispatch();
+
+  const bridge = useMemo(
+    (): CountervaluesBridge => ({
+      setError: flow(setCountervaluesError, dispatch),
+      setPending: flow(setCountervaluesPending, dispatch),
+      setState: flow(setCountervaluesState, dispatch),
+      useState: useCountervaluesState,
+      useError: useCountervaluesError,
+      wipe: flow(wipeCountervalues, dispatch),
+    }),
+    [dispatch],
+  );
+
+  const state = bridge.useState();
+
+  console.log("RE-RENDER", state);
+
   return (
-    <CountervaluesProvider savedState={initialState} userSettings={userSettings}>
+    <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
       <CountervaluesManager>{children}</CountervaluesManager>
     </CountervaluesProvider>
   );

@@ -40,6 +40,7 @@ import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAc
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -128,21 +129,31 @@ export type BlePayload =
 // === COUNTERVALUES ACTIONS ===
 
 export enum CountervaluesActionTypes {
-  SET_COUNTERVALUES_MARKETCAP_IDS = "SET_COUNTERVALUES_MARKETCAP_IDS",
-  SET_COUNTERVALUES_MARKETCAP_LOADING = "SET_COUNTERVALUES_MARKETCAP_LOADING",
-  SET_COUNTERVALUES_MARKETCAP_ERROR = "SET_COUNTERVALUES_MARKETCAP_ERROR",
+  COUNTERVALUES_MARKETCAP_SET_IDS = "COUNTERVALUES_MARKETCAP_SET_IDS",
+  COUNTERVALUES_MARKETCAP_SET_LOADING = "COUNTERVALUES_MARKETCAP_SET_LOADING",
+  COUNTERVALUES_MARKETCAP_SET_ERROR = "COUNTERVALUES_MARKETCAP_SET_ERROR",
+  COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
+  COUNTERVALUES_STATE_SET_PENDING = "COUNTERVALUES_STATE_PENDING_SET",
+  COUNTERVALUES_STATE_SET_ERROR = "COUNTERVALUES_STATE_ERROR_SET",
+  COUNTERVALUES_WIPE = "COUNTERVALUES_WIPE_STATE",
 }
 
 export type CountervaluesMarketcapFetchIdsPayload = void;
 export type CountervaluesMarketcapSetIdsPayload = string[];
 export type CountervaluesMarketcapSetLoadingPayload = boolean;
 export type CountervaluesMarketcapSetErrorPayload = string | null;
+export type CountervaluesStateSetPayload = CounterValuesState;
+export type CountervaluesStateSetPendingPayload = boolean;
+export type CountervaluesStateSetErrorPayload = Error;
 
 export type CountervaluesPayload =
   | CountervaluesMarketcapFetchIdsPayload
   | CountervaluesMarketcapSetIdsPayload
   | CountervaluesMarketcapSetLoadingPayload
-  | CountervaluesMarketcapSetErrorPayload;
+  | CountervaluesMarketcapSetErrorPayload
+  | CountervaluesStateSetPayload
+  | CountervaluesStateSetPendingPayload
+  | CountervaluesStateSetErrorPayload;
 
 // === NOTIFICATIONS ACTIONS ===
 

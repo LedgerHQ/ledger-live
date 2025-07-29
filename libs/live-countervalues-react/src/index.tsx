@@ -2,10 +2,8 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import api from "@ledgerhq/live-countervalues/api/index";
 import {
   calculate,
-  exportCountervalues,
   importCountervalues,
   inferTrackingPairForAccounts,
-  initialState,
   loadCountervalues,
   trackingPairForTopCoins,
 } from "@ledgerhq/live-countervalues/logic";
@@ -31,13 +29,29 @@ import React, {
   useState,
 } from "react";
 
-/** Bridge enabling platform-specific persistence of market-cap ids. */
+/**
+ * Bridge enabling platform-specific persistence of market-cap ids.
+ * @note: make sure that the object is memoized to avoid re-renders.
+ */
 export interface CountervaluesMarketcapBridge {
+  setError(message: string): void;
+  setIds(ids: string[]): void;
+  setLoading(loading: boolean): void;
   useIds(): string[];
   useLastUpdated(): number | undefined;
-  setLoading(loading: boolean): void;
-  setIds(ids: string[]): void;
-  setError(message: string): void;
+}
+
+/**
+ * Bridge enabling platform-specific persistence of countervalues state.
+ * @note: make sure that the object is memoized to avoid re-renders.
+ */
+export interface CountervaluesBridge {
+  setError(error: Error): void;
+  setPending(pending: boolean): void;
+  setState(state: CounterValuesState): void;
+  useError(): Error | null;
+  useState(): CounterValuesState;
+  wipe(): void;
 }
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
@@ -61,6 +75,7 @@ export type Polling = {
 export type Props = {
   children: React.ReactNode;
   userSettings: CountervaluesSettings;
+  bridge: CountervaluesBridge;
   // the time to wait before the first poll when app starts (allow things to render to not do all at boot time)
   pollInitDelay?: number;
   // the minimum time to wait before two automatic polls (then one that happen whatever network/appstate events)
@@ -70,6 +85,7 @@ export type Props = {
   savedState?: CounterValuesStateRaw;
 };
 
+// TODO: Initial context should be null
 const CountervaluesPollingContext = createContext<Polling>({
   wipe: () => {},
   poll: () => {},
@@ -87,10 +103,29 @@ const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
   marketCapBatchingAfterRank: 0,
 });
 
-const CountervaluesContext = createContext<CounterValuesState>(initialState);
+const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
+function useCountervaluesBridgeContext() {
+  const bridge = useContext(CountervaluesContext);
+  if (!bridge) {
+    throw new Error(
+      "'useCountervaluesBridgeContext' must be used within a 'CountervaluesProvider'",
+    );
+  }
+  return bridge;
+}
+
 const CountervaluesMarketcapBridgeContext = createContext<CountervaluesMarketcapBridge | null>(
   null,
 );
+function useCountervaluesMarketcapBridgeContext() {
+  const bridge = useContext(CountervaluesMarketcapBridgeContext);
+  if (!bridge) {
+    throw new Error(
+      "'useCountervaluesMarketcapBridgeContext' must be used within a 'CountervaluesMarketcapProvider'",
+    );
+  }
+  return bridge;
+}
 
 function trackingPairsHash(a: TrackingPair[]) {
   return a
@@ -99,8 +134,8 @@ function trackingPairsHash(a: TrackingPair[]) {
     .join("|");
 }
 
-const marketcapRefresh = 30 * 60000;
-const marketcapRefreshOnError = 60000;
+const MARKETCAP_REFRESH = 30 * 60000;
+const MARKETCAP_REFRESH_ON_ERROR = 60000;
 
 /** Provides market-cap ids via the supplied bridge. */
 export function CountervaluesMarketcapProvider({
@@ -117,21 +152,21 @@ export function CountervaluesMarketcapProvider({
     let timeout: ReturnType<typeof setTimeout> | null = null;
     const now = Date.now();
 
-    if (!lastUpdated || now - lastUpdated > marketcapRefresh) {
+    if (!lastUpdated || now - lastUpdated > MARKETCAP_REFRESH) {
       bridge.setLoading(true);
       api.fetchIdsSortedByMarketcap().then(
         fetchedIds => {
           bridge.setIds(fetchedIds);
-          timeout = setTimeout(() => forceUpdate(), marketcapRefresh);
+          timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH);
         },
         error => {
           log("countervalues", "error fetching marketcap ids " + error);
           bridge.setError(error.message);
-          timeout = setTimeout(() => forceUpdate(), marketcapRefreshOnError);
+          timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH_ON_ERROR);
         },
       );
     } else {
-      timeout = setTimeout(() => forceUpdate(), marketcapRefresh - (now - lastUpdated));
+      timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH - (now - lastUpdated));
     }
 
     return () => {
@@ -146,16 +181,6 @@ export function CountervaluesMarketcapProvider({
   );
 }
 
-function useCountervaluesMarketcapBridgeContext() {
-  const bridge = useContext(CountervaluesMarketcapBridgeContext);
-  if (!bridge) {
-    throw new Error(
-      "useCountervaluesMarketcapBridgeContext must be used within a CountervaluesMarketcapProvider",
-    );
-  }
-  return bridge;
-}
-
 /** Returns market-cap ids. */
 export function useMarketcapIds(): string[] {
   const bridge = useCountervaluesMarketcapBridgeContext();
@@ -168,17 +193,15 @@ export function useMarketcapIds(): string[] {
 export function CountervaluesProvider({
   children,
   userSettings,
+  bridge,
   pollInitDelay = 3 * 1000,
   debounceDelay = 1000,
   savedState,
 }: Props): ReactElement {
-  const autopollInterval = userSettings.refreshRate;
+  const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
-  const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
 
-  // TODO this is always using the initial value, doesn't react to changes.
   const marketcapIds = useMarketcapIds();
-  const { marketCapBatchingAfterRank } = userSettings;
 
   const batchStrategySolver = useMemo(
     () => ({
@@ -193,100 +216,85 @@ export function CountervaluesProvider({
 
   // flag used to trigger a loadCountervalues
   const [triggerLoad, setTriggerLoad] = useState(false);
-  // trigger poll only when userSettings changes. in a debounced way.
+
+  // trigger poll only when userSettings changes in a debounced way
   useEffect(() => {
     setTriggerLoad(true);
   }, [debouncedUserSettings]);
 
   // loadCountervalues logic
+  const currentState = bridge.useState();
+  const pending = "pending" in currentState ? Boolean(currentState.pending) : false;
+  const error = "error" in currentState ? currentState.error : null;
+
+  // loadCountervalues logic using bridge
   useEffect(() => {
     if (pending || !triggerLoad) return;
     setTriggerLoad(false);
-    dispatch({ type: "pending" });
+
+    bridge.setPending(true);
     loadCountervalues(
-      state,
+      currentState,
       userSettings,
       batchStrategySolver,
       userSettings.granularitiesRates,
     ).then(
-      newState => dispatch({ type: "success", payload: newState }),
-      e => dispatch({ type: "error", payload: e }),
+      s => {
+        bridge.setState(s);
+        bridge.setPending(false);
+      },
+      e => {
+        bridge.setError(e);
+        bridge.setPending(false);
+      },
     );
-  }, [pending, state, userSettings, triggerLoad, batchStrategySolver]);
+  }, [pending, currentState, userSettings, triggerLoad, batchStrategySolver, bridge]);
 
   // save the state when it changes
   useEffect(() => {
     if (!savedState?.status || !Object.keys(savedState.status).length) return;
-    dispatch({
-      type: "setCounterValueState",
-      payload: importCountervalues(savedState, userSettings),
-    });
-  }, [savedState, userSettings]);
+    bridge.setState(importCountervalues(savedState, userSettings));
+  }, [bridge, savedState, userSettings]);
 
-  // manage the auto polling loop and the interface for user land to trigger a reload
+  // manage the auto polling loop
   const [isPolling, setIsPolling] = useState(true);
   useEffect(() => {
     if (!isPolling) return;
     let pollingTimeout: ReturnType<typeof setTimeout>;
     function pollingLoop() {
       setTriggerLoad(true);
-      pollingTimeout = setTimeout(pollingLoop, autopollInterval);
+      pollingTimeout = setTimeout(pollingLoop, refreshRate);
     }
     pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
     return () => clearTimeout(pollingTimeout);
-  }, [autopollInterval, pollInitDelay, isPolling]);
+  }, [refreshRate, pollInitDelay, isPolling]);
 
   const polling = useMemo<Polling>(
     () => ({
-      wipe: () => dispatch({ type: "wipe" }),
+      wipe: () => bridge.wipe(),
       poll: () => setTriggerLoad(true),
       start: () => setIsPolling(true),
       stop: () => setIsPolling(false),
       pending,
-      error,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      error: error as Error | null | undefined,
     }),
-    [pending, error],
+    [bridge, error, pending],
   );
 
   return (
     <CountervaluesPollingContext.Provider value={polling}>
       <CountervaluesUserSettingsContext.Provider value={userSettings}>
-        <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
+        <CountervaluesContext.Provider value={bridge}>{children}</CountervaluesContext.Provider>
       </CountervaluesUserSettingsContext.Provider>
     </CountervaluesPollingContext.Provider>
   );
 }
 
-type Action =
-  | { type: "success"; payload: CounterValuesState }
-  | { type: "error"; payload: Error }
-  | { type: "pending" }
-  | { type: "wipe" }
-  | { type: "setCounterValueState"; payload: CounterValuesState };
-
-type FetchState = { state: CounterValuesState; pending: boolean; error?: Error };
-const initialFetchState: FetchState = { state: initialState, pending: false };
-
-function fetchReducer(state: FetchState, action: Action): FetchState {
-  switch (action.type) {
-    case "success":
-      return { state: action.payload, pending: false, error: undefined };
-    case "error":
-      return { ...state, pending: false, error: action.payload };
-    case "pending":
-      return { ...state, pending: true, error: undefined };
-    case "wipe":
-      return { state: initialState, pending: false, error: undefined };
-    case "setCounterValueState":
-      return { ...state, state: action.payload };
-    default:
-      return state;
-  }
-}
-
 /** Returns the full countervalues state. */
 export function useCountervaluesState(): CounterValuesState {
-  return useContext(CountervaluesContext);
+  const bridge = useCountervaluesBridgeContext();
+  return bridge.useState();
 }
 
 // allows consumer to access the countervalues polling control object
@@ -297,12 +305,6 @@ export function useCountervaluesPolling(): Polling {
 // allows consumer to access the user settings that was used to fetch the countervalues
 export function useCountervaluesUserSettingsContext(): CountervaluesSettings {
   return useContext(CountervaluesUserSettingsContext);
-}
-
-// provides an export of the countervalues state
-export function useCountervaluesExport(): CounterValuesStateRaw {
-  const state = useCountervaluesState();
-  return useMemo(() => exportCountervalues(state), [state]);
 }
 
 // provides a way to calculate a countervalue from a value

@@ -1,6 +1,6 @@
 import {
+  CountervaluesBridge,
   CountervaluesProvider,
-  useCountervaluesExport,
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
@@ -9,9 +9,22 @@ import {
   CounterValuesStateRaw,
   RateMapRaw,
 } from "@ledgerhq/live-countervalues/types";
-import React, { useEffect } from "react";
+import { flow } from "lodash/fp";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { setKey } from "~/renderer/storage";
+import {
+  setCountervaluesError,
+  setCountervaluesPending,
+  setCountervaluesState,
+  wipeCountervalues,
+} from "../actions/countervalues";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
+import {
+  useCountervaluesError,
+  useCountervaluesExport,
+  useCountervaluesState,
+} from "../reducers/countervalues";
 
 export function CountervaluesManagedProvider({
   children,
@@ -21,9 +34,22 @@ export function CountervaluesManagedProvider({
   initialState: CounterValuesStateRaw;
 }) {
   const userSettings = useCalculateCountervaluesUserSettings();
+  const dispatch = useDispatch();
+
+  const bridge = useMemo(
+    (): CountervaluesBridge => ({
+      setError: flow(setCountervaluesError, dispatch),
+      setPending: flow(setCountervaluesPending, dispatch),
+      setState: flow(setCountervaluesState, dispatch),
+      useState: useCountervaluesState,
+      useError: useCountervaluesError,
+      wipe: flow(wipeCountervalues, dispatch),
+    }),
+    [dispatch],
+  );
 
   return (
-    <CountervaluesProvider userSettings={userSettings} savedState={initialState}>
+    <CountervaluesProvider bridge={bridge} userSettings={userSettings} savedState={initialState}>
       <CountervaluesManager userSettings={userSettings}>{children}</CountervaluesManager>
     </CountervaluesProvider>
   );
@@ -38,11 +64,12 @@ function CountervaluesManager({
 }) {
   useCacheManager(userSettings);
   usePollingManager();
-  return <>{children}</>;
+  return children;
 }
 
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();
+
   useEffect(() => {
     if (!Object.keys(status).length) return;
     const ids = userSettings.trackingPairs.map(pairId);
@@ -62,6 +89,7 @@ function useCacheManager(userSettings: CountervaluesSettings) {
     });
   }, [state, userSettings, status]);
 }
+
 function usePollingManager() {
   const { start, stop } = useCountervaluesPolling();
   useEffect(() => {
