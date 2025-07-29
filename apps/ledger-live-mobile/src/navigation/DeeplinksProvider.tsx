@@ -21,7 +21,7 @@ import { ScreenName, NavigatorName } from "~/const";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { Writeable } from "~/types/helpers";
-import { lightTheme, darkTheme, Theme } from "../colors";
+import { lightTheme, darkTheme, CustomTheme } from "../colors";
 import { track } from "~/analytics";
 import {
   makeSetEarnInfoModalAction,
@@ -37,7 +37,7 @@ import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import { viewNamePredicate } from "~/datadog";
 
 const themes: {
-  [key: string]: Theme;
+  [key: string]: CustomTheme;
 } = {
   light: lightTheme,
   dark: darkTheme,
@@ -215,7 +215,7 @@ const linkingOptions = () => ({
           },
 
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.SettingsScreen],
+            initialRouteName: ScreenName.SettingsScreen,
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
@@ -401,7 +401,6 @@ export const DeeplinksProvider = ({
                         },
                       }),
                       [NavigatorName.Main]: {
-                        initialRouteName: ScreenName.Portfolio,
                         screens: {
                           /**
                            * ie: "ledgerlive://portfolio" -> will redirect to the portfolio

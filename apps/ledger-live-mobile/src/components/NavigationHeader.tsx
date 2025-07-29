@@ -8,7 +8,7 @@ import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButton";
 
-type NavigationHeaderProps = StackHeaderProps & {
+export type NavigationHeaderProps = StackHeaderProps & {
   containerProps?: FlexBoxProps;
   hideBack?: boolean;
   onPressClose?: () => void;

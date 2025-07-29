@@ -3,7 +3,12 @@ import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import styled, { useTheme } from "styled-components/native";
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  type SharedValue,
+} from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import Delta from "./Delta";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
@@ -26,7 +31,7 @@ type Props = {
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  currentPositionY: Animated.SharedValue<number>;
+  currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
   onTouchEndGraph?: (event: GestureResponderEvent) => void;
 };

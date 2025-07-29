@@ -1,12 +1,8 @@
 import React, { useMemo } from "react";
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/core/lib/typescript/src/types";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
@@ -122,7 +118,6 @@ export default function BaseNavigator() {
       <Stack.Navigator
         screenOptions={{
           ...stackNavigationConfig,
-          ...TransitionPresets.DefaultTransition,
         }}
       >
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
@@ -131,7 +126,7 @@ export default function BaseNavigator() {
           component={BuyDeviceNavigator}
           options={{
             headerShown: false,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            presentation: "modal",
           }}
         />
         <Stack.Screen
@@ -145,14 +140,12 @@ export default function BaseNavigator() {
           options={{
             headerShown: false,
             presentation: "transparentModal",
-            headerMode: undefined,
             cardStyle: { opacity: 1 },
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
             headerBackTitleVisible: false,
             title: "",
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
         <Stack.Screen
@@ -351,7 +344,6 @@ export default function BaseNavigator() {
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
                 headerRight: () => <NavigationHeaderCloseButton />,
-                cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
               };
             }
 
@@ -369,7 +361,6 @@ export default function BaseNavigator() {
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
               headerRight: () => null,
-              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
             };
           }}
         />
@@ -399,7 +390,6 @@ export default function BaseNavigator() {
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
-            ...TransitionPresets.ModalPresentationIOS,
           }}
         />
         <Stack.Screen
@@ -418,7 +408,6 @@ export default function BaseNavigator() {
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
         <Stack.Screen

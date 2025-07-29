@@ -33,6 +33,12 @@ local.properties
 *.keystore
 !debug.keystore
 
+# Eclipse Android
+.project
+.settings/
+.classpath
+.factorypath
+
 # node.js
 node_modules/
 npm-debug.log

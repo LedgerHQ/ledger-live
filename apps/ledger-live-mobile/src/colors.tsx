@@ -24,13 +24,32 @@ export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 export function withTheme<P>(Component: React.ComponentType<P>) {
   return (
     props: Omit<P, "colors"> & {
-      colors?: Partial<Theme["colors"] | DefaultTheme["colors"]>;
+      colors?: Partial<CustomTheme["colors"] | DefaultTheme["colors"]>;
     },
   ) => {
     const { colors } = useTheme();
     return <Component colors={colors} {...(props as P)} />;
   };
 }
+
+const fonts = {
+  regular: {
+    fontFamily: "Inter",
+    fontWeight: "regular",
+  },
+  medium: {
+    fontFamily: "Inter",
+    fontWeight: "medium",
+  },
+  bold: {
+    fontFamily: "Inter",
+    fontWeight: "bold",
+  },
+  heavy: {
+    fontFamily: "Inter",
+    fontWeight: "black",
+  },
+};
 
 export const lightTheme = {
   dark: false,
@@ -41,6 +60,11 @@ export const lightTheme = {
     text: "rgb(28, 28, 30)",
     border: "rgb(199, 199, 204)",
     notification: "rgb(255, 69, 58)",
+    onPrimary: "#FFFFFF",
+    onBackground: "rgb(28, 28, 30)",
+    onCard: "rgb(28, 28, 30)",
+    onBorder: "rgb(28, 28, 30)",
+    onNotification: "#FFFFFF",
     contrastBackground: "#142533",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
@@ -86,6 +110,7 @@ export const lightTheme = {
     /** SKELETON */
     skeletonBg: "#E9EAEB",
   },
+  fonts,
 };
 
 export const darkTheme = {
@@ -97,6 +122,11 @@ export const darkTheme = {
     text: "#FFFFFF",
     border: "rgba(255, 255, 255, 0.1)",
     notification: "rgb(255, 69, 58)",
+    onPrimary: "#000000",
+    onBackground: "#FFFFFF",
+    onCard: "#FFFFFF",
+    onBorder: "#FFFFFF",
+    onNotification: "#000000",
     contrastBackground: "#223544",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
@@ -142,9 +172,10 @@ export const darkTheme = {
     /** SKELETON */
     skeletonBg: "#2a2d33",
   },
+  fonts,
 };
 
-export type Theme = typeof lightTheme;
+export type CustomTheme = typeof lightTheme;
 
 declare module "@react-navigation/native" {
   export type T = typeof lightTheme;

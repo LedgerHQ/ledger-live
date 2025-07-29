@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { CardStyleInterpolators, StackNavigationOptions } from "@react-navigation/stack";
+import { StackNavigationOptions } from "@react-navigation/stack";
 import BuyDeviceNavigator from "~/components/RootNavigator/BuyDeviceNavigator";
 import {
   hasCompletedOnboardingSelector,
@@ -28,14 +28,12 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
       options: {
         headerShown: false,
         presentation: "transparentModal",
-        headerMode: "screen",
         cardStyle: { opacity: 1 },
         gestureEnabled: true,
         headerTitle: () => null,
         headerRight: () => null,
         headerBackTitleVisible: false,
         title: undefined,
-        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       },
     };
   }
@@ -43,7 +41,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
     component: BuyDeviceNavigator,
     options: {
       headerShown: false,
-      cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+      presentation: "modal",
     },
   };
 };
