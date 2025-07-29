@@ -18,6 +18,7 @@ import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { NavigatorName, ScreenName } from "~/const";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -63,7 +64,15 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
+      // The navigation must be popped to to avoid returning to this screen when pressing back on device selection
       navigation.popToTop();
+      // The navigation goes to an intermediary blank screen if not directly navigated to correct screen after pop
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingDeviceSelection,
+        },
+      });
     }
   }, [currentStep, navigation]);
 
