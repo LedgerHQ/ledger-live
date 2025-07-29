@@ -21,7 +21,7 @@ import {
   lastBlock,
   listOperations,
   getBalance,
-} from "../logic/";
+} from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
@@ -31,8 +31,10 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
       broadcast(currency, { signature: tx, broadcastConfig }),
     combine,
-    craftTransaction: (transactionIntent: TransactionIntent<MemoNotSupported>): Promise<string> =>
-      craftTransaction(currency, { transactionIntent }),
+    craftTransaction: (
+      transactionIntent: TransactionIntent<MemoNotSupported>,
+      customFees?: FeeEstimation,
+    ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
     ): Promise<FeeEstimation> => estimate(currency, transactionIntent),
