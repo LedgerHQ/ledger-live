@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Flex, Button } from "@ledgerhq/native-ui";
 import TextInput from "~/components/TextInput";
-import { pushToast } from "~/actions/toast";
-import { useDispatch } from "react-redux";
+import { useToastsActions } from "~/actions/toast";
 
 /**
  * Debugging screen to test snackbars:
@@ -15,33 +14,29 @@ import { useDispatch } from "react-redux";
 export default function DebugSnackbars() {
   const [textInput, setTextInput] = useState("Example of a snackbar 🥨");
   const [incrementedId, setIncrementedId] = useState(0);
-  const dispatch = useDispatch();
+  const { pushToast } = useToastsActions();
 
   const pushARandomIdToast = useCallback(() => {
     const id = `toast-${incrementedId}`;
 
-    dispatch(
-      pushToast({
-        id,
-        type: "success",
-        icon: "success",
-        title: `${id}: ${textInput}`,
-      }),
-    );
+    pushToast({
+      id,
+      type: "success",
+      icon: "success",
+      title: `${id}: ${textInput}`,
+    });
 
     setIncrementedId(prev => prev + 1);
-  }, [incrementedId, dispatch, textInput]);
+  }, [pushToast, textInput, incrementedId]);
 
   const pushAToast = useCallback(() => {
-    dispatch(
-      pushToast({
-        id: "debug_toast",
-        type: "success",
-        icon: "success",
-        title: textInput,
-      }),
-    );
-  }, [dispatch, textInput]);
+    pushToast({
+      id: "debug_toast",
+      type: "success",
+      icon: "success",
+      title: textInput,
+    });
+  }, [pushToast, textInput]);
 
   return (
     <Flex flex={1}>

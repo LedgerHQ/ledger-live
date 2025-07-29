@@ -16,8 +16,7 @@ import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useDispatch } from "react-redux";
-import { pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -54,8 +53,8 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     referral = undefined,
   } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
+  const { pushToast } = useToastsActions();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
@@ -113,15 +112,13 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       setDeviceHasImage(false);
     }
     wrappedOnClose();
-    dispatch(
-      pushToast({
-        id: "customImage.remove",
-        type: "success",
-        icon: "success",
-        title: t("customImage.toastRemove"),
-      }),
-    );
-  }, [setDeviceHasImage, wrappedOnClose, dispatch, t]);
+    pushToast({
+      id: "customImage.remove",
+      type: "success",
+      icon: "success",
+      title: t("customImage.toastRemove"),
+    });
+  }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
 
   const onError = useCallback(
     (error: Error) => {

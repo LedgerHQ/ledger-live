@@ -6,13 +6,14 @@ import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnbo
 import { useTranslation } from "react-i18next";
 import { track } from "~/analytics";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 export function useCompleteActionCallback() {
   const dispatch = useDispatch();
   const { getPostOnboardingAction } = useContext(PostOnboardingContext);
   const { deviceModelId } = usePostOnboardingHubState();
   const { t } = useTranslation();
+  const { pushToast } = useToastsActions();
 
   return useCallback(
     (actionId: PostOnboardingActionId) => {
@@ -25,15 +26,13 @@ export function useCompleteActionCallback() {
         flow: "post-onboarding",
       });
       if (!action?.actionCompletedPopupLabel) return;
-      dispatch(
-        pushToast({
-          id: actionId,
-          type: "success",
-          icon: "success",
-          title: t(action.actionCompletedPopupLabel),
-        }),
-      );
+      pushToast({
+        id: actionId,
+        type: "success",
+        icon: "success",
+        title: t(action.actionCompletedPopupLabel),
+      });
     },
-    [dispatch, getPostOnboardingAction, t, deviceModelId],
+    [dispatch, getPostOnboardingAction, pushToast, t, deviceModelId],
   );
 }

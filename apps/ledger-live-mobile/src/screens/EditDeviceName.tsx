@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
@@ -20,7 +20,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -44,7 +44,6 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const textInputRef = useRef<NativeTextInput | null>(null);
 
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
   const maxDeviceName = useMemo(
     () =>
@@ -60,6 +59,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
   const request = useMemo(() => ({ name }), [name]);
+  const { pushToast } = useToastsActions();
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -91,17 +91,15 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     saveBleDeviceName({ deviceId: device.deviceId, name });
     onNameChange(name);
 
-    dispatch(
-      pushToast({
-        id: "rename-device-success",
-        type: "success",
-        icon: "success",
-        title: t("EditDeviceName.success", { deviceName: name }),
-      }),
-    );
+    pushToast({
+      id: "rename-device-success",
+      type: "success",
+      icon: "success",
+      title: t("EditDeviceName.success", { deviceName: name }),
+    });
 
     navigation.goBack();
-  }, [device.deviceId, dispatch, name, navigation, onNameChange, saveBleDeviceName, t]);
+  }, [device.deviceId, name, navigation, onNameChange, pushToast, saveBleDeviceName, t]);
 
   const onClose = useCallback(() => {
     if (completed) {

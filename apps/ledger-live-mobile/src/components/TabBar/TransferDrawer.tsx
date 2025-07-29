@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { Linking, StyleProp, ViewStyle } from "react-native";
@@ -24,7 +24,7 @@ import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFla
 import { EntryOf } from "~/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { dismissToast, pushToast } from "~/actions/toast";
+import { useToastsActions } from "~/actions/toast";
 
 type ButtonItem = {
   title: string;
@@ -47,7 +47,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   } = useQuickActions();
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { pushToast, dismissToast } = useToastsActions();
 
   const { page } = useAnalytics();
 
@@ -119,15 +119,13 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
-          dispatch(
-            pushToast({
-              id: PTX_SERVICES_TOAST_ID,
-              type: "success",
-              title: t("notifications.ptxServices.toast.title"),
-              icon: "info",
-            }),
-          );
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
         }
       },
       disabled: BUY.disabled,
@@ -146,15 +144,13 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
-          dispatch(
-            pushToast({
-              id: PTX_SERVICES_TOAST_ID,
-              type: "success",
-              title: t("notifications.ptxServices.toast.title"),
-              icon: "info",
-            }),
-          );
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
         }
       },
       disabled: SELL.disabled,
@@ -186,15 +182,13 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
-          dispatch(dismissToast(PTX_SERVICES_TOAST_ID));
-          dispatch(
-            pushToast({
-              id: PTX_SERVICES_TOAST_ID,
-              type: "success",
-              title: t("notifications.ptxServices.toast.title"),
-              icon: "info",
-            }),
-          );
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
         }
       },
       disabled: SWAP.disabled,
