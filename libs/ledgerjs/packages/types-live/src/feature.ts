@@ -702,14 +702,17 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
-type IgnoredOSUpdates = { [M in DeviceModelId]?: Array<string> };
+/**
+ * Array of firmware versions that are ignored for the given device model
+ */
+export type IgnoredOSUpdates = Array<string>;
+
+export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
+
+export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdates };
 
 export type Feature_OnboardingIgnoredOSUpdates = Feature<{
-  ios?: IgnoredOSUpdates;
-  android?: IgnoredOSUpdates;
-  macos?: IgnoredOSUpdates;
-  windows?: IgnoredOSUpdates;
-  linux?: IgnoredOSUpdates;
+  [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
 
 /**

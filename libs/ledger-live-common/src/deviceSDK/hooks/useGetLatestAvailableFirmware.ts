@@ -6,11 +6,7 @@ import {
   initialState,
 } from "../actions/getLatestAvailableFirmware";
 import { filterIgnoredFirmwareUpdates } from "./filterIgnoredFirmwareUpdates";
-
-/**
- * Array of firmware versions that are ignored for the given device model
- */
-type IgnoredOSUpdates = Array<string>;
+import type { IgnoredOSUpdates } from "@ledgerhq/types-live";
 
 export type UseGetLatestAvailableFirmwareArgs = {
   getLatestAvailableFirmwareAction?: typeof defaultGetLatestAvailableFirmwareAction;
