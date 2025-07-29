@@ -1,6 +1,11 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import { mockedAccounts, mockedFF, ModularDrawerSharedNavigator } from "./shared";
+import {
+  mockedAccounts,
+  mockedFF,
+  ModularDrawerSharedNavigator,
+  WITHOUT_ACCOUNT_SELECTION,
+} from "./shared";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { INITIAL_STATE } from "~/reducers/settings";
 import { State } from "~/reducers/types";
@@ -32,7 +37,7 @@ describe("ModularDrawer modules integration", () => {
       },
     );
 
-    await user.press(getByText(/open drawer/i));
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     await user.press(getByText(/ethereum/i));
     expect(getByText(/2 accounts \(detected\)/i)).toBeVisible();
     expect(getAllByText(/1 account \(detected\)/i).length).toBe(2);
@@ -40,7 +45,7 @@ describe("ModularDrawer modules integration", () => {
 
   it("should not display the number of accounts if the configuration is not provided", async () => {
     const { getByText, queryByText, user } = render(<ModularDrawerSharedNavigator />);
-    await user.press(getByText(/open drawer/i));
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     await user.press(getByText(/ethereum/i));
     expect(queryByText(/2 accounts \(detected\)/i)).toBeNull();
   });
