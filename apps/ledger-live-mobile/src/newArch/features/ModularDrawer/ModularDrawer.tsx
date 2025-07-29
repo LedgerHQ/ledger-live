@@ -76,6 +76,7 @@ export function ModularDrawer({
 
   const {
     setDefaultSearchValue,
+    asset,
     handleAsset,
     handleNetwork,
     handleBackButton,
@@ -84,7 +85,6 @@ export function ModularDrawer({
     availableNetworks,
     defaultSearchValue,
     shouldShowBackButton,
-    asset,
     navigationStepManager,
   } = useModularDrawerState({
     currenciesByProvider,
@@ -131,6 +131,8 @@ export function ModularDrawer({
           accounts$,
           asset,
           onAccountSelected,
+          flow,
+          source,
         }}
         isReadyToBeDisplayed={isReadyToBeDisplayed}
       />

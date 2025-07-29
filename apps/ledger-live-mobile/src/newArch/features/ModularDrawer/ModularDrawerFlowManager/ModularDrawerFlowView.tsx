@@ -9,6 +9,7 @@ import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
 import SkeletonList from "../components/Skeleton/SkeletonList";
 import useScreenTransition from "./useScreenTransition";
+import AccountSelection from "../screens/AccountSelection";
 
 export function ModularDrawerFlowView({
   navigationStepViewModel,
@@ -16,6 +17,7 @@ export function ModularDrawerFlowView({
   networksViewModel,
   accountsViewModel,
   isReadyToBeDisplayed,
+  accountsViewModel,
 }: ModularDrawerFlowProps) {
   const { currentStep } = navigationStepViewModel;
 
