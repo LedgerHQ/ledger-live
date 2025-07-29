@@ -125,6 +125,25 @@ export type BlePayload =
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
 
+// === COUNTERVALUES ACTIONS ===
+
+export enum CountervaluesActionTypes {
+  SET_COUNTERVALUES_MARKETCAP_IDS = "SET_COUNTERVALUES_MARKETCAP_IDS",
+  SET_COUNTERVALUES_MARKETCAP_LOADING = "SET_COUNTERVALUES_MARKETCAP_LOADING",
+  SET_COUNTERVALUES_MARKETCAP_ERROR = "SET_COUNTERVALUES_MARKETCAP_ERROR",
+}
+
+export type CountervaluesMarketcapFetchIdsPayload = void;
+export type CountervaluesMarketcapSetIdsPayload = string[];
+export type CountervaluesMarketcapSetLoadingPayload = boolean;
+export type CountervaluesMarketcapSetErrorPayload = string | null;
+
+export type CountervaluesPayload =
+  | CountervaluesMarketcapFetchIdsPayload
+  | CountervaluesMarketcapSetIdsPayload
+  | CountervaluesMarketcapSetLoadingPayload
+  | CountervaluesMarketcapSetErrorPayload;
+
 // === NOTIFICATIONS ACTIONS ===
 
 export enum NotificationsActionTypes {

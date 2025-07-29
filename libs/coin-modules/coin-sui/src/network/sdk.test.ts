@@ -459,6 +459,58 @@ describe("SDK Functions", () => {
     expect(operation.value).toEqual(new BigNumber("500000"));
   });
 
+  test("transactionToOp should map token transaction to operation", () => {
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+
+    // Create a token transaction
+    const tokenTx = {
+      ...mockTransaction,
+      balanceChanges: [
+        {
+          owner: {
+            AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+          },
+          coinType: "0x123::test::TOKEN",
+          amount: "-500000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: "0x123::test::TOKEN",
+          amount: "500000",
+        },
+        {
+          owner: {
+            AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+          },
+          coinType: sdk.DEFAULT_COIN_TYPE,
+          amount: "-1000000",
+        },
+      ],
+    };
+
+    const operation = sdk.transactionToOp(address, tokenTx as SuiTransactionBlockResponse);
+    expect(operation.id).toEqual("DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt");
+    expect(operation.type).toEqual("IN");
+    expect(operation.senders).toEqual([
+      "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+    ]);
+    expect(operation.recipients).toEqual([
+      "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+    ]);
+    expect(operation.value).toEqual(500000n);
+    expect(operation.asset).toEqual({ type: "token", coinType: "0x123::test::TOKEN" });
+    expect(operation.memo).toBeUndefined();
+    expect(operation.details).toBeUndefined();
+    expect(operation.tx).toMatchObject({
+      hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
+      block: {},
+      fees: 1009880n,
+      date: new Date("2025-03-18T10:40:54.878Z"),
+    });
+  });
+
   test("getOperations should fetch operations", async () => {
     const accountId = "mockAccountId";
     const addr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";

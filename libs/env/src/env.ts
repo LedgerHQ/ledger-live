@@ -656,6 +656,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "API port for speculos",
   },
+  SPECULOS_DEVICE: {
+    def: "",
+    parser: stringParser,
+    desc: "Device model id for speculos",
+  },
   SPECULOS_PID_OFFSET: {
     def: 0,
     parser: intParser,

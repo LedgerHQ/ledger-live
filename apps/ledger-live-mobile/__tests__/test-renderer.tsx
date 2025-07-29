@@ -20,6 +20,7 @@ import { State } from "~/reducers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
+import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
@@ -39,9 +40,11 @@ import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDraw
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
-const initialState = {
+const initialState: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
+  countervalues: COUNTERVALUES_INITIAL_STATE,
   settings: SETTINGS_INITIAL_STATE,
   appstate: APP_STATE_INITIAL_STATE,
   ble: BLE_INITIAL_STATE,
@@ -124,9 +127,11 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <QueuedDrawersContextProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          <BottomSheetModalProvider>
+            <QueuedDrawersContextProvider>
+              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+            </QueuedDrawersContextProvider>
+          </BottomSheetModalProvider>
         </I18nextProvider>
       </StyleProvider>
     );

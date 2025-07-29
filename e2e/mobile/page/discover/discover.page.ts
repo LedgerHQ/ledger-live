@@ -15,7 +15,7 @@ export default class DiscoverPage {
     { name: "Bitrefill", url: " https://bitrefill.com" },
     { name: "Zerion", url: " https://zerion.io/" },
     { name: "Rainbow", url: " https://rainbow.me" },
-    { name: "POAP", url: " https://app.poap.xyz/" },
+    { name: "POAP", url: " https://app.poap.xyz" },
     { name: "Yearn", url: " https://beta.yearn.fi" },
     { name: "ChangeNOW", url: " https://changenow.io/" },
     { name: "Transak", url: " https://transak.com" },

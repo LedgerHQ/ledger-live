@@ -937,6 +937,9 @@ importers:
       '@formatjs/intl-relativetimeformat':
         specifier: 11.2.12
         version: 11.2.12
+      '@gorhom/bottom-sheet':
+        specifier: 5.1.6
+        version: 5.1.6(@types/react@18.2.73)(react-native-gesture-handler@2.22.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.16.7(@babel/core@7.27.1)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
@@ -13684,6 +13687,27 @@ packages:
   '@google-cloud/run@1.5.1':
     resolution: {integrity: sha512-4SHyaRMOIHc/EwaiDbi6mtBsTxBmxQTN4VHe3Yp7EHVfodSIY8YJThya3YJkGR1eayyWGmfYFoW6qiepLEmP2g==}
     engines: {node: '>=14.0.0'}
+
+  '@gorhom/bottom-sheet@5.1.6':
+    resolution: {integrity: sha512-0b5tQj4fTaZAjST1PnkCp0p7d8iRqMezibTcqc8Kkn3N23Vn6upORNTD1fH0bLfwRt6e0WnZ7DjAmq315lrcKQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-native': '*'
+      react: '*'
+      react-native: '*'
+      react-native-gesture-handler: '>=2.16.1'
+      react-native-reanimated: '>=3.16.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-native':
+        optional: true
+
+  '@gorhom/portal@1.0.14':
+    resolution: {integrity: sha512-MXyL4xvCjmgaORr/rtryDNFy3kU4qUbKlwtQqqsygd0xX3mhKjOLn6mQK8wfu0RkoE0pBE0nAasRoHua+/QZ7A==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   '@gql.tada/cli-utils@1.6.3':
     resolution: {integrity: sha512-jFFSY8OxYeBxdKi58UzeMXG1tdm4FVjXa8WHIi66Gzu9JWtCE6mqom3a8xkmSw+mVaybFW5EN2WXf1WztJVNyQ==}
@@ -42041,6 +42065,23 @@ snapshots:
       - encoding
       - supports-color
 
+  '@gorhom/bottom-sheet@5.1.6(@types/react@18.2.73)(react-native-gesture-handler@2.22.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native-reanimated@3.16.7(@babel/core@7.27.1)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@gorhom/portal': 1.0.14(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      invariant: 2.2.4
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+      react-native-gesture-handler: 2.22.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-reanimated: 3.16.7(@babel/core@7.27.1)(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.2.73
+
+  '@gorhom/portal@1.0.14(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      nanoid: 3.3.8
+      react: 18.3.1
+      react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+
   '@gql.tada/cli-utils@1.6.3(graphql@16.10.0)(typescript@5.4.3)':
     dependencies:
       '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)(typescript@5.4.3)
@@ -46001,7 +46042,7 @@ snapshots:
 
   '@react-navigation/routers@6.1.9':
     dependencies:
-      nanoid: 3.3.7
+      nanoid: 3.3.8
 
   '@react-navigation/stack@6.3.29(hlfq57d3wpdfaf7ueholl7t65y)':
     dependencies:
@@ -66921,7 +66962,7 @@ snapshots:
 
   postcss@8.4.38:
     dependencies:
-      nanoid: 3.3.7
+      nanoid: 3.3.8
       picocolors: 1.1.1
       source-map-js: 1.2.0
 

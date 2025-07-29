@@ -6,7 +6,10 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { AccountTuple, getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
+import {
+  AccountTuple,
+  getAccountTuplesForCurrency,
+} from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";

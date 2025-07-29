@@ -21,6 +21,7 @@ const transformIncludePatterns = [
   "react-native-qrcode-svg",
   "react-native-video",
   "ky",
+  "@gorhom/bottom-sheet",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

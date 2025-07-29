@@ -20,7 +20,7 @@ describe("ModularDrawer integration", () => {
     await user.press(getByText(/ethereum/i));
     expect(getByText(/select network/i)).toBeVisible();
 
-    await user.press(getByTestId("modal-back-button"));
+    await user.press(getByTestId("drawer-back-button"));
     expect(getByText(/select asset/i)).toBeVisible();
 
     await user.press(getByText(/ethereum/i));
@@ -64,5 +64,22 @@ describe("ModularDrawer integration", () => {
     });
 
     expect(getByText(/arbitrum/i)).toBeVisible();
+  });
+
+  it("should show the empty state when no assets are found", async () => {
+    const { getByText, queryByText, getByPlaceholderText, user } = render(
+      <ModularDrawerSharedNavigator />,
+    );
+
+    await user.press(getByText(/open drawer/i));
+
+    const searchInput = getByPlaceholderText(/search/i);
+    expect(searchInput).toBeVisible();
+
+    await user.type(searchInput, "ttttttt");
+
+    await waitFor(() => {
+      expect(queryByText(/no assets found/i)).toBeVisible();
+    });
   });
 });

@@ -37,8 +37,7 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  // TODO: unskip when explorer is fixed on backend side
-  it.skip("scenario polygon", async () => {
+  it("scenario polygon", async () => {
     try {
       await executeScenario(scenarioPolygon);
     } catch (e) {

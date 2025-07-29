@@ -25,7 +25,7 @@ function ModularDrawerScreenDebug() {
   } as const;
 
   return (
-    <Flex flexDirection="column" rowGap={4} px={6}>
+    <Flex flexDirection="column" rowGap={4} px={6} flex={1}>
       <Button size="small" type="main" title="Open MAD Drawer" onPress={handleToggleDrawer} />
 
       <ModularDrawer

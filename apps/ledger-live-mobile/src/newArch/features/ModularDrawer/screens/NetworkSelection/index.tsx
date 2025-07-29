@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NetworkList } from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import {
+  AssetType,
+  NetworkItem,
+  Network as NetworkType,
+} from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -9,6 +13,9 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import orderBy from "lodash/orderBy";
+import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -48,8 +55,19 @@ const NetworkSelection = ({
     }
   };
 
+  const transformNetworks = createNetworkConfigurationHook({
+    networksConfig: networksConfiguration,
+    accounts$: undefined,
+  });
+
+  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
+
+  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
+
   return (
-    <>
+    <Flex flexGrow={1}>
       <TrackDrawerScreen
         page={EVENTS_NAME.MODULAR_NETWORK_SELECTION}
         flow={flow}
@@ -57,10 +75,15 @@ const NetworkSelection = ({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
-      <Flex>
-        <NetworkList networks={availableNetworks} onClick={handleNetworkClick} />
-      </Flex>
-    </>
+      <BottomSheetFlatList
+        scrollEnabled={true}
+        data={formattedNetworks}
+        keyExtractor={keyExtractor}
+        renderItem={({ item }: { item: NetworkType }) => (
+          <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
+        )}
+      />
+    </Flex>
   );
 };
 

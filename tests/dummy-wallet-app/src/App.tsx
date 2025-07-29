@@ -140,6 +140,27 @@ export default function App() {
     }
   };
 
+  const handleTransactionSignRawSolana = async () => {
+    try {
+      const transaction = {
+        family: "solana" as const,
+        amount: new BigNumber(0),
+        recipient: "",
+        model: { kind: "transfer" as const, uiState: {} },
+        raw: data,
+      };
+      const result = await client?.transaction.sign(accountId, transaction);
+      if (result) {
+        const resTransaction = VersionedTransaction.deserialize(result);
+        setRes(resTransaction);
+      } else {
+        setRes("no response");
+      }
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const handleTransactionSignAndBroadcast = async () => {
     try {
       const transaction = {
@@ -297,6 +318,12 @@ export default function App() {
           </button>
           <button onClick={handleTransactionSignSolana} data-testid="transaction-sign-solana">
             transaction.sign solana
+          </button>
+          <button
+            onClick={handleTransactionSignRawSolana}
+            data-testid="transaction-sign-raw-solana"
+          >
+            transaction.sign raw solana
           </button>
           <button
             onClick={handleTransactionSignAndBroadcast}

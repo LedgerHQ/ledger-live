@@ -19,7 +19,7 @@ type NetworkItemProps = Network & {
 
 const Wrapper = styled(Pressable)<{ tokens: Tokens }>`
   flex-direction: row;
-  padding: ${({ tokens }) => tokens["spacing-xxs"]}px;
+  padding-vertical: ${({ tokens }) => tokens["spacing-xxs"]}px;
   border-radius: ${({ tokens }) => tokens["radius-s"]}px;
   align-items: center;
   width: 100%;

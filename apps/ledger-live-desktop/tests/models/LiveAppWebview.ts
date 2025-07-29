@@ -166,6 +166,11 @@ export class LiveAppWebview {
     return webview.getByTestId("transaction-sign-solana").click();
   }
 
+  async transactionSignRawSolana() {
+    const webview = await this.getWebView();
+    return webview.getByTestId("transaction-sign-raw-solana").click();
+  }
+
   async transactionSignAndBroadcast() {
     const webview = await this.getWebView();
     return webview.getByTestId("transaction-signAndBroadcast").click();

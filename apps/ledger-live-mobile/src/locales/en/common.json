@@ -3659,7 +3659,8 @@
           "refunded": "Please contact the swap provider with your swap ID for more information.",
           "pending": "Please wait while the swap provider is processing the transaction.",
           "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
-          "finished": "Your swap was completed successfully."
+          "finished": "Your swap was completed successfully.",
+          "unknown": "We are awaiting information from the provider."
         }
       },
       "missingApp": {
@@ -4045,6 +4046,10 @@
       "quantityAvailable": "Quantity available"
     },
     "summary": {
+      "solanaRawTransaction": {
+        "title": "Blind signing required",
+        "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
+      },
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
@@ -7782,7 +7787,10 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
-    "searchPlaceholder": "Search"
+    "searchPlaceholder": "Search",
+    "emptyAssetList": "No assets found",
+    "accountCount": "{{count}} account (detected)",
+    "accountCount_plural": "{{count}} accounts (detected)"
   },
   "swapErrors": {
     "incorrectCommandData": {

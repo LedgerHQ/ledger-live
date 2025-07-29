@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/react-ui/index";
-import { getAccountTuplesForCurrency } from "../../../utils/getAccountTuplesForCurrency";
 import { useTranslation } from "react-i18next";
 import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import ApyIndicator from "../../../components/ApyIndicator";
+import { getAccountTuplesForCurrency } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 const createAccountsCount = ({ label }: { label: string }) => (
   <Text fontSize="12px" fontWeight="500" color="var(--colors-content-subdued-default-default)">

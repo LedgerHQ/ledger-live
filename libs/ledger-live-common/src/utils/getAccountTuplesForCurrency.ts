@@ -1,6 +1,6 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeEmptyTokenAccount } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import { makeEmptyTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 export type AccountTuple = {
   account: Account;

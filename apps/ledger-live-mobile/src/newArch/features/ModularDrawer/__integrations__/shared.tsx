@@ -13,6 +13,16 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { useModularDrawer } from "../hooks/useModularDrawer";
 import { ModularDrawerStep } from "../types";
+import {
+  BTC_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_2,
+  ARB_ACCOUNT,
+  SCROLL_ACCOUNT,
+  BASE_ACCOUNT,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
+import { BigNumber } from "bignumber.js";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 const currencies = [
   mockBtcCryptoCurrency,
@@ -21,9 +31,35 @@ const currencies = [
   mockBaseCryptoCurrency,
 ];
 
+export const mockedAccounts = [
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_2,
+  BTC_ACCOUNT,
+  ARB_ACCOUNT,
+  BASE_ACCOUNT,
+  { ...SCROLL_ACCOUNT, balance: new BigNumber(34455).multipliedBy(10 ** 18) },
+];
+
+export const mockedFF = {
+  llmModularDrawer: {
+    enabled: true,
+    params: {
+      enableModularization: true,
+    },
+  },
+};
+
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
-const MockModularDrawerComponent = () => {
+type MockModularDrawerComponentProps = {
+  networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+};
+
+const MockModularDrawerComponent = ({
+  networksConfiguration,
+  assetsConfiguration,
+}: MockModularDrawerComponentProps) => {
   const { openDrawer, closeDrawer, isDrawerOpen } = useModularDrawer();
 
   const handleOpenDrawer = useCallback(() => {
@@ -52,6 +88,8 @@ const MockModularDrawerComponent = () => {
         onClose={handleCloseDrawer}
         currencies={currencies}
         selectedStep={ModularDrawerStep.Asset}
+        networksConfiguration={networksConfiguration}
+        assetsConfiguration={assetsConfiguration}
         flow="integration_test"
         source="modular_drawer_shared"
       />
@@ -59,9 +97,12 @@ const MockModularDrawerComponent = () => {
   );
 };
 
-export const ModularDrawerSharedNavigator = () => (
+export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => (
   <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
-    <Stack.Screen name={ScreenName.MockedModularDrawer} component={MockModularDrawerComponent} />
+    <Stack.Screen
+      name={ScreenName.MockedModularDrawer}
+      component={() => <MockModularDrawerComponent {...props} />}
+    />
     <Stack.Screen
       name={NavigatorName.DeviceSelection}
       component={DeviceSelectionNavigator}
