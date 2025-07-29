@@ -287,120 +287,120 @@
       "description" : "请再次尝试。"
     },
     "DisconnectedDevice" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DisconnectError" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceSessionNotFound" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "TransportNotSupportedError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "TransportAlreadyExistsError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "NoTransportProvidedError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "NoAccessibleDeviceError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "ConnectionOpeningError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceNotInitializedError" : {
-      "title" : "Device not onboarded",
-      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+      "title" : "设备未完成设置",
+      "description" : "您的设备尚未准备好使用。请按照设置说明操作，并在完成设置后重试。"
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Device not onboarded",
-      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+      "title" : "设备未完成设置",
+      "description" : "您的设备尚未准备好使用。请按照设置说明操作，并在完成设置后重试。"
     },
     "DeviceLockedError" : {
-      "title" : "Device locked",
-      "description" : "Your device is locked. Please unlock it and try again."
+      "title" : "设备已锁定",
+      "description" : "您的设备已锁定。请解锁设备并重试。"
     },
     "OutOfMemoryDAError" : {
-      "title" : "Not enough memory",
-      "description" : "Your device doesn’t have enough memory. Please uninstall apps and try again."
+      "title" : "内存不足",
+      "description" : "您的设备内存不足。请卸载应用程序并重试。"
     },
     "UnsupportedFirmwareDAError" : {
-      "title" : "OS is unsupported",
-      "description" : "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+      "title" : "操作系统不受支持",
+      "description" : "您的设备操作系统不受支持。请通过 Ledger Live 进行更新，如果遇到问题，请联系 Ledger 客服寻求帮助。"
     },
     "InvalidBatteryStatusTypeError" : {
-      "title" : "Battery error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "电池错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "InvalidBatteryDataError" : {
-      "title" : "Battery error",
-      "description" : "Battery status error. Please contact Ledger Support."
+      "title" : "电池错误",
+      "description" : "电池状态错误。请联系 Ledger 客服。"
     },
     "InvalidStatusWordError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "InvalidResponseFormatError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "UnknownDAError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceNotRecognizedError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DeviceAlreadyDiscoveredError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "UnknownDeviceError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "ReceiverApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "FramerApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "SendApduTimeoutError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "AlreadySendingApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "UnknownDeviceExchangeError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "CasperInvalidTransferId" : {
       "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
@@ -3659,7 +3659,8 @@
           "refunded" : "请使用您的互换 ID 联系互换服务提供方以了解更多详情。",
           "pending" : "请稍候片刻，互换提供方正在处理该交易。",
           "onhold" : "请使用您的互换 ID 联系互换服务提供方以解决这一情况。",
-          "finished" : "您的互换已成功完成"
+          "finished" : "您的互换已成功完成",
+          "unknown" : "我们正在等待提供商的信息。"
         }
       },
       "missingApp" : {
@@ -3720,6 +3721,7 @@
             "provider" : "提供方",
             "rate" : "汇率",
             "fees" : "网络费用",
+            "feesDescription" : "此费用由区块链网络收取，用于处理互换交易。除预估报价外，仅收取发送费用。已包含接收费用",
             "target" : "目标账户"
           },
           "noAccount" : "创建一个账户以接收 {{name}}",
@@ -3763,6 +3765,8 @@
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
         "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+        "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
         "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
@@ -4044,6 +4048,10 @@
       "quantityAvailable" : "可用数量"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "需要盲签名",
+        "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+      },
       "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
       "tag" : "标签 (可选)",
       "validateTag" : "验证标签",
@@ -7775,6 +7783,87 @@
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
-    "searchPlaceholder" : "搜索"
+    "searchPlaceholder" : "搜索",
+    "emptyAssetList" : "未找到资产",
+    "accountCount" : "{{count}} 个账户（已检测到）",
+    "accountCount_plural" : "{{count}} 个账户（已检测到）"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "命令数据不正确",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "deserializationFailed" : {
+      "title" : "有效负载反序列化失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongTransactionId" : {
+      "title" : "交易 ID 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidAddress" : {
+      "title" : "地址无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "出错了",
+      "description" : "此接收账户不属于已连接的设备。请更改并重试。"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "出错了",
+      "description" : "此发送账户不属于已连接的设备。请更改并重试。"
+    },
+    "userRefused" : {
+      "title" : "操作在设备上被拒绝",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "internalError" : {
+      "title" : "内部错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP1" : {
+      "title" : "P1 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2" : {
+      "title" : "P2 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2 扩展名错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidP2Extension" : {
+      "title" : "出错了",
+      "description" : "P2 扩展名无效"
+    },
+    "unexpectedInstruction" : {
+      "title" : "出错了",
+      "description" : "指令异常"
+    },
+    "classNotSupported" : {
+      "title" : "出错了",
+      "description" : "不支持的类"
+    },
+    "invalidInstruction" : {
+      "title" : "指令无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "malformedApdu" : {
+      "title" : "APDU 标头格式错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidDataLength" : {
+      "title" : "数据长度无效",
+      "description" : "此命令不接受该长度的数据"
+    },
+    "signatureVerificationFail" : {
+      "title" : "签名验证失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "default" : {
+      "title" : "出错了",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    }
   }
 }
