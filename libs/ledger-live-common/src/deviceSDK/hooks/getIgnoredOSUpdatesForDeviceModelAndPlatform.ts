@@ -1,7 +1,9 @@
-import type { Feature_OnboardingIgnoredOSUpdates } from "@ledgerhq/types-live";
+import type {
+  Feature_OnboardingIgnoredOSUpdates,
+  Platform,
+  IgnoredOSUpdates,
+} from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-
-export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
 
 /**
  * Extracts the ignored OS updates for a specific device model and platform from the configuration
@@ -15,11 +17,12 @@ export const getIgnoredOSUpdatesForDeviceModelAndPlatform = (
   ignoredOSUpdatesConfig: Feature_OnboardingIgnoredOSUpdates["params"] | undefined,
   deviceModelId: DeviceModelId,
   platform: Platform,
-): string[] => {
+): IgnoredOSUpdates => {
+  // No ignored OS updates configuration
   if (!ignoredOSUpdatesConfig) return [];
-
+  // No configuration for the specified platform
   const configForPlatform = ignoredOSUpdatesConfig[platform];
   if (!configForPlatform) return [];
-
+  // Return the ignored OS updates for the specified device model, empty array if not configured for that model
   return configForPlatform[deviceModelId] ?? [];
 };
