@@ -18,48 +18,31 @@ const SNAP_POINTS = ["70%", "92%"];
  * Props for the ModularDrawer component.
  */
 type ModularDrawerProps = {
-  /**
-   * Whether the drawer is open.
-   */
+  // Core drawer state
+  /** Whether the drawer is open */
   readonly isOpen: boolean;
-  /**
-   * Callback fired when the drawer is closed.
-   */
+  /** Callback fired when the drawer is closed */
   readonly onClose?: () => void;
-  /**
-   * List of currencies to display in the drawer.
-   */
+
+  // Data and configuration
+  /** List of currencies to display in the drawer */
   readonly currencies: CryptoOrTokenCurrency[];
-  /**
-   * The flow identifier for analytics.
-   */
+  /** The flow identifier for analytics */
   readonly flow: string;
-  /**
-   * The source identifier for analytics.
-   */
+  /** The source identifier for analytics */
   readonly source: string;
-  /**
-   * Configuration for assets display.
-   */
+  /** Configuration for assets display */
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
-  /**
-   * Configuration for networks display.
-   */
+  /** Configuration for networks display */
   readonly networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 
-  /**
-   *  Enables account selection in the drawer.
-   */
+  // Account selection
+  /** Enables account selection in the drawer */
   readonly enableAccountSelection?: boolean;
-  /**
-   * Callback fired when an account is selected.
-   */
+  /** Callback fired when an account is selected */
   readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
-
-  /**
-   * Observable of Accounts
-   */
-  accounts$?: Observable<WalletAPIAccount[]>;
+  /** Observable of accounts */
+  readonly accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 /**

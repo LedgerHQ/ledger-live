@@ -6,7 +6,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
-import { AccountTuple } from "../../utils/getAccountTuplesForCurrency";
+import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
