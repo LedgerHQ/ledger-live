@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.5.0-next.1
+
+### Minor Changes
+
+- [#11126](https://github.com/LedgerHQ/ledger-live/pull/11126) [`c8dc35e`](https://github.com/LedgerHQ/ledger-live/commit/c8dc35e440d3ad47429e064471d1234c932c6523) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
 ## 6.5.0-next.0
 
 ### Minor Changes
