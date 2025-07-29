@@ -17,7 +17,7 @@ import {
   useModularDrawerVisibility,
 } from "LLD/features/ModularDrawer";
 
-type StakeFlowProps = {
+export type StakeFlowProps = {
   currencies?: string[];
   shouldRedirect?: boolean;
   alwaysShowNoFunds?: boolean;
