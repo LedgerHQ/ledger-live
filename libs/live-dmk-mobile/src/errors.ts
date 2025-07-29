@@ -1,5 +1,7 @@
 import {
   DeviceBusyError,
+  DeviceDisconnectedBeforeSendingApdu,
+  DeviceDisconnectedWhileSendingError,
   DmkError,
   OpeningConnectionError,
   SendApduTimeoutError,
@@ -35,6 +37,8 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
+      error instanceof DeviceDisconnectedBeforeSendingApdu ||
+      error instanceof DeviceDisconnectedWhileSendingError ||
       (typeof error === "object" && "_tag" in error && error._tag === "DeviceSessionNotFound")
     );
   }
