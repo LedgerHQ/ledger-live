@@ -24,7 +24,7 @@ function OperationDetailsExtra({ operation: { extra } }: Props) {
     <>
       {extra.assetCode && <Section title={t("stellar.assetCode")} value={extra.assetCode} />}
       {extra.assetIssuer && <Section title={t("stellar.assetIssuer")} value={extra.assetIssuer} />}
-      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={memo} />}
+      {memo && <Section title={t("operationDetails.extra.memo")} value={memo} />}
     </>
   );
 }
