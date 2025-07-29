@@ -30,7 +30,7 @@ export default class SwapLiveAppPage {
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
-    await waitWebElementByTestId(this.quotesButtonDisabled);
+    await waitWebElementByTestId(this.fromSelector);
   }
 
   @Step("Expect swap live app page")
