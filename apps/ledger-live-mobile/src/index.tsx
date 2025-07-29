@@ -327,28 +327,26 @@ function App() {
   });
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <BottomSheetModalProvider>
-        <SyncNewAccounts priority={5} />
-        <TransactionsAlerts />
-        <ExperimentalHeader />
-        {datadogFF?.enabled ? (
-          <DatadogProvider configuration={datadogAutoInstrumentation}>
-            <RootNavigator />
-          </DatadogProvider>
-        ) : (
+    <>
+      <SyncNewAccounts priority={5} />
+      <TransactionsAlerts />
+      <ExperimentalHeader />
+      {datadogFF?.enabled ? (
+        <DatadogProvider configuration={datadogAutoInstrumentation}>
           <RootNavigator />
-        )}
+        </DatadogProvider>
+      ) : (
+        <RootNavigator />
+      )}
 
-        <AnalyticsConsole />
-        <PerformanceConsole />
-        <DebugTheme />
-        <Modals />
-        <FeatureToggle featureId="llmMmkvMigration">
-          <StoragePerformanceOverlay />
-        </FeatureToggle>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+      <AnalyticsConsole />
+      <PerformanceConsole />
+      <DebugTheme />
+      <Modals />
+      <FeatureToggle featureId="llmMmkvMigration">
+        <StoragePerformanceOverlay />
+      </FeatureToggle>
+    </>
   );
 }
 
@@ -453,13 +451,17 @@ export default class Root extends Component {
                                     <StyledStatusBar />
                                     <NavBarColorHandler />
                                     <AuthPass>
-                                      <AppProviders initialCountervalues={initialCountervalues}>
-                                        <AppGeoBlocker>
-                                          <AppVersionBlocker>
-                                            <App />
-                                          </AppVersionBlocker>
-                                        </AppGeoBlocker>
-                                      </AppProviders>
+                                      <GestureHandlerRootView style={styles.root}>
+                                        <BottomSheetModalProvider>
+                                          <AppProviders initialCountervalues={initialCountervalues}>
+                                            <AppGeoBlocker>
+                                              <AppVersionBlocker>
+                                                <App />
+                                              </AppVersionBlocker>
+                                            </AppGeoBlocker>
+                                          </AppProviders>
+                                        </BottomSheetModalProvider>
+                                      </GestureHandlerRootView>
                                     </AuthPass>
                                   </StylesProvider>
                                 </StorylyProvider>

@@ -40,7 +40,7 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import {
   ModularDrawerLocation,
-  useModularDrawerStore,
+  useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
 import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
@@ -89,7 +89,7 @@ export function useWebView(
   });
   const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
 
-  const { openDrawer: openModularDrawer } = useModularDrawerStore();
+  const { openDrawer: openModularDrawer } = useModularDrawerController();
 
   const uiHook = useUiHook({
     isModularDrawerVisible: modularDrawerVisible,
@@ -218,7 +218,7 @@ export function useWebView(
     if (manifest.nocache) {
       return {
         cacheEnabled: false,
-        cacheMode: "LOAD_NO_CACHE" satisfies CacheMode,
+        cacheMode: "LOAD_NO_CACHE" as CacheMode,
         incognito: true,
       };
     } else {
