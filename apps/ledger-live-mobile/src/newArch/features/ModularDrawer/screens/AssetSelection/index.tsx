@@ -30,10 +30,7 @@ export type AssetSelectionStepProps = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
 };
 
-const HEADER_HEIGHT = 64;
-const SEARCH_HEIGHT = 48;
-const ROW_HEIGHT = 64;
-const MARGIN_BOTTOM = HEADER_HEIGHT + SEARCH_HEIGHT + ROW_HEIGHT;
+const SAFE_MARGIN_BOTTOM = 48;
 
 const AssetSelection = ({
   availableAssets,
@@ -145,7 +142,7 @@ const AssetSelection = ({
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
-          paddingBottom: MARGIN_BOTTOM,
+          paddingBottom: SAFE_MARGIN_BOTTOM,
           marginTop: 16,
         }}
       />
