@@ -1,4 +1,5 @@
-import appSupportsQuitApp from "./appSupportsQuitApp";
+import appSupportsQuitApp, { minAppVersion } from "./appSupportsQuitApp";
+
 test("appSupportsQuitApp - Apps that are listed fail if version is lt", () => {
   expect(
     appSupportsQuitApp({
@@ -25,4 +26,9 @@ test("appSupportsQuitApp - Apps that are not listed pass the test", () => {
       flags: 0,
     }),
   ).toBeTruthy();
+});
+test("minAppVersion - Sonic and Ethereum have the same min app version", () => {
+  expect(minAppVersion["Sonic"]).toBeDefined();
+  expect(minAppVersion["Ethereum"]).toBeDefined();
+  expect(minAppVersion["Sonic"]).toBe(minAppVersion["Ethereum"]);
 });
