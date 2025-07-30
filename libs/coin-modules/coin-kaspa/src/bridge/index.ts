@@ -21,10 +21,10 @@ import { broadcast } from "./broadcast";
 import { initAccount } from "./initAccount";
 import resolver from "../hw-getAddress";
 import { buildSignOperation } from "./signOperation";
-import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/lib/derivation";
+import { Result, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -74,7 +74,7 @@ const kaspaIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
     },
   );
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<KaspaSigner>,
 ): AccountBridge<Transaction, KaspaAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);

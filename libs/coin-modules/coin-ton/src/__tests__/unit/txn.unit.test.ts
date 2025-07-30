@@ -1,4 +1,4 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
 import { Builder, Slice } from "@ton/core";

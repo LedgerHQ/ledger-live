@@ -1,4 +1,4 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { broadcastTx } from "../../bridge/bridgeHelpers/api";
 import broadcast from "../../broadcast";
 import { buildOptimisticOperation } from "../../signOperation";

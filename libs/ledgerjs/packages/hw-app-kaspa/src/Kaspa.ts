@@ -5,7 +5,7 @@ import { StatusCodes } from "@ledgerhq/errors";
 import { publicKeyToAddress } from "./kaspa-util";
 import { KaspaHwTransaction } from "./kaspaHwTransaction";
 
-const BIP32Path = require("bip32-path");
+import BIP32Path from "bip32-path";
 
 // Get Address
 const P1_NON_CONFIRM = 0x00;

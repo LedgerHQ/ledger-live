@@ -3,7 +3,7 @@ import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { buildTransaction } from "./buildTransaction";
 import { KaspaAccount, KaspaSigner, Transaction } from "../types";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import buildInitialOperation from "./buildInitialOperation";
 
 /**

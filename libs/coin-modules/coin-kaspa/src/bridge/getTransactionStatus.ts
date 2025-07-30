@@ -18,7 +18,7 @@ import {
   selectUtxos,
 } from "../logic";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types";
-import { makeLRUCache } from "@ledgerhq/live-network/lib/cache";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 const getCachedUtxos = makeLRUCache(
   async (account: KaspaAccount) => {
@@ -27,10 +27,10 @@ const getCachedUtxos = makeLRUCache(
     );
     return await scanUtxos(compressedPublicKey, chainCode);
   },
-  (account: KaspaAccount) => "kaspa",
-  {
-    ttl: 60 * 1000, // 1 minute
+  (account: KaspaAccount) => {
+    return `${account.id}`;
   },
+  minutes(1),
 );
 
 const getTransactionStatus = async (

@@ -10,7 +10,7 @@ import {
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/lib/formatters";
+import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/formatters";
 import { BigNumber } from "bignumber.js";
 
 export const formatTransactionStatus = (

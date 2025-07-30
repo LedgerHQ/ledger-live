@@ -1,5 +1,5 @@
 import { KaspaAccount, KaspaHwTransaction } from "../types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { scriptPublicKeyToAddress } from "../logic";

@@ -7,7 +7,7 @@ import { createResolver, CreateSigner, executeWithSigner } from "../../bridge/se
 import type { Resolver } from "../../hw/getAddress/types";
 import { KaspaSigner } from "@ledgerhq/coin-kaspa/types/signer";
 import { KaspaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-kaspa/types/bridge";
-import { createBridges } from "@ledgerhq/coin-kaspa/lib/bridge/index";
+import { createBridges } from "@ledgerhq/coin-kaspa/bridge";
 import type { Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-kaspa/test/cli";
 
