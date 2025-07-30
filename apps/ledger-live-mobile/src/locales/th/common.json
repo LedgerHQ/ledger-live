@@ -287,120 +287,120 @@
       "description" : "โปรดลองอีกครั้ง"
     },
     "DisconnectedDevice" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DisconnectError" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DeviceSessionNotFound" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "Device connection lost",
-      "description" : "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "TransportNotSupportedError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
     },
     "TransportAlreadyExistsError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
     },
     "NoTransportProvidedError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
     },
     "NoAccessibleDeviceError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
     },
     "ConnectionOpeningError" : {
-      "title" : "Connection method error",
-      "description" : "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
     },
     "DeviceNotInitializedError" : {
-      "title" : "Device not onboarded",
-      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+      "title" : "ไม่มีอุปกรณ์ที่จะออนบอร์ด",
+      "description" : "อุปกรณ์ของคุณยังไม่พร้อมใช้งาน โปรดทำตามคำแนะนำในการติดตั้งและลองออนบอร์ดอีกครั้ง"
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Device not onboarded",
-      "description" : "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+      "title" : "ไม่มีอุปกรณ์ที่จะออนบอร์ด",
+      "description" : "อุปกรณ์ของคุณยังไม่พร้อมใช้งาน โปรดทำตามคำแนะนำในการติดตั้งและลองออนบอร์ดอีกครั้ง"
     },
     "DeviceLockedError" : {
-      "title" : "Device locked",
-      "description" : "Your device is locked. Please unlock it and try again."
+      "title" : "อุปกรณ์ถูกล็อก",
+      "description" : "อุปกรณ์ของคุณถูกล็อก โปรดปลดล็อกและลองอีกครั้ง"
     },
     "OutOfMemoryDAError" : {
-      "title" : "Not enough memory",
-      "description" : "Your device doesn’t have enough memory. Please uninstall apps and try again."
+      "title" : "หน่วยความจำไม่เพียงพอ",
+      "description" : "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอ โปรดถอนการติดตั้งแอปและลองอีกครั้ง"
     },
     "UnsupportedFirmwareDAError" : {
-      "title" : "OS is unsupported",
-      "description" : "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+      "title" : "ไม่รองรับระบบปฏิบัติการ (OS) นี้",
+      "description" : "ระบบปฏิบัติการนี้ไม่สามารถใช้งานได้กับอุปกรณ์ของคุณ โปรดอัปเดตระบบปฏิบัติการนี้ผ่านแอป Ledger Live หรือติดต่อ Ledger Support เพื่อขอความช่วยเหลือหากคุณยังประสบปัญหา"
     },
     "InvalidBatteryStatusTypeError" : {
-      "title" : "Battery error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดด้านแบตเตอรี่",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "InvalidBatteryDataError" : {
-      "title" : "Battery error",
-      "description" : "Battery status error. Please contact Ledger Support."
+      "title" : "เกิดข้อผิดพลาดด้านแบตเตอรี่",
+      "description" : "เกิดข้อผิดพลาดด้านสถานะแบตเตอรี่ โปรดติดต่อ Ledger Support"
     },
     "InvalidStatusWordError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "InvalidResponseFormatError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "UnknownDAError" : {
-      "title" : "Device connection error",
-      "description" : "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DeviceNotRecognizedError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "DeviceAlreadyDiscoveredError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "UnknownDeviceError" : {
-      "title" : "Device not recognised",
-      "description" : "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "ReceiverApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "FramerApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "SendApduTimeoutError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "AlreadySendingApduError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "UnknownDeviceExchangeError" : {
-      "title" : "Communication error",
-      "description" : "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
     "CasperInvalidTransferId" : {
       "title" : "ID การโอนควรเป็นจำนวนบวกที่น้อยกว่า {{maxTransferId}}"
@@ -1448,7 +1448,7 @@
       "discoverWeb3" : {
         "title" : "ค้นพบ Web3",
         "description" : "ค้นพบทุกอย่างเกี่ยวกับ Web3 จนกว่าอุปกรณ์ของคุณจะมาถึง!",
-        "cta" : "Discover"
+        "cta" : "ผู้ให้บริการ"
       }
     }
   },
@@ -1549,7 +1549,7 @@
     "desc" : "คำสั่งซื้อของคุณอยู่ระหว่างดำเนินการ \nโปรดตรวจสอบอีเมลของคุณเพื่อดูการยืนยันคำสั่งซื้อ"
   },
   "discover" : {
-    "title" : "Discover",
+    "title" : "ผู้ให้บริการ",
     "desc" : "สำรวจโลกของ Web3 อย่างปลอดภัย",
     "link" : "ขอรายละเอียดเพิ่มเติม",
     "sections" : {
@@ -1570,7 +1570,7 @@
         "desc" : "สำรวจ Web3 ที่ผสานรวมกับ Ledger อย่างสมบูรณ์"
       },
       "earn" : {
-        "title" : "Earn",
+        "title" : "สร้างรายได้",
         "desc" : "ทำให้คริปโตของคุณเติบโตผ่านการ Stake และการให้ยืม"
       },
       "mint" : {
@@ -2541,10 +2541,10 @@
     "manager" : "Ledger ของฉัน",
     "settings" : "การตั้งค่า",
     "platform" : "แอป Live",
-    "discover" : "Discover",
+    "discover" : "ผู้ให้บริการ",
     "nanoX" : "Nano X",
     "market" : "ตลาด",
-    "earn" : "Earn"
+    "earn" : "สร้างรายได้"
   },
   "portfolio" : {
     "totalBalance" : "ยอดคงเหลือทั้งหมด",
@@ -2986,7 +2986,7 @@
         "description" : "คุณต้องมี {{currencyTicker}} บางส่วนเพื่อ {{actionName}} ด้วยบัญชีนี้"
       }
     },
-    "earn" : "Earn",
+    "earn" : "สร้างรายได้",
     "quickActions" : "ดำเนินการอย่างรวดเร็ว",
     "referralProgram" : "แนะนำเพื่อนและรับ Bitcoin มูลค่า 20 USD",
     "banner" : {
@@ -3237,7 +3237,7 @@
       },
       "largeMover" : {
         "title" : "การแจ้งเตือนราคา",
-        "desc" : "You’ll be notified of important price movements for popular tokens you own"
+        "desc" : "คุณจะได้รับการแจ้งเตือนเกี่ยวกับความเคลื่อนไหวของราคาที่สำคัญสำหรับโทเคนยอดนิยมที่คุณเป็นเจ้าของ"
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
@@ -3597,7 +3597,7 @@
         "balance" : "ยอดคงเหลือในบัญชี <0>123</0>",
         "fromAccount" : "เลือกบัญชี",
         "toAccount" : "เลือกบัญชี",
-        "paraswapCTA" : "กำลังมองหา Paraswap หรือเปล่า? ตอนนี้ถูกย้ายไปยังแท็บ Discover แล้ว!",
+        "paraswapCTA" : "มองหา Paraswap อยู่หรือเปล่า? ตอนนี้ถูกย้ายไปยังแท็บ 'ผู้ให้บริการ' แล้ว!",
         "quote" : "โควตราคา",
         "receive" : "รับ",
         "amount" : {
@@ -3659,7 +3659,8 @@
           "refunded" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
           "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
           "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
-          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว"
+          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
+          "unknown" : "เรากำลังรอข้อมูลจากผู้ให้บริการ"
         }
       },
       "missingApp" : {
@@ -3720,6 +3721,7 @@
             "provider" : "ผู้ให้บริการ",
             "rate" : "อัตรา",
             "fees" : "ค่าธรรมเนียมเครือข่าย",
+            "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
             "target" : "บัญชีเป้าหมาย"
           },
           "noAccount" : "สร้างบัญชีเพื่อรับ {{name}}",
@@ -3773,7 +3775,7 @@
     },
     "lending" : {
       "title" : "ให้ยืมคริปโต",
-      "titleTransferTab" : "Earn",
+      "titleTransferTab" : "สร้างรายได้",
       "descriptionTransferTab" : "รับ Passive Income",
       "actionTitle" : "ให้ยืม",
       "accountActions" : {
@@ -4044,6 +4046,10 @@
       "quantityAvailable" : "ปริมาณที่ใช้ได้"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "จำเป็นต้องมีการ Blind Signing",
+        "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+      },
       "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
       "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
@@ -6838,7 +6844,7 @@
   },
   "browseWeb3" : {
     "catalog" : {
-      "title" : "Discover",
+      "title" : "ผู้ให้บริการ",
       "subtitle" : "สำรวจ Web3 ที่ผสานรวมกับ Ledger อย่างสมบูรณ์",
       "section" : {
         "recentlyUsed" : "ใช้ล่าสุด",
@@ -7668,7 +7674,7 @@
     },
     "main" : {
       "manifestsList" : {
-        "title" : "Discover"
+        "title" : "ผู้ให้บริการ"
       },
       "header" : {
         "title" : "สำรวจ Web3",
@@ -7775,6 +7781,87 @@
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
     "selectAccount" : "เลือกบัญชี",
-    "searchPlaceholder" : "ค้นหา"
+    "searchPlaceholder" : "ค้นหา",
+    "emptyAssetList" : "No assets found",
+    "accountCount" : "{{count}} account (detected)",
+    "accountCount_plural" : "{{count}} accounts (detected)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "ข้อมูลคำสั่งไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "deserializationFailed" : {
+      "title" : "การแปลงข้อมูลเพย์โหลดล้มเหลว",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID ธุรกรรมไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "invalidAddress" : {
+      "title" : "Address ไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "บัญชีรับนี้ไม่เชื่อมโยงกับอุปกรณ์ที่เชื่อมต่ออยู่ โปรดเปลี่ยนและลองอีกครั้ง"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "บัญชีผู้ส่งนี้ไม่ใช่บัญชีที่เชื่อมต่อกับอุปกรณ์นี้ โปรดเปลี่ยนและลองอีกครั้ง"
+    },
+    "userRefused" : {
+      "title" : "การดำเนินการถูกปฏิเสธบนอุปกรณ์",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "internalError" : {
+      "title" : "ข้อผิดพลาดภายใน",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "wrongP1" : {
+      "title" : "P1 ไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "wrongP2" : {
+      "title" : "P2 ไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "wrongP2Extension" : {
+      "title" : "ส่วนขยาย P2 ไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "invalidP2Extension" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "ส่วนขยาย P2 ไม่สามารถใช้งานได้"
+    },
+    "unexpectedInstruction" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "คำสั่งไม่ตรงตามรูปแบบที่กำหนด"
+    },
+    "classNotSupported" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "ไม่รองรับคลาสนี้"
+    },
+    "invalidInstruction" : {
+      "title" : "คำสั่งไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "malformedApdu" : {
+      "title" : "APDU Header ไม่ถูกต้อง",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "invalidDataLength" : {
+      "title" : "ความยาวของข้อมูลไม่ถูกต้อง",
+      "description" : "คำสั่งนี้ไม่รองรับข้อมูลที่มีขนาดตามที่ส่งมา"
+    },
+    "signatureVerificationFail" : {
+      "title" : "การตรวจสอบลายเซ็นล้มเหลว",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    },
+    "default" : {
+      "title" : "มีบางอย่างผิดปกติ",
+      "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    }
   }
 }
