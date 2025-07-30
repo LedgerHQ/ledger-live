@@ -136,7 +136,7 @@ export type Props = {
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
   currentAccountHistDb?: CurrentAccountHistDB;
-  mobileView: MobileView;
+  mobileView?: MobileView;
   setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
 };
 
@@ -256,34 +256,42 @@ export const TopBar = ({
           </ItemContainer>
         </>
       ) : null}
-      <Separator />
-      <ItemContainer data-testid="mobile-view-toggle" isInteractive onClick={toggleMobileView} style={{ marginRight: 0 }}>
-        <Icons.Desktop size="S" />
-        <ItemContent>
-          <Switch isChecked={mobileView.display}></Switch>
-        </ItemContent>
-        <Icons.Mobile size="S" />
-      </ItemContainer>
-      {mobileView.display && (
-        <Box style={{ marginRight: 16 }}>
-          <Input
-          
-            data-testid="mobile-view-width-input"
-            small
-            value={`${mobileView.width}` || ""}
-            onChange={(e: string) => {
-              const value = parseInt(e, 10) || 0;
-              updateMobileWidth?.(value);
-            }}
-            onBlur={() => {
-              if (!mobileView.width) {
-                updateMobileWidth?.(355);
-              }
-            }}
-            style={{ width: 30, textAlign: "center" }}
-            maxLength={4}
-          />
-        </Box>
+      {!!mobileView && (
+        <>
+          <Separator />
+          <ItemContainer
+            data-testid="mobile-view-toggle"
+            isInteractive
+            onClick={toggleMobileView}
+            style={{ marginRight: 0 }}
+          >
+            <Icons.Desktop size="S" />
+            <ItemContent>
+              <Switch isChecked={mobileView.display ?? false}></Switch>
+            </ItemContent>
+            <Icons.Mobile size="S" />
+          </ItemContainer>
+          {mobileView.display && (
+            <Box style={{ marginRight: 16 }}>
+              <Input
+                data-testid="mobile-view-width-input"
+                small
+                value={`${mobileView.width}` || ""}
+                onChange={(e: string) => {
+                  const value = parseInt(e, 10) || 0;
+                  updateMobileWidth?.(value);
+                }}
+                onBlur={() => {
+                  if (!mobileView.width) {
+                    updateMobileWidth?.(355);
+                  }
+                }}
+                style={{ width: 30, textAlign: "center" }}
+                maxLength={4}
+              />
+            </Box>
+          )}
+        </>
       )}
       <RightContainer>
         <ItemContainer hidden={!isLoading}>
