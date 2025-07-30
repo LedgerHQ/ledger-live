@@ -2,15 +2,16 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { renderHook } from "@testing-library/react";
-import BigNumber from "bignumber.js";
 
-import { usePickDefaultAccount } from "./usePickDefaultAccount";
-import { genAccount } from "../../../mock/account";
-import { getCryptoCurrencyById } from "../../../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import { setSupportedCurrencies } from "../../../currencies";
+import { renderHook } from "@testing-library/react";
+import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById, setSupportedCurrencies } from "../../../currencies";
+import { genAccount } from "../../../mock/account";
+import { usePickDefaultAccount } from "./usePickDefaultAccount";
+import { wrapper } from "./wrapper";
+
 setSupportedCurrencies(["ethereum"]);
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
@@ -39,7 +40,7 @@ describe("usePickDefaultAccount", () => {
   test("do nothing when fromAccount is not null/undefined", () => {
     const accounts: Account[] = [getEthAccount(), getBtcAccount()];
 
-    renderHook(() => usePickDefaultAccount(accounts, getEthAccount(), setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, getEthAccount(), setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(0);
   });
@@ -52,7 +53,7 @@ describe("usePickDefaultAccount", () => {
       { ...getEthAccount(), disabled: true },
     ];
 
-    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(0);
   });
@@ -63,7 +64,7 @@ describe("usePickDefaultAccount", () => {
 
     const accounts: Account[] = [ethAccount, getBtcAccount()];
 
-    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount).toHaveBeenCalledWith(ethAccount);
@@ -81,7 +82,7 @@ describe("usePickDefaultAccount", () => {
       { ...getEthAccount(), disabled: true },
     ];
 
-    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount).toHaveBeenCalledWith(btcAccount);
@@ -110,7 +111,7 @@ describe("usePickDefaultAccount", () => {
       ethAccount5,
     ];
 
-    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount).toHaveBeenCalledWith(ethAccount);
@@ -125,7 +126,7 @@ describe("usePickDefaultAccount", () => {
 
     const accounts: Account[] = [{ ...getEthAccount(), disabled: true }, btcAccount, btcAccount2];
 
-    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount));
+    renderHook(() => usePickDefaultAccount(accounts, undefined, setFromAccount), { wrapper });
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount).toHaveBeenCalledWith(btcAccount);
