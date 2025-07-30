@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.79.0-next.1
+
+### Minor Changes
+
+- [#11125](https://github.com/LedgerHQ/ledger-live/pull/11125) [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ignore specific OS updates in onboarding based on remote config
+
 ## 6.79.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.88.0-next.3
+
+### Minor Changes
+
+- [#11125](https://github.com/LedgerHQ/ledger-live/pull/11125) [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ignore specific OS updates in onboarding based on remote config
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+  - @ledgerhq/coin-framework@5.8.0-next.1
+  - @ledgerhq/coin-cosmos@0.16.4-next.1
+  - @ledgerhq/coin-evm@2.25.0-next.1
+  - @ledgerhq/coin-filecoin@1.9.15-next.1
+  - @ledgerhq/coin-multiversx@0.4.15-next.1
+  - @ledgerhq/coin-stacks@0.8.15-next.1
+  - @ledgerhq/domain-service@1.2.38-next.1
+  - @ledgerhq/live-countervalues@0.5.15-next.1
+  - @ledgerhq/live-countervalues-react@0.2.44-next.1
+  - @ledgerhq/live-nft@0.8.15-next.1
+  - @ledgerhq/live-nft-react@0.9.15-next.1
+  - @ledgerhq/live-wallet@0.11.6-next.1
+
 ## 3.88.0-next.2
 
 ### Minor Changes
