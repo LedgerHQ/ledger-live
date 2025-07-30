@@ -1,5 +1,4 @@
 import ecc from "@bitcoinerlab/secp256k1";
-// @ts-ignore
 import BIP32Factory, { BIP32API, BIP32Interface } from "bip32";
 import { publicKeyToAddress } from "./kaspaAddresses";
 
