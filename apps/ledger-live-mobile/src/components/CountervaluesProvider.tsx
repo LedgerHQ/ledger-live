@@ -40,10 +40,6 @@ export function CountervaluesManagedProvider({
     [dispatch],
   );
 
-  const state = bridge.useState();
-
-  console.log("RE-RENDER", state);
-
   return (
     <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
       <CountervaluesManager>{children}</CountervaluesManager>
