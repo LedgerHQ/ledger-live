@@ -91,7 +91,13 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   }, [navigation, ptxCardFlag]);
 
   return (
-    <Flex flexDirection="row" alignItems="center" justifyContent="space-between" py={3}>
+    <Flex
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
+      py={3}
+      style={{ zIndex: 10 }}
+    >
       <Flex flexDirection={"row"} alignItems={"center"} mr={3} flexShrink={1} flexGrow={1}>
         <Text
           variant={"h4"}
