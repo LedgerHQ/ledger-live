@@ -258,7 +258,7 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             asset: {
               type: "trc20",
-              contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+              assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
           });
         });
@@ -275,7 +275,7 @@ describe("listOperations", () => {
             recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
             asset: {
               type: "trc20",
-              contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
           });
         });
