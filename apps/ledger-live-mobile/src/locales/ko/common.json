@@ -3270,8 +3270,8 @@
       "repairDeviceDesc" : "장치 업데이트에 문제가 있어 업데이트를 재개할 수 없을 경우, 장치 복구를 위해 시도해 볼 수 있습니다."
     },
     "experimental" : {
-      "title" : "실험 특징",
-      "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
+      "title" : "실험적 기능",
+      "desc" : "다양한 실험적 기능을 시험해 보고 의견을 나누어 주세요.",
       "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
       "provider" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
       "providerDevMode" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})” 및 \"개발자 모드\"가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
@@ -3659,7 +3659,8 @@
           "refunded" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
           "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
           "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
-          "finished" : "스왑이 성공적으로 완료되었습니다."
+          "finished" : "스왑이 성공적으로 완료되었습니다.",
+          "unknown" : "제공업체의 정보를 기다리는 중입니다."
         }
       },
       "missingApp" : {
@@ -3720,6 +3721,7 @@
             "provider" : "공급자",
             "rate" : "요율",
             "fees" : "네트워크 수수료",
+            "feesDescription" : "이 수수료는 블록체인 네트워크에서 스왑을 처리하는 데 부과되는 비용입니다. 예상 견적에는 수령 수수료가 포함되어 있으며, 전송 수수료만 별도로 청구됩니다.",
             "target" : "보내는 계정"
           },
           "noAccount" : "{{name}}을 수령할 계정을 생성하세요",
@@ -3763,6 +3765,8 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+        "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
         "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
@@ -4044,6 +4048,10 @@
       "quantityAvailable" : "이용 가능한 수량"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "블라인드 서명 필요",
+        "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+      },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
       "validateTag" : "태그 검증",
@@ -7775,6 +7783,87 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
-    "searchPlaceholder" : "검색"
+    "searchPlaceholder" : "검색",
+    "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "accountCount" : "{{count}}개의 계정 (감지됨)",
+    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "잘못된 명령 데이터",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "deserializationFailed" : {
+      "title" : "페이로드 역직렬화 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongTransactionId" : {
+      "title" : "잘못된 트랜잭션 ID",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidAddress" : {
+      "title" : "유효하지 않은 주소",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 수령 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 전송 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "userRefused" : {
+      "title" : "장치에서 거부되었습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "internalError" : {
+      "title" : "내부 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP1" : {
+      "title" : "잘못된 P1",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2" : {
+      "title" : "잘못된 P2",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2Extension" : {
+      "title" : "잘못된 P2 확장 값",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidP2Extension" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "유효하지 않은 P2 확장 값"
+    },
+    "unexpectedInstruction" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "예기치 않은 명령어"
+    },
+    "classNotSupported" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "지원되지 않는 클래스"
+    },
+    "invalidInstruction" : {
+      "title" : "유효하지 않은 명령어",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "malformedApdu" : {
+      "title" : "APDU 헤더 형식 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidDataLength" : {
+      "title" : "유효하지 않은 데이터 길이",
+      "description" : "이 명령은 해당 길이의 데이터를 허용하지 않습니다"
+    },
+    "signatureVerificationFail" : {
+      "title" : "서명 검증 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "default" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    }
   }
 }
