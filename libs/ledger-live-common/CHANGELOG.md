@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.43.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`3cffd85`](https://github.com/LedgerHQ/ledger-live/commit/3cffd85f6963df6528b0d398332f1ebad8d7955f)]:
+  - @ledgerhq/coin-aptos@2.7.0-next.2
+
 ## 34.43.0-next.2
 
 ### Minor Changes

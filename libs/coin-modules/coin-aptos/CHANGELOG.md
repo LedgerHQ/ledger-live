@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 2.7.0-next.2
+
+### Minor Changes
+
+- [#11159](https://github.com/LedgerHQ/ledger-live/pull/11159) [`3cffd85`](https://github.com/LedgerHQ/ledger-live/commit/3cffd85f6963df6528b0d398332f1ebad8d7955f) Thanks [@semeano](https://github.com/semeano)! - Update Aptos SDK; Add HTTP headers with client version
+
 ## 2.7.0-next.1
 
 ### Patch Changes
