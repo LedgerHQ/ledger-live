@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.88.0-nightly.3
+
+### Minor Changes
+
+- [#11124](https://github.com/LedgerHQ/ledger-live/pull/11124) [`32a8614`](https://github.com/LedgerHQ/ledger-live/commit/32a86145a7efec504e3d40d84e0034f0ba481599) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - fix info drawer not displaying content
+
+- [#11123](https://github.com/LedgerHQ/ledger-live/pull/11123) [`63cbb9f`](https://github.com/LedgerHQ/ledger-live/commit/63cbb9fd539cc26c7b064f76dd71d74e8b2650aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Asset List change margin bottom
+
 ## 3.88.0-nightly.2
 
 ### Minor Changes
