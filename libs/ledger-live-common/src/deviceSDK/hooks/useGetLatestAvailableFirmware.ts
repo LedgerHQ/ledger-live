@@ -5,11 +5,14 @@ import {
   getLatestAvailableFirmwareAction as defaultGetLatestAvailableFirmwareAction,
   initialState,
 } from "../actions/getLatestAvailableFirmware";
+import { filterIgnoredFirmwareUpdates } from "./filterIgnoredFirmwareUpdates";
+import type { IgnoredOSUpdates } from "@ledgerhq/types-live";
 
 export type UseGetLatestAvailableFirmwareArgs = {
   getLatestAvailableFirmwareAction?: typeof defaultGetLatestAvailableFirmwareAction;
   deviceId: string;
   isHookEnabled?: boolean;
+  ignoredOSUpdates?: IgnoredOSUpdates;
 };
 
 /**
@@ -30,6 +33,7 @@ export const useGetLatestAvailableFirmware = ({
   getLatestAvailableFirmwareAction = defaultGetLatestAvailableFirmwareAction,
   deviceId,
   isHookEnabled = true,
+  ignoredOSUpdates,
 }: UseGetLatestAvailableFirmwareArgs): {
   state: GetLatestAvailableFirmwareActionState;
 } => {
@@ -47,7 +51,10 @@ export const useGetLatestAvailableFirmware = ({
     const subscription = getLatestAvailableFirmwareAction({
       deviceId,
     }).subscribe({
-      next: setState,
+      next: newValue => {
+        const filteredValue = filterIgnoredFirmwareUpdates(newValue, ignoredOSUpdates);
+        setState(filteredValue);
+      },
       error: (error: unknown) => {
         // Error from an action should be handled like an event and should not reach here
         log("useGetLatestAvailableFirmware", "Unknown error", error);
@@ -57,7 +64,7 @@ export const useGetLatestAvailableFirmware = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceId, getLatestAvailableFirmwareAction, isHookEnabled]);
+  }, [deviceId, getLatestAvailableFirmwareAction, ignoredOSUpdates, isHookEnabled]);
 
   return { state };
 };
