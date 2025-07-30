@@ -10,7 +10,7 @@
 #import <Firebase.h>
 #import "RNSplashScreen.h"
 #import <MMKV/MMKV.h>
-#import "StartupInfoModule.h" // <<< ADD THIS IMPORT
+#import "StartupInfoModule.h"
 
 @interface AppDelegate ()
 @property (nonatomic, assign) BOOL hasLaunchedInThisSession; // A flag to track session within the app's process lifetime
@@ -131,7 +131,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
       isRelaunchFromExternalEvent = YES;
   }
   
-  NSTimeInterval durationFromProcessStart = currentExecutionPointTime - self.launchStartTime;
+  NSTimeInterval durationFromProcessStart = (currentExecutionPointTime - self.launchStartTime) * 1000;
 
   if (!self.didInitialColdLaunchComplete) {
       if (isRelaunchFromExternalEvent) {

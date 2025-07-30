@@ -69,32 +69,13 @@ class MainApplication : Application(), ReactApplication {
 
       registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
 
-        val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
-        coldStartupType = if (launchIntent != null && launchIntent.action != null &&
-            (launchIntent.action == Intent.ACTION_MAIN && launchIntent.hasCategory(Intent.CATEGORY_LAUNCHER))
-        ) {
-            "cold"
-        } else {
-            "warm"
-        }
+        setupStartupTracking()
+
 
         reactNativeHost.reactInstanceManager.addReactInstanceEventListener(object : ReactInstanceEventListener {
             override fun onReactContextInitialized(context: ReactContext) {
                 // This is called when the React Native bridge is fully initialized and JS bundle loaded.
-                if (!isColdStartupDurationSent) { // Ensure it's sent only once for a cold start
-                    val coldLaunchEndTime = SystemClock.uptimeMillis()
-                    val coldLaunchDuration = coldLaunchEndTime - appProcessStartTime
-
-                    // Send the full cold/external warm duration via StartupInfoModule
-                    // This is your final, accurate native cold startup time.
-                    StartupInfoModule.Companion.setStartupInfo(
-                        coldStartupType ?: "unknown", // Use the determined type
-                        coldLaunchDuration / 1000.0, // Pass duration in seconds
-                        appProcessStartTime / 1000.0, // Pass process start time in seconds (as resume start time for cold)
-                        0.0 // Always 0 for timeInBackground for a cold start
-                    )
-                    isColdStartupDurationSent = true // Mark as sent
-                }
+                handleReactContextInitialized()
             }
         })
 
@@ -112,5 +93,41 @@ class MainApplication : Application(), ReactApplication {
     super.onConfigurationChanged(newConfig)
     ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)
   }
+
+    private fun setupStartupTracking() {
+        val launchIntent: Intent? = packageManager.getLaunchIntentForPackage(packageName)
+        coldStartupType = determineStartupType(launchIntent)
+        didInitialColdLaunchComplete = true
+    }
+
+    private fun determineStartupType(launchIntent: Intent?): String {
+        return if (launchIntent != null && launchIntent.action != null &&
+            (launchIntent.action == Intent.ACTION_MAIN && launchIntent.hasCategory(Intent.CATEGORY_LAUNCHER))
+        ) {
+            "cold"
+        } else {
+            "warm"
+        }
+    }
+
+
+    private fun handleReactContextInitialized() {
+        if (!isColdStartupDurationSent) {
+            measureAndReportColdStartup()
+        }
+    }
+
+    private fun measureAndReportColdStartup() {
+        val coldLaunchEndTime = SystemClock.uptimeMillis()
+        val coldLaunchDuration = coldLaunchEndTime - appProcessStartTime
+
+        StartupInfoModule.Companion.setStartupInfo(
+            coldStartupType ?: "unknown",
+            coldLaunchDuration / 1000.0,
+            appProcessStartTime / 1000.0,
+            0.0
+        )
+        isColdStartupDurationSent = true
+    }
 
 }
