@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import network from "@ledgerhq/live-network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled } from "./types";
@@ -9,6 +10,9 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapId = "",
   transactionId,
   swapAppVersion,
+  fromAccount,
+  toAccount,
+  amount,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
@@ -21,6 +25,20 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   if (!swapId) {
     return null;
   }
+
+  // Create swap intent hash
+  const swapIntent = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
+        provider,
+        fromAccount,
+        toAccount,
+        amount,
+      }),
+    )
+    .digest("hex");
+
   try {
     const ipHeader = getSwapUserIP();
     const headers = {
@@ -31,7 +49,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
-      data: { provider, swapId, transactionId, ...rest },
+      data: { provider, swapId, transactionId, swapIntent, ...rest },
       ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
@@ -45,9 +63,23 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
   swapId = "",
   swapAppVersion,
+  fromAccount,
+  toAccount,
+  amount,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
+  const swapIntent = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
+        provider,
+        fromAccount,
+        toAccount,
+        amount,
+      }),
+    )
+    .digest("hex");
 
   /**
    * Since swapId is required by the endpoint, don't call it if we don't have
@@ -67,7 +99,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/cancelled`,
-      data: { provider, swapId, ...rest },
+      data: { provider, swapId, swapIntent, ...rest },
       ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {

@@ -571,6 +571,9 @@ export const handlers = ({
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapAppVersion,
+              fromAccount: fromAccount.id,
+              toAccount: toAccount?.id!,
+              amount: amountExpectedTo.toString(),
             });
 
             resolve({ operationHash, swapId });
@@ -587,6 +590,9 @@ export const handlers = ({
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapType: quoteId ? "fixed" : "float",
               swapAppVersion,
+              fromAccount: fromAccount.id,
+              toAccount: toAccount?.id!,
+              amount: amountExpectedTo.toString(),
             });
 
             reject(error);

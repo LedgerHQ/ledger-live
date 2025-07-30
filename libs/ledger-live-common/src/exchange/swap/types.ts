@@ -200,6 +200,9 @@ type SwapStateRequest = {
   hardwareWalletType: DeviceModelId;
   swapType: TradeMethod;
   swapAppVersion?: string;
+  fromAccount?: string;
+  toAccount?: string;
+  amount?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
