@@ -68,7 +68,11 @@ export function ModularDrawer({
   const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
     useInitModularDrawer();
 
-  const { availableAssets, currencyIdsArray } = useAssets(currencies, sortedCryptoCurrencies);
+  const { availableAssets, currencyIdsArray } = useAssets(
+    currencies,
+    currenciesByProvider,
+    sortedCryptoCurrencies,
+  );
 
   const {
     setDefaultSearchValue,
