@@ -1,5 +1,50 @@
 # @ledgerhq/live-common
 
+## 34.43.0-next.2
+
+### Minor Changes
+
+- [#11125](https://github.com/LedgerHQ/ledger-live/pull/11125) [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ignore specific OS updates in onboarding based on remote config
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.8.0-next.1
+  - @ledgerhq/coin-algorand@0.9.15-next.1
+  - @ledgerhq/coin-aptos@2.7.0-next.1
+  - @ledgerhq/coin-bitcoin@0.19.0-next.1
+  - @ledgerhq/coin-cardano@0.10.1-next.1
+  - @ledgerhq/coin-casper@2.0.6-next.1
+  - @ledgerhq/coin-celo@1.1.13-next.1
+  - @ledgerhq/coin-cosmos@0.16.4-next.1
+  - @ledgerhq/coin-evm@2.25.0-next.1
+  - @ledgerhq/coin-filecoin@1.9.15-next.1
+  - @ledgerhq/coin-hedera@1.9.1-next.1
+  - @ledgerhq/coin-icon@0.11.2-next.1
+  - @ledgerhq/coin-internet_computer@1.7.15-next.1
+  - @ledgerhq/coin-mina@1.1.14-next.1
+  - @ledgerhq/coin-multiversx@0.4.15-next.1
+  - @ledgerhq/coin-near@0.11.15-next.1
+  - @ledgerhq/coin-polkadot@6.5.0-next.2
+  - @ledgerhq/coin-solana@0.29.0-next.1
+  - @ledgerhq/coin-stacks@0.8.15-next.1
+  - @ledgerhq/coin-stellar@5.4.0-next.1
+  - @ledgerhq/coin-sui@0.8.0-next.1
+  - @ledgerhq/coin-tezos@5.7.0-next.1
+  - @ledgerhq/coin-ton@0.13.4-next.1
+  - @ledgerhq/coin-tron@4.5.0-next.1
+  - @ledgerhq/coin-vechain@2.7.15-next.1
+  - @ledgerhq/coin-xrp@6.5.0-next.1
+  - @ledgerhq/device-core@0.5.4-next.1
+  - @ledgerhq/hw-app-eth@6.45.13-next.1
+  - @ledgerhq/live-countervalues@0.5.15-next.1
+  - @ledgerhq/live-countervalues-react@0.2.44-next.1
+  - @ledgerhq/live-nft@0.8.15-next.1
+  - @ledgerhq/live-signer-evm@0.6.2-next.1
+  - @ledgerhq/live-signer-solana@0.5.0-next.1
+  - @ledgerhq/live-wallet@0.11.6-next.1
+  - @ledgerhq/hw-app-celo@6.33.11-next.1
+
 ## 34.43.0-next.1
 
 ### Patch Changes
