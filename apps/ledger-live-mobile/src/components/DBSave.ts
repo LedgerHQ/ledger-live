@@ -98,33 +98,36 @@ function walletExportSelector(state: State) {
   return exportWalletState(walletSelector(state));
 }
 
-export const ConfigureDBSaveEffects = () => {
-  const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
-  const getAccountsChanged = useCallback(
-    (
-      oldState: State,
-      newState: State,
-    ):
-      | {
-          changed: string[];
-        }
-      | null
-      | undefined => {
-      if (oldState.accounts !== newState.accounts) {
-        return {
-          changed: newState.accounts.active
-            .filter(a => {
-              const old = oldState.accounts.active.find(b => a.id === b.id);
-              return !old || old !== a;
-            })
-            .map(a => a.id),
-        };
-      }
-      return null;
-    },
-    [],
-  );
+const getSettingsChanged = (a: State, b: State) => a.settings !== b.settings;
+const getAccountsChanged = (
+  oldState: State,
+  newState: State,
+):
+  | {
+      changed: string[];
+    }
+  | null
+  | undefined => {
+  if (oldState.accounts !== newState.accounts) {
+    return {
+      changed: newState.accounts.active
+        .filter(a => {
+          const old = oldState.accounts.active.find(b => a.id === b.id);
+          return !old || old !== a;
+        })
+        .map(a => a.id),
+    };
+  }
+  return null;
+};
+const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
+const marketNotEquals = (a: State, b: State) => a.market !== b.market;
+const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
+const compareWalletState = (a: State, b: State) =>
+  walletStateExportShouldDiffer(a.wallet, b.wallet);
+const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
+export const ConfigureDBSaveEffects = () => {
   const getPostOnboardingStateChanged = useCallback(
     (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
@@ -134,14 +137,19 @@ export const ConfigureDBSaveEffects = () => {
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [trackingPairs]);
 
-  useDBSaveEffect({
-    save: saveCountervalues,
-    throttle: 2000,
-    getChangesStats: () => ({
+  const countervaluesChangesStats = useCallback(
+    () => ({
       changed: !!Object.keys(rawState.status).length,
       pairIds,
     }),
-    lense: () => rawState,
+    [rawState, pairIds],
+  );
+  const countervaluesRawState = useCallback(() => rawState, [rawState]);
+  useDBSaveEffect({
+    save: saveCountervalues,
+    throttle: 2000,
+    getChangesStats: countervaluesChangesStats,
+    lense: countervaluesRawState,
   });
   useDBSaveEffect({
     save: saveSettings,
@@ -158,7 +166,7 @@ export const ConfigureDBSaveEffects = () => {
   useDBSaveEffect({
     save: saveBle,
     throttle: 500,
-    getChangesStats: (a, b) => a.ble !== b.ble,
+    getChangesStats: bleNotEquals,
     lense: bleSelector,
   });
   useDBSaveEffect({
@@ -171,28 +179,28 @@ export const ConfigureDBSaveEffects = () => {
   useDBSaveEffect({
     save: saveMarketState,
     throttle: 500,
-    getChangesStats: (a, b) => a.market !== b.market,
+    getChangesStats: marketNotEquals,
     lense: exportMarketSelector,
   });
 
   useDBSaveEffect({
     save: saveTrustchainState,
     throttle: 500,
-    getChangesStats: (a, b) => a.trustchain !== b.trustchain,
+    getChangesStats: trustchainNotEquals,
     lense: trustchainStoreSelector,
   });
 
   useDBSaveEffect({
     save: saveWalletExportState,
     throttle: 500,
-    getChangesStats: (a, b) => walletStateExportShouldDiffer(a.wallet, b.wallet),
+    getChangesStats: compareWalletState,
     lense: walletExportSelector,
   });
 
   useDBSaveEffect({
     save: saveLargeMoverState,
     throttle: 500,
-    getChangesStats: (a, b) => a.largeMover !== b.largeMover,
+    getChangesStats: largeMoverNotEquals,
     lense: exportLargeMoverSelector,
   });
 
