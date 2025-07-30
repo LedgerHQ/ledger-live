@@ -7,7 +7,8 @@ export default class AddAccountDrawer extends CommonPage {
   deselectAllButtonId = "add-accounts-deselect-all";
   modalButtonId = "add-accounts-modal-add-button";
   continueButtonId = "add-accounts-continue-button";
-  closeAddAccountButtonId = "button-close-add-account";
+  //closeAddAccountButtonId = "button-close-add-account";
+  closeAddAccountButtonId = "qa-onsite-testID";
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
   addNewOrExistingAccount = "add-new-account-button";

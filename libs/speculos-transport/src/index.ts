@@ -226,7 +226,7 @@ export async function createSpeculosDevice(
         ]),
   ];
 
-  log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
+  log("speculos", `${speculosID}: spawning = ${params.join(" ")}`); //rajouter le log ici
 
   const p = spawn("docker", [...params, "--seed", `${seed}`]);
 
