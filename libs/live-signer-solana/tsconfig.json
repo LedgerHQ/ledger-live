@@ -7,6 +7,7 @@
     "noImplicitThis": false,
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
+    "jsx": "react",
     "outDir": "lib"
   },
   "include": ["src/**/*"]
