@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Flex, Button } from "@ledgerhq/native-ui";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import TextInput from "~/components/TextInput";
+import { useToastsActions } from "~/actions/toast";
 
 /**
  * Debugging screen to test snackbars:
@@ -14,7 +14,7 @@ import TextInput from "~/components/TextInput";
 export default function DebugSnackbars() {
   const [textInput, setTextInput] = useState("Example of a snackbar 🥨");
   const [incrementedId, setIncrementedId] = useState(0);
-  const { pushToast } = useToasts();
+  const { pushToast } = useToastsActions();
 
   const pushARandomIdToast = useCallback(() => {
     const id = `toast-${incrementedId}`;
