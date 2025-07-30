@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import { useMemo, useState, useRef } from "react";
 import { track } from "~/analytics";
@@ -20,7 +20,6 @@ import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type CustomExchangeHandlersHookType = {
