@@ -9,12 +9,11 @@ import {
   usePickDefaultAccount,
   useSwapableAccounts,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
-import { SwapFormParamList } from "../../types";
 import TranslatedError from "~/components/TranslatedError";
 import { ScreenName } from "~/const";
 import { useAnalytics } from "~/analytics";
@@ -25,6 +24,11 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
 interface Props {
   provider?: string;
@@ -34,10 +38,15 @@ interface Props {
   isSendMaxLoading: boolean;
 }
 
+type SwapFormNavigation = CompositeNavigationProp<
+  MaterialTopTabNavigationProp<SwapFormNavigatorParamList>,
+  StackNavigationProp<SwapNavigatorParamList>
+>;
+
 export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoading }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const navigation = useNavigation<SwapFormParamList>();
+  const navigation = useNavigation<SwapFormNavigation>();
   const { data: currenciesFrom } = useFetchCurrencyFrom();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
@@ -73,11 +82,11 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
       ...sharedSwapTracking,
       button: "Edit source account",
     });
-    // @ts-expect-error navigation type is only partially declared
+
     navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
       provider,
-      selectableCurrencyIds: currenciesFrom,
+      selectableCurrencyIds: currenciesFrom ?? [],
       swap: swapTx.swap,
     });
   }, [navigation, provider, currenciesFrom, swapTx.swap, track]);

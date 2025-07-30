@@ -35,7 +35,8 @@ export default function AnalyticsOptInPromptNavigator() {
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
   const route = useRoute<NavigationProps["route"]>();
-  const preventBackNavigation = route.params.params?.entryPoint === "Portfolio";
+
+  const preventBackNavigation = route.params?.params?.entryPoint === "Portfolio";
 
   const navigationOptions = {
     title: "",

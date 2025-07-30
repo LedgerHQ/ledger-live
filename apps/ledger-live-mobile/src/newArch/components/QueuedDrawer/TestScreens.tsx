@@ -6,7 +6,7 @@ import ModalLock from "~/components/ModalLock";
 import { useDispatch, useSelector } from "react-redux";
 import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";

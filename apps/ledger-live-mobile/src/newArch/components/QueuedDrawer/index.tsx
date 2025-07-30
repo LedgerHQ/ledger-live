@@ -97,8 +97,14 @@ const QueuedDrawer = ({
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      logDrawer("trigger close because not focused");
-      triggerClose();
+      // Add delay to prevent premature closing due to React Navigation v7 focus timing
+      const timer = setTimeout(() => {
+        if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
+          logDrawer("trigger close because not focused");
+          triggerClose();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     } else if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
       const onDrawerStateChanged = (isOpen: boolean) => {
         if (isOpen) {

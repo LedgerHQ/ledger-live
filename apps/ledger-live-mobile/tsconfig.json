@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "preserve",
     "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",

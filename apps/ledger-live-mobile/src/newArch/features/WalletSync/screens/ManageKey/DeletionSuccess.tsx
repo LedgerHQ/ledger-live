@@ -18,7 +18,7 @@ export function WalletSyncManageKeyDeletionSuccess({ navigation }: Props) {
   const { t } = useTranslation();
 
   function close(): void {
-    navigation.navigate(NavigatorName.Settings, {
+    navigation.replace(NavigatorName.Settings, {
       screen: ScreenName.GeneralSettings,
     });
   }

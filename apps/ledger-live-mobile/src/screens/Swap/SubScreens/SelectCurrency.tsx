@@ -8,10 +8,10 @@ import { TrackScreen, useAnalytics } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import KeyboardView from "~/components/KeyboardView";
 import CurrencyRow from "~/components/CurrencyRow";
-import { SelectCurrencyParamList } from "../types";
 import { ScreenName } from "~/const";
 import { sharedSwapTracking } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
+import type { SelectCurrencyParamList } from "../types";
 
 function keyExtractor({ id }: CryptoCurrency | TokenCurrency) {
   return id;
@@ -39,11 +39,16 @@ export function SelectCurrency({
         button: "new target currency",
         currency: currency.name,
       });
-      // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, { currency });
+
+      // Preserve the current swap state if available
+      navigation.popTo(ScreenName.SwapTab, {
+        screen: ScreenName.SwapForm,
+        params: {
+          currency,
+        },
+      });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [track, navigation],
   );
 
   const RenderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => {

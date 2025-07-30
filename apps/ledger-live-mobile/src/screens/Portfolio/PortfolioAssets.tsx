@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { shallowEqual, useSelector } from "react-redux";
-import { useStartProfiler } from "@shopify/react-native-performance";
+
 import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
@@ -35,7 +35,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
 
-  const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -74,8 +73,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const showAccounts = selectedTab === TAB_OPTIONS.Accounts;
 
   const onPressButton = useCallback(
-    (uiEvent: GestureResponderEvent) => {
-      startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
+    (_uiEvent: GestureResponderEvent) => {
       track("button_clicked", {
         button: showAssets ? "See all assets" : "See all accounts",
         page: "Wallet",
@@ -107,7 +105,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         });
       }
     },
-    [startNavigationTTITimer, showAssets, isAccountListUIEnabled, navigation],
+    [showAssets, isAccountListUIEnabled, navigation],
   );
 
   return (

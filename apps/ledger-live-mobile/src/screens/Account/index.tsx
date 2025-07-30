@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -12,7 +12,6 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { switchCountervalueFirst } from "~/actions/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
@@ -42,6 +41,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { renderItem } from "LLM/utils/renderItem";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -180,38 +180,36 @@ const AccountScreenInner = ({
   ];
 
   return (
-    <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
-      <SafeAreaView isFlex>
-        {analytics}
-        <CurrencyBackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          gradientColor={getCurrencyColor(currency) || colors.primary.c80}
-        />
-        <AnimatedFlatListWithRefreshControl
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            paddingTop: 48, //CurrencyHeader height
-          }}
-          data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
-          keyExtractor={(_: unknown, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          testID={"account-screen-scrollView"}
-        />
-        <AccountHeader
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          account={account}
-          useCounterValue={useCounterValue}
-          counterValueCurrency={counterValueCurrency}
-          history={history}
-          countervalueAvailable={countervalueAvailable}
-          parentAccount={parentAccount}
-        />
-      </SafeAreaView>
-    </ReactNavigationPerformanceView>
+    <SafeAreaView isFlex>
+      {analytics}
+      <CurrencyBackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+      />
+      <AnimatedFlatListWithRefreshControl
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingTop: 48, //CurrencyHeader height
+        }}
+        data={data}
+        renderItem={renderItem<JSX.Element>}
+        keyExtractor={(_: unknown, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        testID={"account-screen-scrollView"}
+      />
+      <AccountHeader
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        account={account}
+        useCounterValue={useCounterValue}
+        counterValueCurrency={counterValueCurrency}
+        history={history}
+        countervalueAvailable={countervalueAvailable}
+        parentAccount={parentAccount}
+      />
+    </SafeAreaView>
   );
 };
 

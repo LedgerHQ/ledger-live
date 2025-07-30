@@ -260,7 +260,6 @@
       "react-native-bundle-visualizer@3.1.3": "patches/react-native-bundle-visualizer@3.1.3.patch",
       "@ton/core@0.60.1": "patches/@ton__core@0.60.1.patch",
       "storyly-react-native": "patches/storyly-react-native.patch",
-      "@shopify/react-native-performance": "patches/@shopify__react-native-performance.patch",
       "react-native-webview": "patches/react-native-webview.patch",
       "detox@20.39.0": "patches/detox@20.39.0.patch",
       "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",

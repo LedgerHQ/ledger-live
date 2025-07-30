@@ -103,12 +103,16 @@ export default function SwapNavigator(
   const options = useMemo(() => {
     return !ptxSwapLiveAppMobile?.enabled
       ? {
-          ...(noNanoBuyNanoWallScreenOptions as { options: object }).options,
+          ...("options" in noNanoBuyNanoWallScreenOptions
+            ? noNanoBuyNanoWallScreenOptions.options
+            : {}),
           title: t("transfer.swap2.form.title"),
-          headerLeft: () => null,
+          headerLeft: (): React.JSX.Element | null => null,
         }
       : {
-          ...(noNanoBuyNanoWallScreenOptions as { options: object }).options,
+          ...("options" in noNanoBuyNanoWallScreenOptions
+            ? noNanoBuyNanoWallScreenOptions.options
+            : {}),
           headerTitle: t("transfer.swap2.form.title"),
           headerLeft: () => <NavigationHeaderBackButton />,
 

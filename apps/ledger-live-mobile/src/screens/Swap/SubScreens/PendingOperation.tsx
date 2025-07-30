@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { CommonActions, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -26,17 +26,12 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, []);
 
   const onComplete = useCallback(() => {
-    navigation.reset({
-      index: 1,
-      routes: [
-        {
-          name: ScreenName.SwapTab,
-        },
-        {
-          name: ScreenName.SwapHistory,
-        },
-      ],
-    });
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [{ name: ScreenName.SwapTab }, { name: ScreenName.SwapHistory }],
+      }),
+    );
   }, [navigation]);
 
   return (

@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import { AppIcon } from "../AppIcon";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
 import { NavigationProps } from "../types";
 
@@ -34,9 +34,12 @@ export function LocalLiveApp({ localLiveApps }: { localLiveApps: LiveAppManifest
               alignItems: "center",
             }}
             onPress={() => {
-              navigation.navigate(ScreenName.PlatformApp, {
-                platform: manifest.id,
-                name: manifest.name,
+              navigation.navigate(NavigatorName.Base, {
+                screen: ScreenName.PlatformApp,
+                params: {
+                  platform: manifest.id,
+                  name: manifest.name,
+                },
               });
             }}
           >

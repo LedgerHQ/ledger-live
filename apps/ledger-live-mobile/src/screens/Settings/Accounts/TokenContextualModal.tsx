@@ -18,7 +18,6 @@ import Button from "~/components/Button";
 import { parentAccountSelector } from "~/reducers/accounts";
 import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
 import BottomModalChoice from "~/components/BottomModalChoice";
-import { NavigatorName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { State } from "~/reducers/types";
@@ -59,7 +58,7 @@ const TokenContextualModal = ({
     if (!account) return;
     blacklistToken(account.token.id);
     onCloseModal();
-    navigation.navigate(NavigatorName.WalletTab);
+    navigation.pop();
   }, [onCloseModal, blacklistToken, account, navigation]);
 
   // UPGRADE-RN77:

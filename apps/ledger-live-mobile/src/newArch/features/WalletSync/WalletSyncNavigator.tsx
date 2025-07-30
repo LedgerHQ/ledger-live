@@ -14,13 +14,11 @@ import { useTranslation } from "react-i18next";
 import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
 import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstancesProcess";
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";
-import { LedgerSyncDeepLinkHandler } from "./screens/LedgerSyncDeepLinkHandler";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useClose } from "./hooks/useClose";
 import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { NavigationProp } from "@react-navigation/native";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -31,16 +29,13 @@ export default function WalletSyncNavigator() {
   useInitMemberCredentials();
   const close = useClose();
 
-  const onHeaderBackButtonPress = useCallback(
-    (navigation: NavigationProp<ReactNavigation.RootParamList>) => {
-      track("button_clicked", {
-        button: "Back",
-        page: AnalyticsPage.LedgerSyncSettings,
-      });
-      navigation.goBack();
-    },
-    [],
-  );
+  const onHeaderBackButtonPress = useCallback((navigation: { goBack: () => void }) => {
+    track("button_clicked", {
+      button: "Back",
+      page: AnalyticsPage.LedgerSyncSettings,
+    });
+    navigation.goBack();
+  }, []);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -118,14 +113,6 @@ export default function WalletSyncNavigator() {
           title: "",
           headerRight: () => null,
           headerLeft: () => null,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.LedgerSyncDeepLinkHandler}
-        component={LedgerSyncDeepLinkHandler}
-        options={{
-          title: "",
-          headerRight: () => null,
         }}
       />
     </Stack.Navigator>

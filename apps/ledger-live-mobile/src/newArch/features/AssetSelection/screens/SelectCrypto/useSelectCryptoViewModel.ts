@@ -5,10 +5,9 @@ import { useNavigation } from "@react-navigation/core";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
@@ -32,13 +31,15 @@ export default function useSelectCryptoViewModel({
   const { t } = useTranslation();
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const groupedCurrencies = useGroupedCurrenciesByProvider(true);
+  const { result, loadingStatus: providersLoadingStatus } =
+    "loadingStatus" in groupedCurrencies
+      ? groupedCurrencies
+      : { result: groupedCurrencies, loadingStatus: undefined };
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const onPressItem = useCallback(
-    (curr: CryptoCurrency | TokenCurrency) => {
+    (curr: CryptoOrTokenCurrency) => {
       const clickMetadata = analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick;
       if (clickMetadata)
         track(clickMetadata?.eventName, {
@@ -47,9 +48,7 @@ export default function useSelectCryptoViewModel({
         });
 
       const provider = currenciesByProvider.find(elem =>
-        elem.currenciesByNetwork.some(
-          currencyByNetwork => (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
-        ),
+        elem.currenciesByNetwork.some(currencyByNetwork => currencyByNetwork.id === curr.id),
       );
 
       // If the selected currency exists on multiple networks we redirect to the SelectNetwork screen

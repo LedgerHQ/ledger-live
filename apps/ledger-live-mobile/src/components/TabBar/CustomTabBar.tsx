@@ -200,7 +200,7 @@ const TabBar = ({ state, descriptors, navigation, colors, insets }: Props): JSX.
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
+            testID={options.tabBarButtonTestID}
             onPress={onPress}
             onLongPress={onLongPress}
           >

@@ -33,7 +33,7 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
         gestureEnabled: true,
         headerTitle: () => null,
         headerRight: () => null,
-        headerBackTitleVisible: false,
+        headerBackButtonDisplayMode: "minimal",
         title: undefined,
         cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       },

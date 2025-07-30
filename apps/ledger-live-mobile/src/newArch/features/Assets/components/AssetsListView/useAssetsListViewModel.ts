@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { GestureResponderEvent, useStartProfiler } from "@shopify/react-native-performance";
+import { GestureResponderEvent } from "react-native";
 import { useSelector } from "react-redux";
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
@@ -28,14 +28,13 @@ export type NavigationProp = BaseNavigationComposite<
 >;
 
 const useAssetsListViewModel = ({
-  sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAssets,
   onContentChange,
 }: Props) => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const navigation = useNavigation<NavigationProp>();
-  const startNavigationTTITimer = useStartProfiler();
+
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
@@ -65,15 +64,12 @@ const useAssetsListViewModel = ({
   );
 
   const onItemPress = useCallback(
-    (asset: Asset, uiEvent: GestureResponderEvent) => {
+    (asset: Asset, _uiEvent: GestureResponderEvent) => {
       track("asset_clicked", {
         asset: asset.currency.name,
         page: "Assets",
       });
-      startNavigationTTITimer({
-        source: sourceScreenName,
-        uiEvent,
-      });
+
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.Asset,
         params: {
@@ -81,7 +77,7 @@ const useAssetsListViewModel = ({
         },
       });
     },
-    [navigation, sourceScreenName, startNavigationTTITimer],
+    [navigation],
   );
 
   return {

@@ -26,12 +26,19 @@ ios/.xcode.env.local
 build/
 .idea
 .gradle
+.kotlin/
 local.properties
 *.iml
 *.hprof
 .cxx/
 *.keystore
 !debug.keystore
+
+# Eclipse Android
+.project
+.settings/
+.classpath
+.factorypath
 
 # node.js
 node_modules/

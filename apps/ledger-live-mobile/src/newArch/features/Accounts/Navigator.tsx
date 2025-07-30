@@ -28,6 +28,7 @@ import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
@@ -43,7 +44,8 @@ export default function Navigator() {
   const exitProcess = useCallback(() => {
     const rootParent = navigation.getParent();
     // this is the only way to go back to the root navigator
-    navigation.replace(rootParent?.getState().routeNames[0] as keyof AddAccountsNavigatorParamList);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    navigation.replace(rootParent?.getState().routeNames[0] as any);
   }, [navigation]);
 
   const onClose = useCallback(() => {
@@ -94,8 +96,7 @@ export default function Navigator() {
         name={ScreenName.ScanDeviceAccounts}
         component={ScanDeviceAccounts}
         options={{
-          headerTitle: "",
-          headerTransparent: true,
+          ...TransparentHeaderNavigationOptions,
           headerRight: () => <CloseWithConfirmation onClose={onExitScanDeviceAccounts} />,
           headerLeft: () => <NavigationHeaderBackButton onPress={onBackScanDeviceAccounts} />,
         }}
@@ -126,9 +127,8 @@ export default function Navigator() {
         name={ScreenName.AddAccountsSuccess}
         component={AddAccountsSuccess}
         options={{
-          headerTitle: "",
+          ...TransparentHeaderNavigationOptions,
           headerLeft: () => null,
-          headerTransparent: true,
         }}
         initialParams={{
           onCloseNavigation: onClose,
@@ -138,9 +138,8 @@ export default function Navigator() {
         name={ScreenName.AddAccountsWarning}
         component={AddAccountsWarning}
         options={{
-          headerTitle: "",
+          ...TransparentHeaderNavigationOptions,
           headerLeft: () => null,
-          headerTransparent: true,
         }}
         initialParams={{
           onCloseNavigation: onClose,
@@ -150,9 +149,8 @@ export default function Navigator() {
         name={ScreenName.NoAssociatedAccounts}
         component={NoAssociatedAccountsView}
         options={{
-          headerTitle: "",
+          ...TransparentHeaderNavigationOptions,
           headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
-          headerTransparent: true,
         }}
         initialParams={{
           onCloseNavigation: onClose,
