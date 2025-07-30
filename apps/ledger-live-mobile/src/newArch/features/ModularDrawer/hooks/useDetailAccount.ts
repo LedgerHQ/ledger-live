@@ -16,8 +16,10 @@ import { formatDetailedAccount } from "../utils/formatdetailedAccount";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import { AccountTuple, getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-//import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
+import { NavigatorName, ScreenName } from "~/const";
+import { useNavigation } from "@react-navigation/core";
+import { Account } from "@ledgerhq/native-ui/pre-ldls/components/";
 
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
@@ -34,11 +36,10 @@ export const useDetailedAccounts = (
   flow: string,
   source: string,
   accounts$?: Observable<WalletAPIAccount[]>,
-  onAccountSelected?: (account: Account) => void,
 ) => {
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-
+  const navigation = useNavigation();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -98,14 +99,24 @@ export const useDetailedAccounts = (
     return sortAccountsByFiatValue(formattedAccounts);
   }, [accounts, state, counterValueCurrency, isATokenCurrency, overridedAccountName]);
 
-  const onAddAccountClick = useCallback(() => {
-    trackModularDrawerEvent("button_clicked", {
-      button: "Add a new account",
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-      flow,
-      source,
-    });
-  }, [flow, source, trackModularDrawerEvent]);
+  const onAccountClick = useCallback(
+    (account: Account) => {
+      trackModularDrawerEvent("button_clicked", {
+        button: "Add a new account",
+        page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+        flow,
+        source,
+      });
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
+        params: {
+          currencyId: asset.id,
+          accountId: account.id,
+        },
+      });
+    },
+    [trackModularDrawerEvent, flow, source, navigation, asset.id],
+  );
 
-  return { detailedAccounts, accounts, onAddAccountClick };
+  return { detailedAccounts, accounts, onAccountClick };
 };

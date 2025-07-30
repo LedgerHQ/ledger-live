@@ -381,5 +381,6 @@ export function useModularDrawerState({
 
     defaultSearchValue,
     setDefaultSearchValue,
+    navigateToDevice,
   };
 }

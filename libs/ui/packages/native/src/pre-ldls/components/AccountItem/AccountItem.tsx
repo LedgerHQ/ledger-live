@@ -8,7 +8,7 @@ import { Tag } from "../Tag/Tag";
 import Checkbox from "../../../components/Form/Checkbox";
 import { useTokens } from "../../libs";
 
-export type Account = {
+export type AccountUI = {
   address: string;
   balance?: string;
   cryptoId?: string;
@@ -42,7 +42,7 @@ export type RightElement = RightElementArrow | RightElementCheckbox | RightEleme
 
 export type AccountItemProps = {
   onClick?: () => void;
-  account: Account;
+  account: AccountUI;
   rightElement?: RightElement;
   showIcon?: boolean;
   backgroundColor?: string;
@@ -112,6 +112,38 @@ const RightElementContainer = styled(View)`
   justify-content: center;
 `;
 
+type RightElementRendererProps = {
+  rightElement: RightElement;
+  tokens: Record<string, string | number>;
+  onEditPress: () => void;
+};
+
+const RightElementRenderer = ({ rightElement, tokens, onEditPress }: RightElementRendererProps) => {
+  return (
+    <RightElementContainer style={{ marginLeft: Number(tokens["spacing-xs"]) }}>
+      {rightElement.type === "checkbox" && (
+        <View testID="right-element-checkbox">
+          <Checkbox
+            checked={rightElement.checkbox.checked}
+            onChange={rightElement.checkbox.onChange}
+            disabled={rightElement.checkbox.disabled}
+          />
+        </View>
+      )}
+      {rightElement.type === "arrow" && (
+        <View testID="right-element-arrow-icon">
+          <ChevronRightMedium size={24} color={String(tokens["colors-content-default-default"])} />
+        </View>
+      )}
+      {rightElement.type === "edit" && (
+        <IconButton onPress={onEditPress} testID="right-element-edit-icon">
+          <PenMedium size={16} color={String(tokens["colors-content-default-default"])} />
+        </IconButton>
+      )}
+    </RightElementContainer>
+  );
+};
+
 export const AccountItem = ({
   onClick,
   account,
@@ -152,21 +184,21 @@ export const AccountItem = ({
       isClickable={Boolean(onClick)}
       onPress={handlePress}
       style={({ pressed }) => ({
-        padding: onClick ? Number(tokens["margin-s"]) : 0,
+        paddingTop: onClick ? Number(tokens["margin-s"]) : 0,
         borderRadius: onClick ? Number(tokens["radius-s"]) : 0,
         opacity: pressed && onClick ? 0.7 : 1,
       })}
       testID="account-item"
     >
       <ContentContainer>
-        <AccountInfoContainer style={{ gap: Number(tokens["spacing-xxxs"]) }}>
+        <AccountInfoContainer>
           <NameRow style={{ marginBottom: Number(tokens["spacing-xxxs"]) }}>
             <NameWrapper>
               <Text
                 variant="largeLineHeight"
                 fontWeight="semiBold"
                 color={String(tokens["colors-content-default-default"])}
-                fontSize="14px"
+                fontSize="18px"
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
@@ -190,42 +222,23 @@ export const AccountItem = ({
 
         <BalanceContainer style={{ gap: Number(tokens["spacing-xxxs"]) }}>
           {fiatValue && (
-            <Text fontSize="14px" color={String(tokens["colors-content-default-default"])}>
+            <Text fontSize="18px" color={String(tokens["colors-content-default-default"])}>
               {fiatValue}
             </Text>
           )}
           {balance && (
-            <Text fontSize="12px" color={String(tokens["colors-content-subdued-default-default"])}>
+            <Text fontSize="14px" color={String(tokens["colors-content-subdued-default-default"])}>
               {balance}
             </Text>
           )}
         </BalanceContainer>
 
         {rightElement && (
-          <RightElementContainer style={{ marginLeft: Number(tokens["spacing-xs"]) }}>
-            {rightElement.type === "checkbox" && (
-              <View testID="right-element-checkbox">
-                <Checkbox
-                  checked={rightElement.checkbox.checked}
-                  onChange={rightElement.checkbox.onChange}
-                  disabled={rightElement.checkbox.disabled}
-                />
-              </View>
-            )}
-            {rightElement.type === "arrow" && (
-              <View testID="right-element-arrow-icon">
-                <ChevronRightMedium
-                  size={24}
-                  color={String(tokens["colors-content-default-default"])}
-                />
-              </View>
-            )}
-            {rightElement.type === "edit" && (
-              <IconButton onPress={handleEditPress} testID="right-element-edit-icon">
-                <PenMedium size={16} color={String(tokens["colors-content-default-default"])} />
-              </IconButton>
-            )}
-          </RightElementContainer>
+          <RightElementRenderer
+            rightElement={rightElement}
+            tokens={tokens}
+            onEditPress={handleEditPress}
+          />
         )}
       </ContentContainer>
     </Wrapper>

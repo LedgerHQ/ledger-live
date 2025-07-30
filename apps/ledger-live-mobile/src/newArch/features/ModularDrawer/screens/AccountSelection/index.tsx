@@ -17,6 +17,7 @@ export type AccountSelectionStepProps = {
   asset?: CryptoOrTokenCurrency | null;
   flow: string;
   source: string;
+  onAddNewAccount: () => void;
 };
 
 const HEADER_HEIGHT = 64;
@@ -28,37 +29,27 @@ const AccountSelection = ({
   flow,
   source,
   accounts$,
-  onAccountSelected,
+  onAddNewAccount,
 }: Readonly<AccountSelectionStepProps>) => {
-  const { detailedAccounts, onAddAccountClick } = useDetailedAccounts(
-    asset!,
-    flow,
-    source,
-    accounts$,
-    onAccountSelected,
-  );
+  const { detailedAccounts, onAccountClick } = useDetailedAccounts(asset!, flow, source, accounts$);
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const listRef = useRef<FlatList>(null);
 
-  const handleAddAccount = useCallback(() => {
-    onAddAccountClick();
-  }, [onAddAccountClick]);
-
   const renderItem = useCallback(
     ({ item }: { item: Account }) => {
-      return <AccountItem account={item} onClick={onAddAccountClick} />;
+      return <AccountItem account={item} onClick={() => onAccountClick(item)} />;
     },
-    [onAddAccountClick],
+    [onAccountClick],
   );
 
   const renderFooter = useCallback(() => {
     return (
       <AddAccountButton
-        onClick={handleAddAccount}
+        onClick={() => onAddNewAccount}
         sourceScreenName={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION}
       />
     );
-  }, [handleAddAccount]);
+  }, [onAddNewAccount]);
 
   useEffect(() => {
     shouldHandleKeyboardEvents.value = false;

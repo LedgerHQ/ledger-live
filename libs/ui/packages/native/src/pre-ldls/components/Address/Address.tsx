@@ -30,7 +30,7 @@ export const Address = ({
   return (
     <Wrapper>
       <Text
-        fontSize="12px"
+        fontSize="14px"
         color={String(tokens["colors-content-subdued-default-default"])}
         marginRight={showIcon ? Number(tokens["spacing-xxxs"]) : 0}
       >

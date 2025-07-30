@@ -11,6 +11,8 @@ jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", (
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
 
+//TODO: Adapt this test to the new modular drawer flow
+
 describe("ModularDrawer integration", () => {
   const advanceTimers = () => {
     act(() => {
