@@ -2,6 +2,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export enum ModularDrawerStep {
   Asset = "Asset",
@@ -18,6 +19,8 @@ export type OpenModularDrawerParams = {
   accounts$?: Observable<WalletAPIAccount[]>;
   flow?: string;
   source?: string;
+  assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
 
 export type OpenModularDrawerParamsWithCallbackId = {
