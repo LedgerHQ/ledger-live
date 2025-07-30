@@ -1,11 +1,11 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import network from "../network";
-import { PolkadotOperation, PolkadotAsset } from "../types";
+import { PolkadotOperation } from "../types";
 
 export async function listOperations(
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
-): Promise<[Operation<PolkadotAsset>[], number]> {
+): Promise<[Operation[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
@@ -13,7 +13,7 @@ export async function listOperations(
   return [operations.map(convertToCoreOperation), blockHeight];
 }
 
-const convertToCoreOperation = (operation: PolkadotOperation): Operation<PolkadotAsset> => {
+const convertToCoreOperation = (operation: PolkadotOperation): Operation => {
   const { hash, type, value, fee, blockHeight, senders, recipients, date, extra } = operation;
   // The recommended identifier is to use the block ID (height or hash) and operation index.
   // However, `blockHash` is always set to `null` in our codebase.

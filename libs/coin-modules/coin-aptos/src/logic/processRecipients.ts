@@ -1,7 +1,6 @@
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { Operation } from "@ledgerhq/types-live";
 import { Operation as APIOperation } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import {
   BATCH_TRANSFER_TYPES,
   COIN_TRANSFER_TYPES,
@@ -16,7 +15,7 @@ const transferLikeFunctions = (payload: InputEntryFunctionData) =>
   DELEGATION_POOL_TYPES.includes(payload.function);
 
 const addLikeFunctionsToRecipients = (
-  op: Operation | APIOperation<AptosAsset>,
+  op: Operation | APIOperation,
   payload: InputEntryFunctionData,
 ) => {
   if (
@@ -28,10 +27,7 @@ const addLikeFunctionsToRecipients = (
   }
 };
 
-const addFungibleToRecipients = (
-  op: Operation | APIOperation<AptosAsset>,
-  payload: InputEntryFunctionData,
-) => {
+const addFungibleToRecipients = (op: Operation | APIOperation, payload: InputEntryFunctionData) => {
   if (
     payload.functionArguments &&
     payload.functionArguments.length > 1 &&
@@ -43,7 +39,7 @@ const addFungibleToRecipients = (
 };
 
 const addBatchedFunctions = (
-  op: Operation | APIOperation<AptosAsset>,
+  op: Operation | APIOperation,
   payload: InputEntryFunctionData,
   address: string,
 ) => {
@@ -66,7 +62,7 @@ const addBatchedFunctions = (
 export function processRecipients(
   payload: InputEntryFunctionData,
   address: string,
-  op: Operation | APIOperation<AptosAsset>,
+  op: Operation | APIOperation,
   function_address: string,
 ): void {
   // get recipients by 3 groups

@@ -10,7 +10,7 @@ import {
   isAPITransactionType,
 } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TezosAsset } from "../api/types";
+// import { TezosAsset } from "../api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -32,7 +32,7 @@ export async function listOperations(
     sort,
     minHeight,
   }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
-): Promise<[Operation<TezosAsset>[], string]> {
+): Promise<[Operation[], string]> {
   let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
   if (token) {
     options = { ...options, lastId: JSON.parse(token) };
@@ -44,7 +44,7 @@ export async function listOperations(
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   const filteredOperations = operations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
-    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<TezosAsset>[]);
+    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]);
   if (sort === "Ascending") {
     //results are always sorted in descending order
     filteredOperations.reverse();
@@ -56,7 +56,7 @@ export async function listOperations(
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType | APIRevealType,
-): Operation<TezosAsset> {
+): Operation {
   const { hash, sender, type, id } = operation;
 
   let targetAddress = undefined;

@@ -11,16 +11,16 @@ export type BlockInfo = {
   parent?: BlockInfo;
 };
 
-type TokenInfoCommon = Record<string, unknown>;
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
-export type Asset<TokenInfo extends TokenInfoCommon = never> =
+export type AssetInfo =
   | { type: "native" }
-  | (TokenInfo extends never ? TokenInfo : { type: "token" } & TokenInfo);
+  | {
+      type: string; // token, coin, fungible_asset, trc10, trc20, erc20, erc721, erc1155, etc.
+      assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
+      assetOwner?: string;
+    };
 
-export type Operation<
-  AssetInfo extends Asset<TokenInfoCommon> = Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+// NOTE: CoreOperation
+export type Operation<MemoType extends Memo = MemoNotSupported> = {
   id: string;
   type: string;
 
@@ -61,7 +61,7 @@ export type Transaction = {
 /**
  * A block along with its {@link BlockTransaction}, not specific to a particular account/address.
  */
-export type Block<AssetType extends Asset<TokenInfoCommon>> = {
+export type Block = {
   /** The block metadata. */
   info: BlockInfo;
 
@@ -71,13 +71,13 @@ export type Block<AssetType extends Asset<TokenInfoCommon>> = {
    * It should include at least all transactions where an EOA is involved, however it is OK to ignore other types of
    * transactions that cannot cause balance changes (eg: validator vote transactions on Solana).
    */
-  transactions: BlockTransaction<AssetType>[];
+  transactions: BlockTransaction[];
 };
 
 /**
  * A transaction belonging to a {@link Block}, not specific to a particular account/address.
  */
-export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
+export type BlockTransaction = {
   /** The transaction hash/digest (globally unique identifier). */
   hash: string;
 
@@ -92,7 +92,7 @@ export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
    *
    * Note that fees are accounted for separately, so operations must not represent fees.
    */
-  operations: BlockOperation<AssetType>[];
+  operations: BlockOperation[];
 
   /** Network specific details for this transaction. */
   details?: Record<string, unknown>;
@@ -105,12 +105,10 @@ export type BlockTransaction<AssetType extends Asset<TokenInfoCommon>> = {
 };
 
 /** An operation belonging to a {@link BlockTransaction}. */
-export type BlockOperation<AssetType extends Asset<TokenInfoCommon>> =
-  | TransferBlockOperation<AssetType>
-  | OtherBlockOperation;
+export type BlockOperation = TransferBlockOperation | OtherBlockOperation;
 
 /** A asset transfer that occurred in a {@link BlockTransaction}. */
-export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
+export type TransferBlockOperation = {
   /** Operation type discriminator. */
   type: "transfer";
 
@@ -121,7 +119,7 @@ export type TransferBlockOperation<AssetType extends Asset<TokenInfoCommon>> = {
   peer?: string;
 
   /** The transferred asset. */
-  asset: AssetType;
+  asset: AssetInfo;
 
   /**
    * The signed amount of the transfer, i.e. impact of the transfer on <code>address</code> balance (positive for
@@ -147,7 +145,7 @@ export type Account = {
   currencyUnit: Unit;
 };
 
-export type Balance<AssetInfo extends Asset<TokenInfoCommon>> = {
+export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
@@ -183,10 +181,7 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
-export type TransactionIntent<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
@@ -230,27 +225,19 @@ export type AccountInfo = {
   sequence: number;
 };
 
-export type AlpacaApi<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = {
+export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
-  ) => Promise<FeeEstimation>;
+  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<AssetInfo, MemoType>,
+    transactionIntent: TransactionIntent<MemoType>,
     customFees?: bigint,
   ) => Promise<string>;
-  getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
+  getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;
-  getBlock: (height: number) => Promise<Block<AssetInfo>>;
-  listOperations: (
-    address: string,
-    pagination: Pagination,
-  ) => Promise<[Operation<AssetInfo>[], string]>;
+  getBlock: (height: number) => Promise<Block>;
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
 
 export type BridgeApi = {
@@ -259,7 +246,4 @@ export type BridgeApi = {
   getAccountInfo: (address: string) => Promise<AccountInfo>;
 };
 
-export type Api<
-  AssetInfo extends Asset<TokenInfoCommon>,
-  MemoType extends Memo = MemoNotSupported,
-> = AlpacaApi<AssetInfo, MemoType> & BridgeApi;
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;
