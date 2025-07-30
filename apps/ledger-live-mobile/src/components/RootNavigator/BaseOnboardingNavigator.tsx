@@ -15,7 +15,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Question from "~/icons/Question";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
-import { RootComposite, StackNavigatorProps } from "./types/helpers";
+import { StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
@@ -28,9 +28,9 @@ const hitSlop = {
   top: 10,
 };
 
-type ErrorHeaderInfoNavigatorProps = RootComposite<
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
-  | StackNavigatorProps<BaseOnboardingNavigatorParamList, ScreenName.PairDevices>
+type ErrorHeaderInfoNavigatorProps = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.PairDevices
 >;
 
 export const ErrorHeaderInfo = ({ route, navigation }: ErrorHeaderInfoNavigatorProps) => {

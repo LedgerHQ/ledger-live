@@ -5,6 +5,7 @@ import { ScreenName } from "~/const";
 import MarketList from "LLM/features/Market/screens/MarketList";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./Navigator";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 
 const Stack = createStackNavigator<MarketNavigatorStackParamList>();
 
@@ -17,11 +18,10 @@ export default function MarketWalletTabNavigator() {
         name={ScreenName.MarketList}
         component={MarketList}
         options={{
+          ...TransparentHeaderNavigationOptions,
           headerShown: true,
-          title: "",
           headerRight: undefined,
           headerLeft: () => null,
-          headerTransparent: true,
         }}
       />
     </Stack.Navigator>

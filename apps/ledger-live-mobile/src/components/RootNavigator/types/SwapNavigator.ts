@@ -1,4 +1,5 @@
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { NavigatorScreenParams } from "@react-navigation/core";
 import {
   ExchangeRate,
   SwapDataType,
@@ -6,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SwapFormNavigatorParamList } from "./SwapFormNavigator";
 
 import type {
   AlgorandAccount,
@@ -37,7 +39,6 @@ import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/fa
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { NavigatorScreenParams } from "@react-navigation/core";
 import BigNumber from "bignumber.js";
 import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -47,12 +48,13 @@ import type {
   SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
-} from "../../../screens/Swap/types";
+} from "~/screens/Swap/types";
 
 type Target = "from" | "to";
 
 export type SwapNavigatorParamList = {
   [ScreenName.SwapTab]:
+    | NavigatorScreenParams<SwapFormNavigatorParamList>
     | DetailsSwapParamList
     | DefaultAccountSwapParamList
     | SwapSelectCurrency
@@ -62,7 +64,7 @@ export type SwapNavigatorParamList = {
     provider?: string;
     swap: SwapDataType;
     selectableCurrencyIds: string[];
-    selectedCurrency: CryptoCurrency | TokenCurrency;
+    selectedCurrency?: CryptoCurrency | TokenCurrency;
   };
   [ScreenName.SwapSelectCurrency]: SwapSelectCurrency;
   [ScreenName.SwapSelectProvider]: {
