@@ -257,7 +257,7 @@ export const TopBar = ({
         </>
       ) : null}
       <Separator />
-      <ItemContainer isInteractive onClick={toggleMobileView} style={{ marginRight: 0 }}>
+      <ItemContainer data-testid="mobile-view-toggle" isInteractive onClick={toggleMobileView} style={{ marginRight: 0 }}>
         <Icons.Desktop size="S" />
         <ItemContent>
           <Switch isChecked={mobileView.display}></Switch>
@@ -267,6 +267,8 @@ export const TopBar = ({
       {mobileView.display && (
         <Box style={{ marginRight: 16 }}>
           <Input
+          
+            data-testid="mobile-view-width-input"
             small
             value={`${mobileView.width}` || ""}
             onChange={(e: string) => {
