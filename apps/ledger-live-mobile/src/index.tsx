@@ -89,6 +89,7 @@ import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -124,6 +125,7 @@ function App() {
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   useNativeStartupInfo();
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
@@ -141,6 +143,12 @@ function App() {
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber && isLDMKEnabled) {
