@@ -6,7 +6,13 @@
     "src/network/index.ts",
     "src/signer/index.ts"
   ],
-  "ignoreUnused": ["@ledgerhq/devices", "@ledgerhq/types-cryptoassets", "expect", "invariant"],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "@ledgerhq/types-cryptoassets",
+    "expect",
+    "invariant",
+    "got"
+  ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",
     "src/bridge/deviceTransactionConfig.ts",
