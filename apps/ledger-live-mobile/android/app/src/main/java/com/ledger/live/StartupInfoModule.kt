@@ -33,7 +33,6 @@ class StartupInfoModule(reactContext: ReactApplicationContext) : ReactContextBas
             }
         }
 
-        // --- IMPORTANT: Add @JvmStatic here ---
         @JvmStatic
         fun setStartupInfo(startupType: String, startupDuration: Double, resumeStartTime: Double, timeInBackground: Double) {
             sStartupType = startupType
@@ -51,7 +50,6 @@ class StartupInfoModule(reactContext: ReactApplicationContext) : ReactContextBas
                     putDouble("resumeStartTime", resumeStartTime * 1000)
                     putDouble("timeInBackground", timeInBackground * 1000)
                 }
-                // Log params BEFORE emitting
                 Log.d(TAG, "Emitting 'NativeStartupInfoUpdate' event to JS: $params")
                 reactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
@@ -80,7 +78,6 @@ class StartupInfoModule(reactContext: ReactApplicationContext) : ReactContextBas
                 putDouble("resumeStartTime", sResumeStartTime * 1000)
                 putDouble("timeInBackground", sTimeInBackground * 1000)
             }
-            // --- FIX: Log the map BEFORE resolving the promise ---
             Log.d(TAG, "Provided initial startup info to JS: $startupInfo") // Log it here
             promise.resolve(startupInfo) // Then resolve it
         } else {
