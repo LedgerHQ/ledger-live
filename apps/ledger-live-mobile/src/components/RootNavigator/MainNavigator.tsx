@@ -126,10 +126,7 @@ export default function MainNavigator() {
                 navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
               } else if (readOnlyModeEnabled) {
                 navigateToRebornFlow();
-              } else
-                navigation.navigate(NavigatorName.Earn, {
-                  screen: ScreenName.Earn,
-                });
+              } else navigation.jumpTo(NavigatorName.Earn);
             });
           },
         })}
@@ -157,7 +154,7 @@ export default function MainNavigator() {
             tabPress: e => {
               e.preventDefault();
               managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Web3HubTab);
+                navigation.jumpTo(NavigatorName.Web3HubTab);
               });
             },
           })}
@@ -176,7 +173,7 @@ export default function MainNavigator() {
             tabPress: e => {
               e.preventDefault();
               managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Discover, {
+                navigation.jumpTo(NavigatorName.Discover, {
                   screen: ScreenName.DiscoverScreen,
                 });
               });
@@ -200,14 +197,7 @@ export default function MainNavigator() {
               } else if (readOnlyModeEnabled) {
                 navigateToRebornFlow();
               } else {
-                navigation.navigate(NavigatorName.MyLedger, {
-                  screen: ScreenName.MyLedgerChooseDevice,
-                  params: {
-                    tab: undefined,
-                    searchQuery: undefined,
-                    updateModalOpened: undefined,
-                  },
-                });
+                navigation.jumpTo(NavigatorName.MyLedger);
               }
             });
           },

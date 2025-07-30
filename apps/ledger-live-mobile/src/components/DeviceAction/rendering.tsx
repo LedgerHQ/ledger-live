@@ -50,7 +50,7 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
-import { Theme, lighten } from "../../colors";
+import { type CustomTheme, lighten } from "../../colors";
 import Alert from "../Alert";
 import Animation from "../Animation";
 import Button from "../Button";
@@ -130,7 +130,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 
 export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
-  colors?: Theme["colors"];
+  colors?: CustomTheme["colors"];
   theme?: "light" | "dark";
 };
 
@@ -179,7 +179,6 @@ export function renderRequiresAppInstallation({
           title={t("DeviceAction.button.openManager")}
           onPress={() =>
             navigation.navigate(NavigatorName.MyLedger, {
-              screen: ScreenName.MyLedgerChooseDevice,
               params: { searchQuery: appNamesCSV },
             })
           }
@@ -466,7 +465,7 @@ export const renderAllowRemoveCustomLockscreen = ({
   );
 };
 
-const AllowOpeningApp = ({
+function AllowOpeningApp({
   t,
   navigation,
   wording,
@@ -480,7 +479,7 @@ const AllowOpeningApp = ({
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
   device: Device;
-}) => {
+}) {
   useEffect(() => {
     if (isDeviceBlocker) {
       // TODO: disable gesture, modal close, hide header buttons
@@ -513,7 +512,7 @@ const AllowOpeningApp = ({
       <ModalLock />
     </Wrapper>
   );
-};
+}
 
 export function renderAllowOpeningApp({
   t,
@@ -636,7 +635,7 @@ export function renderError({
   device?: Device;
   hasExportLogButton?: boolean;
 }) {
-  const onPress = () => {
+  function onPress() {
     if (managerAppName && navigation) {
       navigation.navigate(NavigatorName.Base, {
         screen: NavigatorName.Main,
@@ -655,7 +654,7 @@ export function renderError({
     } else if (onRetry) {
       onRetry();
     }
-  };
+  }
 
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
@@ -726,7 +725,6 @@ export function RequiredFirmwareUpdate({
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
     navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
       params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
     });
   };
@@ -1003,7 +1001,7 @@ export function LoadingAppInstall({
 }
 
 type WarningOutdatedProps = RawProps & {
-  colors: Theme["colors"];
+  colors: CustomTheme["colors"];
   navigation: StackNavigationProp<ParamListBase>;
   appName: string;
   passWarning: () => void;

@@ -3,6 +3,8 @@
   "compilerOptions": {
     "allowJs": false,
     "checkJs": false,
+    "moduleResolution": "bundler",
+    "module": "preserve",
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
     "types": [

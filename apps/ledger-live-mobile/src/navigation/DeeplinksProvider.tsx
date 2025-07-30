@@ -694,6 +694,7 @@ export const DeeplinksProvider = ({
       theme={themes[resolvedTheme]}
       linking={linking}
       ref={navigationRef}
+      navigationInChildEnabled
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
         setTimeout(() => SplashScreen.hide(), 300);
