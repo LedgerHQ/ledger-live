@@ -19,6 +19,7 @@ export function genericEstimateMaxSpendable(
       ...transaction,
       amount: mainAccount.spendableBalance,
       useAllAmount: true,
+      fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
     };
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(mainAccount, draftTransaction),

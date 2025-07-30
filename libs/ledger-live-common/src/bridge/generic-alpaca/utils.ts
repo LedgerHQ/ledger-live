@@ -98,7 +98,6 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
     fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
@@ -141,7 +140,7 @@ export const buildOptimisticOperation = (
   sequenceNumber?: number,
 ): Operation => {
   const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
-  const fees = transaction["fees"] ?? 0n;
+  const fees = BigInt(transaction["fees"]?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
 
@@ -149,8 +148,8 @@ export const buildOptimisticOperation = (
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type: type,
-    value: subAccountId ? new BigNumber(fees) : transaction.amount, // match old behavior
-    fee: new BigNumber(fees),
+    value: subAccountId ? new BigNumber(fees.toString()) : transaction.amount, // match old behavior
+    fee: new BigNumber(fees.toString()),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

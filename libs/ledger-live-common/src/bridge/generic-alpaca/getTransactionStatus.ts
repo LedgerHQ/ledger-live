@@ -13,7 +13,7 @@ export function genericGetTransactionStatus(
   return async (
     account,
     transaction: TransactionCommon & {
-      fees: bigint | null | undefined;
+      fees: BigNumber | null | undefined;
       assetIssuer?: string;
       assetCode?: string;
       mode?: string;
@@ -26,7 +26,7 @@ export function genericGetTransactionStatus(
     const draftTransaction = {
       recipient: transaction.recipient,
       amount: transaction.amount ?? new BigNumber(0),
-      fees: transaction.fees ?? 0n,
+      fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
       useAllAmount: !!transaction.useAllAmount,
       assetCode: transaction.assetCode || "",
       assetIssuer: transaction.assetIssuer || "",
@@ -52,13 +52,13 @@ export function genericGetTransactionStatus(
       errors,
       warnings,
       estimatedFees:
-        !transaction.fees || transaction.fees === 0n
+        !transaction.fees || transaction.fees.isZero()
           ? new BigNumber(estimatedFees.toString())
-          : new BigNumber(transaction.fees.toString()),
+          : transaction.fees,
       amount: transaction.amount.eq(0) ? new BigNumber(amount.toString()) : transaction.amount,
       totalSpent: transaction.amount.eq(0)
         ? new BigNumber(totalSpent.toString())
-        : transaction.amount.plus(new BigNumber(transaction.fees?.toString() || "0")),
+        : transaction.amount.plus(new BigNumber(transaction.fees || "0")),
     });
   };
 }

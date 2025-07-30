@@ -20,7 +20,7 @@ type Props = {
 const Root = (props: Props) => {
   const { transaction, trackProperties } = props;
   const { fees, networkInfo } = transaction;
-  const isCustomFee = !new BigNumber(fees || 0)?.eq(networkInfo?.fees || 0);
+  const isCustomFee = !fees?.eq(networkInfo?.fees || 0);
   const [isCustomMode, setCustomMode] = useState(isCustomFee);
   if (!networkInfo || !fees) return null; // these were loaded on the previous send step
   const bridge = getAccountBridge(props.account);

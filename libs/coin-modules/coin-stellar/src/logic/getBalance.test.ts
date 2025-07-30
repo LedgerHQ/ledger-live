@@ -16,7 +16,7 @@ describe("getBalance", () => {
     } as any);
 
     expect(await getBalance("GC65CUPW2IMTJJY6CII7F3OBPVG4YGASEPBBLM4V3LBKX62P6LA24OFV")).toEqual([
-      { value: BigInt(500000000), asset: { type: "native" } },
+      { value: BigInt(500000000), asset: { type: "native" }, spendableBalance: BigInt(499999900) },
     ]);
   });
 });

@@ -121,12 +121,12 @@ export const genericSignOperation =
       async function main() {
         // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
-
+        const fees = BigInt(transaction["fees"]?.toString() || "0");
         if (transaction["useAllAmount"]) {
           const draftTransaction = {
             recipient: transaction.recipient,
-            amount: transaction.amount ?? 0n,
-            fee: transaction["fees"] ?? 0n,
+            amount: transaction.amount ?? 0,
+            fee: fees,
             useAllAmount: !!transaction.useAllAmount,
             assetCode: transaction?.["assetCode"] || "",
             assetIssuer: transaction?.["assetIssuer"] || "",
@@ -135,14 +135,13 @@ export const genericSignOperation =
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
             transactionToIntent(account, draftTransaction),
           );
-          const totoamount = new BigNumber(amount.toString());
-          console.log({ totoamount, amount: transaction.amount, transaction });
+          transaction.amount = new BigNumber(amount.toString());
         }
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-          let transactionIntent = transactionToIntent(account, transaction);
+          let transactionIntent = transactionToIntent(account, { ...transaction, fees });
           transactionIntent.senderPublicKey = publicKey;
 
           // Enrich with memo and asset information
