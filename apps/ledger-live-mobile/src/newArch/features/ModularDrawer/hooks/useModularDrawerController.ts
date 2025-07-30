@@ -35,6 +35,8 @@ export const useModularDrawerController = () => {
     accountsObservableId,
     flow,
     source,
+    assetsConfiguration,
+    networksConfiguration,
   } = useSelector(modularDrawerStateSelector);
 
   const {
@@ -123,6 +125,8 @@ export const useModularDrawerController = () => {
     enableAccountSelection,
     flow,
     source,
+    assetsConfiguration,
+    networksConfiguration,
     openDrawer,
     closeDrawer,
     handleAccountSelected,
