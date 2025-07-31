@@ -139,7 +139,7 @@ export class SwapPage extends AppPage {
         const providerLocator = webview
           .getByTestId(this.quoteCardProviderName)
           .getByText(providerName)
-          .first();
+          .nth(1);
 
         await providerLocator.isVisible();
         await providerLocator.click();
@@ -165,7 +165,7 @@ export class SwapPage extends AppPage {
       const providerLocator = webview
         .getByTestId(this.quoteCardProviderName)
         .getByText(providerName)
-        .first();
+        .nth(1);
 
       if (await providerLocator.isVisible()) {
         await providerLocator.click();
@@ -184,7 +184,6 @@ export class SwapPage extends AppPage {
   @step("Check drawer error message ($0)")
   async checkFeeDrawerErrorMessage(errorMessage: string | RegExp) {
     await expect(this.insufficientFundsWarningElem).toHaveText(errorMessage);
-    await expect(this.continueButton).toBeVisible();
     await expect(this.continueButton).toBeDisabled();
     await this.drawerCloseButton.click();
   }
@@ -501,7 +500,7 @@ export class SwapPage extends AppPage {
 
   @step("Check minimum amount for swap")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toString() ?? "";
+    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
   }
 
   @step("Click on swap max")

@@ -95,6 +95,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySeiNetworkEvm: DEFAULT_FEATURE,
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
+  currencyCantonNetwork: DEFAULT_FEATURE,
 };
 
 /**

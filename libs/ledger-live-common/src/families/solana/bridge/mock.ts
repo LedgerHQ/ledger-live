@@ -11,7 +11,7 @@ import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { Message } from "@solana/web3.js";
+import { Message, MessageV0 } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
 import { getMockedMethods } from "./mock-data";
 import { scanAccounts, sync } from "../../../bridge/mockHelpers";
@@ -59,8 +59,8 @@ function removeUndefineds(input: unknown): unknown {
 function preprocessArgs(method: keyof ChainAPI, args: any) {
   if (method === "getFeeForMessage") {
     // getFeeForMessage needs some args preprocessing
-    if (args.length === 1 && args[0] instanceof Message) {
-      return [args[0].serialize().toString("base64")];
+    if (args.length === 1 && (args[0] instanceof Message || args[0] instanceof MessageV0)) {
+      return [Buffer.from(args[0].serialize()).toString("base64")];
     } else {
       throw new Error("unexpected getFeeForMessage function signature");
     }

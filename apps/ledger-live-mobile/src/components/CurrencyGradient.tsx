@@ -1,57 +1,45 @@
-import * as React from "react";
-import Svg, { Path, Defs, LinearGradient, Stop, Mask, G } from "react-native-svg";
+import React, { memo, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
+import LinearGradient from "react-native-linear-gradient";
+import { StyleSheet, View } from "react-native";
+import { rgba } from "@ledgerhq/native-ui";
 
-function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
+const CurrencyGradient = ({ gradientColor }: { gradientColor: string }) => {
   const { colors } = useTheme();
-  const contrastedColor = ensureContrast(gradientColor, colors.background.main);
-  return (
-    <Svg width={850} height={454} viewBox="0 0 850 454" fill="none">
-      <Mask
-        id="a"
-        style={{
-          maskType: "alpha",
-        }}
-        maskUnits={"userSpaceOnUse" as const}
-        x={0}
-        y={0}
-        width={850}
-        height={454}
-      >
-        <Path fill="#fff" d="M0 0H850V454H0z" />
-      </Mask>
-      <G mask="url(#a)">
-        <Path fill={colors.background.main} d="M0 0H850V454H0z" />
-        <Path fill="url(#paint0_linear_22_3)" fillOpacity={0.3} d="M0 0H850V454.077H0z" />
-        <Path fill="url(#paint1_linear_22_3)" d="M0 0H850V454.077H0z" />
-      </G>
-      <Defs>
-        <LinearGradient
-          id="paint0_linear_22_3"
-          x1={270.5}
-          y1={0}
-          x2={270.5}
-          y2={450.077}
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop stopColor={contrastedColor} />
-          <Stop offset={1} stopColor={contrastedColor} stopOpacity={0} />
-        </LinearGradient>
-        <LinearGradient
-          id="paint1_linear_22_3"
-          x1={270.5}
-          y1={0}
-          x2={270.5}
-          y2={450.077}
-          gradientUnits="userSpaceOnUse"
-        >
-          <Stop stopColor={colors.background.main} stopOpacity={0} />
-          <Stop offset={1} stopColor={colors.background.main} />
-        </LinearGradient>
-      </Defs>
-    </Svg>
+  const contrasted = useMemo(
+    () => ensureContrast(gradientColor, colors.background.main),
+    [gradientColor, colors.background.main],
   );
-}
 
-export default CurrencyGradient;
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background.main }]}>
+      <LinearGradient
+        colors={[rgba(contrasted, 0.3), rgba(contrasted, 0)]}
+        style={styles.gradient}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+      />
+
+      <LinearGradient
+        colors={[`${colors.background.main}00`, colors.background.main]}
+        style={styles.gradient}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+      />
+    </View>
+  );
+};
+
+export default memo(CurrencyGradient);
+
+const styles = StyleSheet.create({
+  container: {
+    width: 850,
+    height: 454,
+    overflow: "hidden",
+  },
+  gradient: {
+    flex: 1,
+  },
+});

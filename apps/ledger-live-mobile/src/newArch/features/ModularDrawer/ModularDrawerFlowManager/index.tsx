@@ -2,12 +2,14 @@ import React from "react";
 import { ModularDrawerFlowView } from "./ModularDrawerFlowView";
 import { AssetSelectionStepProps } from "../screens/AssetSelection";
 import { NetworkSelectionStepProps } from "../screens/NetworkSelection";
+import { AccountSelectionStepProps } from "../screens/AccountSelection";
 import { StepFlowManagerReturnType } from "../hooks/useModularDrawerFlowStepManager";
 
 export interface ModularDrawerFlowProps {
   navigationStepViewModel: StepFlowManagerReturnType;
   assetsViewModel: AssetSelectionStepProps;
   networksViewModel: NetworkSelectionStepProps;
+  accountsViewModel: AccountSelectionStepProps;
   isReadyToBeDisplayed?: boolean;
 }
 
@@ -25,6 +27,7 @@ export default function ModularDrawerFlow(props: ModularDrawerFlowProps) {
       navigationStepViewModel={props.navigationStepViewModel}
       assetsViewModel={props.assetsViewModel}
       networksViewModel={props.networksViewModel}
+      accountsViewModel={props.accountsViewModel}
       isReadyToBeDisplayed={props.isReadyToBeDisplayed}
     />
   );

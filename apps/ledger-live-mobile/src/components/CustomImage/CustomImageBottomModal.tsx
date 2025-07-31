@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
@@ -17,6 +16,7 @@ import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useToastsActions } from "~/actions/toast";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -53,8 +53,8 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     referral = undefined,
   } = props;
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
   const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
+  const { pushToast } = useToastsActions();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 

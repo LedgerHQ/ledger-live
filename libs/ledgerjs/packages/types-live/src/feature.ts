@@ -138,6 +138,7 @@ export type CurrencyFeatures = {
   currencySeiNetworkEvm: DefaultFeature;
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
+  currencyCantonNetwork: DefaultFeature;
 };
 
 /**

@@ -22,11 +22,11 @@ describe("getBalance", () => {
         { value: BigInt("1000000000000000000"), asset: { type: "native" } },
         {
           value: BigInt("1000000"),
-          asset: { type: "token", contractAddress: "0x123", standard: "erc" },
+          asset: { type: "erc20", assetReference: "0x123" },
         },
         {
           value: BigInt("2000000"),
-          asset: { type: "token", contractAddress: "0x456", standard: "erc" },
+          asset: { type: "erc20", assetReference: "0x456" },
         },
       ], // expected
     ],

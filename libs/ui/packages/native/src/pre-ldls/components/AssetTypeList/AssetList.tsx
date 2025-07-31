@@ -9,12 +9,16 @@ export const AssetList = ({
   assets,
   onClick,
   onVisibleItemsScrollEnd,
+  onScrollDown,
+  onScrollUp,
   scrollToTop,
   hasNextPage,
 }: {
   assets: AssetType[];
   onClick: (asset: AssetType) => void;
   onVisibleItemsScrollEnd?: () => void;
+  onScrollDown?: () => void;
+  onScrollUp?: () => void;
   scrollToTop?: boolean;
   hasNextPage?: boolean;
 }) => {
@@ -39,6 +43,26 @@ export const AssetList = ({
     }
   }, [hasNextPage, onVisibleItemsScrollEnd]);
 
+  const handleViewableItemsChanged = useCallback(
+    (info: {
+      viewableItems: Array<{ item: AssetType; index: number }>;
+      changed: Array<{ item: AssetType; index: number }>;
+    }) => {
+      if (info.changed.length === 0) return;
+
+      const isScrollingDown = info.changed[0].index > info.changed[info.changed.length - 1].index;
+      const isScrollingUp = info.changed[0].index < info.changed[info.changed.length - 1].index;
+
+      if (onScrollDown && isScrollingDown) {
+        onScrollDown();
+      }
+      if (onScrollUp && isScrollingUp) {
+        onScrollUp();
+      }
+    },
+    [onScrollUp, onScrollDown],
+  );
+
   const flatListProps: FlatListProps<AssetType> = {
     data: assets,
     renderItem: renderAssetItem,
@@ -53,6 +77,7 @@ export const AssetList = ({
       onEndReached: handleEndReached,
       onEndReachedThreshold: 0.1,
     }),
+    onViewableItemsChanged: handleViewableItemsChanged,
   };
 
   return <FlatList ref={flatListRef} {...flatListProps} />;

@@ -2,7 +2,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import i18next from "i18next";
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -13,6 +12,7 @@ import KeyboardView from "~/components/KeyboardView";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "~/const";
+import { isModelSupported } from "./SendRowsCustom";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
@@ -23,9 +23,9 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const { model } = route.params.transaction;
 
-  invariant(model.kind === "transfer", "must be a transfer tx");
+  const modelSupported = isModelSupported(model);
 
-  const [memo, setMemo] = useState(model.uiState.memo);
+  const [memo, setMemo] = useState(modelSupported ? modelSupported.uiState.memo : undefined);
   const account = route.params.account;
 
   const onValidateText = useCallback(() => {
@@ -46,6 +46,10 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
       transaction: nextTx,
     });
   }, [navigation, route.params, account, memo]);
+
+  if (!modelSupported) {
+    return null;
+  }
 
   return (
     <SafeAreaView style={styles.root}>

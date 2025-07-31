@@ -22,6 +22,7 @@ import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
 import { getFontStyle } from "~/components/LText";
 import { Keyboard } from "react-native";
+import KeyboardView from "~/components/KeyboardView";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
@@ -78,30 +79,32 @@ const EditAccountName = ({ navigation, route }: NavigationProps) => {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background.main }]}>
-      <Box px={6} flex={1}>
-        <TextInput
-          autoFocus
-          value={accountName}
-          defaultValue={accountName}
-          returnKeyType="done"
-          maxLength={MAX_ACCOUNT_NAME_LENGHT}
-          onChangeText={onChangeText}
-          onSubmitEditing={onNameEndEditing}
-          clearButtonMode="while-editing"
-          placeholder={i18next.t("account.settings.accountName.placeholder")}
-          testID="account-rename-text-input"
-        />
-      </Box>
-      <Button
-        event="EditAccountNameApply"
-        type="main"
-        onPress={onNameEndEditing}
-        disabled={isApplyDisabled}
-        m={6}
-        testID="account-rename-apply"
-      >
-        {t("common.apply")}
-      </Button>
+      <KeyboardView behavior="height">
+        <Box px={6} flex={1}>
+          <TextInput
+            autoFocus
+            value={accountName}
+            defaultValue={accountName}
+            returnKeyType="done"
+            maxLength={MAX_ACCOUNT_NAME_LENGHT}
+            onChangeText={onChangeText}
+            onSubmitEditing={onNameEndEditing}
+            clearButtonMode="while-editing"
+            placeholder={i18next.t("account.settings.accountName.placeholder")}
+            testID="account-rename-text-input"
+          />
+        </Box>
+        <Button
+          event="EditAccountNameApply"
+          type="main"
+          onPress={onNameEndEditing}
+          disabled={isApplyDisabled}
+          m={6}
+          testID="account-rename-apply"
+        >
+          {t("common.apply")}
+        </Button>
+      </KeyboardView>
     </SafeAreaView>
   );
 };

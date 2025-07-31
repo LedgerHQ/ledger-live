@@ -19,7 +19,7 @@ type AddAccountScreenProps = {
   doesNotHaveAccount?: boolean;
   onClose?: () => void;
   onShowWalletSyncDrawer?: () => void;
-  onShowModularDrawer?: () => void;
+  onCloseAddAccountDrawer?: () => void;
 };
 
 function View({
