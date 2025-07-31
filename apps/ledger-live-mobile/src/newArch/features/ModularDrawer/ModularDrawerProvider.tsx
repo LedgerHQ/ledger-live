@@ -16,6 +16,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
     getAccountsObservable,
     flow,
     source,
+    assetsConfiguration,
+    networksConfiguration,
   } = useModularDrawerController();
 
   return (
@@ -26,6 +28,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         currencies={preselectedCurrencies}
         onClose={closeDrawer}
         enableAccountSelection={enableAccountSelection}
+        assetsConfiguration={assetsConfiguration}
+        networksConfiguration={networksConfiguration}
         onAccountSelected={handleAccountSelected}
         accounts$={getAccountsObservable()}
         flow={flow ?? ""}
