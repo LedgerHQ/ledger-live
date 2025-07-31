@@ -1,5 +1,19 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.4.0
+
+### Minor Changes
+
+- [#10952](https://github.com/LedgerHQ/ledger-live/pull/10952) [`ede3a08`](https://github.com/LedgerHQ/ledger-live/commit/ede3a08e9f1ba85aa687688d343003504063e767) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - fix account for e2e swap test
+
+### Patch Changes
+
+- Updated dependencies [[`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b), [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`3e32d52`](https://github.com/LedgerHQ/ledger-live/commit/3e32d522e0589a8356d222e0dbd3a87551d26e79), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd), [`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e), [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e)]:
+  - @ledgerhq/live-common@34.43.0
+  - @ledgerhq/types-live@6.79.0
+  - @ledgerhq/live-cli@24.20.0
+  - @ledgerhq/live-wallet@0.11.6
+
 ## 0.4.0-next.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.35.0
+
+### Minor Changes
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10968](https://github.com/LedgerHQ/ledger-live/pull/10968) [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update chip design
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11059](https://github.com/LedgerHQ/ledger-live/pull/11059) [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update swap ui to use the react ui Chip components
+
 ## 0.35.0-next.0
 
 ### Minor Changes

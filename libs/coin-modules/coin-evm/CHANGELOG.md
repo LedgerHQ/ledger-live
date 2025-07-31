@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 2.25.0
+
+### Minor Changes
+
+- [#11022](https://github.com/LedgerHQ/ledger-live/pull/11022) [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): support EIP-1559 in `craftTransaction`
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+### Patch Changes
+
+- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/cryptoassets@13.23.0
+  - @ledgerhq/coin-framework@5.8.0
+  - @ledgerhq/domain-service@1.2.38
+  - @ledgerhq/evm-tools@1.7.1
+
 ## 2.25.0-next.1
 
 ### Patch Changes
