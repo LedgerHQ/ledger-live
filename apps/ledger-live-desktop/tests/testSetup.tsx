@@ -14,7 +14,7 @@ import { MemoryRouter } from "react-router-dom";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
-import { CountervaluesManagedProvider } from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import createStore from "~/renderer/createStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -87,7 +87,11 @@ function Providers({
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
           <MemoryRouter>
-            {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+            <CountervaluesMarketcapBridgedProvider>
+              <CountervaluesBridgedProvider initialState={initialCountervaluesMock}>
+                {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+              </CountervaluesBridgedProvider>
+            </CountervaluesMarketcapBridgedProvider>
           </MemoryRouter>
         </FirebaseFeatureFlagsProvider>
       </Provider>
@@ -139,9 +143,9 @@ function renderWithMockedCounterValuesProvider(
       wrapper: ({ children }) => (
         <Providers store={store}>
           <CountervaluesMarketcapBridgedProvider>
-            <CountervaluesManagedProvider initialState={initialCountervaluesMock}>
+            <CountervaluesBridgedProvider initialState={initialCountervaluesMock}>
               {children}
-            </CountervaluesManagedProvider>
+            </CountervaluesBridgedProvider>
           </CountervaluesMarketcapBridgedProvider>
         </Providers>
       ),

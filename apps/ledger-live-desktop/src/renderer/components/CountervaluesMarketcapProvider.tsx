@@ -8,10 +8,9 @@ import {
   useCountervaluesMarketcapLastUpdated,
 } from "../reducers/countervalues";
 
-export function CountervaluesMarketcapBridgedProvider({ children }: { children: React.ReactNode }) {
+function useCountervaluesMarketcapBridge() {
   const dispatch = useDispatch();
-
-  const bridge = useMemo(
+  return useMemo(
     () => ({
       setError: flow(countervaluesActions.COUNTERVALUES_MARKETCAP_SET_ERROR, dispatch),
       setIds: flow(countervaluesActions.COUNTERVALUES_MARKETCAP_SET_IDS, dispatch),
@@ -21,6 +20,10 @@ export function CountervaluesMarketcapBridgedProvider({ children }: { children: 
     }),
     [dispatch],
   );
+}
+
+export function CountervaluesMarketcapBridgedProvider({ children }: { children: React.ReactNode }) {
+  const bridge = useCountervaluesMarketcapBridge();
 
   return (
     <CountervaluesMarketcapProvider bridge={bridge}>{children}</CountervaluesMarketcapProvider>

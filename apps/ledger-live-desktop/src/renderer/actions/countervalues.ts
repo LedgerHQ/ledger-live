@@ -23,6 +23,7 @@ export const countervaluesActions = {
   COUNTERVALUES_STATE_SET_ERROR: createCountervaluesAction("COUNTERVALUES_STATE_SET_ERROR"),
   COUNTERVALUES_STATE_SET_PENDING: createCountervaluesAction("COUNTERVALUES_STATE_SET_PENDING"),
   COUNTERVALUES_STATE_SET: createCountervaluesAction("COUNTERVALUES_STATE_SET"),
+  COUNTERVALUES_USER_SETTINGS_SET: createCountervaluesAction("COUNTERVALUES_USER_SETTINGS_SET"),
   COUNTERVALUES_WIPE: createCountervaluesAction("COUNTERVALUES_WIPE"),
 } satisfies Record<
   CountervaluesHandlersKey,

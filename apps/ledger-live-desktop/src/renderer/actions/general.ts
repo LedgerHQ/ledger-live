@@ -13,7 +13,6 @@ import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { CountervaluesSettings } from "@ledgerhq/live-countervalues/types";
 import { useDistribution as useDistributionRaw } from "@ledgerhq/live-countervalues-react/portfolio";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
@@ -29,6 +28,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { walletSelector } from "../reducers/wallet";
 import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { countervaluesActions } from "./countervalues";
 
 // provide redux states via custom hook wrapper
 
@@ -36,7 +36,7 @@ export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
 ) {
   const accounts = useSelector(accountsSelector);
-  const to = useSelector(counterValueCurrencySelector);
+  const to = useSelector(counterValueCurrencySelector, shallowEqual);
   return useDistributionRaw({
     accounts,
     to,
@@ -44,7 +44,7 @@ export function useDistribution(
   });
 }
 export function useCalculateCountervalueCallback() {
-  const to = useSelector(counterValueCurrencySelector);
+  const to = useSelector(counterValueCurrencySelector, shallowEqual);
   return useCalculateCountervalueCallbackCommon({
     to,
   });
@@ -108,14 +108,15 @@ export const themeSelector = createSelector(
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
 
-export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
-  const countervalue = useSelector(counterValueCurrencySelector, shallowEqual);
+export function useCalculateCountervaluesUserSettings() {
+  const dispatch = useDispatch();
+  const countervalue = useSelector(counterValueCurrencySelector);
 
   // countervalues for top coins (market performance feature)
   const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
 
   // countervalues for accounts
-  const accounts = useSelector(accountsSelector, shallowEqual);
+  const accounts = useSelector(accountsSelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
 
   // countervalues for on demand session tracking pairs
@@ -142,16 +143,17 @@ export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
     [granularitiesRatesConfig],
   );
 
-  return useMemo(
-    () => ({
-      trackingPairs,
-      autofillGaps: true,
-      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
-      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-        "config_countervalues_marketCapBatchingAfterRank",
-      ),
-      granularitiesRates,
-    }),
-    [granularitiesRates, trackingPairs],
-  );
+  useEffect(() => {
+    dispatch(
+      countervaluesActions.COUNTERVALUES_USER_SETTINGS_SET({
+        trackingPairs,
+        autofillGaps: true,
+        refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
+        marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+          "config_countervalues_marketCapBatchingAfterRank",
+        ),
+        granularitiesRates,
+      }),
+    );
+  }, [dispatch, granularitiesRates, trackingPairs]);
 }

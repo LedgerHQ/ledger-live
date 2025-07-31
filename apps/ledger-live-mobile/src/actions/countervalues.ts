@@ -1,3 +1,4 @@
+import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { createAction } from "redux-actions";
 import {
   CountervaluesActionTypes,
@@ -5,7 +6,6 @@ import {
   CountervaluesMarketcapSetIdsPayload,
   CountervaluesMarketcapSetLoadingPayload,
 } from "./types";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 
 export const setCountervaluesMarketcapIds = createAction<CountervaluesMarketcapSetIdsPayload>(
   CountervaluesActionTypes.COUNTERVALUES_MARKETCAP_SET_IDS,

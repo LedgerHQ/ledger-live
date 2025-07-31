@@ -56,13 +56,14 @@ export function CountervaluesManagedProvider({
       useState: useCountervaluesState,
       useStateError: useCountervaluesStateError,
       useStatePending: useCountervaluesStatePending,
+      useUserSettings: () => userSettings,
       wipe: flow(wipeCountervalues, dispatch),
     }),
-    [dispatch],
+    [dispatch, userSettings],
   );
 
   return (
-    <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
+    <CountervaluesProvider bridge={bridge} savedState={initialState}>
       <Effect />
       {children}
     </CountervaluesProvider>

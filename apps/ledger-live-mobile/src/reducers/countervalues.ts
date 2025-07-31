@@ -1,6 +1,6 @@
 import { exportCountervalues, initialState } from "@ledgerhq/live-countervalues/logic";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { shallowEqual, useSelector } from "react-redux";
+import { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { useSelector } from "react-redux";
 import { Action, handleActions, ReducerMap } from "redux-actions";
 import {
   CountervaluesActionTypes,
@@ -34,6 +34,7 @@ export interface CountervaluesState {
     isPolling: boolean;
     triggerLoad: boolean;
   };
+  userSettings: CountervaluesSettings;
 }
 
 export const INITIAL_STATE: CountervaluesState = {
@@ -52,6 +53,13 @@ export const INITIAL_STATE: CountervaluesState = {
     isPolling: true,
     triggerLoad: false,
   },
+  // dummy values that should be overriden by the context provider
+  userSettings: {
+    trackingPairs: [],
+    autofillGaps: true,
+    refreshRate: 0,
+    marketCapBatchingAfterRank: 0,
+  },
 };
 
 /// Selectors
@@ -66,16 +74,15 @@ export const countervaluesErrorSelector = (s: State) => s.countervalues.counterv
 
 // Hooks
 
-export const useCountervaluesMarketcapIds = () =>
-  useSelector(countervaluesMarketcapIdsSelector, shallowEqual);
+export const useCountervaluesMarketcapIds = () => useSelector(countervaluesMarketcapIdsSelector);
 export const useCountervaluesMarketcapLastUpdated = () =>
   useSelector(countervaluesMarketcapLastUpdatedSelector);
 
 export const useCountervaluesStateError = () => useSelector(countervaluesErrorSelector);
 export const useCountervaluesStateExport = () =>
-  useSelector((s: State) => exportCountervalues(s.countervalues.countervalues.state), shallowEqual);
+  useSelector((s: State) => exportCountervalues(s.countervalues.countervalues.state));
 export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
-export const useCountervaluesState = () => useSelector(countervaluesStateSelector, shallowEqual);
+export const useCountervaluesState = () => useSelector(countervaluesStateSelector);
 
 export const useCountervaluesPollingIsPolling = () =>
   useSelector((s: State) => s.countervalues.polling.isPolling);

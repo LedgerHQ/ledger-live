@@ -100,6 +100,7 @@ export function useCleanCache() {
     flushAll();
   }, [dispatch, wipe]);
 }
+
 export function useUserSettings() {
   const trackingPairs = useTrackingPairs();
 

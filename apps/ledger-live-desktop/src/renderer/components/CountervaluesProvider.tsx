@@ -4,11 +4,7 @@ import {
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import {
-  CountervaluesSettings,
-  CounterValuesStateRaw,
-  RateMapRaw,
-} from "@ledgerhq/live-countervalues/types";
+import { CounterValuesStateRaw, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import { flow } from "lodash/fp";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
@@ -22,29 +18,12 @@ import {
   useCountervaluesStateError,
   useCountervaluesStateExport,
   useCountervaluesStatePending,
+  useCountervaluesUserSettings,
 } from "../reducers/countervalues";
 
-/**
- * Call side effects outside of the primary render tree, avoiding costly child re-renders
- */
-function Effect({ userSettings }: { userSettings: CountervaluesSettings }) {
-  useCacheManager(userSettings);
-  usePollingManager();
-
-  return null;
-}
-
-export function CountervaluesManagedProvider({
-  children,
-  initialState,
-}: {
-  children: React.ReactNode;
-  initialState: CounterValuesStateRaw;
-}) {
-  const userSettings = useCalculateCountervaluesUserSettings();
+export function useCountervaluesProviderBridge() {
   const dispatch = useDispatch();
-
-  const bridge = useMemo(
+  return useMemo(
     (): CountervaluesBridge => ({
       setPollingIsPolling: flow(
         countervaluesActions.COUNTERVALUES_POLLING_SET_IS_POLLING,
@@ -62,20 +41,44 @@ export function CountervaluesManagedProvider({
       useState: useCountervaluesState,
       useStateError: useCountervaluesStateError,
       useStatePending: useCountervaluesStatePending,
+      useUserSettings: useCountervaluesUserSettings,
       wipe: flow(countervaluesActions.COUNTERVALUES_WIPE, dispatch),
     }),
     [dispatch],
   );
+}
+
+/**
+ * Call side effects outside of the primary render tree, avoiding costly child re-renders
+ */
+function Effect() {
+  useCacheManager();
+  usePollingManager();
+
+  return null;
+}
+
+export function CountervaluesBridgedProvider({
+  children,
+  initialState,
+}: {
+  children: React.ReactNode;
+  initialState: CounterValuesStateRaw;
+}) {
+  useCalculateCountervaluesUserSettings();
+
+  const bridge = useCountervaluesProviderBridge();
 
   return (
-    <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
-      <Effect userSettings={userSettings} />
+    <CountervaluesProvider bridge={bridge} savedState={initialState}>
+      <Effect />
       {children}
     </CountervaluesProvider>
   );
 }
 
-function useCacheManager(userSettings: CountervaluesSettings) {
+function useCacheManager() {
+  const userSettings = useCountervaluesUserSettings();
   const { status, ...state } = useCountervaluesStateExport();
 
   useEffect(() => {

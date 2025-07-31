@@ -48,6 +48,7 @@ export interface CountervaluesBridge {
   useStateError(): Error | null;
   useStatePending(): boolean;
   useState(): CounterValuesState;
+  useUserSettings(): CountervaluesSettings;
   wipe(): void;
 }
 
@@ -70,14 +71,14 @@ export type Polling = {
 };
 
 export type Props = {
-  children: React.ReactNode;
-  userSettings: CountervaluesSettings;
+  /** Bridge enabling platform-specific persistence of countervalues state. */
   bridge: CountervaluesBridge;
-  // the time to wait before the first poll when app starts (allow things to render to not do all at boot time)
+  children: React.ReactNode;
+  /** the time to wait before the first poll when app starts (allow things to render to not do all at boot time) */
   pollInitDelay?: number;
-  // the minimum time to wait before two automatic polls (then one that happen whatever network/appstate events)
+  /** the minimum time to wait before two automatic polls (then one that happen whatever network/appstate events) */
   autopollInterval?: number;
-  // debounce time before actually fetching
+  /** debounce time before actually fetching */
   debounceDelay?: number;
   savedState?: CounterValuesStateRaw;
 };
@@ -90,14 +91,6 @@ const CountervaluesPollingContext = createContext<
   poll: () => {},
   start: () => {},
   stop: () => {},
-});
-
-const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
-  // dummy values that are overriden by the context provider
-  trackingPairs: [],
-  autofillGaps: true,
-  refreshRate: 0,
-  marketCapBatchingAfterRank: 0,
 });
 
 const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
@@ -124,13 +117,10 @@ function trackingPairsHash(a: TrackingPair[]) {
 function Effect({
   bridge,
   savedState,
-  userSettings,
   debounceDelay = 1000,
   pollInitDelay = 3 * 1000,
-}: Pick<
-  Props,
-  "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState" | "userSettings"
->) {
+}: Pick<Props, "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState">) {
+  const userSettings = bridge.useUserSettings();
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
@@ -148,7 +138,6 @@ function Effect({
   );
 
   // flag used to trigger a loadCountervalues
-  // const [triggerLoad, setTriggerLoad] = useState(false);
   const triggerLoad = bridge.usePollingTriggerLoad();
 
   // trigger poll only when userSettings changes in a debounced way
@@ -190,7 +179,6 @@ function Effect({
   }, [bridge, savedState, userSettings]);
 
   // manage the auto polling loop
-  // const [isPolling, setIsPolling] = useState(true);
   const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
     if (!isPolling) return;
@@ -209,12 +197,7 @@ function Effect({
 /**
  * Root countervalues provider (polling + calculation).
  */
-export function CountervaluesProvider({
-  children,
-  userSettings,
-  bridge,
-  ...rest
-}: Props): ReactElement {
+export function CountervaluesProvider({ children, bridge, ...rest }: Props): ReactElement {
   const polling = useMemo<Pick<Polling, "wipe" | "poll" | "start" | "stop">>(
     () => ({
       wipe: () => bridge.wipe(),
@@ -227,12 +210,10 @@ export function CountervaluesProvider({
 
   return (
     <CountervaluesPollingContext.Provider value={polling}>
-      <CountervaluesUserSettingsContext.Provider value={userSettings}>
-        <CountervaluesContext.Provider value={bridge}>
-          <Effect {...rest} userSettings={userSettings} bridge={bridge} />
-          {children}
-        </CountervaluesContext.Provider>
-      </CountervaluesUserSettingsContext.Provider>
+      <CountervaluesContext.Provider value={bridge}>
+        <Effect {...rest} bridge={bridge} />
+        {children}
+      </CountervaluesContext.Provider>
     </CountervaluesPollingContext.Provider>
   );
 }
@@ -252,9 +233,12 @@ export function useCountervaluesPolling(): Polling {
   return useMemo(() => ({ ...polling, pending, error }), [error, pending, polling]);
 }
 
-// allows consumer to access the user settings that was used to fetch the countervalues
-export function useCountervaluesUserSettingsContext(): CountervaluesSettings {
-  return useContext(CountervaluesUserSettingsContext);
+/**
+ * Allows consumer to access the user settings that was used to fetch the countervalues
+ */
+export function useCountervaluesUserSettings(): CountervaluesSettings {
+  const bridge = useCountervaluesBridgeContext();
+  return bridge.useUserSettings();
 }
 
 // provides a way to calculate a countervalue from a value

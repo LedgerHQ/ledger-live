@@ -1,4 +1,4 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CountervaluesSettings, CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 export type Handlers<State, Types, PreciseKey = true> = {
   [Key in keyof Types]: (
@@ -16,6 +16,7 @@ export type CountervaluesHandlersPayloads = {
   COUNTERVALUES_STATE_SET_ERROR: Error;
   COUNTERVALUES_STATE_SET_PENDING: boolean;
   COUNTERVALUES_STATE_SET: CounterValuesState;
+  COUNTERVALUES_USER_SETTINGS_SET: CountervaluesSettings;
   COUNTERVALUES_WIPE: undefined;
 };
 
