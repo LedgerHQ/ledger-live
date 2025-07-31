@@ -60,18 +60,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
       alwaysShowNoFunds: StakeFlowProps["alwaysShowNoFunds"];
       entryPoint: StakeFlowProps["entryPoint"];
       source: StakeFlowProps["source"];
-      shouldRedirect: StakeFlowProps["shouldRedirect"];
       returnTo?: string;
     }) => {
-      const {
-        account,
-        parentAccount,
-        alwaysShowNoFunds,
-        entryPoint,
-        source,
-        shouldRedirect,
-        returnTo,
-      } = props;
+      const { account, parentAccount, alwaysShowNoFunds, entryPoint, source, returnTo } = props;
       const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
 
       if (alwaysShowNoFunds || account.spendableBalance.isZero()) {
@@ -100,14 +91,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         });
       } else {
         dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
-      }
-
-      const isNoFundsFlow = account.spendableBalance.isZero();
-
-      if (shouldRedirect && !platformAppRoute && !isNoFundsFlow) {
-        history.push({
-          pathname: returnTo ?? `/account/${account.id}`,
-        });
       }
     },
     [dispatch, getRouteToPlatformApp, history, walletState],
@@ -198,7 +181,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           }
 
           const source = queryParams?.source;
-          const shouldRedirect = queryParams?.shouldRedirect === "true";
 
           if (!accountId) {
             throw new Error("Missing accountId parameter");
@@ -229,11 +211,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           startStakeFlow({
             account: matchingAccount,
             parentAccount,
-            shouldRedirect,
             alwaysShowNoFunds: false,
             entryPoint: "get-funds",
             source,
-            returnTo: "",
           });
           return { success: true };
         }
