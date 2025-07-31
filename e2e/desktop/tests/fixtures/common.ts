@@ -45,21 +45,6 @@ const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
-// Log environment variables for debugging
-console.log("=== Environment Variables Debug ===");
-console.log("SWAP_API_BASE:", process.env.SWAP_API_BASE);
-console.log("LEDGER_SYNC_ENVIRONMENT:", process.env.LEDGER_SYNC_ENVIRONMENT);
-console.log("DISABLE_TRANSACTION_BROADCAST:", process.env.DISABLE_TRANSACTION_BROADCAST);
-console.log("SPECULOS_DEVICE:", process.env.SPECULOS_DEVICE);
-console.log("MOCK:", process.env.MOCK);
-console.log("SEED:", process.env.SEED ? "***SET***" : "NOT SET");
-console.log("XRAY:", process.env.XRAY);
-console.log("TEST_EXECUTION:", process.env.TEST_EXECUTION);
-console.log("PROJECT_KEY:", process.env.PROJECT_KEY);
-console.log("CI_OS:", process.env.CI_OS);
-console.log("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD:", process.env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD);
-console.log("=== End Environment Variables Debug ===");
-
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
   const promise = await cmd(`${userdataDestinationPath}/app.json`);
   const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
