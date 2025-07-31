@@ -1,5 +1,4 @@
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import api from "@ledgerhq/live-countervalues/api/index";
 import {
   calculate,
   importCountervalues,
@@ -14,7 +13,6 @@ import type {
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import { log } from "@ledgerhq/logs";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -25,21 +23,11 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useReducer,
   useState,
 } from "react";
+import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
-/**
- * Bridge enabling platform-specific persistence of market-cap ids.
- * @note: make sure that the object is memoized to avoid re-renders.
- */
-export interface CountervaluesMarketcapBridge {
-  setError(message: string): void;
-  setIds(ids: string[]): void;
-  setLoading(loading: boolean): void;
-  useIds(): string[];
-  useLastUpdated(): number | undefined;
-}
+export { CountervaluesMarketcapProvider, useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
 /**
  * Bridge enabling platform-specific persistence of countervalues state.
@@ -114,77 +102,11 @@ function useCountervaluesBridgeContext() {
   return bridge;
 }
 
-const CountervaluesMarketcapBridgeContext = createContext<CountervaluesMarketcapBridge | null>(
-  null,
-);
-function useCountervaluesMarketcapBridgeContext() {
-  const bridge = useContext(CountervaluesMarketcapBridgeContext);
-  if (!bridge) {
-    throw new Error(
-      "'useCountervaluesMarketcapBridgeContext' must be used within a 'CountervaluesMarketcapProvider'",
-    );
-  }
-  return bridge;
-}
-
 function trackingPairsHash(a: TrackingPair[]) {
   return a
     .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
     .sort()
     .join("|");
-}
-
-const MARKETCAP_REFRESH = 30 * 60000;
-const MARKETCAP_REFRESH_ON_ERROR = 60000;
-
-/** Provides market-cap ids via the supplied bridge. */
-export function CountervaluesMarketcapProvider({
-  children,
-  bridge,
-}: {
-  children: React.ReactNode;
-  bridge: CountervaluesMarketcapBridge;
-}): ReactElement {
-  const lastUpdated = bridge.useLastUpdated();
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout> | null = null;
-    const now = Date.now();
-
-    if (!lastUpdated || now - lastUpdated > MARKETCAP_REFRESH) {
-      bridge.setLoading(true);
-      api.fetchIdsSortedByMarketcap().then(
-        fetchedIds => {
-          bridge.setIds(fetchedIds);
-          timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH);
-        },
-        error => {
-          log("countervalues", "error fetching marketcap ids " + error);
-          bridge.setError(error.message);
-          timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH_ON_ERROR);
-        },
-      );
-    } else {
-      timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH - (now - lastUpdated));
-    }
-
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [lastUpdated, bridge]);
-
-  return (
-    <CountervaluesMarketcapBridgeContext.Provider value={bridge}>
-      {children}
-    </CountervaluesMarketcapBridgeContext.Provider>
-  );
-}
-
-/** Returns market-cap ids. */
-export function useMarketcapIds(): string[] {
-  const bridge = useCountervaluesMarketcapBridgeContext();
-  return bridge.useIds();
 }
 
 /**
