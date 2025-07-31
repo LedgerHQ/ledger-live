@@ -55,7 +55,6 @@ const test_ios = async () => {
       -c ios.sim.${target} \
       --loglevel error \
       --record-logs failing \
-      --record-videos failing \
       --take-screenshots failing \
       --forceExit \
       --headless \
