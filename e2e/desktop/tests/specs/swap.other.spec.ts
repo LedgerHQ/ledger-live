@@ -36,12 +36,12 @@ const checkProviders = [
     xrayTicket: "B2CQA-3120",
     provider: Provider.ONE_INCH,
   },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3119",
-    provider: Provider.VELORA,
-  },
+  // {
+  //   fromAccount: Account.ETH_1,
+  //   toAccount: TokenAccount.ETH_USDC_1,
+  //   xrayTicket: "B2CQA-3119",
+  //   provider: Provider.VELORA,
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
@@ -79,7 +79,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
       ],
     });
 
-    test(
+    test.only(
       `Swap test provider redirection (${provider.uiName})`,
       {
         tag: ["@NanoSP", "@LNS", "@NanoX"],

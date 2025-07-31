@@ -54,8 +54,14 @@ runs:
         echo "Running tests with filter: $grep_option $grep_filter"
 
         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
-          -- pnpm e2e:desktop test:playwright \
-          --max-failures 50 \
-          $grep_option "$grep_filter" \
-          --shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}
+          -- env \
+            SWAP_API_BASE="${{ env.SWAP_API_BASE }}" \
+            LEDGER_SYNC_ENVIRONMENT="${{ env.LEDGER_SYNC_ENVIRONMENT }}" \
+            DISABLE_TRANSACTION_BROADCAST="${{ env.DISABLE_TRANSACTION_BROADCAST }}" \
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD="${{ env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD }}" \
+            SPECULOS_DEVICE="${{ env.SPECULOS_DEVICE }}" \
+            pnpm e2e:desktop test:playwright \
+            --max-failures 50 \
+            $grep_option "$grep_filter" \
+            --shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}
       shell: bash

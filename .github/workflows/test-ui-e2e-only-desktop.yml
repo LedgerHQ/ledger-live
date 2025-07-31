@@ -130,7 +130,7 @@ jobs:
           build_type: ${{ inputs.build_type }}
 
       - name: Run Playwright Tests
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@fix/env-vars-pass-through
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ inputs.test_filter }}
