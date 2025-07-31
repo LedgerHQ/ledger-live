@@ -1,7 +1,3 @@
-import axios from "axios";
-import { log } from "@ledgerhq/logs";
-import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets-evm-signatures/data/evm/index";
-import { getLoadConfig } from "./loadConfig";
 import { LoadConfig } from "../types";
 
 const asContractAddress = (addr: string) => {
@@ -13,24 +9,7 @@ export const findERC20SignaturesInfo = async (
   userLoadConfig: LoadConfig,
   chainId: number,
 ): Promise<string | null> => {
-  const { cryptoassetsBaseURL } = getLoadConfig(userLoadConfig);
-  if (!cryptoassetsBaseURL) return null;
-
-  const url = `${cryptoassetsBaseURL}/evm/${chainId}/erc20-signatures.json`;
-  const blob = await axios
-    .get<string>(url)
-    .then(({ data }) => {
-      if (!data || typeof data !== "string") {
-        throw new Error(`ERC20 signatures for chainId ${chainId} file is malformed ${url}`);
-      }
-      return data;
-    })
-    .catch(e => {
-      log("error", "could not fetch from " + url + ": " + String(e));
-      return null;
-    });
-
-  return blob;
+  return null;
 };
 
 /**
@@ -111,15 +90,5 @@ const parse = (erc20SignaturesBlob: string): API => {
 
 // this internal get() will lazy load and cache the data from the erc20 data blob
 const get: (chainId: number) => API | null = (() => {
-  const cache: Record<number, API> = {};
-  return chainId => {
-    if (cache[chainId]) return cache[chainId];
-
-    const signatureBlob: string | undefined = signaturesByChainId[chainId];
-    if (!signatureBlob) return null;
-
-    const api = parse(signatureBlob);
-    cache[chainId] = api;
-    return api;
-  };
+  return () => null;
 })();

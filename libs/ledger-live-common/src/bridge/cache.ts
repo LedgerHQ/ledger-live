@@ -14,10 +14,7 @@ export function makeBridgeCacheSystem({
   getData: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
 }): BridgeCacheSystem {
   const hydrateCurrency = async (currency: CryptoCurrency) => {
-    const value = await getData(currency);
-    const bridge = getCurrencyBridge(currency);
-    bridge.hydrate(value, currency);
-    return value;
+    return null;
   };
 
   const lruCaches = {};
@@ -36,14 +33,7 @@ export function makeBridgeCacheSystem({
     if (!cache || forceUpdate) {
       cache = makeLRUCache(
         async () => {
-          const preloaded = await bridge.preload(currency);
-
-          if (preloaded) {
-            bridge.hydrate(preloaded, currency);
-            await saveData(currency, preloaded);
-          }
-
-          return preloaded;
+          return null;
         },
         () => "",
         {

@@ -29,7 +29,6 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/rlp": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
-    "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
