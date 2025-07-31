@@ -344,6 +344,7 @@
           "provider" : "sağlayıcı",
           "rate" : "kur",
           "fees" : "Ağ Ücretleri",
+          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Geliştirici Aracı",
+        "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır"
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "mockAppUpdate" : "Test uygulama güncellemesi",
@@ -7279,6 +7284,15 @@
       "newAccount" : "Yeni hesap",
       "addAccountSelection" : "Fonların ekleneceği hesabı seçin",
       "addAccountSelectionPtxFlow" : "Hesap seçin"
+    },
+    "editAccountName" : {
+      "title" : "Hesap adını düzenleyin",
+      "input" : {
+        "name" : "İsim"
+      },
+      "cta" : {
+        "save" : "Kaydet"
+      }
     },
     "fundAccount" : {
       "receive" : "Al",
