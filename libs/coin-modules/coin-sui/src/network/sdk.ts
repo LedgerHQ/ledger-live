@@ -11,6 +11,8 @@ import {
   QueryTransactionBlocksParams,
   BalanceChange,
   SuiTransactionBlockResponseOptions,
+  DelegatedStake,
+  StakeObject,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
@@ -20,6 +22,8 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  Stake,
+  StakeState,
   AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -669,4 +673,52 @@ export const queryTransactionsByDigest = async (params: {
   }
 
   return responses;
+};
+
+export const getStakes = (address: string): Promise<Stake[]> =>
+  withApi(async api =>
+    api
+      .getStakes({ owner: address })
+      .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
+  );
+
+export const toStakes = (address: string, delegation: DelegatedStake): Stake[] =>
+  delegation.stakes.map(stake => {
+    const { deposited, rewarded } = toStakeAmounts(stake);
+    return {
+      uid: stake.stakedSuiId,
+      address: address,
+      delegate: delegation.validatorAddress,
+      state: toStakeState(stake.status),
+      asset: { type: "native" },
+      amount: deposited + rewarded,
+      amountDeposited: deposited,
+      amountRewarded: rewarded,
+      details: {
+        activeEpoch: Number(stake.stakeActiveEpoch),
+        requestEpoch: Number(stake.stakeRequestEpoch),
+      },
+    };
+  });
+
+export const toStakeState = (status: "Pending" | "Active" | "Unstaked"): StakeState => {
+  switch (status) {
+    case "Pending":
+      return "activating";
+    case "Active":
+      return "active";
+    case "Unstaked":
+      return "inactive";
+  }
+};
+
+export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarded: bigint } => {
+  switch (stake.status) {
+    case "Pending":
+      return { deposited: BigInt(stake.principal), rewarded: 0n };
+    case "Active":
+      return { deposited: BigInt(stake.principal), rewarded: BigInt(stake.estimatedReward) };
+    case "Unstaked":
+      return { deposited: BigInt(stake.principal), rewarded: 0n }; // note: we lose reward information in unstaked state here
+  }
 };
