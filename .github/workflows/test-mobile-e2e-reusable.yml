@@ -379,6 +379,7 @@ jobs:
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
+            --record-videos true \
             --shard ${{ matrix.shard }}/${{ matrix.total }} \
             ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
@@ -625,6 +626,7 @@ jobs:
           pnpm mobile e2e:ci -p android -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
+            --record-videos true \
             --shard ${{ matrix.shard }}/${{ matrix.total }} \
             ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
             --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
