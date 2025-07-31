@@ -8,7 +8,6 @@ let shard = "";
 let target = "release";
 let filter = "";
 let outputFile = "";
-let recordVideos = false;
 
 $.verbose = true; // everything works like in v7
 
@@ -20,7 +19,7 @@ const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(
       __filename,
-    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--testType] [--shard] [--production] [--record-videos]`,
+    )} -p --platform <ios|android> [-h --help]  [-t --test] [-b --build] [--bundle] [--cache | --no-cache] [--testType] [--shard] [--production]`,
   );
   process.exit(exitCode);
 };
@@ -52,12 +51,10 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
-  const videoFlag = recordVideos ? "--record-videos failing \\" : "";
   await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
       --loglevel error \
       --record-logs failing \
-      ${videoFlag} \
       --take-screenshots failing \
       --forceExit \
       --headless \
@@ -73,12 +70,10 @@ const build_android = async () => {
 };
 
 const test_android = async () => {
-  const videoFlag = recordVideos ? "--record-videos failing \\" : "";
   await $`pnpm mobile ${testType}:test \\
       -c android.emu.${target} \\
       --loglevel error \\
       --record-logs failing \\
-      ${videoFlag} \\
       --take-screenshots failing \\
       --forceExit \\
       --headless \\
@@ -147,9 +142,6 @@ for (const argName in argv) {
     case "outputFile":
     case "o":
       outputFile = argv[argName];
-      break;
-    case "record-videos":
-      recordVideos = argv[argName];
       break;
     default:
       usage(42);
