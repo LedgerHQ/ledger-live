@@ -1,5 +1,51 @@
 # @ledgerhq/live-common
 
+## 34.43.0-nightly.2
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+### Patch Changes
+
+- Updated dependencies [[`e165f4e`](https://github.com/LedgerHQ/ledger-live/commit/e165f4e1cc7058fb26d415a36cc03165febc69b0), [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3)]:
+  - @ledgerhq/coin-vechain@2.8.0-nightly.2
+  - @ledgerhq/cryptoassets@13.23.0-nightly.1
+  - @ledgerhq/coin-polkadot@6.5.0-nightly.2
+  - @ledgerhq/coin-stellar@5.4.0-nightly.2
+  - @ledgerhq/coin-aptos@2.7.0-nightly.2
+  - @ledgerhq/coin-tezos@5.7.0-nightly.2
+  - @ledgerhq/coin-tron@4.5.0-nightly.2
+  - @ledgerhq/coin-evm@2.25.0-nightly.2
+  - @ledgerhq/coin-sui@0.8.0-nightly.2
+  - @ledgerhq/coin-xrp@6.5.0-nightly.2
+  - @ledgerhq/coin-framework@5.8.0-nightly.2
+  - @ledgerhq/coin-algorand@0.9.15-nightly.2
+  - @ledgerhq/coin-bitcoin@0.18.1-nightly.2
+  - @ledgerhq/coin-cardano@0.10.1-nightly.2
+  - @ledgerhq/coin-casper@2.0.6-nightly.2
+  - @ledgerhq/coin-celo@1.1.13-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.2
+  - @ledgerhq/coin-hedera@1.9.1-nightly.2
+  - @ledgerhq/coin-icon@0.11.2-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.15-nightly.2
+  - @ledgerhq/coin-mina@1.1.14-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.15-nightly.2
+  - @ledgerhq/coin-near@0.11.15-nightly.2
+  - @ledgerhq/coin-solana@0.29.0-nightly.2
+  - @ledgerhq/coin-stacks@0.8.15-nightly.2
+  - @ledgerhq/coin-ton@0.13.4-nightly.2
+  - @ledgerhq/hw-app-vet@0.5.11-nightly.1
+  - @ledgerhq/live-countervalues@0.5.15-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.2
+  - @ledgerhq/live-nft@0.8.15-nightly.2
+  - @ledgerhq/live-wallet@0.11.6-nightly.2
+  - @ledgerhq/live-signer-evm@0.6.2-nightly.2
+  - @ledgerhq/live-signer-solana@0.5.0-nightly.2
+
 ## 34.43.0-nightly.1
 
 ### Minor Changes

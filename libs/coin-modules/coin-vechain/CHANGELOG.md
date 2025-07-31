@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.8.0-nightly.2
+
+### Minor Changes
+
+- [#11110](https://github.com/LedgerHQ/ledger-live/pull/11110) [`e165f4e`](https://github.com/LedgerHQ/ledger-live/commit/e165f4e1cc7058fb26d415a36cc03165febc69b0) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - deps(coin-vechain): remove `coin-tester` dependency
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3)]:
+  - @ledgerhq/cryptoassets@13.23.0-nightly.1
+  - @ledgerhq/coin-framework@5.8.0-nightly.2
+
 ## 2.7.15-nightly.1
 
 ### Patch Changes

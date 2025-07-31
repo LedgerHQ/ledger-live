@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.23.0-nightly.1
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
 ## 13.22.1-nightly.0
 
 ### Patch Changes

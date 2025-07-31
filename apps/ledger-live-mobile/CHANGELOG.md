@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.88.0-nightly.4
+
+### Minor Changes
+
+- [#11122](https://github.com/LedgerHQ/ledger-live/pull/11122) [`ebd6b4c`](https://github.com/LedgerHQ/ledger-live/commit/ebd6b4cfb4d0cd82bd50b908ee3e020d75db350c) Thanks [@themooneer](https://github.com/themooneer)! - Calculate hot/warm/cold start from native modules (ios and android)
+
+- [#11092](https://github.com/LedgerHQ/ledger-live/pull/11092) [`66a1723`](https://github.com/LedgerHQ/ledger-live/commit/66a1723334a122337e7b1a389ea1c4c338ae7ffe) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - migrate toast provider to redux
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+- [#10875](https://github.com/LedgerHQ/ledger-live/pull/10875) [`9b3d21d`](https://github.com/LedgerHQ/ledger-live/commit/9b3d21d11cd194b3eec86d10dfc27e881c7a108d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Portfolio gradiant and Account page
+
+### Patch Changes
+
+- Updated dependencies [[`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3)]:
+  - @ledgerhq/coin-evm@2.25.0-nightly.2
+  - @ledgerhq/coin-framework@5.8.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.15-nightly.2
+  - @ledgerhq/coin-stacks@0.8.15-nightly.2
+  - @ledgerhq/live-countervalues@0.5.15-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.2
+  - @ledgerhq/live-nft@0.8.15-nightly.2
+  - @ledgerhq/live-nft-react@0.9.15-nightly.2
+  - @ledgerhq/live-wallet@0.11.6-nightly.2
+
 ## 3.88.0-nightly.3
 
 ### Minor Changes
