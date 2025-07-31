@@ -134,6 +134,7 @@
     "src/families/stacks/deviceTransactionConfig.ts",
     "src/families/stacks/types.ts",
     "src/families/stellar/types.ts",
+    "src/families/stellar/ui.ts",
     "src/families/tezos/bakers.ts",
     "src/families/tezos/bakers.whitelist-default.ts",
     "src/families/tezos/types.ts",
