@@ -63,7 +63,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
       returnTo?: string;
     }) => {
       const { account, parentAccount, alwaysShowNoFunds, entryPoint, source, returnTo } = props;
-      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
+      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount, returnTo);
 
       if (alwaysShowNoFunds || account.spendableBalance.isZero()) {
         dispatch(
