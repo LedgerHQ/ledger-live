@@ -344,6 +344,7 @@
           "provider" : "Anbieter",
           "rate" : "Kurs",
           "fees" : "Netzgebühren",
+          "feesDescription" : "Diese Gebühr wird vom Blockchain-Netzwerk für die Abwicklung des Swaps erhoben. Auf den veranschlagten Preis wird lediglich die Sendegebühr aufgeschlagen. Die Empfangsgebühr ist dagegen bereits inbegriffen.",
           "target" : "Zielkonto"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "Zurückgestellt",
         "expired" : "Abgelaufen",
         "finished" : "Abgeschlossen",
+        "unknown" : "In Bearbeitung",
         "refunded" : "Zurückerstattet"
       }
     },
@@ -570,7 +572,7 @@
         "pending" : "Bitte warte, während der Swap-Provider die Transaktion verarbeitet.",
         "onhold" : "Bitte kontaktiere den Swap-Anbieter unter Angabe deiner Swap-ID, um das Problem zu beheben.",
         "finished" : "Dein Swap wurde erfolgreich abgeschlossen.",
-        "unknown" : "Bitte kontaktiere den Swap-Anbieter mit deiner Swap-ID für weitere Informationen."
+        "unknown" : "Wir warten auf Informationen vom Anbieter."
       },
       "date" : "Datum",
       "from" : "Von",
@@ -2385,6 +2387,10 @@
         "title" : "Gerät"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Blindsignatur erforderlich",
+          "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
         "from" : "Von",
@@ -4579,6 +4585,10 @@
             "cta" : "Anwenden"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer-Entwicklungstool",
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
       },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
@@ -7279,6 +7289,15 @@
       "newAccount" : "Neues Konto",
       "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
       "addAccountSelectionPtxFlow" : "Konto auswählen"
+    },
+    "editAccountName" : {
+      "title" : "Kontonamen bearbeiten",
+      "input" : {
+        "name" : "Name"
+      },
+      "cta" : {
+        "save" : "Speichern"
+      }
     },
     "fundAccount" : {
       "receive" : "Empfangen",
