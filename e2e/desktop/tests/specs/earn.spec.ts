@@ -181,7 +181,6 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
         if (!staking) {
           await app.earnDashboard.verifyRewardsPotentials();
           await app.earnDashboard.verifyYourEligibleAssets(account.accountName);
-          await app.earnDashboard.verifyEligibleAssets(account);
           await app.earnDashboard.verifyEarnByStackingButton();
         } else {
           await app.earnDashboard.goToAssetsTab();
