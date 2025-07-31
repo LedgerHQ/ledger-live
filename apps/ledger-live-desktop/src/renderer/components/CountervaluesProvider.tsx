@@ -52,6 +52,7 @@ export function useCountervaluesProviderBridge() {
  * Call side effects outside of the primary render tree, avoiding costly child re-renders
  */
 function Effect() {
+  useCalculateCountervaluesUserSettings();
   useCacheManager();
   usePollingManager();
 
@@ -65,8 +66,6 @@ export function CountervaluesBridgedProvider({
   children: React.ReactNode;
   initialState: CounterValuesStateRaw;
 }) {
-  useCalculateCountervaluesUserSettings();
-
   const bridge = useCountervaluesProviderBridge();
 
   return (
@@ -98,7 +97,7 @@ function useCacheManager() {
       ...newState,
       status: status,
     });
-  }, [state, userSettings, status]);
+  }, [state, status, userSettings]);
 }
 
 function usePollingManager() {

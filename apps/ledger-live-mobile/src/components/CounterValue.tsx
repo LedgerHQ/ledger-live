@@ -67,7 +67,6 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const value = BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const { poll } = useCountervaluesPolling();
@@ -91,13 +90,17 @@ export default function CounterValue({
       if (t) clearTimeout(t);
     };
   }, [counterValueCurrency, currency, poll, hasTrackingPair, trackingPairs]);
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value,
-    disableRounding: true,
-    date,
-  });
+  const param = useMemo(
+    () => ({
+      from: currency,
+      to: counterValueCurrency,
+      value: BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp,
+      disableRounding: true,
+      date,
+    }),
+    [currency, counterValueCurrency, valueProp, date],
+  );
+  const countervalue = useCalculate(param);
 
   if (typeof countervalue !== "number") {
     return withPlaceholder ? <NoCountervaluePlaceholder /> : null;

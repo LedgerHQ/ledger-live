@@ -43,10 +43,10 @@ function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
 
 // TODO put in the reducer
 export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([] as TrackingPair[]);
+  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
   useEffect(() => {
-    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
-    return () => sub.unsubscribe();
+    const subscription = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
+    return () => subscription.unsubscribe();
   }, []);
   return extraSessionTrackingPair;
 }

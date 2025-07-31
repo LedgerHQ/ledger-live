@@ -83,16 +83,6 @@ export type Props = {
   savedState?: CounterValuesStateRaw;
 };
 
-// TODO: Initial context should be null
-const CountervaluesPollingContext = createContext<
-  Pick<Polling, "wipe" | "poll" | "start" | "stop">
->({
-  wipe: () => {},
-  poll: () => {},
-  start: () => {},
-  stop: () => {},
-});
-
 const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);
@@ -198,50 +188,46 @@ function Effect({
  * Root countervalues provider (polling + calculation).
  */
 export function CountervaluesProvider({ children, bridge, ...rest }: Props): ReactElement {
-  const polling = useMemo<Pick<Polling, "wipe" | "poll" | "start" | "stop">>(
-    () => ({
-      wipe: () => bridge.wipe(),
-      poll: () => bridge.setPollingTriggerLoad(true),
-      start: () => bridge.setPollingIsPolling(true),
-      stop: () => bridge.setPollingIsPolling(false),
-    }),
-    [bridge],
-  );
-
   return (
-    <CountervaluesPollingContext.Provider value={polling}>
-      <CountervaluesContext.Provider value={bridge}>
-        <Effect {...rest} bridge={bridge} />
-        {children}
-      </CountervaluesContext.Provider>
-    </CountervaluesPollingContext.Provider>
+    <CountervaluesContext.Provider value={bridge}>
+      <Effect {...rest} bridge={bridge} />
+      {children}
+    </CountervaluesContext.Provider>
   );
 }
 
 /** Returns the full countervalues state. */
 export function useCountervaluesState(): CounterValuesState {
-  const bridge = useCountervaluesBridgeContext();
-  return bridge.useState();
+  return useCountervaluesBridgeContext().useState();
 }
 
-// allows consumer to access the countervalues polling control object
+/** Allows consumer to access the countervalues polling control object */
 export function useCountervaluesPolling(): Polling {
   const bridge = useCountervaluesBridgeContext();
-  const polling = useContext(CountervaluesPollingContext);
   const pending = bridge.useStatePending();
   const error = bridge.useStateError();
-  return useMemo(() => ({ ...polling, pending, error }), [error, pending, polling]);
+  return useMemo(
+    () => ({
+      poll: () => bridge.setPollingTriggerLoad(true),
+      start: () => bridge.setPollingIsPolling(true),
+      stop: () => bridge.setPollingIsPolling(false),
+      wipe: () => bridge.wipe(),
+      pending,
+      error,
+    }),
+    [bridge, error, pending],
+  );
+}
+
+/** Allows consumer to access the user settings that was used to fetch the countervalues */
+export function useCountervaluesUserSettings(): CountervaluesSettings {
+  return useCountervaluesBridgeContext().useUserSettings();
 }
 
 /**
- * Allows consumer to access the user settings that was used to fetch the countervalues
+ * Provides a way to calculate a countervalue from a value
+ * Seems like a major bottleneck, see if it actually needs the full state or we can select only the needed data
  */
-export function useCountervaluesUserSettings(): CountervaluesSettings {
-  const bridge = useCountervaluesBridgeContext();
-  return bridge.useUserSettings();
-}
-
-// provides a way to calculate a countervalue from a value
 export function useCalculate(query: {
   value: number;
   from: Currency;
@@ -251,10 +237,10 @@ export function useCalculate(query: {
   reverse?: boolean;
 }): number | null | undefined {
   const state = useCountervaluesState();
-  return calculate(state, query);
+  return useMemo(() => calculate(state, query), [state, query]);
 }
 
-// provides a way to calculate a countervalue from a value using a callback
+/** Provides a way to calculate a countervalue from a value using a callback */
 export function useCalculateCountervalueCallback({
   to,
 }: {
@@ -314,8 +300,10 @@ export function useSendAmount({
   return { fiatAmount, fiatUnit, calculateCryptoAmount };
 }
 
-// infer the tracking pairs for the top coins that the portfolio needs to display itself
-// if startDate is undefined, the feature is disabled
+/**
+ * Infer the tracking pairs for the top coins that the portfolio needs to display itself
+ * if startDate is undefined, the feature is disabled
+ */
 export function useTrackingPairsForTopCoins(
   marketcapIds: string[],
   countervalue: Currency,
