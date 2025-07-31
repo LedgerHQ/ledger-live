@@ -114,7 +114,7 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ inputs.build_type == 'js' && 'master' || 'develop' }}
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps

@@ -11,6 +11,10 @@ inputs:
     description: "GitHub Bot ID"
   bot_key:
     description: "GitHub Bot private key"
+  production_firebase:
+    required: false
+    description: "Production Firebase"
+    default: "false"
 outputs:
   token:
     description: "GitHub Bot Token"
@@ -29,7 +33,7 @@ runs:
     - name: Retrieving coin apps
       uses: actions/checkout@v4
       with:
-        ref: master
+        ref: ${{ inputs.production_firebase == 'true' && 'master' || 'develop' }}
         repository: LedgerHQ/coin-apps
         token: ${{ steps.generate-token.outputs.token }}
         path: ${{ inputs.coinapps_path }}
