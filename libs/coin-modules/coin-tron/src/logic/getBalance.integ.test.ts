@@ -17,7 +17,10 @@ describe("getBalance", () => {
     const balances = await getBalance("TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
 
     expect(balances[0].asset).toEqual({ type: "native" });
-    balances.slice(1).forEach(balance => expect(balance.asset).toMatchObject({ type: "token" }));
+    // Backend either returns trc10 or trc20 first (randomly)
+    balances
+      .slice(1)
+      .forEach(balance => expect(["trc20", "trc10"].includes(balance.asset.type)).toBe(true));
     balances.forEach(balance => expect(balance.value).toBeGreaterThanOrEqual(0));
   });
 });

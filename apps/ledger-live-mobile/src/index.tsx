@@ -112,6 +112,7 @@ import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -151,6 +152,7 @@ function App() {
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
+  useNativeStartupInfo();
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({

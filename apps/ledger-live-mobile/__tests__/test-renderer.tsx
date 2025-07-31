@@ -34,6 +34,7 @@ import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
+import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
 
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
@@ -62,6 +63,7 @@ const initialState: State = {
   trustchain: TRUSTCHAIN_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
+  toasts: TOASTS_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {

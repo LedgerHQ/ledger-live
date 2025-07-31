@@ -500,7 +500,7 @@ describe("SDK Functions", () => {
       "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
     ]);
     expect(operation.value).toEqual(500000n);
-    expect(operation.asset).toEqual({ type: "token", coinType: "0x123::test::TOKEN" });
+    expect(operation.asset).toEqual({ type: "token", assetReference: "0x123::test::TOKEN" });
     expect(operation.memo).toBeUndefined();
     expect(operation.details).toBeUndefined();
     expect(operation.tx).toMatchObject({
@@ -1449,7 +1449,7 @@ describe("filterOperations", () => {
           amount: 8824n,
           asset: {
             type: "token",
-            coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+            assetReference: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
           },
         },
       ]);
@@ -1512,7 +1512,7 @@ describe("filterOperations", () => {
           {
             address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
             amount: 500000n,
-            asset: { type: "token", coinType: "0x123::test::TOKEN" },
+            asset: { type: "token", assetReference: "0x123::test::TOKEN" },
             type: "transfer",
           },
         ],
@@ -1526,7 +1526,7 @@ describe("filterOperations", () => {
     test("suiCoinTypeToAsset should map tokens correctly", () => {
       expect(sdk.toSuiAsset("0x123::test::TOKEN")).toEqual({
         type: "token",
-        coinType: "0x123::test::TOKEN",
+        assetReference: "0x123::test::TOKEN",
       });
     });
   });

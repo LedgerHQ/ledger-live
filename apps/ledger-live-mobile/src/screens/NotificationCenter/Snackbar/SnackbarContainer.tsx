@@ -2,17 +2,20 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { useSelector } from "react-redux";
+import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";
 import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useToasts } from "~/reducers/toast";
+import { useToastsActions } from "~/actions/toast";
 
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const { dismissToast, toasts } = useToasts();
+  const toasts = useToasts();
+  const { dismissToast } = useToastsActions();
+
   const { t } = useTranslation();
   const [nonce, setNonce] = useState(0);
 

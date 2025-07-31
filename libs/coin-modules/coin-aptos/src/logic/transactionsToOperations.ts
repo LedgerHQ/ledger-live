@@ -1,6 +1,5 @@
 import { AptosTransaction } from "../types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
@@ -29,7 +28,7 @@ const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP
   return type;
 };
 
-const getTokenStandard = (coin_id: string): string => {
+const getTokenType = (coin_id: string) => {
   const parts = coin_id.split("::");
   if (parts.length === 3) {
     return "coin";
@@ -40,8 +39,8 @@ const getTokenStandard = (coin_id: string): string => {
 export function transactionsToOperations(
   address: string,
   txs: (AptosTransaction | null)[],
-): Operation<AptosAsset>[] {
-  const operations: Operation<AptosAsset>[] = [];
+): Operation[] {
+  const operations: Operation[] = [];
 
   return txs.reduce((acc, tx) => {
     if (tx === null) {
@@ -62,7 +61,7 @@ export function transactionsToOperations(
     const value = calculateAmount(tx.sender, address, amount_in, amount_out);
     const type = detectType(address, tx, value);
 
-    const op: Operation<AptosAsset> = {
+    const op: Operation = {
       id: tx.hash,
       type,
       senders: [],
@@ -94,9 +93,8 @@ export function transactionsToOperations(
         return acc;
       } else {
         op.asset = {
-          type: "token",
-          standard: getTokenStandard(coin_id),
-          contractAddress: coin_id,
+          type: getTokenType(coin_id),
+          assetReference: coin_id,
         };
         acc.push(op);
       }

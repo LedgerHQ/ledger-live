@@ -73,7 +73,6 @@ describe("buildTransaction", () => {
         sender: mockAccount.freshAddress,
         recipient: mockTransaction.recipient,
         type: mockTransaction.mode,
-        coinType: "0x2::sui::SUI",
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "native" },
       });
@@ -360,7 +359,6 @@ describe("buildTransaction", () => {
         sender: mockAccount.freshAddress,
         recipient: transaction.recipient,
         type: transaction.mode,
-        coinType: "0x2::sui::SUI",
         amount: BigInt(transaction.amount!.toString()),
         asset: { type: "native" },
       });

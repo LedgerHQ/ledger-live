@@ -19,6 +19,7 @@ class NativeModulesPackage : ReactPackage {
     ): MutableList<NativeModule> = listOf(
         BluetoothHelperModule(reactContext),
         ImagePickerModule(reactContext),
-        LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default)
+        LocationHelperModule(reactContext, coroutineDispatcher = Dispatchers.Default),
+        StartupInfoModule(reactContext)
     ).toMutableList()
 }

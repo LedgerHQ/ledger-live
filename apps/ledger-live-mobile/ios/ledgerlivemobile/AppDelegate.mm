@@ -10,14 +10,41 @@
 #import <Firebase.h>
 #import "RNSplashScreen.h"
 #import <MMKV/MMKV.h>
+#import "StartupInfoModule.h"
 
+@interface AppDelegate ()
+@property (nonatomic, assign) BOOL hasLaunchedInThisSession; // A flag to track session within the app's process lifetime
+@property (nonatomic, assign) BOOL didInitialColdLaunchComplete;
+// Tracks if the app has just moved from foreground to background.
+@property (nonatomic, assign) BOOL didEnterBackgroundSinceLastActive;
+@property (nonatomic, assign) CFAbsoluteTime launchStartTime;
+@property (nonatomic, assign) CFAbsoluteTime backgroundEnterTime;
+@property (nonatomic, strong) NSString *coldStartupType;
+
+
+
+
+@end
 
 @implementation AppDelegate
 
 static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
+// Initialize new properties in init or with default values
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _didInitialColdLaunchComplete = NO;
+        _didEnterBackgroundSinceLastActive = NO; // Initially, app hasn't been in background
+        _launchStartTime = CFAbsoluteTimeGetCurrent(); // Capture time as early as possible
+        _backgroundEnterTime = 0.0;
+    }
+    return self;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  CFAbsoluteTime currentExecutionPointTime = CFAbsoluteTimeGetCurrent(); // Current time at this point
   self.moduleName = @"ledgerlivemobile";
   self.dependencyProvider = [RCTAppDependencyProvider new];
   // You can add your custom initial props in the dictionary below.
@@ -74,6 +101,54 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   if (!appLaunched) {
     return NO;
   }
+  
+  // --- Step 1: Initialize the 'hasLaunchedInThisSession' flag ---
+      // This static variable ensures that `self.hasLaunchedInThisSession`
+      // is only reset to NO once per application process launch (cold start).
+  static BOOL appProcessInitialized = NO;
+  if (!appProcessInitialized) {
+      self.hasLaunchedInThisSession = NO; // False on first process launch
+      appProcessInitialized = YES;
+  }
+
+  // --- Step 2: Determine if app was launched from background via external event ---
+  // Check for launch options that might indicate an external warm start.
+      // If the app was completely terminated and then opened by a deep link/notification,
+      // it's technically a cold start for the process, but functionally a "warm" experience
+      // from the user's perspective regarding the reason for launch. We'll label it warm for Datadog.
+  NSString *startupType = @"cold";
+
+  BOOL isRelaunchFromExternalEvent = NO;
+  if (launchOptions[UIApplicationLaunchOptionsSourceApplicationKey] ||
+      launchOptions[UIApplicationLaunchOptionsURLKey] ||
+      launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] ||
+      launchOptions[UIApplicationLaunchOptionsLocationKey] ||
+      launchOptions[UIApplicationLaunchOptionsBluetoothCentralsKey] ||
+      launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] ||
+      launchOptions[UIApplicationLaunchOptionsCloudKitShareMetadataKey] ||
+      launchOptions[UIApplicationLaunchOptionsShortcutItemKey])
+  {
+      isRelaunchFromExternalEvent = YES;
+  }
+  
+  NSTimeInterval durationFromProcessStart = (currentExecutionPointTime - self.launchStartTime) * 1000;
+
+  if (!self.didInitialColdLaunchComplete) {
+      if (isRelaunchFromExternalEvent) {
+          startupType = @"warm";
+      } else {
+          startupType = @"cold";
+      }
+
+      self.didInitialColdLaunchComplete = YES;
+  }
+  else if (isRelaunchFromExternalEvent) {
+      startupType = @"warm";
+  }
+  
+  
+  [StartupInfoModule setStartupType:startupType duration:durationFromProcessStart];
+
 
   BOOL isRunningDetox = [[[NSProcessInfo processInfo] arguments] containsObject:@"-IS_TEST"];
 
@@ -177,11 +252,40 @@ static Braze *_braze;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+  CFAbsoluteTime resumeStartTime = CFAbsoluteTimeGetCurrent();
   [self hideOverlay];
+
+      if (self.didInitialColdLaunchComplete && self.didEnterBackgroundSinceLastActive) {
+        NSTimeInterval warmThreshold = 5.0; // More than 5 seconds on background should be considered as a long inactivity -> warm if restart
+        NSString *startupType;
+        NSTimeInterval timeInBackground = resumeStartTime - self.backgroundEnterTime;
+
+        if (timeInBackground > warmThreshold) {
+                    startupType = @"warm";
+                } else {
+                    startupType = @"hot";
+                }
+
+        
+        NSTimeInterval activationDuration = CFAbsoluteTimeGetCurrent() - resumeStartTime;
+
+        [StartupInfoModule setStartupType:startupType duration:activationDuration];
+      }
+
+      // Reset the background flag once the app is active
+      self.didEnterBackgroundSinceLastActive = NO;
+      self.backgroundEnterTime = 0.0;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
   [self showOverlay];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // This method is called when the app goes into the background.
+    // Useful for understanding the app's state transitions.
+    self.didEnterBackgroundSinceLastActive = YES; // Mark that app has been in background
+    self.backgroundEnterTime = CFAbsoluteTimeGetCurrent();
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

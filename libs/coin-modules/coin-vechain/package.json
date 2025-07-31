@@ -108,7 +108,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",

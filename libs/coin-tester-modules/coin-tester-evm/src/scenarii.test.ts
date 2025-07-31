@@ -12,7 +12,7 @@ jest.setTimeout(100_000);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
-export const defaultNanoApp = { firmware: "2.4.1" as const, version: "1.15.0" as const };
+export const defaultNanoApp = { firmware: "2.4.2" as const, version: "1.17.0" as const };
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {

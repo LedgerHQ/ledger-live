@@ -2,7 +2,6 @@ import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
-import { TronAsset } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/format", () => ({
@@ -22,7 +21,7 @@ describe("craftTransaction", () => {
   });
 
   it("should craft a standard transaction", async () => {
-    const transactionIntent: TransactionIntent<TronAsset> = {
+    const transactionIntent: TransactionIntent = {
       asset: { type: "native" },
       type: "send",
       recipient: "recipient",
@@ -52,12 +51,11 @@ describe("craftTransaction", () => {
   });
 
   it("should craft a TRC20 transaction", async () => {
-    const transactionIntent: TransactionIntent<TronAsset> = {
+    const transactionIntent: TransactionIntent = {
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "contractAddress",
+        type: "trc20",
+        assetReference: "contractAddress",
       },
       recipient: "recipient",
       sender: "sender",
@@ -89,12 +87,11 @@ describe("craftTransaction", () => {
     const amount: number = 1000;
     const transactionIntent = {
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "contractAddress",
+        type: "trc20",
+        assetReference: "contractAddress",
       },
       amount: BigInt(amount),
-    } as TransactionIntent<TronAsset>;
+    } as TransactionIntent;
 
     (decode58Check as jest.Mock).mockImplementation(_address => undefined);
     (craftTrc20Transaction as jest.Mock).mockResolvedValue({
@@ -116,12 +113,11 @@ describe("craftTransaction", () => {
     const amount = 1000;
     const transactionIntent = {
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "contractAddress",
+        type: "trc20",
+        assetReference: "contractAddress",
       },
       amount: BigInt(amount),
-    } as TransactionIntent<TronAsset>;
+    } as TransactionIntent;
 
     (decode58Check as jest.Mock).mockImplementation(_address => undefined);
     (craftTrc20Transaction as jest.Mock).mockResolvedValue({
@@ -146,11 +142,10 @@ describe("craftTransaction", () => {
         await craftTransaction(
           {
             asset: {
-              type: "token",
-              standard: "trc20",
-              contractAddress: "contractAddress",
+              type: "trc20",
+              assetReference: "contractAddress",
             },
-          } as TransactionIntent<TronAsset>,
+          } as TransactionIntent,
           customFees,
         );
       } catch (error) {

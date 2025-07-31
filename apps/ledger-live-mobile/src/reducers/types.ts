@@ -35,6 +35,7 @@ import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
+import { ToastState } from "./toast";
 
 // === ACCOUNT STATE ===
 
@@ -399,4 +400,5 @@ export type State = {
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
   largeMover: LargeMoverState;
+  toasts: ToastState;
 };
