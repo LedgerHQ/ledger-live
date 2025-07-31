@@ -165,7 +165,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         },
       }),
       "custom.navigate": async request => {
-        const { action, queryParams, currencyId, accountId } = request.params || {};
+        const { action } = request.params || {};
 
         if (!action) {
           throw new Error("Missing action parameter");
@@ -176,11 +176,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           history.goBack();
           return { success: true };
         } else if (action === "redirect-provider") {
+          const { currencyId, accountId, source } = request.params || {};
+
           if (!currencyId) {
             throw new Error("Missing currencyId parameter");
           }
-
-          const source = queryParams?.source;
 
           if (!accountId) {
             throw new Error("Missing accountId parameter");
