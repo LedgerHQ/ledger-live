@@ -31,14 +31,10 @@ function useCountervaluesMarketcapBridgeContext() {
   return bridge;
 }
 
-/** Provides market-cap ids via the supplied bridge. */
-export function CountervaluesMarketcapProvider({
-  children,
-  bridge,
-}: {
-  children: React.ReactNode;
-  bridge: CountervaluesMarketcapBridge;
-}): ReactElement {
+/**
+ * TODO this could be re-written as a side effect only, to avoid dependency on render state.
+ */
+function Effect({ bridge }: { bridge: CountervaluesMarketcapBridge }) {
   const lastUpdated = bridge.useLastUpdated();
   const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
@@ -68,8 +64,23 @@ export function CountervaluesMarketcapProvider({
     };
   }, [lastUpdated, bridge]);
 
+  return null;
+}
+
+/**
+ * Provides market-cap ids via the supplied bridge.
+ */
+export function CountervaluesMarketcapProvider({
+  children,
+  bridge,
+}: {
+  children: React.ReactNode;
+  /** @param bridge Contains the functions that interact with the apps' state. Reference needs to be stable */
+  bridge: CountervaluesMarketcapBridge;
+}): ReactElement {
   return (
     <CountervaluesMarketcapBridgeContext.Provider value={bridge}>
+      <Effect bridge={bridge} />
       {children}
     </CountervaluesMarketcapBridgeContext.Provider>
   );
