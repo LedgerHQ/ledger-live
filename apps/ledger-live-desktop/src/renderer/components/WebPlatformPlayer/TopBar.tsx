@@ -195,16 +195,30 @@ export const TopBar = ({
     webview.goForward();
   }, [webviewAPIRef]);
 
-  const toggleMobileView = useCallback(async () => {
+  const toggleMobileView = useCallback(() => {
     setMobileView?.(prev => ({ ...prev, display: !prev.display }));
   }, [setMobileView]);
 
   const updateMobileWidth = useCallback(
-    async (width: number) => {
+    (width: number) => {
       setMobileView?.(prev => ({ ...prev, width: width > 0 ? width : 355 }));
     },
     [setMobileView],
   );
+
+  const setInpuMobileWidthChange = useCallback(
+    (width: string) => {
+      const value = parseInt(width, 10) || 0;
+      updateMobileWidth?.(value);
+    },
+    [updateMobileWidth],
+  );
+
+  const setIntutMobileWidthBlur = useCallback(() => {
+    if (mobileView && !mobileView.width) {
+      updateMobileWidth?.(355);
+    }
+  }, [mobileView, updateMobileWidth]);
 
   const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
   const currentAccountName =
@@ -277,15 +291,8 @@ export const TopBar = ({
                 data-testid="mobile-view-width-input"
                 small
                 value={`${mobileView.width}` || ""}
-                onChange={(e: string) => {
-                  const value = parseInt(e, 10) || 0;
-                  updateMobileWidth?.(value);
-                }}
-                onBlur={() => {
-                  if (!mobileView.width) {
-                    updateMobileWidth?.(355);
-                  }
-                }}
+                onChange={setInpuMobileWidthChange}
+                onBlur={setIntutMobileWidthBlur}
                 style={{ width: 30, textAlign: "center" }}
                 maxLength={4}
               />
