@@ -3659,7 +3659,8 @@
           "refunded" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID für weitere Informationen.",
           "pending" : "Bitte warten Sie, während der Swap-Provider die Transaktion verarbeitet.",
           "onhold" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID, um die Situation zu lösen.",
-          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen."
+          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen.",
+          "unknown" : "Wir warten auf Informationen vom Anbieter."
         }
       },
       "missingApp" : {
@@ -3720,6 +3721,7 @@
             "provider" : "Anbieter",
             "rate" : "Kurs",
             "fees" : "Netzgebühren",
+            "feesDescription" : "Diese Gebühr wird vom Blockchain-Netzwerk für die Abwicklung des Swaps erhoben. Auf den veranschlagten Preis wird lediglich die Sendegebühr aufgeschlagen. Die Empfangsgebühr ist dagegen bereits inbegriffen.",
             "target" : "Zielkonto"
           },
           "noAccount" : "Erstellen Sie ein Konto um {{name}} zu erhalten",
@@ -4044,6 +4046,10 @@
       "quantityAvailable" : "Verfügbare Menge"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Blindsignatur erforderlich",
+        "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+      },
       "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
       "tag" : "Markierung (optional)",
       "validateTag" : "Markierung validieren",
@@ -7775,6 +7781,87 @@
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
-    "searchPlaceholder" : "Suche"
+    "searchPlaceholder" : "Suche",
+    "emptyAssetList" : "Keine Assets gefunden",
+    "accountCount" : "{{count}} Konto (erkannt)",
+    "accountCount_plural" : "{{count}} Konten (erkannt)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Fehlerhafte Befehlsdaten",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "deserializationFailed" : {
+      "title" : "Deserialisierung der Nutzlast fehlgeschlagen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongTransactionId" : {
+      "title" : "Falsche Transaktions-ID",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidAddress" : {
+      "title" : "Ungültige Adresse",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Das empfangende Konto ist dem verbundenen Gerät nicht zugeordnet. Bitte nutze das richtige Gerät und versuche es noch einmal."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Das versendende Konto ist dem verbundenen Gerät nicht zugeordnet. Bitte nutze das richtige Gerät und versuche es noch einmal."
+    },
+    "userRefused" : {
+      "title" : "Aktion auf Gerät verweigert",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "internalError" : {
+      "title" : "Interner Fehler",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP1" : {
+      "title" : "P1 falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP2" : {
+      "title" : "P2 falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2-Erweiterung falsch",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidP2Extension" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "P2-Erweiterung ungültig"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Unerwartete Anweisung"
+    },
+    "classNotSupported" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Klasse wird nicht unterstützt"
+    },
+    "invalidInstruction" : {
+      "title" : "Ungültige Anweisung",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "malformedApdu" : {
+      "title" : "Fehlformatierter APDU-Header",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "invalidDataLength" : {
+      "title" : "Ungültige Datenlänge",
+      "description" : "Dieser Befehl akzeptiert keine Daten dieser Länge"
+    },
+    "signatureVerificationFail" : {
+      "title" : "Signaturverifizierung fehlgeschlagen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    },
+    "default" : {
+      "title" : "Etwas ist schief gelaufen",
+      "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    }
   }
 }
