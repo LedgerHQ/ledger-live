@@ -11,7 +11,7 @@ import useBridgeTransaction, {
   getGlobalOnBridgeError,
 } from "./useBridgeTransaction";
 import { setSupportedCurrencies } from "../currencies";
-import { LiveConfig } from "@ledgerhq/live-config/lib/LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 

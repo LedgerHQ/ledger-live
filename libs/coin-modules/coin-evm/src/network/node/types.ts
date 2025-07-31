@@ -28,7 +28,10 @@ export type NodeApi = {
     account: Pick<Account, "currency" | "freshAddress">,
     transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
   ) => Promise<BigNumber>;
-  getFeeData: (currency: CryptoCurrency, transaction: EvmTransaction) => Promise<FeeData>;
+  getFeeData: (
+    currency: CryptoCurrency,
+    transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+  ) => Promise<FeeData>;
   broadcastTransaction: (
     currency: CryptoCurrency,
     signedTxHex: string,

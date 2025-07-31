@@ -3720,6 +3720,7 @@
             "provider" : "Оператор",
             "rate" : "Курс",
             "fees" : "Комиссия сети",
+            "feesDescription" : "Эта комиссия взимается блокчейн-сетью для проведения обмена. В дополнение к ориентировочному курсу взимается только комиссия за отправку. Комиссия за получение уже включена.",
             "target" : "Куда"
           },
           "noAccount" : "Создайте счёт, чтобы получить {{name}}",
@@ -7776,5 +7777,83 @@
     "selectNetwork" : "Выберите сеть",
     "selectAccount" : "Выберите счёт",
     "searchPlaceholder" : "Поиск..."
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Неверные данные команды",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "deserializationFailed" : {
+      "title" : "Сбой десериализации данных",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "wrongTransactionId" : {
+      "title" : "Неверный ID транзакции",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "invalidAddress" : {
+      "title" : "Неправильный адрес",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Счёт для получения не привязан к подключенному устройству. Попробуйте другое устройство."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Счёт отправки не привязан к подключенному устройству. Попробуйте другое устройство."
+    },
+    "userRefused" : {
+      "title" : "Операция отклонена на устройстве",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "internalError" : {
+      "title" : "Внутренняя ошибка",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "wrongP1" : {
+      "title" : "Неверный P1",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "wrongP2" : {
+      "title" : "Неверный P2",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "wrongP2Extension" : {
+      "title" : "Неверное расширение P2",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "invalidP2Extension" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Недопустимое расширение P2"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Неожиданная инструкция"
+    },
+    "classNotSupported" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Класс не поддерживается"
+    },
+    "invalidInstruction" : {
+      "title" : "Неверная инструкция",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "malformedApdu" : {
+      "title" : "Неверный формат заголовка APDU",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "invalidDataLength" : {
+      "title" : "Неверная длина данных",
+      "description" : "Эта команда не принимает данные такой длины"
+    },
+    "signatureVerificationFail" : {
+      "title" : "Сбой проверки подписи",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "default" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    }
   }
 }

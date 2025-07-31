@@ -4,6 +4,7 @@
       "localStorage": { "acceptedTermsVersion": "2042-01-01" }
     },
     "settings": {
+      "readOnlyModeEnabled": false,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
@@ -2895,7 +2896,7 @@
           },
           "subAccounts": [
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub+143nLxFLwxNtqEd2LxEJjjjLCsspcuxyt3y2FRuyFXdg",
               "parentId": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub",
               "tokenId": "solana/spl/ekpqgsjtjmfqkz9kqansqyxrcf8fbopzlhyxdm65zcjm",
@@ -2965,7 +2966,7 @@
               "starred": false
             },
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub+4JLL8NzonhGQyfrhvuTy4fGeskB7db4gZ9NxhPWDVa87",
               "parentId": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub",
               "tokenId": "solana/spl/gigachad_63lfdmnb3mq8mw9mtz2to9bea2m71kzuugq5tijxcqj9",
@@ -4340,7 +4341,7 @@
               "starred": false
             },
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub+5REe4gMpMYmatDmgC68PbFqFjmjPtE9MkK9uYucLZXm1",
               "parentId": "js:2:solana:HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id:solanaSub",
               "tokenId": "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
@@ -6386,7 +6387,7 @@
           },
           "subAccounts": [
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fpolygon~!underscore!~ecosystem~!underscore!~token",
               "parentId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:",
               "tokenId": "ethereum/erc20/polygon_ecosystem_token",
@@ -6438,7 +6439,7 @@
               "starred": false
             },
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
               "parentId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:",
               "tokenId": "ethereum/erc20/usd_tether__erc20_",
@@ -6874,7 +6875,7 @@
               "starred": false
             },
             {
-              "type": "TokenAccountRaw",
+              "type": "TokenAccount",
               "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
               "parentId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:",
               "tokenId": "ethereum/erc20/usd__coin",

@@ -11,10 +11,12 @@ export default class SwapLiveAppPage {
   toSelector = "to-account-coin-selector";
   toAmountInput = "to-account-amount-input";
   getQuotesButton = "mobile-get-quotes-button";
+  quotesButtonDisabled = "mobile-get-quotes-button-disabled";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
+  executeSwapButtonDisabled = "execute-button-disabled";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
   showDetailslink = "show-details-link";
@@ -23,17 +25,20 @@ export default class SwapLiveAppPage {
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
   liveAppTitle = "live-app-title";
+  quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
+
+  feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
 
   @Step("Wait for swap live app")
   async waitForSwapLiveApp() {
-    await waitWebElementByTestId(this.getQuotesButton);
+    await waitWebElementByTestId(this.quotesButtonDisabled);
   }
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
-    await detoxExpect(getWebElementByTestId(this.getQuotesButton)).toExist();
+    await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
   }
 
   @Step("Tap from currency")
@@ -44,6 +49,16 @@ export default class SwapLiveAppPage {
   @Step("Tap to currency")
   async tapToCurrency() {
     await tapWebElementByTestId(this.toSelector);
+  }
+
+  @Step("Tap quote infos fees selector $0")
+  async tapQuoteInfosFeesSelector(index: number) {
+    await tapWebElementByTestId(this.quoteInfosFeesSelector, index);
+  }
+
+  @Step("Tap fee container $0")
+  async tapFeeContainer(strategy: "slow" | "medium" | "fast") {
+    await tapById(this.feeContainerId(strategy));
   }
 
   @Step("Input amount")
@@ -79,9 +94,10 @@ export default class SwapLiveAppPage {
         );
 
         if (provider && !provider.kyc && provider.isNative) {
+          await waitWebElementByTestId(this.quoteProviderName);
           await getWebElementByTestId(this.quoteProviderName, index).tap();
           await allure.attachment("Selected provider: ", providerName, "text/plain");
-          return providerName;
+          return { providerName, index };
         }
 
         index++;
@@ -94,6 +110,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
+    await detoxExpect(getWebElementByTestId(this.executeSwapButtonDisabled)).not.toExist();
     await tapWebElementByTestId(this.executeSwapButton, 1);
   }
 
@@ -162,9 +179,7 @@ export default class SwapLiveAppPage {
       : `Swap with ${provider}`;
 
     const actualButtonText = await getWebElementText(this.executeSwapButton);
-    if (actualButtonText !== expectedButtonText) {
-      await tapWebElementByElement(getWebElementById(this.executeSwapButton));
-    }
+    jestExpect(actualButtonText).toEqual(expectedButtonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')

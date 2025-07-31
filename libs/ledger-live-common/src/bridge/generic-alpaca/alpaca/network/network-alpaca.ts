@@ -1,6 +1,7 @@
-import type {
+import {
   Account,
   Balance,
+  Block,
   BlockInfo,
   Operation,
   FeeEstimation,
@@ -190,4 +191,10 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
+    getBlock(_height): Promise<Block<any>> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
   }) satisfies Api<any>;

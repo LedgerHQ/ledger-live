@@ -92,6 +92,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySui: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
+  currencySeiNetworkEvm: DEFAULT_FEATURE,
+  currencyBerachain: DEFAULT_FEATURE,
+  currencyHyperevm: DEFAULT_FEATURE,
 };
 
 /**
@@ -619,6 +622,7 @@ export const DEFAULT_FEATURES: Features = {
       enableModularization: false,
     },
   },
+  lldModularDrawerBackendData: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
@@ -668,6 +672,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmSentry: { enabled: true },
+  onboardingIgnoredOsUpdates: {
+    ...DEFAULT_FEATURE,
+    params: {},
+  },
 };
 
 // Firebase SDK treat JSON values as strings

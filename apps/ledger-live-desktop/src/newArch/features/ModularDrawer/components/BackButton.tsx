@@ -1,8 +1,7 @@
+import { Icons } from "@ledgerhq/react-ui/index";
+import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import styled from "styled-components";
-import { Icons } from "@ledgerhq/react-ui/index";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
 
 type Props = {
   onBackClick?: () => void;

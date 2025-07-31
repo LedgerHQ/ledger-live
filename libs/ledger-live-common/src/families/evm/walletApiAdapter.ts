@@ -48,7 +48,7 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 
   /**
    * We explicitly set unrelated type specific fields to undefined to avoid transaction
-   * type assertion errors during the `prepareTransaction` logic (libs/coin-evm/src/prepareTransaction.ts)
+   * type assertion errors during the `prepareTransaction` logic (libs/coin-modules/coin-evm/src/bridge/prepareTransaction.ts)
    * when performing an `updateTransaction` with a newly created tx
    * Which is what happen in this case (in apps/ledger-live-desktop/src/renderer/modals/SignTransaction/Body.tsx):
       // `createTransaction` will create a type 2 tx by default with `maxFeePerGas` and `maxPriorityFeePerGas` set to 0

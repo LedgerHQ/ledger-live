@@ -343,6 +343,38 @@ describe("Testing craftTransaction function", () => {
     );
   });
 
+  it("should not pass memos when user does not provide it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+    } as TransactionIntent<XrpAsset, XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
+    );
+  });
+
+  it("should not pass memos when user provides an empty memo list it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map(),
+      },
+    } as TransactionIntent<XrpAsset, XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
+    );
+  });
+
   it("should pass destination tag when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
       sender: "foo",

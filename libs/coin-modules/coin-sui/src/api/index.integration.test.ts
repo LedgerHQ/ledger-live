@@ -101,4 +101,26 @@ describe("sui api integration test", () => {
 //       expect(result.time).toBeInstanceOf(Date);
 //     });
 //   });
+
+// describe("getBlockInfo", () => {
+//   test("getBlockInfo should get block info by id or sequence number", async () => {
+//     const block = await module.getBlockInfo(164167623);
+//     expect(block.height).toEqual(164167623);
+//     expect(block.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//     expect(block.time).toEqual(new Date(1751696298663));
+//     expect(block.parent?.height).toEqual(164167622);
+//     expect(block.parent?.hash).toEqual("TODO");
+//   });
+// });
+
+// describe("getBlock", () => {
+//   test("getBlock should get block by id or sequence number", async () => {
+//     const block = await module.getBlock(164167623);
+//     expect(block.info.height).toEqual(164167623);
+//     expect(block.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+//     expect(block.info.time).toEqual(new Date(1751696298663));
+//     expect(block.info.parent?.height).toEqual(164167622);
+//     expect(block.info.parent?.hash).toEqual("TODO");
+//     expect(block.transactions.length).toEqual(19);
+//   });
 // });

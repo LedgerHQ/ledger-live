@@ -239,9 +239,9 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
     /**
      * ⚠️ We don't know the type of the transaction for sure at this stage since
      * `getFeeData` is called before `getTypedTransaction` in prepareTransaction
-     * libs/coin-evm/src/prepareTransaction.ts:201
+     * libs/coin-modules/coin-evm/src/bridge/prepareTransaction.ts:201
      * It's most probably always 2 since it's the default type value for a new transaction
-     * cf. libs/coin-evm/src/createTransaction.ts:23
+     * cf. libs/coin-modules/coin-evm/src/bridge/createTransaction.ts:23
      */
     options: {
       useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,

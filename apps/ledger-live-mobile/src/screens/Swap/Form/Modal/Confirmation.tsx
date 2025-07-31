@@ -176,12 +176,10 @@ export function Confirmation({
       if (typeof swapTx.current.swap.from.amount !== "undefined") {
         navigation.replace(ScreenName.SwapPendingOperation, {
           swapOperation: {
-            fromAccountId: fromAccount.id,
-            fromParentAccount,
-            toAccountId: toAccount!.id,
-            toParentAccount,
-            toExists: false,
-            operation,
+            receiverAccountId: (swapTx.current.transaction as Transaction).recipient,
+            toCurrency,
+            fromCurrency,
+            operationId: operation.id,
             provider,
             swapId,
             status: "pending",

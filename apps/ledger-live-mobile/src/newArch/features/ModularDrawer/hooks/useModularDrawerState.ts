@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import uniqWith from "lodash/uniqWith";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getProvider, useProviders } from "./useProviders";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -12,13 +12,14 @@ import {
 
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import { AssetSelectionNavigationProps } from "../../AssetSelection/types";
 
 type ModularDrawerStateProps = {
   goToStep?: (step: ModularDrawerStep) => void;
   currencyIds: string[];
   currenciesByProvider: CurrenciesByProviderId[];
+  isDrawerOpen?: boolean;
 };
 
 /**
@@ -31,6 +32,7 @@ export function useModularDrawerState({
   goToStep,
   currencyIds,
   currenciesByProvider,
+  isDrawerOpen,
 }: ModularDrawerStateProps) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -77,12 +79,10 @@ export function useModularDrawerState({
         const uniqueNetworks = uniqWith(availableNetworksList, (a, b) => a.id === b.id);
         setAvailableNetworks(uniqueNetworks);
         goToStep?.(ModularDrawerStep.Network);
+      } else if (isAddAccountFlow) {
+        processNetworkSelection(selected);
       } else {
-        if (isAddAccountFlow) {
-          processNetworkSelection(selected);
-        } else {
-          goToStep?.(ModularDrawerStep.Account);
-        }
+        goToStep?.(ModularDrawerStep.Account);
       }
     },
     [goToStep, isAddAccountFlow, processNetworkSelection],
@@ -150,7 +150,6 @@ export function useModularDrawerState({
       if (isAddAccountFlow) {
         processNetworkSelection(selectedAsset);
       } else {
-        // TODO in incr2
         goToStep?.(ModularDrawerStep.Account);
       }
     },
@@ -190,6 +189,41 @@ export function useModularDrawerState({
     [goToAccount, providers],
   );
 
+  const handleSingleCurrencyFlow = useCallback(
+    (currency: CryptoOrTokenCurrency) => {
+      const provider = getProvider(currency, currenciesByProvider);
+
+      setProviders(provider);
+      if (!provider) {
+        selectAsset(currency);
+        return;
+      }
+      const networks = getNetworksFromProvider(provider, currencyIds);
+
+      const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
+
+      goToNetwork(effectiveCurrency, networks);
+    },
+    [
+      currenciesByProvider,
+      setProviders,
+      getNetworksFromProvider,
+      currencyIds,
+      goToNetwork,
+      selectAsset,
+    ],
+  );
+
+  const singleCurrency = useMemo(() => {
+    return currencyIds.length === 1 ? findCryptoCurrencyById(currencyIds[0]) : undefined;
+  }, [currencyIds]);
+
+  useEffect(() => {
+    if (isDrawerOpen && singleCurrency && !asset) {
+      handleSingleCurrencyFlow(singleCurrency);
+    }
+  }, [isDrawerOpen, singleCurrency, asset, handleSingleCurrencyFlow]);
+
   return {
     asset,
     network,
@@ -202,5 +236,6 @@ export function useModularDrawerState({
     handleBack,
     handleAsset,
     handleNetwork,
+    handleSingleCurrencyFlow,
   };
 }
