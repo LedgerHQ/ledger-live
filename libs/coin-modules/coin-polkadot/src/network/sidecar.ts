@@ -4,7 +4,7 @@ import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
-import { EXISTENTIAL_DEPOSIT } from "../bridge/utils";
+import { EXISTENTIAL_DEPOSIT, EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN } from "../bridge/utils";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -315,7 +315,12 @@ export const getBalances = async (addr: string) => {
 
   const frozenMinusReserved = frozenBalance.minus(reservedBalance);
   const spendableBalance = BigNumber.max(
-    balance.minus(BigNumber.max(frozenMinusReserved, EXISTENTIAL_DEPOSIT)),
+    balance.minus(
+      BigNumber.max(
+        frozenMinusReserved,
+        EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN),
+      ),
+    ),
     new BigNumber(0),
   );
 
