@@ -98,7 +98,7 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(transactionIntent, customFees);
+    await craftTransaction(transactionIntent, { value: customFees });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       "contractAddress",
       undefined,
@@ -146,7 +146,7 @@ describe("craftTransaction", () => {
               assetReference: "contractAddress",
             },
           } as TransactionIntent,
-          customFees,
+          { value: customFees },
         );
       } catch (error) {
         expect((error as Error).message).toEqual(
