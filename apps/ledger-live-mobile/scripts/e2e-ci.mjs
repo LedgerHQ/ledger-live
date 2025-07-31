@@ -51,11 +51,12 @@ const bundle_ios_with_cache = async () => {
 };
 
 const test_ios = async () => {
+  const videoFlag = testType === "mock" ? "" : "--record-videos failing \\";
   await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
       --loglevel error \
       --record-logs failing \
-      --record-videos failing \
+      ${videoFlag} \
       --take-screenshots failing \
       --forceExit \
       --headless \
