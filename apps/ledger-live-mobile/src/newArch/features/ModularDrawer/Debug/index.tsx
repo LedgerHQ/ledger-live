@@ -1,42 +1,38 @@
-import React, { useState } from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import React, { useCallback, useState, useMemo } from "react";
+import { Flex, Switch, Text } from "@ledgerhq/native-ui";
 import Button from "~/components/Button";
-import { ModularDrawer } from "../ModularDrawer";
-import { ModularDrawerStep } from "../types";
+import { useModularDrawerController } from "../hooks/useModularDrawerController";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
 function ModularDrawerScreenDebug() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { openDrawer } = useModularDrawerController();
 
-  const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
-  const handleDrawerClose = () => setIsDrawerOpen(false);
+  const currencies = useMemo(() => listAndFilterCurrencies({ includeTokens: true }), []);
+  const [enableLocalAccountSelection, setEnableLocalAccountSelection] = useState(true);
 
-  const currencies = listAndFilterCurrencies({ includeTokens: true });
-
-  const assetsConfiguration = {
-    filter: "topNetworks",
-    leftElement: "apy",
-    rightElement: "balance",
-  } as const;
-
-  const networksConfiguration = {
-    leftElement: "numberOfAccounts",
-    rightElement: "balance",
-  } as const;
+  const handleToggleDrawer = useCallback(() => {
+    openDrawer({
+      currencies,
+      enableAccountSelection: enableLocalAccountSelection,
+      flow: "debug_flow",
+      source: "debug_screen",
+    });
+  }, [openDrawer, currencies, enableLocalAccountSelection]);
 
   return (
-    <Flex flexDirection="column" rowGap={4} px={6} flex={1}>
-      <Button size="small" type="main" title="Open MAD Drawer" onPress={handleToggleDrawer} />
+    <Flex flexDirection="column" rowGap={4} px={6}>
+      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" mb={4}>
+        <Text variant="body" fontWeight="medium">
+          {"Enable Account Selection"}
+        </Text>
+        <Switch checked={enableLocalAccountSelection} onChange={setEnableLocalAccountSelection} />
+      </Flex>
 
-      <ModularDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleDrawerClose}
-        selectedStep={ModularDrawerStep.Asset}
-        currencies={currencies}
-        flow="debug_flow"
-        source="debug_screen"
-        assetsConfiguration={assetsConfiguration}
-        networksConfiguration={networksConfiguration}
+      <Button
+        size="small"
+        type="main"
+        title={`Open MAD Drawer (${enableLocalAccountSelection ? "with" : "without"} account selection)`}
+        onPress={handleToggleDrawer}
       />
     </Flex>
   );

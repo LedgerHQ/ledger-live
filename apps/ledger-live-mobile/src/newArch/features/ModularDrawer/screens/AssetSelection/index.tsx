@@ -85,11 +85,13 @@ const AssetSelection = ({
       return;
     }
 
-    setItemsToDisplay(
-      availableAssets.filter(asset =>
-        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-      ),
-    );
+    if (availableAssets.length > 0) {
+      setItemsToDisplay(
+        availableAssets.filter(asset =>
+          asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
+        ),
+      );
+    }
   }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
 
   const handleSearchPressIn = () => {
