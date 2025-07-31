@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 2.7.0-next.3
+
+### Minor Changes
+
+- [#11168](https://github.com/LedgerHQ/ledger-live/pull/11168) [`23c6f2f`](https://github.com/LedgerHQ/ledger-live/commit/23c6f2f9eaf503520637be7f35448247a1a5a457) Thanks [@semeano](https://github.com/semeano)! - Update current_delegator_balances query
+
 ## 2.7.0-next.2
 
 ### Minor Changes
