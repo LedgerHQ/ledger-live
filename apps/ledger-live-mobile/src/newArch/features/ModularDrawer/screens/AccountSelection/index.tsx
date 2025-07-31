@@ -9,7 +9,7 @@ import AddAccountButton from "~/newArch/features/Accounts/components/AddAccountB
 import { useDetailedAccounts } from "../../hooks/useDetailAccount";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
-import { Account } from "@ledgerhq/native-ui/pre-ldls/components/";
+import { AccountUI } from "@ledgerhq/native-ui/pre-ldls/components/";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -36,7 +36,7 @@ const AccountSelection = ({
   const listRef = useRef<FlatList>(null);
 
   const renderItem = useCallback(
-    ({ item }: { item: Account }) => {
+    ({ item }: { item: AccountUI }) => {
       return <AccountItem account={item} onClick={() => onAccountClick(item)} />;
     },
     [onAccountClick],

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Account as DetailedAccount } from "@ledgerhq/native-ui/pre-ldls/index";
+import { AccountUI as DetailedAccount } from "@ledgerhq/native-ui/pre-ldls/index";
 
 /**
  *

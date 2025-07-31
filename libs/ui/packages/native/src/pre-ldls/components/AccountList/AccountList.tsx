@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
-import { Account, AccountItem } from "../AccountItem/AccountItem";
+import { AccountUI, AccountItem } from "../AccountItem/AccountItem";
 
 const ITEM_HEIGHT = 76;
 
@@ -8,17 +8,17 @@ export const AccountList = ({
   accounts,
   onClick,
 }: {
-  accounts: Account[];
+  accounts: AccountUI[];
   onClick: (accountId: string) => void;
 }) => {
   const renderAccountItem = useCallback(
-    ({ item }: { item: Account }) => (
+    ({ item }: { item: AccountUI }) => (
       <AccountItem onClick={() => onClick(item.id)} account={item} />
     ),
     [onClick],
   );
 
-  const keyExtractor = useCallback((item: Account, index: number) => `${item.id}-${index}`, []);
+  const keyExtractor = useCallback((item: AccountUI, index: number) => `${item.id}-${index}`, []);
 
   return (
     <FlatList

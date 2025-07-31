@@ -14,12 +14,15 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
 import { formatDetailedAccount } from "../utils/formatdetailedAccount";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
-import { AccountTuple, getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
-import { Account } from "@ledgerhq/native-ui/pre-ldls/components/";
+import {
+  getAccountTuplesForCurrency,
+  AccountTuple,
+} from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
+import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
@@ -100,7 +103,7 @@ export const useDetailedAccounts = (
   }, [accounts, state, counterValueCurrency, isATokenCurrency, overridedAccountName]);
 
   const onAccountClick = useCallback(
-    (account: Account) => {
+    (account: AccountUI) => {
       trackModularDrawerEvent("button_clicked", {
         button: "Add a new account",
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,

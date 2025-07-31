@@ -23,8 +23,8 @@ export const Address = ({
   ticker?: string;
   parentId?: string;
 }) => {
-  const theme = useTheme();
-  const colorType = theme.colors.type === "dark" ? "dark" : "light";
+  const { theme } = useTheme();
+  const colorType = theme;
   const tokens = useTokens(colorType, ["spacing-xxxs", "colors-content-subdued-default-default"]);
 
   return (
