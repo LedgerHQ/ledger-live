@@ -14,7 +14,7 @@ import InfoModal from "~/modals/Info";
 type Props = {
   account: AptosAccount;
 };
-type InfoName = "available" | "storageUsage" | "staked" | "pending" | "withdrawable";
+type InfoName = "available" | "staked" | "pending" | "withdrawable";
 
 function AccountBalanceSummaryFooter({ account }: Readonly<Props>) {
   const { t } = useTranslation();
@@ -88,12 +88,6 @@ function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
         Icon: () => <AptosIcon color={currency.color} size={18} />,
         title: t("aptos.info.available.title"),
         description: t("aptos.info.available.description"),
-      },
-    ],
-    storageUsage: [
-      {
-        title: t("aptos.info.storageUsage.title"),
-        description: t("aptos.info.storageUsage.description"),
       },
     ],
     staked: [
