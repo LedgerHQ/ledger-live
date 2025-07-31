@@ -74,10 +74,7 @@ export const GetNumActiveDelegatorPerPoolData = gql`
 
 export const GetCurrentDelegatorBalancesData = gql`
   query GetCurrentDelegatorBalances {
-    current_delegator_balances(
-      distinct_on: pool_address
-      order_by: { current_pool_balance: { total_coins: desc }, pool_address: asc }
-    ) {
+    current_delegator_balances(distinct_on: pool_address) {
       current_pool_balance {
         total_coins
         operator_commission_percentage
