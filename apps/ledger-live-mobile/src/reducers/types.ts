@@ -86,6 +86,14 @@ export type AppState = {
   isPasswordLockBlocked: boolean;
 };
 
+// === AUTH STATE ===
+
+export type AuthState = {
+  isLocked: boolean;
+  biometricsError: Error | null;
+  authModalOpen: boolean;
+};
+
 // === BLE STATE ===
 
 export type DeviceLike = {
@@ -383,6 +391,7 @@ export type LargeMoverState = {
 
 export type State = {
   accounts: AccountsState;
+  auth: AuthState;
   countervalues: CountervaluesState;
   settings: SettingsState;
   appstate: AppState;

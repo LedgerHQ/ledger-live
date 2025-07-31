@@ -1,0 +1,94 @@
+import { createStore, Store } from "redux";
+import authReducer, { INITIAL_STATE } from "../auth";
+import {
+  initializeAuthState,
+  setLocked,
+  setBiometricsError,
+  setAuthModalOpen,
+  lock,
+  unlock,
+} from "../../actions/auth";
+import type { Privacy, AuthState } from "../types";
+
+// Mock privacy objects for testing
+const mockPrivacyWithPassword: Privacy = {
+  hasPassword: true,
+  biometricsEnabled: true,
+  biometricsType: "FaceID",
+};
+
+const mockPrivacyWithoutPassword: Privacy = {
+  hasPassword: false,
+  biometricsEnabled: false,
+  biometricsType: null,
+};
+
+// Test Redux auth state management
+describe("Auth Redux Implementation", () => {
+  let store: Store<AuthState>;
+
+  beforeEach(() => {
+    store = createStore(authReducer);
+  });
+
+  test("initial state is correct", () => {
+    expect(store.getState()).toEqual(INITIAL_STATE);
+  });
+
+  test("initializeAuthState without password sets isLocked to false", () => {
+    store.dispatch(initializeAuthState({ privacy: mockPrivacyWithoutPassword }));
+    expect(store.getState().isLocked).toBe(false);
+  });
+
+  test("setting password while unlocked keeps app unlocked", () => {
+    // Start with no password (unlocked state)
+    store.dispatch(initializeAuthState({ privacy: mockPrivacyWithoutPassword }));
+    expect(store.getState().isLocked).toBe(false);
+
+    // Set password while unlocked - should stay unlocked
+    store.dispatch(initializeAuthState({ privacy: mockPrivacyWithPassword }));
+    expect(store.getState().isLocked).toBe(false);
+  });
+
+  test("setLocked action updates isLocked state", () => {
+    store.dispatch(setLocked(true));
+    expect(store.getState().isLocked).toBe(true);
+
+    store.dispatch(setLocked(false));
+    expect(store.getState().isLocked).toBe(false);
+  });
+
+  test("setBiometricsError action updates biometricsError state", () => {
+    const error = new Error("Biometrics failed");
+    store.dispatch(setBiometricsError(error));
+    expect(store.getState().biometricsError).toBe(error);
+
+    store.dispatch(setBiometricsError(null));
+    expect(store.getState().biometricsError).toBe(null);
+  });
+
+  test("setAuthModalOpen action updates authModalOpen state", () => {
+    store.dispatch(setAuthModalOpen(true));
+    expect(store.getState().authModalOpen).toBe(true);
+
+    store.dispatch(setAuthModalOpen(false));
+    expect(store.getState().authModalOpen).toBe(false);
+  });
+
+  test("lock action sets isLocked to true and clears biometricsError", () => {
+    store.dispatch(setBiometricsError(new Error("test")));
+    store.dispatch(lock());
+
+    expect(store.getState().isLocked).toBe(true);
+    expect(store.getState().biometricsError).toBe(null);
+  });
+
+  test("unlock action sets isLocked to false and clears biometricsError", () => {
+    store.dispatch(setLocked(true));
+    store.dispatch(setBiometricsError(new Error("test")));
+    store.dispatch(unlock());
+
+    expect(store.getState().isLocked).toBe(false);
+    expect(store.getState().biometricsError).toBe(null);
+  });
+});

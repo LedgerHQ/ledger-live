@@ -1,9 +1,18 @@
-import { useCallback, useRef, useState } from "react";
-import { AppState, Platform, Vibration } from "react-native";
-import type { Privacy } from "~/reducers/types";
+import { useCallback, useRef, useState, useEffect } from "react";
+import { AppState, Platform } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import * as Keychain from "react-native-keychain";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
-import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
+import type { Privacy } from "~/reducers/types";
+import { privacySelector } from "~/reducers/settings";
+import { isLockedSelector, biometricsErrorSelector, authModalOpenSelector } from "~/reducers/auth";
+import {
+  initializeAuthState,
+  setLocked,
+  setBiometricsError,
+  setAuthModalOpen,
+  lock as lockAction,
+  unlock as unlockAction,
+} from "~/actions/auth";
 
 interface UsePrivacyInitializationProps {
   privacy: Privacy | null | undefined;
@@ -76,44 +85,54 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
   return { handleAppStateChange };
 }
 
-interface UseAuthStateProps {
-  privacy: Privacy | null | undefined;
-  closeAllDrawers: () => void;
-}
-
-// as we needs to be resilient to reboots (not showing unlock again after a reboot)
-// we need to store this global variable to know if we need to isLocked initially
-let wasUnlocked = false;
-
-export function useAuthState({ privacy, closeAllDrawers }: UseAuthStateProps) {
+export function useAuthState({ closeAllDrawers }: { closeAllDrawers: () => void }) {
+  const dispatch = useDispatch();
   const mounted = useRef<boolean>(false);
-
-  const [isLocked, setIsLocked] = useState<boolean>(!!privacy?.hasPassword && !wasUnlocked);
-  const [biometricsError, setBiometricsError] = useState<Error | null | undefined>(null);
-  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [skipLockCount, setSkipLockCount] = useState<number>(0);
 
-  // lock the app
+  const isLocked = useSelector(isLockedSelector);
+  const biometricsError = useSelector(biometricsErrorSelector);
+  const authModalOpen = useSelector(authModalOpenSelector);
+  const privacy = useSelector(privacySelector);
+
+  useEffect(() => {
+    if (privacy !== null && privacy !== undefined) {
+      dispatch(initializeAuthState({ privacy }));
+    }
+  }, [privacy, dispatch]);
+
+  const setIsLocked = useCallback(
+    (locked: boolean) => {
+      dispatch(setLocked(locked));
+    },
+    [dispatch],
+  );
+
+  const setBiometricsErrorAction = useCallback(
+    (error: Error | null) => {
+      dispatch(setBiometricsError(error));
+    },
+    [dispatch],
+  );
+
+  const setAuthModalOpenAction = useCallback(
+    (open: boolean) => {
+      dispatch(setAuthModalOpen(open));
+    },
+    [dispatch],
+  );
+
   const lock = useCallback(() => {
     if (!privacy?.hasPassword || skipLockCount) return;
-    wasUnlocked = false;
+
     closeAllDrawers();
 
-    if (mounted.current) {
-      setIsLocked(true);
-      setBiometricsError(null);
-    }
-  }, [privacy, skipLockCount, closeAllDrawers]);
+    dispatch(lockAction());
+  }, [privacy, skipLockCount, closeAllDrawers, dispatch]);
 
-  // unlock the app
   const unlock = useCallback(() => {
-    wasUnlocked = true;
-
-    if (mounted.current) {
-      setIsLocked(false);
-      setBiometricsError(null);
-    }
-  }, []);
+    dispatch(unlockAction());
+  }, [dispatch]);
 
   return {
     isLocked,
@@ -121,61 +140,10 @@ export function useAuthState({ privacy, closeAllDrawers }: UseAuthStateProps) {
     authModalOpen,
     mounted,
     setIsLocked,
-    setBiometricsError,
-    setAuthModalOpen,
+    setBiometricsError: setBiometricsErrorAction,
+    setAuthModalOpen: setAuthModalOpenAction,
     setSkipLockCount,
     lock,
     unlock,
   };
 }
-
-interface UseAuthSubmitProps {
-  password: string;
-  unlock: () => void;
-  setPasswordError: (error: Error | null) => void;
-  setPassword: (password: string) => void;
-}
-
-export const useAuthSubmit = ({
-  password,
-  unlock,
-  setPasswordError,
-  setPassword,
-}: UseAuthSubmitProps) => {
-  const submitId = useRef(0);
-
-  const submit = useCallback(async () => {
-    const id = ++submitId.current;
-    if (!password) return;
-
-    try {
-      const options =
-        Platform.OS === "ios"
-          ? {}
-          : {
-              accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-              rules: Keychain.SECURITY_RULES.NONE,
-            };
-
-      const credentials = await Keychain.getGenericPassword(options);
-      if (id !== submitId.current) return;
-
-      if (credentials && credentials.password === password) {
-        unlock();
-      } else if (credentials) {
-        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
-        setPasswordError(new PasswordIncorrectError());
-        setPassword("");
-      } else {
-        console.warn("no credentials stored");
-      }
-    } catch (err) {
-      if (id !== submitId.current) return;
-      console.warn("could not load credentials");
-      setPasswordError(err as Error);
-      setPassword("");
-    }
-  }, [password, unlock, setPasswordError, setPassword]);
-
-  return { submit };
-};

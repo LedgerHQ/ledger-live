@@ -16,6 +16,8 @@ type OwnProps = {
 };
 
 const AuthPass: React.FC<OwnProps> = ({ children }) => {
+  // TODO this used to call withTranslation - make sure it's definitely not required anymore.
+
   const dispatch = useDispatch();
 
   const privacy = useSelector(privacySelector);
@@ -24,14 +26,9 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
       dispatch(setPrivacyAction(privacy));
     },
     [dispatch],
-  ); // TODO does this need to be a callback?
-
-  // TODO is withTranslation needed?
-
-  // TODO needs to be tested (isPasswordLockBlocked and closeAllDrawers)
+  );
 
   const isPasswordLockBlocked = useSelector(isPasswordLockBlockedState);
-
   const { closeAllDrawers } = useQueuedDrawerContext();
 
   const {
@@ -45,7 +42,7 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
     setSkipLockCount,
     lock,
     unlock,
-  } = useAuthState({ privacy, closeAllDrawers });
+  } = useAuthState({ closeAllDrawers });
 
   const { handleAppStateChange } = useAppStateHandler({ isPasswordLockBlocked, lock });
 
