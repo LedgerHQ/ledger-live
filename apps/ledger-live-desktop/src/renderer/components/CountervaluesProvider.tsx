@@ -24,6 +24,16 @@ import {
   useCountervaluesStatePending,
 } from "../reducers/countervalues";
 
+/**
+ * Call side effects outside of the primary render tree, avoiding costly child re-renders
+ */
+function Effect({ userSettings }: { userSettings: CountervaluesSettings }) {
+  useCacheManager(userSettings);
+  usePollingManager();
+
+  return null;
+}
+
 export function CountervaluesManagedProvider({
   children,
   initialState,
@@ -58,23 +68,11 @@ export function CountervaluesManagedProvider({
   );
 
   return (
-    <CountervaluesProvider bridge={bridge} userSettings={userSettings} savedState={initialState}>
-      <CountervaluesManager userSettings={userSettings}>{children}</CountervaluesManager>
+    <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
+      <Effect userSettings={userSettings} />
+      {children}
     </CountervaluesProvider>
   );
-}
-
-function CountervaluesManager({
-  children,
-  userSettings,
-}: {
-  children: React.ReactNode;
-  userSettings: CountervaluesSettings;
-}) {
-  useCacheManager(userSettings);
-  usePollingManager();
-
-  return children;
 }
 
 function useCacheManager(userSettings: CountervaluesSettings) {

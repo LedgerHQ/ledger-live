@@ -32,6 +32,7 @@ function useCountervaluesMarketcapBridgeContext() {
 }
 
 /**
+ * Call side effects outside of the primary render tree, avoiding costly child re-renders
  * TODO this could be re-written as a side effect only, to avoid dependency on render state.
  */
 function Effect({ bridge }: { bridge: CountervaluesMarketcapBridge }) {

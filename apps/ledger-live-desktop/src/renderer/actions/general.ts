@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
 // eslint-disable-next-line no-restricted-imports
@@ -109,13 +109,13 @@ export const themeSelector = createSelector(
 );
 
 export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
-  const countervalue = useSelector(counterValueCurrencySelector);
+  const countervalue = useSelector(counterValueCurrencySelector, shallowEqual);
 
   // countervalues for top coins (market performance feature)
   const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
 
   // countervalues for accounts
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(accountsSelector, shallowEqual);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
 
   // countervalues for on demand session tracking pairs

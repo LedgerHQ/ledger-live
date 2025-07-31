@@ -25,6 +25,14 @@ import {
   useCountervaluesPollingTriggerLoad,
 } from "../reducers/countervalues";
 
+/**
+ * Call side effects outside of the primary render tree, avoiding costly child re-renders
+ */
+function Effect() {
+  usePollingManager();
+  return null;
+}
+
 export function CountervaluesManagedProvider({
   children,
   initialState,
@@ -55,14 +63,10 @@ export function CountervaluesManagedProvider({
 
   return (
     <CountervaluesProvider bridge={bridge} savedState={initialState} userSettings={userSettings}>
-      <CountervaluesManager>{children}</CountervaluesManager>
+      <Effect />
+      {children}
     </CountervaluesProvider>
   );
-}
-
-function CountervaluesManager({ children }: { children: React.ReactNode }) {
-  usePollingManager();
-  return <>{children}</>;
 }
 
 function usePollingManager() {

@@ -119,16 +119,18 @@ function trackingPairsHash(a: TrackingPair[]) {
 }
 
 /**
- * Root countervalues provider (polling + calculation).
+ * Call side effects outside of the primary render tree, avoiding costly child re-renders
  */
-export function CountervaluesProvider({
-  children,
-  userSettings,
+function Effect({
   bridge,
-  pollInitDelay = 3 * 1000,
-  debounceDelay = 1000,
   savedState,
-}: Props): ReactElement {
+  userSettings,
+  debounceDelay = 1000,
+  pollInitDelay = 3 * 1000,
+}: Pick<
+  Props,
+  "autopollInterval" | "bridge" | "debounceDelay" | "pollInitDelay" | "savedState" | "userSettings"
+>) {
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
@@ -201,6 +203,18 @@ export function CountervaluesProvider({
     return () => clearTimeout(pollingTimeout);
   }, [refreshRate, pollInitDelay, isPolling, bridge]);
 
+  return null;
+}
+
+/**
+ * Root countervalues provider (polling + calculation).
+ */
+export function CountervaluesProvider({
+  children,
+  userSettings,
+  bridge,
+  ...rest
+}: Props): ReactElement {
   const polling = useMemo<Pick<Polling, "wipe" | "poll" | "start" | "stop">>(
     () => ({
       wipe: () => bridge.wipe(),
@@ -214,7 +228,10 @@ export function CountervaluesProvider({
   return (
     <CountervaluesPollingContext.Provider value={polling}>
       <CountervaluesUserSettingsContext.Provider value={userSettings}>
-        <CountervaluesContext.Provider value={bridge}>{children}</CountervaluesContext.Provider>
+        <CountervaluesContext.Provider value={bridge}>
+          <Effect {...rest} userSettings={userSettings} bridge={bridge} />
+          {children}
+        </CountervaluesContext.Provider>
       </CountervaluesUserSettingsContext.Provider>
     </CountervaluesPollingContext.Provider>
   );
