@@ -2,11 +2,7 @@ import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-rea
 import { flow } from "lodash/fp";
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
-import {
-  setCountervaluesMarketcapError,
-  setCountervaluesMarketcapIds,
-  setCountervaluesMarketcapLoading,
-} from "../actions/countervalues";
+import { countervaluesActions } from "../actions/countervalues";
 import {
   useCountervaluesMarketcapIds,
   useCountervaluesMarketcapLastUpdated,
@@ -17,9 +13,9 @@ export function CountervaluesMarketcapBridgedProvider({ children }: { children: 
 
   const bridge = useMemo(
     () => ({
-      setError: flow(setCountervaluesMarketcapError, dispatch),
-      setIds: flow(setCountervaluesMarketcapIds, dispatch),
-      setLoading: flow(setCountervaluesMarketcapLoading, dispatch),
+      setError: flow(countervaluesActions.COUNTERVALUES_MARKETCAP_SET_ERROR, dispatch),
+      setIds: flow(countervaluesActions.COUNTERVALUES_MARKETCAP_SET_IDS, dispatch),
+      setLoading: flow(countervaluesActions.COUNTERVALUES_MARKETCAP_SET_LOADING, dispatch),
       useIds: useCountervaluesMarketcapIds,
       useLastUpdated: useCountervaluesMarketcapLastUpdated,
     }),

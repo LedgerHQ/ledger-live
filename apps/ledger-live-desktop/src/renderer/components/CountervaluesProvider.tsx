@@ -13,17 +13,15 @@ import { flow } from "lodash/fp";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setKey } from "~/renderer/storage";
-import {
-  setCountervaluesError,
-  setCountervaluesPending,
-  setCountervaluesState,
-  wipeCountervalues,
-} from "../actions/countervalues";
+import { countervaluesActions } from "../actions/countervalues";
 import { useCalculateCountervaluesUserSettings } from "../actions/general";
 import {
-  useCountervaluesError,
-  useCountervaluesExport,
+  useCountervaluesPollingIsPolling,
+  useCountervaluesPollingTriggerLoad,
   useCountervaluesState,
+  useCountervaluesStateError,
+  useCountervaluesStateExport,
+  useCountervaluesStatePending,
 } from "../reducers/countervalues";
 
 export function CountervaluesManagedProvider({
@@ -38,12 +36,23 @@ export function CountervaluesManagedProvider({
 
   const bridge = useMemo(
     (): CountervaluesBridge => ({
-      setError: flow(setCountervaluesError, dispatch),
-      setPending: flow(setCountervaluesPending, dispatch),
-      setState: flow(setCountervaluesState, dispatch),
+      setPollingIsPolling: flow(
+        countervaluesActions.COUNTERVALUES_POLLING_SET_IS_POLLING,
+        dispatch,
+      ),
+      setPollingTriggerLoad: flow(
+        countervaluesActions.COUNTERVALUES_POLLING_SET_TRIGGER_LOAD,
+        dispatch,
+      ),
+      setState: flow(countervaluesActions.COUNTERVALUES_STATE_SET, dispatch),
+      setStateError: flow(countervaluesActions.COUNTERVALUES_STATE_SET_ERROR, dispatch),
+      setStatePending: flow(countervaluesActions.COUNTERVALUES_STATE_SET_PENDING, dispatch),
+      usePollingIsPolling: useCountervaluesPollingIsPolling,
+      usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,
-      useError: useCountervaluesError,
-      wipe: flow(wipeCountervalues, dispatch),
+      useStateError: useCountervaluesStateError,
+      useStatePending: useCountervaluesStatePending,
+      wipe: flow(countervaluesActions.COUNTERVALUES_WIPE, dispatch),
     }),
     [dispatch],
   );
@@ -64,11 +73,12 @@ function CountervaluesManager({
 }) {
   useCacheManager(userSettings);
   usePollingManager();
+
   return children;
 }
 
 function useCacheManager(userSettings: CountervaluesSettings) {
-  const { status, ...state } = useCountervaluesExport();
+  const { status, ...state } = useCountervaluesStateExport();
 
   useEffect(() => {
     if (!Object.keys(status).length) return;

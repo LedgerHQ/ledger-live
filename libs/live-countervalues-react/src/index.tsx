@@ -23,21 +23,30 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react";
 import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
 export { CountervaluesMarketcapProvider, useMarketcapIds } from "./CountervaluesMarketcapProvider";
+
+export interface PollingState {
+  isPolling: boolean;
+  triggerRef: number;
+}
 
 /**
  * Bridge enabling platform-specific persistence of countervalues state.
  * @note: make sure that the object is memoized to avoid re-renders.
  */
 export interface CountervaluesBridge {
-  setError(error: Error): void;
-  setPending(pending: boolean): void;
+  setPollingIsPolling(polling: boolean): void;
+  setPollingTriggerLoad(triggerLoad: boolean): void;
   setState(state: CounterValuesState): void;
-  useError(): Error | null;
+  setStateError(error: Error): void;
+  setStatePending(pending: boolean): void;
+  usePollingIsPolling(): boolean;
+  usePollingTriggerLoad(): boolean;
+  useStateError(): Error | null;
+  useStatePending(): boolean;
   useState(): CounterValuesState;
   wipe(): void;
 }
@@ -74,13 +83,13 @@ export type Props = {
 };
 
 // TODO: Initial context should be null
-const CountervaluesPollingContext = createContext<Polling>({
+const CountervaluesPollingContext = createContext<
+  Pick<Polling, "wipe" | "poll" | "start" | "stop">
+>({
   wipe: () => {},
   poll: () => {},
   start: () => {},
   stop: () => {},
-  pending: false,
-  error: null,
 });
 
 const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
@@ -137,24 +146,24 @@ export function CountervaluesProvider({
   );
 
   // flag used to trigger a loadCountervalues
-  const [triggerLoad, setTriggerLoad] = useState(false);
+  // const [triggerLoad, setTriggerLoad] = useState(false);
+  const triggerLoad = bridge.usePollingTriggerLoad();
 
   // trigger poll only when userSettings changes in a debounced way
   useEffect(() => {
-    setTriggerLoad(true);
-  }, [debouncedUserSettings]);
+    bridge.setPollingTriggerLoad(true);
+  }, [bridge, debouncedUserSettings]);
 
   // loadCountervalues logic
   const currentState = bridge.useState();
-  const pending = "pending" in currentState ? Boolean(currentState.pending) : false;
-  const error = "error" in currentState ? currentState.error : null;
+  const pending = bridge.useStatePending();
 
   // loadCountervalues logic using bridge
   useEffect(() => {
     if (pending || !triggerLoad) return;
-    setTriggerLoad(false);
+    bridge.setPollingTriggerLoad(false);
 
-    bridge.setPending(true);
+    bridge.setStatePending(true);
     loadCountervalues(
       currentState,
       userSettings,
@@ -163,11 +172,11 @@ export function CountervaluesProvider({
     ).then(
       s => {
         bridge.setState(s);
-        bridge.setPending(false);
+        bridge.setStatePending(false);
       },
       e => {
-        bridge.setError(e);
-        bridge.setPending(false);
+        bridge.setStateError(e);
+        bridge.setStatePending(false);
       },
     );
   }, [pending, currentState, userSettings, triggerLoad, batchStrategySolver, bridge]);
@@ -179,29 +188,27 @@ export function CountervaluesProvider({
   }, [bridge, savedState, userSettings]);
 
   // manage the auto polling loop
-  const [isPolling, setIsPolling] = useState(true);
+  // const [isPolling, setIsPolling] = useState(true);
+  const isPolling = bridge.usePollingIsPolling();
   useEffect(() => {
     if (!isPolling) return;
     let pollingTimeout: ReturnType<typeof setTimeout>;
     function pollingLoop() {
-      setTriggerLoad(true);
+      bridge.setPollingTriggerLoad(true);
       pollingTimeout = setTimeout(pollingLoop, refreshRate);
     }
     pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
     return () => clearTimeout(pollingTimeout);
-  }, [refreshRate, pollInitDelay, isPolling]);
+  }, [refreshRate, pollInitDelay, isPolling, bridge]);
 
-  const polling = useMemo<Polling>(
+  const polling = useMemo<Pick<Polling, "wipe" | "poll" | "start" | "stop">>(
     () => ({
       wipe: () => bridge.wipe(),
-      poll: () => setTriggerLoad(true),
-      start: () => setIsPolling(true),
-      stop: () => setIsPolling(false),
-      pending,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      error: error as Error | null | undefined,
+      poll: () => bridge.setPollingTriggerLoad(true),
+      start: () => bridge.setPollingIsPolling(true),
+      stop: () => bridge.setPollingIsPolling(false),
     }),
-    [bridge, error, pending],
+    [bridge],
   );
 
   return (
@@ -221,7 +228,11 @@ export function useCountervaluesState(): CounterValuesState {
 
 // allows consumer to access the countervalues polling control object
 export function useCountervaluesPolling(): Polling {
-  return useContext(CountervaluesPollingContext);
+  const bridge = useCountervaluesBridgeContext();
+  const polling = useContext(CountervaluesPollingContext);
+  const pending = bridge.useStatePending();
+  const error = bridge.useStateError();
+  return useMemo(() => ({ ...polling, pending, error }), [error, pending, polling]);
 }
 
 // allows consumer to access the user settings that was used to fetch the countervalues

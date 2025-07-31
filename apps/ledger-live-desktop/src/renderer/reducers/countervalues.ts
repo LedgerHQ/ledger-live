@@ -1,8 +1,8 @@
 import { exportCountervalues, initialState } from "@ledgerhq/live-countervalues/logic";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { shallowEqual, useSelector } from "react-redux";
 import { handleActions } from "redux-actions";
-import { Handlers } from "./types";
+import type { CountervaluesHandlersPayloads, Handlers } from "./types";
 
 // State
 
@@ -18,6 +18,10 @@ export type CountervaluesState = {
     pending: boolean;
     error: Error | null;
   };
+  polling: {
+    isPolling: boolean;
+    triggerLoad: boolean;
+  };
 };
 
 const INITIAL_STATE: CountervaluesState = {
@@ -31,6 +35,10 @@ const INITIAL_STATE: CountervaluesState = {
     state: initialState,
     pending: false,
     error: null,
+  },
+  polling: {
+    isPolling: true,
+    triggerLoad: false,
   },
 };
 
@@ -53,27 +61,25 @@ export const useCountervaluesMarketcapIds = () =>
 export const useCountervaluesMarketcapLastUpdated = () =>
   useSelector(countervaluesMarketcapLastUpdatedSelector);
 
-export const useCountervaluesError = () => useSelector(countervaluesErrorSelector, shallowEqual);
-export const useCountervaluesExport = () =>
-  useSelector((s: RootState) => exportCountervalues(s.countervalues.countervalues.state));
-export const useCountervaluesPending = () => useSelector(countervaluesPendingSelector);
+export const useCountervaluesStateError = () =>
+  useSelector(countervaluesErrorSelector, shallowEqual);
+export const useCountervaluesStateExport = () =>
+  useSelector(
+    (s: RootState) => exportCountervalues(s.countervalues.countervalues.state),
+    shallowEqual,
+  );
+export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
 export const useCountervaluesState = () => useSelector(countervaluesStateSelector, shallowEqual);
+export const useCountervaluesPollingIsPolling = () =>
+  useSelector((s: RootState) => s.countervalues.polling.isPolling);
+export const useCountervaluesPollingTriggerLoad = () =>
+  useSelector((s: RootState) => s.countervalues.polling.triggerLoad);
 
 // Handlers
 
-type HandlersPayloads = {
-  COUNTERVALUES_MARKETCAP_SET_ERROR: string;
-  COUNTERVALUES_MARKETCAP_SET_IDS: string[];
-  COUNTERVALUES_MARKETCAP_SET_LOADING: boolean;
-  COUNTERVALUES_STATE_ERROR_SET: Error;
-  COUNTERVALUES_STATE_PENDING_SET: boolean;
-  COUNTERVALUES_STATE_SET: CounterValuesState;
-  COUNTERVALUES_WIPE_STATE: undefined;
-};
-
 type CountervaluesHandlers<PreciseKey = true> = Handlers<
   CountervaluesState,
-  HandlersPayloads,
+  CountervaluesHandlersPayloads,
   PreciseKey
 >;
 
@@ -112,6 +118,26 @@ const handlers: CountervaluesHandlers = {
       isLoading: false,
     },
   }),
+  COUNTERVALUES_POLLING_SET_IS_POLLING: (
+    state: CountervaluesState,
+    { payload }: { payload: boolean },
+  ) => ({
+    ...state,
+    polling: {
+      ...state.polling,
+      isPolling: payload,
+    },
+  }),
+  COUNTERVALUES_POLLING_SET_TRIGGER_LOAD: (
+    state: CountervaluesState,
+    { payload }: { payload: boolean },
+  ) => ({
+    ...state,
+    polling: {
+      ...state.polling,
+      triggerLoad: payload,
+    },
+  }),
   COUNTERVALUES_STATE_SET: (
     state: CountervaluesState,
     { payload }: { payload: CounterValuesState },
@@ -122,7 +148,7 @@ const handlers: CountervaluesHandlers = {
       state: payload,
     },
   }),
-  COUNTERVALUES_STATE_ERROR_SET: (state: CountervaluesState, { payload }: { payload: Error }) => ({
+  COUNTERVALUES_STATE_SET_ERROR: (state: CountervaluesState, { payload }: { payload: Error }) => ({
     ...state,
     countervalues: {
       ...state.countervalues,
@@ -130,7 +156,7 @@ const handlers: CountervaluesHandlers = {
       pending: false,
     },
   }),
-  COUNTERVALUES_STATE_PENDING_SET: (
+  COUNTERVALUES_STATE_SET_PENDING: (
     state: CountervaluesState,
     { payload }: { payload: boolean },
   ) => ({
@@ -141,7 +167,7 @@ const handlers: CountervaluesHandlers = {
       error: payload ? null : state.countervalues.error, // Clear error when starting new request
     },
   }),
-  COUNTERVALUES_WIPE_STATE: (state: CountervaluesState) => ({
+  COUNTERVALUES_WIPE: (state: CountervaluesState) => ({
     ...state,
     countervalues: {
       ...state.countervalues,
@@ -152,7 +178,7 @@ const handlers: CountervaluesHandlers = {
   }),
 };
 
-export default handleActions<CountervaluesState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as CountervaluesHandlers<false>,
-  INITIAL_STATE,
-);
+export default handleActions<
+  CountervaluesState,
+  CountervaluesHandlersPayloads[keyof CountervaluesHandlersPayloads]
+>(handlers as unknown as CountervaluesHandlers<false>, INITIAL_STATE);

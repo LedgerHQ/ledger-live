@@ -8,6 +8,8 @@ import {
   CountervaluesMarketcapSetIdsPayload,
   CountervaluesMarketcapSetLoadingPayload,
   CountervaluesPayload,
+  CountervaluesPollingSetIsPollingPayload,
+  CountervaluesPollingSetTriggerLoadPayload,
   CountervaluesStateSetErrorPayload,
   CountervaluesStateSetPayload,
   CountervaluesStateSetPendingPayload,
@@ -28,6 +30,10 @@ export interface CountervaluesState {
     pending: boolean;
     error: Error | null;
   };
+  polling: {
+    isPolling: boolean;
+    triggerLoad: boolean;
+  };
 }
 
 export const INITIAL_STATE: CountervaluesState = {
@@ -41,6 +47,10 @@ export const INITIAL_STATE: CountervaluesState = {
     state: initialState,
     pending: false,
     error: null,
+  },
+  polling: {
+    isPolling: true,
+    triggerLoad: false,
   },
 };
 
@@ -61,11 +71,16 @@ export const useCountervaluesMarketcapIds = () =>
 export const useCountervaluesMarketcapLastUpdated = () =>
   useSelector(countervaluesMarketcapLastUpdatedSelector);
 
-export const useCountervaluesError = () => useSelector(countervaluesErrorSelector);
-export const useCountervaluesExport = () =>
+export const useCountervaluesStateError = () => useSelector(countervaluesErrorSelector);
+export const useCountervaluesStateExport = () =>
   useSelector((s: State) => exportCountervalues(s.countervalues.countervalues.state), shallowEqual);
-export const useCountervaluesPending = () => useSelector(countervaluesPendingSelector);
+export const useCountervaluesStatePending = () => useSelector(countervaluesPendingSelector);
 export const useCountervaluesState = () => useSelector(countervaluesStateSelector, shallowEqual);
+
+export const useCountervaluesPollingIsPolling = () =>
+  useSelector((s: State) => s.countervalues.polling.isPolling);
+export const useCountervaluesPollingTriggerLoad = () =>
+  useSelector((s: State) => s.countervalues.polling.triggerLoad);
 
 /// Handlers
 
@@ -128,6 +143,20 @@ const handlers: ReducerMap<CountervaluesState, CountervaluesPayload> = {
       state: initialState,
       pending: false,
       error: null,
+    },
+  }),
+  [CountervaluesActionTypes.COUNTERVALUES_POLLING_SET_IS_POLLING]: (state, action) => ({
+    ...state,
+    polling: {
+      ...state.polling,
+      isPolling: (action as Action<CountervaluesPollingSetIsPollingPayload>).payload,
+    },
+  }),
+  [CountervaluesActionTypes.COUNTERVALUES_POLLING_SET_TRIGGER_LOAD]: (state, action) => ({
+    ...state,
+    polling: {
+      ...state.polling,
+      triggerLoad: (action as Action<CountervaluesPollingSetTriggerLoadPayload>).payload,
     },
   }),
 };

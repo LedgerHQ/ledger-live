@@ -1,35 +1,30 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/lib-es/types";
+import { Action, ActionFunctionAny, createAction } from "redux-actions";
+import { CountervaluesHandlersKey, CountervaluesHandlersPayloads } from "../reducers/types";
 
-export const setCountervaluesMarketcapIds = (payload: string[]) => ({
-  type: "COUNTERVALUES_MARKETCAP_SET_IDS" as const,
-  payload,
-});
+const createCountervaluesAction = <
+  T extends CountervaluesHandlersKey,
+  P extends CountervaluesHandlersPayloads[T],
+>(
+  type: T,
+): ActionFunctionAny<Action<CountervaluesHandlersPayloads[T]>> => createAction<P>(type);
 
-export const setCountervaluesMarketcapLoading = (payload: boolean) => ({
-  type: "COUNTERVALUES_MARKETCAP_SET_LOADING" as const,
-  payload,
-});
-
-export const setCountervaluesMarketcapError = (payload: string) => ({
-  type: "COUNTERVALUES_MARKETCAP_SET_ERROR" as const,
-  payload,
-});
-
-export const setCountervaluesState = (payload: CounterValuesState) => ({
-  type: "COUNTERVALUES_STATE_SET" as const,
-  payload,
-});
-
-export const setCountervaluesPending = (payload: boolean) => ({
-  type: "COUNTERVALUES_STATE_PENDING_SET" as const,
-  payload,
-});
-
-export const setCountervaluesError = (payload: Error) => ({
-  type: "COUNTERVALUES_STATE_ERROR_SET" as const,
-  payload,
-});
-
-export const wipeCountervalues = () => ({
-  type: "COUNTERVALUES_WIPE_STATE" as const,
-});
+export const countervaluesActions = {
+  COUNTERVALUES_MARKETCAP_SET_ERROR: createCountervaluesAction("COUNTERVALUES_MARKETCAP_SET_ERROR"),
+  COUNTERVALUES_MARKETCAP_SET_IDS: createCountervaluesAction("COUNTERVALUES_MARKETCAP_SET_IDS"),
+  COUNTERVALUES_MARKETCAP_SET_LOADING: createCountervaluesAction(
+    "COUNTERVALUES_MARKETCAP_SET_LOADING",
+  ),
+  COUNTERVALUES_POLLING_SET_IS_POLLING: createCountervaluesAction(
+    "COUNTERVALUES_POLLING_SET_IS_POLLING",
+  ),
+  COUNTERVALUES_POLLING_SET_TRIGGER_LOAD: createCountervaluesAction(
+    "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
+  ),
+  COUNTERVALUES_STATE_SET_ERROR: createCountervaluesAction("COUNTERVALUES_STATE_SET_ERROR"),
+  COUNTERVALUES_STATE_SET_PENDING: createCountervaluesAction("COUNTERVALUES_STATE_SET_PENDING"),
+  COUNTERVALUES_STATE_SET: createCountervaluesAction("COUNTERVALUES_STATE_SET"),
+  COUNTERVALUES_WIPE: createCountervaluesAction("COUNTERVALUES_WIPE"),
+} satisfies Record<
+  CountervaluesHandlersKey,
+  ActionFunctionAny<Action<CountervaluesHandlersPayloads[CountervaluesHandlersKey]>>
+>;

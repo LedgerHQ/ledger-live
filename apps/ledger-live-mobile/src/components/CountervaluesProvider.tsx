@@ -10,12 +10,20 @@ import { AppState, AppStateStatus } from "react-native";
 import { useDispatch } from "react-redux";
 import { useUserSettings } from "~/actions/general";
 import {
-  setCountervaluesError,
-  setCountervaluesPending,
+  setCountervaluesPollingIsPolling,
+  setCountervaluesPollingTriggerLoad,
   setCountervaluesState,
+  setCountervaluesStateError,
+  setCountervaluesStatePending,
   wipeCountervalues,
 } from "../actions/countervalues";
-import { useCountervaluesError, useCountervaluesState } from "../reducers/countervalues";
+import {
+  useCountervaluesStateError,
+  useCountervaluesStatePending,
+  useCountervaluesState,
+  useCountervaluesPollingIsPolling,
+  useCountervaluesPollingTriggerLoad,
+} from "../reducers/countervalues";
 
 export function CountervaluesManagedProvider({
   children,
@@ -30,11 +38,16 @@ export function CountervaluesManagedProvider({
 
   const bridge = useMemo(
     (): CountervaluesBridge => ({
-      setError: flow(setCountervaluesError, dispatch),
-      setPending: flow(setCountervaluesPending, dispatch),
+      setPollingIsPolling: flow(setCountervaluesPollingIsPolling, dispatch),
+      setPollingTriggerLoad: flow(setCountervaluesPollingTriggerLoad, dispatch),
       setState: flow(setCountervaluesState, dispatch),
+      setStateError: flow(setCountervaluesStateError, dispatch),
+      setStatePending: flow(setCountervaluesStatePending, dispatch),
+      usePollingIsPolling: useCountervaluesPollingIsPolling,
+      usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,
-      useError: useCountervaluesError,
+      useStateError: useCountervaluesStateError,
+      useStatePending: useCountervaluesStatePending,
       wipe: flow(wipeCountervalues, dispatch),
     }),
     [dispatch],

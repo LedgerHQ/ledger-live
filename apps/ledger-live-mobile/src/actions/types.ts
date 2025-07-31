@@ -132,6 +132,8 @@ export enum CountervaluesActionTypes {
   COUNTERVALUES_MARKETCAP_SET_IDS = "COUNTERVALUES_MARKETCAP_SET_IDS",
   COUNTERVALUES_MARKETCAP_SET_LOADING = "COUNTERVALUES_MARKETCAP_SET_LOADING",
   COUNTERVALUES_MARKETCAP_SET_ERROR = "COUNTERVALUES_MARKETCAP_SET_ERROR",
+  COUNTERVALUES_POLLING_SET_IS_POLLING = "COUNTERVALUES_POLLING_SET_IS_POLLING",
+  COUNTERVALUES_POLLING_SET_TRIGGER_LOAD = "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
   COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
   COUNTERVALUES_STATE_SET_PENDING = "COUNTERVALUES_STATE_PENDING_SET",
   COUNTERVALUES_STATE_SET_ERROR = "COUNTERVALUES_STATE_ERROR_SET",
@@ -142,6 +144,8 @@ export type CountervaluesMarketcapFetchIdsPayload = void;
 export type CountervaluesMarketcapSetIdsPayload = string[];
 export type CountervaluesMarketcapSetLoadingPayload = boolean;
 export type CountervaluesMarketcapSetErrorPayload = string | null;
+export type CountervaluesPollingSetIsPollingPayload = boolean;
+export type CountervaluesPollingSetTriggerLoadPayload = boolean;
 export type CountervaluesStateSetPayload = CounterValuesState;
 export type CountervaluesStateSetPendingPayload = boolean;
 export type CountervaluesStateSetErrorPayload = Error;
@@ -151,6 +155,8 @@ export type CountervaluesPayload =
   | CountervaluesMarketcapSetIdsPayload
   | CountervaluesMarketcapSetLoadingPayload
   | CountervaluesMarketcapSetErrorPayload
+  | CountervaluesPollingSetIsPollingPayload
+  | CountervaluesPollingSetTriggerLoadPayload
   | CountervaluesStateSetPayload
   | CountervaluesStateSetPendingPayload
   | CountervaluesStateSetErrorPayload;
