@@ -96,11 +96,11 @@ const liveApps = [
     xrayTicket: "B2CQA-3024",
   },
   {
-    delegate: new Delegate(Account.TRX_1, "1", "stakekit"),
+    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3025", //todo: Add split from when parent ticket is available
   },
   {
-    delegate: new Delegate(Account.DOT_1, "1", "stakekit"),
+    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3026", //todo: Add split from when parent ticket is available
   },
 ];
