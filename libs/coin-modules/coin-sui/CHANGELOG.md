@@ -1,5 +1,17 @@
 # @ledgerhq/coin-sui
 
+## 0.8.0-nightly.3
+
+### Patch Changes
+
+- [#11129](https://github.com/LedgerHQ/ledger-live/pull/11129) [`2c80849`](https://github.com/LedgerHQ/ledger-live/commit/2c808497a27c144dee0b5373b84f496052b956ab) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - tests: enabled integration tests for SUI on mainnet
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb)]:
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.1
+  - @ledgerhq/cryptoassets@13.23.0-nightly.2
+  - @ledgerhq/types-live@6.79.0-nightly.1
+  - @ledgerhq/coin-framework@6.0.0-nightly.3
+
 ## 0.8.0-nightly.2
 
 ### Minor Changes

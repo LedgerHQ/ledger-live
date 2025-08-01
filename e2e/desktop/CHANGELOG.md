@@ -1,5 +1,17 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.3.2-nightly.3
+
+### Patch Changes
+
+- [#11130](https://github.com/LedgerHQ/ledger-live/pull/11130) [`e8de571`](https://github.com/LedgerHQ/ledger-live/commit/e8de571b5dfa40e0e0f4f3708a61811b62f11e50) Thanks [@qperrot](https://github.com/qperrot)! - Change Cardano default validato to LBF4
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a)]:
+  - @ledgerhq/types-live@6.79.0-nightly.1
+  - @ledgerhq/live-common@34.43.0-nightly.3
+  - @ledgerhq/live-cli@24.20.0-nightly.3
+  - @ledgerhq/live-wallet@0.11.6-nightly.3
+
 ## 0.3.2-nightly.2
 
 ### Patch Changes

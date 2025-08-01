@@ -1,5 +1,19 @@
 # @ledgerhq/coin-polkadot
 
+## 6.5.0-nightly.3
+
+### Minor Changes
+
+- [#11155](https://github.com/LedgerHQ/ledger-live/pull/11155) [`76f88c3`](https://github.com/LedgerHQ/ledger-live/commit/76f88c39a7368b1c61b1018000e64e3fe2f906af) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb)]:
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.1
+  - @ledgerhq/cryptoassets@13.23.0-nightly.2
+  - @ledgerhq/types-live@6.79.0-nightly.1
+  - @ledgerhq/coin-framework@6.0.0-nightly.3
+
 ## 6.5.0-nightly.2
 
 ### Minor Changes

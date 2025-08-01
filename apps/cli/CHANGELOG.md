@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.20.0-nightly.3
+
+### Minor Changes
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a)]:
+  - @ledgerhq/cryptoassets@13.23.0-nightly.2
+  - @ledgerhq/live-common@34.43.0-nightly.3
+  - @ledgerhq/coin-framework@6.0.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.18.1-nightly.3
+  - @ledgerhq/live-countervalues@0.5.15-nightly.3
+  - @ledgerhq/live-wallet@0.11.6-nightly.3
+  - @ledgerhq/device-core@0.5.4-nightly.2
+
 ## 24.19.7-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.123.0-nightly.4
+
+### Minor Changes
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+- [#11083](https://github.com/LedgerHQ/ledger-live/pull/11083) [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a) Thanks [@sergiubreban](https://github.com/sergiubreban)! - enable modular drawer for all earn entry points
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a), [`9c200a4`](https://github.com/LedgerHQ/ledger-live/commit/9c200a44f0d8d0cb3995b64a85adbaa750c2452d)]:
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.1
+  - @ledgerhq/cryptoassets@13.23.0-nightly.2
+  - @ledgerhq/types-live@6.79.0-nightly.1
+  - @ledgerhq/live-common@34.43.0-nightly.3
+  - @ledgerhq/coin-framework@6.0.0-nightly.3
+  - @ledgerhq/coin-evm@2.25.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.18.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.3
+  - @ledgerhq/domain-service@1.2.38-nightly.1
+  - @ledgerhq/live-countervalues@0.5.15-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.3
+  - @ledgerhq/live-nft@0.8.15-nightly.3
+  - @ledgerhq/live-nft-react@0.9.15-nightly.3
+  - @ledgerhq/live-wallet@0.11.6-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.8.2-nightly.3
+
 ## 2.123.0-nightly.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.23.0-nightly.2
+
+### Minor Changes
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
 ## 13.23.0-nightly.1
 
 ### Minor Changes

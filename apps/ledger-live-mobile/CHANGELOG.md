@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.88.0-nightly.5
+
+### Minor Changes
+
+- [#11095](https://github.com/LedgerHQ/ledger-live/pull/11095) [`830884a`](https://github.com/LedgerHQ/ledger-live/commit/830884a9d4213051e35263855e25ed9a75e27e17) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework ModularDrawer + LiveApp integrations of MAD
+
+- [#11172](https://github.com/LedgerHQ/ledger-live/pull/11172) [`cf32f05`](https://github.com/LedgerHQ/ledger-live/commit/cf32f051835a1aa2d8f4184205592ee583dc4aab) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove unused imported videos
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+- [#11149](https://github.com/LedgerHQ/ledger-live/pull/11149) [`1c37c10`](https://github.com/LedgerHQ/ledger-live/commit/1c37c10b169c2c47d5b28123f6e6161c68f2110a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Enhance MAD debug tool on LLM
+
+- [#11083](https://github.com/LedgerHQ/ledger-live/pull/11083) [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a) Thanks [@sergiubreban](https://github.com/sergiubreban)! - enable modular drawer for all earn entry points
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`9c200a4`](https://github.com/LedgerHQ/ledger-live/commit/9c200a44f0d8d0cb3995b64a85adbaa750c2452d)]:
+  - @ledgerhq/types-cryptoassets@7.24.0-nightly.1
+  - @ledgerhq/types-live@6.79.0-nightly.1
+  - @ledgerhq/coin-framework@6.0.0-nightly.3
+  - @ledgerhq/coin-evm@2.25.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.4-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.15-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.15-nightly.3
+  - @ledgerhq/coin-stacks@0.8.15-nightly.3
+  - @ledgerhq/domain-service@1.2.38-nightly.1
+  - @ledgerhq/live-countervalues@0.5.15-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.44-nightly.3
+  - @ledgerhq/live-nft@0.8.15-nightly.3
+  - @ledgerhq/live-nft-react@0.9.15-nightly.3
+  - @ledgerhq/live-wallet@0.11.6-nightly.3
+
 ## 3.88.0-nightly.4
 
 ### Minor Changes
