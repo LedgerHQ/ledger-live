@@ -349,6 +349,10 @@ export function useModularDrawerState({
     }
   };
 
+  const onAddNewAccount = useCallback(() => {
+    navigateToDevice(asset as CryptoCurrency);
+  }, [asset, navigateToDevice]);
+
   return {
     // State
     asset,
@@ -381,6 +385,6 @@ export function useModularDrawerState({
 
     defaultSearchValue,
     setDefaultSearchValue,
-    navigateToDevice,
+    onAddNewAccount,
   };
 }

@@ -8,3 +8,4 @@ export * from "./Search/Search";
 export * from "./AccountItem/AccountItem";
 export * from "./AccountList/AccountList";
 export * from "./Address/Address";
+export * from "./AddAccountButton/AddAccountButton";

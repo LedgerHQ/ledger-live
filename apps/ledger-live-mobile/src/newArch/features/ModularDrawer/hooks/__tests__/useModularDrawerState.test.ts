@@ -201,7 +201,6 @@ describe("useModularDrawerState", () => {
   });
 
   // test handleSingleCurrencyFlow
-  //todo: adapt this test to the new modular drawer flow
 
   it("should handle single currency flow", () => {
     const { result } = renderHook(() =>

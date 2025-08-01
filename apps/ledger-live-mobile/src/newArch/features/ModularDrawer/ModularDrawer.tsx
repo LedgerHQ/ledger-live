@@ -86,6 +86,7 @@ export function ModularDrawer({
     defaultSearchValue,
     shouldShowBackButton,
     navigationStepManager,
+    onAddNewAccount,
   } = useModularDrawerState({
     currenciesByProvider,
     currencyIds: currencyIdsArray,
@@ -129,11 +130,12 @@ export function ModularDrawer({
         }}
         accountsViewModel={{
           accounts$,
-          onAddNewAccount: () => {},
+          onAddNewAccount,
           asset,
           onAccountSelected,
           flow,
           source,
+          onClose,
         }}
         isReadyToBeDisplayed={isReadyToBeDisplayed}
       />

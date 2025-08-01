@@ -25,10 +25,8 @@ export const formatDetailedAccount = (
   const isAnAccount = isAccount(account);
   const details = isAnAccount ? account.currency : account.token;
   const parentId = isAnAccount ? undefined : account.token.parentCurrency.id;
-
   const { id } = account;
   const { name, ticker, id: cryptoId } = details;
-
   const { balance, fiatValue } = getBalanceAndFiatValue(account, state, to, discreet);
   const address = formatAddress(parentAddress);
 

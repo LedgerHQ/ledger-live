@@ -58,6 +58,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cardano unit (ada) 1`] = `"12.345.678.900,000000- -ADA"`;
@@ -413,6 +415,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -770,6 +774,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cardano unit (ada) 1`] = `"12.345.678.900,000000- -ADA"`;
@@ -1125,6 +1131,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network unit (cc) 1`] = `"123 456,78900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12 345 678 900,000000- -tADA"`;
 
@@ -1482,6 +1490,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cardano unit (ada) 1`] = `"12,345,678,900.000000- -ADA"`;
@@ -1837,6 +1847,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
@@ -2194,6 +2206,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cardano unit (ada) 1`] = `"12.345.678.900,000000- -ADA"`;
@@ -2549,6 +2563,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network unit (cc) 1`] = `"123 456,78900000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cardano (Testnet) unit (ada) 1`] = `"12 345 678 900,000000- -tADA"`;
 
@@ -2906,6 +2922,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cardano (Testnet) unit (ada) 1`] = `"12.345.678.900,000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cardano unit (ada) 1`] = `"12.345.678.900,000000- -ADA"`;
@@ -3262,6 +3280,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900.000000- -tADA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cardano unit (ada) 1`] = `"12,345,678,900.000000- -ADA"`;
@@ -3617,6 +3637,8 @@ exports[`formatCurrencyUnit with default options should correctly format Blast u
 exports[`formatCurrencyUnit with default options should correctly format Boba unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Callisto unit (CLO) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Canton Network unit (cc) 1`] = `"123,456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Cardano (Testnet) unit (ada) 1`] = `"12,345,678,900"`;
 

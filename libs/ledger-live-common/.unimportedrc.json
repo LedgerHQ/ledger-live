@@ -397,6 +397,7 @@
     "src/modularDrawer/utils/currencyUtils.ts",
     "src/modularDrawer/utils/haveOneCommonProvider.ts",
     "src/modularDrawer/utils/index.ts",
+    "src/modularDrawer/utils/getBalanceAndFiatValue.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
