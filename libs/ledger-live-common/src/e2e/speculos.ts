@@ -14,13 +14,13 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
-import { DeviceLabels } from "../e2e/enum/DeviceLabels";
+import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from ".//families/evm";
+import { sendEVM, sendEvmNFT } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -330,6 +330,7 @@ export const specs: Specs = {
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
+  runId?: string,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -385,13 +386,12 @@ export async function startSpeculos(
     onSpeculosDeviceCreated,
   };
   try {
-    const device = isSpeculosRemote
-      ? await createSpeculosDeviceCI(deviceParams)
+    return isSpeculosRemote
+      ? await createSpeculosDeviceCI(deviceParams, runId)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return { id: device.id, port: device.ports.apiPort };
         });
-    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
