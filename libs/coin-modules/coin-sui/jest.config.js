@@ -5,6 +5,6 @@ module.exports = {
   coverageDirectory: "coverage",
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s", "index.monitor.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };
