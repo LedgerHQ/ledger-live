@@ -80,6 +80,10 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
+
+  // for example '2025-08-01'
+  const currentday = new Date().toISOString().split("T")[0];
+
   const swapIntentWithProvider = crypto
     .createHash("sha256")
     .update(
@@ -88,6 +92,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
         fromAccount,
         toAccount,
         amount,
+        currentday
       }),
     )
     .digest("hex");
@@ -99,6 +104,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
         fromAccount,
         toAccount,
         amount,
+        currentday
       }),
     )
     .digest("hex");
