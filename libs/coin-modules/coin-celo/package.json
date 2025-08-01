@@ -129,7 +129,6 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.14.179",
@@ -142,7 +141,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|index.monitor.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-celo.json",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-celo.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
@@ -153,7 +152,6 @@
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported",
-    "test-monitor": "jest --config=jest.monitoring.config.js"
+    "unimported": "unimported"
   }
 }

@@ -125,8 +125,7 @@
     "expect": "^27.4.6",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
-    "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/coin-modules-monitoring": "workspace:^"
+    "@ledgerhq/disable-network-setup": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -140,7 +139,6 @@
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
-    "unimported": "unimported",
-    "test-monitor": "jest --config=jest.monitoring.config.js"
+    "unimported": "unimported"
   }
 }

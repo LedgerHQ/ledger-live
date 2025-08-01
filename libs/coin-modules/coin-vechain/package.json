@@ -89,7 +89,6 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "test-monitor": "jest --config=jest.monitoring.config.js",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "unimported": "unimported"
   },
@@ -110,7 +109,6 @@
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",

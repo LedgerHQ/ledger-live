@@ -10,7 +10,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration|monitor)\\.test\\.[tj]s"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   setupFilesAfterEnv: [
     "jest-expect-message",
     "dotenv/config",
