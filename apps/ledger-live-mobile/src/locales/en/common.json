@@ -7775,7 +7775,7 @@
   },
   "geoBlocking": {
     "title": "Location unavailable",
-    "description": "Ledger wallet is not available in this location.",
+    "description": "Ledger Live is not available in this location.",
     "learnMore": "Learn more"
   },
   "versionBlocking": {

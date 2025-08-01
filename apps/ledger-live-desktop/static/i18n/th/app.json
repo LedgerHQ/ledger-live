@@ -7352,7 +7352,7 @@
   },
   "geoBlocking" : {
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
-    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "description" : "Ledger Live ไม่สามารถใช้ได้ในพื้นที่นี้",
     "learnMore" : "เรียนรู้เพิ่มเติม"
   },
   "versionBlocking" : {
