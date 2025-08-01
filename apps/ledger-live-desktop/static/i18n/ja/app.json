@@ -344,6 +344,7 @@
           "provider" : "プロバイダー",
           "rate" : "レート",
           "fees" : "ネットワーク手数料",
+          "feesDescription" : "この手数料は、スワップを処理するためにブロックチェーンネットワークによって請求されます。見積額に加えて、送付手数料のみ請求されます。受取手数料が含まれています",
           "target" : "ターゲットアカウント"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "モジュラードロワー開発ツール",
+        "description" : "モジュラードロワーを簡単にテストできます"
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "mockAppUpdate" : "Mockアプリのアップデート",
@@ -7279,6 +7284,15 @@
       "newAccount" : "新しいアカウント",
       "addAccountSelection" : "資金を追加するアカウントを選択",
       "addAccountSelectionPtxFlow" : "アカウントを選択"
+    },
+    "editAccountName" : {
+      "title" : "アカウント名を編集",
+      "input" : {
+        "name" : "名前"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "受け取る",

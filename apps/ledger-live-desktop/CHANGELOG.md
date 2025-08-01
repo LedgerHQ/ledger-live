@@ -1,5 +1,165 @@
 # ledger-live-desktop
 
+## 2.123.0
+
+### Minor Changes
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- [#10983](https://github.com/LedgerHQ/ledger-live/pull/10983) [`22121f5`](https://github.com/LedgerHQ/ledger-live/commit/22121f537fe1b01f2014f96db0cdc7fc7bcfd82b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - [LLD] Post-Onboarding Screen Does not Scroll - Buttons Hidden depending on Screen Size and LL Language
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10948](https://github.com/LedgerHQ/ledger-live/pull/10948) [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Refactor useScanAccounts hook
+  stopPropagation on Checkbox's onChange
+
+- [#11051](https://github.com/LedgerHQ/ledger-live/pull/11051) [`62919c6`](https://github.com/LedgerHQ/ledger-live/commit/62919c6303fa149cd1351685a4aab771dcc3b12c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add left APY component for MAD asset selection screen
+
+- [#11043](https://github.com/LedgerHQ/ledger-live/pull/11043) [`8141f8c`](https://github.com/LedgerHQ/ledger-live/commit/8141f8ce042493be518ebbe22ff2e97cd1797c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add a devtool for the Modular Drawer
+
+- [#10987](https://github.com/LedgerHQ/ledger-live/pull/10987) [`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Account entry points for MAD + rework live-common lib for utils used in both platforms
+
+- [#11057](https://github.com/LedgerHQ/ledger-live/pull/11057) [`4b2bbf7`](https://github.com/LedgerHQ/ledger-live/commit/4b2bbf79fc6e5479752372f3ceea3937ad639420) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY component to network selection page
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+- [#11021](https://github.com/LedgerHQ/ledger-live/pull/11021) [`e8e2d60`](https://github.com/LedgerHQ/ledger-live/commit/e8e2d60ada3e9508f416fe41e313acd9ff0ad1b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove grid accounts tool tip
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11044](https://github.com/LedgerHQ/ledger-live/pull/11044) [`a726911`](https://github.com/LedgerHQ/ledger-live/commit/a7269118c85a7866e2c16348cb857650e8741570) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add max character limit to LLD edit name
+
+- [#11025](https://github.com/LedgerHQ/ledger-live/pull/11025) [`85b6f2d`](https://github.com/LedgerHQ/ledger-live/commit/85b6f2d270f877ce899f013f77448f7e85233aab) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - edit account name on MAD already existing new account
+
+- [#11059](https://github.com/LedgerHQ/ledger-live/pull/11059) [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update swap ui to use the react ui Chip components
+
+- [#11031](https://github.com/LedgerHQ/ledger-live/pull/11031) [`bcaed1a`](https://github.com/LedgerHQ/ledger-live/commit/bcaed1a2f0eb8024aefd71992bcd7e17fc815ef8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Extract Add Account Drawer into its own folder
+
+### Patch Changes
+
+- Updated dependencies [[`6ff7f97`](https://github.com/LedgerHQ/ledger-live/commit/6ff7f9750c4cfdf7706ddcdfb16ed6dc78172fb6), [`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b), [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`3e32d52`](https://github.com/LedgerHQ/ledger-live/commit/3e32d522e0589a8356d222e0dbd3a87551d26e79), [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95), [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd), [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1), [`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e), [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e), [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4), [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594)]:
+  - @ledgerhq/coin-bitcoin@0.19.0
+  - @ledgerhq/live-common@34.43.0
+  - @ledgerhq/types-live@6.79.0
+  - @ledgerhq/cryptoassets@13.23.0
+  - @ledgerhq/coin-evm@2.25.0
+  - @ledgerhq/react-ui@0.35.0
+  - @ledgerhq/types-cryptoassets@7.24.0
+  - @ledgerhq/coin-framework@5.8.0
+  - @ledgerhq/live-dmk-desktop@0.8.2
+  - @ledgerhq/coin-cosmos@0.16.4
+  - @ledgerhq/coin-filecoin@1.9.15
+  - @ledgerhq/domain-service@1.2.38
+  - @ledgerhq/live-countervalues@0.5.15
+  - @ledgerhq/live-countervalues-react@0.2.44
+  - @ledgerhq/live-nft@0.8.15
+  - @ledgerhq/live-nft-react@0.9.15
+  - @ledgerhq/live-wallet@0.11.6
+
+## 2.123.0-next.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.43.0-next.4
+  - @ledgerhq/live-dmk-desktop@0.8.2-next.4
+
+## 2.123.0-next.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.43.0-next.3
+  - @ledgerhq/live-dmk-desktop@0.8.2-next.3
+
+## 2.123.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+  - @ledgerhq/live-common@34.43.0-next.2
+  - @ledgerhq/coin-framework@5.8.0-next.1
+  - @ledgerhq/coin-bitcoin@0.19.0-next.1
+  - @ledgerhq/coin-cosmos@0.16.4-next.1
+  - @ledgerhq/coin-evm@2.25.0-next.1
+  - @ledgerhq/coin-filecoin@1.9.15-next.1
+  - @ledgerhq/domain-service@1.2.38-next.1
+  - @ledgerhq/live-countervalues@0.5.15-next.1
+  - @ledgerhq/live-countervalues-react@0.2.44-next.1
+  - @ledgerhq/live-nft@0.8.15-next.1
+  - @ledgerhq/live-nft-react@0.9.15-next.1
+  - @ledgerhq/live-wallet@0.11.6-next.1
+  - @ledgerhq/live-dmk-desktop@0.8.2-next.2
+
+## 2.123.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.43.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.8.2-next.1
+
+## 2.123.0-next.0
+
+### Minor Changes
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- [#10983](https://github.com/LedgerHQ/ledger-live/pull/10983) [`22121f5`](https://github.com/LedgerHQ/ledger-live/commit/22121f537fe1b01f2014f96db0cdc7fc7bcfd82b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - [LLD] Post-Onboarding Screen Does not Scroll - Buttons Hidden depending on Screen Size and LL Language
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10948](https://github.com/LedgerHQ/ledger-live/pull/10948) [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Refactor useScanAccounts hook
+  stopPropagation on Checkbox's onChange
+
+- [#11051](https://github.com/LedgerHQ/ledger-live/pull/11051) [`62919c6`](https://github.com/LedgerHQ/ledger-live/commit/62919c6303fa149cd1351685a4aab771dcc3b12c) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add left APY component for MAD asset selection screen
+
+- [#11043](https://github.com/LedgerHQ/ledger-live/pull/11043) [`8141f8c`](https://github.com/LedgerHQ/ledger-live/commit/8141f8ce042493be518ebbe22ff2e97cd1797c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add a devtool for the Modular Drawer
+
+- [#10987](https://github.com/LedgerHQ/ledger-live/pull/10987) [`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Account entry points for MAD + rework live-common lib for utils used in both platforms
+
+- [#11057](https://github.com/LedgerHQ/ledger-live/pull/11057) [`4b2bbf7`](https://github.com/LedgerHQ/ledger-live/commit/4b2bbf79fc6e5479752372f3ceea3937ad639420) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY component to network selection page
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+- [#11021](https://github.com/LedgerHQ/ledger-live/pull/11021) [`e8e2d60`](https://github.com/LedgerHQ/ledger-live/commit/e8e2d60ada3e9508f416fe41e313acd9ff0ad1b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove grid accounts tool tip
+
+- [#10857](https://github.com/LedgerHQ/ledger-live/pull/10857) [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom errors and add translations to them
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11044](https://github.com/LedgerHQ/ledger-live/pull/11044) [`a726911`](https://github.com/LedgerHQ/ledger-live/commit/a7269118c85a7866e2c16348cb857650e8741570) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add max character limit to LLD edit name
+
+- [#11025](https://github.com/LedgerHQ/ledger-live/pull/11025) [`85b6f2d`](https://github.com/LedgerHQ/ledger-live/commit/85b6f2d270f877ce899f013f77448f7e85233aab) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - edit account name on MAD already existing new account
+
+- [#11059](https://github.com/LedgerHQ/ledger-live/pull/11059) [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update swap ui to use the react ui Chip components
+
+- [#11031](https://github.com/LedgerHQ/ledger-live/pull/11031) [`bcaed1a`](https://github.com/LedgerHQ/ledger-live/commit/bcaed1a2f0eb8024aefd71992bcd7e17fc815ef8) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Extract Add Account Drawer into its own folder
+
+### Patch Changes
+
+- Updated dependencies [[`6ff7f97`](https://github.com/LedgerHQ/ledger-live/commit/6ff7f9750c4cfdf7706ddcdfb16ed6dc78172fb6), [`509f075`](https://github.com/LedgerHQ/ledger-live/commit/509f0754cddc4acbb632d6eb9c0886261bba6a4b), [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`3e32d52`](https://github.com/LedgerHQ/ledger-live/commit/3e32d522e0589a8356d222e0dbd3a87551d26e79), [`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95), [`46d5926`](https://github.com/LedgerHQ/ledger-live/commit/46d5926d5e63ea889cdc71b7846d0de9020409fd), [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1), [`b8856c1`](https://github.com/LedgerHQ/ledger-live/commit/b8856c1fb541640d886ef75d31aa367ab94f209a), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e), [`8de2972`](https://github.com/LedgerHQ/ledger-live/commit/8de2972333b8d40aa105c6d229d3cfe10d42058e), [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4), [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594)]:
+  - @ledgerhq/coin-bitcoin@0.19.0-next.0
+  - @ledgerhq/live-common@34.43.0-next.0
+  - @ledgerhq/types-live@6.79.0-next.0
+  - @ledgerhq/cryptoassets@13.23.0-next.0
+  - @ledgerhq/coin-evm@2.25.0-next.0
+  - @ledgerhq/react-ui@0.35.0-next.0
+  - @ledgerhq/types-cryptoassets@7.24.0-next.0
+  - @ledgerhq/coin-framework@5.8.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.8.2-next.0
+  - @ledgerhq/coin-cosmos@0.16.4-next.0
+  - @ledgerhq/coin-filecoin@1.9.15-next.0
+  - @ledgerhq/domain-service@1.2.38-next.0
+  - @ledgerhq/live-countervalues@0.5.15-next.0
+  - @ledgerhq/live-countervalues-react@0.2.44-next.0
+  - @ledgerhq/live-nft@0.8.15-next.0
+  - @ledgerhq/live-nft-react@0.9.15-next.0
+  - @ledgerhq/live-wallet@0.11.6-next.0
+
 ## 2.122.1
 
 ### Patch Changes

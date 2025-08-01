@@ -3720,6 +3720,7 @@
             "provider" : "Proveedor",
             "rate" : "Tasa",
             "fees" : "Tarifas de red",
+            "feesDescription" : "La red de cadena de bloques carga estas tarifas para procesar la permuta. Además de la cotización estimada, sólo se cobra la tarifa de envío. La tarifa de recepción ya está incluida.",
             "target" : "Cuenta de destino"
           },
           "noAccount" : "Crear una cuenta para recibir {{name}}",
@@ -7776,5 +7777,83 @@
     "selectNetwork" : "Seleccionar red",
     "selectAccount" : "Seleccionar cuenta",
     "searchPlaceholder" : "Buscar"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Datos de comando incorrectos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "deserializationFailed" : {
+      "title" : "La deserialización de la carga útil ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transacción incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidAddress" : {
+      "title" : "Dirección inválida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta emisora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "userRefused" : {
+      "title" : "Operación denegada en el dispositivo",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "internalError" : {
+      "title" : "Error interno",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensión de P2 incorrecta",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Extensión de P2 no válida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Instrucción inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Clase no admitida"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrucción no válida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "malformedApdu" : {
+      "title" : "La cabecera de APDU tiene un formato incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidDataLength" : {
+      "title" : "Longitud de los datos no válida",
+      "description" : "Este comando no acepta datos de esa longitud"
+    },
+    "signatureVerificationFail" : {
+      "title" : "La verificación de la firma ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "default" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    }
   }
 }

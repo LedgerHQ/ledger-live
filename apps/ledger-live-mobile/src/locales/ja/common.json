@@ -3720,6 +3720,7 @@
             "provider" : "プロバイダー",
             "rate" : "レート",
             "fees" : "ネットワーク手数料",
+            "feesDescription" : "この手数料は、スワップを処理するためにブロックチェーンネットワークによって請求されます。見積額に加えて、送付手数料のみ請求されます。受取手数料が含まれています",
             "target" : "送付先アカウント"
           },
           "noAccount" : "{{name}}を受け取るアカウントを作成する",
@@ -7776,5 +7777,83 @@
     "selectNetwork" : "ネットワークを選択",
     "selectAccount" : "アカウントを選択",
     "searchPlaceholder" : "検索"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "コマンドデータが正しくありません",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "deserializationFailed" : {
+      "title" : "ペイロードのデシリアライズに失敗しました",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "wrongTransactionId" : {
+      "title" : "トランザクションIDが間違っています",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "invalidAddress" : {
+      "title" : "無効なアドレス",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "問題が発生しました。",
+      "description" : "この受取アカウントは接続されているデバイスに属していません。変更して再試行してください。"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "問題が発生しました。",
+      "description" : "この送付アカウントは接続されたデバイスに属していません。変更して再試行してください。"
+    },
+    "userRefused" : {
+      "title" : "デバイス上で操作が却下されました。",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "internalError" : {
+      "title" : "内部エラー",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "wrongP1" : {
+      "title" : "P1が間違っています",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "wrongP2" : {
+      "title" : "P2が間違っています",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2拡張子が間違っています",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "invalidP2Extension" : {
+      "title" : "問題が発生しました。",
+      "description" : "P2拡張子が無効です"
+    },
+    "unexpectedInstruction" : {
+      "title" : "問題が発生しました。",
+      "description" : "予期しない命令です"
+    },
+    "classNotSupported" : {
+      "title" : "問題が発生しました。",
+      "description" : "クラスはサポートされていません"
+    },
+    "invalidInstruction" : {
+      "title" : "命令が無効です",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "malformedApdu" : {
+      "title" : "APDUヘッダーが不正です",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "invalidDataLength" : {
+      "title" : "データ長が無効です",
+      "description" : "このコマンドはその長さのデータを受け付けません"
+    },
+    "signatureVerificationFail" : {
+      "title" : "署名の検証に失敗しました",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "default" : {
+      "title" : "問題が発生しました。",
+      "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    }
   }
 }
