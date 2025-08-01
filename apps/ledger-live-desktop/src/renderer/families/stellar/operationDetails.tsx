@@ -11,6 +11,7 @@ import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { Account } from "@ledgerhq/types-live";
 import { OperationDetailsExtraProps } from "../types";
 import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
+import { formatMemo } from "@ledgerhq/live-common/families/stellar/ui";
 
 const OperationDetailsExtra = ({
   operation: { extra },
@@ -31,7 +32,7 @@ const OperationDetailsExtra = ({
                   </HashContainer>
                 ) : null}
                 {key === "assetCode" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
-                {key === "memo" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
+                {key === "memo" ? <Ellipsis>{formatMemo(extra)}</Ellipsis> : null}
               </OpDetailsData>
             </OpDetailsSection>
           );
