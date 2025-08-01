@@ -1,18 +1,8 @@
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { AppState, Platform } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+
 import * as Keychain from "react-native-keychain";
 import type { Privacy } from "~/reducers/types";
-import { privacySelector } from "~/reducers/settings";
-import { isLockedSelector, biometricsErrorSelector, authModalOpenSelector } from "~/reducers/auth";
-import {
-  initializeAuthState,
-  setLocked,
-  setBiometricsError,
-  setAuthModalOpen,
-  lock as lockAction,
-  unlock as unlockAction,
-} from "~/actions/auth";
 
 interface UsePrivacyInitializationProps {
   privacy: Privacy | null | undefined;
@@ -83,69 +73,4 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
   );
 
   return { handleAppStateChange };
-}
-
-export function useAuthState({ closeAllDrawers }: { closeAllDrawers: () => void }) {
-  const dispatch = useDispatch();
-  const mounted = useRef<boolean>(false);
-  const [skipLockCount, setSkipLockCount] = useState<number>(0);
-
-  const isLocked = useSelector(isLockedSelector);
-  const biometricsError = useSelector(biometricsErrorSelector);
-  const authModalOpen = useSelector(authModalOpenSelector);
-  const privacy = useSelector(privacySelector);
-
-  useEffect(() => {
-    if (privacy !== null && privacy !== undefined) {
-      dispatch(initializeAuthState({ privacy }));
-    }
-    // disable exhaustive-deps to prevent password requirement immediately after setting
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const setIsLocked = useCallback(
-    (locked: boolean) => {
-      dispatch(setLocked(locked));
-    },
-    [dispatch],
-  );
-
-  const setBiometricsErrorAction = useCallback(
-    (error: Error | null) => {
-      dispatch(setBiometricsError(error));
-    },
-    [dispatch],
-  );
-
-  const setAuthModalOpenAction = useCallback(
-    (open: boolean) => {
-      dispatch(setAuthModalOpen(open));
-    },
-    [dispatch],
-  );
-
-  const lock = useCallback(() => {
-    if (!privacy?.hasPassword || skipLockCount) return;
-
-    closeAllDrawers();
-
-    dispatch(lockAction());
-  }, [privacy, skipLockCount, closeAllDrawers, dispatch]);
-
-  const unlock = useCallback(() => {
-    dispatch(unlockAction());
-  }, [dispatch]);
-
-  return {
-    isLocked,
-    biometricsError,
-    authModalOpen,
-    mounted,
-    setIsLocked,
-    setBiometricsError: setBiometricsErrorAction,
-    setAuthModalOpen: setAuthModalOpenAction,
-    setSkipLockCount,
-    lock,
-    unlock,
-  };
 }

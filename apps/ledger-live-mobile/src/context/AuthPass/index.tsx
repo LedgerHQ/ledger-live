@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { StyleSheet, View, AppState } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { privacySelector } from "~/reducers/settings";
@@ -9,16 +9,34 @@ import type { Privacy } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
 import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
-import { useAuthState, useAppStateHandler, usePrivacyInitialization } from "./auth.hooks";
+import { useAppStateHandler, usePrivacyInitialization } from "./auth.hooks";
+import { isLockedSelector, biometricsErrorSelector, authModalOpenSelector } from "~/reducers/auth";
+import {
+  initializeAuthState,
+  setLocked,
+  setBiometricsError,
+  setAuthModalOpen,
+  lock as lockAction,
+  unlock as unlockAction,
+} from "~/actions/auth";
 
 type OwnProps = {
   children: JSX.Element;
 };
 
 const AuthPass: React.FC<OwnProps> = ({ children }) => {
+  const [skipLockCount, setSkipLockCount] = useState<number>(0);
+
+  const mounted = useRef<boolean>(false);
+
   const dispatch = useDispatch();
 
   const privacy = useSelector(privacySelector);
+  const authModalOpen = useSelector(authModalOpenSelector);
+  const isLocked = useSelector(isLockedSelector);
+  const isPasswordLockBlocked = useSelector(isPasswordLockBlockedState);
+  const biometricsError = useSelector(biometricsErrorSelector);
+
   const setPrivacy = useCallback(
     (privacy: Privacy) => {
       dispatch(setPrivacyAction(privacy));
@@ -26,21 +44,19 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
     [dispatch],
   );
 
-  const isPasswordLockBlocked = useSelector(isPasswordLockBlockedState);
   const { closeAllDrawers } = useQueuedDrawerContext();
 
-  const {
-    isLocked,
-    biometricsError,
-    authModalOpen,
-    mounted,
-    setIsLocked,
-    setBiometricsError,
-    setAuthModalOpen,
-    setSkipLockCount,
-    lock,
-    unlock,
-  } = useAuthState({ closeAllDrawers });
+  const lock = useCallback(() => {
+    if (!privacy?.hasPassword || skipLockCount) return;
+
+    closeAllDrawers();
+
+    dispatch(lockAction());
+  }, [privacy, skipLockCount, closeAllDrawers, dispatch]);
+
+  const unlock = useCallback(() => {
+    dispatch(unlockAction());
+  }, [dispatch]);
 
   const { handleAppStateChange } = useAppStateHandler({ isPasswordLockBlocked, lock });
 
@@ -57,10 +73,11 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
 
   // auth: try to auth with biometrics and fallback on password
   const auth = useCallback(() => {
-    if (isLocked && privacy?.biometricsEnabled && !authModalOpen && mounted.current) {
-      setAuthModalOpen(true);
+    if (mounted.current) {
+      const biometricModal = isLocked && !!privacy?.biometricsEnabled;
+      dispatch(setAuthModalOpen(biometricModal));
     }
-  }, [isLocked, privacy, authModalOpen, mounted, setAuthModalOpen]);
+  }, [isLocked, privacy, dispatch]);
 
   const setupComponent = useCallback(() => {
     mounted.current = true;
@@ -78,28 +95,34 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
 
   const handlePasswordStateChange = useCallback(() => {
     if (isLocked && !privacy?.hasPassword) {
-      setIsLocked(false);
+      dispatch(setLocked(false));
     }
-  }, [isLocked, privacy?.hasPassword, setIsLocked]);
+  }, [isLocked, privacy?.hasPassword, dispatch]);
 
   useEffect(setupComponent, [setupComponent]);
   useEffect(handlePasswordStateChange, [handlePasswordStateChange]);
 
+  useEffect(() => {
+    if (isLocked && privacy?.hasPassword) {
+      dispatch(initializeAuthState({ privacy }));
+    }
+  }, [dispatch, isLocked, privacy]);
+
   const onSuccess = useCallback(() => {
     if (mounted.current) {
-      setAuthModalOpen(false);
+      dispatch(setAuthModalOpen(false));
     }
-    unlock();
-  }, [unlock, mounted, setAuthModalOpen]);
+    dispatch(unlockAction());
+  }, [dispatch]);
 
   const onError = useCallback(
     (error: Error) => {
       if (mounted.current) {
-        setAuthModalOpen(false);
-        setBiometricsError(error);
+        dispatch(setAuthModalOpen(false));
+        dispatch(setBiometricsError(error));
       }
     },
-    [mounted, setAuthModalOpen, setBiometricsError],
+    [dispatch],
   );
 
   let lockScreen = null;

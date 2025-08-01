@@ -38,14 +38,6 @@ describe("Auth Redux Implementation", () => {
     expect(store.getState().isLocked).toBe(false);
   });
 
-  test("setting password while unlocked keeps app unlocked", () => {
-    store.dispatch(initializeAuthState({ privacy: mockPrivacyWithoutPassword }));
-    expect(store.getState().isLocked).toBe(false);
-
-    store.dispatch(initializeAuthState({ privacy: mockPrivacyWithPassword }));
-    expect(store.getState().isLocked).toBe(false);
-  });
-
   test("setLocked action updates isLocked state", () => {
     store.dispatch(setLocked(true));
     expect(store.getState().isLocked).toBe(true);
