@@ -83,7 +83,6 @@ async function formatOperation(
   minHeight: number,
 ): Promise<StellarOperation | undefined> {
   const transaction = await rawOperation.transaction();
-
   if (transaction.ledger_attr < minHeight) return undefined;
 
   const { hash: blockHash, closed_at: blockTime } = await transaction.ledger();
@@ -152,11 +151,11 @@ async function formatOperation(
     operation.extra.pagingToken = rawOperation.paging_token;
   }
   if (rawOperation.asset_code) {
-    operation.extra.assetCode = rawOperation.asset_code;
+    operation.extra.assetReference = rawOperation.asset_code;
     operation.extra.assetAmount = rawOperation.asset_code ? value.toString() : undefined;
   }
   if (rawOperation.asset_issuer) {
-    operation.extra.assetIssuer = rawOperation.asset_issuer;
+    operation.extra.assetOwner = rawOperation.asset_issuer;
   }
   if (memo) {
     operation.extra.memo = memo;
