@@ -3659,7 +3659,8 @@
           "refunded" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
           "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
           "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
-          "finished" : "Takas işleminiz başarıyla tamamlandı."
+          "finished" : "Takas işleminiz başarıyla tamamlandı.",
+          "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
         }
       },
       "missingApp" : {
@@ -3720,6 +3721,7 @@
             "provider" : "Sağlayıcı",
             "rate" : "Kur",
             "fees" : "Ağ ücretleri",
+            "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
             "target" : "Hedef hesap"
           },
           "noAccount" : "{{name}} almak için bir hesap oluşturun",
@@ -4044,6 +4046,10 @@
       "quantityAvailable" : "Mevcut miktar"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Kör imzalama gerekir",
+        "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+      },
       "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
       "tag" : "Etiket (İsteğe Bağlı)",
       "validateTag" : "Etiketi onayla",
@@ -7775,6 +7781,87 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
-    "searchPlaceholder" : "Ara"
+    "searchPlaceholder" : "Ara",
+    "emptyAssetList" : "No assets found",
+    "accountCount" : "{{count}} account (detected)",
+    "accountCount_plural" : "{{count}} accounts (detected)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Yanlış komut verisi",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "deserializationFailed" : {
+      "title" : "Yük seri durumdan çıkarılamadı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongTransactionId" : {
+      "title" : "Yanlış işlem kimliği",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidAddress" : {
+      "title" : "Geçersiz adres",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu alıcı hesabı, bağlı cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu gönderen hesabı, bağlı cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
+    },
+    "userRefused" : {
+      "title" : "İşlem cihazda reddedildi",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "internalError" : {
+      "title" : "Dâhilî hata",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP1" : {
+      "title" : "Yanlış P1",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP2" : {
+      "title" : "Yanlış P2",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "wrongP2Extension" : {
+      "title" : "Yanlış P2 uzantısı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidP2Extension" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Geçersiz P2 uzantısı"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Beklenmedik talimat"
+    },
+    "classNotSupported" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Sınıf desteklenmiyor"
+    },
+    "invalidInstruction" : {
+      "title" : "Geçersiz talimat",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "malformedApdu" : {
+      "title" : "APDU başlığının biçimi yanlış",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "invalidDataLength" : {
+      "title" : "Geçersiz veri uzunluğu",
+      "description" : "Bu komut o uzunlukta veri kabul etmez"
+    },
+    "signatureVerificationFail" : {
+      "title" : "İmza doğrulanamadı",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "default" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    }
   }
 }
