@@ -113,8 +113,8 @@ export type StellarOperation = Operation<StellarOperationExtra>;
 
 export type StellarOperationExtra = {
   pagingToken?: string;
-  assetReference?: string;
-  assetOwner?: string;
+  assetCode?: string;
+  assetIssuer?: string;
   assetAmount?: string | undefined;
   ledgerOpType: OperationType;
   memo?: StellarMemo;

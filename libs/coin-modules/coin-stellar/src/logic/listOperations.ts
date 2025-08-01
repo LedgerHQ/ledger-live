@@ -31,11 +31,11 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
   return {
     id: `${operation.hash}-${operation.extra.index}`,
     asset:
-      operation.extra?.assetReference && operation.extra?.assetOwner
+      operation.extra?.assetCode && operation.extra?.assetIssuer
         ? {
             type: "token",
-            assetReference: operation.extra.assetReference,
-            assetOwner: operation.extra.assetOwner,
+            assetReference: operation.extra.assetCode,
+            assetOwner: operation.extra.assetIssuer,
           }
         : { type: "native" },
     tx: {
