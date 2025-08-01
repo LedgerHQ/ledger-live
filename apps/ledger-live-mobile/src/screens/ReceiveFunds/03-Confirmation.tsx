@@ -252,14 +252,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const bannerHeight = useSharedValue(screenHeight * 0.23);
   const bannerOpacity = useSharedValue(1);
 
-  const animatedBannerStyle = useAnimatedStyle(() => ({
-    height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
-      if (onFinish && bannerHeight.value === 0) {
-        runOnJS(hideBanner)();
-      }
+  const animatedBannerStyle = useAnimatedStyle(
+    () => ({
+      height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
+        if (onFinish && bannerHeight.value === 0) {
+          runOnJS(hideBanner)();
+        }
+      }),
+      opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    opacity: withTiming(bannerOpacity.value, { duration: 200 }),
-  }));
+    [bannerHeight, bannerOpacity],
+  );
 
   const handleBannerClose = useCallback(() => {
     bannerHeight.value = 0;

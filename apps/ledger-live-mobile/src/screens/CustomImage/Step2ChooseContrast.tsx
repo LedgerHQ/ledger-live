@@ -167,13 +167,19 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
     [animSelectedIndex],
   );
 
-  const leftBoxAnimatedStyle = useAnimatedStyle(() => ({
-    width: (3 - animSelectedIndex.value) * 54,
-  }));
+  const leftBoxAnimatedStyle = useAnimatedStyle(
+    () => ({
+      width: (3 - animSelectedIndex.value) * 54,
+    }),
+    [animSelectedIndex],
+  );
 
-  const rightBoxAnimatedStyle = useAnimatedStyle(() => ({
-    width: animSelectedIndex.value * 54,
-  }));
+  const rightBoxAnimatedStyle = useAnimatedStyle(
+    () => ({
+      width: animSelectedIndex.value * 54,
+    }),
+    [animSelectedIndex],
+  );
 
   const confirmEventProperties = useMemo(
     () => ({

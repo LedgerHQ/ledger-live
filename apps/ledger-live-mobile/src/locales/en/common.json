@@ -7786,8 +7786,8 @@
     "selectAccount": "Select account",
     "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
-    "accountCount": "{{count}} account (detected)",
-    "accountCount_plural": "{{count}} accounts (detected)"
+    "accountCount": "{{count}} account",
+    "accountCount_plural": "{{count}} accounts"
   },
   "swapErrors": {
     "incorrectCommandData": {

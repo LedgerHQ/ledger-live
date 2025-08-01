@@ -57,6 +57,7 @@ export function useModularDrawerState({
 
   useEffect(() => {
     if (isDrawerOpen) {
+      setDefaultSearchValue("");
       hasClosedRef.current = false;
     }
   }, [isDrawerOpen]);

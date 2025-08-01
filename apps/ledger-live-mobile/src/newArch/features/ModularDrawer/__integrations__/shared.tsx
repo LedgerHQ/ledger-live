@@ -116,10 +116,9 @@ const MockModularDrawerComponent = ({
 
 export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => (
   <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
-    <Stack.Screen
-      name={ScreenName.MockedModularDrawer}
-      component={() => <MockModularDrawerComponent {...props} />}
-    />
+    <Stack.Screen name={ScreenName.MockedModularDrawer}>
+      {() => <MockModularDrawerComponent {...props} />}
+    </Stack.Screen>
     <Stack.Screen
       name={NavigatorName.DeviceSelection}
       component={DeviceSelectionNavigator}
