@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react";
 
-export const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <CountervaluesMarketcapProvider
-    bridge={{
+export const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const bridge = useMemo(
+    () => ({
       setError: () => {},
       setIds: () => {},
       setLoading: () => {},
       useIds: () => [],
       useLastUpdated: () => 0,
-    }}
-  >
-    {children}
-  </CountervaluesMarketcapProvider>
-);
+    }),
+    [],
+  );
+  return (
+    <CountervaluesMarketcapProvider bridge={bridge}>{children}</CountervaluesMarketcapProvider>
+  );
+};

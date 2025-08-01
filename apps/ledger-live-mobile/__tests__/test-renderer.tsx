@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   render as rntlRender,
   RenderOptions,
@@ -43,6 +43,8 @@ import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
+import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 
 const initialState: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -140,11 +142,33 @@ function Providers({
       </StyleProvider>
     );
 
+  const countervaluesBridge = useMemo((): CountervaluesBridge => {
+    const state = store.getState();
+    return {
+      setPollingIsPolling: () => {},
+      setPollingTriggerLoad: () => {},
+      setState: () => {},
+      setStateError: () => {},
+      setStatePending: () => {},
+      usePollingIsPolling: () => false,
+      usePollingTriggerLoad: () => false,
+      useState: () => state.countervalues.countervalues.state,
+      useStateError: () => null,
+      useStatePending: () => false,
+      useUserSettings: () => state.countervalues.userSettings,
+      wipe: () => {},
+    };
+  }, [store]);
+
   // General Providers needed for all render types
   let providers = (
     <Provider store={store}>
       <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-        {extraProviders}
+        <CountervaluesMarketcapBridgedProvider>
+          <CountervaluesProvider bridge={countervaluesBridge}>
+            {extraProviders}
+          </CountervaluesProvider>
+        </CountervaluesMarketcapBridgedProvider>
       </FirebaseFeatureFlagsProvider>
     </Provider>
   );

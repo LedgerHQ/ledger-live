@@ -347,7 +347,7 @@
     "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
-    "src/exchange/swap/hooks/wrapper.tsx"
+    "src/exchange/swap/hooks/wrapper.tsx",
     "src/families/aptos/config.ts",
     "src/families/aptos/constants.ts",
     "src/families/aptos/logic.ts",

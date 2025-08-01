@@ -33,7 +33,7 @@ function Effect() {
   return null;
 }
 
-export function CountervaluesManagedProvider({
+export function CountervaluesBridgedProvider({
   children,
   initialState,
 }: {
