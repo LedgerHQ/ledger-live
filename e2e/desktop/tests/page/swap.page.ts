@@ -56,7 +56,7 @@ export class SwapPage extends AppPage {
   private insufficientFundsWarningElem = this.drawerContent.getByTestId(
     "insufficient-funds-warning",
   );
-  private continueButton = this.drawerContent.getByTestId("continue-button");
+  private continueButton = this.drawerContent.getByRole("button", { name: "Continue" });
   private drawerCloseButton = this.drawerContent.getByTestId("drawer-close-button");
 
   async sendMax() {
@@ -78,24 +78,41 @@ export class SwapPage extends AppPage {
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview.getByTestId(baseProviderLocator + "amount-label").click();
-    await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-infoIcon")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-value")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "networkFees-fiat-value")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-heading")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-value")).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
+    await webview
+      .getByTestId(baseProviderLocator + "amount-label")
+      .nth(1)
+      .click();
+    await expect(webview.getByTestId(baseProviderLocator + "amount-label").nth(1)).toBeVisible();
+    await expect(
+      webview.getByTestId(baseProviderLocator + "fiatAmount-label").nth(1),
+    ).toBeVisible();
+    await expect(
+      webview.getByTestId(baseProviderLocator + "networkFees-heading").nth(1),
+    ).toBeVisible();
+    await expect(
+      webview.getByTestId(baseProviderLocator + "networkFees-infoIcon").nth(1),
+    ).toBeVisible();
+    await expect(
+      webview.getByTestId(baseProviderLocator + "networkFees-value").nth(1),
+    ).toBeVisible();
+    await expect(
+      webview.getByTestId(baseProviderLocator + "networkFees-fiat-value").nth(1),
+    ).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-heading").nth(1)).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-value").nth(1)).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value").nth(1)).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
       provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
-      await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
-      await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
+      await expect(
+        webview.getByTestId(baseProviderLocator + "slippage-heading").nth(1),
+      ).toBeVisible();
+      await expect(
+        webview.getByTestId(baseProviderLocator + "slippage-value").nth(1),
+      ).toBeVisible();
     }
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
@@ -178,7 +195,7 @@ export class SwapPage extends AppPage {
   @step("Tap quote infos fees selector")
   async tapQuoteInfosFeesSelector(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.quoteInfosFeesSelector).first().click();
+    await webview.getByTestId(this.quoteInfosFeesSelector).nth(1).click();
   }
 
   @step("Check drawer error message ($0)")
@@ -191,47 +208,60 @@ export class SwapPage extends AppPage {
   @step("Get all swap providers available")
   async getAllSwapProviders(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    return await webview
+    const elements = await webview
       .locator(
         '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
       )
-      .allTextContents();
+      .all();
+    return Promise.all(elements.map(el => el.innerText().then(text => text.replace(/\n/g, " "))));
   }
 
   @step("Extract quotes and fees")
-  async extractQuotesAndFees(quoteContainers: string[]) {
-    const quotes = quoteContainers
+  async extractQuotesAndFees(quotes: string[]) {
+    const parsed = quotes
       .map(quote => {
         const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
-        if (match) {
-          const rate = parseFloat(match[1]);
-          const fees = parseFloat(match[2]);
-          return { rate, fees, quote };
-        }
-        return undefined;
+        if (!match) return null;
+        return {
+          rate: parseFloat(match[1]),
+          fees: parseFloat(match[2]),
+          quote,
+        };
       })
-      .filter(quote => quote !== undefined);
+      .filter((quote): quote is { rate: number; fees: number; quote: string } => quote !== null);
 
-    if (quotes.length === 0) {
-      throw new Error("No quotes found");
-    }
-    return quotes;
+    if (parsed.length === 0) throw new Error("No quotes found");
+    return parsed;
   }
 
   @step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer(electronApp: ElectronApplication) {
-    const quoteContainers = await this.getAllSwapProviders(electronApp);
     try {
-      const quotes = await this.extractQuotesAndFees(quoteContainers);
-      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
-        (max, current) =>
-          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
-        null,
-      );
-      expect(bestOffer?.quote).toContain("Best Offer");
+      const quoteTexts = await this.getAllSwapProviders(electronApp);
+      const quotes = await this.extractQuotesAndFees(quoteTexts);
+      const bestQuote = this.findBestQuote(quotes);
+
+      expect(bestQuote?.quote).toContain("Best Offer");
     } catch (error) {
       console.error("Error checking Best offer:", error);
     }
+  }
+
+  private findBestQuote(quotes: { rate: number; fees: number; quote: string }[]) {
+    if (quotes.length === 0) return null;
+
+    return quotes.slice(1).reduce((best, current) => {
+      const bestValue = best.rate - best.fees;
+      const currentValue = current.rate - current.fees;
+
+      if (currentValue > bestValue) return current;
+      if (currentValue < bestValue) return best;
+
+      const currentIsLabeled = current.quote.includes("Best Offer");
+      const bestIsLabeled = best.quote.includes("Best Offer");
+
+      return currentIsLabeled && !bestIsLabeled ? current : best;
+    }, quotes[0]);
   }
 
   @step("Wait for exchange to be available")
@@ -498,9 +528,9 @@ export class SwapPage extends AppPage {
     expect(fileContents).toContain(swap.accountToCredit.address);
   }
 
-  @step("Check minimum amount for swap")
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    return (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
+    const amount = (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
+    return amount ? parseFloat(amount).toString() : "";
   }
 
   @step("Click on swap max")
