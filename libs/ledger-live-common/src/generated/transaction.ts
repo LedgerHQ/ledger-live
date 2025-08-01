@@ -11,6 +11,7 @@ import hedera from "@ledgerhq/coin-hedera/transaction";
 import filecoin from "@ledgerhq/coin-filecoin/transaction";
 import internet_computer from "@ledgerhq/coin-internet_computer/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
+import kaspa from "@ledgerhq/coin-kaspa/transaction";
 import multiversx from "@ledgerhq/coin-multiversx/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
@@ -39,6 +40,7 @@ export default {
   filecoin,
   internet_computer,
   icon,
+  kaspa,
   multiversx,
   near,
   polkadot,

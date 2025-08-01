@@ -1,0 +1,14 @@
+import { parseExtendedPublicKey } from "../kaspaAddresses";
+import { scanUtxos } from "../scanUtxos";
+
+describe("scan UTXOs function", () => {
+  it("Gets information about addresses being active or not", async () => {
+    const xpub =
+      "410404cd27f15b8a73039972cdd131a93754ef3fa90bee794222737f5ca26a12f887f2fd493acf13230fa42c418d2c1be53a6fc66fbbec3ea9c37a675acc53a65e08203a35a71b1d8c10f7b03cf84c50570ee21af9b830b25bbe16ec661e7de8a51563";
+    const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(xpub, "hex"));
+
+    const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
+
+    expect(utxos.length).toBeGreaterThan(0);
+  });
+});

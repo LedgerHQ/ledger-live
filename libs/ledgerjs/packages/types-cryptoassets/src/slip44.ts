@@ -50,6 +50,7 @@ export enum CoinType {
   ICP = 223,
   IOTA = 4218,
   IOV = 234,
+  KASPA = 111111,
   KIN = 2017,
   KOMODO = 141,
   KUSAMA = 434,

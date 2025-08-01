@@ -133,6 +133,7 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "canton_network",
+  "kaspa",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
