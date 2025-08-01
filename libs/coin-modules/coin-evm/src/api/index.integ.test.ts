@@ -104,7 +104,7 @@ describe.each([
   describe("estimateFees", () => {
     it("estimates fees for native asset transfer", async () => {
       const result: FeeEstimation = await module.estimateFees({
-        type: "send",
+        type: "send-legacy",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -119,7 +119,7 @@ describe.each([
 
     it("estimates fees for USDC token transfer", async () => {
       const result = await module.estimateFees({
-        type: "send",
+        type: "send-legacy",
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
