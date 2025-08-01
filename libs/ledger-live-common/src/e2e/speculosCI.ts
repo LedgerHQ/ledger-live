@@ -12,10 +12,11 @@ const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
 const GITHUB_REF = "main";
-const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
+export const getSpeculosAddress = (runId: string) =>
+  `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
-function uniqueId(): string {
+export function uniqueId(): string {
   const timestamp = Date.now().toString(36);
   const randomString = Math.random().toString(36).slice(2, 7);
   return timestamp + randomString;
@@ -58,7 +59,7 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
+export function waitForSpeculosReady(url: string, { interval = 2_000, timeout = 150_000 } = {}) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     let currentRequest: ReturnType<typeof https.get> | null = null;
@@ -150,20 +151,17 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
 
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
+  runId?: string,
 ): Promise<SpeculosDevice | undefined> {
   try {
-    const runId = uniqueId();
-    console.warn("Creating remote speculos:", runId);
+    runId ??= uniqueId();
     const data = createStartPayload(deviceParams, runId);
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
-    await waitForSpeculosReady(getSpeculosAddress(runId));
-
     return {
       id: runId,
       port: speculosPort,
     };
   } catch (e: unknown) {
-    console.error(e);
     console.warn(
       `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
     );
