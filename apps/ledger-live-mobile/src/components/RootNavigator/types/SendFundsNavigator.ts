@@ -1,9 +1,9 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Operation } from "@ledgerhq/types-live";
 import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import type {
   CardanoAccount,
@@ -34,6 +34,10 @@ import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/fa
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
+import type {
+  Transaction as KaspaTransaction,
+  TransactionStatus as KaspaTransactionStatus,
+} from "@ledgerhq/live-common/families/kaspa/types";
 import BigNumber from "bignumber.js";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "~/const";
@@ -204,6 +208,22 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
+  };
+  [ScreenName.KaspaEditCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: KaspaTransaction;
+    status?: KaspaTransactionStatus;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+    sompiPerByte?: BigNumber | null;
+    setSompiPerByte?: (_: BigNumber) => void;
   };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;

@@ -527,6 +527,8 @@ export enum ScreenName {
   AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
   AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
   AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
+  // Kaspa
+  KaspaEditCustomFees = "KaspaEditCustomFees",
 
   // sui
   SuiStakingValidator = "SuiStakingValidator",
