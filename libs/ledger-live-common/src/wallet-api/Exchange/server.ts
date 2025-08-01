@@ -593,6 +593,8 @@ export const handlers = ({
               fromAccount: fromAccount.id,
               toAccount: toAccount?.id!,
               amount: amountExpectedTo.toString(),
+              seedIdFrom: mainFromAccount.seedIdentifier,
+              seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             });
 
             reject(error);

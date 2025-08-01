@@ -203,6 +203,8 @@ type SwapStateRequest = {
   fromAccount?: string;
   toAccount?: string;
   amount?: string;
+  seedIdFrom?: string;
+  seedIdTo?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {

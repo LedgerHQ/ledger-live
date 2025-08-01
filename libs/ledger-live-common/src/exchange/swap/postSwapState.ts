@@ -27,11 +27,22 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   }
 
   // Create swap intent hash
-  const swapIntent = crypto
+  const swapIntentWithProvider = crypto
     .createHash("sha256")
     .update(
       JSON.stringify({
         provider,
+        fromAccount,
+        toAccount,
+        amount,
+      }),
+    )
+    .digest("hex");
+
+  const swapIntentWithoutProvider = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
         fromAccount,
         toAccount,
         amount,
@@ -49,7 +60,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
-      data: { provider, swapId, transactionId, swapIntent, ...rest },
+      data: { provider, swapId, swapIntentWithProvider, swapIntentWithoutProvider, ...rest },
       ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
@@ -69,11 +80,22 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
-  const swapIntent = crypto
+  const swapIntentWithProvider = crypto
     .createHash("sha256")
     .update(
       JSON.stringify({
         provider,
+        fromAccount,
+        toAccount,
+        amount,
+      }),
+    )
+    .digest("hex");
+
+  const swapIntentWithoutProvider = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
         fromAccount,
         toAccount,
         amount,
@@ -99,7 +121,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/cancelled`,
-      data: { provider, swapId, swapIntent, ...rest },
+      data: { provider, swapId, swapIntentWithProvider, swapIntentWithoutProvider,  ...rest },
       ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
