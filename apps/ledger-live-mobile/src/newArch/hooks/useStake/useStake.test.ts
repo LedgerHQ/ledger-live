@@ -44,7 +44,7 @@ const rawTron: AccountRaw = {
 };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
+setCryptoAssetsStore({} as CryptoAssetsStore);
 const mockEthereumAccount = fromAccountRaw(raw);
 const mockTronAccount = fromAccountRaw(rawTron);
 

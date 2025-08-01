@@ -43,7 +43,7 @@ test("mock fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
     findTokenByTicker: (_: string) => undefined,
-  } as unknown as CryptoAssetsStore);
+  } as CryptoAssetsStore);
 
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });

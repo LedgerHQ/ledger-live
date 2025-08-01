@@ -21,7 +21,7 @@ setCryptoAssetsStoreForCoinFramework({
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
   findTokenByTicker: legacy.findTokenByTicker,
-} as unknown as CryptoAssetsStore);
+} as CryptoAssetsStore);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml

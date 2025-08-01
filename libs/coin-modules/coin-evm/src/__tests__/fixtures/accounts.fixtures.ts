@@ -46,7 +46,7 @@ setCryptoAssetsStore({
     return undefined;
   },
   findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
-} as unknown as CryptoAssetsStore);
+} as CryptoAssetsStore);
 
 export const TMUSDTTransaction = makeOperation({
   hash: "anyHash",

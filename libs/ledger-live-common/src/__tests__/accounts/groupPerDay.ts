@@ -13,7 +13,9 @@ LiveConfig.setConfig({
     default: true,
   },
 });
-setup({} as unknown as CryptoAssetsStore);
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setup({} as CryptoAssetsStore);
 
 const account = fromAccountRaw({
   id: "libcore:1:tezos:A:tezbox",

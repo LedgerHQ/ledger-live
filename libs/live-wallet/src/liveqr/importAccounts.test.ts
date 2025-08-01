@@ -79,7 +79,7 @@ describe("importAccountsMakeItems", () => {
       },
     };
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
+    setCryptoAssetsStore({} as CryptoAssetsStore);
     const accounts = [
       <AccountRaw>{
         id: "js:1:ethereum:0x01:",

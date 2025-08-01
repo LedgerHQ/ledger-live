@@ -9,7 +9,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/ind
 import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as unknown as CryptoAssetsStore);
+setCryptoAssetsStore({} as CryptoAssetsStore);
 
 setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {

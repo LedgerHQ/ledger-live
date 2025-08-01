@@ -22,7 +22,7 @@ import {
 import usdtTokenData from "../../__fixtures__/scroll_sepolia-erc20-mock_usdt.json";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const USDT_TOKEN = usdtTokenData as unknown as TokenCurrency;
+const USDT_TOKEN = usdtTokenData as TokenCurrency;
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);

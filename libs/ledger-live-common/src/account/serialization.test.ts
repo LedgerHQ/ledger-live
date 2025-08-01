@@ -14,7 +14,7 @@ setSupportedCurrencies(["solana"]);
 const Solana = getCryptoCurrencyById("solana");
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const USDC = solanaSplTokenData as unknown as TokenCurrency;
+const USDC = solanaSplTokenData as TokenCurrency;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
@@ -26,7 +26,7 @@ setCryptoAssetsStoreForCoinFramework({
     return undefined;
   },
   findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-} as unknown as CryptoAssetsStore);
+} as CryptoAssetsStore);
 
 describe("serialization", () => {
   test("TokenAccount extra fields should be serialized/deserialized", () => {

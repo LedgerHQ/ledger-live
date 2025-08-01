@@ -68,7 +68,7 @@ describe("DataModel", () => {
   setCryptoAssetsStoreForCoinFramework({
     findTokenById: (_: string) => undefined,
     findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-  } as unknown as CryptoAssetsStore);
+  } as CryptoAssetsStore);
 
   test("createDataModel for crypto.org account", () => {
     const migratedCryptoOrgAccount = createDataModel(schema).decode(cryptoOrgAccount);

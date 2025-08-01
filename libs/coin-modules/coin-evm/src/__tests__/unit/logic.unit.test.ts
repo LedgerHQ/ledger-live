@@ -647,7 +647,7 @@ describe("EVM Family", () => {
             return undefined;
           },
           findTokenByAddressInCurrency: (_: string, __: string) => undefined,
-        } as unknown as CryptoAssetsStore);
+        } as CryptoAssetsStore);
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });

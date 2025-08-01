@@ -10,7 +10,7 @@ import * as cryptoAssets from "../crypto-assets";
 import { CryptoAssetsStore } from "../crypto-assets/type";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const TOKEN = tokenData as unknown as TokenCurrency;
+const TOKEN = tokenData as TokenCurrency;
 
 describe("coin-framework", () => {
   describe("accountId", () => {
@@ -69,7 +69,7 @@ describe("coin-framework", () => {
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           .mockReturnValue({
             findTokenById: (_: unknown) => TOKEN,
-          } as unknown as CryptoAssetsStore);
+          } as CryptoAssetsStore);
 
         expect(
           decodeTokenAccountId(

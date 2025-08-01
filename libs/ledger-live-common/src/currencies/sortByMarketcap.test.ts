@@ -8,7 +8,7 @@ import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
   findTokenByTicker: (_: string) => undefined,
-} as unknown as CryptoAssetsStore);
+} as CryptoAssetsStore);
 
 test("sortCurrenciesByIds snapshot", () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];

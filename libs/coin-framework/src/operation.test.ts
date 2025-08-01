@@ -7,9 +7,11 @@ import { isAddressPoisoningOperation, isOldestPendingOperation } from "./operati
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
-const usdc = { parentCurrency: { family: "evm" } } as unknown as TokenCurrency;
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const usdc = { parentCurrency: { family: "evm" } } as TokenCurrency;
 const cardano = getCryptoCurrencyById("cardano");
-const lobster = { parentCurrency: { family: "cardano" } } as unknown as TokenCurrency;
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const lobster = { parentCurrency: { family: "cardano" } } as TokenCurrency;
 
 describe("Operation.ts", () => {
   describe("isPoisoningAddressOperation", () => {

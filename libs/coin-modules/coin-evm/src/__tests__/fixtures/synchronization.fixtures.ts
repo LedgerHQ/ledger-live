@@ -59,9 +59,9 @@ export const swapHistory = [
 
 export const tokenCurrencies = [
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  Object.freeze(usdCoinTokenData as unknown as TokenCurrency),
+  Object.freeze(usdCoinTokenData as TokenCurrency),
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  Object.freeze(usdTetherTokenData as unknown as TokenCurrency),
+  Object.freeze(usdTetherTokenData as TokenCurrency),
 ];
 
 export const tokenAccount = {
@@ -111,7 +111,7 @@ setCryptoAssetsStore({
     return undefined;
   },
   findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
-} as unknown as CryptoAssetsStore);
+} as CryptoAssetsStore);
 
 export const tokenOperations = [
   makeOperation({
