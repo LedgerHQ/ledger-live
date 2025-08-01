@@ -19,7 +19,7 @@ export default class AccountsPage extends CommonPage {
   }
 
   @Step("Expect accounts number")
-  async expectAccountsNumber(expected: number, testDataJson?: string) {
+  async expectAccountsNumber(expectedAccountCount: number, testDataJson?: string) {
     let expectedAccountIds: string[] = [];
 
     if (testDataJson) {
@@ -32,13 +32,11 @@ export default class AccountsPage extends CommonPage {
     }
 
     let foundAccounts = 0;
-
     for (const accountId of expectedAccountIds) {
-      const element = getElementById(`account-item-${accountId}`);
-      await detoxExpect(element).toBeVisible();
+      await waitForElementById(`account-item-${accountId}-name`);
       foundAccounts++;
     }
-    jestExpect(foundAccounts).toBe(expected);
+    jestExpect(foundAccounts).toBe(expectedAccountCount);
   }
 
   @Step("Expect no accounts screen")
