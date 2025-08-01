@@ -284,7 +284,9 @@ describe("Testing craftTransaction function", () => {
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>, customFees);
+    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>, {
+      value: customFees,
+    });
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),

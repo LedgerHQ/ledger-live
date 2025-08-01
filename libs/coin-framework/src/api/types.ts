@@ -202,12 +202,7 @@ export type TransactionValidation = {
 
 export type FeeEstimation = {
   value: bigint;
-  parameters?: {
-    storageLimit: bigint;
-    gasLimit: bigint;
-    // Optional gas price, only for Aptos (need to improve)
-    gasPrice?: bigint;
-  };
+  parameters?: Record<string, unknown>;
 };
 
 // TODO rename start to minHeight
@@ -231,7 +226,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
   craftTransaction: (
     transactionIntent: TransactionIntent<MemoType>,
-    customFees?: bigint,
+    customFees?: FeeEstimation,
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;

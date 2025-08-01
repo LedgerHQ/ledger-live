@@ -604,6 +604,37 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  canton_network: {
+    type: "CryptoCurrency",
+    id: "canton_network",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 20,
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 11,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-to-define.io/transaction/$hash",
+        address: "https://explorer-to-define.io/address/$address",
+      },
+    ],
+    keywords: ["cc", "canton", "canton_network"],
+  },
   cardano: {
     type: "CryptoCurrency",
     id: "cardano",

@@ -28,7 +28,7 @@ describe("craftTransaction", () => {
         maxPriorityFeePerGas: null,
         nextBaseFee: null,
       },
-      { gasPrice: 5 },
+      { gasPrice: 8 },
     ],
     [
       "eip1559",
@@ -62,6 +62,12 @@ describe("craftTransaction", () => {
             amount: 10n,
             asset: { type: "native" },
           } as TransactionIntent,
+          customFees: {
+            value: 0n,
+            parameters: {
+              gasPrice: 8n,
+            },
+          },
         }),
       ).toEqual(
         ethers.utils.serializeTransaction({
@@ -94,6 +100,12 @@ describe("craftTransaction", () => {
             amount: 10n,
             asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
           } as TransactionIntent,
+          customFees: {
+            value: 0n,
+            parameters: {
+              gasPrice: 8n,
+            },
+          },
         }),
       ).toEqual(
         ethers.utils.serializeTransaction({

@@ -140,7 +140,7 @@ describe("Testing craftTransaction function", () => {
         recipient,
         amount,
       },
-      customFees,
+      { value: customFees },
     );
 
     const decodeResult = await decodeTransaction(result);

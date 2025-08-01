@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
 
@@ -37,6 +38,22 @@ describe("getTransactionStatus", () => {
       expect(stubIsElectionClosed).not.toHaveBeenCalled();
       expect(stubIsControllerAddress).not.toHaveBeenCalled();
       expect(stubVerifyValidatorAddresses).not.toHaveBeenCalled();
+    });
+
+    it("[Bug Polkadot] should have no amount error when user have a valid spendable balance", async () => {
+      const account = createFixtureAccount({
+        spendableBalance: new BigNumber(6705569396),
+        balance: new BigNumber(16705569396),
+      });
+      const transaction = createFixtureTransaction({
+        mode: "send",
+        fees: new BigNumber(158612606),
+        useAllAmount: false,
+        amount: new BigNumber(10000000),
+      });
+
+      const status = await getTransactionStatus(account, transaction);
+      expect(status.errors.amount).toBeUndefined();
     });
   });
 });

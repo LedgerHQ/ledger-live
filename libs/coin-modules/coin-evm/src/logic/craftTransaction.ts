@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -17,8 +17,10 @@ export async function craftTransaction(
   currency: CryptoCurrency,
   {
     transactionIntent,
+    customFees,
   }: {
     transactionIntent: TransactionIntent;
+    customFees?: FeeEstimation | undefined;
   },
 ): Promise<string> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
@@ -41,7 +43,7 @@ export async function craftTransaction(
     type === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
   const fee = await node.getFeeData(currency, { type: transactionType });
 
-  return ethers.utils.serializeTransaction({
+  const unsignedTransaction: ethers.utils.UnsignedTransaction = {
     type: transactionType,
     to,
     nonce,
@@ -56,5 +58,23 @@ export async function craftTransaction(
     ...(fee.maxPriorityFeePerGas
       ? { maxPriorityFeePerGas: ethers.BigNumber.from(fee.maxPriorityFeePerGas.toFixed(0)) }
       : {}),
-  });
+  };
+
+  if (
+    transactionType === TransactionTypes.legacy &&
+    typeof customFees?.parameters?.gasPrice === "bigint"
+  ) {
+    unsignedTransaction.gasPrice = customFees.parameters.gasPrice;
+  }
+
+  if (
+    transactionType === TransactionTypes.eip1559 &&
+    typeof customFees?.parameters?.maxFeePerGas === "bigint" &&
+    typeof customFees?.parameters?.maxPriorityFeePerGas === "bigint"
+  ) {
+    unsignedTransaction.maxFeePerGas = customFees.parameters.maxFeePerGas;
+    unsignedTransaction.maxPriorityFeePerGas = customFees.parameters.maxPriorityFeePerGas;
+  }
+
+  return ethers.utils.serializeTransaction(unsignedTransaction);
 }

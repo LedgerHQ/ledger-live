@@ -19,6 +19,8 @@ import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -58,6 +60,37 @@ export function useCustomExchangeHandlers({
     const ptxCustomHandlers = {
       "custom.close": () => {
         navigation.popToTop();
+      },
+      "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
+        const accountId = request.params?.accountId;
+
+        return new Promise<void>((resolve, reject) => {
+          try {
+            if (accountId) {
+              const id = getAccountIdFromWalletAccountId(accountId);
+              const account = accounts.find(acc => acc.id === id);
+
+              if (!account) {
+                reject(new Error("Account not found"));
+                return;
+              }
+
+              navigation.navigate(NavigatorName.NoFundsFlow, {
+                screen: ScreenName.NoFunds,
+                params: {
+                  account,
+                  parentAccount: isTokenAccount(account)
+                    ? getParentAccount(account, accounts)
+                    : undefined,
+                },
+              });
+
+              resolve();
+            }
+          } catch (error) {
+            reject(error);
+          }
+        });
       },
     };
 

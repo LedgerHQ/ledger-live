@@ -127,3 +127,19 @@ export const stripHexPrefix = (str: string): string => {
 
   return isHexPrefixed(str) ? str.slice(2) : str;
 };
+
+export function objectToURLSearchParams(obj: Record<string, unknown>): URLSearchParams {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (typeof value === "object") {
+        searchParams.append(key, JSON.stringify(value));
+      } else {
+        searchParams.append(key, String(value));
+      }
+    }
+  });
+
+  return searchParams;
+}

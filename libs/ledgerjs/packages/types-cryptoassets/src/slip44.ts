@@ -15,6 +15,7 @@ export enum CoinType {
   BTC_PRIVATE = 183,
   BTC_TESTNET = 1,
   CALLISTO = 820,
+  CANTON_NETWORK = 6767,
   CARDANO = 1815,
   CELO = 52752,
   CLUB = 79,

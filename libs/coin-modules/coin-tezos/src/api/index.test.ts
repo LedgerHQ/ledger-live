@@ -111,10 +111,9 @@ describe("Testing craftTransaction function", () => {
         gasLimit: DEFAULT_GAS_LIMIT,
         storageLimit: DEFAULT_STORAGE_LIMIT,
       });
-      await api.craftTransaction(
-        { type: "send", sender: {} } as TezosTransactionIntent,
-        customFees,
-      );
+      await api.craftTransaction({ type: "send", sender: {} } as TezosTransactionIntent, {
+        value: customFees,
+      });
       expect(logicEstimateFees).toHaveBeenCalledTimes(1);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),

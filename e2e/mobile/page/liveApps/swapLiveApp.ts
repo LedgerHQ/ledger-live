@@ -82,7 +82,7 @@ export default class SwapLiveAppPage {
 
   @Step("Select available provider")
   async selectExchange() {
-    let index = 0;
+    let index = 1;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -124,7 +124,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
     const providerList = await getWebElementsText(this.quoteProviderName);
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
+    jestExpect(numberOfQuotesText).toEqual(`${providerList.length - 1} quotes found`);
     return providerList;
   }
 

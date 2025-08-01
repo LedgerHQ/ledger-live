@@ -36,6 +36,7 @@ import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
+import { ModularDrawerState } from "./modularDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -399,6 +400,7 @@ export type State = {
   wallet: WalletState;
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
+  modularDrawer: ModularDrawerState;
   largeMover: LargeMoverState;
   toasts: ToastState;
 };

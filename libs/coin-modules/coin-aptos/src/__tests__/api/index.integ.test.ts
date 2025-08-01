@@ -115,7 +115,7 @@ describe("createApi", () => {
           type: "send",
           asset: { type: "native" },
         },
-        0n,
+        { value: 0n },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -141,7 +141,7 @@ describe("createApi", () => {
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
-        0n,
+        { value: 0n },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -167,7 +167,7 @@ describe("createApi", () => {
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
-        0n,
+        { value: 0n },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -194,7 +194,7 @@ describe("createApi", () => {
             assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
           },
         },
-        0n,
+        { value: 0n },
       );
 
       const rawTx = RawTransaction.deserialize(

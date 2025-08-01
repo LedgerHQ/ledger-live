@@ -25,6 +25,8 @@ export type NetworkSelectionStepProps = {
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
 
+const SAFE_MARGIN_BOTTOM = 48;
+
 const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
@@ -77,11 +79,15 @@ const NetworkSelection = ({
       />
       <BottomSheetFlatList
         scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
         data={formattedNetworks}
         keyExtractor={keyExtractor}
         renderItem={({ item }: { item: NetworkType }) => (
           <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
         )}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+        }}
       />
     </Flex>
   );

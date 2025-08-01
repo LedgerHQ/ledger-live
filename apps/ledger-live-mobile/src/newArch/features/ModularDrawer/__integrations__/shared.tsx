@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import { ModularDrawer } from "../ModularDrawer";
+
 import { Button } from "@ledgerhq/native-ui";
 import {
   mockArbitrumCryptoCurrency,
@@ -11,8 +11,6 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { useModularDrawer } from "../hooks/useModularDrawer";
-import { ModularDrawerStep } from "../types";
 import {
   BTC_ACCOUNT,
   ETH_ACCOUNT,
@@ -23,6 +21,10 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
 import { BigNumber } from "bignumber.js";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { ModularDrawer, useModularDrawerController } from "..";
+
+export const WITH_ACCOUNT_SELECTION = "Open Drawer (with account selection)";
+export const WITHOUT_ACCOUNT_SELECTION = "Open Drawer (without account selection)";
 
 const currencies = [
   mockBtcCryptoCurrency,
@@ -60,15 +62,19 @@ const MockModularDrawerComponent = ({
   networksConfiguration,
   assetsConfiguration,
 }: MockModularDrawerComponentProps) => {
-  const { openDrawer, closeDrawer, isDrawerOpen } = useModularDrawer();
+  const { openDrawer, closeDrawer, isOpen, enableAccountSelection } = useModularDrawerController();
 
-  const handleOpenDrawer = useCallback(() => {
-    openDrawer();
-  }, [openDrawer]);
-
-  const handleCloseDrawer = useCallback(() => {
-    closeDrawer();
-  }, [closeDrawer]);
+  const handleOpenDrawer = useCallback(
+    (withAccountSelection: boolean) => {
+      openDrawer({
+        currencies,
+        enableAccountSelection: withAccountSelection,
+        flow: "integration_test",
+        source: "modular_drawer_shared",
+      });
+    },
+    [openDrawer],
+  );
 
   return (
     <>
@@ -78,18 +84,29 @@ const MockModularDrawerComponent = ({
         outline
         mt={6}
         mb={8}
-        onPress={handleOpenDrawer}
+        onPress={() => handleOpenDrawer(true)}
         role="button"
       >
-        {"Open Drawer"}
+        {WITH_ACCOUNT_SELECTION}
+      </Button>
+      <Button
+        type="shade"
+        size="large"
+        outline
+        mt={6}
+        mb={8}
+        onPress={() => handleOpenDrawer(false)}
+        role="button"
+      >
+        {WITHOUT_ACCOUNT_SELECTION}
       </Button>
       <ModularDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
+        isOpen={isOpen}
+        onClose={closeDrawer}
         currencies={currencies}
-        selectedStep={ModularDrawerStep.Asset}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
+        enableAccountSelection={enableAccountSelection}
         flow="integration_test"
         source="modular_drawer_shared"
       />

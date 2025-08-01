@@ -44,6 +44,9 @@ test("Market", async ({ page, electronApp }) => {
       page.getByTestId("market-cap"),
       page.getByTestId("market-price-change"),
       // Fix for Test App (external) workflow
+      page.getByRole("row").nth(3),
+      page.getByRole("row").nth(4),
+      page.getByRole("row").nth(5),
       page.getByRole("row").nth(6),
       page.getByRole("row").nth(7),
     ];

@@ -45,9 +45,9 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
 
 async function craft(
   transactionIntent: TransactionIntent<StellarMemo>,
-  customFees?: bigint,
+  customFees?: FeeEstimation,
 ): Promise<string> {
-  const fees = customFees !== undefined ? customFees : await estimateFees();
+  const fees = customFees?.value ?? (await estimateFees());
 
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {

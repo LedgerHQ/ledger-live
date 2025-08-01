@@ -8,7 +8,7 @@ import Delta from "~/components/Delta";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTranslation } from "react-i18next";
 import { useLocale } from "~/context/Locale";
-import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { counterValueFormatter } from "LLM/features/Market/utils";
 import { getColors } from "../utils";
 
 type PriceAndVariationProps = {

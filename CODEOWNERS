@@ -114,6 +114,8 @@ libs/exchange-module/                                                					@ledge
 libs/wallet-api-acre-module/                                         					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
 libs/live-services/cal/src/partners/                                 					@ledgerhq/ptx
+libs/ledgerjs/packages/types-live/src/swap.ts                        					@ledgerhq/ptx
+
 
 
 # Wallet API team > coin-integration

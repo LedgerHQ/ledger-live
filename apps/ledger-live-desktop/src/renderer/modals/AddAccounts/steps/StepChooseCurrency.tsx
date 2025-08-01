@@ -97,6 +97,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
+  const canton = useFeature("currencyCantonNetwork");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -162,6 +163,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       sui,
       mina,
       babylon,
+      canton_network: canton,
     }),
     [
       aptos,
@@ -226,6 +228,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       berachain,
       hyperevm,
       seiNetworkEvm,
+      canton,
     ],
   );
 

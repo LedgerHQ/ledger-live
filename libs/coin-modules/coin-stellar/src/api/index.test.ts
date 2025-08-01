@@ -111,7 +111,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>, fees);
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>, { value: fees });
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),

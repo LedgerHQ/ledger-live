@@ -20,6 +20,7 @@ export type CryptoCurrencyId =
   | "bitcoin_private"
   | "bsc"
   | "callisto"
+  | "canton_network"
   | "cardano"
   | "cardano_testnet"
   | "celo"

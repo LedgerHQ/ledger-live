@@ -152,7 +152,7 @@ describe("Xrp Api", () => {
             memos: new Map(),
           },
         },
-        customFees,
+        { value: customFees },
       );
 
       expect(decode(result)).toMatchObject({

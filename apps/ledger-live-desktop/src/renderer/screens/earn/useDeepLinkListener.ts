@@ -67,6 +67,7 @@ export const useDeepLinkListener = () => {
         queryParams.delete("accountId");
         break;
       }
+      // Deprecated: use custom.getFunds instead
       case "get-funds": {
         const currencyId = queryParams.get("currencyId");
         if (currencyId) {
