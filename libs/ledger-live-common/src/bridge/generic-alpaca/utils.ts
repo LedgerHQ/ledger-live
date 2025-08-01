@@ -12,8 +12,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   const opType = op.type as OperationType;
 
   const extra: {
-    assetCode?: string;
-    assetIssuer?: string;
+    assetReference?: string;
+    assetOwner?: string;
     assetAmount?: string | undefined;
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
@@ -28,8 +28,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   }
 
   if (op.asset?.type === "token") {
-    extra.assetCode = op.asset.assetReference;
-    extra.assetIssuer = op.asset.assetOwner;
+    extra.assetReference = op.asset.assetReference;
+    extra.assetOwner = op.asset.assetOwner;
   }
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
@@ -63,8 +63,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
  *
  * @param account - The account initiating the transaction. Contains details such as the sender's address.
  * @param transaction - The transaction object containing details about the operation to be performed.
- *   - `assetIssuer` (optional): The issuer of the asset, if applicable.
- *   - `assetCode` (optional): The code of the asset, if applicable.
+ *   - `assetOwner` (optional): The issuer of the asset, if applicable.
+ *   - `assetReference` (optional): The code of the asset, if applicable.
  *   - `mode` (optional): The mode of the transaction, e.g., "changetrust" or "send".
  *   - `fees` (optional): The fees associated with the transaction.
  *   - `memoType` (optional): The type of memo to attach to the transaction.
@@ -72,7 +72,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
  *
  * @returns A `TransactionIntent` object containing the standardized representation of the transaction.
  *   - Includes details such as type, sender, recipient, amount, fees, asset, and an optional memo.
- *   - If `assetCode` and `assetIssuer` are provided, the asset is represented as a token.
+ *   - If `assetReference` and `assetOwner` are provided, the asset is represented as a token.
  *   - If `memoType` and `memoValue` are provided, a memo is included; otherwise, a default memo of type "NO_MEMO" is added.
  *
  * @throws An error if the transaction mode is unsupported.
@@ -80,8 +80,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 export function transactionToIntent(
   account: Account,
   transaction: TransactionCommon & {
-    assetIssuer?: string;
-    assetCode?: string;
+    assetOwner?: string;
+    assetReference?: string;
     mode?: string;
     fees?: bigint | null | undefined;
     memoType?: string;
@@ -111,7 +111,7 @@ export function transactionToIntent(
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount: !!transaction.useAllAmount,
   };
-  if (transaction.assetCode && transaction.assetIssuer) {
+  if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
     const { subAccounts } = account;
 
@@ -121,10 +121,10 @@ export function transactionToIntent(
 
     res.asset = {
       type: "token",
-      assetReference: transaction.assetCode,
-      name: tokenAccount?.token.name ?? transaction.assetCode, // NOTE: for stellar, assetCode = tokenAccount.name, this is futureproofing
+      assetReference: transaction.assetReference,
+      name: tokenAccount?.token.name ?? transaction.assetReference, // NOTE: for stellar, assetReference = tokenAccount.name, this is futureproofing
       unit: account.currency.units[0],
-      assetOwner: transaction.assetIssuer,
+      assetOwner: transaction.assetOwner,
     };
   }
   if (transaction.memoType && transaction.memoValue) {

@@ -15,12 +15,12 @@ export function genericPrepareTransaction(
     account,
     transaction: TransactionCommon & {
       fees: BigNumber | null | undefined;
-      assetCode?: string;
-      assetIssuer?: string;
+      assetReference?: string;
+      assetOwner?: string;
       subAccountId?: string;
     },
   ) => {
-    const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
+    const [assetReference, assetOwner] = getAssetInfos(transaction);
     const fees = await getAlpacaApi(network, kind).estimateFees(
       transactionToIntent(account, {
         ...transaction,
@@ -32,19 +32,24 @@ export function genericPrepareTransaction(
     // transaction.networkInfo !== networkInfo ||
     // transaction.baseReserve !== baseReserve
     if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
-      return { ...transaction, fees: new BigNumber(fees.value.toString()), assetCode, assetIssuer };
+      return {
+        ...transaction,
+        fees: new BigNumber(fees.value.toString()),
+        assetReference,
+        assetOwner,
+      };
     }
 
     return transaction;
   };
 }
 
-export function getAssetCodeIssuer(
-  tr: TransactionCommon & { assetCode?: string; assetIssuer?: string },
+export function getAssetInfos(
+  tr: TransactionCommon & { assetReference?: string; assetOwner?: string },
 ): string[] {
   if (tr.subAccountId) {
     const assetString = tr.subAccountId.split("+")[1];
     return assetString.split(":");
   }
-  return [tr.assetCode || "", tr.assetIssuer || ""];
+  return [tr.assetReference || "", tr.assetOwner || ""];
 }

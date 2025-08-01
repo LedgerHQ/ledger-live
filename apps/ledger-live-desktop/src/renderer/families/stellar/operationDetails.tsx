@@ -19,6 +19,7 @@ const OperationDetailsExtra = ({
   return (
     <>
       {Object.keys(extra).map(key => {
+        console.log("extra key", key);
         if (["assetCode", "assetIssuer", "memo"].includes(key)) {
           return (
             <OpDetailsSection key={key}>

@@ -59,16 +59,16 @@ function applyMemoToIntent(
  */
 function applyAssetInfo(
   transactionIntent: TransactionIntent<any>,
-  assetCode?: string,
-  assetIssuer?: string,
+  assetReference?: string,
+  assetOwner?: string,
 ): TransactionIntent<any> {
   const txWithAsset = transactionIntent as TransactionIntent<any>;
 
-  if (assetCode && assetIssuer) {
+  if (assetReference && assetOwner) {
     txWithAsset.asset = {
       type: "token",
-      assetReference: assetCode,
-      assetOwner: assetIssuer,
+      assetReference: assetReference,
+      assetOwner: assetOwner,
     };
   } else {
     txWithAsset.asset = {
@@ -96,8 +96,8 @@ function enrichTransactionIntent(
   // Apply asset information
   transactionIntent = applyAssetInfo(
     transactionIntent,
-    transaction["assetCode"],
-    transaction["assetIssuer"],
+    transaction["assetReference"],
+    transaction["assetOwner"],
   );
 
   return transactionIntent;
@@ -128,8 +128,8 @@ export const genericSignOperation =
             amount: transaction.amount ?? 0,
             fees: fees,
             useAllAmount: !!transaction.useAllAmount,
-            assetCode: transaction?.["assetCode"] || "",
-            assetIssuer: transaction?.["assetIssuer"] || "",
+            assetReference: transaction?.["assetReference"] || "",
+            assetOwner: transaction?.["assetOwner"] || "",
             subAccountId: transaction.subAccountId || "",
           };
           const { amount } = await getAlpacaApi(network, kind).validateIntent(

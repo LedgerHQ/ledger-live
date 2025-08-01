@@ -79,7 +79,6 @@ export function buildSubAccounts({
   if (allTokens.length === 0 || assetsBalance.length === 0) {
     return undefined;
   }
-
   const tokenAccounts: TokenAccount[] = [];
   assetsBalance
     .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
@@ -94,8 +93,8 @@ export function buildSubAccounts({
             token,
             operations: operations.filter(
               op =>
-                op.extra.assetCode === balance.asset["assetReference"] &&
-                op.extra.assetIssuer === balance.asset["assetOwner"], // NOTE: we could narrow type
+                op.extra.assetReference === balance.asset["assetReference"] &&
+                op.extra.assetOwner === balance.asset["assetOwner"], // NOTE: we could narrow type
             ),
           }),
         );

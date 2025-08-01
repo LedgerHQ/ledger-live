@@ -14,8 +14,8 @@ export function genericGetTransactionStatus(
     account,
     transaction: TransactionCommon & {
       fees: BigNumber | null | undefined;
-      assetIssuer?: string;
-      assetCode?: string;
+      assetReference?: string;
+      assetOwner?: string;
       mode?: string;
       subAccountId?: string;
       memoType?: string;
@@ -28,8 +28,8 @@ export function genericGetTransactionStatus(
       amount: transaction.amount ?? new BigNumber(0),
       fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
       useAllAmount: !!transaction.useAllAmount,
-      assetCode: transaction.assetCode || "",
-      assetIssuer: transaction.assetIssuer || "",
+      assetReference: transaction.assetReference || "",
+      assetOwner: transaction.assetOwner || "",
       subAccountId: transaction.subAccountId || "",
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",

@@ -26,8 +26,8 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   memoType?: string | null;
   memoValue?: string | null;
   mode?: "send" | "changeTrust";
-  assetCode?: string;
-  assetIssuer?: string;
+  assetReference?: string;
+  assetOwner?: string;
 } {
   const currency =
     account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
@@ -52,8 +52,8 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         memoType: null,
         useAllAmount: false,
         mode: "send",
-        assetCode: "",
-        assetIssuer: "",
+        assetReference: "",
+        assetOwner: "",
       };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);

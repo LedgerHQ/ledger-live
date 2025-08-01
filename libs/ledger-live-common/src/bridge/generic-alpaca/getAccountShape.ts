@@ -54,11 +54,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const mergedOps = mergeOps(oldOps, newOps) as OperationCommon[];
 
     const assetOperations: OperationCommon[] = [];
-
     mergedOps.forEach(operation => {
       if (
-        operation?.extra?.assetCode &&
-        operation?.extra?.assetIssuer &&
+        operation?.extra?.assetReference &&
+        operation?.extra?.assetOwner &&
         !["OPT_IN", "OPT_OUT"].includes(operation.type)
       ) {
         assetOperations.push(operation);
