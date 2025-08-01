@@ -34,7 +34,7 @@ export function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
     return assetString.split(":");
   }
 
-  return [tr.assetCode || "", tr.assetIssuer || ""];
+  return [tr.assetReference || "", tr.assetOwner || ""];
 }
 
 export function isMemoValid(memoType: string, memoValue: string): boolean {

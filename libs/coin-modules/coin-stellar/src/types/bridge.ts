@@ -57,8 +57,8 @@ export type Transaction = TransactionCommon & {
   memoType?: string | null;
   memoValue?: string | null;
   mode: StellarTransactionMode;
-  assetCode?: string;
-  assetIssuer?: string;
+  assetReference?: string;
+  assetOwner?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -69,8 +69,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   memoType?: string | null;
   memoValue?: string | null;
   mode: StellarTransactionMode;
-  assetCode?: string;
-  assetIssuer?: string;
+  assetReference?: string;
+  assetOwner?: string;
 };
 
 export type BalanceAsset = {
@@ -113,8 +113,8 @@ export type StellarOperation = Operation<StellarOperationExtra>;
 
 export type StellarOperationExtra = {
   pagingToken?: string;
-  assetReference?: string;
-  assetOwner?: string;
+  assetCode?: string;
+  assetIssuer?: string;
   assetAmount?: string | undefined;
   ledgerOpType: OperationType;
   memo?: StellarMemo;

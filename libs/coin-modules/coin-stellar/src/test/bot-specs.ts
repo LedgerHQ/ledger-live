@@ -202,8 +202,8 @@ const stellar: AppSpec<Transaction> = {
             fees: new BigNumber(MAX_FEE),
           },
           {
-            assetCode: USDC_CODE,
-            assetIssuer: USDC_ISSUER,
+            assetReference: USDC_CODE,
+            assetOwner: USDC_ISSUER,
           },
         ];
 

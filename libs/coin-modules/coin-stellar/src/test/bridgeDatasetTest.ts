@@ -92,8 +92,8 @@ export const dataset: DatasetTest<Transaction> = {
                 memoType: null,
                 memoValue: null,
                 mode: "send",
-                assetCode: "",
-                assetIssuer: "",
+                assetReference: "",
+                assetOwner: "",
               }),
               expectedStatus: {
                 errors: {
@@ -148,8 +148,8 @@ export const dataset: DatasetTest<Transaction> = {
                 memoType: null,
                 memoValue: null,
                 mode: "send",
-                assetCode: "",
-                assetIssuer: "",
+                assetReference: "",
+                assetOwner: "",
               }),
               expectedStatus: account => ({
                 errors: {},
