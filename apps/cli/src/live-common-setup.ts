@@ -18,7 +18,7 @@ import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 let idCounter = 0;

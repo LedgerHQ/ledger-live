@@ -1,7 +1,7 @@
 import { fromAccountRaw } from "../../account/serialization";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 

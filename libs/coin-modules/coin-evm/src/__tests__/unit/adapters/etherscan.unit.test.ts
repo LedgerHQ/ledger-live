@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -16,11 +17,39 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../../types";
+import usdCoinTokenData from "../../../__fixtures__/ethereum-erc20-usd__coin.json";
+import outUsdCoinTokenData from "../../../__fixtures__/ethereum-erc20-usd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0.json";
+import inUsdCoinTokenData from "../../../__fixtures__/ethereum-erc20-usd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0.json";
+import { setCryptoAssetsStoreGetter } from "../../../cryptoAssetsStore";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const OUT_USD_COIN_TOKEN = outUsdCoinTokenData as unknown as TokenCurrency;
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const IN_USD_COIN_TOKEN = inUsdCoinTokenData as unknown as TokenCurrency;
 
 describe("EVM Family", () => {
   describe("adapters", () => {
     describe("etherscan", () => {
       describe("etherscanOperationToOperations", () => {
+        beforeEach(() => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (address: string, _currencyId: string) => {
+                  if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
+                    return IN_USD_COIN_TOKEN;
+                  } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
+                    return OUT_USD_COIN_TOKEN;
+                  }
+                  return undefined;
+                },
+              }) as CryptoAssetsStore,
+          );
+        });
+
         it("should convert an etherscan-like smart contract creation operation (from their API) to a Ledger Live Operation", () => {
           const etherscanOp: EtherscanOperation = {
             blockNumber: "14923692",
@@ -501,6 +530,16 @@ describe("EVM Family", () => {
 
       describe("etherscanERC20EventToOperations", () => {
         it("should return an empty array for an unknown token", () => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                  return undefined;
+                },
+              }) as unknown as CryptoAssetsStore,
+          );
+
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -564,8 +603,7 @@ describe("EVM Family", () => {
             xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             derivationMode: "",
           });
-          const tokenCurrency = findTokenById("ethereum/erc20/usd__coin");
-          const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
+          const tokenAccountId = encodeTokenAccountId(accountId, USD_COIN_TOKEN);
 
           const expectedOperation: Operation = {
             id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
@@ -583,6 +621,16 @@ describe("EVM Family", () => {
             type: "OUT",
             extra: {},
           };
+
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                  return USD_COIN_TOKEN;
+                },
+              }) as unknown as CryptoAssetsStore,
+          );
 
           expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
@@ -619,8 +667,7 @@ describe("EVM Family", () => {
             xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             derivationMode: "",
           });
-          const tokenCurrency = findTokenById("ethereum/erc20/usd__coin");
-          const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
+          const tokenAccountId = encodeTokenAccountId(accountId, USD_COIN_TOKEN);
 
           const expectedOperation: Operation = {
             id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
@@ -708,8 +755,7 @@ describe("EVM Family", () => {
             xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             derivationMode: "",
           });
-          const tokenCurrency = findTokenById("ethereum/erc20/usd__coin");
-          const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
+          const tokenAccountId = encodeTokenAccountId(accountId, USD_COIN_TOKEN);
 
           const expectedOperations: Operation[] = [
             {
@@ -753,6 +799,23 @@ describe("EVM Family", () => {
       });
 
       describe("etherscanER721EventToOperation", () => {
+        beforeEach(() => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (address: string, _currencyId: string) => {
+                  if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
+                    return IN_USD_COIN_TOKEN;
+                  } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
+                    return OUT_USD_COIN_TOKEN;
+                  }
+                  return undefined;
+                },
+              }) as unknown as CryptoAssetsStore,
+          );
+        });
+
         it("should convert an etherscan-like erc721 nft out event (from their API) to a Ledger Live Operation", () => {
           const etherscanOp: EtherscanERC721Event = {
             blockNumber: "4708120",
@@ -974,6 +1037,23 @@ describe("EVM Family", () => {
       });
 
       describe("etherscanERC1155EventToOperations", () => {
+        beforeEach(() => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (address: string, _currencyId: string) => {
+                  if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
+                    return IN_USD_COIN_TOKEN;
+                  } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
+                    return OUT_USD_COIN_TOKEN;
+                  }
+                  return undefined;
+                },
+              }) as unknown as CryptoAssetsStore,
+          );
+        });
+
         it("should convert a etherscan-like erc1155 nft out event (from their API) to a Ledger Live Operation", () => {
           const etherscanOp: EtherscanERC1155Event = {
             blockNumber: "13472395",
