@@ -3,7 +3,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration|monitor)\\.test\\.[tj]s"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

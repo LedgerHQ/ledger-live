@@ -2,6 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration|monitor)\\.test\\.[tj]s"],
+  testRegex: ".integ.test.ts$",
+  testPathIgnorePatterns: ["lib/", "lib-es/"],
   testTimeout: 60_000,
 };

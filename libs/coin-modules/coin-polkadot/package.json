@@ -119,7 +119,6 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
-    "test-monitor": "jest --config=jest.monitoring.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   },
@@ -150,7 +149,6 @@
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
-    "@ledgerhq/coin-modules-monitoring": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
