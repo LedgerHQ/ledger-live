@@ -49,6 +49,7 @@
     "transactionDate" : "Дата транзакции",
     "outdated" : "Устарело",
     "satPerByte" : "сатоши/байт",
+    "sompiPerByte" : "сомпи/байт",
     "notAvailable" : "Недоступно",
     "import" : "Импортировать",
     "bluetooth" : "Bluetooth",

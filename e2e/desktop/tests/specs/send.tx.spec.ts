@@ -192,6 +192,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
   },
+  {
+    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
+    xrayTicket: "B2CQA-3840",
+  },
 ];
 
 test.describe("Send flows", () => {

@@ -135,6 +135,7 @@ setSupportedCurrencies([
   "canton_network",
   "canton_network_devnet",
   "canton_network_localnet",
+  "kaspa",
 ]);
 
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
