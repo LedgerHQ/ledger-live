@@ -39,6 +39,7 @@ import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
+import { delegateZcash, sendZcash } from "./families/zcash";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -322,6 +323,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Litecoin",
+    },
+    dependency: "",
+  },
+  Zcash: {
+    currency: getCryptoCurrencyById("zcash"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName:"Zcash",
     },
     dependency: "",
   },
@@ -688,6 +697,9 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.APT:
       await sendAptos();
       break;
+    case Currency.ZEC:
+      await sendZcash();
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
@@ -732,6 +744,9 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.APTOS_1.currency.name:
       await delegateAptos(delegatingAccount);
+      break;
+    case Account.ZEC_1.currency.name:
+      await delegateZcash(delegatingAccount);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);

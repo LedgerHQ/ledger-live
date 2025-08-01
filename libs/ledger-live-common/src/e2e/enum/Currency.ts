@@ -132,4 +132,5 @@ export class Currency {
     "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
   );
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM);
+  static readonly ZEC = new Currency("Zcash", "ZEC", "Zcash", AppInfos.ZCASH);
 }

@@ -489,6 +489,20 @@ export class Account {
     1,
   );
 
+  static readonly ZEC_1 = new Account(
+    Currency.ZEC,
+    "Zcash 1",
+    "",
+    0
+  );
+
+  static readonly ZEC_TRANSPARENT_1 = new Account(
+    Currency.ZEC,
+    "Zcash Transparent funds 1",
+    "",
+    0
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 
