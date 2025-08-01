@@ -11,6 +11,7 @@ import { bridge as hedera } from "../../families/hedera/setup";
 import { bridge as filecoin } from "../../families/filecoin/setup";
 import { bridge as internet_computer } from "../../families/internet_computer/setup";
 import { bridge as icon } from "../../families/icon/setup";
+import { bridge as kaspa } from "../../families/kaspa/setup";
 import { bridge as multiversx } from "../../families/multiversx/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -37,6 +38,7 @@ export default {
   filecoin,
   internet_computer,
   icon,
+  kaspa,
   multiversx,
   near,
   polkadot,
