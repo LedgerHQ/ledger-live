@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
 import type { AuthState, State } from "./types";
@@ -11,27 +10,17 @@ import type {
 } from "../actions/types";
 import { AuthActionTypes } from "../actions/types";
 
-// Global variable to track if the app was unlocked (to be resilient to reboots)
-let wasUnlocked = false;
-
 export const INITIAL_STATE: AuthState = {
-  isLocked: false, // Will be updated based on privacy state
+  isLocked: false,
   biometricsError: null,
   authModalOpen: false,
 };
 
 const handlers: ReducerMap<AuthState, AuthPayload> = {
-  [AuthActionTypes.INITIALIZE_AUTH_STATE]: (state, action) => {
-    const { privacy } = (action as Action<AuthInitializeStatePayload>).payload;
-    // If we're currently unlocked and setting a password, stay unlocked
-    if (!state.isLocked && privacy?.hasPassword) {
-      wasUnlocked = true;
-    }
-    return {
-      ...state,
-      isLocked: !!privacy?.hasPassword && !wasUnlocked,
-    };
-  },
+  [AuthActionTypes.INITIALIZE_AUTH_STATE]: (state, action) => ({
+    ...state,
+    isLocked: !!(action as Action<AuthInitializeStatePayload>)?.payload.privacy?.hasPassword,
+  }),
   [AuthActionTypes.SET_LOCKED]: (state, action) => ({
     ...state,
     isLocked: (action as Action<AuthSetLockedPayload>).payload,
@@ -44,22 +33,16 @@ const handlers: ReducerMap<AuthState, AuthPayload> = {
     ...state,
     authModalOpen: (action as Action<AuthSetAuthModalOpenPayload>).payload,
   }),
-  [AuthActionTypes.LOCK]: state => {
-    wasUnlocked = false;
-    return {
-      ...state,
-      isLocked: true,
-      biometricsError: null,
-    };
-  },
-  [AuthActionTypes.UNLOCK]: state => {
-    wasUnlocked = true;
-    return {
-      ...state,
-      isLocked: false,
-      biometricsError: null,
-    };
-  },
+  [AuthActionTypes.LOCK]: state => ({
+    ...state,
+    isLocked: true,
+    biometricsError: null,
+  }),
+  [AuthActionTypes.UNLOCK]: state => ({
+    ...state,
+    isLocked: false,
+    biometricsError: null,
+  }),
 };
 
 export const isLockedSelector = (state: State) => state.auth.isLocked;

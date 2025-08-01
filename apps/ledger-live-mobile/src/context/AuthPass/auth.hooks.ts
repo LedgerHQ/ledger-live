@@ -99,7 +99,9 @@ export function useAuthState({ closeAllDrawers }: { closeAllDrawers: () => void 
     if (privacy !== null && privacy !== undefined) {
       dispatch(initializeAuthState({ privacy }));
     }
-  }, [privacy, dispatch]);
+    // disable exhaustive-deps to prevent password requirement immediately after setting
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setIsLocked = useCallback(
     (locked: boolean) => {

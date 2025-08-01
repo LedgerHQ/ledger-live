@@ -10,7 +10,6 @@ import {
 } from "../../actions/auth";
 import type { Privacy, AuthState } from "../types";
 
-// Mock privacy objects for testing
 const mockPrivacyWithPassword: Privacy = {
   hasPassword: true,
   biometricsEnabled: true,
@@ -23,7 +22,6 @@ const mockPrivacyWithoutPassword: Privacy = {
   biometricsType: null,
 };
 
-// Test Redux auth state management
 describe("Auth Redux Implementation", () => {
   let store: Store<AuthState>;
 
@@ -41,11 +39,9 @@ describe("Auth Redux Implementation", () => {
   });
 
   test("setting password while unlocked keeps app unlocked", () => {
-    // Start with no password (unlocked state)
     store.dispatch(initializeAuthState({ privacy: mockPrivacyWithoutPassword }));
     expect(store.getState().isLocked).toBe(false);
 
-    // Set password while unlocked - should stay unlocked
     store.dispatch(initializeAuthState({ privacy: mockPrivacyWithPassword }));
     expect(store.getState().isLocked).toBe(false);
   });

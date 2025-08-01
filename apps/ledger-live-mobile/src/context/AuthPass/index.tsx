@@ -16,8 +16,6 @@ type OwnProps = {
 };
 
 const AuthPass: React.FC<OwnProps> = ({ children }) => {
-  // TODO this used to call withTranslation - make sure it's definitely not required anymore.
-
   const dispatch = useDispatch();
 
   const privacy = useSelector(privacySelector);
