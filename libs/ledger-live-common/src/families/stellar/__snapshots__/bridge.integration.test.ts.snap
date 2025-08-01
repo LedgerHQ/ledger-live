@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064626",
+    "balance": "341064672",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 69,
+    "operationsCount": 115,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064526",
+    "spendableBalance": "311064572",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -116,7 +116,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27766392,
       "extra": {
         "blockTime": 2020-01-15T14:47:57.000Z,
+        "index": "119255745567977473",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119255745567977473",
       },
       "fee": "100",
@@ -139,7 +143,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27952591,
       "extra": {
         "blockTime": 2020-01-27T16:25:37.000Z,
+        "index": "120055464183619585",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120055464183619585",
       },
       "fee": "100",
@@ -162,7 +170,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205836,
       "extra": {
         "blockTime": 2020-04-16T12:18:34.000Z,
+        "index": "125438110472704001",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125438110472704001",
       },
       "fee": "100",
@@ -185,8 +197,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27890199,
       "extra": {
         "blockTime": 2020-01-23T15:29:51.000Z,
+        "index": "119787492583981057",
         "ledgerOpType": "OUT",
-        "memo": "3",
+        "memo": {
+          "type": "MEMO_ID",
+          "value": "3",
+        },
         "pagingToken": "119787492583981057",
       },
       "fee": "100",
@@ -209,8 +225,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 56002611,
       "extra": {
         "blockTime": 2025-03-04T19:08:36.000Z,
+        "index": "240529382736080977",
         "ledgerOpType": "IN",
-        "memo": "t.me/WealthAcademyStellar",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
         "pagingToken": "240529382736080977",
       },
       "fee": "10000",
@@ -233,8 +253,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53991651,
       "extra": {
         "blockTime": 2024-10-17T20:35:20.000Z,
+        "index": "231892375302615120",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "231892375302615120",
       },
       "fee": "10000",
@@ -253,12 +277,72 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "75f82b2e6dfefd595ed2f55dba8df2b6e3fb6c97fb0c6a95207803ff1abd7050",
+      "blockHeight": 56618137,
+      "extra": {
+        "blockTime": 2025-04-14T22:07:02.000Z,
+        "index": "243173046776545328",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243173046776545328",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "080c13bc24df23e052f70bd4f0685af4b87961513c1057d81af5e1dcf597ef92",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-080c13bc24df23e052f70bd4f0685af4b87961513c1057d81af5e1dcf597ef92-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137259550,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7060421c1b904d023150b529f76d9b976153019c62fc7b6eeb788b1996dbaf2d",
+      "blockHeight": 56844316,
+      "extra": {
+        "blockTime": 2025-04-29T20:51:21.000Z,
+        "index": "244144478183841862",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "EDEN Dance To the Moon 🚀",
+        },
+        "pagingToken": "244144478183841862",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "08ba616699b31d9e69b8d437017d2475d466da445e76b58326edbdab97fe9903",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-08ba616699b31d9e69b8d437017d2475d466da445e76b58326edbdab97fe9903-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988786430,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "a49467d7feb75bcb4b287cfa9d38a00258005e81f462ad5fbb76c73c2ff7b6a6",
       "blockHeight": 54142073,
       "extra": {
         "blockTime": 2024-10-27T23:54:56.000Z,
+        "index": "232538432873521232",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "232538432873521232",
       },
       "fee": "10000",
@@ -281,7 +365,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28194270,
       "extra": {
         "blockTime": 2020-02-12T17:57:58.000Z,
+        "index": "121093467584729089",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121093467584729089",
       },
       "fee": "100",
@@ -300,12 +388,72 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "45d6a185a2879f85c29ed8c16997ff759c9042441f625029c9da9ec41b96f7b4",
+      "blockHeight": 57890209,
+      "extra": {
+        "blockTime": 2025-07-07T07:56:50.000Z,
+        "index": "248636554414428247",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RGN Earn Native XLM!",
+        },
+        "pagingToken": "248636554414428247",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "0c116524f0170480352658613a090bc19808e428a79dc8bbd673460cf9bd1897",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0c116524f0170480352658613a090bc19808e428a79dc8bbd673460cf9bd1897-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
+      ],
+      "transactionSequenceNumber": 248584795762722980,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "b9d39c8c122b2d90115d5acdd54ea685094f3ba4098bd5bc9d6c058c4d34cd82",
+      "blockHeight": 57521497,
+      "extra": {
+        "blockTime": 2025-06-13T03:28:52.000Z,
+        "index": "247052948432330839",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "TUNGTUNG Live tungtung.shop",
+        },
+        "pagingToken": "247052948432330839",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "0f975daa7069faccbedb48b2488de43c67232dc8e94b235ade7c5a1420101a2d",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0f975daa7069faccbedb48b2488de43c67232dc8e94b235ade7c5a1420101a2d-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844123260,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "de91876967432c18db672925858963de846140dc7cbfc8e73e016a09bec9f719",
       "blockHeight": 55972081,
       "extra": {
         "blockTime": 2025-03-02T17:43:03.000Z,
+        "index": "240398257385058400",
         "ledgerOpType": "IN",
-        "memo": "Send XLM will return double",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Send XLM will return double",
+        },
         "pagingToken": "240398257385058400",
       },
       "fee": "10000",
@@ -324,12 +472,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "ea27597e0313e761e0c89e19091d856140fe24aab1c7c826322d0778df6e101c",
+      "blockHeight": 56835320,
+      "extra": {
+        "blockTime": 2025-04-29T06:37:05.000Z,
+        "index": "244105840657985606",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "EDEN Dance To the Moon 🚀",
+        },
+        "pagingToken": "244105840657985606",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "117333e864ca8df18b0dbd8854b6700cce5be5c5374c22289862e221623bf542",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-117333e864ca8df18b0dbd8854b6700cce5be5c5374c22289862e221623bf542-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988784640,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "9b53959e3850d83e925dbd0eb1bd7846e7b80c70f31ebb71494690aff354a43a",
       "blockHeight": 55706589,
       "extra": {
         "blockTime": 2025-02-12T19:04:44.000Z,
+        "index": "239257977927057504",
         "ledgerOpType": "IN",
-        "memo": "Pleas Help Me With Send XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Pleas Help Me With Send XLM",
+        },
         "pagingToken": "239257977927057504",
       },
       "fee": "10000",
@@ -348,11 +528,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "369368b05c1ed908969f6fda396bd9a8bc505a2c5ef5290b70528c778b804840",
+      "blockHeight": 57835213,
+      "extra": {
+        "blockTime": 2025-07-03T17:13:50.000Z,
+        "index": "248400348392611927",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Get up to 720% APY with yXRP",
+        },
+        "pagingToken": "248400348392611927",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "15287c277e86a8f81fb9a5968ec640ae4a02a61f51bdcf14c1555d8a2db02f77",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-15287c277e86a8f81fb9a5968ec640ae4a02a61f51bdcf14c1555d8a2db02f77-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542689900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "ac1ffabbdb011c7e32938783c022b5b018096aea21c181904be5880a53c48687",
       "blockHeight": 27736926,
       "extra": {
         "blockTime": 2020-01-13T16:56:26.000Z,
+        "index": "119129190061592577",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119129190061592577",
       },
       "fee": "100",
@@ -371,11 +583,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "b531112cddc4afb35b968847396ffd01a7ec543cbf9df29c9410aae234dd18e7",
+      "blockHeight": 58199372,
+      "extra": {
+        "blockTime": 2025-07-27T21:30:53.000Z,
+        "index": "249964399388696663",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "yXRP-Get up to 604% APY",
+        },
+        "pagingToken": "249964399388696663",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "1ed4aa64b30bc0cda713e8656d5aab1731aad630e010c15dfc828daf8634e48f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-1ed4aa64b30bc0cda713e8656d5aab1731aad630e010c15dfc828daf8634e48f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBZPI6BC5KCD6J4ZTIEI4UTWWZ4DR54KE5FW32H32DY655CFPQNZOIRS",
+      ],
+      "transactionSequenceNumber": 249681756179929280,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "4dd5809a6f2eaa7d93e6f038174d99c277964afc48364c7d269f892ac55639fd",
       "blockHeight": 29205667,
       "extra": {
         "blockTime": 2020-04-16T12:01:53.000Z,
+        "index": "125437384622931969",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437384622931969",
       },
       "fee": "100",
@@ -394,12 +638,72 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d209e12db579fc91297c2be86e432005ecca40be839dc1d9911b135b0f4eb4a8",
+      "blockHeight": 56541880,
+      "extra": {
+        "blockTime": 2025-04-09T19:42:59.000Z,
+        "index": "242845525454815280",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "242845525454815280",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "213c9f6e34d061e0824b678f6d65dc37712735b2564f76713d4914a35ab2ca6a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-213c9f6e34d061e0824b678f6d65dc37712735b2564f76713d4914a35ab2ca6a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137248350,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "9e3ada3ccaf8288c0156e6a6d3a373ba51f2715f91ff80487999dbae8a687067",
+      "blockHeight": 57772725,
+      "extra": {
+        "blockTime": 2025-06-29T14:55:33.000Z,
+        "index": "248131964476088407",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "720% APY On yXRP YXRP.SITE",
+        },
+        "pagingToken": "248131964476088407",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "22a0f791bc0a7995277d119f86abe2b0cb87078722107632173d072d8bd70d85",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-22a0f791bc0a7995277d119f86abe2b0cb87078722107632173d072d8bd70d85-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542679680,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "2ce97ae5ea75b59247c22d89a28ec88437603f5d5b8b020d53b2834d53a8f8cc",
       "blockHeight": 28318748,
       "extra": {
         "blockTime": 2020-02-20T21:05:33.000Z,
+        "index": "121628096523747329",
         "ledgerOpType": "OUT",
-        "memo": "1",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "1",
+        },
         "pagingToken": "121628096523747329",
       },
       "fee": "100",
@@ -422,8 +726,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 54110961,
       "extra": {
         "blockTime": 2024-10-25T21:29:53.000Z,
+        "index": "232404807850631248",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "232404807850631248",
       },
       "fee": "10000",
@@ -446,8 +754,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53961051,
       "extra": {
         "blockTime": 2024-10-15T19:22:56.000Z,
+        "index": "231760949303132240",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "231760949303132240",
       },
       "fee": "10000",
@@ -466,11 +778,99 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "9319f8f2d6ea5836bab7e95e945cfc04842bcea5043bb4b46b317dfa1d134596",
+      "blockHeight": 56647726,
+      "extra": {
+        "blockTime": 2025-04-16T21:31:20.000Z,
+        "index": "243300130563035184",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243300130563035184",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "29d9d4fe4a5318432e631c3b8480c531b8236b511e437bb33beb5a18933fba98",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-29d9d4fe4a5318432e631c3b8480c531b8236b511e437bb33beb5a18933fba98-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137264300,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d84ad49191ffd2caeef66181caad1a2039c225f1f15e9cfc68a62761c738ea74",
+      "blockHeight": 57820390,
+      "extra": {
+        "blockTime": 2025-07-02T17:55:38.000Z,
+        "index": "248336684093497431",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yXRP Get up to 720% APY",
+        },
+        "pagingToken": "248336684093497431",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2b8b91c8e1de91283e01eb551a18457472b70d4aa134df1b46c4635547b5f44b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2b8b91c8e1de91283e01eb551a18457472b70d4aa134df1b46c4635547b5f44b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542688200,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "68edeabc014a4c412ed7415203ef20d49475bc163b6deca8dac4423f8b5bb7d9",
+      "blockHeight": 56546654,
+      "extra": {
+        "blockTime": 2025-04-10T03:26:36.000Z,
+        "index": "242866029628284976",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/StellarLumin",
+        },
+        "pagingToken": "242866029628284976",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2f4d19bd9a42387ca85129a57e097af632302dff531a67f8a259373734f834f4",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2f4d19bd9a42387ca85129a57e097af632302dff531a67f8a259373734f834f4-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137249660,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "c63800dd8a5a2c1a62ad7c15fac2de9891243a7fd52c637c1e0f3e61fbc28bad",
       "blockHeight": 27222055,
       "extra": {
         "blockTime": 2019-12-11T15:54:48.000Z,
+        "index": "116917835955011585",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "116917835955011585",
       },
       "fee": "100",
@@ -493,7 +893,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27746937,
       "extra": {
         "blockTime": 2020-01-14T08:24:41.000Z,
+        "index": "119172186979196929",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119172186979196929",
       },
       "fee": "100",
@@ -516,7 +920,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28379715,
       "extra": {
         "blockTime": 2020-02-24T17:50:03.000Z,
+        "index": "121889947794821121",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121889947794821121",
       },
       "fee": "100",
@@ -535,11 +943,71 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d36d670013ed47c7223e58ab411d8c61d0a22fbf1ee70508bcfbaff088ecfabe",
+      "blockHeight": 56663480,
+      "extra": {
+        "blockTime": 2025-04-17T22:54:48.000Z,
+        "index": "243367793477779504",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243367793477779504",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "3498052b82f376ad598b515df96e7ed37f9fde0a1203bfc87c79ef460319ed5d",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3498052b82f376ad598b515df96e7ed37f9fde0a1203bfc87c79ef460319ed5d-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137266000,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "5692d8c456e8045cf207b1ecae7bc2c4c7c78d475b2d389b5841741666a6e792",
+      "blockHeight": 57550819,
+      "extra": {
+        "blockTime": 2025-06-15T01:27:27.000Z,
+        "index": "247178885463400535",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tungtung.shop 1000 tung free",
+        },
+        "pagingToken": "247178885463400535",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "36be6c3197755d39691e6b8151c581ed259a8791e018f0ece973cbb54516f17a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-36be6c3197755d39691e6b8151c581ed259a8791e018f0ece973cbb54516f17a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844131070,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "e8d7e4b973a1d55fbf77c6267129f4a94181e0d4edd6f9a1d001cdfa8a040c2a",
       "blockHeight": 28114251,
       "extra": {
         "blockTime": 2020-02-07T12:10:45.000Z,
+        "index": "120749788596604929",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120749788596604929",
       },
       "fee": "100",
@@ -558,11 +1026,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "9d7dd6f61d2ec2db5f6fec5d0fa80ad636ea4d9f7b1a592f49d407b224085d7c",
+      "blockHeight": 56588572,
+      "extra": {
+        "blockTime": 2025-04-12T22:37:52.000Z,
+        "index": "243046066068062256",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243046066068062256",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "3e1e888f026c7f2222cf9293ed895591c8904ccc5afee1bd301433fc474340e7",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3e1e888f026c7f2222cf9293ed895591c8904ccc5afee1bd301433fc474340e7-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137256200,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "29c5e1094688a64b8dbf901ef2e60896b52e2e2ab6026e4b10f61c0050835aa2",
       "blockHeight": 27963532,
       "extra": {
         "blockTime": 2020-01-28T09:40:10.000Z,
+        "index": "120102455420669953",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120102455420669953",
       },
       "fee": "100",
@@ -581,11 +1081,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a0a568b02eb87ac4d0efaaa08a81aa33d8baa3c80c5feca641c948e4dc4d0e6e",
+      "blockHeight": 57643376,
+      "extra": {
+        "blockTime": 2025-06-21T03:07:57.000Z,
+        "index": "247576414751215703",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "720% APY On TungTung Now",
+        },
+        "pagingToken": "247576414751215703",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "3ef41db0026bdecab0eaea0f768fa48900db20dcf3b6e0ca87a832fe9e68d265",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3ef41db0026bdecab0eaea0f768fa48900db20dcf3b6e0ca87a832fe9e68d265-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844137700,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "f75b5fe09fbe209e50872636679e7d07fc61360a3e623588bff30437178a204a",
       "blockHeight": 29107888,
       "extra": {
         "blockTime": 2020-04-10T09:02:37.000Z,
+        "index": "125017427015831553",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125017427015831553",
       },
       "fee": "100",
@@ -604,11 +1136,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "552f8b8f9a5a237f3426497c071e141388d9a50bbe7ac7dfca04dbbd8058bcf5",
+      "blockHeight": 57811358,
+      "extra": {
+        "blockTime": 2025-07-02T03:44:46.000Z,
+        "index": "248297891947737175",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yXRP Get up to 720% APY",
+        },
+        "pagingToken": "248297891947737175",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "47df70bbbabd6e48f30cfe26c6b4ab7585c1aecc7123270dd62089dbc46659c1",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-47df70bbbabd6e48f30cfe26c6b4ab7585c1aecc7123270dd62089dbc46659c1-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542686460,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "7a8a04682794135315a774dbeda355e18774b081c418b7e3fb9b75e985a9b499",
       "blockHeight": 29205672,
       "extra": {
         "blockTime": 2020-04-16T12:02:19.000Z,
+        "index": "125437406098026497",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437406098026497",
       },
       "fee": "100",
@@ -634,7 +1198,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "assetCode": "ETH",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "blockTime": 2020-02-14T10:49:02.000Z,
+        "index": "121205634950537217",
         "ledgerOpType": "OPT_IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121205634950537217",
       },
       "fee": "100",
@@ -655,8 +1223,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55310780,
       "extra": {
         "blockTime": 2025-01-16T22:57:09.000Z,
+        "index": "237557991216635984",
         "ledgerOpType": "IN",
-        "memo": "pleas help me with send 1XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "pleas help me with send 1XLM",
+        },
         "pagingToken": "237557991216635984",
       },
       "fee": "10000",
@@ -679,7 +1251,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889269,
       "extra": {
         "blockTime": 2020-01-23T14:05:51.000Z,
+        "index": "119783498264412161",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119783498264412161",
       },
       "fee": "100",
@@ -698,12 +1274,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "55073773076a69a5d50563ab5a84bc54e592dfe0982776433e937ab95d97d166",
+      "blockHeight": 56565997,
+      "extra": {
+        "blockTime": 2025-04-11T10:22:23.000Z,
+        "index": "242949107180859440",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "242949107180859440",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "502a29f0a3967278dc125b1576a71fd994455c4c521bb0d28dca990a5f3a6401",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-502a29f0a3967278dc125b1576a71fd994455c4c521bb0d28dca990a5f3a6401-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137251140,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "c2af9e6dfb593640f03dd93ab9db23a0a831ec07608ef253967bb0404af0705d",
       "blockHeight": 27843368,
       "extra": {
         "blockTime": 2020-01-20T16:02:31.000Z,
+        "index": "119586354970836993",
         "ledgerOpType": "OUT",
-        "memo": "821966803",
+        "memo": {
+          "type": "MEMO_ID",
+          "value": "821966803",
+        },
         "pagingToken": "119586354970836993",
       },
       "fee": "100",
@@ -722,12 +1330,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "250ef44a3f04e815230c83a2fb76c03421e70ea1dcb13d28c9b9d631c1e7178b",
+      "blockHeight": 58167129,
+      "extra": {
+        "blockTime": 2025-07-25T18:35:23.000Z,
+        "index": "249825916757418071",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "yXRP-Get up to 604% APY",
+        },
+        "pagingToken": "249825916757418071",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "57307807d8fd75d8a3c05da0b431c1fd5952c275d40e93f701899c91d2e2f427",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-57307807d8fd75d8a3c05da0b431c1fd5952c275d40e93f701899c91d2e2f427-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBZPI6BC5KCD6J4ZTIEI4UTWWZ4DR54KE5FW32H32DY655CFPQNZOIRS",
+      ],
+      "transactionSequenceNumber": 249681756179924160,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "f189110af0c6400ca9011ab95beb30d67d9aa3fceb1b73a5417fd1a72d87cea2",
       "blockHeight": 53858883,
       "extra": {
         "blockTime": 2024-10-08T23:26:22.000Z,
+        "index": "231322141084708944",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "231322141084708944",
       },
       "fee": "10000",
@@ -750,7 +1390,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28101387,
       "extra": {
         "blockTime": 2020-02-06T15:30:44.000Z,
+        "index": "120694538137272321",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120694538137272321",
       },
       "fee": "100",
@@ -769,12 +1413,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "bf8c8a00cb60004d8fe16e06af02149b1ce21e282bed6941509b039efe302144",
+      "blockHeight": 58185996,
+      "extra": {
+        "blockTime": 2025-07-27T00:24:20.000Z,
+        "index": "249906949905260631",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "yXRP-Get up to 604% APY",
+        },
+        "pagingToken": "249906949905260631",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "5c6623196cc5ecdd246344d29379ea06e22075aa5b9639f7583865dd7c7239c0",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5c6623196cc5ecdd246344d29379ea06e22075aa5b9639f7583865dd7c7239c0-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBZPI6BC5KCD6J4ZTIEI4UTWWZ4DR54KE5FW32H32DY655CFPQNZOIRS",
+      ],
+      "transactionSequenceNumber": 249681756179927550,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "dd7c1dc54844d75f82766ef8b32a04ba94bfdb4a9dab6b2a3162c7cf86dfb535",
       "blockHeight": 34526066,
       "extra": {
         "blockTime": 2021-03-20T13:21:33.000Z,
+        "index": "148288324330012717",
         "ledgerOpType": "IN",
-        "memo": "Establish trustline to $RUM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Establish trustline to $RUM",
+        },
         "pagingToken": "148288324330012717",
       },
       "fee": "10000",
@@ -797,7 +1473,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27735937,
       "extra": {
         "blockTime": 2020-01-13T15:25:17.000Z,
+        "index": "119124942339112961",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119124942339112961",
       },
       "fee": "100",
@@ -820,7 +1500,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27902342,
       "extra": {
         "blockTime": 2020-01-24T10:15:46.000Z,
+        "index": "119839646372044801",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119839646372044801",
       },
       "fee": "100",
@@ -843,7 +1527,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205265,
       "extra": {
         "blockTime": 2020-04-16T11:24:09.000Z,
+        "index": "125435658046103553",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125435658046103553",
       },
       "fee": "100",
@@ -862,11 +1550,71 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "c4a4a04adcf5d4574ddc4a8efb7bb99385f99b23b76d8aec4def1ee46ff95f78",
+      "blockHeight": 57804273,
+      "extra": {
+        "blockTime": 2025-07-01T16:38:42.000Z,
+        "index": "248267462104338519",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yXRP get 720% APY Hourly",
+        },
+        "pagingToken": "248267462104338519",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6ac114be20cb897b62f98a59126ae55fa7ae188cad33ce91f5d3e14dd90bb31f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6ac114be20cb897b62f98a59126ae55fa7ae188cad33ce91f5d3e14dd90bb31f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542684770,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "025bb8acb9b78ff008daf0b6ffad07bdcc64dc5dfc64605189c3fd4a5fac499c",
+      "blockHeight": 56641142,
+      "extra": {
+        "blockTime": 2025-04-16T10:54:00.000Z,
+        "index": "243271852498669616",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243271852498669616",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6c14f1b8157c54ed7f200bb935cd0fd1946b9d40588bc55269ff162f9c21918a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6c14f1b8157c54ed7f200bb935cd0fd1946b9d40588bc55269ff162f9c21918a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137262600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "e6ceed1eef929d727717e0a32f0a64177779e0dd5b51ca6db3db22a6b73087d4",
       "blockHeight": 27641409,
       "extra": {
         "blockTime": 2020-01-07T14:43:49.000Z,
+        "index": "118718947670560769",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "118718947670560769",
       },
       "fee": "100",
@@ -885,12 +1633,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a7bf4fd23e070c5edc81a91dfed85dd7b87df5839c8596fd8b20c48592aed6fa",
+      "blockHeight": 57580409,
+      "extra": {
+        "blockTime": 2025-06-16T23:50:02.000Z,
+        "index": "247305973545480279",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tungtung.shop 1000 tung free",
+        },
+        "pagingToken": "247305973545480279",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6fe3ee2128bda464c60a80d29a93e90e65ddfe5c2a210b9132dd554f5409d094",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6fe3ee2128bda464c60a80d29a93e90e65ddfe5c2a210b9132dd554f5409d094-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844134460,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "6482e96cf4def81df8e6319041cee43495ef9d6acc362d620d95700bfc6941e4",
       "blockHeight": 34308375,
       "extra": {
         "blockTime": 2021-03-06T20:30:43.000Z,
+        "index": "147353348604919817",
         "ledgerOpType": "IN",
-        "memo": "$RUM will beat $ADA.",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "$RUM will beat $ADA.",
+        },
         "pagingToken": "147353348604919817",
       },
       "fee": "10000",
@@ -913,7 +1693,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889433,
       "extra": {
         "blockTime": 2020-01-23T14:20:56.000Z,
+        "index": "119784202639093761",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119784202639093761",
       },
       "fee": "100",
@@ -936,7 +1720,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206210,
       "extra": {
         "blockTime": 2020-04-16T12:52:29.000Z,
+        "index": "125439716790431745",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125439716790431745",
       },
       "fee": "100",
@@ -955,11 +1743,127 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "ab38853af055dcd240de504370b0068d1c3ef5fc02ec958492105687f87456e8",
+      "blockHeight": 57538076,
+      "extra": {
+        "blockTime": 2025-06-14T05:29:59.000Z,
+        "index": "247124154694983767",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "250 TUNG free tungtung.shop",
+        },
+        "pagingToken": "247124154694983767",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "7fea13919cb8dc577ab8dd5c0b5ca7cd07aebe8c7133c4bac21e3fac24a2f8d6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-7fea13919cb8dc577ab8dd5c0b5ca7cd07aebe8c7133c4bac21e3fac24a2f8d6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844127680,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "67a85c4ff74a9af1a6228b0266b4493cba750ee23df4fa9888b942b3914aec75",
+      "blockHeight": 57524816,
+      "extra": {
+        "blockTime": 2025-06-13T08:41:26.000Z,
+        "index": "247067203428941911",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "TUNGTUNG Live tungtung.shop",
+        },
+        "pagingToken": "247067203428941911",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8208bf02c81bd86b2eb85286ba9f5d3fdee45b76dcbfcdc9432b11112e76e0e5",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8208bf02c81bd86b2eb85286ba9f5d3fdee45b76dcbfcdc9432b11112e76e0e5-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844124260,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "8725edc018d7d191cbf15ab8833d3150134848120f6797a7c0c8ddc874048520",
+      "blockHeight": 57761332,
+      "extra": {
+        "blockTime": 2025-06-28T21:00:05.000Z,
+        "index": "248083031913766999",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "720% APY On yXRP YXRP.SITE",
+        },
+        "pagingToken": "248083031913766999",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "82b1c09e7c1548f27c0d3ebd6e6680a45bf636b0319e478082d8cf050e956a99",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-82b1c09e7c1548f27c0d3ebd6e6680a45bf636b0319e478082d8cf050e956a99-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542678000,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0f46c13b01242aab25ab2063688651ba962676084533f8e08c4a48ac3698ff53",
+      "blockHeight": 57515199,
+      "extra": {
+        "blockTime": 2025-06-12T17:31:41.000Z,
+        "index": "247025898728439895",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "TUNGTUNG ON Lobstr.co",
+        },
+        "pagingToken": "247025898728439895",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8339b55903802e4a3f6139da944d5aa09187ce181399d3fbdd23d436ba1fa404",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8339b55903802e4a3f6139da944d5aa09187ce181399d3fbdd23d436ba1fa404-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844121600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "b1dc829d8aeab361098dd6992aa4853c71bdee44d8d814f5bbb17177b93d4188",
       "blockHeight": 27904466,
       "extra": {
         "blockTime": 2020-01-24T13:33:31.000Z,
+        "index": "119848768882610177",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119848768882610177",
       },
       "fee": "100",
@@ -982,8 +1886,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55322359,
       "extra": {
         "blockTime": 2025-01-17T17:50:42.000Z,
+        "index": "237607722643083276",
         "ledgerOpType": "IN",
-        "memo": "pleas help me with send 1XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "pleas help me with send 1XLM",
+        },
         "pagingToken": "237607722643083276",
       },
       "fee": "10000",
@@ -1002,11 +1910,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "048042c685b3650c1e1d6f87196b26ba227b34fddf5b7ab3915ae2aa4a590ad1",
+      "blockHeight": 57897210,
+      "extra": {
+        "blockTime": 2025-07-07T19:00:57.000Z,
+        "index": "248666623480209495",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RGN Earn Native XLM!",
+        },
+        "pagingToken": "248666623480209495",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8aa9b0e8e66525a629e42c33a7bd151069afcdfe72255e57c6b826961bcf8e65",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8aa9b0e8e66525a629e42c33a7bd151069afcdfe72255e57c6b826961bcf8e65-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
+      ],
+      "transactionSequenceNumber": 248584795762724670,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "940f6d55e324cad32a8f495d0d4816167f2dc527e98f38a4c05d2ec6a0dd1fa3",
       "blockHeight": 27751970,
       "extra": {
         "blockTime": 2020-01-14T16:13:59.000Z,
+        "index": "119193803549724673",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119193803549724673",
       },
       "fee": "100",
@@ -1025,11 +1965,71 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "4a62714e5950c465b100f8e97d495f121e8110dd5ce213269506e45317244417",
+      "blockHeight": 57786017,
+      "extra": {
+        "blockTime": 2025-06-30T11:54:16.000Z,
+        "index": "248189053181399127",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yXRP get 720% APY Hourly",
+        },
+        "pagingToken": "248189053181399127",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "91ddcf41280892578a59cfde83e5dad8a4f32d4a230672489ad1bf513a85adbf",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-91ddcf41280892578a59cfde83e5dad8a4f32d4a230672489ad1bf513a85adbf-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542681380,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "77e7aa328a0e0ee36ffa181024d15108b04a44378e9fd072e26c6fa2ab135276",
+      "blockHeight": 57842434,
+      "extra": {
+        "blockTime": 2025-07-04T04:38:05.000Z,
+        "index": "248431362351337559",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Get up to 720% APY with yXRP",
+        },
+        "pagingToken": "248431362351337559",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9387d0d0066830e433bc87beba7600ae0643c76ac753f74fb1bc849142ed3b21",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9387d0d0066830e433bc87beba7600ae0643c76ac753f74fb1bc849142ed3b21-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542691600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "610e9c1e9bfef1abed295cb11fc0b4e08ab7e5fee4014265c88f58da546a4782",
       "blockHeight": 28085073,
       "extra": {
         "blockTime": 2020-02-05T13:03:02.000Z,
+        "index": "120624470040944641",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120624470040944641",
       },
       "fee": "100",
@@ -1048,11 +2048,99 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "fefab023dab79c20910ff1117be5749d54f0efa217e2d8aa10831aee6577576c",
+      "blockHeight": 56821065,
+      "extra": {
+        "blockTime": 2025-04-28T08:00:21.000Z,
+        "index": "244044615899246662",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "EDEN Dance IS LIMITED",
+        },
+        "pagingToken": "244044615899246662",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9544d42b94a57457be4ad361b64c27bc7cc45141260f65260c5b22b0c1863bb3",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9544d42b94a57457be4ad361b64c27bc7cc45141260f65260c5b22b0c1863bb3-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988780960,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0655b72cdd23db22764504e4b9cb3a97b66a9f79d571c84435fa6616f4592434",
+      "blockHeight": 57905758,
+      "extra": {
+        "blockTime": 2025-07-08T08:36:06.000Z,
+        "index": "248703336860377175",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "https://regenesis.business",
+        },
+        "pagingToken": "248703336860377175",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "954ebb125440e3c9075700fecdb2571710f47604bcc5ac31dd9ffe02ab902f4e",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-954ebb125440e3c9075700fecdb2571710f47604bcc5ac31dd9ffe02ab902f4e-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
+      ],
+      "transactionSequenceNumber": 248584795762726400,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "d102b74b08af54c3fb885aca0d31ab36e5daac22830bf4315d936f593e20975a",
+      "blockHeight": 57558089,
+      "extra": {
+        "blockTime": 2025-06-15T12:47:00.000Z,
+        "index": "247210109875437655",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tungtung.shop 1000 tung free",
+        },
+        "pagingToken": "247210109875437655",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9612d74b68efe109982b319aeb30067ff38b8edba97cd36f7d30c4d1abd95896",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9612d74b68efe109982b319aeb30067ff38b8edba97cd36f7d30c4d1abd95896-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844132770,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "2a03d7514890104dde2c9814fd1c1d48a0cf33d0fbf0b6c146ef2b2b1163c60e",
       "blockHeight": 28437182,
       "extra": {
         "blockTime": 2020-02-28T10:38:30.000Z,
+        "index": "122136766680686593",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "122136766680686593",
       },
       "fee": "100",
@@ -1071,11 +2159,71 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "91d515574d1e91f90c2aada0f6b5c0e6d821e7b4c1851198b19065a389bae84d",
+      "blockHeight": 56850766,
+      "extra": {
+        "blockTime": 2025-04-30T07:05:11.000Z,
+        "index": "244172180722643014",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "EDEN Dance To the Moon 🚀",
+        },
+        "pagingToken": "244172180722643014",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "99def159e45344f3667dc80228b79c70e9db5ce1d574459fdca57666b8628e27",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-99def159e45344f3667dc80228b79c70e9db5ce1d574459fdca57666b8628e27-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988788300,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "1b34f16f25809b331f04a8d2b671b26c56bcbb1936ee5320a2bd07bf62312153",
+      "blockHeight": 57545050,
+      "extra": {
+        "blockTime": 2025-06-14T16:26:36.000Z,
+        "index": "247154107798089815",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "0 fee on swap tungtung.shop",
+        },
+        "pagingToken": "247154107798089815",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9a091e6cda1360aed7f848dfe6a118c36c97b75c1550796374dfd8f32b5f1886",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9a091e6cda1360aed7f848dfe6a118c36c97b75c1550796374dfd8f32b5f1886-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844129380,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "e00d50c05c6b306d154fe8ffc398d7d705101105dab8837bf6f1526803ee15a8",
       "blockHeight": 27888571,
       "extra": {
         "blockTime": 2020-01-23T13:03:26.000Z,
+        "index": "119780500377280513",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119780500377280513",
       },
       "fee": "100",
@@ -1094,12 +2242,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a7ac120842484fecc3b25f7a92db368606fcaa79bb7672b4db07e3203c70a283",
+      "blockHeight": 57794145,
+      "extra": {
+        "blockTime": 2025-07-01T00:45:01.000Z,
+        "index": "248223962675540055",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yXRP get 720% APY Hourly",
+        },
+        "pagingToken": "248223962675540055",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9d7c5c5d5ac530a0f57e89ede5fbcff77fa4e675c8e6b9f6077e2ca8f724dcc7",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9d7c5c5d5ac530a0f57e89ede5fbcff77fa4e675c8e6b9f6077e2ca8f724dcc7-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+      ],
+      "transactionSequenceNumber": 248002359542683070,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "c53bebf8e6ac35945d5816163582524392d3217f47648084afb856d220254323",
       "blockHeight": 28114936,
       "extra": {
         "blockTime": 2020-02-07T13:15:16.000Z,
+        "index": "120752730649231361",
         "ledgerOpType": "OUT",
-        "memo": "Errr",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Errr",
+        },
         "pagingToken": "120752730649231361",
       },
       "fee": "100",
@@ -1122,7 +2302,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206206,
       "extra": {
         "blockTime": 2020-04-16T12:52:04.000Z,
+        "index": "125439699611508737",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125439699611508737",
       },
       "fee": "100",
@@ -1145,8 +2329,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53442497,
       "extra": {
         "blockTime": 2024-09-11T03:56:14.000Z,
+        "index": "229533776832098323",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "229533776832098323",
       },
       "fee": "10000",
@@ -1165,12 +2353,72 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "5908290e3a133bd8b8013255f2d95dbce569b4419672b65eefe1aa69fb3efeaf",
+      "blockHeight": 56605236,
+      "extra": {
+        "blockTime": 2025-04-14T01:19:40.000Z,
+        "index": "243117637402656816",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243117637402656816",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "a4af02c9f60c117e5af660cebce34c03f220488b73fc7e239f448bfc46c5a7e6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a4af02c9f60c117e5af660cebce34c03f220488b73fc7e239f448bfc46c5a7e6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137257900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "8279d9992095515d69a8bc6d598f2d23757ad9e28b3a1546e12d211a21a98b0f",
+      "blockHeight": 57882240,
+      "extra": {
+        "blockTime": 2025-07-06T19:18:31.000Z,
+        "index": "248602327819755607",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RGN Earn Native XLM!",
+        },
+        "pagingToken": "248602327819755607",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "a9d1c9bd0aad692d34ffdbc64f209c1ce3b5cbca625fbcf6956799bbea67a19a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a9d1c9bd0aad692d34ffdbc64f209c1ce3b5cbca625fbcf6956799bbea67a19a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
+      ],
+      "transactionSequenceNumber": 248584795762721280,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "814dcd435904e349cbaf61509197b1a7f54616ec394e627c59184681a8c1852c",
       "blockHeight": 54272423,
       "extra": {
         "blockTime": 2024-11-05T19:38:29.000Z,
+        "index": "233098281860362320",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "233098281860362320",
       },
       "fee": "10000",
@@ -1193,8 +2441,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 54119932,
       "extra": {
         "blockTime": 2024-10-26T12:03:44.000Z,
+        "index": "232443338001944656",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "232443338001944656",
       },
       "fee": "10000",
@@ -1220,7 +2472,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "assetCode": "XRP",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "blockTime": 2020-01-09T12:31:33.000Z,
+        "index": "118846808846880769",
         "ledgerOpType": "OPT_IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "118846808846880769",
       },
       "fee": "100",
@@ -1237,12 +2493,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7109c350309e1c9bc50ca866b2698ba7730b3c4e9d1749b44fc11676140fb893",
+      "blockHeight": 56580132,
+      "extra": {
+        "blockTime": 2025-04-12T09:04:15.000Z,
+        "index": "243009816543367216",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243009816543367216",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b8acdec9da0fa5004fe452fb2b084c6095e9dac8557eca064ef0bd3fbecfb7ea",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b8acdec9da0fa5004fe452fb2b084c6095e9dac8557eca064ef0bd3fbecfb7ea-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137254500,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "7f145261aafcb95bbdbbf9e702d434ec296fcea77da840d2a19175bc46cc7147",
       "blockHeight": 28437162,
       "extra": {
         "blockTime": 2020-02-28T10:36:41.000Z,
+        "index": "122136680781512705",
         "ledgerOpType": "IN",
-        "memo": "test",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "test",
+        },
         "pagingToken": "122136680781512705",
       },
       "fee": "100",
@@ -1265,8 +2553,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 37858200,
       "extra": {
         "blockTime": 2021-10-17T21:07:46.000Z,
+        "index": "162599730886103043",
         "ledgerOpType": "IN",
-        "memo": "tRAstME a.MERA.one",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tRAstME a.MERA.one",
+        },
         "pagingToken": "162599730886103043",
       },
       "fee": "10000",
@@ -1289,7 +2581,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206434,
       "extra": {
         "blockTime": 2020-04-16T13:13:04.000Z,
+        "index": "125440678864154625",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125440678864154625",
       },
       "fee": "100",
@@ -1312,8 +2608,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 54011812,
       "extra": {
         "blockTime": 2024-10-19T05:21:01.000Z,
+        "index": "231978966137774160",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "231978966137774160",
       },
       "fee": "10000",
@@ -1336,7 +2636,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205869,
       "extra": {
         "blockTime": 2020-04-16T12:21:28.000Z,
+        "index": "125438252206436353",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125438252206436353",
       },
       "fee": "100",
@@ -1355,11 +2659,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7daa8d51b8bec153837dacd929ded3bf774f372ec2973242dcb6bbd3ec516bfb",
+      "blockHeight": 58207158,
+      "extra": {
+        "blockTime": 2025-07-28T09:49:55.000Z,
+        "index": "249997840003276887",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "yXRP-Get up to 604% APY",
+        },
+        "pagingToken": "249997840003276887",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "c7a5bfe861d685219fa15ce440c78f688f7047e3b710b26e20146d3df924c100",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c7a5bfe861d685219fa15ce440c78f688f7047e3b710b26e20146d3df924c100-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBZPI6BC5KCD6J4ZTIEI4UTWWZ4DR54KE5FW32H32DY655CFPQNZOIRS",
+      ],
+      "transactionSequenceNumber": 249681756179930980,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "a8cb0254665ea216a2666d611db42b80d46ff598f76e69c4dc883c8d79792f1e",
       "blockHeight": 29205644,
       "extra": {
         "blockTime": 2020-04-16T11:59:31.000Z,
+        "index": "125437285838716929",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437285838716929",
       },
       "fee": "100",
@@ -1382,7 +2718,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27966558,
       "extra": {
         "blockTime": 2020-01-28T14:28:13.000Z,
+        "index": "120115451994812417",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120115451994812417",
       },
       "fee": "100",
@@ -1401,12 +2741,72 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "f845e177320196a6c3e395cc67215502c9276580301135a5526714117f78ba52",
+      "blockHeight": 56624155,
+      "extra": {
+        "blockTime": 2025-04-15T07:50:22.000Z,
+        "index": "243198893889003568",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy LUMIN Earn Native XLM!",
+        },
+        "pagingToken": "243198893889003568",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "d226c675da66e47551f814eac30a1b66e1578ad113a703c6b0b2dc48bd6ba65c",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d226c675da66e47551f814eac30a1b66e1578ad113a703c6b0b2dc48bd6ba65c-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137260900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "19e34c4ef4b8b5af02e3eb5bf601c8f018161fc7c5e93172486d927dcd5fdebc",
+      "blockHeight": 57595539,
+      "extra": {
+        "blockTime": 2025-06-17T23:43:24.000Z,
+        "index": "247370956401250391",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tungtung.shop 1000 tung free",
+        },
+        "pagingToken": "247370956401250391",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "d618355841f1b030dce8db1cf88224bc3668a2292ffe9a672ca4ccb9b91aecb1",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d618355841f1b030dce8db1cf88224bc3668a2292ffe9a672ca4ccb9b91aecb1-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844136160,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "348700d9be98e1df277bdad085c71626843870bd80aec3f428aeb06a2519ee43",
       "blockHeight": 37735917,
       "extra": {
         "blockTime": 2021-10-10T01:23:47.000Z,
+        "index": "162074529399820318",
         "ledgerOpType": "IN",
-        "memo": "airdrop softbalanced.com",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "airdrop softbalanced.com",
+        },
         "pagingToken": "162074529399820318",
       },
       "fee": "9000",
@@ -1432,7 +2832,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "assetCode": "BCH",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "blockTime": 2020-02-14T10:54:29.000Z,
+        "index": "121205888354127873",
         "ledgerOpType": "OPT_IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121205888354127873",
       },
       "fee": "100",
@@ -1453,7 +2857,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28163178,
       "extra": {
         "blockTime": 2020-02-10T17:51:20.000Z,
+        "index": "120959928461459457",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120959928461459457",
       },
       "fee": "100",
@@ -1472,11 +2880,43 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "16723eb6836e31c77c0fc1a73c172089dccc81058965792f0e05cfcb0a591c4d",
+      "blockHeight": 58179505,
+      "extra": {
+        "blockTime": 2025-07-26T14:09:20.000Z,
+        "index": "249879071273390167",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "yXRP-Get up to 604% APY",
+        },
+        "pagingToken": "249879071273390167",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "d8e18a65fb90c2bce1894a93d3d781e1dcc674ce5cb85d3326895e3e969086e8",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d8e18a65fb90c2bce1894a93d3d781e1dcc674ce5cb85d3326895e3e969086e8-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBZPI6BC5KCD6J4ZTIEI4UTWWZ4DR54KE5FW32H32DY655CFPQNZOIRS",
+      ],
+      "transactionSequenceNumber": 249681756179925860,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "02fb6429c872fc75491085179a6d8b81f15ad3ed8f1ba36c7fa7625fa778f850",
       "blockHeight": 29205269,
       "extra": {
         "blockTime": 2020-04-16T11:24:35.000Z,
+        "index": "125435675226099713",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125435675226099713",
       },
       "fee": "100",
@@ -1499,7 +2939,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27746942,
       "extra": {
         "blockTime": 2020-01-14T08:25:10.000Z,
+        "index": "119172208454135809",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119172208454135809",
       },
       "fee": "100",
@@ -1522,8 +2966,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 54033536,
       "extra": {
         "blockTime": 2024-10-20T16:22:41.000Z,
+        "index": "232072270008602704",
         "ledgerOpType": "IN",
-        "memo": "ultracapital.site 602% APY",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "ultracapital.site 602% APY",
+        },
         "pagingToken": "232072270008602704",
       },
       "fee": "10000",
@@ -1542,11 +2990,71 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "57f597bb85d242b312104c8ca90fee3006ca5d962f8abf9979070e530d10d2ec",
+      "blockHeight": 56572918,
+      "extra": {
+        "blockTime": 2025-04-11T21:31:50.000Z,
+        "index": "242978832649736240",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/StellarLumin",
+        },
+        "pagingToken": "242978832649736240",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "e0eefd2e3a1d44b66617f4ec17226f19599b0d5d20956a8ac68272b6ee7cebe9",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-e0eefd2e3a1d44b66617f4ec17226f19599b0d5d20956a8ac68272b6ee7cebe9-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137252800,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "c41537d8e48e517f3866dfb3097d5cbf3d206cdbf1151c3a2b6bb79c130ce3e4",
+      "blockHeight": 56827967,
+      "extra": {
+        "blockTime": 2025-04-28T18:57:55.000Z,
+        "index": "244074259764027462",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "EDEN Dance IS LIMITED",
+        },
+        "pagingToken": "244074259764027462",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "eb4c3720600c3c08cfe8e010b16c30e6af529cd0aabcfec304d773b9c970dbb2",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-eb4c3720600c3c08cfe8e010b16c30e6af529cd0aabcfec304d773b9c970dbb2-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988782800,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "c2dd2af05d842d854d789cf480e11399c915ba041ff44082a6e07d719c3ccf5b",
       "blockHeight": 27735951,
       "extra": {
         "blockTime": 2020-01-13T15:26:35.000Z,
+        "index": "119125002468630529",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119125002468630529",
       },
       "fee": "100",
@@ -1572,7 +3080,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "assetCode": "KIN",
         "assetIssuer": "GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR",
         "blockTime": 2020-02-14T09:49:43.000Z,
+        "index": "121202894761410561",
         "ledgerOpType": "OPT_IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121202894761410561",
       },
       "fee": "100",
@@ -1593,8 +3105,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53713438,
       "extra": {
         "blockTime": 2024-09-29T07:32:50.000Z,
+        "index": "230697459566329936",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "230697459566329936",
       },
       "fee": "10000",
@@ -1617,7 +3133,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28437169,
       "extra": {
         "blockTime": 2020-02-28T10:37:20.000Z,
+        "index": "122136710846099457",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "122136710846099457",
       },
       "fee": "100",
@@ -1636,12 +3156,44 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "556399148852e877e2c434574d03d8f461a4faf4f6a057b05282600455df0a46",
+      "blockHeight": 57530666,
+      "extra": {
+        "blockTime": 2025-06-13T17:52:45.000Z,
+        "index": "247092328987263063",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "250 TUNG free tungtung.shop",
+        },
+        "pagingToken": "247092328987263063",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "f9ba3ad2c0b7dceb5abb32a2200b2d15ede50dbb879b09dfd0ffbd33a9431f32",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f9ba3ad2c0b7dceb5abb32a2200b2d15ede50dbb879b09dfd0ffbd33a9431f32-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844125950,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "ff555f5439ccadffc8cefba09f0e795c9e7f77197ce4ec8e9852649e4be541b9",
       "blockHeight": 55519527,
       "extra": {
         "blockTime": 2025-01-31T04:09:09.000Z,
+        "index": "238454552754909196",
         "ledgerOpType": "IN",
-        "memo": "Pleas Help Me With Send XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Pleas Help Me With Send XLM",
+        },
         "pagingToken": "238454552754909196",
       },
       "fee": "10000",
@@ -1664,7 +3216,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28162919,
       "extra": {
         "blockTime": 2020-02-10T17:27:53.000Z,
+        "index": "120958816065163265",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120958816065163265",
       },
       "fee": "100",
@@ -1687,7 +3243,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205676,
       "extra": {
         "blockTime": 2020-04-16T12:02:42.000Z,
+        "index": "125437423277637633",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437423277637633",
       },
       "fee": "100",
@@ -1710,7 +3270,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889406,
       "extra": {
         "blockTime": 2020-01-23T14:18:30.000Z,
+        "index": "119784086676713473",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119784086676713473",
       },
       "fee": "100",
@@ -1735,7 +3299,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27766392,
       "extra": {
         "blockTime": 2020-01-15T14:47:57.000Z,
+        "index": "119255745567977473",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119255745567977473",
       },
       "fee": "100",
@@ -1758,7 +3326,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27952591,
       "extra": {
         "blockTime": 2020-01-27T16:25:37.000Z,
+        "index": "120055464183619585",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120055464183619585",
       },
       "fee": "100",
@@ -1781,8 +3353,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27890199,
       "extra": {
         "blockTime": 2020-01-23T15:29:51.000Z,
+        "index": "119787492583981057",
         "ledgerOpType": "IN",
-        "memo": "3",
+        "memo": {
+          "type": "MEMO_ID",
+          "value": "3",
+        },
         "pagingToken": "119787492583981057",
       },
       "fee": "100",
@@ -1805,8 +3381,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 56007260,
       "extra": {
         "blockTime": 2025-03-05T02:35:15.000Z,
+        "index": "240549350038851652",
         "ledgerOpType": "IN",
-        "memo": "t.me/WealthAcademyStellar",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
         "pagingToken": "240549350038851652",
       },
       "fee": "10000",
@@ -1829,8 +3409,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28318748,
       "extra": {
         "blockTime": 2020-02-20T21:05:33.000Z,
+        "index": "121628096523747329",
         "ledgerOpType": "IN",
-        "memo": "1",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "1",
+        },
         "pagingToken": "121628096523747329",
       },
       "fee": "100",
@@ -1853,7 +3437,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28114251,
       "extra": {
         "blockTime": 2020-02-07T12:10:45.000Z,
+        "index": "120749788596604929",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120749788596604929",
       },
       "fee": "100",
@@ -1876,7 +3464,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27963532,
       "extra": {
         "blockTime": 2020-01-28T09:40:10.000Z,
+        "index": "120102455420669953",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120102455420669953",
       },
       "fee": "100",
@@ -1899,8 +3491,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55326542,
       "extra": {
         "blockTime": 2025-01-18T00:43:46.000Z,
+        "index": "237625688490881045",
         "ledgerOpType": "IN",
-        "memo": "pleas help me with send 1XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "pleas help me with send 1XLM",
+        },
         "pagingToken": "237625688490881045",
       },
       "fee": "10000",
@@ -1923,7 +3519,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889727,
       "extra": {
         "blockTime": 2020-01-23T14:47:21.000Z,
+        "index": "119785465359474689",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119785465359474689",
       },
       "fee": "100",
@@ -1946,7 +3546,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889269,
       "extra": {
         "blockTime": 2020-01-23T14:05:51.000Z,
+        "index": "119783498264412161",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119783498264412161",
       },
       "fee": "100",
@@ -1969,7 +3573,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28101387,
       "extra": {
         "blockTime": 2020-02-06T15:30:44.000Z,
+        "index": "120694538137272321",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120694538137272321",
       },
       "fee": "100",
@@ -1992,7 +3600,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27902342,
       "extra": {
         "blockTime": 2020-01-24T10:15:46.000Z,
+        "index": "119839646372044801",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119839646372044801",
       },
       "fee": "100",
@@ -2015,8 +3627,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55927470,
       "extra": {
         "blockTime": 2025-02-27T17:17:18.000Z,
+        "index": "240206654598270996",
         "ledgerOpType": "IN",
-        "memo": "Send XLM will return double",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Send XLM will return double",
+        },
         "pagingToken": "240206654598270996",
       },
       "fee": "10000",
@@ -2039,8 +3655,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55968678,
       "extra": {
         "blockTime": 2025-03-02T12:03:54.000Z,
+        "index": "240383641610809364",
         "ledgerOpType": "IN",
-        "memo": "Send XLM will return double",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Send XLM will return double",
+        },
         "pagingToken": "240383641610809364",
       },
       "fee": "10000",
@@ -2063,7 +3683,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27751970,
       "extra": {
         "blockTime": 2020-01-14T16:13:59.000Z,
+        "index": "119193803549724673",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119193803549724673",
       },
       "fee": "100",
@@ -2086,7 +3710,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28115381,
       "extra": {
         "blockTime": 2020-02-07T13:56:25.000Z,
+        "index": "120754641909706753",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120754641909706753",
       },
       "fee": "100",
@@ -2109,7 +3737,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27888571,
       "extra": {
         "blockTime": 2020-01-23T13:03:26.000Z,
+        "index": "119780500377280513",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119780500377280513",
       },
       "fee": "100",
@@ -2132,8 +3764,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 37734402,
       "extra": {
         "blockTime": 2021-10-09T23:04:10.000Z,
+        "index": "162068022524194819",
         "ledgerOpType": "IN",
-        "memo": "airdrop softbalanced.com",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "airdrop softbalanced.com",
+        },
         "pagingToken": "162068022524194819",
       },
       "fee": "9000",
@@ -2156,8 +3792,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28114936,
       "extra": {
         "blockTime": 2020-02-07T13:15:16.000Z,
+        "index": "120752730649231361",
         "ledgerOpType": "IN",
-        "memo": "Errr",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Errr",
+        },
         "pagingToken": "120752730649231361",
       },
       "fee": "100",
@@ -2180,7 +3820,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27966569,
       "extra": {
         "blockTime": 2020-01-28T14:29:21.000Z,
+        "index": "120115499236392961",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120115499236392961",
       },
       "fee": "100",
@@ -2203,7 +3847,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27966558,
       "extra": {
         "blockTime": 2020-01-28T14:28:13.000Z,
+        "index": "120115451994812417",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120115451994812417",
       },
       "fee": "100",
@@ -2226,8 +3874,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53438540,
       "extra": {
         "blockTime": 2024-09-10T21:35:40.000Z,
+        "index": "229516781646295087",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "229516781646295087",
       },
       "fee": "10000",
@@ -2250,8 +3902,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55523370,
       "extra": {
         "blockTime": 2025-01-31T10:20:26.000Z,
+        "index": "238471058314002453",
         "ledgerOpType": "IN",
-        "memo": "Pleas Help Me With Send XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Pleas Help Me With Send XLM",
+        },
         "pagingToken": "238471058314002453",
       },
       "fee": "10000",
@@ -2276,8 +3932,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55699404,
       "extra": {
         "blockTime": 2025-02-12T07:15:50.000Z,
+        "index": "239227118586945599",
         "ledgerOpType": "IN",
-        "memo": "Pleas Help Me With Send XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Pleas Help Me With Send XLM",
+        },
         "pagingToken": "239227118586945599",
       },
       "fee": "10000",
@@ -2300,7 +3960,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889727,
       "extra": {
         "blockTime": 2020-01-23T14:47:21.000Z,
+        "index": "119785465359474689",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119785465359474689",
       },
       "fee": "100",
@@ -2323,8 +3987,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55965218,
       "extra": {
         "blockTime": 2025-03-02T06:29:04.000Z,
+        "index": "240368781023604799",
         "ledgerOpType": "IN",
-        "memo": "Send XLM will return double",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Send XLM will return double",
+        },
         "pagingToken": "240368781023604799",
       },
       "fee": "10000",
@@ -2347,7 +4015,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889433,
       "extra": {
         "blockTime": 2020-01-23T14:20:56.000Z,
+        "index": "119784202639093761",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119784202639093761",
       },
       "fee": "100",
@@ -2370,7 +4042,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27904466,
       "extra": {
         "blockTime": 2020-01-24T13:33:31.000Z,
+        "index": "119848768882610177",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119848768882610177",
       },
       "fee": "100",
@@ -2393,8 +4069,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55332542,
       "extra": {
         "blockTime": 2025-01-18T10:39:07.000Z,
+        "index": "237651458295517190",
         "ledgerOpType": "IN",
-        "memo": "pleas help me with send 1XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "pleas help me with send 1XLM",
+        },
         "pagingToken": "237651458295517190",
       },
       "fee": "10000",
@@ -2417,8 +4097,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 37742747,
       "extra": {
         "blockTime": 2021-10-10T11:46:11.000Z,
+        "index": "162103864026546198",
         "ledgerOpType": "IN",
-        "memo": "airdrop softbalanced.com",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "airdrop softbalanced.com",
+        },
         "pagingToken": "162103864026546198",
       },
       "fee": "9000",
@@ -2441,8 +4125,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55528507,
       "extra": {
         "blockTime": 2025-01-31T18:41:16.000Z,
+        "index": "238493121560899590",
         "ledgerOpType": "IN",
-        "memo": "Pleas Help Me With Send XLM",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Pleas Help Me With Send XLM",
+        },
         "pagingToken": "238493121560899590",
       },
       "fee": "10000",
@@ -2465,7 +4153,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27966569,
       "extra": {
         "blockTime": 2020-01-28T14:29:21.000Z,
+        "index": "120115499236392961",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120115499236392961",
       },
       "fee": "100",
@@ -2488,8 +4180,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 56008962,
       "extra": {
         "blockTime": 2025-03-05T05:20:29.000Z,
+        "index": "240556660073410576",
         "ledgerOpType": "IN",
-        "memo": "t.me/WealthAcademyStellar",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
         "pagingToken": "240556660073410576",
       },
       "fee": "10000",
@@ -2512,7 +4208,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28163178,
       "extra": {
         "blockTime": 2020-02-10T17:51:20.000Z,
+        "index": "120959928461459457",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120959928461459457",
       },
       "fee": "100",
@@ -2535,8 +4235,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53443652,
       "extra": {
         "blockTime": 2024-09-11T05:46:45.000Z,
+        "index": "229538737518915618",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "229538737518915618",
       },
       "fee": "10000",
@@ -2559,7 +4263,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28055813,
       "extra": {
         "blockTime": 2020-02-03T15:08:59.000Z,
+        "index": "120498799297777665",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120498799297777665",
       },
       "fee": "100",
@@ -2582,8 +4290,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 55924151,
       "extra": {
         "blockTime": 2025-02-27T11:56:15.000Z,
+        "index": "240192399601573951",
         "ledgerOpType": "IN",
-        "memo": "Send XLM will return double",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Send XLM will return double",
+        },
         "pagingToken": "240192399601573951",
       },
       "fee": "10000",
@@ -2606,7 +4318,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28067899,
       "extra": {
         "blockTime": 2020-02-04T09:56:58.000Z,
+        "index": "120550708272582657",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120550708272582657",
       },
       "fee": "100",
@@ -2629,7 +4345,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28162919,
       "extra": {
         "blockTime": 2020-02-10T17:27:53.000Z,
+        "index": "120958816065163265",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120958816065163265",
       },
       "fee": "100",
@@ -2652,7 +4372,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 27889406,
       "extra": {
         "blockTime": 2020-01-23T14:18:30.000Z,
+        "index": "119784086676713473",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "119784086676713473",
       },
       "fee": "100",
@@ -2677,7 +4401,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205836,
       "extra": {
         "blockTime": 2020-04-16T12:18:34.000Z,
+        "index": "125438110472704001",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125438110472704001",
       },
       "fee": "100",
@@ -2700,7 +4428,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205667,
       "extra": {
         "blockTime": 2020-04-16T12:01:53.000Z,
+        "index": "125437384622931969",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437384622931969",
       },
       "fee": "100",
@@ -2723,8 +4455,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 56031711,
       "extra": {
         "blockTime": 2025-03-06T18:17:33.000Z,
+        "index": "240654366283989072",
         "ledgerOpType": "IN",
-        "memo": "t.me/WealthAcademyStellar",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
         "pagingToken": "240654366283989072",
       },
       "fee": "10000",
@@ -2747,7 +4483,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205672,
       "extra": {
         "blockTime": 2020-04-16T12:02:19.000Z,
+        "index": "125437406098026497",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437406098026497",
       },
       "fee": "100",
@@ -2770,7 +4510,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205265,
       "extra": {
         "blockTime": 2020-04-16T11:24:09.000Z,
+        "index": "125435658046103553",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125435658046103553",
       },
       "fee": "100",
@@ -2793,7 +4537,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206210,
       "extra": {
         "blockTime": 2020-04-16T12:52:29.000Z,
+        "index": "125439716790431745",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125439716790431745",
       },
       "fee": "100",
@@ -2816,8 +4564,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53450451,
       "extra": {
         "blockTime": 2024-09-11T16:41:16.000Z,
+        "index": "229567939001618483",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "229567939001618483",
       },
       "fee": "10000",
@@ -2840,8 +4592,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 53461273,
       "extra": {
         "blockTime": 2024-09-12T10:02:48.000Z,
+        "index": "229614419137814578",
         "ledgerOpType": "IN",
-        "memo": "try MMBOT from MMBOT.SHOP",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "try MMBOT from MMBOT.SHOP",
+        },
         "pagingToken": "229614419137814578",
       },
       "fee": "10000",
@@ -2864,7 +4620,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28389951,
       "extra": {
         "blockTime": 2020-02-25T09:23:48.000Z,
+        "index": "121933911080058881",
         "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121933911080058881",
       },
       "fee": "100",
@@ -2887,7 +4647,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206206,
       "extra": {
         "blockTime": 2020-04-16T12:52:04.000Z,
+        "index": "125439699611508737",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125439699611508737",
       },
       "fee": "100",
@@ -2910,7 +4674,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29206434,
       "extra": {
         "blockTime": 2020-04-16T13:13:04.000Z,
+        "index": "125440678864154625",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125440678864154625",
       },
       "fee": "100",
@@ -2933,7 +4701,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205869,
       "extra": {
         "blockTime": 2020-04-16T12:21:28.000Z,
+        "index": "125438252206436353",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125438252206436353",
       },
       "fee": "100",
@@ -2956,7 +4728,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205644,
       "extra": {
         "blockTime": 2020-04-16T11:59:31.000Z,
+        "index": "125437285838716929",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437285838716929",
       },
       "fee": "100",
@@ -2979,7 +4755,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205269,
       "extra": {
         "blockTime": 2020-04-16T11:24:35.000Z,
+        "index": "125435675226099713",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125435675226099713",
       },
       "fee": "100",
@@ -3002,7 +4782,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28055813,
       "extra": {
         "blockTime": 2020-02-03T15:08:59.000Z,
+        "index": "120498799297777665",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120498799297777665",
       },
       "fee": "100",
@@ -3025,7 +4809,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28067899,
       "extra": {
         "blockTime": 2020-02-04T09:56:58.000Z,
+        "index": "120550708272582657",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120550708272582657",
       },
       "fee": "100",
@@ -3048,7 +4836,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 29205676,
       "extra": {
         "blockTime": 2020-04-16T12:02:42.000Z,
+        "index": "125437423277637633",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "125437423277637633",
       },
       "fee": "100",
@@ -3073,7 +4865,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28194270,
       "extra": {
         "blockTime": 2020-02-12T17:57:58.000Z,
+        "index": "121093467584729089",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121093467584729089",
       },
       "fee": "100",
@@ -3096,7 +4892,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28115381,
       "extra": {
         "blockTime": 2020-02-07T13:56:25.000Z,
+        "index": "120754641909706753",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "120754641909706753",
       },
       "fee": "100",
@@ -3119,7 +4919,11 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 28389951,
       "extra": {
         "blockTime": 2020-02-25T09:23:48.000Z,
+        "index": "121933911080058881",
         "ledgerOpType": "IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
         "pagingToken": "121933911080058881",
       },
       "fee": "100",
@@ -3142,8 +4946,12 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "blockHeight": 56072035,
       "extra": {
         "blockTime": 2025-03-09T11:28:36.000Z,
+        "index": "240827556545601633",
         "ledgerOpType": "IN",
-        "memo": "t.me/WealthAcademyStellar",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
         "pagingToken": "240827556545601633",
       },
       "fee": "10000",
