@@ -54,6 +54,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "start:debug": "DOTENV_CONFIG_PATH=.env node --inspect-brk ./node_modules/jest/bin/jest.js --runTestsByPath src/*.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {
