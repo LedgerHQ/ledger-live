@@ -15,6 +15,7 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   await app.common.performSearch(account.currency.name);
   await app.stake.selectCurrency(account.currency.id);
   await app.common.selectFirstAccount();
+  await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
 export async function performSwapUntilQuoteSelectionStep(
