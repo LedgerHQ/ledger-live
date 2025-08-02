@@ -211,6 +211,17 @@ export const cosmosConfig: CosmosConfig = {
       disableDelegation: true,
     },
   },
+  config_currency_terra: {
+    type: "object",
+    default: {
+      lcd: "https://terra-classic-lcd.publicnode.com/api",
+      minGasPrice: 28.32,  
+      status: {
+        type: "active",
+      },
+      disableDelegation: true,
+    },
+  },
 };
 
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
