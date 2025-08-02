@@ -5,6 +5,7 @@
   "arbitrum": {
     "icon": "ARB.png"
   },
+
   "ethereum": {
     "icon": "ETH.png"
   },
@@ -149,10 +150,10 @@
   "optimism/erc20/tether_usd": {
     "icon": "USDT.png"
   },
-  "polygon/erc20/(pos)_tether_usd": {
+  "/erc20/(pos)_tether_usd": {
     "icon": "USDT.png"
   },
-  "polygon_zk_evm/erc20/tether_usd": {
+  "_zk_evm/erc20/tether_usd": {
     "icon": "USDT.png"
   },
   "scroll/erc20/tether_usd": {
@@ -200,7 +201,7 @@
   "optimism/erc20/usd_coin": {
     "icon": "USDC.png"
   },
-  "polygon/erc20/usd_coin": {
+  "/erc20/usd_coin": {
     "icon": "USDC.png"
   },
   "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v": {
@@ -260,10 +261,10 @@
   "optimism/erc20/chainlink_token": {
     "icon": "LINK.png"
   },
-  "polygon/erc20/chainlink_token": {
+  "/erc20/chainlink_token": {
     "icon": "LINK.png"
   },
-  "polygon_zk_evm/erc20/chainlink_token": {
+  "_zk_evm/erc20/chainlink_token": {
     "icon": "LINK.png"
   },
   "telos_evm/erc20/chainlink_token": {
@@ -287,7 +288,7 @@
   "optimism/erc20/uniswap": {
     "icon": "UNI.png"
   },
-  "polygon/erc20/uniswap_(pos)": {
+  "/erc20/uniswap_(pos)": {
     "icon": "UNI.png"
   },
   "polygon": {
@@ -1021,6 +1022,12 @@
   },
   "ethereum/erc20/kava": {
     "icon": "KAVA.png"
+  },
+  "terra": {
+    "icon": "LUNC.png"
+  },
+  "terra/CW20/juris": {
+    "icon": "JURIS.png"
   },
   "kava_evm": {
     "icon": "KAVA.png"
