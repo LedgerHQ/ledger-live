@@ -1,0 +1,36 @@
+name: "Monitoring"
+description: "Run the monitoring framework"
+inputs:
+  DD_API_KEY:
+    description: "Datadog API key"
+    required: false
+  DD_APP_KEY:
+    description: "Datadog application key"
+    required: false
+  DD_DOMAIN:
+    description: "Datadog domain"
+    required: false
+  SUBMIT_LOGS:
+    description: "Whether logs should be submitted to Datadog"
+    required: false
+  MONITOR_FILTER_CURRENCIES:
+    description: "Currencies to filter on"
+    required: false
+    default: all
+
+runs:
+  using: "composite"
+  steps:
+    - name: install and build dependencies
+      run: |
+        pnpm i
+        pnpm build:llc
+      shell: bash
+    - name: run monitoring
+      env:
+        DD_API_KEY: ${{ inputs.DD_API_KEY }}
+        DD_APP_KEY: ${{ inputs.DD_APP_KEY }}
+        DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
+        SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
+      run: pnpm coin:modules:monitoring start ${{ inputs.MONITOR_FILTER_CURRENCIES }}
+      shell: bash
