@@ -14,6 +14,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
   "axelar",
+    "terra",
   "stargaze",
   "secret_network",
   "umee",
