@@ -117,6 +117,7 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "canton_network",
+  "terra",
 ]);
 LiveConfig.setConfig(liveConfig);
 
