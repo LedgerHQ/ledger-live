@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 2.26.0-nightly.0
+
+### Minor Changes
+
+- [#11189](https://github.com/LedgerHQ/ledger-live/pull/11189) [`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): use `toFixed` instead of `toString`
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+- [#11147](https://github.com/LedgerHQ/ledger-live/pull/11147) [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-framework): add `feesStrategy` property to `TransactionIntent`
+
+### Patch Changes
+
+- Updated dependencies [[`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-framework@5.9.0-nightly.0
+
 ## 2.25.0
 
 ### Minor Changes

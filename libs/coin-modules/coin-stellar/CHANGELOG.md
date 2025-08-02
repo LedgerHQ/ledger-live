@@ -1,5 +1,16 @@
 # @ledgerhq/coin-stellar
 
+## 5.5.0-nightly.0
+
+### Minor Changes
+
+- [#11120](https://github.com/LedgerHQ/ledger-live/pull/11120) [`eb49ca4`](https://github.com/LedgerHQ/ledger-live/commit/eb49ca47a7e66e8b4528bab90ef34a985e3838b1) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][stellar] fix memo details lost
+
+### Patch Changes
+
+- Updated dependencies [[`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-framework@5.9.0-nightly.0
+
 ## 5.4.0
 
 ### Minor Changes

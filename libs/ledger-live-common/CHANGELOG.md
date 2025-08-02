@@ -1,5 +1,49 @@
 # @ledgerhq/live-common
 
+## 34.44.0-nightly.0
+
+### Minor Changes
+
+- [#11191](https://github.com/LedgerHQ/ledger-live/pull/11191) [`e1155b8`](https://github.com/LedgerHQ/ledger-live/commit/e1155b8420f06ead4ab377e16202afdd9133bd26) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(common): do not pretend native asset balance position
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+### Patch Changes
+
+- Updated dependencies [[`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`eb49ca4`](https://github.com/LedgerHQ/ledger-live/commit/eb49ca47a7e66e8b4528bab90ef34a985e3838b1), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.0
+  - @ledgerhq/coin-stellar@5.5.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.20.0-nightly.0
+  - @ledgerhq/live-countervalues@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.0
+  - @ledgerhq/live-wallet@0.12.0-nightly.0
+  - @ledgerhq/coin-celo@1.1.14-nightly.0
+  - @ledgerhq/live-signer-evm@0.6.3-nightly.0
+  - @ledgerhq/coin-hedera@1.9.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.45-nightly.0
+  - @ledgerhq/coin-algorand@0.9.16-nightly.0
+  - @ledgerhq/coin-aptos@2.7.1-nightly.0
+  - @ledgerhq/coin-cardano@0.10.2-nightly.0
+  - @ledgerhq/coin-casper@2.0.7-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.5-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.16-nightly.0
+  - @ledgerhq/coin-icon@0.11.3-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.16-nightly.0
+  - @ledgerhq/coin-mina@1.1.15-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.16-nightly.0
+  - @ledgerhq/coin-near@0.11.16-nightly.0
+  - @ledgerhq/coin-polkadot@6.5.1-nightly.0
+  - @ledgerhq/coin-solana@0.29.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.16-nightly.0
+  - @ledgerhq/coin-sui@0.8.1-nightly.0
+  - @ledgerhq/coin-tezos@5.7.1-nightly.0
+  - @ledgerhq/coin-ton@0.13.5-nightly.0
+  - @ledgerhq/coin-tron@4.5.1-nightly.0
+  - @ledgerhq/coin-vechain@2.7.16-nightly.0
+  - @ledgerhq/coin-xrp@6.5.1-nightly.0
+  - @ledgerhq/live-nft@0.8.16-nightly.0
+  - @ledgerhq/live-signer-solana@0.5.1-nightly.0
+
 ## 34.43.0
 
 ### Minor Changes

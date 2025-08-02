@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.89.0-nightly.0
+
+### Minor Changes
+
+- [#11120](https://github.com/LedgerHQ/ledger-live/pull/11120) [`eb49ca4`](https://github.com/LedgerHQ/ledger-live/commit/eb49ca47a7e66e8b4528bab90ef34a985e3838b1) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][stellar] fix memo details lost
+
+- [#11137](https://github.com/LedgerHQ/ledger-live/pull/11137) [`964240a`](https://github.com/LedgerHQ/ledger-live/commit/964240a6bda3713a76a914faaf0fe8bb2fb685c2) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - move useDBSaveEffect usage away from LLM root App
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+### Patch Changes
+
+- Updated dependencies [[`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.0
+  - @ledgerhq/live-countervalues@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.0
+  - @ledgerhq/live-wallet@0.12.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.45-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.5-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.16-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.16-nightly.0
+  - @ledgerhq/coin-stacks@0.8.16-nightly.0
+  - @ledgerhq/live-nft@0.8.16-nightly.0
+  - @ledgerhq/live-nft-react@0.9.16-nightly.0
+
 ## 3.88.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.4.0-nightly.0
+
+### Minor Changes
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+### Patch Changes
+
+- Updated dependencies [[`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.0
+  - @ledgerhq/live-signer-evm@0.6.3-nightly.0
+
 ## 1.3.3
 
 ### Patch Changes
