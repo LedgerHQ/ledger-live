@@ -44,6 +44,7 @@ export const IDS = [
   "xion",
   "zenrock",
   "babylon",
+  "terra",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -653,6 +654,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/babylon/txs/$hash",
         address: "https://www.mintscan.io/babylon/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "terra",
+    coinType: 118,
+    name: "Terra Classic",
+    managerAppName: "Cosmos",
+    ticker: "LUNC",
+    scheme: "terra",
+    color: "#CE6533",
+    family: "cosmos",
+    units: [
+      {
+        name: "Terra Classic",
+        code: "LUNC",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Luna Classic",
+        code: "uluna",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://finder.terraclassic.community/txs/$hash",
+        address: "https://finder.terraclassic.community/account/$address",
       },
     ],
   },
