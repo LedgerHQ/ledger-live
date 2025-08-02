@@ -1076,4 +1076,22 @@ export const expectedCurrencyList = [
     color: "#CE6533",
     decimals: 6,
   },
+  {
+    type: "CryptoCurrency",
+    id: "terra",
+    ticker: "LUNC",
+    name: "Terra Classic",
+    family: "cosmos",
+    color: "#CE6533",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "terra",
+    ticker: "USTC",
+    name: "TerraClassicUSD",
+    family: "cosmos",
+    color: "#CE6533",
+    decimals: 6,
+  },
 ];
