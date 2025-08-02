@@ -4547,6 +4547,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+terra: {
+  type: "CryptoCurrency",
+  id: "terra",
+  coinType: CoinType.ATOM,
+  name: "Terra Classic",
+  managerAppName: "Cosmos",
+  ticker: "LUNC",
+  scheme: "terra",
+  color: "#CE6533",
+  family: "cosmos",
+  units: [
+    {
+      name: "Terra Classic",
+      code: "LUNC",
+      magnitude: 6,
+    },
+    {
+      name: "Micro-Luna Classic",
+      code: "uluna",
+      magnitude: 0,
+    },
+  ],
+  explorerViews: [
+    {
+      tx: "https://finder.terraclassic.community/txs/$hash",
+      address: "https://finder.terraclassic.community/account/$address",
+    },
+  ],
+},
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
