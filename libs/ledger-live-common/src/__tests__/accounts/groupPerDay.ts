@@ -2,7 +2,20 @@ import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
 import { setSupportedCurrencies } from "../../currencies";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setup } from "../../bridge/impl";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 setSupportedCurrencies(["tezos"]);
+
+LiveConfig.setConfig({
+  feature_cal_lazy_loading: {
+    type: "boolean",
+    default: true,
+  },
+});
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setup({} as CryptoAssetsStore);
 
 const account = fromAccountRaw({
   id: "libcore:1:tezos:A:tezbox",

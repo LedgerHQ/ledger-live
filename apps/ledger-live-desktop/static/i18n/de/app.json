@@ -344,6 +344,7 @@
           "provider" : "Anbieter",
           "rate" : "Kurs",
           "fees" : "Netzgebühren",
+          "feesDescription" : "Diese Gebühr wird vom Blockchain-Netzwerk für die Abwicklung des Swaps erhoben. Auf den veranschlagten Preis wird lediglich die Sendegebühr aufgeschlagen. Die Empfangsgebühr ist dagegen bereits inbegriffen.",
           "target" : "Zielkonto"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer-Entwicklungstool",
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
+      },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "mockAppUpdate" : "Mock-App-Update",
@@ -7279,6 +7284,15 @@
       "newAccount" : "Neues Konto",
       "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
       "addAccountSelectionPtxFlow" : "Konto auswählen"
+    },
+    "editAccountName" : {
+      "title" : "Kontonamen bearbeiten",
+      "input" : {
+        "name" : "Name"
+      },
+      "cta" : {
+        "save" : "Speichern"
+      }
     },
     "fundAccount" : {
       "receive" : "Empfangen",

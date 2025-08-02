@@ -564,27 +564,22 @@ jobs:
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
 
-      - name: cache android emulator
-        timeout-minutes: 10
-        uses: tespkg/actions-cache@v1
+      - name: Download android emulator
+        timeout-minutes: 5
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
-            /usr/local/lib/android/sdk/emulator/*
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
-          bucket: ${{ env.cache-bucket }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
+        id: create-avd
         with:
           api-level: ${{ env.AVD_API }}
           arch: ${{ env.AVD_ARCH }}
@@ -597,6 +592,21 @@ jobs:
           disable-linux-hw-accel: false
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
+
+      - name: Cache android emulator
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        with:
+          path: |
+            /home/runner/.android/
+            /usr/local/lib/android/sdk/emulator/
+            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos

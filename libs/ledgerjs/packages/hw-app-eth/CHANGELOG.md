@@ -1,31 +1,33 @@
 # @ledgerhq/hw-app-eth
 
-## 6.45.13-nightly.2
+## 6.45.13
 
 ### Patch Changes
 
-- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
-  - @ledgerhq/types-live@6.79.0-nightly.1
-  - @ledgerhq/domain-service@1.2.38-nightly.1
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.11-nightly.0
-  - @ledgerhq/evm-tools@1.7.2-nightly.0
-
-## 6.45.13-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/evm-tools@1.7.2-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.11-nightly.0
-
-## 6.45.13-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118)]:
-  - @ledgerhq/types-live@6.78.1-nightly.0
-  - @ledgerhq/domain-service@1.2.38-nightly.0
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0
+  - @ledgerhq/domain-service@1.2.38
   - @ledgerhq/evm-tools@1.7.1
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.10
+
+## 6.45.13-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+  - @ledgerhq/domain-service@1.2.38-next.1
+  - @ledgerhq/evm-tools@1.7.1
+
+## 6.45.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0-next.0
+  - @ledgerhq/domain-service@1.2.38-next.0
+  - @ledgerhq/evm-tools@1.7.1
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.10
 
 ## 6.45.12
 

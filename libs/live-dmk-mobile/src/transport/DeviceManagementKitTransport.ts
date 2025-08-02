@@ -7,7 +7,10 @@ import {
   DiscoveredDevice,
   OpeningConnectionError,
 } from "@ledgerhq/device-management-kit";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  PairingRefusedError,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
@@ -26,9 +29,11 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError } from "@ledgerhq/errors";
+import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
+import { isPeerRemovedPairingError } from "../errors";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 export const tracer = new LocalTracer("live-dmk-tracer", {
   function: "DeviceManagementKitTransport",
@@ -162,10 +167,21 @@ export class DeviceManagementKitTransport extends Transport {
           tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
 
           await getDeviceManagementKit().close();
-          const sessionId = await getDeviceManagementKit().connect({
-            device: found,
-            sessionRefresherOptions: { isRefresherDisabled: true },
-          });
+          const sessionId = await getDeviceManagementKit()
+            .connect({
+              device: found,
+              sessionRefresherOptions: { isRefresherDisabled: true },
+            })
+            .catch(error => {
+              if (isPeerRemovedPairingError(error)) {
+                // NB: remapping this error here because we need the device model info
+                throw new PeerRemovedPairing(undefined, {
+                  productName: getDeviceModel(dmkToLedgerDeviceIdMap[found.deviceModel.model])
+                    ?.productName,
+                });
+              }
+              throw error;
+            });
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
 
           activeDeviceSessionSubject.next({ sessionId, transport });
@@ -178,7 +194,13 @@ export class DeviceManagementKitTransport extends Transport {
             getDeviceManagementKit().stopDiscovering();
 
             tracer.trace("[DMKTransport] [open2] error", error);
-            if (error instanceof OpeningConnectionError) {
+            if (error instanceof PairingRefusedError) {
+              // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
+              return throwError(() => new PairingFailed());
+            } else if (
+              error instanceof PeerRemovedPairing ||
+              error instanceof OpeningConnectionError
+            ) {
               return throwError(() => error);
             }
 

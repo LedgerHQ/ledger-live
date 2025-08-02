@@ -3720,6 +3720,7 @@
             "provider" : "المزود",
             "rate" : "مُعدل",
             "fees" : "رسوم الشبكة",
+            "feesDescription" : "يتم فرض هذه الرسوم من قِبل شبكة سلسلة الكتل (بلوكتشين) لمعالجة المبادلة. يتم فرض رسوم الإرسال فقط بالإضافة إلى عرض السعر المُقدّر. رسوم التلقي مشمولة",
             "target" : "الحساب المستهدف"
           },
           "noAccount" : "إنشاء حساب لتلقي {{name}}",
@@ -7776,5 +7777,83 @@
     "selectNetwork" : "اختر شبكة",
     "selectAccount" : "اختر حساب",
     "searchPlaceholder" : "بحث"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "بيانات أمر غير صحيحة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "deserializationFailed" : {
+      "title" : "فشل إلغاء تسلسل الحمولة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongTransactionId" : {
+      "title" : "مُعرف معاملة خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidAddress" : {
+      "title" : "عنوان غير صحيح",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "حدث خطأ ما",
+      "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز المتصل. يُرجى تغييره وإعادة المحاولة."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "حدث خطأ ما",
+      "description" : "حساب الإرسال هذا لا ينتمي إلى الجهاز المتصل. يُرجى تغييره وإعادة المحاولة."
+    },
+    "userRefused" : {
+      "title" : "تم رفض العملية على الجهاز",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "internalError" : {
+      "title" : "خطأ داخلي",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP1" : {
+      "title" : "P1 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP2" : {
+      "title" : "P2 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP2Extension" : {
+      "title" : "ملحق P2 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidP2Extension" : {
+      "title" : "حدث خطأ ما",
+      "description" : "ملحق P2 غير صالح"
+    },
+    "unexpectedInstruction" : {
+      "title" : "حدث خطأ ما",
+      "description" : "تعليمات غير متوقعة"
+    },
+    "classNotSupported" : {
+      "title" : "حدث خطأ ما",
+      "description" : "الفئة غير مدعومة"
+    },
+    "invalidInstruction" : {
+      "title" : "تعليمات غير صالحة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "malformedApdu" : {
+      "title" : "عنوان APDU مشوه",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidDataLength" : {
+      "title" : "طول بيانات غير صالح",
+      "description" : "هذا الأمر لا يقبل بيانات بهذا الطول"
+    },
+    "signatureVerificationFail" : {
+      "title" : "فشل التحقق من التوقيع",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "default" : {
+      "title" : "حدث خطأ ما",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    }
   }
 }

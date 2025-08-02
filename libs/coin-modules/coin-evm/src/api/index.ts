@@ -10,7 +10,7 @@ import {
   type AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -37,7 +37,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
-    ): Promise<FeeEstimation> => estimate(currency, transactionIntent),
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
@@ -52,12 +52,4 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       throw new Error("getBlockInfo is not supported");
     },
   };
-}
-
-async function estimate(
-  currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
-): Promise<FeeEstimation> {
-  const fees = await estimateFees(currency, transactionIntent);
-  return { value: fees };
 }

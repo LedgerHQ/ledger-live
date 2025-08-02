@@ -344,6 +344,7 @@
           "provider" : "Prestataire",
           "rate" : "Taux",
           "fees" : "Frais de réseau",
+          "feesDescription" : "Ces frais sont appliqués par le réseau de blockchain pour traiter l’échange. Seuls les frais d’envoi sont ajoutés à l’offre estimée. Les frais de réception sont inclus.",
           "target" : "Compte bénéficiaire"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Outil développeur pour le Modular Drawer",
+        "description" : "Testez facilement le Modular Drawer."
+      },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
       "mockAppUpdate" : "Simuler des mises à jour d’app",
@@ -7279,6 +7284,15 @@
       "newAccount" : "Nouveau compte",
       "addAccountSelection" : "Choisissez le compte à approvisionner",
       "addAccountSelectionPtxFlow" : "Sélectionner un compte"
+    },
+    "editAccountName" : {
+      "title" : "Modifier le nom du compte",
+      "input" : {
+        "name" : "Nom"
+      },
+      "cta" : {
+        "save" : "Enregistrer"
+      }
     },
     "fundAccount" : {
       "receive" : "Recevoir",

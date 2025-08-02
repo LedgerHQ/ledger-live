@@ -1,29 +1,6 @@
 # @ledgerhq/live-signer-solana
 
-## 0.5.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.29.0-nightly.3
-
-## 0.5.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.29.0-nightly.2
-
-## 0.5.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`69010f8`](https://github.com/LedgerHQ/ledger-live/commit/69010f87cdffcabd825464ba5b5aba58ce2c350b)]:
-  - @ledgerhq/coin-solana@0.29.0-nightly.1
-  - @ledgerhq/ledger-cal-service@1.2.2-nightly.0
-  - @ledgerhq/ledger-trust-service@0.3.9-nightly.0
-
-## 0.5.0-nightly.0
+## 0.5.0
 
 ### Minor Changes
 
@@ -31,8 +8,26 @@
 
 ### Patch Changes
 
+- Updated dependencies [[`cc50885`](https://github.com/LedgerHQ/ledger-live/commit/cc508857db6743756dae3d8914b6563104f831d0)]:
+  - @ledgerhq/coin-solana@0.29.0
+
+## 0.5.0-next.1
+
+### Patch Changes
+
 - Updated dependencies []:
-  - @ledgerhq/coin-solana@0.28.1-nightly.0
+  - @ledgerhq/coin-solana@0.29.0-next.1
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#11029](https://github.com/LedgerHQ/ledger-live/pull/11029) [`d235ec0`](https://github.com/LedgerHQ/ledger-live/commit/d235ec0b843b94de81642952c322e2a3b3adedaf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(live-signer-solana): do not check min version on LNS
+
+### Patch Changes
+
+- Updated dependencies [[`cc50885`](https://github.com/LedgerHQ/ledger-live/commit/cc508857db6743756dae3d8914b6563104f831d0)]:
+  - @ledgerhq/coin-solana@0.29.0-next.0
 
 ## 0.4.2
 

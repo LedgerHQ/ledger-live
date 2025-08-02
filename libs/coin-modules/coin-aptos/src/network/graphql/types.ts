@@ -53,8 +53,6 @@ export type GetAccountTransactionsDataLtQuery = {
 export type DelegatedStakingActivity = {
   amount: number;
   delegator_address: string;
-  event_index: number;
-  event_type: string;
   pool_address: string;
   transaction_version: bigint;
 };

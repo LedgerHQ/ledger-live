@@ -1,0 +1,61 @@
+name: "Cache Download"
+description: "Download and uncompress cache files to S3"
+inputs:
+  endpoint:
+    description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
+    type: string
+    required: false
+    default: 's3.amazonaws.com'
+  key:
+    type: string
+    required: true
+  accessKey:
+    type: string
+    required: true
+  secretKey:
+    type: string
+    required: true
+  sessionToken:
+    type: string
+    required: false
+  bucket:
+    type: string
+    required: true
+  region:
+    type: string
+    required: true
+outputs:
+  cache-hit:
+    description: "Indicates if the cache was successfully downloaded"
+    value: ${{ steps.download-cache.outcome == 'success' }}
+runs:
+  using: "composite"
+  steps:
+    - name: Downloading files
+      id: download-cache
+      shell: bash
+      continue-on-error: true
+      run: |
+        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }} --no-progress
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
+        AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+
+    - name: Un-Compress files (Linux)
+      if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
+      shell: bash
+      run: |
+        tar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+
+    - name: Un-Compress files (macOS)
+      if: runner.os == 'macOS' && steps.download-cache.outcome == 'success'
+      shell: bash
+      run: |
+        gtar -xf /tmp/cache.tzst -P -C ${{ github.workspace }} --use-compress-program unzstd
+
+    - name: Cleanup
+      shell: bash
+      if: steps.download-cache.outcome == 'success'
+      run: |
+          rm -f /tmp/cache.tzst

@@ -1,12 +1,12 @@
 # @ledgerhq/types-cryptoassets
 
-## 7.24.0-nightly.1
+## 7.24.0
 
 ### Minor Changes
 
-- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
 
-## 7.24.0-nightly.0
+## 7.24.0-next.0
 
 ### Minor Changes
 

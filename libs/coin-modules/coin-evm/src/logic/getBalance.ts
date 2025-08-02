@@ -19,7 +19,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
   balance.push({
-    value: BigInt(nativeBalance.toString()),
+    value: BigInt(nativeBalance.toFixed(0)),
     asset: { type: "native" },
   });
 

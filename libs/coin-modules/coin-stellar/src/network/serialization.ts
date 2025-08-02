@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { Horizon } from "@stellar/stellar-sdk";
 import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT, fetchBaseFee } from "./horizon";
-import type { BalanceAsset, RawOperation, StellarOperation } from "../types";
+import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
 import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("stellar");
@@ -90,11 +90,39 @@ async function formatOperation(
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
   const recipients = getRecipients(rawOperation);
-  const memo = transaction.memo
-    ? transaction.memo_type === "hash" || transaction.memo_type === "return"
-      ? Buffer.from(transaction.memo, "base64").toString("hex")
-      : transaction.memo
-    : null;
+
+  let memo: StellarMemo | undefined = undefined;
+  switch (transaction.memo_type) {
+    case "none":
+      memo = { type: "NO_MEMO" };
+      break;
+    case "id":
+      if (transaction.memo) {
+        memo = { type: "MEMO_ID", value: transaction.memo };
+      }
+      break;
+    case "text":
+      if (transaction.memo) {
+        memo = { type: "MEMO_TEXT", value: transaction.memo };
+      }
+      break;
+    case "return":
+      if (transaction.memo) {
+        memo = {
+          type: "MEMO_RETURN",
+          value: Buffer.from(transaction.memo, "base64").toString("hex"),
+        };
+      }
+      break;
+    case "hash":
+      if (transaction.memo) {
+        memo = {
+          type: "MEMO_HASH",
+          value: Buffer.from(transaction.memo, "base64").toString("hex"),
+        };
+      }
+      break;
+  }
 
   const operation: StellarOperation = {
     id: encodeOperationId(accountId, rawOperation.transaction_hash, type),

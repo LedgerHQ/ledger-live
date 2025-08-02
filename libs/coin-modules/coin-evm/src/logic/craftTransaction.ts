@@ -5,13 +5,7 @@ import BigNumber from "bignumber.js";
 import { TransactionTypes } from "ethers/lib/utils";
 import { isNative } from "../types";
 import { getNodeApi } from "../network/node";
-import ERC20ABI from "../abis/erc20.abi.json";
-
-function getErc20Data(recipient: string, amount: bigint): Buffer {
-  const contract = new ethers.utils.Interface(ERC20ABI);
-  const data = contract.encodeFunctionData("transfer", [recipient, amount]);
-  return Buffer.from(data.slice(2), "hex");
-}
+import { getErc20Data, getTransactionType } from "./common";
 
 export async function craftTransaction(
   currency: CryptoCurrency,
@@ -25,10 +19,7 @@ export async function craftTransaction(
 ): Promise<string> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
 
-  if (!["send-legacy", "send-eip1559"].includes(type)) {
-    throw new Error(`Unsupported intent type '${type}'. Must be 'send-legacy' or 'send-eip1559'`);
-  }
-
+  const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
   const to = isNative(asset) ? recipient : (asset?.assetReference as string);
   const nonce = await node.getTransactionCount(currency, sender);
@@ -39,8 +30,6 @@ export async function craftTransaction(
     { currency, freshAddress: sender },
     { amount: BigNumber(value.toString()), recipient: to, data },
   );
-  const transactionType =
-    type === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
   const fee = await node.getFeeData(currency, { type: transactionType });
 
   const unsignedTransaction: ethers.utils.UnsignedTransaction = {

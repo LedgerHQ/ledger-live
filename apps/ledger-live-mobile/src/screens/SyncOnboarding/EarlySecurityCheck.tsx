@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
@@ -10,13 +10,15 @@ import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
 import { TrackScreen, track } from "~/analytics";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
-import { Linking } from "react-native";
+import { Linking, Platform } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "~/const";
 import type { UpdateStep } from "../FirmwareUpdate";
 import { urls } from "~/utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getIgnoredOSUpdatesForDeviceModelAndPlatform } from "@ledgerhq/live-common/deviceSDK/hooks/getIgnoredOSUpdatesForDeviceModelAndPlatform";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -125,6 +127,15 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
+  const ignoredOSUpdatesConfig = useFeature("onboardingIgnoredOsUpdates")?.params;
+  const ignoredOSUpdatesForDeviceModelAndPlatform = useMemo(() => {
+    return getIgnoredOSUpdatesForDeviceModelAndPlatform(
+      ignoredOSUpdatesConfig,
+      deviceModelId,
+      Platform.OS === "ios" ? "ios" : "android",
+    );
+  }, [ignoredOSUpdatesConfig, deviceModelId]);
+
   const {
     state: {
       firmwareUpdateContext: latestFirmware,
@@ -136,6 +147,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
+    ignoredOSUpdates: ignoredOSUpdatesForDeviceModelAndPlatform,
   });
 
   const onStartChecks = useCallback(() => {

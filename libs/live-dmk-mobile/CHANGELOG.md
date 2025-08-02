@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.10.0
+
+### Minor Changes
+
+- [#11112](https://github.com/LedgerHQ/ledger-live/pull/11112) [`50ac52b`](https://github.com/LedgerHQ/ledger-live/commit/50ac52bae99d45ae3ed364209b72108f85a96544) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve error remapping for pairing errors
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#11112](https://github.com/LedgerHQ/ledger-live/pull/11112) [`50ac52b`](https://github.com/LedgerHQ/ledger-live/commit/50ac52bae99d45ae3ed364209b72108f85a96544) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve error remapping for pairing errors
+
 ## 0.9.0
 
 ### Minor Changes

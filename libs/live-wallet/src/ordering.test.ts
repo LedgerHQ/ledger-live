@@ -5,6 +5,8 @@ import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 setSupportedCurrencies(["ethereum"]);
 
@@ -85,6 +87,8 @@ const raws: AccountRaw[] = [
     balance: "4000000000000000000",
   },
 ];
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({} as CryptoAssetsStore);
 const accounts = raws.map(a => fromAccountRaw(a));
 
 const walletState: WalletState = {
