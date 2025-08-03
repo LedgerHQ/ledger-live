@@ -1,6 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import * as store from "@ledgerhq/cryptoassets/tokens";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
+import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { firstValueFrom, reduce } from "rxjs";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
@@ -42,13 +43,24 @@ function getSync(currency: CryptoCurrency) {
 
 export default async function (currencyIds: string[]) {
   LiveConfig.setConfig(liveConfig);
+  setup(store);
   const entries: LogEntry[] = [];
+
+  const nbOfAccounts = currencyIds
+    .map(currencyId => Object.keys(accounts[currencyId]).length)
+    .reduce((previous, current) => previous + current, 0);
+  let i = 0;
+  console.log(`Monitoring ${nbOfAccounts} account(s) within ${currencyIds.join(", ")}`);
 
   for (const currencyId of currencyIds) {
     const currency = getCryptoCurrencyById(currencyId);
     const sync = getSync(currency);
 
     for (const [accountType, info] of Object.entries(accounts[currencyId])) {
+      console.log(
+        `\n[${++i} / ${nbOfAccounts}] Start (currency = "${currencyId}" account = "${accountType}")`,
+      );
+
       const startScan = Date.now();
       const initialAccount = await sync(toEmptyAccount(currency, info));
       const endScan = Date.now();
@@ -57,11 +69,16 @@ export default async function (currencyIds: string[]) {
       await sync(initialAccount);
       const endSync = Date.now();
 
+      const scanDuration = endScan - startScan;
+      const syncDuration = endSync - startSync;
+
       const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+
+      console.log(`[${i} / ${nbOfAccounts}] Completed in ${scanDuration + syncDuration} ms`);
 
       entries.push(
         {
-          duration: endScan - startScan,
+          duration: scanDuration,
           currencyName: currency.id,
           coinModuleName: currency.family,
           operationType: "scan",
@@ -70,7 +87,7 @@ export default async function (currencyIds: string[]) {
           accountAddressOrXpub: xpubOrAddress,
         },
         {
-          duration: endSync - startSync,
+          duration: syncDuration,
           currencyName: currency.id,
           coinModuleName: currency.family,
           operationType: "sync",
