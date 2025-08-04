@@ -1,4 +1,4 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { formatAddress } from "LLD/utils/formatAddress";

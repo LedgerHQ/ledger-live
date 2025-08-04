@@ -40,7 +40,7 @@ import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAc
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 //  === ACCOUNTS ACTIONS ===
 

@@ -83,7 +83,11 @@ export type Props = {
   savedState?: CounterValuesStateRaw;
 };
 
-const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
+/**
+ * Base Countervalues Context to use without polling logic.
+ */
+export const CountervaluesContext = createContext<CountervaluesBridge | null>(null);
+
 function useCountervaluesBridgeContext() {
   const bridge = useContext(CountervaluesContext);
   if (!bridge) {
