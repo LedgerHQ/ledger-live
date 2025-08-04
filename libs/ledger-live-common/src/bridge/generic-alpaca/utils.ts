@@ -18,10 +18,6 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
-export function extractBalance(balances: Balance[], type: string): Balance {
-  return balances.find(balance => balance.asset.type === type) ?? { asset: { type }, value: 0n };
-}
-
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const opType = op.type as OperationType;
 
