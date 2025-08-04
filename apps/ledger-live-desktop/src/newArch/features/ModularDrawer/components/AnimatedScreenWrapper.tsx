@@ -9,12 +9,14 @@ const AnimatedScreenWrapper = ({
   children,
   screenKey,
   direction,
+  testID,
   ...props
 }: {
   children: React.ReactNode;
   screenKey: ModularDrawerStep | ModularDrawerAddAccountStep;
   direction: NavigationDirection;
-} & React.ComponentProps<typeof motion.div>) => {
+  testID?: string;
+}) => {
   const variants = {
     enter: (direction: NavigationDirection) => ({
       x: direction === "FORWARD" ? 100 : -100,
