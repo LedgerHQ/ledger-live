@@ -32,7 +32,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const nativeAsset = extractBalance(balanceRes, "native");
 
     const assetsBalance = balanceRes
-      .filter(b => b.asset.type === "token")
+      .filter(b => b.asset.type !== "native")
       .filter(b => findToken(currency, b));
 
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
