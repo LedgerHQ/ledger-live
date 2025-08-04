@@ -14,7 +14,7 @@ export type NetworkInfo = {
 
 export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
   family: string;
-  fee?: BigNumber | null | undefined;
+  // fee?: BigNumber | null | undefined;
   fees?: BigNumber | null;
   tag?: number | null | undefined;
   feeCustomUnit?: Unit | null | undefined;
@@ -34,7 +34,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         family: currency.family,
         amount: BigNumber(0),
         recipient: "",
-        fee: null,
+        fees: null,
         tag: undefined,
         feeCustomUnit: null, // NOTE: XRP does not use custom units for fees anymore
       };

@@ -34,6 +34,7 @@ const bridgeCache: Record<string, AccountBridge<any>> = {};
 const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+  // console.log("getCurrencyBridge", currency.id, currency.family);
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.currencyBridge;

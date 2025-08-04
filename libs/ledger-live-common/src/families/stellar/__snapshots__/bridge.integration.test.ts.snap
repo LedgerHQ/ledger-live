@@ -118,8 +118,8 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
   [
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "ef457e3171c63398ecc9935759502cc1f41f472ee0b188553515bfa45b9404b0",
-      "blockHeight": 56002611,
+      "blockHash": "a49467d7feb75bcb4b287cfa9d38a00258005e81f462ad5fbb76c73c2ff7b6a6",
+      "blockHeight": 54142073,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -135,18 +135,127 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GCVTUT4QMMCZFKOQTXFRHWFGBT6B4V3GUECDE6OVNC6HFKSPOBHHTBHI",
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
-      "transactionSequenceNumber": 240200272276634700,
+      "transactionSequenceNumber": 224182342070057570,
       "type": "IN",
       "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "a7769b7f7c72338772933bd009182489c81e44b2e7b73c8395b73726318fc139",
-      "blockHeight": 53991651,
+      "blockHash": "45d6a185a2879f85c29ed8c16997ff759c9042441f625029c9da9ec41b96f7b4",
+      "blockHeight": 57890209,
+      "extra": {
+<<<<<<< HEAD
+        "assetAmount": "1",
+=======
+        "blockTime": 2020-01-27T16:25:37.000Z,
+        "index": "120055464183619585",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "120055464183619585",
+      },
+      "fee": "10000",
+      "hash": "07c4c39bc142dcfc41a625e68b8f4b42cbd4e5ba1e204abddf4218e74bb37dc2",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-07c4c39bc142dcfc41a625e68b8f4b42cbd4e5ba1e204abddf4218e74bb37dc2-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070053020,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "75f82b2e6dfefd595ed2f55dba8df2b6e3fb6c97fb0c6a95207803ff1abd7050",
+      "blockHeight": 56618137,
+      "extra": {
+        "blockTime": 2020-04-16T12:18:34.000Z,
+        "index": "125438110472704001",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "125438110472704001",
+      },
+      "fee": "10000",
+      "hash": "080c13bc24df23e052f70bd4f0685af4b87961513c1057d81af5e1dcf597ef92",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-080c13bc24df23e052f70bd4f0685af4b87961513c1057d81af5e1dcf597ef92-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
+      ],
+      "transactionSequenceNumber": 242646183137259550,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7060421c1b904d023150b529f76d9b976153019c62fc7b6eeb788b1996dbaf2d",
+      "blockHeight": 56844316,
+      "extra": {
+        "blockTime": 2020-01-23T15:29:51.000Z,
+        "index": "119787492583981057",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "MEMO_ID",
+          "value": "3",
+        },
+        "pagingToken": "119787492583981057",
+      },
+      "fee": "10000",
+      "hash": "08ba616699b31d9e69b8d437017d2475d466da445e76b58326edbdab97fe9903",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-08ba616699b31d9e69b8d437017d2475d466da445e76b58326edbdab97fe9903-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBLYYM2TF6MTXS52QXGZAEDKB6WGQWBH3Y6WJANED4O7KBYU7SCGZGCA",
+      ],
+      "transactionSequenceNumber": 243671000988786430,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a49467d7feb75bcb4b287cfa9d38a00258005e81f462ad5fbb76c73c2ff7b6a6",
+      "blockHeight": 54142073,
       "extra": {
         "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "t.me/WealthAcademyStellar",
+        },
+      },
+      "fee": "10000",
+      "hash": "0a67955a1ca916f222988365bce633da59e54f1e926e1b7049fb1a4d15308d2a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0a67955a1ca916f222988365bce633da59e54f1e926e1b7049fb1a4d15308d2a-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070057570,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "45d6a185a2879f85c29ed8c16997ff759c9042441f625029c9da9ec41b96f7b4",
+      "blockHeight": 57890209,
+      "extra": {
+        "blockTime": 2024-10-17T20:35:20.000Z,
+        "index": "231892375302615120",
+>>>>>>> 7ae58e43d6 (fix: stellar generic alpaca)
         "ledgerOpType": "IN",
         "memo": {
           "type": "MEMO_TEXT",
@@ -893,8 +1002,10 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "c4a4a04adcf5d4574ddc4a8efb7bb99385f99b23b76d8aec4def1ee46ff95f78",
-      "blockHeight": 57804273,
+<<<<<<< HEAD
+=======
+      "blockHash": "025bb8acb9b78ff008daf0b6ffad07bdcc64dc5dfc64605189c3fd4a5fac499c",
+      "blockHeight": 56641142,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -904,15 +1015,120 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         },
       },
       "fee": "10000",
-      "hash": "6ac114be20cb897b62f98a59126ae55fa7ae188cad33ce91f5d3e14dd90bb31f",
-      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6ac114be20cb897b62f98a59126ae55fa7ae188cad33ce91f5d3e14dd90bb31f-IN",
+      "hash": "6c14f1b8157c54ed7f200bb935cd0fd1946b9d40588bc55269ff162f9c21918a",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6c14f1b8157c54ed7f200bb935cd0fd1946b9d40588bc55269ff162f9c21918a-IN",
       "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GC5TB3CVMPYHBQEF2DJFXIT6OBRWESNCO3CWGYSOUCKUDQ2JSCIIJNHM",
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
-      "transactionSequenceNumber": 248002359542684770,
+      "transactionSequenceNumber": 242646183137262600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a7bf4fd23e070c5edc81a91dfed85dd7b87df5839c8596fd8b20c48592aed6fa",
+      "blockHeight": 57580409,
+      "extra": {
+        "blockTime": 2020-01-13T15:25:17.000Z,
+        "index": "119124942339112961",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "119124942339112961",
+      },
+      "fee": "10000",
+      "hash": "6fe3ee2128bda464c60a80d29a93e90e65ddfe5c2a210b9132dd554f5409d094",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6fe3ee2128bda464c60a80d29a93e90e65ddfe5c2a210b9132dd554f5409d094-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844134460,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "ab38853af055dcd240de504370b0068d1c3ef5fc02ec958492105687f87456e8",
+      "blockHeight": 57538076,
+      "extra": {
+        "blockTime": 2020-01-24T10:15:46.000Z,
+        "index": "119839646372044801",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "119839646372044801",
+      },
+      "fee": "10000",
+      "hash": "7fea13919cb8dc577ab8dd5c0b5ca7cd07aebe8c7133c4bac21e3fac24a2f8d6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-7fea13919cb8dc577ab8dd5c0b5ca7cd07aebe8c7133c4bac21e3fac24a2f8d6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
+      ],
+      "transactionSequenceNumber": 247017862844127680,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "67a85c4ff74a9af1a6228b0266b4493cba750ee23df4fa9888b942b3914aec75",
+      "blockHeight": 57524816,
+      "extra": {
+        "blockTime": 2020-04-16T11:24:09.000Z,
+        "index": "125435658046103553",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "125435658046103553",
+      },
+      "fee": "100",
+      "hasFailed": false,
+      "hash": "660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f-OUT",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "transactionSequenceNumber": 116917835954913310,
+      "type": "OUT",
+      "value": "100000",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+>>>>>>> 7ae58e43d6 (fix: stellar generic alpaca)
+      "blockHash": "c4a4a04adcf5d4574ddc4a8efb7bb99385f99b23b76d8aec4def1ee46ff95f78",
+      "blockHeight": 57804273,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yStorm Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hash": "6be42b9b39e7f99a20f4df57b8513c881caf1de5279b573c262f6e32425d4e25",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6be42b9b39e7f99a20f4df57b8513c881caf1de5279b573c262f6e32425d4e25-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
+      ],
+      "transactionSequenceNumber": 250201623316411780,
       "type": "IN",
       "value": "1",
     },
@@ -1145,6 +1361,31 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "1a5bfecea672170945dcefce62af99913290d3696d2b5fe8b3c40e756bbe2f04",
       "blockHeight": 58270682,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yStorm Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hash": "86cc5be8b2e5e3ac6fe4ee1d0ace67d6dcee9682c428b2df08e90758583666e1",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-86cc5be8b2e5e3ac6fe4ee1d0ace67d6dcee9682c428b2df08e90758583666e1-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
+      ],
+      "transactionSequenceNumber": 250201623316400540,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "77e7aa328a0e0ee36ffa181024d15108b04a44378e9fd072e26c6fa2ab135276",
+      "blockHeight": 57842434,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -1560,16 +1801,16 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+        "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
-      "transactionSequenceNumber": 224182342070058530,
+      "transactionSequenceNumber": 242646183137257900,
       "type": "IN",
       "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-      "blockHash": "e04e717c77b1c8483b71759b0fc4c0a56b4fe14442e2ef902c058e1c1d07cb82",
-      "blockHeight": 54119932,
+      "blockHash": "8279d9992095515d69a8bc6d598f2d23757ad9e28b3a1546e12d211a21a98b0f",
+      "blockHeight": 57882240,
       "extra": {
         "assetAmount": "1",
         "ledgerOpType": "IN",
@@ -1585,9 +1826,9 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "senders": [
-        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+        "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
       ],
-      "transactionSequenceNumber": 224182342070056600,
+      "transactionSequenceNumber": 248584795762721280,
       "type": "IN",
       "value": "1",
     },
@@ -1618,6 +1859,37 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+<<<<<<< HEAD
+=======
+      "blockHash": "814dcd435904e349cbaf61509197b1a7f54616ec394e627c59184681a8c1852c",
+      "blockHeight": 54272423,
+      "extra": {
+        "assetAmount": "100",
+        "assetCode": "XRP",
+        "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
+        "blockTime": 2020-01-09T12:31:33.000Z,
+        "index": "118846808846880769",
+        "ledgerOpType": "OPT_IN",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "118846808846880769",
+      },
+      "fee": "100",
+      "hasFailed": false,
+      "hash": "b862ee6db59117c8b7a1598f82ee93173c394426b5cc9244fd61e9c5320b4647",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b862ee6db59117c8b7a1598f82ee93173c394426b5cc9244fd61e9c5320b4647-OPT_IN",
+      "recipients": [],
+      "senders": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "transactionSequenceNumber": 116917835954913280,
+      "type": "OPT_IN",
+      "value": "100",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+>>>>>>> 7ae58e43d6 (fix: stellar generic alpaca)
       "blockHash": "7109c350309e1c9bc50ca866b2698ba7730b3c4e9d1749b44fc11676140fb893",
       "blockHeight": 56580132,
       "extra": {
@@ -1625,8 +1897,90 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "ledgerOpType": "IN",
         "memo": {
           "type": "MEMO_TEXT",
-          "value": "Buy LUMIN Earn Native XLM!",
+          "value": "Buy RFL & Earn Native XLM",
         },
+      },
+      "fee": "10000",
+      "hash": "b1a4b775747d4a70444a313f61e7050b804c49ecccc409f8a7ebabd553c66df5",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b1a4b775747d4a70444a313f61e7050b804c49ecccc409f8a7ebabd553c66df5-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
+      ],
+      "transactionSequenceNumber": 250653093098684700,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+<<<<<<< HEAD
+=======
+      "blockHash": "7f145261aafcb95bbdbbf9e702d434ec296fcea77da840d2a19175bc46cc7147",
+      "blockHeight": 28437162,
+      "extra": {
+        "blockTime": 2020-02-28T10:36:41.000Z,
+        "index": "122136680781512705",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "test",
+        },
+        "pagingToken": "122136680781512705",
+      },
+      "fee": "10000",
+      "hash": "b112972878f7788738536f17dc7fd016ffd5b1239365d3d427d2ca0d3c6ee929",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b112972878f7788738536f17dc7fd016ffd5b1239365d3d427d2ca0d3c6ee929-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070058530,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "e04e717c77b1c8483b71759b0fc4c0a56b4fe14442e2ef902c058e1c1d07cb82",
+      "blockHeight": 54119932,
+      "extra": {
+        "blockTime": 2021-10-17T21:07:46.000Z,
+        "index": "162599730886103043",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "tRAstME a.MERA.one",
+        },
+        "pagingToken": "162599730886103043",
+      },
+      "fee": "10000",
+      "hash": "b17ade0f6f647f695283d4cb2b87ff1d6bb373f6f78e849680555cdc9104ceee",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b17ade0f6f647f695283d4cb2b87ff1d6bb373f6f78e849680555cdc9104ceee-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
+      ],
+      "transactionSequenceNumber": 224182342070056600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7109c350309e1c9bc50ca866b2698ba7730b3c4e9d1749b44fc11676140fb893",
+      "blockHeight": 56580132,
+      "extra": {
+        "blockTime": 2020-04-16T13:13:04.000Z,
+        "index": "125440678864154625",
+        "ledgerOpType": "OUT",
+        "memo": {
+          "type": "NO_MEMO",
+        },
+        "pagingToken": "125440678864154625",
       },
       "fee": "10000",
       "hash": "b8acdec9da0fa5004fe452fb2b084c6095e9dac8557eca064ef0bd3fbecfb7ea",
@@ -1643,6 +1997,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+>>>>>>> 7ae58e43d6 (fix: stellar generic alpaca)
       "blockHash": "267d39cf1e8e5d69cb54cc1adeeb0bc39e9963dd00b36bc9646d3bd3d7b179c5",
       "blockHeight": 54011812,
       "extra": {

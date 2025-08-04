@@ -99,3 +99,61 @@ const dummyAccounts = [
     });
   });
 });
+// describe("genericEstimateMaxSpendable", () => {
+//   afterEach(() => {
+//     jest.clearAllMocks();
+//   });
+
+//   it("subtracts estimated fee from spendable balance", async () => {
+//     mockedGetAlpacaApi.mockReturnValue({
+//       validateIntent: jest.fn().mockResolvedValue({ amount: 10000n }),
+//       estimateFees: jest.fn().mockResolvedValue({ value: 10000n }), // 0.01 XRP
+//     });
+
+//     const estimate = genericEstimateMaxSpendable("xrp", "local");
+//     const result = await estimate({
+//       account: dummyAccount,
+//       parentAccount: null,
+//       transaction: {},
+//     });
+
+//     expect(result.toString()).toBe("49990000"); // 50_000_000 - 10_000
+//   });
+
+//   it("returns 0 if fee is higher than spendable", async () => {
+//     const poorAccount = {
+//       ...dummyAccount,
+//       spendableBalance: new BigNumber(5000), // very low
+//     };
+
+//     mockedGetAlpacaApi.mockReturnValue({
+//       validateIntent: jest.fn().mockResolvedValue({ amount: 10000n }),
+//       estimateFees: jest.fn().mockResolvedValue({ value: 10000n }),
+//     });
+
+//     const estimate = genericEstimateMaxSpendable("xrp", "local");
+//     const result = await estimate({
+//       account: poorAccount,
+//       parentAccount: null,
+//       transaction: {},
+//     });
+
+//     expect(result.toString()).toBe("0");
+//   });
+
+//   it("returns full spendable balance if fee is 0", async () => {
+//     mockedGetAlpacaApi.mockReturnValue({
+//       validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
+//       estimateFees: jest.fn().mockResolvedValue({ value: 0n }),
+//     });
+
+//     const estimate = genericEstimateMaxSpendable("xrp", "local");
+//     const result = await estimate({
+//       account: dummyAccount,
+//       parentAccount: null,
+//       transaction: {},
+//     });
+
+//     expect(result.toString()).toBe("50000000");
+//   });
+// });

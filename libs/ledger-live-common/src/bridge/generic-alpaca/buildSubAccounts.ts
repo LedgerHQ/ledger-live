@@ -14,9 +14,7 @@ export interface OperationCommon extends Operation {
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
 export const getAssetIdFromAsset = (asset: AssetInfo) =>
-  asset.type !== "native" && "assetReference" in asset && "assetOwner" in asset
-    ? `${asset.assetReference}:${asset.assetOwner}`
-    : "";
+  asset.type === "token" ? `${asset.assetReference}:${asset.assetOwner}` : "";
 
 function buildTokenAccount({
   parentAccountId,
@@ -83,7 +81,7 @@ export function buildSubAccounts({
   }
   const tokenAccounts: TokenAccount[] = [];
   assetsBalance
-    .filter(b => b.asset.type !== "native") // NOTE: this could be removed, keeping here while fixing things up
+    .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
     .map(balance => {
       const token = findToken(currency, balance);
       // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
@@ -95,8 +93,8 @@ export function buildSubAccounts({
             token,
             operations: operations.filter(
               op =>
-                op.extra.assetReference === balance.asset?.["assetReference"] &&
-                op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
+                op.extra.assetReference === balance.asset["assetReference"] &&
+                op.extra.assetOwner === balance.asset["assetOwner"], // NOTE: we could narrow type
             ),
           }),
         );
