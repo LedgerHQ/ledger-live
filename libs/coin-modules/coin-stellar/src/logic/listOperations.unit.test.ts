@@ -299,6 +299,9 @@ describe("listOperations", () => {
           type: "OUT",
           value: 460600000n,
           details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
             memo: {
               type: "MEMO_TEXT",
               value: "momo",
