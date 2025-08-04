@@ -11,7 +11,7 @@ import type {
 import { AuthActionTypes } from "../actions/types";
 
 export const INITIAL_STATE: AuthState = {
-  isLocked: false,
+  isLocked: true,
   biometricsError: null,
   authModalOpen: false,
 };

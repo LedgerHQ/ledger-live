@@ -10,12 +10,6 @@ import {
 } from "../../actions/auth";
 import type { Privacy, AuthState } from "../types";
 
-const mockPrivacyWithPassword: Privacy = {
-  hasPassword: true,
-  biometricsEnabled: true,
-  biometricsType: "FaceID",
-};
-
 const mockPrivacyWithoutPassword: Privacy = {
   hasPassword: false,
   biometricsEnabled: false,
