@@ -40,9 +40,23 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
   }
 
+  @Step("Check if the from currency is already selected")
+  async getFromCurrencyTexts() {
+    return await getWebElementText(this.fromSelector);
+  }
+
   @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);
+  }
+
+  @Step("Verify currency is selected $0")
+  async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
+    if (isFromCurrency) {
+      await detoxExpect(getWebElementByTestId(this.fromSelector)).toHaveText(ticker);
+    } else {
+      await detoxExpect(getWebElementByTestId(this.toSelector)).toHaveText(ticker);
+    }
   }
 
   @Step("Tap to currency")
