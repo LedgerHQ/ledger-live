@@ -21,7 +21,6 @@ export async function getBalances(
       asset: isNative
         ? { type: "native" }
         : { type: type, assetReference: balance.contractAddress },
-      spendableBalance: BigInt(balance.amount.toString()),
     };
   });
 }
