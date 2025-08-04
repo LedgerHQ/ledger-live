@@ -5,27 +5,21 @@ export const getTransactions = async (
   address: string,
   after: number = 1,
 ): Promise<{ transactions: ApiResponseTransaction[]; nextPageAfter: string | null }> => {
-  try {
-    const response = await fetch(
-      `${API_BASE}/addresses/${address}/full-transactions-page?resolve_previous_outpoints=light&limit=500&before=0&after=${after}`,
-      {
-        headers: {
-          Accept: "application/json",
-        },
+  const response = await fetch(
+    `${API_BASE}/addresses/${address}/full-transactions-page?resolve_previous_outpoints=light&limit=500&before=0&after=${after}`,
+    {
+      headers: {
+        Accept: "application/json",
       },
-    );
+    },
+  );
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok.");
-    }
-
-    const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
-
-    return { transactions: await response.json(), nextPageAfter } as {
-      transactions: ApiResponseTransaction[];
-      nextPageAfter: string | null;
-    };
-  } catch (error) {
-    throw error;
+  if (!response.ok) {
+    throw new Error("Network response was not ok.");
   }
+
+  const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
+  const transactions = await response.json();
+
+  return { transactions, nextPageAfter };
 };

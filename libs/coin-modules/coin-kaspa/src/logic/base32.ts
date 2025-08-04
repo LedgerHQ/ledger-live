@@ -85,7 +85,7 @@ export function decode(base32: string) {
     if (!(value in CHARSET_INVERSE_INDEX)) {
       throw new Error("value " + value);
     }
-    // @ts-ignore
+    // @ts-expect-error: ignore array of any
     data.push(CHARSET_INVERSE_INDEX[value]);
   }
   return data;

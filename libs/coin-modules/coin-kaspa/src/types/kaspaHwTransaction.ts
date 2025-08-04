@@ -199,7 +199,7 @@ export class KaspaHwTransactionOutput {
   scriptPublicKey: string;
 
   constructor(outputData: { value: number; scriptPublicKey: string }) {
-    if (!outputData.value || outputData.value < 0 || outputData.value > 0xffffffffffffffff) {
+    if (!outputData.value || outputData.value < 0 || outputData.value > 0xffffffffffffffffn) {
       throw new Error(
         "value must be set to a value greater than 0 and less than 0xFFFFFFFFFFFFFFFF",
       );

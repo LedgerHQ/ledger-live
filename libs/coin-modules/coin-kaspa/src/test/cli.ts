@@ -14,7 +14,7 @@ function inferTransactions(
   transactions: Array<{ account: AccountLike; transaction: Transaction }>,
   opts: Record<string, any>,
 ): Transaction[] {
-  return flatMap(transactions, ({ transaction, account }) => {
+  return flatMap(transactions, ({ transaction }) => {
     if (transaction.family !== "kaspa") {
       throw new Error("transaction is not of type Kaspa");
     }

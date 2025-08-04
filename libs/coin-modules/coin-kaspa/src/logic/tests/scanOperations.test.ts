@@ -44,16 +44,13 @@ describe("scan transactions for multiple addresses", () => {
       "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
       "kaspa:qqkqkzjvr7zwxxmjxjkmxxdwju9kjs6e9u82uh59z07vgaks6gg62v8707g73",
     ];
-    // console.log(new Date().toLocaleString());
     const result = await scanOperations(addresses, "");
-    // console.log(result);
+
     expect(result.length).toBeGreaterThan(20);
 
     // both addresses in outputs
     expect(result.find(res => res.recipients.includes(addresses[0]))).toBeDefined();
     expect(result.find(res => res.recipients.includes(addresses[1]))).toBeDefined();
-
-    // console.log(new Date().toLocaleString());
   });
   it("200 addresses should be done in max 10s", async () => {
     const addresses: string[] = [
@@ -258,14 +255,12 @@ describe("scan transactions for multiple addresses", () => {
       "kaspa:qp7he2r07njf6a9l9kc4ensygxl0ydfqqp8jfx5l4a8qehnhmr6pvswfcz3ld",
       "kaspa:qpy2dzp9znrrwqsmxgrj3glqy8dz7nyg6tatcfuy5ku7srkryju3gpmwuar8a",
     ];
-    // console.log(new Date().toLocaleString());
 
     const startTime = Date.now();
     const result = await scanOperations(addresses, "");
     const endTime = Date.now();
     const timeTakenInSeconds = (endTime - startTime) / 1000;
-    console.log(`Time taken: ${timeTakenInSeconds} seconds`);
-    // console.log(result);
+
     expect(result.length).toBeGreaterThan(5);
 
     // both addresses in outputs

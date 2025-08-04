@@ -252,7 +252,6 @@ describe("scriptPublicKeyToAddress", () => {
   it("incorrect scriptPublicKey throws error", () => {
     const scriptPublicKey =
       "aa219c5809e7f2aad6f0eaec0389083d6c2beae8dbabf47cd3d354cf4b15dacee4a987";
-    const expectedAddress = "kaspa:pzw9sz08724ddu82aspcjzpads4746xm4068e57n2n85k9w6emj2j450rc47a";
 
     expect(() => scriptPublicKeyToAddress(scriptPublicKey)).toThrow();
   });

@@ -87,8 +87,6 @@ export async function scanAddresses(
     }
   }
 
-  const countUsedAddresses =
-    accountAddresses.usedChangeAddresses.length + accountAddresses.usedReceiveAddresses.length;
   const spendableBalance = [
     ...accountAddresses.usedChangeAddresses,
     ...accountAddresses.usedReceiveAddresses,
