@@ -34,6 +34,10 @@ export class ModularDrawer extends Drawer {
     return await this.networkDrawer.selectNetwork(currency, networkIndex);
   }
 
+  async isModularAccountDrawerVisible(): Promise<boolean> {
+    return await this.accountDrawer.isModularAccountDrawerVisible();
+  }
+
   async selectAccountByName(account: AccountType) {
     return await this.accountDrawer.selectAccountByName(account);
   }
