@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
@@ -10,18 +10,20 @@ import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
 import * as ApiTypes from "./api-types";
 import { APITransaction } from "./api-types";
 
+export interface FetchTransactions {
+  pageNo: number;
+  limit: number;
+  blockHeight: number;
+  transactions: Array<APITransaction>;
+}
+
 async function fetchTransactions(
   paymentKeys: Array<string>,
   pageNo: number,
   blockHeight: number,
   currency: CryptoCurrency,
-): Promise<{
-  pageNo: number;
-  limit: number;
-  blockHeight: number;
-  transactions: Array<APITransaction>;
-}> {
-  const res = await network({
+): Promise<FetchTransactions> {
+  const res = await network<FetchTransactions>({
     method: "POST",
     url: isTestnet(currency)
       ? `${CARDANO_TESTNET_API_ENDPOINT}/v1/transaction`
@@ -32,6 +34,7 @@ async function fetchTransactions(
       blockHeight,
     },
   });
+
   return res.data;
 }
 
