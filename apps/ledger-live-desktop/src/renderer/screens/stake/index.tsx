@@ -17,6 +17,8 @@ import {
   useModularDrawerVisibility,
 } from "LLD/features/ModularDrawer";
 
+const DRAWER_FLOW = "stake";
+
 export type StakeFlowProps = {
   currencies?: string[];
   shouldRedirect?: boolean;
@@ -146,7 +148,7 @@ const useStakeFlow = () => {
           currencies: cryptoCurrencies,
           onSuccess,
           onCancel: handleRequestClose,
-          flow: "stake",
+          flow: DRAWER_FLOW,
           source: source ?? "",
         });
       } else {
@@ -154,6 +156,8 @@ const useStakeFlow = () => {
           SelectAccountAndCurrencyDrawer,
           {
             currencies: cryptoCurrencies,
+            flow: DRAWER_FLOW,
+            source: source ?? "",
             onAccountSelected: (account, parentAccount) =>
               handleAccountSelected(
                 account,
