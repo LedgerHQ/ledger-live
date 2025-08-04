@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -50,7 +49,10 @@ const buildOptimisticCoinOperation = async ({
   transaction: Transaction;
   transactionType?: OperationType;
 }): Promise<Operation> => {
-  const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer);
+  const estimatedFee =
+    transactionType === "FEES"
+      ? transaction.amount
+      : await getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
 
@@ -90,7 +92,7 @@ const buildOptimisticTokenOperation = async ({
     transaction: {
       ...transaction,
       recipient: tokenAccount.token.contractAddress,
-      amount: new BigNumber(0),
+      amount: estimatedFee,
     },
     transactionType: "FEES",
   });

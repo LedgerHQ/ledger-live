@@ -90,6 +90,25 @@ export async function getOperationsForAccount(
       const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
       const { type, value, senders, recipients } = parseTransfers(rawTx.token_transfers, address);
 
+      // add main FEES coin operation for send token transfer
+      if (type === "OUT") {
+        coinOperations.push({
+          id: encodeOperationId(ledgerAccountId, hash, "FEES"),
+          accountId: ledgerAccountId,
+          type: "FEES",
+          value: fee,
+          recipients,
+          senders,
+          hash,
+          fee,
+          date: timestamp,
+          blockHeight: 5,
+          blockHash: null,
+          hasFailed,
+          extra: { consensusTimestamp: rawTx.consensus_timestamp },
+        });
+      }
+
       tokenOperations.push({
         id: encodeOperationId(encodedTokenId, hash, type),
         accountId: encodedTokenId,

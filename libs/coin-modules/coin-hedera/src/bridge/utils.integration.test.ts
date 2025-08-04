@@ -335,7 +335,8 @@ describe("utils", () => {
       const result = prepareOperations([], [mockedOrphanTokenOperation], []);
       const noneOp = result.find(op => op.type === "NONE");
 
-      expect(noneOp).toBeDefined();
+      expect(typeof noneOp).toBe("object");
+      expect(noneOp).not.toBeNull();
       expect(noneOp?.subOperations?.[0]).toEqual(mockedOrphanTokenOperation);
       expect(noneOp?.hash).toBe("unknown-hash");
     });
@@ -353,7 +354,8 @@ describe("utils", () => {
       const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
       const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
 
-      expect(extra).toBeDefined();
+      expect(typeof extra).toBe("object");
+      expect(extra).not.toBeNull();
       expect(extra?.associatedTokenId).toBe("0.0.1001");
     });
 
@@ -370,7 +372,8 @@ describe("utils", () => {
       const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
       const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
 
-      expect(extra).toBeDefined();
+      expect(typeof extra).toBe("object");
+      expect(extra).not.toBeNull();
       expect(extra?.associatedTokenId).toBeUndefined();
     });
   });
