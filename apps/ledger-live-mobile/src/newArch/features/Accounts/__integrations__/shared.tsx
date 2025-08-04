@@ -9,15 +9,37 @@ import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import ImportAccountsNavigator from "~/components/RootNavigator/ImportAccountsNavigator";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ModularDrawer, useModularDrawerController } from "../../ModularDrawer";
+import { useCallback } from "react";
+import {
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+  mockArbitrumCryptoCurrency,
+  mockBaseCryptoCurrency,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+
+const currencies = [
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+  mockArbitrumCryptoCurrency,
+  mockBaseCryptoCurrency,
+];
 
 const MockComponent = () => {
   const { t } = useTranslation();
-  const [isAddModalOpened, setAddModalOpened] = React.useState<boolean>(false);
 
-  const openAddModal = () => setAddModalOpened(true);
-  const closeAddModal = () => setAddModalOpened(false);
+  const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
 
-  const { isOpen, preselectedCurrencies } = useModularDrawerController();
+  const handleOpenDrawer = useCallback(() => {
+    openDrawer({
+      currencies: currencies,
+      flow: "integration_test",
+      source: "accounts_shared",
+    });
+  }, [openDrawer]);
+
+  const handleCloseDrawer = useCallback(() => {
+    closeDrawer();
+  }, [closeDrawer]);
 
   return (
     <>
@@ -29,14 +51,14 @@ const MockComponent = () => {
         mb={8}
         iconPosition="left"
         Icon={IconsLegacy.PlusMedium}
-        onPress={openAddModal}
+        onPress={handleOpenDrawer}
       >
         {t("portfolio.emptyState.buttons.import")}
       </Button>
-      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
+      <AddAccountDrawer isOpened={isOpen} onClose={handleCloseDrawer} />
       <ModularDrawer
         isOpen={isOpen}
-        currencies={preselectedCurrencies}
+        currencies={currencies}
         flow="integration_test"
         source="accounts_shared"
       />
