@@ -14,7 +14,7 @@ describe("Alpaca utils", () => {
       expect(extractBalance([{ value: 4n, asset: { type: "type1" } }], "type2")).toEqual({
         value: 0n,
         asset: { type: "type2" },
-        spendableBalance: 4n,
+        spendableBalance: 0n,
       });
     });
   });
