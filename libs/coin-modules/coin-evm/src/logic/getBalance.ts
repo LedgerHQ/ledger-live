@@ -45,7 +45,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
         assetType = "erc1155";
       }
 
-      let balanceParsed = BigInt(integerString);
+      const balanceParsed = BigInt(integerString);
 
       balance.push({
         value: balanceParsed,

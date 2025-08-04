@@ -12,9 +12,9 @@ describe("getBalance", () => {
       {}, // token balances (empty)
       [
         {
-          value: BigInt("1000000000000000000"),
+          value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("1000000000000000000"),
+          spendableBalance: BigInt("10000000000000000000000"),
         },
       ], // expected
     ],
