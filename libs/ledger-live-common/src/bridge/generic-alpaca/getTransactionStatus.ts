@@ -56,9 +56,7 @@ export function genericGetTransactionStatus(
           ? new BigNumber(estimatedFees.toString())
           : transaction.fees,
       amount: transaction.amount.eq(0) ? new BigNumber(amount.toString()) : transaction.amount,
-      totalSpent: transaction.amount.eq(0)
-        ? new BigNumber(totalSpent.toString())
-        : transaction.amount.plus(new BigNumber(transaction.fees || "0")),
+      totalSpent: new BigNumber(totalSpent.toString()),
     });
   };
 }
