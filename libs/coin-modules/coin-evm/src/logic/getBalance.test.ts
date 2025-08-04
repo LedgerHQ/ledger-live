@@ -12,9 +12,9 @@ describe("getBalance", () => {
       {}, // token balances (empty)
       [
         {
-          value: BigInt("1000000000000000000"),
+          value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("1000000000000000000"),
+          spendableBalance: BigInt("10000000000000000000000"),
         },
       ], // expected
     ],
@@ -26,9 +26,9 @@ describe("getBalance", () => {
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [
         {
-          value: BigInt("1000000000000000000"),
+          value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("1000000000000000000"),
+          spendableBalance: BigInt("10000000000000000000000"),
         }, // native balance
         {
           value: BigInt("1000000"),

@@ -2,7 +2,21 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  Balance,
+  Operation as CoreOperation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+
+export function extractBalance(balances: Balance[], type: string): Balance {
+  return (
+    balances.find(balance => balance.asset.type === type) ?? {
+      asset: { type },
+      value: 0n,
+      spendableBalance: 0n,
+    }
+  );
+}
 
 export function extractBalance(balances: Balance[], type: string): Balance {
   return balances.find(balance => balance.asset.type === type) ?? { asset: { type }, value: 0n };

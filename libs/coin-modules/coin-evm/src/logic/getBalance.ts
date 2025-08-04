@@ -18,7 +18,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
 
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
-  let balanceParsed = BigInt(nativeBalance.toString());
+  const balanceParsed = BigInt(nativeBalance.toFixed(0));
 
   balance.push({
     value: balanceParsed,
@@ -46,7 +46,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
         assetType = "erc1155";
       }
 
-      let balanceParsed = BigInt(integerString);
+      const balanceParsed = BigInt(integerString);
 
       balance.push({
         value: balanceParsed,

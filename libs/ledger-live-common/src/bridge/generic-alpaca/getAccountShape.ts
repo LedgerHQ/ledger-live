@@ -2,7 +2,7 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { adaptCoreOperationToLiveOperation } from "./utils";
+import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { findToken } from "./buildSubAccounts";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
@@ -29,7 +29,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const blockInfo = await alpacaApi.lastBlock();
     const balanceRes = await alpacaApi.getBalance(address);
-    const nativeAsset = balanceRes.find(b => b.asset.type === "native");
+    const nativeAsset = extractBalance(balanceRes, "native");
+
     const assetsBalance = balanceRes
       .filter(b => b.asset.type === "token")
       .filter(b => findToken(currency, b));
