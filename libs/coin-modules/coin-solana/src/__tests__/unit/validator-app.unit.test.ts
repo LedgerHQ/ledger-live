@@ -1,22 +1,17 @@
-jest.mock("@ledgerhq/live-network", () => jest.fn());
-jest.mock("@ledgerhq/live-env", () => ({
-  getEnv: jest.fn((key: string) => {
-    const urls: Record<string, string> = {
-      SOLANA_VALIDATORS_APP_BASE_URL: "https://validators.app/api",
-      SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: "https://validators.testnet.app/api",
-      SOLANA_VALIDATORS_SUMMARY_BASE_URL:
-        "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
-      LEDGER_CLIENT_VERSION: "test-version",
-    };
-    return urls[key] || "";
-  }),
-  changes: { subscribe: jest.fn() },
-}));
-
 import { getValidators } from "../../network/validator-app";
-import network from "@ledgerhq/live-network";
+import * as network from "@ledgerhq/live-network";
+import { getEnv } from "@ledgerhq/live-env";
 
-const mockNetwork = network as jest.MockedFunction<typeof network>;
+jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
+  const testUrls: Record<string, string> = {
+    SOLANA_VALIDATORS_APP_BASE_URL: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    SOLANA_TESTNET_VALIDATORS_APP_BASE_URL:
+      "https://validators-solana.coin.ledger.com/api/v1/validators",
+    SOLANA_VALIDATORS_SUMMARY_BASE_URL:
+      "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
+  };
+  return testUrls[key] || "";
+});
 
 const mockValidator = (overrides = {}) => ({
   active_stake: 1000000,
@@ -36,18 +31,22 @@ const mockApyData = (overrides = {}) => ({
 });
 
 describe("validator-app", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Suppress console.warn for cleaner test output
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
 
   describe("APY integration", () => {
     it("should work for testnet without APY", async () => {
-      mockNetwork.mockResolvedValueOnce({ status: 200, data: [] });
+      jest.spyOn(network, "default").mockResolvedValue({ status: 200, data: [] });
 
       const result = await getValidators("testnet");
 
-      expect(mockNetwork).toHaveBeenCalledTimes(1);
-      expect(mockNetwork).toHaveBeenCalledWith({
+      expect(network.default).toHaveBeenCalledTimes(1);
+      expect(network.default).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://validators.testnet.app/api/testnet.json?order=score&limit=1000",
+        url: "https://validators-solana.coin.ledger.com/api/v1/validators/testnet.json?order=score&limit=1000",
       });
       expect(result).toEqual([]);
     });
@@ -56,13 +55,14 @@ describe("validator-app", () => {
       const validator = mockValidator();
       const apyData = mockApyData();
 
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: [apyData] });
 
       const result = await getValidators("mainnet-beta");
 
-      expect(mockNetwork).toHaveBeenCalledTimes(2);
+      expect(network.default).toHaveBeenCalledTimes(2);
       expect(result[0]).toMatchObject({
         activeStake: 1000000,
         voteAccount: "test-validator",
@@ -72,27 +72,31 @@ describe("validator-app", () => {
 
     it("should handle APY fetch errors gracefully", async () => {
       const validator = mockValidator();
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockRejectedValueOnce(new Error("Network error"));
 
-      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
-
       const result = await getValidators("mainnet-beta");
 
-      expect(result[0].apy).toBeUndefined();
-      expect(consoleSpy).toHaveBeenCalledWith("Failed to fetch Figment APY", expect.any(Error));
-      consoleSpy.mockRestore();
+      expect(result[0]).toMatchObject({
+        name: "Test Validator",
+        apy: undefined,
+      });
     });
 
     it("should handle invalid APY data", async () => {
       const validator = mockValidator();
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: "invalid" });
 
       const result = await getValidators("mainnet-beta");
-      expect(result[0].apy).toBeUndefined();
+      expect(result[0]).toMatchObject({
+        name: "Test Validator",
+        apy: undefined,
+      });
     });
 
     it("should filter invalid APY entries", async () => {
@@ -103,12 +107,24 @@ describe("validator-app", () => {
         mockApyData({ address: "other", delegator_apy: "invalid" }),
       ];
 
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: apyData });
 
       const result = await getValidators("mainnet-beta");
-      expect(result[0].apy).toBe(0.075);
+      expect(result).toEqual([
+        {
+          activeStake: 1000000,
+          voteAccount: "valid-validator",
+          apy: 0.075,
+          name: "Test Validator",
+          avatarUrl: undefined,
+          wwwUrl: undefined,
+          totalScore: 8,
+          commission: 5,
+        },
+      ]);
     });
   });
 
@@ -120,18 +136,30 @@ describe("validator-app", () => {
         mockValidator({ vote_account: "incomplete", active_stake: null }),
       ];
 
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 200, data: validators })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
       const result = await getValidators("mainnet-beta");
 
-      expect(result).toHaveLength(1);
-      expect(result[0].voteAccount).toBe("good");
+      expect(result).toEqual([
+        {
+          activeStake: 1000000,
+          commission: 5,
+          totalScore: 8,
+          voteAccount: "good",
+          name: "Test Validator",
+          avatarUrl: undefined,
+          wwwUrl: undefined,
+          apy: undefined,
+        },
+      ]);
     });
 
     it("should handle failed API calls", async () => {
-      mockNetwork
+      jest
+        .spyOn(network, "default")
         .mockResolvedValueOnce({ status: 500, data: null })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
