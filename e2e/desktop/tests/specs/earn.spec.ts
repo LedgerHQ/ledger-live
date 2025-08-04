@@ -102,7 +102,12 @@ test.describe("Inline Add Account", () => {
       await app.delegateDrawer.clickOnAddAccountButton();
       await app.addAccount.addAccounts();
       await app.addAccount.done();
-      await app.delegateDrawer.selectAccountByName(account);
+      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
+      if (modularDrawerVisible) {
+        await app.modularDrawer.selectAccountByName(account);
+      } else {
+        await app.delegateDrawer.selectAccountByName(account);
+      }
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
