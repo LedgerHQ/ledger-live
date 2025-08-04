@@ -76,10 +76,10 @@ describe("api/index", () => {
   it("should call getBalance from logic", async () => {
     const mockGetBalance = jest
       .spyOn(logic, "getBalance")
-      .mockResolvedValue([{ value: 42n, spendableBalance: 42n, asset: { type: "native" } }]);
+      .mockResolvedValue([{ value: 42n, asset: { type: "native" } }]);
     const result = await api.getBalance("address");
     expect(mockGetBalance).toHaveBeenCalledWith("address");
-    expect(result).toEqual([{ value: 42n, spendableBalance: 42n, asset: { type: "native" } }]);
+    expect(result).toEqual([{ value: 42n, asset: { type: "native" } }]);
   });
 
   it("should call lastBlock from logic", async () => {

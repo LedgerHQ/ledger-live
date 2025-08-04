@@ -14,7 +14,6 @@ describe("getBalance", () => {
         {
           value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("10000000000000000000000"),
         },
       ], // expected
     ],

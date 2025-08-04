@@ -38,8 +38,6 @@ describe("getBalance", () => {
     expect(mockGetAccountInfo).toHaveBeenCalledTimes(1);
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetAccountInfo.mock.lastCall[0]).toEqual(address);
-    expect(result).toEqual([
-      { value: balance, asset: { type: "native" }, locked: 23000000n, spendableBalance: 0n },
-    ]);
+    expect(result).toEqual([{ value: balance, asset: { type: "native" }, locked: 23000000n }]);
   });
 });

@@ -21,7 +21,6 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
 
   balance.push({
     value: balanceParsed,
-    spendableBalance: balanceParsed,
     asset: { type: "native" },
   });
 
@@ -49,7 +48,6 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
 
       balance.push({
         value: balanceParsed,
-        spendableBalance: balanceParsed,
         asset: {
           type: assetType,
           assetReference: operation.contract,
