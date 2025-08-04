@@ -8,6 +8,7 @@ describe("Alpaca utils", () => {
       ).toEqual({
         value: 4n,
         asset: { type: "type1" },
+        spendableBalance: 4n,
       });
     });
 
@@ -17,6 +18,7 @@ describe("Alpaca utils", () => {
       ).toEqual({
         value: 0n,
         asset: { type: "type2" },
+        spendableBalance: 4n,
       });
     });
   });

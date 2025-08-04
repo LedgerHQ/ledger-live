@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064677",
+    "balance": "341064678",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 68,
+    "operationsCount": 69,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064577",
+    "spendableBalance": "311064578",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -1063,6 +1063,31 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
       ],
       "transactionSequenceNumber": 247017862844121600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "09fd06182f1e9bb78ff2f53e4556aa512d9f13f971d71906a9f91453239eeed9",
+      "blockHeight": 58311936,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "50% CASHBACK ON yStorm & XLM",
+        },
+      },
+      "fee": "10000",
+      "hash": "83c0c4837794746edc769650209596d2b10a163ffaa012942cc49b72cd3e201b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-83c0c4837794746edc769650209596d2b10a163ffaa012942cc49b72cd3e201b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
+      ],
+      "transactionSequenceNumber": 250201623316407580,
       "type": "IN",
       "value": "1",
     },

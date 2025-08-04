@@ -1,8 +1,5 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { fetchAccount } from "../network";
-// import { getAssetIdFromAsset } from "./tokens";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 export async function getBalance(addr: string): Promise<Balance[]> {
   const { balance, assets, spendableBalance } = await fetchAccount(addr);
@@ -20,7 +17,6 @@ export async function getBalance(addr: string): Promise<Balance[]> {
     const balanceStr = asset.balance || "0";
     // NOTE: parse as-is (assumed decimal string), caller should decide how to render
     const intBalance = BigInt(Math.floor(parseFloat(balanceStr) * 10 ** 7)); // 7 decimals, per Stellar convention
-    console.log({ intBalance });
     return {
       value: intBalance,
       asset: {
