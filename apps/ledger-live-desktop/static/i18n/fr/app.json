@@ -344,6 +344,7 @@
           "provider" : "Prestataire",
           "rate" : "Taux",
           "fees" : "Frais de réseau",
+          "feesDescription" : "Ces frais sont appliqués par le réseau de blockchain pour traiter l’échange. Seuls les frais d’envoi sont ajoutés à l’offre estimée. Les frais de réception sont inclus.",
           "target" : "Compte bénéficiaire"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "En attente",
         "expired" : "Expiré",
         "finished" : "Terminé",
+        "unknown" : "Traitement",
         "refunded" : "Remboursé"
       }
     },
@@ -570,7 +572,7 @@
         "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
         "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
         "finished" : "Votre échange a bien été réalisé.",
-        "unknown" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap."
+        "unknown" : "En attente des informations de la part du prestataire."
       },
       "date" : "Date",
       "from" : "De",
@@ -2385,6 +2387,10 @@
         "title" : "Appareil"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Demande de signature aveugle",
+          "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        },
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
         "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
         "from" : "De",
@@ -2553,7 +2559,7 @@
         "drawerTitle" : "Intégration de MultiversX",
         "title" : "Le token MultiversX eGold (EGLD) est désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant sécuriser et gérer vos tokens eGold (EGLD) via Ledger Live.",
-        "description2" : "Le token MultiversX eGold (EGLD) est natif au réseau MultiversX. Il est utilisé pour les transactions, le staking, les contrats intelligents, la gouvernance et les récompenses de validateur.",
+        "description2" : "MultiversX eGold (EGLD) est le token natif du réseau MultiversX. Il est utilisé pour les transactions, le staking, les contrats intelligents, la gouvernance et les récompenses de validateur.",
         "description3" : "Nous travaillons avec l’équipe de MultiversX pour ajouter plus de fonctionnalités, comme le staking, la prise en charge native de l’ESDT (Elrond Standard Digital Token), et bien plus.",
         "website" : "The Internet Scale Blockchain"
       }
@@ -2901,7 +2907,7 @@
         "drawerTitle" : "Propulsé par Figment",
         "title" : "Le token CELO désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens CELO via Ledger Live.",
-        "description2" : "Le token Celo est natif de la chaîne Celo. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "description2" : "CELO est le token natif de la chaîne Celo. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
         "website" : "Propulsé par Figment"
       }
     },
@@ -4132,7 +4138,7 @@
         "drawerTitle" : "Propulsé par Figment",
         "title" : "Le token NEAR désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens NEAR via Ledger Live.",
-        "description2" : "Le token NEAR est natif de la chaîne NEAR. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "description2" : "NEAR est le token natif de la chaîne Near. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
         "website" : "Propulsé par Figment"
       }
     },
@@ -4579,6 +4585,10 @@
             "cta" : "Appliquer"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Outil développeur pour le Modular Drawer",
+        "description" : "Testez facilement le Modular Drawer."
       },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
@@ -7279,6 +7289,15 @@
       "newAccount" : "Nouveau compte",
       "addAccountSelection" : "Choisissez le compte à approvisionner",
       "addAccountSelectionPtxFlow" : "Sélectionner un compte"
+    },
+    "editAccountName" : {
+      "title" : "Modifier le nom du compte",
+      "input" : {
+        "name" : "Nom"
+      },
+      "cta" : {
+        "save" : "Enregistrer"
+      }
     },
     "fundAccount" : {
       "receive" : "Recevoir",
