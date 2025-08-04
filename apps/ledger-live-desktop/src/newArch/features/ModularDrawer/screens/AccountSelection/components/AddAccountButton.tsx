@@ -8,7 +8,7 @@ type Props = {
   testID?: string;
 };
 
-export const AddAccountButton = ({ onAddAccountClick, ...rest }: Props) => {
+export const AddAccountButton = ({ onAddAccountClick, testID }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -17,7 +17,7 @@ export const AddAccountButton = ({ onAddAccountClick, ...rest }: Props) => {
       title={t("drawers.selectAccount.addAccount")}
       iconRight={<Icons.Plus size="S" />}
       variant="dashed"
-      {...rest}
+      testID={testID}
     />
   );
 };
