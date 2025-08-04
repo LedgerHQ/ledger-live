@@ -1,5 +1,5 @@
 import { client, v2 } from "@datadog/datadog-api-client";
-import { AccountType } from "./accounts";
+import { AccountType } from "./currencies";
 
 const configuration = client.createConfiguration({
   authMethods: {

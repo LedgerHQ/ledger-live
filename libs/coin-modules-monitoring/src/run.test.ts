@@ -11,10 +11,13 @@ describe("Coin Modules Monitoring", () => {
   });
 
   describe("run", () => {
-    it("produces log entries to be submitted", async () => {
+    it("produces log entries to be submitted, skipping failures", async () => {
       jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockReturnValue({
         sync: makeSync({
           getAccountShape: async info => {
+            if (info.address === "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S") {
+              throw new Error("Unavailable");
+            }
             const accountId = encodeAccountId({
               type: "js",
               version: "2",
@@ -23,7 +26,6 @@ describe("Coin Modules Monitoring", () => {
               derivationMode: "",
             });
             const transactionCounts: Record<string, number> = {
-              "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S": 1000,
               Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp: 500,
               Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv: 0,
             };
@@ -38,9 +40,6 @@ describe("Coin Modules Monitoring", () => {
       jest
         .spyOn(Date, "now")
         .mockReturnValueOnce(3000) // Start scan big
-        .mockReturnValueOnce(3200) // End scan big
-        .mockReturnValueOnce(3000) // Start sync big
-        .mockReturnValueOnce(3100) // End sync big
         .mockReturnValueOnce(3000) // Start scan average
         .mockReturnValueOnce(3050) // End scan average
         .mockReturnValueOnce(3000) // Start sync average
@@ -53,24 +52,6 @@ describe("Coin Modules Monitoring", () => {
       const logs = await run(["solana"]);
 
       expect(logs).toEqual([
-        {
-          duration: 200,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "scan",
-          accountType: "big",
-          transactions: 1000,
-          accountAddressOrXpub: "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S",
-        },
-        {
-          duration: 100,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "sync",
-          accountType: "big",
-          transactions: 1000,
-          accountAddressOrXpub: "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S",
-        },
         {
           duration: 50,
           currencyName: "solana",
