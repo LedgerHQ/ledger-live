@@ -5,31 +5,20 @@ import type { PostSwapAccepted, PostSwapCancelled } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
-export const postSwapAccepted: PostSwapAccepted = async ({
+function createSwapIntentHashes({
   provider,
-  swapId = "",
-  transactionId,
-  swapAppVersion,
   fromAccount,
   toAccount,
   amount,
-  ...rest
-}) => {
-  if (isIntegrationTestEnv())
-    return mockPostSwapAccepted({ provider, swapId, transactionId, ...rest });
-
-  /**
-   * Since swapId is required by the endpoint, don't call it if we don't have
-   * this info
-   */
-  if (!swapId) {
-    return null;
-  }
-
+}: {
+  provider: string;
+  fromAccount?: string;
+  toAccount?: string;
+  amount?: string;
+}) {
   // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
   const currentday = new Date().toISOString().split("T")[0];
 
-  // Create swap intent hash
   const swapIntentWithProvider = crypto
     .createHash("sha256")
     .update(
@@ -54,6 +43,37 @@ export const postSwapAccepted: PostSwapAccepted = async ({
       }),
     )
     .digest("hex");
+
+  return { swapIntentWithProvider, swapIntentWithoutProvider };
+}
+
+export const postSwapAccepted: PostSwapAccepted = async ({
+  provider,
+  swapId = "",
+  transactionId,
+  swapAppVersion,
+  fromAccount,
+  toAccount,
+  amount,
+  ...rest
+}) => {
+  if (isIntegrationTestEnv())
+    return mockPostSwapAccepted({ provider, swapId, transactionId, ...rest });
+
+  /**
+   * Since swapId is required by the endpoint, don't call it if we don't have
+   * this info
+   */
+  if (!swapId) {
+    return null;
+  }
+
+  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+    provider,
+    fromAccount,
+    toAccount,
+    amount,
+  });
 
   try {
     const ipHeader = getSwapUserIP();
@@ -82,6 +102,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   fromAccount,
   toAccount,
   amount,
+  seedIdFrom,
+  seedIdTo,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -94,33 +116,12 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     return null;
   }
 
-  // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
-  const currentday = new Date().toISOString().split("T")[0];
-
-  const swapIntentWithProvider = crypto
-    .createHash("sha256")
-    .update(
-      JSON.stringify({
-        provider,
-        fromAccount,
-        toAccount,
-        amount,
-        currentday,
-      }),
-    )
-    .digest("hex");
-
-  const swapIntentWithoutProvider = crypto
-    .createHash("sha256")
-    .update(
-      JSON.stringify({
-        fromAccount,
-        toAccount,
-        amount,
-        currentday,
-      }),
-    )
-    .digest("hex");
+  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+    provider,
+    fromAccount,
+    toAccount,
+    amount,
+  });
 
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
   // returns true if any value is missing to not send false in error cases where the values are not set
@@ -138,34 +139,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
     };
 
-    // Only include seedIdFrom and seedIdTo for specific device-related error messages
-    // NOTE only useful if trying to swap from EVM account 1 to EVM account 2
-    // cross c
-    const shouldIncludeSeedIds =
-      rest.errorMessage ===
-        "This receiving account does not belong to the device you have connected. Please change and retry" ||
-      rest.errorMessage ===
-        "This sending account does not belong to the device you have connected. Please change and retry";
-
-    const requestData = shouldIncludeSeedIds
-      ? {
-          provider,
-          swapId,
-          swapIntentWithProvider,
-          swapIntentWithoutProvider,
-          payloadAddressMatchAccountAddress,
-          ...rest,
-        }
-      : {
-          provider,
-          swapId,
-          swapIntentWithProvider,
-          swapIntentWithoutProvider,
-          payloadAddressMatchAccountAddress,
-          ...Object.fromEntries(
-            Object.entries(rest).filter(([key]) => key !== "seedIdFrom" && key !== "seedIdTo"),
-          ),
-        };
+    const requestData = {
+      provider,
+      swapId,
+      swapIntentWithProvider,
+      swapIntentWithoutProvider,
+      payloadAddressMatchAccountAddress,
+      seedMatch: seedIdFrom === seedIdTo,
+    };
 
     await network({
       method: "POST",
