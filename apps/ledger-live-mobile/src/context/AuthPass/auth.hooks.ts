@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react";
-import { AppState, Platform } from "react-native";
-
-import * as Keychain from "react-native-keychain";
+import { useCallback, useRef, useState } from "react";
+import { AppState, Platform, Vibration } from "react-native";
 import type { Privacy } from "~/reducers/types";
+import * as Keychain from "react-native-keychain";
+import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
 
 interface UsePrivacyInitializationProps {
   privacy: Privacy | null | undefined;
@@ -74,3 +75,54 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
 
   return { handleAppStateChange };
 }
+
+interface UseAuthSubmitProps {
+  password: string;
+  unlock: () => void;
+  setPasswordError: (error: Error | null) => void;
+  setPassword: (password: string) => void;
+}
+
+export const useAuthSubmit = ({
+  password,
+  unlock,
+  setPasswordError,
+  setPassword,
+}: UseAuthSubmitProps) => {
+  const submitId = useRef(0);
+
+  const submit = useCallback(async () => {
+    const id = ++submitId.current;
+    if (!password) return;
+
+    try {
+      const options =
+        Platform.OS === "ios"
+          ? {}
+          : {
+              accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
+              rules: Keychain.SECURITY_RULES.NONE,
+            };
+
+      const credentials = await Keychain.getGenericPassword(options);
+      if (id !== submitId.current) return;
+
+      if (credentials && credentials.password === password) {
+        unlock();
+      } else if (credentials) {
+        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
+        setPasswordError(new PasswordIncorrectError());
+        setPassword("");
+      } else {
+        console.warn("no credentials stored");
+      }
+    } catch (err) {
+      if (id !== submitId.current) return;
+      console.warn("could not load credentials");
+      setPasswordError(err as Error);
+      setPassword("");
+    }
+  }, [password, unlock, setPasswordError, setPassword]);
+
+  return { submit };
+};

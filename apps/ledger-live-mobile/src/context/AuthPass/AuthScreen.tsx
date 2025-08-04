@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { withTranslation, useTranslation } from "react-i18next";
-import { Platform, StyleSheet, Vibration } from "react-native";
+import { StyleSheet } from "react-native";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -20,9 +20,7 @@ import FailBiometrics from "./FailBiometrics";
 import SafeKeyboardView from "~/components/KeyboardBackgroundDismiss";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
-import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
-import * as Keychain from "react-native-keychain";
+import { useAuthSubmit } from "./auth.hooks";
 
 type OwnProps = {
   privacy: Privacy;
@@ -89,52 +87,6 @@ const FormFooter = ({
       </LText>
     </Touchable>
   );
-};
-
-interface UseAuthSubmitProps {
-  password: string;
-  unlock: () => void;
-  setPasswordError: (error: Error | null) => void;
-  setPassword: (password: string) => void;
-}
-
-const useAuthSubmit = ({ password, unlock, setPasswordError, setPassword }: UseAuthSubmitProps) => {
-  const submitId = useRef(0);
-
-  const submit = useCallback(async () => {
-    const id = ++submitId.current;
-    if (!password) return;
-
-    try {
-      const options =
-        Platform.OS === "ios"
-          ? {}
-          : {
-              accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-              rules: Keychain.SECURITY_RULES.NONE,
-            };
-
-      const credentials = await Keychain.getGenericPassword(options);
-      if (id !== submitId.current) return;
-
-      if (credentials && credentials.password === password) {
-        unlock();
-      } else if (credentials) {
-        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
-        setPasswordError(new PasswordIncorrectError());
-        setPassword("");
-      } else {
-        console.warn("no credentials stored");
-      }
-    } catch (err) {
-      if (id !== submitId.current) return;
-      console.warn("could not load credentials");
-      setPasswordError(err as Error);
-      setPassword("");
-    }
-  }, [password, unlock, setPasswordError, setPassword]);
-
-  return { submit };
 };
 
 const AuthScreen: React.FC<Props> = ({ t, privacy, biometricsError, lock, unlock, colors }) => {
