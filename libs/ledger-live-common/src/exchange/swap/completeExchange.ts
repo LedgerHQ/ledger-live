@@ -178,8 +178,6 @@ const completeExchange = (
               getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(payoutAccount),
-                seedIdReceiver: payoutAccount.seedIdentifier,
-                seedIdSender: refundAccount.seedIdentifier,
               },
             );
           }
@@ -222,8 +220,6 @@ const completeExchange = (
               getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(refundAccount),
-                seedIdReceiver: payoutAccount.seedIdentifier,
-                seedIdSender: refundAccount.seedIdentifier,
               },
             );
           }
