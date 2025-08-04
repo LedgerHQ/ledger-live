@@ -592,6 +592,8 @@ export const handlers = ({
               swapAppVersion,
               fromAccount: fromAccount.id,
               toAccount: toAccount?.id!,
+              refundAddress,
+              payoutAddress,
               amount: amountExpectedTo.toString(),
               seedIdFrom: mainFromAccount.seedIdentifier,
               seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,

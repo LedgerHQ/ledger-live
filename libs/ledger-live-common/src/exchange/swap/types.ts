@@ -205,6 +205,8 @@ type SwapStateRequest = {
   amount?: string;
   seedIdFrom?: string;
   seedIdTo?: string;
+  refundAddress?: string;
+  payoutAddress?: string;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
