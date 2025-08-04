@@ -200,8 +200,8 @@ type SwapStateRequest = {
   hardwareWalletType: DeviceModelId;
   swapType: TradeMethod;
   swapAppVersion?: string;
-  fromAccount?: string;
-  toAccount?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
   amount?: string;
   seedIdFrom?: string;
   seedIdTo?: string;

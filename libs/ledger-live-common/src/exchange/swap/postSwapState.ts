@@ -7,13 +7,13 @@ import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
 function createSwapIntentHashes({
   provider,
-  fromAccount,
-  toAccount,
+  fromAccountId,
+  toAccountId,
   amount,
 }: {
   provider: string;
-  fromAccount?: string;
-  toAccount?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
   amount?: string;
 }) {
   // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
@@ -24,8 +24,8 @@ function createSwapIntentHashes({
     .update(
       JSON.stringify({
         provider,
-        fromAccount,
-        toAccount,
+        fromAccountId,
+        toAccountId,
         amount,
         currentday,
       }),
@@ -36,8 +36,8 @@ function createSwapIntentHashes({
     .createHash("sha256")
     .update(
       JSON.stringify({
-        fromAccount,
-        toAccount,
+        fromAccountId,
+        toAccountId,
         amount,
         currentday,
       }),
@@ -52,8 +52,8 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapId = "",
   transactionId,
   swapAppVersion,
-  fromAccount,
-  toAccount,
+  fromAccountId,
+  toAccountId,
   amount,
   ...rest
 }) => {
@@ -70,8 +70,8 @@ export const postSwapAccepted: PostSwapAccepted = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccount,
-    toAccount,
+    fromAccountId,
+    toAccountId,
     amount,
   });
 
@@ -99,8 +99,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
   swapId = "",
   swapAppVersion,
-  fromAccount,
-  toAccount,
+  fromAccountId,
+  toAccountId,
   amount,
   seedIdFrom,
   seedIdTo,
@@ -118,19 +118,19 @@ export const postSwapCancelled: PostSwapCancelled = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccount,
-    toAccount,
+    fromAccountId,
+    toAccountId,
     amount,
   });
 
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
   // returns true if any value is missing to not send false in error cases where the values are not set
   const payloadAddressMatchAccountAddress =
-    !fromAccount ||
-    !toAccount ||
+    !fromAccountId ||
+    !toAccountId ||
     !rest.refundAddress ||
     !rest.payoutAddress ||
-    (fromAccount.includes(rest.refundAddress) && toAccount.includes(rest.payoutAddress));
+    (fromAccountId.includes(rest.refundAddress) && toAccountId.includes(rest.payoutAddress));
 
   try {
     const ipHeader = getSwapUserIP();
