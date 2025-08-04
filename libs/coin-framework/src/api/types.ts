@@ -171,7 +171,6 @@ export type Balance = {
   value: bigint;
   locked?: bigint;
   asset: AssetInfo;
-  spendableBalance: bigint;
 };
 
 export interface Memo {

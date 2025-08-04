@@ -13,7 +13,6 @@ export function extractBalance(balances: Balance[], type: string): Balance {
     balances.find(balance => balance.asset.type === type) ?? {
       asset: { type },
       value: 0n,
-      spendableBalance: 0n,
     }
   );
 }

@@ -8,7 +8,6 @@ export async function getBalance(address: string): Promise<Balance[]> {
     {
       asset: { type: "native" },
       value: BigInt(accountInfo.account_data.Balance),
-      spendableBalance: BigInt(accountInfo.account_data.Balance),
     },
   ]; // TODO: add more info like spendableBalance, etc.
 }

@@ -115,7 +115,7 @@ const buildGetBalance = (networkFamily: string) =>
       {
         value: BigInt(data.value),
         asset: data.asset,
-        spendableBalance: BigInt(data.spendableBalance),
+        locked: BigInt(data?.locked ?? "0"),
       },
     ];
   };

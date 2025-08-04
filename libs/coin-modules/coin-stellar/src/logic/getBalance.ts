@@ -3,11 +3,12 @@ import { fetchAccount } from "../network";
 
 export async function getBalance(addr: string): Promise<Balance[]> {
   const { balance, assets, spendableBalance } = await fetchAccount(addr);
+  const locked = BigInt(balance.toString()) - BigInt(spendableBalance.toString());
   const nativeRes = [
     {
       value: BigInt(balance.toString()),
       asset: { type: "native" as const },
-      spendableBalance: BigInt(spendableBalance.toString()),
+      locked: locked, // locked balance is the difference between native balance and spendable balance
     },
   ];
   if (!assets || assets.length === 0) {
@@ -24,7 +25,6 @@ export async function getBalance(addr: string): Promise<Balance[]> {
         assetReference: asset.asset_code,
         assetOwner: asset.asset_issuer,
       },
-      spendableBalance: BigInt(spendableBalance.toString()), // fallback for all assets
     };
   });
 

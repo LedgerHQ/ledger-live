@@ -31,7 +31,6 @@ function extractTrc10Balance(account: AccountTronAPI): Balance[] {
           type: "trc10",
           assetReference: trc.key,
         },
-        spendableBalance: BigInt(trc.value),
       };
     }) ?? []
   );
@@ -46,14 +45,12 @@ function extractTrc20Balance(account: AccountTronAPI): Balance[] {
         type: "trc20",
         assetReference: contractAddress,
       },
-      spendableBalance: BigInt(balance),
     };
   });
 }
 
 export function computeBalance(account: AccountTronAPI): Balance {
   const tronResources = getTronResources(account);
-  const spendableBalance = account.balance ? BigInt(account.balance) : BigInt(0);
 
   let balance = bigIntOrZero(account.balance ?? 0);
   balance += bigIntOrZero(tronResources.frozen.bandwidth?.amount);
@@ -73,7 +70,7 @@ export function computeBalance(account: AccountTronAPI): Balance {
   balance += bigIntOrZero(tronResources.legacyFrozen.bandwidth?.amount);
   balance += bigIntOrZero(tronResources.legacyFrozen.energy?.amount);
 
-  return { asset: { type: "native" }, value: balance, spendableBalance };
+  return { asset: { type: "native" }, value: balance };
 }
 
 export function computeBalanceBridge(account: AccountTronAPI): BigNumber {

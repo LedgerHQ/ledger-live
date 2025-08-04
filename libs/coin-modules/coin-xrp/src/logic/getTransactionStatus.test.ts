@@ -56,7 +56,6 @@ describe("getTransactionStatus", () => {
         value: 50_000_000n,
         asset: { type: "native" },
         locked: 0n,
-        spendableBalance: 50_000_000n,
       },
     ]);
 

@@ -202,11 +202,9 @@ const account = JSON.parse(`
 describe("computeBalance", () => {
   it("returns expected value", () => {
     const balance = computeBalance(account);
-    const spendableBalance = account.balance ? BigInt(account.balance) : BigInt(0);
     expect(balance).toEqual({
       value: BigInt("27781772"),
       asset: { type: "native" },
-      spendableBalance: spendableBalance,
     });
   });
 });
@@ -227,78 +225,63 @@ describe("getBalance", () => {
       ),
     );
     const balance = await getBalance("41ae18eb0a9e067f8884058470ed187f44135d816d");
-    const spendableBalance = account.balance ? BigInt(account.balance) : BigInt(0);
     expect(balance).toEqual([
-      { asset: { type: "native" }, value: 27781772n, spendableBalance: spendableBalance },
+      { asset: { type: "native" }, value: 27781772n },
       {
         asset: { type: "trc10", assetReference: "1002897" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002775" },
         value: 5000000n,
-        spendableBalance: 5000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002830" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002962" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002876" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002398" },
         value: 5000000n,
-        spendableBalance: 5000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002573" },
         value: 5000000n,
-        spendableBalance: 5000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002881" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002927" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002736" },
         value: 5000000n,
-        spendableBalance: 5000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002814" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002858" },
         value: 10000000n,
-        spendableBalance: 10000000n,
       },
       {
         asset: { type: "trc10", assetReference: "1002000" },
         value: 26888000n,
-        spendableBalance: 26888000n,
       },
       {
         asset: { type: "trc10", assetReference: "1004031" },
         value: 9856699n,
-        spendableBalance: 9856699n,
       },
       {
         asset: {
@@ -306,7 +289,6 @@ describe("getBalance", () => {
           assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         value: 46825830n,
-        spendableBalance: 46825830n,
       },
       {
         asset: {
@@ -314,7 +296,6 @@ describe("getBalance", () => {
           assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         },
         value: 376n,
-        spendableBalance: 376n,
       },
     ]);
   });

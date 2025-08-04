@@ -14,7 +14,6 @@ describe("getBalance", () => {
         {
           value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("10000000000000000000000"),
         },
       ], // expected
     ],
@@ -28,17 +27,14 @@ describe("getBalance", () => {
         {
           value: BigInt("10000000000000000000000"),
           asset: { type: "native" },
-          spendableBalance: BigInt("10000000000000000000000"),
         }, // native balance
         {
           value: BigInt("1000000"),
           asset: { type: "erc20", assetReference: "0x123" },
-          spendableBalance: BigInt("1000000"),
         },
         {
           value: BigInt("2000000"),
           asset: { type: "erc20", assetReference: "0x456" },
-          spendableBalance: BigInt("2000000"),
         },
       ], // expected
     ],
