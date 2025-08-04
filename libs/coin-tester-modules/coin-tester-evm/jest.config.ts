@@ -1,16 +1,21 @@
 import type { Config } from "jest";
 
+const transformIncludePatterns = ["ky"];
+
 const config: Config = {
   preset: "ts-jest",
   testEnvironment: "node",
   transform: {
-    "^.+\\.tsx?$": [
-      "ts-jest",
+    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+      "@swc/jest",
       {
-        tsconfig: "tsconfig.json",
+        jsc: {
+          target: "esnext",
+        },
       },
     ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   setupFilesAfterEnv: ["dotenv/config"],
