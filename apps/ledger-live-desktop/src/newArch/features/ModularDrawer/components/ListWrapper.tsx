@@ -4,7 +4,8 @@ import React from "react";
 type Props = {
   children: React.ReactNode;
   customHeight?: string;
-} & React.HTMLAttributes<HTMLDivElement>;
+  testID?: string;
+};
 
 const TITLE_HEIGHT = 52;
 const ROW_MARGIN = 8;

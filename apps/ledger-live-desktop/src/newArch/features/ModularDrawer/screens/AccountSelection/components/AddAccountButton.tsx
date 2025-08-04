@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   onAddAccountClick: () => void;
-} & Omit<React.ComponentProps<typeof CardButton>, "onClick" | "title">;
+  testID?: string;
+};
 
 export const AddAccountButton = ({ onAddAccountClick, ...rest }: Props) => {
   const { t } = useTranslation();
