@@ -2139,6 +2139,9 @@ importers:
       '@datadog/datadog-api-client':
         specifier: ^1.40
         version: 1.40.0
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
