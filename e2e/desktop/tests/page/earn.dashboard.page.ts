@@ -3,6 +3,7 @@ import { step } from "../misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
+import { ModularDrawer } from "./drawer/modular.drawer";
 
 export class EarnPage extends WebViewAppPage {
   private earnMoreRewardTabButton = "tab-earn-more";
@@ -21,6 +22,7 @@ export class EarnPage extends WebViewAppPage {
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+  private modularDrawer = new ModularDrawer(this.page);
 
   @step("Go and wait for Earn app to be ready")
   async goAndWaitForEarnToBeReady(earnFunction: () => Promise<void>) {
@@ -105,6 +107,10 @@ export class EarnPage extends WebViewAppPage {
     await expect(earnButton).toBeVisible();
     await expect(earnButton).toBeEnabled();
     await earnButton.click();
+    if (await this.modularDrawer.isModularAssetsDrawerVisible()) {
+      await this.modularDrawer.validateAssetsDrawerItems();
+      return;
+    }
     await this.chooseAssetDrawer.verifyChooseAssetDrawer();
   }
 
@@ -115,11 +121,11 @@ export class EarnPage extends WebViewAppPage {
 
     switch (selectedProvider) {
       case "Lido": {
-        this.expectUrlToContainAll(url, [account.currency.id, "stake.lido.fi"]);
+        await this.expectUrlToContainAll(url, [account.currency.id, "stake.lido.fi"]);
         break;
       }
       case "Stader Labs": {
-        this.expectUrlToContainAll(url, [
+        await this.expectUrlToContainAll(url, [
           account.currency.id,
           `staderlabs.com/${account.currency.ticker}`,
           account.address,
@@ -127,7 +133,7 @@ export class EarnPage extends WebViewAppPage {
         break;
       }
       case "Kiln staking Pool": {
-        this.expectUrlToContainAll(url, [account.currency.id, "kiln.fi%2F%3Ffocus%3Dpooled"]);
+        await this.expectUrlToContainAll(url, [account.currency.id, "kiln.fi%2F%3Ffocus%3Dpooled"]);
         break;
       }
       default:
