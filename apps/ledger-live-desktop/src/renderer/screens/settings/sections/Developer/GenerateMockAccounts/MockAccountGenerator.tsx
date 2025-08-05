@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import Button from "~/renderer/components/Button";
 import { generateRandomAccounts, injectMockAccounts } from "./utils";
@@ -10,13 +11,15 @@ type Props = {
 };
 
 export default function MockAccountGenerator({ count, title, desc }: Props) {
+  const { t } = useTranslation();
+
   const handleGenerate = async () => {
     try {
       const accounts = generateRandomAccounts(count);
       await injectMockAccounts(accounts, true);
     } catch (error) {
       console.error("Failed to generate mock accounts:", error);
-      alert("Failed to generate mock accounts. Please try again.");
+      alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.generateError"));
     }
   };
 
@@ -25,12 +28,16 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
       <Button
         primary
         onClick={() => {
-          if (window.confirm("This will erase existing accounts. Continue?")) {
+          if (
+            window.confirm(t("settings.developer.debugSimpleHash.mockAccounts.alerts.confirmErase"))
+          ) {
             handleGenerate();
           }
         }}
       >
-        Generate {count} Accounts
+        {t("settings.developer.debugSimpleHash.mockAccounts.buttons.generateAccountsQuick", {
+          count,
+        })}
       </Button>
     </SettingsSectionRow>
   );

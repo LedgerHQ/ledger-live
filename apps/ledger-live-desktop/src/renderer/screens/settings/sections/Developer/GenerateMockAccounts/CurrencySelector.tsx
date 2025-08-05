@@ -9,6 +9,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import AngleDown from "~/renderer/icons/AngleDown";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { useTranslation } from "react-i18next";
 
 const SelectContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -57,7 +58,6 @@ type Props = {
   disabled?: boolean;
 };
 
-// Composant pour afficher le texte de sélection
 const SelectionDisplay = ({
   selectedCount,
   selectedCurrenciesList,
@@ -67,13 +67,16 @@ const SelectionDisplay = ({
   selectedCurrenciesList: Currency[];
   placeholder: string;
 }) => {
+  const { t } = useTranslation();
   const getDisplayText = () => {
     if (selectedCount === 0) return placeholder;
     if (selectedCount === 1) return selectedCurrenciesList[0]?.name || placeholder;
     if (selectedCount <= 3) {
       return selectedCurrenciesList.map(c => c.name).join(", ");
     }
-    return `${selectedCount} currencies selected`;
+    return t("settings.developer.debugSimpleHash.mockAccounts.currencySelector.selectedCount", {
+      count: selectedCount,
+    });
   };
 
   return (
@@ -83,14 +86,15 @@ const SelectionDisplay = ({
       </Text>
       {selectedCount > 0 && (
         <Text ff="Inter|Regular" fontSize={2} color="palette.text.shade60" mt={1}>
-          {selectedCount} currency{selectedCount > 1 ? "ies" : "y"} selected
+          {t("settings.developer.debugSimpleHash.mockAccounts.currencySelector.selectedCount", {
+            count: selectedCount,
+          })}
         </Text>
       )}
     </Box>
   );
 };
 
-// Composant pour un élément de devise
 const CurrencyItemComponent = ({
   currency,
   isSelected,
@@ -116,7 +120,6 @@ const CurrencyItemComponent = ({
   </CurrencyItem>
 );
 
-// Hook personnalisé pour la gestion du clic à l'extérieur
 const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
   callback: () => void,
@@ -142,9 +145,10 @@ const useClickOutside = (
 export default function CurrencySelector({
   selectedCurrencies,
   onCurrencyToggle,
-  placeholder = "Choose currencies...",
+  placeholder = "...",
   disabled = false,
 }: Props) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -210,7 +214,9 @@ export default function CurrencySelector({
             <Input
               value={searchValue}
               onChange={handleSearchChange}
-              placeholder="Search currencies..."
+              placeholder={t(
+                "settings.developer.debugSimpleHash.mockAccounts.currencySelector.searchPlaceholder",
+              )}
               maxLength={50}
               autoFocus
             />
@@ -219,7 +225,13 @@ export default function CurrencySelector({
           {filteredCurrencies.length === 0 ? (
             <Box p={3} horizontal alignItems="center" justifyContent="center">
               <Text ff="Inter|Regular" fontSize={3} color="palette.text.shade60">
-                {searchValue ? "No currencies found" : "No currencies available"}
+                {searchValue
+                  ? t(
+                      "settings.developer.debugSimpleHash.mockAccounts.currencySelector.noCurrenciesFound",
+                    )
+                  : t(
+                      "settings.developer.debugSimpleHash.mockAccounts.currencySelector.noCurrenciesAvailable",
+                    )}
               </Text>
             </Box>
           ) : (
