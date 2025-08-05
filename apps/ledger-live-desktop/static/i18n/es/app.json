@@ -344,6 +344,7 @@
           "provider" : "Proveedor",
           "rate" : "Tasa",
           "fees" : "Tarifas de red",
+          "feesDescription" : "La red de cadena de bloques carga estas tarifas para procesar la permuta. Además de la cotización estimada, sólo se cobra la tarifa de envío. La tarifa de recepción ya está incluida.",
           "target" : "Cuenta de destino"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Herramienta del drawer modular para desarrolladores",
+        "description" : "Te permite probar el drawer modular con facilidad"
+      },
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
       "mockAppUpdate" : "Actualización ficticia de la aplicación",
@@ -4590,6 +4595,8 @@
       "customCALRefDesc" : "Especifica una rama, commit o etiqueta personalizados para usarlos con todas las solicitudes CAL",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "customLockScreenTester" : "Probador de pantalla de bloqueo personalizada",
+      "customLockScreenTesterDesc" : "Prueba la pantalla de bloqueo personalizada en dispositivos compatibles",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Nueva cuenta",
       "addAccountSelection" : "Elige la cuenta a la que quieres añadir los fondos",
       "addAccountSelectionPtxFlow" : "Seleccionar cuenta"
+    },
+    "editAccountName" : {
+      "title" : "Editar nombre de la cuenta",
+      "input" : {
+        "name" : "Nombre"
+      },
+      "cta" : {
+        "save" : "Guardar"
+      }
     },
     "fundAccount" : {
       "receive" : "Recibir",
