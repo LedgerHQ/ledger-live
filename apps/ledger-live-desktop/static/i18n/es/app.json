@@ -385,6 +385,7 @@
         "onhold" : "En espera",
         "expired" : "Caducado",
         "finished" : "Finalizado",
+        "unknown" : "Procesando",
         "refunded" : "Reembolsado"
       }
     },
@@ -462,6 +463,8 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
@@ -571,7 +574,7 @@
         "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
         "onhold" : "Contacta al proveedor de permuta mediante tu ID de permuta para resolver la situación.",
         "finished" : "Tu permuta se ha completado correctamente.",
-        "unknown" : "Contacta al proveedor de permuta y ten a mano tu ID de permuta para obtener más información."
+        "unknown" : "Estamos a la espera de información del proveedor."
       },
       "date" : "Fecha",
       "from" : "De",
@@ -2386,6 +2389,10 @@
         "title" : "Dispositivo"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Firma a ciegas requerida",
+          "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+        },
         "utxoLag" : "La firma y verificación de esta transacción puede llevar un tiempo prolongado porque la cuenta presenta una cantidad significativa de monedas.",
         "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
         "from" : "De",
@@ -7352,7 +7359,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
