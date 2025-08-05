@@ -248,13 +248,10 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const accounts = await scanAccountsCached(sa.apdus);
 
               for (const account of accounts) {
-                // console.log("ACC:", account);
                 const accountBridge = getAccountBridge(account);
                 const estimation = await accountBridge.estimateMaxSpendable({
                   account,
                 });
-                // console.log("estimation", estimation.toString());
-                // console.log("balance", account.spendableBalance.toString());
                 expect(estimation.gte(0)).toBe(true);
                 if (estimation.isGreaterThan(0)) {
                   expect(estimation.lte(account.spendableBalance)).toBe(true);
