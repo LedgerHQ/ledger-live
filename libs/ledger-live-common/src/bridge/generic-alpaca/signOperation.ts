@@ -94,11 +94,11 @@ function enrichTransactionIntent(
   transactionIntent = applyMemoToIntent(transactionIntent, transaction);
 
   // Apply asset information
-  transactionIntent = applyAssetInfo(
-    transactionIntent,
-    transaction["assetReference"],
-    transaction["assetOwner"],
-  );
+  // transactionIntent = applyAssetInfo(
+  //   transactionIntent,
+  //   transaction["assetReference"],
+  //   transaction["assetOwner"],
+  // );
 
   return transactionIntent;
 }
@@ -145,7 +145,9 @@ export const genericSignOperation =
           transactionIntent.senderPublicKey = publicKey;
 
           // Enrich with memo and asset information
+          console.log("before : ", transactionIntent);
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
+          console.log("After : ", transactionIntent);
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
           const sequenceNumber = await getAlpacaApi(network, kind).getSequence(

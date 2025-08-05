@@ -84,7 +84,7 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      ...(transactionIntent.asset.type === "token"
+      ...(transactionIntent.asset.type !== "native" && "assetReference" in transactionIntent.asset
         ? {
             assetCode: transactionIntent.asset.assetReference,
             assetIssuer: transactionIntent.asset.assetOwner,

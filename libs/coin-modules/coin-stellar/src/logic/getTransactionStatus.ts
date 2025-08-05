@@ -56,7 +56,7 @@ export const getTransactionStatus = async (
   const baseReserve = networkInfo.baseReserve
     ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
     : 0n;
-  const isAssetPayment = transactionIntent.asset.type === "token";
+  const isAssetPayment = transactionIntent.asset.type !== "native";
   const balances = await getBalance(transactionIntent.sender);
   const nativeBalance = BigInt(balance.toString());
   const nativeAmountAvailable = BigInt(spendableBalance.toString()) - estimatedFees;
@@ -83,8 +83,9 @@ export const getTransactionStatus = async (
   if (transactionIntent.type === "changeTrust") {
     // Check asset provided
     if (
-      transactionIntent.asset.type === "token" &&
-      (!transactionIntent.asset.assetReference || !transactionIntent.asset.assetOwner)
+      transactionIntent.asset.type !== "native" &&
+      (("assetReference" in transactionIntent.asset && !transactionIntent.asset.assetReference) ||
+        ("assetOwner" in transactionIntent.asset && !transactionIntent.asset.assetOwner))
     ) {
       // This is unlikely
       errors.transaction = new StellarAssetRequired("");
@@ -132,7 +133,9 @@ export const getTransactionStatus = async (
     // Asset payment
     if (isAssetPayment) {
       const asset = transactionIntent.asset;
-      if (asset.type !== "token") throw StellarAssetNotFound;
+      if (asset.type === "native" || (!("assetReference" in asset) && !("assetOwner" in asset))) {
+        throw new StellarAssetNotFound();
+      }
       // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
       // const asset = findSubAccountById(account, transaction.subAccountId || "");
 
@@ -151,8 +154,10 @@ export const getTransactionStatus = async (
       // const assetBalance = BigInt(asset?.balance.toString()) || 0n;
       const assetBalance = balances.find(
         b =>
-          b.asset.type === "token" &&
+          b.asset.type !== "native" &&
+          "assetReference" in b.asset &&
           b.asset.assetReference === asset.assetReference &&
+          "assetOwner" in b.asset &&
           b.asset.assetOwner === asset.assetOwner,
       );
 

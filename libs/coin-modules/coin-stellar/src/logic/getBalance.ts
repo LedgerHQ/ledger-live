@@ -21,7 +21,7 @@ export async function getBalance(addr: string): Promise<Balance[]> {
     return {
       value: intBalance,
       asset: {
-        type: "token",
+        type: asset.asset_type,
         assetReference: asset.asset_code,
         assetOwner: asset.asset_issuer,
       },

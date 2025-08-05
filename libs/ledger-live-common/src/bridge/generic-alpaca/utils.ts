@@ -36,9 +36,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.assetAmount = op.details.assetAmount as string;
   }
 
-  if (op.asset?.type === "token") {
-    extra.assetReference = op.asset.assetReference;
-    extra.assetOwner = op.asset.assetOwner;
+  if (op.asset?.type !== "native") {
+    extra.assetReference =
+      "assetReference" in (op.asset ?? {}) ? (op.asset as any).assetReference : "";
+    extra.assetOwner = "assetOwner" in (op.asset ?? {}) ? (op.asset as any).assetOwner : "";
   }
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
@@ -129,7 +130,7 @@ export function transactionToIntent(
       : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
     res.asset = {
-      type: "token",
+      type: tokenAccount?.token.tokenType ?? "token",
       assetReference: transaction.assetReference,
       name: tokenAccount?.token.name ?? transaction.assetReference, // NOTE: for stellar, assetReference = tokenAccount.name, this is futureproofing
       unit: account.currency.units[0],

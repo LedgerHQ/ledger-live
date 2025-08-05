@@ -3,8 +3,9 @@ import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/lib/api/types";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 
 export interface OperationCommon extends Operation {
   extra: Record<string, any>;
@@ -13,7 +14,9 @@ export interface OperationCommon extends Operation {
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
 export const getAssetIdFromAsset = (asset: AssetInfo) =>
-  asset.type === "token" ? `${asset.assetReference}:${asset.assetOwner}` : "";
+  asset.type !== "native" && "assetReference" in asset && "assetOwner" in asset
+    ? `${asset.assetReference}:${asset.assetOwner}`
+    : "";
 
 function buildTokenAccount({
   parentAccountId,
@@ -81,7 +84,7 @@ export function buildSubAccounts({
   }
   const tokenAccounts: TokenAccount[] = [];
   assetsBalance
-    .filter(b => b.asset.type === "token") // NOTE: this could be removed, keeping here while fixing things up
+    .filter(b => b.asset.type !== "native") // NOTE: this could be removed, keeping here while fixing things up
     .map(balance => {
       const token = findToken(currency, balance);
       // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
@@ -93,8 +96,8 @@ export function buildSubAccounts({
             token,
             operations: operations.filter(
               op =>
-                op.extra.assetReference === balance.asset["assetReference"] &&
-                op.extra.assetOwner === balance.asset["assetOwner"], // NOTE: we could narrow type
+                op.extra.assetReference === balance.asset?.["assetReference"] &&
+                op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
             ),
           }),
         );
@@ -104,5 +107,12 @@ export function buildSubAccounts({
 }
 
 export function findToken(currency: CryptoCurrency, balance: Balance): TokenCurrency | undefined {
-  return findTokenById(`${currency.family}/asset/${getAssetIdFromAsset(balance.asset)}`);
+  if (
+    balance.asset?.type !== "native" &&
+    "assetReference" in balance.asset &&
+    "assetOwner" in balance.asset
+  ) {
+    return findTokenByAddressInCurrency(balance.asset?.assetOwner as string, currency.id);
+  }
+  return undefined;
 }
