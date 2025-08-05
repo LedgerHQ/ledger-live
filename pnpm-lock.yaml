@@ -456,6 +456,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@reduxjs/toolkit':
+        specifier: 2.0.1
+        version: 2.0.1(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@sentry/electron':
         specifier: 5.2.0
         version: 5.2.0
@@ -46258,6 +46261,16 @@ snapshots:
       react-native-safe-area-context: 5.1.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-screens: 4.8.0(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       warn-once: 0.1.1
+
+  '@reduxjs/toolkit@2.0.1(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      immer: 10.0.3
+      redux: 5.0.0
+      redux-thunk: 3.1.0(redux@5.0.0)
+      reselect: 5.0.1
+    optionalDependencies:
+      react: 18.3.1
+      react-redux: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@reduxjs/toolkit@2.0.1(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
     dependencies:

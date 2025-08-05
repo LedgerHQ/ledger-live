@@ -86,6 +86,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@reduxjs/toolkit": "2.0.1",
     "@sentry/electron": "5.2.0",
     "@sentry/node": "8.16.0",
     "@tanstack/react-query": "5.28.9",
