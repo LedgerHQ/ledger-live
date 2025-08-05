@@ -385,6 +385,7 @@
         "onhold" : "已暂停",
         "expired" : "已逾期",
         "finished" : "已完成",
+        "unknown" : "正在处理",
         "refunded" : "已退款"
       }
     },
@@ -462,6 +463,8 @@
       "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
       "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+      "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
       "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
@@ -571,7 +574,7 @@
         "pending" : "请稍候片刻，互换提供方正在处理该交易。",
         "onhold" : "请使用您的互换代码联系互换服务提供方以解决这一情况。",
         "finished" : "您的互换已成功完成",
-        "unknown" : "请使用您的互换 ID 联系互换服务提供商以了解更多详情。"
+        "unknown" : "我们正在等待提供商的信息。"
       },
       "date" : "日期",
       "from" : "从",
@@ -2386,6 +2389,10 @@
         "title" : "设备"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "需要盲签名",
+          "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+        },
         "utxoLag" : "由于该账户持有大量硬币，本次交易可能需要花费较长时间来验证和签署。",
         "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
         "from" : "从",
@@ -7352,7 +7359,7 @@
   },
   "geoBlocking" : {
     "title" : "所在地区不可用",
-    "description" : "此地区无法使用 Ledger 钱包。",
+    "description" : "此地区无法使用 Ledger Live。",
     "learnMore" : "了解更多"
   },
   "versionBlocking" : {
