@@ -344,6 +344,7 @@
           "provider" : "مزود",
           "rate" : "مُعدل",
           "fees" : "رسوم الشبكة",
+          "feesDescription" : "يتم فرض هذه الرسوم من قِبل شبكة سلسلة الكتل (بلوكتشين) لمعالجة المبادلة. يتم فرض رسوم الإرسال فقط بالإضافة إلى عرض السعر المُقدّر. رسوم التلقي مشمولة",
           "target" : "الحساب المستهدف"
         },
         "tooltip" : {
@@ -3877,7 +3878,7 @@
         "earnRewards" : "اكسب مكافآت"
       },
       "table" : {
-        "header" : "موضع (أو مواضع) التكديس",
+        "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "active" : "مُكدَّس",
         "pendingInactive" : "في انتظار الإصدار",
@@ -4148,7 +4149,7 @@
         "earnRewards" : "اكسب المكافآت"
       },
       "table" : {
-        "header" : "موضع (أو مواضع) التكديس",
+        "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "staked" : "مُكدَّس",
         "pending" : "بانتظار الإتاحة",
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "أداة تطوير الشريط النموذجي",
+        "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
       "mockAppUpdate" : "تحديث صوري للتطبيق",
@@ -4590,6 +4595,8 @@
       "customCALRefDesc" : "حدّد فرع مخصص أو تضمين أو علامة للاستخدام gكل طلبات CAL",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "customLockScreenTester" : "مُختبِر شاشة القَفل المُخصّصة",
+      "customLockScreenTesterDesc" : "اختبر شاشة القَفل المخصصة للأجهزة المدعومة",
       "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
       "customLockScreenDesc" : "تصحيح أخطاء الأصول الرسومية لشاشة القَفل المُخصّصة",
       "customLockScreenCTA" : "تشغيل",
@@ -7279,6 +7286,15 @@
       "newAccount" : "حساب جديد",
       "addAccountSelection" : "اختر الحساب لإضافة الأموال",
       "addAccountSelectionPtxFlow" : "اختر حساب"
+    },
+    "editAccountName" : {
+      "title" : "تعديل اسم الحساب",
+      "input" : {
+        "name" : "الاسم"
+      },
+      "cta" : {
+        "save" : "حفظ"
+      }
     },
     "fundAccount" : {
       "receive" : "تلقي",
