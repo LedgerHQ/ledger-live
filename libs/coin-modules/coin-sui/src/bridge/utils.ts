@@ -69,6 +69,6 @@ export const calculateAmount = ({
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
-export const assertUnreachable = (_: never): never => {
+export const assertUnreachable = (_: unknown): never => {
   throw new Error("unreachable assertion failed");
 };

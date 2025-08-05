@@ -11,6 +11,7 @@
     "**/node_modules/**",
     "**/*.fixture.ts",
     "**/*.mock.ts",
+    "**/getOperationExtra.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [],

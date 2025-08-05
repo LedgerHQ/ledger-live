@@ -6,3 +6,4 @@ export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { getBlock, getBlockInfo } from "./getBlock";
 export { listOperations } from "./listOperations";
+export { canStake } from "./stake";

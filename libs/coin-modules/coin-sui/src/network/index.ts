@@ -5,6 +5,7 @@ import {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 } from "./sdk";
 
 export {
@@ -14,6 +15,7 @@ export {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 };
 
 export default {
@@ -23,4 +25,5 @@ export default {
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 };

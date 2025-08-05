@@ -4,7 +4,15 @@ import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 
 export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicArg =>
-  pick(transaction, ["mode", "amount", "recipient", "useAllAmount", "coinType"]);
+  pick(transaction, [
+    "mode",
+    "amount",
+    "recipient",
+    "useAllAmount",
+    "coinType",
+    "stakedSuiId",
+    "fees",
+  ]);
 
 /**
  * @param {Account} account
@@ -12,7 +20,7 @@ export const extractExtrinsicArg = (transaction: Transaction): CreateExtrinsicAr
  */
 export const buildTransaction = async (
   { freshAddress }: SuiAccount,
-  { recipient, mode, amount, coinType }: Transaction,
+  { recipient, mode, amount, coinType, useAllAmount = false, stakedSuiId = "" }: Transaction,
 ) => {
   const NATIVE_COIN_TYPE = "0x2::sui::SUI"; // <-- NOTE: unusure, double check
   let asset: AssetInfo = {
@@ -30,5 +38,7 @@ export const buildTransaction = async (
     type: mode,
     amount: BigInt(amount.toString()),
     asset,
+    useAllAmount,
+    stakedSuiId,
   });
 };

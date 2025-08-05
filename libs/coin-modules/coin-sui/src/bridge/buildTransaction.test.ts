@@ -75,6 +75,8 @@ describe("buildTransaction", () => {
         type: mockTransaction.mode,
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "native" },
+        useAllAmount: false,
+        stakedSuiId: "",
       });
     });
 
@@ -224,6 +226,7 @@ describe("buildTransaction", () => {
         amount: new BigNumber("100000000"),
         recipient: "0xabcdef1234567890",
         useAllAmount: true,
+        fees: new BigNumber("1000000"),
       });
     });
 
@@ -243,6 +246,7 @@ describe("buildTransaction", () => {
         amount: new BigNumber("100000000"),
         recipient: "0xabcdef1234567890",
         useAllAmount: false,
+        fees: new BigNumber("1000000"),
       });
     });
 
@@ -262,6 +266,7 @@ describe("buildTransaction", () => {
         amount: new BigNumber("100000000"),
         recipient: "0xabcdef1234567890",
         useAllAmount: undefined,
+        fees: new BigNumber("1000000"),
       });
     });
 
@@ -315,7 +320,6 @@ describe("buildTransaction", () => {
       const result = extractExtrinsicArg(transaction);
 
       // THEN
-      expect(result).not.toHaveProperty("fees");
       expect(result).not.toHaveProperty("errors");
       expect(result).not.toHaveProperty("family");
       expect(result).not.toHaveProperty("id");
@@ -361,6 +365,8 @@ describe("buildTransaction", () => {
         type: transaction.mode,
         amount: BigInt(transaction.amount!.toString()),
         asset: { type: "native" },
+        useAllAmount: true,
+        stakedSuiId: "",
       });
     });
   });

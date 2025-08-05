@@ -9,7 +9,9 @@ export type CreateExtrinsicArg = {
   amount: BigNumber;
   coinType: string;
   recipient: string;
-  useAllAmount?: boolean | undefined;
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+  fees?: BigNumber | null;
 };
 
 export async function craftTransaction({
@@ -18,7 +20,11 @@ export async function craftTransaction({
   recipient,
   asset,
   type,
-}: TransactionIntent): Promise<CoreTransaction> {
+  ...extra
+}: TransactionIntent & {
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+}): Promise<CoreTransaction> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;
@@ -28,6 +34,7 @@ export async function craftTransaction({
     recipient,
     coinType,
     mode: type as SuiTransactionMode,
+    ...extra,
   });
 
   return { unsigned };
