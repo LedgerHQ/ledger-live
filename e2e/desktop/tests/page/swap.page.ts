@@ -18,7 +18,9 @@ export class SwapPage extends AppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
-  private quoteCardProviderName = "quote-card-provider-name";
+  private quoteCardProviderName = "compact-quote-card-provider-";
+  private specificQuoteCardProviderName = (provider: string) =>
+    `compact-quote-card-provider-name-${provider}`;
   private numberOfQuotes = "number-of-quotes";
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
@@ -68,39 +70,35 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
-    return await webview.getByTestId(this.quoteCardProviderName).allTextContents();
+    return await webview
+      .locator(`[data-testid^='${this.quoteCardProviderName}']`)
+      .allTextContents();
   }
 
   @step("Check quotes container infos")
-  async checkQuotesContainerInfos(electronApp: ElectronApplication, providerList: string[]) {
+  async checkQuotesContainerInfos(
+    electronApp: ElectronApplication,
+    providerList: string[],
+    ticker: string,
+  ) {
     const [, webview] = electronApp.windows();
 
     const provider = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
 
-    await webview
-      .getByTestId(baseProviderLocator + "amount-label")
-      .nth(1)
-      .click();
-    await expect(webview.getByTestId(baseProviderLocator + "amount-label").nth(1)).toBeVisible();
+    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
     await expect(
-      webview.getByTestId(baseProviderLocator + "fiatAmount-label").nth(1),
+      webview
+        .getByTestId(baseProviderLocator + "extraFeesContainer")
+        .getByText(/Floating rate|Fixed rate/),
     ).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-infoIcon")).toBeVisible();
     await expect(
-      webview.getByTestId(baseProviderLocator + "networkFees-heading").nth(1),
+      webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText(ticker),
     ).toBeVisible();
-    await expect(
-      webview.getByTestId(baseProviderLocator + "networkFees-infoIcon").nth(1),
-    ).toBeVisible();
-    await expect(
-      webview.getByTestId(baseProviderLocator + "networkFees-value").nth(1),
-    ).toBeVisible();
-    await expect(
-      webview.getByTestId(baseProviderLocator + "networkFees-fiat-value").nth(1),
-    ).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-heading").nth(1)).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-value").nth(1)).toBeVisible();
-    await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value").nth(1)).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
       provider === Provider.VELORA.name ||
@@ -108,25 +106,24 @@ export class SwapPage extends AppPage {
       provider === Provider.LIFI.name
     ) {
       await expect(
-        webview.getByTestId(baseProviderLocator + "slippage-heading").nth(1),
+        webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText("Max Slippage"),
       ).toBeVisible();
       await expect(
-        webview.getByTestId(baseProviderLocator + "slippage-value").nth(1),
+        webview.getByTestId(baseProviderLocator + "extraFeesContainer").getByText("%"),
       ).toBeVisible();
     }
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
   @step("Select specific provider $0")
-  async selectSpecificProvider(provider: string, electronApp: ElectronApplication) {
+  async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
     const providersList = await this.getProviderList(electronApp);
 
-    if (providersList.includes(provider)) {
+    if (providersList.includes(provider.uiName)) {
       const providerLocator = webview
-        .getByTestId(this.quoteCardProviderName)
-        .getByText(provider)
+        .getByTestId(this.specificQuoteCardProviderName(provider.name))
         .first();
 
       await providerLocator.isVisible();
@@ -154,9 +151,8 @@ export class SwapPage extends AppPage {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
       if (provider && provider.isNative) {
         const providerLocator = webview
-          .getByTestId(this.quoteCardProviderName)
-          .getByText(providerName)
-          .nth(1);
+          .getByTestId(this.specificQuoteCardProviderName(provider.name.toLowerCase()))
+          .first();
 
         await providerLocator.isVisible();
         await providerLocator.click();
@@ -180,9 +176,8 @@ export class SwapPage extends AppPage {
 
     for (const providerName of providers) {
       const providerLocator = webview
-        .getByTestId(this.quoteCardProviderName)
-        .getByText(providerName)
-        .nth(1);
+        .getByTestId(this.specificQuoteCardProviderName(providerName.toLowerCase()))
+        .first();
 
       if (await providerLocator.isVisible()) {
         await providerLocator.click();
@@ -210,7 +205,7 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     const elements = await webview
       .locator(
-        '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
+        '[data-testid^="compact-quote-container-"][data-testid$="-fixed"], [data-testid^="compact-quote-container-"][data-testid$="-float"]',
       )
       .all();
     return Promise.all(elements.map(el => el.innerText().then(text => text.replace(/\n/g, " "))));
