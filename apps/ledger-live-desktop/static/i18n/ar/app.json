@@ -385,6 +385,7 @@
         "onhold" : "معلّق",
         "expired" : "منتهي الصلاحية",
         "finished" : "مكتمل",
+        "unknown" : "جارٍ المعالجة",
         "refunded" : "مُسترد"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
         "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
         "finished" : "تم تنفيذ مبادلتك بنجاح.",
-        "unknown" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات."
+        "unknown" : "نحن بانتظار معلومات من المزود."
       },
       "date" : "التاريخ",
       "from" : "من",
@@ -2386,6 +2387,10 @@
         "title" : "جهاز"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "التوقيع بدون اطلاع مطلوب",
+          "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+        },
         "utxoLag" : "قد يستغرق التحقق من هذه المعاملة وتوقيعها وقتاً طويلاً لأن الحساب يحتوي على عدد كبير من العملات.",
         "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
         "from" : "من",
@@ -3878,7 +3883,7 @@
         "earnRewards" : "اكسب مكافآت"
       },
       "table" : {
-        "header" : "موضع (أو مواضع) التكديس",
+        "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "active" : "مُكدَّس",
         "pendingInactive" : "في انتظار الإصدار",
@@ -4149,7 +4154,7 @@
         "earnRewards" : "اكسب المكافآت"
       },
       "table" : {
-        "header" : "موضع (أو مواضع) التكديس",
+        "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "staked" : "مُكدَّس",
         "pending" : "بانتظار الإتاحة",
@@ -4466,6 +4471,40 @@
             "spam" : "الإبلاغ كعشوائي",
             "refresh" : "تحديث البيانات الوصفية",
             "check" : "مؤشر العشوائية"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
           }
         },
         "debugSpamNft" : {
@@ -7352,7 +7391,7 @@
   },
   "geoBlocking" : {
     "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "description" : "Ledger Live غير متاح في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
   },
   "versionBlocking" : {
