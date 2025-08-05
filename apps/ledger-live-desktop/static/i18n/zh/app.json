@@ -344,6 +344,7 @@
           "provider" : "提供方",
           "rate" : "费率",
           "fees" : "网络费用",
+          "feesDescription" : "此费用由区块链网络收取，用于处理互换交易。除预估报价外，仅收取发送费用。已包含接收费用",
           "target" : "目标账户"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "模块化抽屉开发工具",
+        "description" : "助您轻松测试模块化抽屉"
+      },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
       "mockAppUpdate" : "Mock 应用程序更新",
@@ -4590,6 +4595,8 @@
       "customCALRefDesc" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "customLockScreenTester" : "自定义锁屏界面测试器",
+      "customLockScreenTesterDesc" : "测试支持设备的自定义锁屏界面",
       "customLockScreen" : "自定义锁屏素材资源",
       "customLockScreenDesc" : "调试自定义锁屏图形素材资源",
       "customLockScreenCTA" : "启动",
@@ -7279,6 +7286,15 @@
       "newAccount" : "新账户",
       "addAccountSelection" : "选择账户用于添加资金",
       "addAccountSelectionPtxFlow" : "选择账户"
+    },
+    "editAccountName" : {
+      "title" : "编辑账户名称",
+      "input" : {
+        "name" : "名称"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
     },
     "fundAccount" : {
       "receive" : "接收",
