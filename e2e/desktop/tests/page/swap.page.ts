@@ -203,40 +203,44 @@ export class SwapPage extends AppPage {
   @step("Get all swap providers available")
   async getAllSwapProviders(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    const elements = await webview
+    return await webview
       .locator(
         '[data-testid^="compact-quote-container-"][data-testid$="-fixed"], [data-testid^="compact-quote-container-"][data-testid$="-float"]',
       )
-      .all();
-    return Promise.all(elements.map(el => el.innerText().then(text => text.replace(/\n/g, " "))));
+      .allTextContents();
   }
 
   @step("Extract quotes and fees")
-  async extractQuotesAndFees(quotes: string[]) {
-    const parsed = quotes
+  async extractQuotesAndFees(quoteContainers: string[]) {
+    const quotes = quoteContainers
       .map(quote => {
         const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
-        if (!match) return null;
-        return {
-          rate: parseFloat(match[1]),
-          fees: parseFloat(match[2]),
-          quote,
-        };
+        if (match) {
+          const rate = parseFloat(match[1]);
+          const fees = parseFloat(match[2]);
+          return { rate, fees, quote };
+        }
+        return undefined;
       })
-      .filter((quote): quote is { rate: number; fees: number; quote: string } => quote !== null);
+      .filter(quote => quote !== undefined);
 
-    if (parsed.length === 0) throw new Error("No quotes found");
-    return parsed;
+    if (quotes.length === 0) {
+      throw new Error("No quotes found");
+    }
+    return quotes;
   }
 
   @step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer(electronApp: ElectronApplication) {
+    const quoteContainers = await this.getAllSwapProviders(electronApp);
     try {
-      const quoteTexts = await this.getAllSwapProviders(electronApp);
-      const quotes = await this.extractQuotesAndFees(quoteTexts);
-      const bestQuote = this.findBestQuote(quotes);
-
-      expect(bestQuote?.quote).toContain("Best Offer");
+      const quotes = await this.extractQuotesAndFees(quoteContainers);
+      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+        (max, current) =>
+          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+        null,
+      );
+      expect(bestOffer?.quote).toContain("Best Offer");
     } catch (error) {
       console.error("Error checking Best offer:", error);
     }
