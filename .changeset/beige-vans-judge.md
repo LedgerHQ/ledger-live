@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/hw-app-canton": patch
-"@ledgerhq/live-signer-canton": patch
+"@ledgerhq/hw-app-canton": minor
+"@ledgerhq/live-signer-canton": minor
 ---
 
 Fix CI checks issue
