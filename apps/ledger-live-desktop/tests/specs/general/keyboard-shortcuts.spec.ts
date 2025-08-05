@@ -5,7 +5,22 @@ import { Layout } from "../../component/layout.component";
 import { AddAccountModal } from "../../page/modal/add.account.modal";
 import { PortfolioPage } from "../../page/portfolio.page";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({
+  userdata: "skip-onboarding",
+  featureFlags: {
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        earn_flow: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
+  },
+});
 
 // eslint-disable-next-line jest/expect-expect
 test("Keyboard shortcuts", async ({ page }) => {
