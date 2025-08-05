@@ -385,6 +385,7 @@
         "onhold" : "Zurückgestellt",
         "expired" : "Abgelaufen",
         "finished" : "Abgeschlossen",
+        "unknown" : "In Bearbeitung",
         "refunded" : "Zurückerstattet"
       }
     },
@@ -462,6 +463,8 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
@@ -571,7 +574,7 @@
         "pending" : "Bitte warte, während der Swap-Provider die Transaktion verarbeitet.",
         "onhold" : "Bitte kontaktiere den Swap-Anbieter unter Angabe deiner Swap-ID, um das Problem zu beheben.",
         "finished" : "Dein Swap wurde erfolgreich abgeschlossen.",
-        "unknown" : "Bitte kontaktiere den Swap-Anbieter mit deiner Swap-ID für weitere Informationen."
+        "unknown" : "Wir warten auf Informationen vom Anbieter."
       },
       "date" : "Datum",
       "from" : "Von",
@@ -2386,6 +2389,10 @@
         "title" : "Gerät"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Blindsignatur erforderlich",
+          "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
         "from" : "Von",
@@ -7352,7 +7359,7 @@
   },
   "geoBlocking" : {
     "title" : "Nicht am Ort verfügbar",
-    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "description" : "Ledger Live is not available in this location.",
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {
