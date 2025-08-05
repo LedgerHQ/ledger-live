@@ -1,5 +1,18 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.0.0-nightly.1
+
+### Minor Changes
+
+- [#11202](https://github.com/LedgerHQ/ledger-live/pull/11202) [`8d5abe4`](https://github.com/LedgerHQ/ledger-live/commit/8d5abe4d59f7b1ef5d1d495d1ace3e3bf6d95fe4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-modules-monitoring): make monitoring more robust
+
+- [#11197](https://github.com/LedgerHQ/ledger-live/pull/11197) [`75e8028`](https://github.com/LedgerHQ/ledger-live/commit/75e8028caa9e23eab47aa629a89b44c6cd6e83a3) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-modules-monitoring): setup crypto assets store
+
+### Patch Changes
+
+- Updated dependencies [[`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`64ebbd1`](https://github.com/LedgerHQ/ledger-live/commit/64ebbd119e1f20c371cd23d0bf951ee10ef2f293)]:
+  - @ledgerhq/live-common@34.44.0-nightly.1
+
 ## 2.0.0-nightly.0
 
 ### Major Changes

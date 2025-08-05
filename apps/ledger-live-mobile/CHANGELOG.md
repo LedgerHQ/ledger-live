@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.89.0-nightly.1
+
+### Minor Changes
+
+- [#11156](https://github.com/LedgerHQ/ledger-live/pull/11156) [`094bf6b`](https://github.com/LedgerHQ/ledger-live/commit/094bf6bb6739c8e1e127f0662ac7f3de7ce06ebb) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Fix mobile export error and swap custom error consistency
+
+- [#11160](https://github.com/LedgerHQ/ledger-live/pull/11160) [`8b55463`](https://github.com/LedgerHQ/ledger-live/commit/8b55463a1b1758c0d1a61a8f1a43344b9d3c2e35) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix assetsList provider display. We need to display the provider crypto instead of the first of the list
+
 ## 3.89.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.124.0-nightly.1
+
+### Minor Changes
+
+- [#11209](https://github.com/LedgerHQ/ledger-live/pull/11209) [`9a9f6b2`](https://github.com/LedgerHQ/ledger-live/commit/9a9f6b2b159f9a5e33093e47802425ab51233f6a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add tracking for the old account selector
+
+- [#11160](https://github.com/LedgerHQ/ledger-live/pull/11160) [`8b55463`](https://github.com/LedgerHQ/ledger-live/commit/8b55463a1b1758c0d1a61a8f1a43344b9d3c2e35) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix assetsList provider display. We need to display the provider crypto instead of the first of the list
+
+- [#11145](https://github.com/LedgerHQ/ledger-live/pull/11145) [`3d96744`](https://github.com/LedgerHQ/ledger-live/commit/3d9674481b7a8d84146abe256c09fa20c93e708f) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - add llm resolution tool on electron earn screen
+
+### Patch Changes
+
+- Updated dependencies [[`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`64ebbd1`](https://github.com/LedgerHQ/ledger-live/commit/64ebbd119e1f20c371cd23d0bf951ee10ef2f293)]:
+  - @ledgerhq/live-common@34.44.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.8.3-nightly.1
+
 ## 2.124.0-nightly.0
 
 ### Minor Changes

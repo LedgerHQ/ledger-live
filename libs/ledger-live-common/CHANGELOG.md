@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.44.0-nightly.1
+
+### Minor Changes
+
+- [#11200](https://github.com/LedgerHQ/ledger-live/pull/11200) [`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a) Thanks [@ishaba](https://github.com/ishaba)! - Canton signer init
+
+- [#11213](https://github.com/LedgerHQ/ledger-live/pull/11213) [`64ebbd1`](https://github.com/LedgerHQ/ledger-live/commit/64ebbd119e1f20c371cd23d0bf951ee10ef2f293) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix live-common imports on modularDrawer utils
+
+### Patch Changes
+
+- Updated dependencies [[`4d14752`](https://github.com/LedgerHQ/ledger-live/commit/4d14752360435f27f07768302a715cd2f39f59ac), [`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a)]:
+  - @ledgerhq/live-signer-canton@0.2.0-nightly.0
+  - @ledgerhq/coin-canton@0.2.0-nightly.2
+
 ## 34.44.0-nightly.0
 
 ### Minor Changes

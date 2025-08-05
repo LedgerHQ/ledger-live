@@ -152,16 +152,26 @@
     "@ledgerhq/coin-tester-solana": "1.0.0",
     "@actions/mobile-performance-test": "1.0.0",
     "@ledgerhq/coin-modules-monitoring": "1.0.0",
-    "@ledgerhq/coin-canton": "0.1.0"
+    "@ledgerhq/coin-canton": "0.1.0",
+    "@ledgerhq/hw-app-canton": "0.1.0",
+    "@ledgerhq/live-signer-canton": "0.1.0"
   },
   "changesets": [
+    "beige-bears-stare",
+    "beige-vans-judge",
     "blue-ligers-smoke",
     "brave-spiders-sell",
+    "brown-dogs-appear",
     "chilly-snails-relax",
     "clean-ties-chew",
+    "cool-donuts-dance",
     "dirty-lemons-relate",
+    "dull-rocks-clean",
+    "early-adults-fix",
     "fair-onions-share",
     "forty-jokes-smoke",
+    "fresh-turtles-knock",
+    "friendly-dogs-explode",
     "fuzzy-carrots-rescue",
     "gold-yaks-own",
     "long-toys-end",
@@ -195,6 +205,8 @@
     "two-pigs-call",
     "weak-mails-divide",
     "wet-apples-serve",
-    "wet-eyes-sip"
+    "wet-eyes-sip",
+    "yellow-months-sniff",
+    "young-boats-develop"
   ]
 }
