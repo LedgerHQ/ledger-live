@@ -310,6 +310,7 @@ export class AptosAPI {
 
     return Promise.all(
       queryResponse.data.account_transactions
+        .slice()
         .sort((a, b) => b.transaction_version - a.transaction_version)
         .map(({ transaction_version }) => {
           return this.richItemByVersion(transaction_version);
