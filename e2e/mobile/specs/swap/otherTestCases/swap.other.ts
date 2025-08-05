@@ -471,7 +471,7 @@ export function runSwapCheckProvider(
         true,
       );
 
-      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      await app.swapLiveApp.selectSpecificProvider(provider);
       await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
       await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
     });
@@ -560,8 +560,8 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
         actualAmount,
       );
       await app.swapLiveApp.checkQuotes();
-      const { index } = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapQuoteInfosFeesSelector(index);
+      await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.tapQuoteInfosFeesSelector();
       await app.swapLiveApp.tapFeeContainer("fast");
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
     });
