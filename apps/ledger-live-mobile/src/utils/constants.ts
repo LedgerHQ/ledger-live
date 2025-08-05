@@ -84,5 +84,4 @@ export const EXCLUDED_ERROR_DESCRIPTION = [
 export const FIRST_PARTY_MAIN_HOST_DOMAIN = "ledger.com";
 export const PORTFOLIO_VIEW_ID = "Portfolio";
 export const MARKET_LIST_VIEW_ID = "MarketList";
-
-export const TOP_CHAINS = ["bitcoin", "ethereum", "solana"];
+export const TOP_CHAINS = ["bitcoin", "ethereum", "solana", "xrp", "cardano"];
