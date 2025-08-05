@@ -344,6 +344,7 @@
           "provider" : "provedor",
           "rate" : "taxa",
           "fees" : "Taxas de Rede",
+          "feesDescription" : "Essa taxa é cobrada pela rede blockchain para processar a troca. Apenas a taxa de envio é cobrada em adição à cotação estimada. A taxa de recebimento está incluída",
           "target" : "conta de destino"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Ferramenta de Desenvolvedor do Menu Modular",
+        "description" : "Permite que você teste o menu modular facilmente"
+      },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "mockAppUpdate" : "Atualização simulada do aplicativo",
@@ -4590,6 +4595,8 @@
       "customCALRefDesc" : "Especificar um branch, commit ou tag personalizado a ser usado para todas as solicitações CAL",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilite a janela de ferramentas para desenvolvedores de aplicativos da plataforma",
+      "customLockScreenTester" : "Teste de personalização da tela de bloqueio",
+      "customLockScreenTesterDesc" : "Teste a personalização da tela de bloqueio de dispositivos compatíveis.",
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
       "customLockScreenDesc" : "Faça o debug de gráficos da tela de bloqueio",
       "customLockScreenCTA" : "Iniciar",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Nova conta",
       "addAccountSelection" : "Escolha uma conta para adicionar fundos",
       "addAccountSelectionPtxFlow" : "Selecionar conta"
+    },
+    "editAccountName" : {
+      "title" : "Editar nome da conta",
+      "input" : {
+        "name" : "Nome"
+      },
+      "cta" : {
+        "save" : "Salvar"
+      }
     },
     "fundAccount" : {
       "receive" : "Receber",
