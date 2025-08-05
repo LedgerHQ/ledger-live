@@ -48,6 +48,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
         asset: {
           type: assetType,
           assetReference: operation.contract,
+          assetOwner: address,
         },
       });
       contractAddresses.add(operation.contract);
