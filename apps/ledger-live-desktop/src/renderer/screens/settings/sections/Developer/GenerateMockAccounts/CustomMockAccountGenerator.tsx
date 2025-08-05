@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export default function CustomMockAccountGenerator({ title, desc }: Props) {
+  const { t } = useTranslation();
   const [tokens, setTokens] = useState<string>("");
   const [selectedCurrencies, setSelectedCurrencies] = useState<Record<string, boolean>>({});
 
@@ -29,23 +31,23 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
     );
 
     if (selectedCurrencyIds.length === 0) {
-      alert("Please select at least one currency");
+      alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.selectCurrency"));
       return;
     }
 
-    if (window.confirm("This will erase existing accounts. Continue?")) {
+    if (window.confirm(t("settings.developer.debugSimpleHash.mockAccounts.alerts.confirmErase"))) {
       try {
         const currencies = getSupportedCurrencies().filter(c => selectedCurrencyIds.includes(c.id));
         const accounts = generateAccountsForCurrencies(currencies, tokens);
         await injectMockAccounts(accounts, true);
       } catch (error) {
         console.error("Failed to generate mock accounts:", error);
-        alert("Failed to generate mock accounts. Please try again.");
+        alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.generateError"));
       }
     }
 
     setSelectedCurrencies({});
-  }, [selectedCurrencies, tokens]);
+  }, [selectedCurrencies, tokens, t]);
 
   const selectedCount = Object.values(selectedCurrencies).filter(Boolean).length;
 
@@ -56,25 +58,29 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
           <CurrencySelector
             selectedCurrencies={selectedCurrencies}
             onCurrencyToggle={handleCurrencyToggle}
-            placeholder="Choose currencies..."
+            placeholder={t(
+              "settings.developer.debugSimpleHash.mockAccounts.currencySelector.placeholder",
+            )}
           />
         </Box>
 
         <Box flex={1}>
           <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade100" mb={2}>
-            Token IDs (optional)
+            {t("settings.developer.debugSimpleHash.mockAccounts.tokenIds.label")}
           </Text>
           <Input
             value={tokens}
             onChange={setTokens}
-            placeholder="token1, token2, token3"
+            placeholder={t("settings.developer.debugSimpleHash.mockAccounts.tokenIds.placeholder")}
             maxLength={200}
           />
         </Box>
 
         <Box>
           <Button primary disabled={selectedCount === 0} onClick={handlePressContinue}>
-            Generate {selectedCount} Account{selectedCount !== 1 ? "s" : ""}
+            {t("settings.developer.debugSimpleHash.mockAccounts.buttons.generateAccounts", {
+              count: selectedCount,
+            })}
           </Button>
         </Box>
       </Flex>
