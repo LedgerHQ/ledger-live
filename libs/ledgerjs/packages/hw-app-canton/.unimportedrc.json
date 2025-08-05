@@ -1,0 +1,5 @@
+{
+  "entry": ["src/Canton.ts"],
+  "ignoreUnused": ["jest-sonar"],
+  "ignoreUnimported": ["**/__tests__/**"]
+}

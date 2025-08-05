@@ -1,20 +1,55 @@
 import BigNumber from "bignumber.js";
 import { DatasetTest } from "@ledgerhq/types-live";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
+  RecipientRequired,
+  AmountRequired,
+} from "@ledgerhq/errors";
 import { fromTransactionRaw } from "../bridge/transaction";
 import { Transaction } from "../types";
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 
-export const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";
+// Mock Canton addresses using SECP256R1-compatible format
+export const mockCantonAddresses = {
+  sender: "canton_1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z",
+  recipient1: "canton_2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a",
+  recipient2: "canton_3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b",
+  invalid: "invalid_canton_address",
+};
 
-export const dataset: DatasetTest<Transaction> = {
-  implementations: ["mock", "ripplejs"],
+// Mock public keys (SECP256R1 uncompressed format)
+export const mockPublicKeys = {
+  sender:
+    "0x04" +
+    "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef" +
+    "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+  recipient1:
+    "0x04" +
+    "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890" +
+    "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd",
+};
+
+const mainAccId = encodeAccountId({
+  type: "js",
+  version: "2",
+  currencyId: "canton_network",
+  xpubOrAddress: mockCantonAddresses.sender,
+  derivationMode: "",
+});
+
+const fees = new BigNumber("1000");
+const zero = new BigNumber(0);
+
+const canton: DatasetTest<Transaction> = {
+  implementations: ["mock"],
   currencies: {
-    ripple: {
+    canton_network: {
       scanAccounts: [
         {
-          name: "ripple seed 1",
+          name: "canton seed 1",
           unstableAccounts: true,
-          // our account is getting spammed...
           apdus: `
           => e00200400d038000002c8000009080000000
           <= 2103c73f64083463fa923e1530af6f558204853873c6a45cbfb1f2f1e2ac2a5d989c2272734a4675764165634c333153513750594864504b6b3335625a456f78446d5231789000
@@ -29,119 +64,152 @@ export const dataset: DatasetTest<Transaction> = {
       ],
       accounts: [
         {
-          transactions: [
-            // FIXME
-
-            /*
-        {
-          name: "not enough spendable balance with base reserve",
-          transaction: fromTransactionRaw({
-            family: "xrp",
-            recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
-            amount: "15000000",
-            tag: null,
-            fee: "1",
-            feeCustomUnit: null,
-            networkInfo: null,
-          }),
-          expectedStatus: {
-            amount: BigNumber("15000000"),
-            estimatedFees: BigNumber("1"),
-            errors: {
-              amount: new NotEnoughSpendableBalance(null, {
-                minimumAmount: formatCurrencyUnit(
-                  rippleUnit,
-                  BigNumber("20"),
-                  {
-                    disableRounding: true,
-                    useGrouping: false,
-                    showCode: true,
-                  }
-                ),
-              }),
-            },
-            warnings: {},
-            totalSpent: BigNumber("15000001"),
+          raw: {
+            id: mainAccId,
+            seedIdentifier: mockCantonAddresses.sender,
+            name: "Canton 1",
+            derivationMode: "",
+            index: 0,
+            freshAddress: mockCantonAddresses.sender,
+            freshAddressPath: "44'/6767'/0'/0'/0'",
+            blockHeight: 12345,
+            operations: [],
+            pendingOperations: [],
+            currencyId: "canton_network",
+            lastSyncDate: "2024-01-01T00:00:00.000Z",
+            balance: "1000000000", // 1000 CANTON
+            spendableBalance: "999999000", // 999.999 CANTON (reserving 1000 for fees)
+            subAccounts: [],
           },
-        },
-        */
-            // FIXME
-
-            /*
-        {
-          name: "operation amount to low to create the recipient account",
-          transaction: fromTransactionRaw({
-            family: "xrp",
-            recipient: newAddress1,
-            amount: "10000000",
-            tag: null,
-            fee: "1",
-            feeCustomUnit: null,
-            networkInfo: null
-          }),
-          expectedStatus: {
-            amount: BigNumber("10000000"),
-            estimatedFees: BigNumber("1"),
-            errors: {
-              amount: new NotEnoughBalanceBecauseDestinationNotCreated()
-            },
-            warnings: {},
-            totalSpent: BigNumber("10000001")
-          }
-        },
-        */
+          transactions: [
+            // Basic transaction tests
             {
               name: "recipient and sender must not be the same",
               transaction: fromTransactionRaw({
                 family: "canton",
-                recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
+                recipient: mockCantonAddresses.sender,
                 amount: "10000000",
-                fee: "1",
+                fee: "1000",
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("1"),
+                estimatedFees: fees,
                 errors: {
                   recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
-                totalSpent: new BigNumber("10000001"),
+                totalSpent: new BigNumber("10001000"),
               },
             },
             {
-              name: "Operation with tag succeed",
+              name: "valid transaction with sufficient balance",
               transaction: fromTransactionRaw({
                 family: "canton",
-                recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
-                amount: "10000000",
-                fee: "1",
+                recipient: mockCantonAddresses.recipient1,
+                amount: "10000000", // 10 CANTON
+                fee: "1000",
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("1"),
+                estimatedFees: fees,
                 errors: {},
                 warnings: {},
-                totalSpent: new BigNumber("10000001"),
+                totalSpent: new BigNumber("10001000"),
+              },
+            },
+            {
+              name: "transaction with insufficient balance",
+              transaction: fromTransactionRaw({
+                family: "canton",
+                recipient: mockCantonAddresses.recipient1,
+                amount: "2000000000", // 2000 CANTON (more than balance)
+                fee: "1000",
+              }),
+              expectedStatus: {
+                amount: new BigNumber("2000000000"),
+                estimatedFees: fees,
+                errors: {
+                  amount: new NotEnoughBalance(),
+                },
+                warnings: {},
+                totalSpent: new BigNumber("20001000"),
+              },
+            },
+            {
+              name: "transaction with invalid recipient address",
+              transaction: fromTransactionRaw({
+                family: "canton",
+                recipient: mockCantonAddresses.invalid,
+                amount: "10000000",
+                fee: "1000",
+              }),
+              expectedStatus: {
+                amount: new BigNumber("10000000"),
+                estimatedFees: fees,
+                errors: {
+                  recipient: new InvalidAddress(),
+                },
+                warnings: {},
+                totalSpent: new BigNumber("10001000"),
+              },
+            },
+            {
+              name: "transaction with zero amount",
+              transaction: fromTransactionRaw({
+                family: "canton",
+                recipient: mockCantonAddresses.recipient1,
+                amount: "0",
+                fee: "1000",
+              }),
+              expectedStatus: {
+                amount: zero,
+                estimatedFees: fees,
+                errors: {
+                  amount: new AmountRequired(),
+                },
+                warnings: {},
+                totalSpent: fees,
+              },
+            },
+            {
+              name: "transaction with empty recipient",
+              transaction: fromTransactionRaw({
+                family: "canton",
+                recipient: "",
+                amount: "10000000",
+                fee: "1000",
+              }),
+              expectedStatus: {
+                amount: new BigNumber("10000000"),
+                estimatedFees: fees,
+                errors: {
+                  recipient: new RecipientRequired(),
+                },
+                warnings: {},
+                totalSpent: new BigNumber("10001000"),
+              },
+            },
+            {
+              name: "transaction with high fee",
+              transaction: fromTransactionRaw({
+                family: "canton",
+                recipient: mockCantonAddresses.recipient1,
+                amount: "10000000",
+                fee: "50000", // 50 CANTON fee
+              }),
+              expectedStatus: {
+                amount: new BigNumber("10000000"),
+                estimatedFees: new BigNumber("50000"),
+                errors: {},
+                warnings: {},
+                totalSpent: new BigNumber("10050000"),
               },
             },
           ],
-          raw: {
-            id: "ripplejs:2:ripple:rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7:",
-            seedIdentifier: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
-            name: "XRP 1",
-            derivationMode: "",
-            index: 0,
-            freshAddress: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
-            freshAddressPath: "44'/144'/0'/0/0",
-            blockHeight: 0,
-            operations: [],
-            pendingOperations: [],
-            currencyId: "ripple",
-            lastSyncDate: "",
-            balance: "21000310",
-          },
         },
       ],
     },
   },
 };
+
+export { canton as dataset };

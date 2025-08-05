@@ -51,17 +51,21 @@ export const requestAccountLogic = async (
    */
   const safeCurrencies = currencies?.filter(c => typeof c === "string") ?? undefined;
 
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
+
   const { account, parentAccount } = modularDrawerVisible
     ? await openAssetAndAccountDrawerPromise({
         assetIds: safeCurrencies,
         includeTokens,
-        flow: manifest.name,
-        source:
-          currentRouteNameRef.current === "Platform Catalog"
-            ? "Discover"
-            : currentRouteNameRef.current ?? "Unknown",
+        flow,
+        source,
       })
-    : await selectAccountAndCurrency(safeCurrencies, includeTokens);
+    : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);
 
   return serializePlatformAccount(accountToPlatformAccount(walletState, account, parentAccount));
 };

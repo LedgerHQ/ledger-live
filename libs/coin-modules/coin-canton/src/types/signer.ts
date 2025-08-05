@@ -1,11 +1,11 @@
-export type BoilerplateAddress = {
+export type CantonAddress = {
   publicKey: string;
   address: string;
 };
 
-export type BoilerplateSignature = string; // `0x${string}`
+export type CantonSignature = string; // `0x${string}`
 
-export interface BoilerplateSigner {
-  getAddress(path: string): Promise<BoilerplateAddress>;
-  signTransaction(path: string, rawTx: string): Promise<BoilerplateSignature>;
+export interface CantonSigner {
+  getAddress(path: string): Promise<CantonAddress>;
+  signTransaction(path: string, rawTx: string): Promise<CantonSignature>;
 }

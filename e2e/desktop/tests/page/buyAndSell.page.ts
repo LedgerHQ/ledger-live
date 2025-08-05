@@ -36,8 +36,15 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawer = "open-fiat-drawer";
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
+  private showMoreQuotes = "SHOW MORE QUOTES";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+
+  private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
+    cryptoAmount: buySell => buySell.amount,
+    cryptoCurrency: buySell => buySell.crypto.currency.ticker,
+    fiatCurrency: buySell => buySell.fiat.currencyTicker,
+  };
 
   private providerConfigs: Record<string, ProviderConfig> = {
     [Provider.MOONPAY.uiName]: {
@@ -46,11 +53,16 @@ export class BuyAndSellPage extends WebViewAppPage {
         currencyCode: buySell => buySell.crypto.currency.ticker,
         baseCurrencyCode: buySell => buySell.fiat.currencyTicker,
       },
-      sellParams: {
-        cryptoAmount: buySell => buySell.amount,
-        cryptoCurrency: buySell => buySell.crypto.currency.ticker,
+      sellParams: this.standardSellParams,
+      addressParam: "walletaddress",
+    },
+    [Provider.TRANSAK.uiName]: {
+      buyParams: {
+        fiatAmount: buySell => buySell.amount,
+        cryptoCurrencyCode: buySell => buySell.crypto.currency.ticker,
         fiatCurrency: buySell => buySell.fiat.currencyTicker,
       },
+      sellParams: this.standardSellParams,
       addressParam: "walletaddress",
     },
     [Provider.COINBASE.uiName]: {
@@ -59,11 +71,7 @@ export class BuyAndSellPage extends WebViewAppPage {
         defaultAsset: buySell => buySell.crypto.currency.ticker,
         fiatCurrency: buySell => buySell.fiat.currencyTicker,
       },
-      sellParams: {
-        cryptoAmount: buySell => buySell.amount,
-        cryptoCurrency: buySell => buySell.crypto.currency.ticker,
-        fiatCurrency: buySell => buySell.fiat.currencyTicker,
-      },
+      sellParams: this.standardSellParams,
       addressParam: "destinationwallets",
       parseAddress: (value: string) => {
         const wallets = JSON.parse(decodeURIComponent(value)) as Array<{
@@ -177,6 +185,9 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Select provider quote for $1")
   async selectProviderQuote(operation: string, providerName: string) {
+    if (await this.isTextVisible(this.showMoreQuotes)) {
+      await this.clickElementByText(this.showMoreQuotes);
+    }
     await this.clickElement(this.provider(providerName));
     await this.verifyElementText(this.formCta, `${operation} with ${providerName}`);
   }

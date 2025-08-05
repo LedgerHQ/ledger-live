@@ -10,7 +10,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
-import { BoilerplateSigner } from "../types";
+import { CantonSigner } from "../types";
 import type { Transaction } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -22,7 +22,7 @@ import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 
 export function createBridges(
-  signerContext: SignerContext<BoilerplateSigner>,
+  signerContext: SignerContext<CantonSigner>,
   coinConfig: CoinConfig<CantonCoinConfig>,
 ) {
   cantonCoinConfig.setCoinConfig(coinConfig);

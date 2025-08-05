@@ -325,21 +325,27 @@ export function useSelectAccount({
     setDrawer();
   }, []);
 
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
+
   const onSelectAccount = useCallback(() => {
     modularDrawerVisible
       ? openAssetAndAccountDrawer({
           currencies,
           onSuccess,
           onCancel,
-          flow: manifest.name,
-          source:
-            currentRouteNameRef.current === "Platform Catalog"
-              ? "Discover"
-              : currentRouteNameRef.current ?? "Unknown",
+          flow,
+          source,
         })
       : setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
+            flow,
+            source,
             currencies: currencies,
             onAccountSelected: onSuccess,
           },
@@ -347,7 +353,7 @@ export function useSelectAccount({
             onRequestClose: onCancel,
           },
         );
-  }, [currencies, manifest.name, modularDrawerVisible, onCancel, onSuccess]);
+  }, [currencies, flow, modularDrawerVisible, onCancel, onSuccess, source]);
 
   return { onSelectAccount, currentAccount };
 }

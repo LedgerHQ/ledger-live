@@ -1,7 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
-import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { getTokenOrCryptoCurrencyById } from "../../deposit/helper";
+import { isTokenCurrency } from "../../currencies";
+import { CurrenciesByProviderId } from "../../deposit/type";
 
 export type ProviderCoverageMap = Map<string, Set<string>>;
 

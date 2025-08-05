@@ -2,12 +2,9 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import debounce from "lodash/debounce";
 import { useNavigation } from "@react-navigation/core";
-
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
-
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
@@ -15,6 +12,7 @@ import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/typ
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
+import { useAssets } from "LLM/features/ModularDrawer/hooks/useAssets";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];
@@ -32,10 +30,6 @@ export default function useSelectCryptoViewModel({
   path,
 }: SelectCryptoViewModelProps) {
   const { t } = useTranslation();
-  const filterCurrencyIdsSet = useMemo(
-    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
-    [filterCurrencyIds],
-  );
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
@@ -111,13 +105,6 @@ export default function useSelectCryptoViewModel({
       });
   }, 1500);
 
-  const list = useMemo(
-    () =>
-      filterCurrencyIdsSet
-        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIdsSet.has(crypto.id))
-        : sortedCryptoCurrencies,
-    [filterCurrencyIdsSet, sortedCryptoCurrencies],
-  );
   const { titleText, titleTestId } = useMemo(() => {
     switch (context) {
       case AddAccountContexts.AddAccounts:
@@ -135,10 +122,29 @@ export default function useSelectCryptoViewModel({
     }
   }, [context, t]);
 
+  // This fix an issue we had with provider of crypto.
+  // As we have it for the MAD I use the same hook
+  // In the future the MAD will replace this so it's fine to do it this way
+  const filterCurrencyIdsSet = useMemo(
+    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
+    [filterCurrencyIds],
+  );
+
+  const filteredCurrencies = useMemo(() => {
+    if (!filterCurrencyIdsSet) return sortedCryptoCurrencies;
+    return sortedCryptoCurrencies.filter(currency => filterCurrencyIdsSet.has(currency.id));
+  }, [sortedCryptoCurrencies, filterCurrencyIdsSet]);
+
+  const { availableAssets } = useAssets(
+    filteredCurrencies,
+    currenciesByProvider,
+    sortedCryptoCurrencies,
+  );
+
   return {
     titleText,
     titleTestId,
-    list,
+    list: availableAssets,
     debounceTrackOnSearchChange,
     onPressItem,
     providersLoadingStatus,

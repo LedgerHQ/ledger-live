@@ -21,6 +21,7 @@ import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 import Switch from "../Switch";
 import { Icons } from "@ledgerhq/react-ui/index";
 import Input from "~/renderer/components/Input";
+import { MobileView } from "~/renderer/hooks/useMobileView";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -95,11 +96,6 @@ const RightContainer = styled(Box).attrs(() => ({
   alignItems: "center",
   ml: "auto",
 }))``;
-
-export interface MobileView {
-  display: boolean;
-  width: number;
-}
 
 export type Props = {
   icon?: boolean;

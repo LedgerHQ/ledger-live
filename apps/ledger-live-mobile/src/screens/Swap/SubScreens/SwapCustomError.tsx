@@ -5,7 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Trans, useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { SwapCustomErrorProps } from "../types";
+import Button from "~/components/Button";
+import useExportLogs from "~/components/useExportLogs";
 
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
@@ -13,6 +16,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const titleKey = error && "title" in error ? error.title : undefined;
   const nameKey =
     error && "name" in error && error.name !== "CompleteExchangeError" ? error.name : undefined;
+  const onExport = useExportLogs();
+  const headerHeight = useHeaderHeight();
 
   const { title, description } = useMemo(() => {
     if (titleKey || nameKey) {
@@ -34,18 +39,13 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   }, [error, nameKey, t, titleKey]);
 
   return (
-    <SafeAreaView style={styles.root}>
-      <Flex justifyContent="center" alignItems="center" flex={1}>
-        <Icons.Close color="red" size="L" />
-        <Text variant="h3Inter" fontWeight="bold" fontSize={25} textAlign={"center"}>
+    <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>
+      <Flex justifyContent="center" alignItems="center">
+        <Icons.DeleteCircleFill color="red" size="XXL" />
+        <Text variant="h3Inter" fontWeight="bold" fontSize={25} textAlign={"center"} mt={24}>
           {title}
         </Text>
-        <Text
-          variant="body"
-          textAlign={"center"}
-          testID="error-description-deviceAction"
-          mt={"32px"}
-        >
+        <Text variant="body" textAlign={"center"} testID="error-description-deviceAction" mt={16}>
           {description}
 
           {error && "cause" in error && error.cause?.swapCode && (
@@ -55,6 +55,14 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
             />
           )}
         </Text>
+        <Button
+          type="main"
+          size="medium"
+          onPress={onExport}
+          alignSelf="stretch"
+          title={t("common.saveLogs")}
+          mt={32}
+        />
       </Flex>
     </SafeAreaView>
   );
@@ -62,7 +70,9 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
 
 const styles = StyleSheet.create({
   root: {
+    display: "flex",
     flex: 1,
-    padding: 32,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

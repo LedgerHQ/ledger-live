@@ -1,11 +1,6 @@
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  baseCurrency,
-  bitcoinCurrency,
-  ethereumCurrency,
-  usdcToken,
-} from "../../../__mocks__/useSelectAssetFlow.mock";
+
 import {
   buildProviderCoverageMap,
   extractProviderCurrencies,
@@ -14,6 +9,12 @@ import {
   isProviderToken,
   safeCurrencyLookup,
 } from "../currencyUtils";
+import {
+  usdcToken,
+  mockBaseCryptoCurrency,
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+} from "../../__mocks__/currencies.mock";
 
 describe("safeCurrencyLookup", () => {
   it("should return the currency if it is found", () => {
@@ -32,7 +33,7 @@ describe("isProviderToken", () => {
       type: "TokenCurrency",
       id: "base/erc20/base",
       contractAddress: "0x0000000000000000000000000000000000000000",
-      parentCurrency: baseCurrency,
+      parentCurrency: mockBaseCryptoCurrency,
       tokenType: "erc20",
       name: "Base",
       ticker: "BASE",
@@ -48,7 +49,7 @@ describe("isProviderToken", () => {
     expect(currency).toBe(true);
   });
   it("should return false if the currency is not a provider token", () => {
-    const currency = isProviderToken(ethereumCurrency, "ethereum");
+    const currency = isProviderToken(mockEthCryptoCurrency, "ethereum");
     expect(currency).toBe(false);
   });
 });
@@ -57,7 +58,7 @@ describe("getProviderCurrency", () => {
   it("should return the currency if it is a provider currency", () => {
     const { result } = useGroupedCurrenciesByProvider();
     const currency = getProviderCurrency(result.currenciesByProvider[0]);
-    expect(currency).toEqual(bitcoinCurrency);
+    expect(currency).toEqual(mockBtcCryptoCurrency);
   });
   it("should return the currency if it is a provider token", () => {
     const { result } = useGroupedCurrenciesByProvider();
@@ -118,7 +119,7 @@ describe("extractProviderCurrencies", () => {
     const { result } = useGroupedCurrenciesByProvider();
     const providerCurrencies = extractProviderCurrencies(result.currenciesByProvider);
     expect(providerCurrencies).toHaveLength(5);
-    expect(providerCurrencies[0]).toEqual(bitcoinCurrency);
+    expect(providerCurrencies[0]).toEqual(mockBtcCryptoCurrency);
     expect(providerCurrencies[1].id).toBe("ethereum");
     expect(providerCurrencies[2].id).toBe("arbitrum/erc20/arbitrum");
   });

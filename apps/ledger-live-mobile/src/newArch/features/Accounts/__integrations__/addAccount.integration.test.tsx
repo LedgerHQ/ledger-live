@@ -126,7 +126,7 @@ describe("AddAccount", () => {
   });
 
   /**====== use ModularDrawer Test =======*/
-  it.only("Should open ModularDrawer when selecting use Ledger device", async () => {
+  it("Should open ModularDrawer when selecting use Ledger device", async () => {
     const { user } = render(<TestButtonPage />, {
       overrideInitialState: (state: State) => ({
         ...state,
@@ -162,6 +162,6 @@ describe("AddAccount", () => {
 
     // Press the "Use your Ledger device" button to trigger ModularDrawer
     await user.press(screen.getByText(/Use your Ledger device/i));
-    expect(await screen.findByText(/Bitcoin/i));
+    expect(screen.getByText(/Bitcoin/i)).toBeVisible();
   });
 });

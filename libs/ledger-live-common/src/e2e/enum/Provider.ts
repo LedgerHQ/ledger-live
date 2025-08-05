@@ -19,6 +19,7 @@ export class Provider {
   static readonly KILN = new Provider("kiln", "Kiln staking Pool", false, true, true);
   static readonly STADER_LABS = new Provider("stader", "Stader Labs", false, true, true);
   static readonly LIDO = new Provider("lido", "Lido", false, true, true);
+  static readonly TRANSAK = new Provider("transak", "Transak", false, true, true);
 
   static getNameByUiName(uiName: string): string {
     const provider = Object.values(Provider).find(p => p.uiName === uiName);

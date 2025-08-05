@@ -71,8 +71,15 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
-    await tapById(this.assetItemId(currencyName));
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
+
+    if (await IsIdVisible(this.assetItemId(currencyName))) {
+      await tapById(this.assetItemId(currencyName));
+    } else {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName));
+      await tapById(this.assetItemId(currencyName));
+    }
   }
 
   @Step("Check quick action buttons visibility")

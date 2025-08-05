@@ -139,4 +139,22 @@ export abstract class WebViewAppPage extends AppPage {
     const webview = await this.getWebView();
     await expect(webview.getByText(text, { exact: true })).toBeVisible();
   }
+
+  @step("Click text in WebView")
+  protected async clickElementByText(text: string) {
+    const webview = await this.getWebView();
+    await webview.getByText(text, { exact: true }).click();
+  }
+
+  @step("Check if text is visible in WebView")
+  protected async isTextVisible(text: string): Promise<boolean> {
+    const webview = await this.getWebView();
+    const element = webview.getByText(text, { exact: true });
+    try {
+      await expect(element).toBeVisible({ timeout: 1000 });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

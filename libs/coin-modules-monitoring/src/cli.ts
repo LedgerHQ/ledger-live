@@ -1,11 +1,21 @@
-import accounts from "./accounts";
+import currencies from "./currencies";
 import run from "./run";
 
 const [, , argv2 = "all"] = process.argv;
-const supportedCurrencies = Object.keys(accounts);
-const currencies =
+const supportedCurrencies = Object.keys(currencies);
+const filteredCurrencies =
   argv2 === "all"
     ? supportedCurrencies
-    : argv2.split(",").filter(c => supportedCurrencies.includes(c));
+    : argv2
+        .split(",")
+        .map(c => c.trim())
+        .filter(c => supportedCurrencies.includes(c));
+const monitoredCurrencies = filteredCurrencies.filter(c => {
+  const currency = currencies[c];
+  if (currency?.skip) {
+    console.log(`Skipping "${c}". Reason: ${currency.skip}`);
+  }
+  return !currency.skip;
+});
 
-run(currencies).then(console.table).catch(console.error);
+run(monitoredCurrencies).then(console.table).catch(console.error);

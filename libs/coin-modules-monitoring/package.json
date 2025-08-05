@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
+    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "rxjs": "^7.8.1"

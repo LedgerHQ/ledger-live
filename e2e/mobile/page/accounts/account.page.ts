@@ -30,7 +30,7 @@ export default class AccountPage {
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
   subAccountId = (account: Account) =>
-    `js:2:${account.currency.id}:${account.parentAccount!.address}:${account.currency.id}Sub+${account.address}`;
+    `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Open accounts list via deeplink")

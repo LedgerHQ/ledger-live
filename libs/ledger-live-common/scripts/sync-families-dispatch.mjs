@@ -30,6 +30,7 @@ const familiesWPackage = [
   "bitcoin",
   "cardano",
   "casper",
+  "canton",
   "celo",
   "cosmos",
   "evm",

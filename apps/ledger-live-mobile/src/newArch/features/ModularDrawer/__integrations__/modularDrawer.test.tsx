@@ -61,13 +61,13 @@ describe("ModularDrawer integration", () => {
     const searchInput = getByPlaceholderText(/search/i);
     expect(searchInput).toBeVisible();
 
-    await user.type(searchInput, "arb");
+    await user.type(searchInput, "bitc");
 
     await waitFor(() => {
       expect(queryByText(/ethereum/i)).not.toBeVisible();
     });
 
-    expect(getByText(/arbitrum/i)).toBeVisible();
+    expect(getByText(/bitcoin/i)).toBeVisible();
   });
 
   it("should show the empty state when no assets are found", async () => {

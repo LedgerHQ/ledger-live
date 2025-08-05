@@ -3,11 +3,12 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { Web3AppWebview } from "../Web3AppWebview";
-import { TopBar, MobileView } from "./TopBar";
+import { TopBar } from "./TopBar";
 import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "./CustomHandlers";
+import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 
 export const Container = styled.div`
   display: flex;
@@ -22,14 +23,6 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-const initialMobileView: MobileView = {
-  display: false,
-  width: 355,
-};
-interface WebViewWrapperProps {
-  mobileView: MobileView;
-}
-
 export const WebViewWrapper = styled.div<WebViewWrapperProps>`
   flex: 1;
   height: 100%;
@@ -41,7 +34,7 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
 export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const [mobileView, setMobileView] = useState<MobileView>(initialMobileView);
+  const { mobileView, setMobileView } = useMobileView();
 
   const accounts = useSelector(flattenAccountsSelector);
   const customHandlers = usePTXCustomHandlers(manifest, accounts);

@@ -1,4 +1,4 @@
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { CurrenciesByProviderId } from "../../deposit/type";
 
 /**
  * This function checks if all currencies in the provided array

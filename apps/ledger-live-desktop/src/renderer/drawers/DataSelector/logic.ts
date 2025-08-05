@@ -9,6 +9,8 @@ type SelectAccountAndCurrencyResult = {
 export function selectAccountAndCurrency(
   currencies?: string[],
   includeTokens?: boolean,
+  flow?: string,
+  source?: string,
 ): Promise<SelectAccountAndCurrencyResult> {
   return new Promise((resolve, reject) => {
     setDrawer(
@@ -25,6 +27,8 @@ export function selectAccountAndCurrency(
             parentAccount,
           });
         },
+        flow,
+        source,
       },
       {
         onRequestClose: () => {

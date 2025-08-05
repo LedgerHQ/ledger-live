@@ -130,7 +130,8 @@ export function runSwapWithDifferentSeedTest(
         swap.accountToCredit,
         minAmount,
       );
-      await app.swapLiveApp.selectExchange();
+      const { providerName } = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(providerName);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
       await app.swapLiveApp.checkErrorMessage(errorMessage);
