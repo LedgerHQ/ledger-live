@@ -55,7 +55,7 @@ async function craft(
   customFees?: FeeEstimation,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees?.value ?? (await estimateFees()).fee;
+  const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
 
   const memosMap =
     transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
@@ -77,7 +77,7 @@ async function craft(
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: estimatedFees,
+      fees: estimatedFees,
       destinationTag,
       // NOTE: double check before/after here
       memos: memoEntries,
@@ -90,7 +90,7 @@ async function craft(
 
 async function estimate(): Promise<FeeEstimation> {
   const estimation = await estimateFees();
-  return { value: estimation.fee };
+  return { value: estimation.fees };
 }
 
 type PaginationState = {
