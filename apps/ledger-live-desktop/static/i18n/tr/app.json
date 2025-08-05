@@ -344,6 +344,7 @@
           "provider" : "sağlayıcı",
           "rate" : "kur",
           "fees" : "Ağ Ücretleri",
+          "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -4580,6 +4581,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Geliştirici Aracı",
+        "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır"
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "mockAppUpdate" : "Test uygulama güncellemesi",
@@ -4590,6 +4595,8 @@
       "customCALRefDesc" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "customLockScreenTester" : "Özel kilitli ekran testçisi",
+      "customLockScreenTesterDesc" : "Desteklenen cihazlar için özel kilitli ekranı test edin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
       "customLockScreenCTA" : "Başlat",
@@ -7279,6 +7286,15 @@
       "newAccount" : "Yeni hesap",
       "addAccountSelection" : "Fonların ekleneceği hesabı seçin",
       "addAccountSelectionPtxFlow" : "Hesap seçin"
+    },
+    "editAccountName" : {
+      "title" : "Hesap adını düzenleyin",
+      "input" : {
+        "name" : "İsim"
+      },
+      "cta" : {
+        "save" : "Kaydet"
+      }
     },
     "fundAccount" : {
       "receive" : "Al",
