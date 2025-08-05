@@ -3659,7 +3659,8 @@
           "refunded" : "Contacta con el proveedor de permuta mediante tu ID de permuta para obtener más información.",
           "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
           "onhold" : "Contacta con el proveedor de permuta mediante tu ID de permuta para resolver la situación.",
-          "finished" : "Tu permuta se ha completado correctamente."
+          "finished" : "Tu permuta se ha completado correctamente.",
+          "unknown" : "Estamos a la espera de información del proveedor."
         }
       },
       "missingApp" : {
@@ -3764,6 +3765,8 @@
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
         "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+        "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
         "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
@@ -4045,6 +4048,10 @@
       "quantityAvailable" : "Cantidad disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Firma a ciegas requerida",
+        "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+      },
       "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
       "tag" : "Etiqueta (opcional)",
       "validateTag" : "Validar etiqueta",
@@ -7764,7 +7771,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
@@ -7776,7 +7783,10 @@
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
     "selectAccount" : "Seleccionar cuenta",
-    "searchPlaceholder" : "Buscar"
+    "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "No se encontraron activos",
+    "accountCount" : "{{count}} cuenta (detectada)",
+    "accountCount_plural" : "{{count}} cuentas (detectadas)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
