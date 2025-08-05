@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { getAccountTransactions } from "./mirror";
+import { getAccount, getAccountTransactions } from "./mirror";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -70,5 +70,32 @@ describe("getAccountTransactions", () => {
     expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(5);
+  });
+});
+
+describe("getAccount", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should call the correct endpoint and return account data", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      makeMockResponse({
+        account: "0.0.1234",
+        max_automatic_token_associations: 0,
+        balance: {
+          balance: 1000,
+          timestamp: "1749047764.000113442",
+          tokens: [],
+        },
+      }),
+    );
+
+    const result = await getAccount("0.0.1234");
+    const requestUrl = mockedNetwork.mock.calls[0][0].url;
+
+    expect(result.account).toEqual("0.0.1234");
+    expect(requestUrl).toContain("/api/v1/accounts/0.0.1234");
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
 });
