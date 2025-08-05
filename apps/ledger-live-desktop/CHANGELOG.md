@@ -1,5 +1,61 @@
 # ledger-live-desktop
 
+## 2.124.0-next.0
+
+### Minor Changes
+
+- [#11209](https://github.com/LedgerHQ/ledger-live/pull/11209) [`9a9f6b2`](https://github.com/LedgerHQ/ledger-live/commit/9a9f6b2b159f9a5e33093e47802425ab51233f6a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add tracking for the old account selector
+
+- [#11028](https://github.com/LedgerHQ/ledger-live/pull/11028) [`ee47e8e`](https://github.com/LedgerHQ/ledger-live/commit/ee47e8ea0817a5f2fbf9966c02a9643d563972a1) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add unknown tooltip
+
+- [#11160](https://github.com/LedgerHQ/ledger-live/pull/11160) [`8b55463`](https://github.com/LedgerHQ/ledger-live/commit/8b55463a1b1758c0d1a61a8f1a43344b9d3c2e35) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix assetsList provider display. We need to display the provider crypto instead of the first of the list
+
+- [#11145](https://github.com/LedgerHQ/ledger-live/pull/11145) [`3d96744`](https://github.com/LedgerHQ/ledger-live/commit/3d9674481b7a8d84146abe256c09fa20c93e708f) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - add llm resolution tool on electron earn screen
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+- [#11120](https://github.com/LedgerHQ/ledger-live/pull/11120) [`eb49ca4`](https://github.com/LedgerHQ/ledger-live/commit/eb49ca47a7e66e8b4528bab90ef34a985e3838b1) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][stellar] fix memo details lost
+
+- [#11082](https://github.com/LedgerHQ/ledger-live/pull/11082) [`59c65db`](https://github.com/LedgerHQ/ledger-live/commit/59c65dbee3008fbd8283d0625f7448a2e558f77c) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - implement countervalues marketcaps' reducer
+
+- [#10395](https://github.com/LedgerHQ/ledger-live/pull/10395) [`69010f8`](https://github.com/LedgerHQ/ledger-live/commit/69010f87cdffcabd825464ba5b5aba58ce2c350b) Thanks [@Justkant](https://github.com/Justkant)! - fix: improve solana raw tx handling
+
+  - Implemented handling of raw Solana transactions in the SendFunds summary screen.
+  - Updated transaction building and signing processes to accommodate raw transaction types.
+  - Introduced new types and command descriptors for raw transactions in the Solana module.
+  - Enhanced error handling and user feedback for raw transactions.
+  - Added mock data and tests to ensure proper functionality of raw transaction features.
+
+- [#11083](https://github.com/LedgerHQ/ledger-live/pull/11083) [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a) Thanks [@sergiubreban](https://github.com/sergiubreban)! - enable modular drawer for all earn entry points
+
+- [#11113](https://github.com/LedgerHQ/ledger-live/pull/11113) [`cc01ee3`](https://github.com/LedgerHQ/ledger-live/commit/cc01ee328ad02ac623a300104a745eab9e7c9d10) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Add accounts number on asset selection screen.
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+### Patch Changes
+
+- Updated dependencies [[`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`64ebbd1`](https://github.com/LedgerHQ/ledger-live/commit/64ebbd119e1f20c371cd23d0bf951ee10ef2f293), [`e1155b8`](https://github.com/LedgerHQ/ledger-live/commit/e1155b8420f06ead4ab377e16202afdd9133bd26), [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3), [`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`59c65db`](https://github.com/LedgerHQ/ledger-live/commit/59c65dbee3008fbd8283d0625f7448a2e558f77c), [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777), [`69010f8`](https://github.com/LedgerHQ/ledger-live/commit/69010f87cdffcabd825464ba5b5aba58ce2c350b), [`99f1fd9`](https://github.com/LedgerHQ/ledger-live/commit/99f1fd946b1f336f796ffa2e40846000cbe97b0a), [`9c200a4`](https://github.com/LedgerHQ/ledger-live/commit/9c200a44f0d8d0cb3995b64a85adbaa750c2452d), [`cc01ee3`](https://github.com/LedgerHQ/ledger-live/commit/cc01ee328ad02ac623a300104a745eab9e7c9d10), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/live-common@34.44.0-next.0
+  - @ledgerhq/cryptoassets@13.24.0-next.0
+  - @ledgerhq/types-cryptoassets@7.25.0-next.0
+  - @ledgerhq/types-live@6.80.0-next.0
+  - @ledgerhq/coin-evm@2.26.0-next.0
+  - @ledgerhq/coin-framework@6.0.0-next.0
+  - @ledgerhq/live-countervalues-react@0.3.0-next.0
+  - @ledgerhq/live-env@2.13.0-next.0
+  - @ledgerhq/coin-bitcoin@0.20.0-next.0
+  - @ledgerhq/live-countervalues@0.6.0-next.0
+  - @ledgerhq/live-wallet@0.12.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.8.3-next.0
+  - @ledgerhq/coin-cosmos@0.16.5-next.0
+  - @ledgerhq/coin-filecoin@1.9.16-next.0
+  - @ledgerhq/live-nft@0.8.16-next.0
+  - @ledgerhq/live-nft-react@0.9.16-next.0
+  - @ledgerhq/domain-service@1.2.39-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.11-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.1-next.0
+  - @ledgerhq/live-network@2.0.14-next.0
+
 ## 2.123.0
 
 ### Minor Changes
