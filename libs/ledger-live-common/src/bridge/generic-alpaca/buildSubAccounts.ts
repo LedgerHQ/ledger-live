@@ -106,5 +106,12 @@ export function buildSubAccounts({
 }
 
 export function findToken(currency: CryptoCurrency, balance: Balance): TokenCurrency | undefined {
-  return findTokenById(`${currency.family}/asset/${getAssetIdFromAsset(balance.asset)}`);
+  if (
+    balance.asset?.type !== "native" &&
+    "assetReference" in balance.asset &&
+    "assetOwner" in balance.asset
+  ) {
+    return findTokenByAddressInCurrency(balance.asset?.assetOwner as string, currency.id);
+  }
+  return undefined;
 }
