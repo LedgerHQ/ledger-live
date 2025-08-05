@@ -6514,9 +6514,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "残高が{{minimumBalance}} を下回ることはできません。空のアカウントに最大額を送金してください。"
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "{{minimumBondAmount}}以上ボンドする必要があります。"
     },

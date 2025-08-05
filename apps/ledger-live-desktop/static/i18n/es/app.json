@@ -6514,9 +6514,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "El saldo no puede ser inferior a {{minimumBalance}} Envía el máximo a una cuenta vacía."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Tienes que vincular al menos {{minimumBondAmount}}."
     },
