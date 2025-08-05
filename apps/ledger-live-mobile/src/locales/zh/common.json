@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "余额不能少于 {{minimumBalance}}发送最大值以清空账户。"
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "您必须至少绑定 {{minimumBondAmount}}。"
     },
