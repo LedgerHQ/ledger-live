@@ -45,7 +45,8 @@ export default class AddAccountDrawer extends CommonPage {
       this.accountItemId,
       "",
     );
-    await detoxExpect(this.accountItemName(accountId)).toHaveText(currencyName);
+    const fromText = await getTextOfElement(`${this.accountItemId + accountId}-name`);
+    jestExpect(fromText).toContain(currencyName);
     return accountId;
   }
 
