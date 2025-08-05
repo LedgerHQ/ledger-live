@@ -53,6 +53,7 @@ export const getAccountShape: GetAccountShape<Account> = async (
     balance: accountBalance.balance,
     spendableBalance: accountBalance.balance,
     operations,
+    operationsCount: operations.length,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,
