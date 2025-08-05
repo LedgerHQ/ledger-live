@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex } from "@ledgerhq/react-ui/index";
+import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import ButtonV2 from "~/renderer/components/Button";
 import MockAccountGenerator from "./MockAccountGenerator";
@@ -15,22 +15,21 @@ type MockAccountGeneratorSectionContentProps = {
 export const MockAccountGeneratorSectionContent = ({
   expanded,
 }: MockAccountGeneratorSectionContentProps) => {
+  const { t } = useTranslation();
+
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
-      <div>
-        Generate mock accounts for testing purposes. These tools allow you to create test accounts
-        with various currencies and configurations.
-      </div>
+      <Text>{t("settings.developer.debugSimpleHash.mockAccounts.description")}</Text>
       {expanded && (
         <Flex flexDirection="column" columnGap={4} mt={2} flexWrap="wrap">
           <CustomMockAccountGenerator
-            title="Custom Generate"
-            desc="Select specific currencies and add tokens"
+            title={t("settings.developer.debugSimpleHash.mockAccounts.customGenerate.title")}
+            desc={t("settings.developer.debugSimpleHash.mockAccounts.customGenerate.desc")}
           />
           <MockAccountGenerator
             count={10}
-            title="Quick Generate"
-            desc="Generate 10 random accounts with random currencies"
+            title={t("settings.developer.debugSimpleHash.mockAccounts.quickGenerate.title")}
+            desc={t("settings.developer.debugSimpleHash.mockAccounts.quickGenerate.desc")}
           />
           <FeatureToggle featureId="llNftSupport">
             <GenerateMockAccountsWithNfts />
@@ -51,7 +50,7 @@ const MockAccountGeneratorSection = () => {
 
   return (
     <Row
-      title="Generate Mock Accounts"
+      title={t("settings.developer.debugSimpleHash.mockAccounts.title")}
       descContainerStyle={{ maxWidth: undefined }}
       contentContainerStyle={{ marginRight: 0 }}
       childrenContainerStyle={{ alignSelf: "flex-start" }}
