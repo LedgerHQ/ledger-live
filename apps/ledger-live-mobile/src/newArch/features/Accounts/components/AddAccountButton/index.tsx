@@ -47,7 +47,7 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
   });
 
   const handleOnclick = useCallback(() => {
-    if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
+    if (isModularDrawerVisible({ location: ModularDrawerLocation.ADD_ACCOUNT })) {
       handleCloseAddAccountModal();
       return openDrawer({
         currencies: currencyToUse ? [currencyToUse] : [],

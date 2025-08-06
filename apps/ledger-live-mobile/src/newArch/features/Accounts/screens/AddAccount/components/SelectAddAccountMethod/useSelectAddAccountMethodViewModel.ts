@@ -95,7 +95,7 @@ const useSelectAddAccountMethodViewModel = ({
 
     onCloseAddAccountDrawer?.();
 
-    if (isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)) {
+    if (isModularDrawerVisible({ location: ModularDrawerLocation.ADD_ACCOUNT })) {
       handleOpenModularDrawer();
     } else {
       const entryNavigatorName = NavigatorName.AssetSelection;

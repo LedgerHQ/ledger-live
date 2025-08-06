@@ -4,6 +4,10 @@ import { ModularDrawerLocation } from "./enums";
 
 type ModularDrawerFeatureFlagKey = "lldModularDrawer" | "llmModularDrawer";
 
+export type ModularDrawerVisibleParams =
+  | { location: ModularDrawerLocation.LIVE_APP; liveAppId: string }
+  | { location: Exclude<ModularDrawerLocation, ModularDrawerLocation.LIVE_APP> };
+
 export function useModularDrawerVisibility({
   modularDrawerFeatureFlagKey,
 }: {
@@ -12,9 +16,29 @@ export function useModularDrawerVisibility({
   const featureModularDrawer = useFeature(modularDrawerFeatureFlagKey);
 
   const isModularDrawerVisible = useCallback(
-    (location: ModularDrawerLocation) => {
+    (params: ModularDrawerVisibleParams) => {
       if (!featureModularDrawer?.enabled) return false;
-      return featureModularDrawer.params?.[location] ?? false;
+
+      if (params.location === ModularDrawerLocation.LIVE_APP) {
+        const isLiveAppEnabled = featureModularDrawer.params?.[params.location] ?? false;
+        if (!isLiveAppEnabled) return false;
+
+        const { liveAppId } = params;
+        const whitelisted = featureModularDrawer.params?.live_apps_whitelisted ?? [];
+        const blacklisted = featureModularDrawer.params?.live_apps_blacklisted ?? [];
+
+        if (whitelisted.length > 0 && !whitelisted.includes(liveAppId)) {
+          return false;
+        }
+
+        if (blacklisted.includes(liveAppId)) {
+          return false;
+        }
+
+        return true;
+      }
+
+      return featureModularDrawer.params?.[params.location] ?? false;
     },
     [featureModularDrawer],
   );

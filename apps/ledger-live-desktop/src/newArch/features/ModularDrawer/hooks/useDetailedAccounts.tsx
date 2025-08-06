@@ -46,7 +46,10 @@ export const useDetailedAccounts = (
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, source);
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    source,
+  );
 
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
