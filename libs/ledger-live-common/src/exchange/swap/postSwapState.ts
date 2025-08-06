@@ -104,6 +104,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   amount,
   seedIdFrom,
   seedIdTo,
+  refundAddress,
+  payoutAddress,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -151,8 +153,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       payloadAddressMatchAccountAddress,
       fromAccountId: shouldIncludeAddresses ? fromAccountId : undefined,
       toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
-      payloadRefundAddress: shouldIncludeAddresses ? rest.refundAddress : undefined,
-      payloadPayoutAddress: shouldIncludeAddresses ? rest.payoutAddress : undefined,
+      payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
+      payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
       maybeSeedMatch: seedIdFrom === seedIdTo, // should only matters for EVM to EVM
       ...rest,
     };
