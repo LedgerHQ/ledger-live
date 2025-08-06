@@ -200,15 +200,17 @@ export const getAccountShape: GetAccountShape = async info => {
   const balance = await fetchBalances(address);
   const rawTxs = await fetchTxs(address);
   const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
+  const operations = flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)).sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
 
   const result: Partial<Account> = {
     id: accountId,
     subAccounts: tokenAccounts,
     balance: new BigNumber(balance.total_balance),
     spendableBalance: new BigNumber(balance.spendable_balance),
-    operations: flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)).sort(
-      (a, b) => b.date.getTime() - a.date.getTime(),
-    ),
+    operations,
+    operationsCount: operations.length,
     blockHeight: blockHeight.current_block_identifier.index,
   };
   return result;

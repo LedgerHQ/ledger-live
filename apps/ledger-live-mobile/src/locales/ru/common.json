@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Не забудьте оставить немного средств на потенциальные комиссии."
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Баланс не может быть ниже {{minimumBalance}}. Отправьте всю сумму, чтобы аннулировать счёт."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Вы должны заблокировать не менее {{minimumBondAmount}}."
     },

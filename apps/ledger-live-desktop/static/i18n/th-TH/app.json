@@ -6203,9 +6203,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "ยอดคงเหลือในบัญชีต้องไม่ต่ำกว่า {{minimumBalance}} ส่งสูงสุดไปยังบัญชีที่ว่างเปล่า"
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "คุณต้องผูกมัดอย่างน้อย {{minimumBondAmount}}"
     },

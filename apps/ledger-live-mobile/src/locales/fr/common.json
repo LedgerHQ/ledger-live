@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Vous devez lier au moins {{minimumBondAmount}}."
     },

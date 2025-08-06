@@ -22,15 +22,15 @@ describe("getBalance", () => {
         { value: BigInt("10000000000000000000000"), asset: { type: "native" } },
         {
           value: BigInt("1000000"),
-          asset: { type: "erc20", assetReference: "0x123" },
+          asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
         },
         {
           value: BigInt("2000000"),
-          asset: { type: "erc20", assetReference: "0x456" },
+          asset: { type: "erc20", assetReference: "0x456", assetOwner: "address" },
         },
       ], // expected
     ],
-  ])("should return %s", async (_, operations, tokenBalances, expected) => {
+  ])("returns %s", async (_, operations, tokenBalances, expected) => {
     const mockGetTokenBalance = jest
       .fn()
       .mockImplementation((_currency, _address, contractAddress) => {
@@ -46,6 +46,6 @@ describe("getBalance", () => {
       getLastOperations: jest.fn().mockResolvedValue(operations),
     } as any);
 
-    expect(await getBalance({} as CryptoCurrency, "")).toEqual(expected);
+    expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
   });
 });

@@ -6514,9 +6514,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔금을 충분히 남겨 두세요"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "잔액은 {{minimumBalance}} 미만일 수 없습니다 최대 금액을 전송하여 계정을 비우세요."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "적어도 {{minimumBondAmount}} 이상 본딩해야 합니다."
     },

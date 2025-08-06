@@ -45,7 +45,7 @@ function getOperationType(transaction: NearTransaction, address: string): Operat
 }
 
 function getOperationValue(transaction: NearTransaction, type: OperationType): BigNumber {
-  const amount = transaction.actions[0].data.deposit || 0;
+  const amount = transaction.actions[0]?.data?.deposit || 0;
 
   if (type === "OUT") {
     return new BigNumber(amount).plus(transaction.fee);

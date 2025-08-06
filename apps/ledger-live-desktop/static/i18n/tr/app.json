@@ -6514,9 +6514,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Bakiye {{minimumBalance}} altında olamaz Maksimum miktarı bir boş hesaba gönder."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Bağlanılacak tutar en az {{minimumBondAmount}} olmalıdır."
     },

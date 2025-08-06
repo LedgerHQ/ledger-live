@@ -14,7 +14,6 @@ import {
   PolkadotBondMinimumAmount,
   PolkadotValidatorsRequired,
   PolkadotAllFundsWarning,
-  PolkadotDoMaxSendInstead,
 } from "../types";
 
 import { fromTransactionRaw } from "../bridge/transaction";
@@ -505,26 +504,6 @@ const polkadot: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {
               amount: new NotEnoughBalance(),
-            },
-            warnings: {},
-          },
-        },
-        {
-          name: "[send] Do Max Send Instead error",
-          transaction: fromTransactionRaw({
-            family: "polkadot",
-            recipient: ACCOUNT_SAME_STASHCONTROLLER,
-            amount: "5000000000",
-            mode: "send",
-            era: null,
-            validators: [],
-            fees: null,
-            rewardDestination: null,
-            numSlashingSpans: 0,
-          }),
-          expectedStatus: {
-            errors: {
-              amount: new PolkadotDoMaxSendInstead(),
             },
             warnings: {},
           },

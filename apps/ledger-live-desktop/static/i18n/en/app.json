@@ -6546,9 +6546,6 @@
     "PolkadotAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
-    "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
-    },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least {{minimumBondAmount}}."
     },

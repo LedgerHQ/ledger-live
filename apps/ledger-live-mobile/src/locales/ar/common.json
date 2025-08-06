@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "لا يمكن للرصيد أن يقل عن {{minimumBalance}} أرسل الحد الأقصى الى حساب خالي."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
     },

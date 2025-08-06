@@ -20,7 +20,6 @@ import {
   canNominate,
   isFirstBond,
   hasMinimumBondBalance,
-  getMinimumBalance,
 } from "../bridge/utils";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./bot-deviceActions";
@@ -81,16 +80,6 @@ const polkadot: AppSpec<Transaction> = {
             "send is too low to activate account",
           );
           amount = EXISTENTIAL_DEPOSIT;
-        }
-
-        const minimumBalanceExistential = getMinimumBalance(account);
-        const leftover = account.spendableBalance.minus(amount.plus(POLKADOT_MIN_SAFE));
-        if (
-          minimumBalanceExistential.gt(0) &&
-          leftover.lt(minimumBalanceExistential) &&
-          leftover.gt(0)
-        ) {
-          throw new Error("risk of PolkadotDoMaxSendInstead");
         }
 
         return {

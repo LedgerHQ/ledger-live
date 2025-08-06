@@ -250,10 +250,3 @@ export const calculateAmount = ({
 
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
-
-export const getMinimumBalance = (a: Account): BigNumber => {
-  const lockedBalance = a.balance.minus(a.spendableBalance);
-  return lockedBalance.lte(EXISTENTIAL_DEPOSIT)
-    ? EXISTENTIAL_DEPOSIT.minus(lockedBalance)
-    : new BigNumber(0);
-};

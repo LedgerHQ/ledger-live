@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Kontostand darf nicht unter {{minimumBalance}} liegen. Maximalbetrag zu leerem Konto senden."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Sie müssen eine Kaution von mindestens {{minimumBondAmount}} hinterlegen."
     },

@@ -22,7 +22,6 @@ import {
   PolkadotBondMinimumAmountWarning,
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
-  PolkadotDoMaxSendInstead,
 } from "../types";
 import {
   EXISTENTIAL_DEPOSIT,
@@ -34,7 +33,6 @@ import {
   hasMaxUnlockings,
   calculateAmount,
   getMinimumAmountToBond,
-  getMinimumBalance,
 } from "./utils";
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
@@ -75,16 +73,7 @@ const getSendTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  const minimumBalanceExistential = getMinimumBalance(account);
-  const leftover = account.spendableBalance.minus(totalSpent);
-
-  if (minimumBalanceExistential.gt(0) && leftover.lt(minimumBalanceExistential) && leftover.gt(0)) {
-    errors.amount = new PolkadotDoMaxSendInstead("", {
-      minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-        showCode: true,
-      }),
-    });
-  } else if (!errors.amount && !transaction.useAllAmount && account.spendableBalance.isZero()) {
+  if (!errors.amount && !transaction.useAllAmount && account.spendableBalance.isZero()) {
     errors.amount = new NotEnoughBalance();
   } else if (totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();

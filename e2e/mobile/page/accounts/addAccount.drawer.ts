@@ -80,7 +80,9 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Tap on (Add new or existing account) button")
   async tapAddNewOrExistingAccountButton() {
-    await scrollToId(app.portfolio.allocationSectionTitleId, undefined, 400);
+    if (!(await IsIdVisible(this.addNewOrExistingAccount))) {
+      await scrollToId(this.addNewOrExistingAccount, undefined, 400);
+    }
     await tapById(this.addNewOrExistingAccount);
   }
 }

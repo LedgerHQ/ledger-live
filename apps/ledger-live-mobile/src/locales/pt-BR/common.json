@@ -762,9 +762,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "O saldo não pode ser inferior a {{minimumBalance}}. Enviar máximo para conta vazia."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Você deve vincular pelo menos {{minimumBondAmount}}."
     },
