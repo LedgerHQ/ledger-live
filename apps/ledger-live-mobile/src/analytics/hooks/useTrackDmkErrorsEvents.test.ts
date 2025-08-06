@@ -119,7 +119,7 @@ describe("useTrackDmkErrorsEvents", () => {
         trackScreen: mockedTrackScreen,
       });
       // then
-      expect(mockedTrackScreen).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
+      expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", expectedErrorName, {
         error: expectedErrorName,
         subError: error._tag,
       });
@@ -150,7 +150,7 @@ describe("useTrackDmkErrorsEvents", () => {
       trackScreen: mockedTrackScreen,
     });
     // then
-    expect(mockedTrackScreen).toHaveBeenCalledWith("DeviceErrorTracking", undefined, {
+    expect(mockedTrackScreen).toHaveBeenCalledWith("Error:", "UnregisteredDmkErrorEvent", {
       error: "UnregisteredDmkErrorEvent",
       subError: "UnregisteredDmkErrorEvent",
     });

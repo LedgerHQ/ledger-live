@@ -75,7 +75,7 @@ export const useTrackDmkErrorsEvents = ({
   const properties = { subError: error._tag };
   const groupedError = ErrorEvents.find(({ tags }) => tags.includes(error._tag));
 
-  trackScreen("DeviceErrorTracking", undefined, {
+  trackScreen("Error:", groupedError ? groupedError.name : error._tag, {
     ...properties,
     error: groupedError ? groupedError.name : error._tag,
   });
