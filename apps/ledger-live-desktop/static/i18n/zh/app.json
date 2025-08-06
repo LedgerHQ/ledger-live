@@ -6727,7 +6727,7 @@
       "description" : "解锁您的设备并重试。",
       "descriptionWithProductName" : "解锁您的 {{ productName }} 并重试。"
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "您的 Ledger 设备尚未设置",
       "description" : "设置设备以便开始使用。我们将引导您完成设置流程。",
       "goToOnboardingButton" : "设置我的 Ledger 设备",

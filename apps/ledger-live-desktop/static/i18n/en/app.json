@@ -6793,7 +6793,7 @@
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     },
-    "DeviceNotOnboardedError": {
+    "DeviceNotOnboardedDAError": {
       "title": "Your Ledger is not set up",
       "description": "Set it up to start using it. We will guide you through the setup process.",
       "goToOnboardingButton": "Set up my Ledger",

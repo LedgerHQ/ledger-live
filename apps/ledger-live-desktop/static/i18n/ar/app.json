@@ -6727,7 +6727,7 @@
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "لم يتم إعداد جهازك Ledger",
       "description" : "قم بإعداده لتبدأ استخدامه. سنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي Ledger",

@@ -6727,7 +6727,7 @@
       "description" : "Desbloqueie seu dispositivo e tente novamente.",
       "descriptionWithProductName" : "Desbloqueie sua {{ productName }} e tente novamente."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Sua Ledger não está configurada",
       "description" : "Configure para usá-lá. Vamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar minha Ledger",

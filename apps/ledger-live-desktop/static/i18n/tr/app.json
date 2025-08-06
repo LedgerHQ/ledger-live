@@ -6727,7 +6727,7 @@
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledger cihazınızın kurulumu yapılmadı",
       "description" : "Kullanmaya başlamak için cihazınızın kurulumunu yapın. Kurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Ledger'ımı kur",

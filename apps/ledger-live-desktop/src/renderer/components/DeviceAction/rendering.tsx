@@ -709,8 +709,8 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       <Wrapper id="error-device-not-onboarded">
         <ErrorBody
           top={device ? <DeviceIllustration size={120} deviceId={device.modelId} /> : null}
-          title={t("errors.DeviceNotOnboardedError.title")}
-          description={t("errors.DeviceNotOnboardedError.description")}
+          title={t("errors.DeviceNotOnboardedDAError.title")}
+          description={t("errors.DeviceNotOnboardedDAError.description")}
           buttons={
             <ButtonV3
               variant="main"
@@ -719,10 +719,10 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
               Icon={IconsLegacy.ArrowRightMedium}
             >
               {productName
-                ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                ? t("errors.DeviceNotOnboardedDAError.goToOnboardingButtonWithProductName", {
                     productName,
                   })
-                : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+                : t("errors.DeviceNotOnboardedDAError.goToOnboardingButton")}
             </ButtonV3>
           }
         />

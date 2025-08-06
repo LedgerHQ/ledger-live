@@ -6727,7 +6727,7 @@
       "description" : "Разблокируйте устройство и повторите попытку.",
       "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ваш Ledger ещё не настроен",
       "description" : "Сделайте это, чтобы взаимодействовать с ним. Мы вам поможем.",
       "goToOnboardingButton" : "Настроить мой Ledger",
