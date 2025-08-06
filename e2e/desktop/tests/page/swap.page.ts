@@ -205,7 +205,7 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     return await webview
       .locator(
-        '[data-testid^="compact-quote-container-"][data-testid$="-fixed"], [data-testid^="compact-quote-container-"][data-testid$="-float"]',
+        '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
       )
       .allTextContents();
   }
@@ -214,10 +214,10 @@ export class SwapPage extends AppPage {
   async extractQuotesAndFees(quoteContainers: string[]) {
     const quotes = quoteContainers
       .map(quote => {
-        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
+        const match = quote.match(/Network Fees \$(\d+\.\d+).*?[A-Z]{2,10}\$(\d+\.\d+)/);
         if (match) {
-          const rate = parseFloat(match[1]);
-          const fees = parseFloat(match[2]);
+          const fees = parseFloat(match[1]);
+          const rate = parseFloat(match[2]);
           return { rate, fees, quote };
         }
         return undefined;
@@ -240,27 +240,10 @@ export class SwapPage extends AppPage {
           current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
         null,
       );
-      expect(bestOffer?.quote).toContain("Best Offer");
+      expect(bestOffer?.quote).toMatch(quoteContainers[0]);
     } catch (error) {
       console.error("Error checking Best offer:", error);
     }
-  }
-
-  private findBestQuote(quotes: { rate: number; fees: number; quote: string }[]) {
-    if (quotes.length === 0) return null;
-
-    return quotes.slice(1).reduce((best, current) => {
-      const bestValue = best.rate - best.fees;
-      const currentValue = current.rate - current.fees;
-
-      if (currentValue > bestValue) return current;
-      if (currentValue < bestValue) return best;
-
-      const currentIsLabeled = current.quote.includes("Best Offer");
-      const bestIsLabeled = best.quote.includes("Best Offer");
-
-      return currentIsLabeled && !bestIsLabeled ? current : best;
-    }, quotes[0]);
   }
 
   @step("Wait for exchange to be available")
