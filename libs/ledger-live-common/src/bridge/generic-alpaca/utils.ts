@@ -102,7 +102,7 @@ export function transactionToIntent(
   let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
   if (transaction.mode) {
     switch (transaction.mode) {
-      case "changetrust":
+      case "changeTrust":
         transactionType = "changeTrust";
         break;
       case "send":

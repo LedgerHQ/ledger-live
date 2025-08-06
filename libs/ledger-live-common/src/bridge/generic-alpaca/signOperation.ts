@@ -57,27 +57,27 @@ function applyMemoToIntent(
 /**
  * Applies asset information to transaction intent
  */
-function applyAssetInfo(
-  transactionIntent: TransactionIntent<any>,
-  assetReference?: string,
-  assetOwner?: string,
-): TransactionIntent<any> {
-  const txWithAsset = transactionIntent as TransactionIntent<any>;
+// function applyAssetInfo(
+//   transactionIntent: TransactionIntent<any>,
+//   assetReference?: string,
+//   assetOwner?: string,
+// ): TransactionIntent<any> {
+//   const txWithAsset = transactionIntent as TransactionIntent<any>;
 
-  if (assetReference && assetOwner) {
-    txWithAsset.asset = {
-      type: "token",
-      assetReference: assetReference,
-      assetOwner: assetOwner,
-    };
-  } else {
-    txWithAsset.asset = {
-      type: "native",
-    };
-  }
+//   if (assetReference && assetOwner) {
+//     txWithAsset.asset = {
+//       type: "token",
+//       assetReference: assetReference,
+//       assetOwner: assetOwner,
+//     };
+//   } else {
+//     txWithAsset.asset = {
+//       type: "native",
+//     };
+//   }
 
-  return txWithAsset;
-}
+//   return txWithAsset;
+// }
 
 /**
  * Enriches transaction intent with memo and asset information

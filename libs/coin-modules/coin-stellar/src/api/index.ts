@@ -69,8 +69,12 @@ async function craft(
   transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: FeeEstimation,
 ): Promise<string> {
-  const fees = customFees?.value ?? (await estimateFees(transactionIntent.sender));
-
+  let fees = transactionIntent.fees;
+  if (customFees?.value) {
+    fees = customFees?.value ?? (await estimateFees(transactionIntent.sender));
+  } else {
+    fees = transactionIntent.fees ?? (await estimateFees(transactionIntent.sender));
+  }
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
   //   throw new Error("Stellar only supports one memo per transaction.");

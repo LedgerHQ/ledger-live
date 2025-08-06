@@ -5,7 +5,7 @@ import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/lib/api/types";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 export interface OperationCommon extends Operation {
   extra: Record<string, any>;
@@ -107,12 +107,5 @@ export function buildSubAccounts({
 }
 
 export function findToken(currency: CryptoCurrency, balance: Balance): TokenCurrency | undefined {
-  if (
-    balance.asset?.type !== "native" &&
-    "assetReference" in balance.asset &&
-    "assetOwner" in balance.asset
-  ) {
-    return findTokenByAddressInCurrency(balance.asset?.assetOwner as string, currency.id);
-  }
-  return undefined;
+  return findTokenById(`${currency.family}/asset/${getAssetIdFromAsset(balance.asset)}`);
 }
