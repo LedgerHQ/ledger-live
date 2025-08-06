@@ -385,6 +385,7 @@
         "onhold" : "보류 중",
         "expired" : "만료됨",
         "finished" : "완료됨",
+        "unknown" : "처리 중",
         "refunded" : "환불 처리됨"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "finished" : "스왑이 성공적으로 완료되었습니다.",
-        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
+        "unknown" : "제공업체의 정보를 기다리는 중입니다."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -2386,6 +2387,10 @@
         "title" : "장치"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "블라인드 서명 필요",
+          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -4468,6 +4473,40 @@
             "check" : "스팸 점수"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft" : {
           "report" : "신고하기",
           "contractAddress" : "계약 주소",
@@ -5907,10 +5946,6 @@
       "title" : "장치 연결 해제됨",
       "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
-    },
     "EConnReset" : {
       "title" : "Ledger 애플리케이션 스토어에 연결할 수 없습니다.",
       "description" : "인터넷 연결이 끊어졌거나 비정상적인 구성을 사용하고 있을 수 있습니다. 연결(프록시 또는 방화벽)을 차단하는 것이 있는지 확인하고 시작하세요. 문제가 지속되면 아래의 해결 방법을 클릭하거나 고객 지원팀에 문의해주세요."
@@ -6728,10 +6763,10 @@
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Ledger 설정이 완료되지 않았습니다",
-      "description" : "장치를 사용하려면 먼저 설정이 필요합니다. 설정 절차를 안내해드리겠습니다.",
-      "goToOnboardingButton" : "내 Ledger 설정",
-      "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+      "title" : "Your Ledger is not set up",
+      "description" : "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my Ledger",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "트랜잭션을 가져오지 못했습니다",
@@ -6807,6 +6842,118 @@
     "AddressesSanctionedError" : {
       "title" : "사용자 보호 조치 실행 중",
       "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DisconnectError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceLockedError" : {
+      "title" : "장치 잠김",
+      "description" : "장치가 잠겨 있습니다. 잠금을 해제한 후 다시 시도해 주세요."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "메모리 부족",
+      "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "지원되지 않는 운영체제",
+      "description" : "이 장치의 운영체제는 현재 지원되지 않습니다. Ledger Live를 통해 업데이트해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "배터리 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "배터리 오류",
+      "description" : "배터리 상태에 문제가 발생했습니다. Ledger 지원팀에 문의하세요"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDAError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "ReceiverApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "FramerApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     }
   },
   "cryptoOrg" : {
@@ -7349,7 +7496,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
