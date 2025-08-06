@@ -3,9 +3,12 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { StrKey } from "@stellar/stellar-sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { fetchSigners } from "../network";
-import type { Transaction, TransactionRaw } from "../types";
+import type { BalanceAsset, Transaction, TransactionRaw } from "../types";
 
 export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 export function getAmountValue(
   account: Account,
