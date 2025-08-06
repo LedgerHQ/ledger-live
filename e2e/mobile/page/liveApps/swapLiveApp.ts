@@ -157,24 +157,18 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "fiatAmount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-heading")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-infoIcon"),
-    ).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-value")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-fiat-value"),
-    ).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-heading")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-value")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-fiat-value")).toExist();
+
+    const extraFeesContainer = getWebElementByTestId(baseProviderLocator + "extraFeesContainer");
+    await detoxExpect(extraFeesContainer).toExist();
+    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-infoIcon")).toExist();
+
     if (
       provider === Provider.ONE_INCH.name ||
       provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-heading")).toExist();
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-value")).toExist();
+      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-infoIcon")).toExist();
     }
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
@@ -253,7 +247,7 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.showDetailslink);
     const showDetailsLink = getWebElementByTestId(this.showDetailslink);
     await showDetailsLink.runScript(el => el.click());
-    await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
+    await waitWebElementByTestId(this.quotesContainerErrorIcon);
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
 
@@ -300,22 +294,18 @@ export default class SwapLiveAppPage {
   @Step("Select specific provider $0")
   async selectSpecificProvider(provider: string) {
     const providersList = await this.getProviderList();
-
     if (!providersList.includes(provider)) {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
-
-    await waitWebElementByTestId(this.specificQuoteCardProviderName(provider));
-    const selectedProvider = getWebElementsByIdAndText(
-      this.specificQuoteCardProviderName(provider),
-      provider,
-    );
-    await tapWebElementByElement(selectedProvider);
+    const providerName = Provider.getNameByUiName(provider);
+    const providerTestId = this.specificQuoteCardProviderName(providerName);
+    await waitWebElementByTestId(providerTestId);
+    await tapWebElementByTestId(providerTestId);
   }
 
   @Step("Go to $0 live app")
   async goToProviderLiveApp(provider: string) {
-    const continueButton = getWebElementByTestId(this.executeSwapButton, 1);
+    const continueButton = getWebElementByTestId(this.executeSwapButton);
     await detoxExpect(continueButton).toExist();
     await this.checkExchangeButtonHasProviderName(provider);
     await this.tapExecuteSwap();
