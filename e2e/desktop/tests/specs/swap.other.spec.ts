@@ -460,7 +460,7 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
           await app.swap.selectToAccountCoinSelector(electronApp);
           await app.modularDrawer.selectAssetByTicker(creditAccount.currency);
           await app.modularDrawer.selectNetwork(creditAccount.currency);
-          await app.swapDrawer.clickOnAddAccountButton();
+          await app.modularDrawer.clickOnAddAccountButton();
 
           await app.addAccount.addAccounts();
           await app.addAccount.done();
