@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 6.6.0-nightly.1
+
+### Minor Changes
+
+- [#11228](https://github.com/LedgerHQ/ledger-live/pull/11228) [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: remove send max error on Polkadot
+
 ## 6.5.1-nightly.0
 
 ### Patch Changes

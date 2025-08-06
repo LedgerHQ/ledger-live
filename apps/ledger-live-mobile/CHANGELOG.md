@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.89.0-nightly.2
+
+### Minor Changes
+
+- [#11236](https://github.com/LedgerHQ/ledger-live/pull/11236) [`25a357e`](https://github.com/LedgerHQ/ledger-live/commit/25a357e0f9546560166543f021b98fe9d0dadccd) Thanks [@themooneer](https://github.com/themooneer)! - only 1 tiers chains will be reported on datadog wallet view's custom attributes
+
+- [#11228](https://github.com/LedgerHQ/ledger-live/pull/11228) [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: remove send max error on Polkadot
+
+### Patch Changes
+
+- [#11186](https://github.com/LedgerHQ/ledger-live/pull/11186) [`3d2495c`](https://github.com/LedgerHQ/ledger-live/commit/3d2495c2478cf091fab98720fca5ff7b9eaecdbd) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix My Ledger Filter Drawer Cropped
+
+- Updated dependencies [[`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`8189aaf`](https://github.com/LedgerHQ/ledger-live/commit/8189aaf419d383158185ae3182a1b61fabd61e11)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.0-nightly.1
+
 ## 3.89.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.124.0-nightly.2
+
+### Minor Changes
+
+- [#11228](https://github.com/LedgerHQ/ledger-live/pull/11228) [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: remove send max error on Polkadot
+
+### Patch Changes
+
+- Updated dependencies [[`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`8189aaf`](https://github.com/LedgerHQ/ledger-live/commit/8189aaf419d383158185ae3182a1b61fabd61e11)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.0-nightly.1
+  - @ledgerhq/live-common@34.44.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.8.3-nightly.2
+
 ## 2.124.0-nightly.1
 
 ### Minor Changes

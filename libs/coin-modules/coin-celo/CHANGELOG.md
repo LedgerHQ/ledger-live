@@ -1,5 +1,12 @@
 # @ledgerhq/coin-celo
 
+## 1.1.14-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa)]:
+  - @ledgerhq/coin-evm@2.26.0-nightly.1
+
 ## 1.1.14-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 5.8.0-nightly.1
+
+### Minor Changes
+
+- [#11183](https://github.com/LedgerHQ/ledger-live/pull/11183) [`8189aaf`](https://github.com/LedgerHQ/ledger-live/commit/8189aaf419d383158185ae3182a1b61fabd61e11) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(coin-monitoring): monitor tier two adresses
+
 ## 5.7.1-nightly.0
 
 ### Patch Changes

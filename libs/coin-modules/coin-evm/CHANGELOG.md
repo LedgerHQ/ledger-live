@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.26.0-nightly.1
+
+### Minor Changes
+
+- [#11221](https://github.com/LedgerHQ/ledger-live/pull/11221) [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): populate `assetOwner` in `getBalance` and `listOperations`
+
 ## 2.26.0-nightly.0
 
 ### Minor Changes
