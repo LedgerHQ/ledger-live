@@ -141,7 +141,7 @@ export class EarnPage extends WebViewAppPage {
     }
   }
 
-  @step("Click on learn more button for $1")
+  @step("Click on learn more button for $0")
   async clickLearnMoreButton(currency: string) {
     await this.clickElement(this.learnMoreButton(currency));
   }
