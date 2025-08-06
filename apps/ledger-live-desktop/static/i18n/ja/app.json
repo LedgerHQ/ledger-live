@@ -385,6 +385,7 @@
         "onhold" : "保留中",
         "expired" : "期限切れ",
         "finished" : "完了",
+        "unknown" : "処理中",
         "refunded" : "返金済み"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
         "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
         "finished" : "スワップが正常に完了しました。",
-        "unknown" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。"
+        "unknown" : "プロバイダーからの情報を待っています。"
       },
       "date" : "日付",
       "from" : "送付元",
@@ -2386,6 +2387,10 @@
         "title" : "デバイス"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "ブラインド署名が必要です",
+          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -4468,6 +4473,40 @@
             "check" : "スパムスコア"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft" : {
           "report" : "報告",
           "contractAddress" : "コントラクトアドレス",
@@ -5907,10 +5946,6 @@
       "title" : "デバイスが切断されました",
       "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "デバイスが切断されました",
-      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
-    },
     "EConnReset" : {
       "title" : "Ledgerアプリケーションストアに到達できません",
       "description" : "インターネット接続がダウンしているか、異常が発生している可能性があります。接続をブロックしているもの（プロキシまたはファイアウォール）の確認から始めてください。問題が解決しない場合は、以下をクリックして解決策を確認するか、当社のカスタマーサポートにご連絡ください。"
@@ -6728,10 +6763,10 @@
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Ledgerが設定されていません",
-      "description" : "セットアップして使用を開始してください。セットアッププロセスをご案内します。",
-      "goToOnboardingButton" : "Ledgerをセットアップ",
-      "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
+      "title" : "Your Ledger is not set up",
+      "description" : "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my Ledger",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "トランザクションの取得に失敗しました",
@@ -6807,6 +6842,118 @@
     "AddressesSanctionedError" : {
       "title" : "お客様の安全を確保",
       "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DisconnectError" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "TransportNotSupportedError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "NoTransportProvidedError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ConnectionOpeningError" : {
+      "title" : "接続方法エラー",
+      "description" : "使用されたデバイスの接続方法に問題がありました。問題が解決しない場合は、別の接続方法をお試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "デバイスが初期設定されていません",
+      "description" : "デバイスは、使用準備が整っていません。初期設定手順を完了後に、もう一度お試しください。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "デバイスが初期設定されていません",
+      "description" : "デバイスは、使用準備が整っていません。初期設定手順を完了後に、もう一度お試しください。"
+    },
+    "DeviceLockedError" : {
+      "title" : "デバイスがロックされました",
+      "description" : "デバイスがロックされています。ロックを解除してもう一度お試しください。"
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "メモリが足りません",
+      "description" : "デバイスのメモリが不足しています。アプリをアンインストールしてもう一度お試しください。"
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OSはサポートされていません",
+      "description" : "お使いのデバイスのオペレーティングシステムはサポートされていません。Ledger Liveから更新していただくか、問題が発生した場合はLedgerサポートにご連絡ください。"
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "バッテリーエラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "バッテリーエラー",
+      "description" : "バッテリー状態エラー。Ledgerサポートにご連絡ください。"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDAError" : {
+      "title" : "デバイス接続エラー",
+      "description" : "何か問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDeviceError" : {
+      "title" : "デバイスが認識されません",
+      "description" : "Ledger Liveはデバイスを認識できませんでした。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "ReceiverApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "FramerApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "SendApduTimeoutError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "AlreadySendingApduError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "通信エラー",
+      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     }
   },
   "cryptoOrg" : {
@@ -7349,7 +7496,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "Ledger Live is not available in this location.",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {
