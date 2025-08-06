@@ -5,7 +5,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
-import { CountervaluesManagedProvider } from "~/components/CountervaluesProvider";
+import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
@@ -33,7 +33,7 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
         <WalletSyncProvider>
           <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
             <CountervaluesMarketcapBridgedProvider>
-              <CountervaluesManagedProvider initialState={initialCountervalues}>
+              <CountervaluesBridgedProvider initialState={initialCountervalues}>
                 <AppDataStorageProvider>
                   <OnboardingContextProvider>
                     <PostOnboardingProviderWrapped>
@@ -48,7 +48,7 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                     </PostOnboardingProviderWrapped>
                   </OnboardingContextProvider>
                 </AppDataStorageProvider>
-              </CountervaluesManagedProvider>
+              </CountervaluesBridgedProvider>
             </CountervaluesMarketcapBridgedProvider>
           </DeviceManagementKitProvider>
         </WalletSyncProvider>

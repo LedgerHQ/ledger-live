@@ -18,7 +18,7 @@ import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import { CountervaluesManagedProvider } from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
 import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
@@ -82,7 +82,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
               <AppDataStorageProvider>
                 <DeviceManagementKitProvider>
                   <CountervaluesMarketcapBridgedProvider>
-                    <CountervaluesManagedProvider initialState={initialCountervalues}>
+                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
                       <ToastProvider>
                         <AnnouncementProviderWrapper>
                           <Router>
@@ -103,7 +103,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           </Router>
                         </AnnouncementProviderWrapper>
                       </ToastProvider>
-                    </CountervaluesManagedProvider>
+                    </CountervaluesBridgedProvider>
                   </CountervaluesMarketcapBridgedProvider>
                 </DeviceManagementKitProvider>
               </AppDataStorageProvider>

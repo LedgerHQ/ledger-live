@@ -304,60 +304,60 @@ export default class Root extends Component {
 
   render() {
     return (
-      <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-          {(ready, initialCountervalues) =>
-            ready ? (
-              <>
-                <SetEnvsFromSettings />
-                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-                <HookSentry />
-                <SegmentSetup />
-                <HookNotifications />
-                <HookDynamicContentCards />
-                <TermsAndConditionMigrateLegacyData />
-                <QueuedDrawersContextProvider>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <I18nextProvider i18n={i18n}>
-                        <LocaleProvider>
-                          <PlatformAppProviderWrapper>
-                            <SafeAreaProvider>
-                              <PerformanceProvider>
-                                <StorylyProvider>
-                                  <StylesProvider>
-                                    <StyledStatusBar />
-                                    <NavBarColorHandler />
-                                    <AuthPass>
-                                      <GestureHandlerRootView style={styles.root}>
-                                        <BottomSheetModalProvider>
-                                          <AppProviders initialCountervalues={initialCountervalues}>
+      <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
+        {(ready, initialCountervalues) =>
+          ready ? (
+            <>
+              <SetEnvsFromSettings />
+              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
+              <HookSentry />
+              <SegmentSetup />
+              <HookNotifications />
+              <HookDynamicContentCards />
+              <TermsAndConditionMigrateLegacyData />
+              <QueuedDrawersContextProvider>
+                <FirebaseRemoteConfigProvider>
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <I18nextProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <PerformanceProvider>
+                              <StorylyProvider>
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <AuthPass>
+                                    <GestureHandlerRootView style={styles.root}>
+                                      <BottomSheetModalProvider>
+                                        <AppProviders initialCountervalues={initialCountervalues}>
+                                          <RebootProvider onRebootStart={this.onRebootStart}>
                                             <AppGeoBlocker>
                                               <AppVersionBlocker>
                                                 <App />
                                               </AppVersionBlocker>
                                             </AppGeoBlocker>
-                                          </AppProviders>
-                                        </BottomSheetModalProvider>
-                                      </GestureHandlerRootView>
-                                    </AuthPass>
-                                  </StylesProvider>
-                                </StorylyProvider>
-                              </PerformanceProvider>
-                            </SafeAreaProvider>
-                          </PlatformAppProviderWrapper>
-                        </LocaleProvider>
-                      </I18nextProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </QueuedDrawersContextProvider>
-              </>
-            ) : (
-              <LoadingApp />
-            )
-          }
-        </LedgerStoreProvider>
-      </RebootProvider>
+                                          </RebootProvider>
+                                        </AppProviders>
+                                      </BottomSheetModalProvider>
+                                    </GestureHandlerRootView>
+                                  </AuthPass>
+                                </StylesProvider>
+                              </StorylyProvider>
+                            </PerformanceProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nextProvider>
+                  </FirebaseFeatureFlagsProvider>
+                </FirebaseRemoteConfigProvider>
+              </QueuedDrawersContextProvider>
+            </>
+          ) : (
+            <LoadingApp />
+          )
+        }
+      </LedgerStoreProvider>
     );
   }
 }
