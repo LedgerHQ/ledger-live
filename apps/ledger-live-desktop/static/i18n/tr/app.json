@@ -344,7 +344,7 @@
           "provider" : "sağlayıcı",
           "rate" : "kur",
           "fees" : "Ağ Ücretleri",
-          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
+          "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -385,6 +385,7 @@
         "onhold" : "Durduruldu",
         "expired" : "Süresi doldu",
         "finished" : "Tamamlandı",
+        "unknown" : "İşleniyor",
         "refunded" : "Para iadesi yapıldı"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
         "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
         "finished" : "Takas işleminiz başarıyla tamamlandı.",
-        "unknown" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun."
+        "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
       },
       "date" : "Tarih",
       "from" : "Gönderici",
@@ -2386,6 +2387,10 @@
         "title" : "Cihaz"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Kör imzalama gerekir",
+          "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+        },
         "utxoLag" : "Hesapta yüksek miktarda coin bulunduğu için bu işlemin doğrulanması ve imzalanması uzun sürebilir.",
         "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
         "from" : "Gönderici",
@@ -4468,6 +4473,40 @@
             "check" : "Spam Puanı"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft" : {
           "report" : "İhbar et",
           "contractAddress" : "Sözleşme Adresi",
@@ -5907,10 +5946,6 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
-    },
     "EConnReset" : {
       "title" : "Ledger uygulama mağazasına ulaşılamıyor",
       "description" : "İnternet bağlantınız kapalı olabilir veya olağan dışı bir yapılandırma kullanıyor olabilir. İlk olarak proxy veya güvenlik duvarı gibi bağlantınızı engelleyen bir unsurun olup olmadığını kontrol edin. Sorun devam ederse çözümleri görmek için aşağıdaki düğmeye tıklayın veya müşteri destek ekibimizle iletişime geçin."
@@ -6728,10 +6763,10 @@
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Ledger cihazınızın kurulumu yapılmadı",
-      "description" : "Kullanmaya başlamak için cihazınızın kurulumunu yapın. Kurulum sürecinde size yardımcı olacağız.",
-      "goToOnboardingButton" : "Ledger'ımı kur",
-      "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+      "title" : "Your Ledger is not set up",
+      "description" : "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my Ledger",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "İşlemler alınamadı",
@@ -6807,6 +6842,118 @@
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DisconnectError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceLockedError" : {
+      "title" : "Cihaz kilitli",
+      "description" : "Cihazınız kilitlenmiş. Lütfen kilidini açıp tekrar deneyin."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Bellek yetersiz",
+      "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "İşletim sistemi desteklenmiyor",
+      "description" : "Cihazınızın işletim sistemi desteklenmiyor. Lütfen Ledger Live üzerinden güncelleyin veya zorluk yaşarsanız yardım almak için Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Pil hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Pil hatası",
+      "description" : "Pil durumu hatası. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDAError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ReceiverApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "FramerApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     }
   },
   "cryptoOrg" : {
@@ -7349,7 +7496,7 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "description" : "Ledger Live bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
