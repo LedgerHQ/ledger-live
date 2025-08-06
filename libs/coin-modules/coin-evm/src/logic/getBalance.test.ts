@@ -10,12 +10,7 @@ describe("getBalance", () => {
       "native balance only", // test description
       { lastTokenOperations: [] }, // operation
       {}, // token balances (empty)
-      [
-        {
-          value: BigInt("10000000000000000000000"),
-          asset: { type: "native" },
-        },
-      ], // expected
+      [{ value: BigInt("10000000000000000000000"), asset: { type: "native" } }], // expected
     ],
     [
       "native and token balances", // test description
