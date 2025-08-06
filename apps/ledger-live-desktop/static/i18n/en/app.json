@@ -5973,10 +5973,6 @@
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try again."
     },
-    "DisconnectedDeviceDuringOperation": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try again."
-    },
     "EConnReset": {
       "title": "The Ledger application store can't be reached",
       "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
@@ -6873,6 +6869,118 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedWhileSendingError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedBeforeSendingApdu": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError": {
+      "title": "Device locked",
+      "description": "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError": {
+      "title": "Not enough memory",
+      "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError": {
+      "title": "OS is unsupported",
+      "description": "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError": {
+      "title": "Battery error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError": {
+      "title": "Battery error",
+      "description": "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     }
   },
   "cryptoOrg": {
