@@ -65,7 +65,7 @@ export function runSwapWithoutAccountTest(
       await app.common.selectFirstAccount();
     } else {
       await app.common.tapProceedButton();
-      await app.addAccount.addAccountAtIndex(asset.currency.name, asset.currency.id, 0);
+      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
       await app.common.selectFirstAccount();
     }
   };
