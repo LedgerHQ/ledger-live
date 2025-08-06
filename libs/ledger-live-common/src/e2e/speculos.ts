@@ -1,10 +1,10 @@
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import {
-  listAppCandidates,
   createSpeculosDevice,
-  releaseSpeculosDevice,
   findLatestAppCandidate,
+  listAppCandidates,
+  releaseSpeculosDevice,
   SpeculosTransport,
 } from "../load/speculos";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
@@ -25,20 +25,20 @@ import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
 import { sendStellar } from "./families/stellar";
-import { sendCardano, delegateCardano } from "./families/cardano";
+import { delegateCardano, sendCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
-import { sendAptos } from "./families/aptos";
+import { delegateAptos, sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
-import { delegateAptos } from "./families/aptos";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
+import { AppInfos } from "./enum/AppInfos";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -618,31 +618,24 @@ export async function goToSettings() {
   await pressBoth();
 }
 
+const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
+  [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
+  [AppInfos.BINANCE_SMART_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
+  [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
+  [AppInfos.SOLANA, [DeviceLabels.PUBKEY, DeviceLabels.APPROVE]],
+  [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
+  [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
+  [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],
+]);
+
+const DEFAULT_LABELS: [string, string] = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE];
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
-  let deviceLabels: string[];
+  const labels = APP_LABEL_MAP.get(account.currency.speculosApp) ?? DEFAULT_LABELS;
+  const [firstLabel, confirmLabel] = labels;
 
-  switch (account.currency) {
-    case Currency.SOL:
-      deviceLabels = [DeviceLabels.PUBKEY, DeviceLabels.APPROVE, DeviceLabels.REJECT];
-      break;
-    case Currency.DOT:
-    case Currency.ATOM:
-      deviceLabels = [
-        DeviceLabels.PLEASE_REVIEW,
-        DeviceLabels.CAPS_APPROVE,
-        DeviceLabels.CAPS_REJECT,
-      ];
-      break;
-    case Currency.BTC:
-      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.CANCEL];
-      break;
-    default:
-      deviceLabels = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT];
-      break;
-  }
-
-  await waitFor(deviceLabels[0]);
-  const events = await pressUntilTextFound(deviceLabels[1]);
+  await waitFor(firstLabel);
+  const events = await pressUntilTextFound(confirmLabel);
   const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
   expect(isAddressCorrect).toBeTruthy();
   await pressBoth();
