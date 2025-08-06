@@ -4,4 +4,5 @@ export { DeviceManagementKitTransport } from "./transport/DeviceManagementKitTra
 export {
   isAllowedOnboardingStatePollingErrorDmk,
   isDisconnectedWhileSendingApduError,
+  isDmkError,
 } from "./errors";
