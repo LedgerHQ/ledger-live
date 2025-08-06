@@ -385,6 +385,7 @@
         "onhold" : "Удерживается",
         "expired" : "Просрочено",
         "finished" : "Завершено",
+        "unknown" : "Обрабатываем...",
         "refunded" : "Произведён возврат"
       }
     },
@@ -462,6 +463,8 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+      "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
       "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
@@ -571,7 +574,7 @@
         "pending" : "Подождите, оператор обрабатывает транзакцию",
         "onhold" : "Чтобы решить эту проблему, обратитесь к поставщику услуг обмена и сообщите ID операции.",
         "finished" : "Обмен произведён успешно.",
-        "unknown" : "Чтобы решить эту проблему, обратитесь к оператору услуг обмена и сообщите ID операции."
+        "unknown" : "Ждём информацию от оператора..."
       },
       "date" : "Дата",
       "from" : "Откуда",
@@ -2386,6 +2389,10 @@
         "title" : "Устройство"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Требуется слепая подпись",
+          "description" : "Невозможно проверить данные транзакции на устройстве Ledger. Её подписание может привести к потере криптоактивов. Одобряйте транзакцию только в том случае, если доверяете сайту."
+        },
         "utxoLag" : "Подтверждение и подписание операции может занять много времени ввиду большого количества монет на счету.",
         "subaccountsWarning" : "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {{ currency }}",
         "from" : "Откуда",
@@ -4466,6 +4473,40 @@
             "spam" : "Жалоба на спам",
             "refresh" : "Обновление метаданных",
             "check" : "Оценка спама"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
           }
         },
         "debugSpamNft" : {
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "Страна не обслуживается",
-    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "description" : "Ledger Live недоступно в этой локации.",
     "learnMore" : "Подробнее..."
   },
   "versionBlocking" : {
