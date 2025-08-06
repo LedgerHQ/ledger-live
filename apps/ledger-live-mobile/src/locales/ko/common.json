@@ -3656,7 +3656,8 @@
           "refunded" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
           "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
           "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
-          "finished" : "스왑이 성공적으로 완료되었습니다."
+          "finished" : "스왑이 성공적으로 완료되었습니다.",
+          "unknown" : "제공업체의 정보를 기다리는 중입니다."
         }
       },
       "missingApp" : {
@@ -3761,6 +3762,8 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+        "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
         "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
@@ -4042,6 +4045,10 @@
       "quantityAvailable" : "이용 가능한 수량"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "블라인드 서명 필요",
+        "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+      },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
       "validateTag" : "태그 검증",
@@ -7761,7 +7768,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
@@ -7773,7 +7780,10 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
-    "searchPlaceholder" : "검색"
+    "searchPlaceholder" : "검색",
+    "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "accountCount" : "{{count}}개의 계정 (감지됨)",
+    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
