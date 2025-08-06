@@ -372,6 +372,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
@@ -628,6 +629,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
