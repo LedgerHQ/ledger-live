@@ -1,5 +1,4 @@
 import type {
-  // Account,
   Balance,
   Block,
   BlockInfo,
@@ -7,9 +6,7 @@ import type {
   FeeEstimation,
   Pagination,
   TransactionIntent,
-  // Transaction,
   TransactionValidation,
-  // AccountInfo,
   Api,
   AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
@@ -180,10 +177,6 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    // getAccountInfo: buildGetAccountInfo(networkFamily),
-    // getSpendableBalance(address) {
-    //
-    // },
     getSequence: buildGetSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),

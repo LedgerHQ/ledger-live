@@ -46,7 +46,6 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
       const accountInfo = await getAccountInfo(address);
       return accountInfo.sequence;
     },
-    // getAccountInfo,
   };
 }
 

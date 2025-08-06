@@ -202,10 +202,7 @@ const account = JSON.parse(`
 describe("computeBalance", () => {
   it("returns expected value", () => {
     const balance = computeBalance(account);
-    expect(balance).toEqual({
-      value: BigInt("27781772"),
-      asset: { type: "native" },
-    });
+    expect(balance).toEqual({ value: BigInt("27781772"), asset: { type: "native" } });
   });
 });
 

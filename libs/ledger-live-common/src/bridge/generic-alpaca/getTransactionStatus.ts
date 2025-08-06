@@ -1,6 +1,5 @@
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
-
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";

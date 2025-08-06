@@ -26,18 +26,6 @@ const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
-// const account = {
-//   address: SENDER,
-//   balance: 50_000_000n,
-//   currencyUnit: {
-//     code: "XRP",
-//     magnitude: 6,
-//     name: "XRP",
-//     symbol: "XRP",
-//   },
-//   currencyName: "XRP",
-// };
-
 describe("getTransactionStatus", () => {
   afterEach(() => {
     jest.clearAllMocks();

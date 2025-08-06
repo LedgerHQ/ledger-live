@@ -50,11 +50,7 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
     },
     details: {
       sequence: operation.transactionSequenceNumber,
-      // NOTE: could be in operation.details instead?
-      // blockTime: operation.extra.blockTime,
-      // index: operation.extra.index,
       ledgerOpType: operation.extra.ledgerOpType,
-      // pagingToken: operation.extra.pagingToken,
       assetAmount: operation.extra.assetAmount
         ? operation.extra.assetAmount
         : operation.value.toString(),

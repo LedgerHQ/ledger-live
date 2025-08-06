@@ -98,8 +98,6 @@ export type TransactionCommon = {
   amount: BigNumber;
   recipient: string;
   recipientDomain?: DomainServiceResolution;
-  // mode?: string | undefined;
-  // fees?: BigNumber | null | undefined; // legacy field, use fee instead
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null | undefined;

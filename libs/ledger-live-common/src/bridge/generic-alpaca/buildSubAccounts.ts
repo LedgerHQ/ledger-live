@@ -35,7 +35,6 @@ function buildTokenAccount({
 
   // TODO: recheck this logic
   const spendableBalance = new BigNumber(assetBalance.value.toString()).minus(
-    // assetBalance.selling_liabilities || 0,
     new BigNumber(assetBalance.locked?.toString() || "0"),
   );
 

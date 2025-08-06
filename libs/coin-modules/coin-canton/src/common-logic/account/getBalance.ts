@@ -4,10 +4,5 @@ import { getAccountInfo } from "../../network/node";
 // Could be getAccountInfo so it is used in both bridge and api
 export async function getBalance(address: string): Promise<Balance[]> {
   const accountInfo = await getAccountInfo(address);
-  return [
-    {
-      asset: { type: "native" },
-      value: BigInt(accountInfo.account_data.Balance),
-    },
-  ]; // TODO: add more info like spendableBalance, etc.
+  return [{ asset: { type: "native" }, value: BigInt(accountInfo.account_data.Balance) }]; // TODO: add more info like spendableBalance, etc.
 }

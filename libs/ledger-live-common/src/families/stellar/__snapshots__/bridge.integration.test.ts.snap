@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064679",
+    "balance": "341064681",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 70,
+    "operationsCount": 72,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064579",
+    "spendableBalance": "311064581",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -918,6 +918,31 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "e03520700e06dc2c1bfae2f0b4a94490277088becb48ea306264fdd8dfd1df62",
+      "blockHeight": 58334484,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yStorm Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hash": "6be42b9b39e7f99a20f4df57b8513c881caf1de5279b573c262f6e32425d4e25",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6be42b9b39e7f99a20f4df57b8513c881caf1de5279b573c262f6e32425d4e25-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
+      ],
+      "transactionSequenceNumber": 250201623316411780,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "025bb8acb9b78ff008daf0b6ffad07bdcc64dc5dfc64605189c3fd4a5fac499c",
       "blockHeight": 56641142,
       "extra": {
@@ -1663,6 +1688,31 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
       ],
       "transactionSequenceNumber": 247017862844136160,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "2220076b8d57bd2e0ce2e70ba0765145d47ecf07d06aa67c1999550a85842949",
+      "blockHeight": 58343922,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy yStorm Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hash": "d7156608ccfa85496429722fedfc7b1928b4964ea87bac94a42bf753bbe9794b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d7156608ccfa85496429722fedfc7b1928b4964ea87bac94a42bf753bbe9794b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
+      ],
+      "transactionSequenceNumber": 250201623316413820,
       "type": "IN",
       "value": "1",
     },

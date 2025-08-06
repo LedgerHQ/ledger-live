@@ -9,12 +9,12 @@ export enum NetworkCongestionLevel {
 }
 
 export type NetworkInfo = {
-  family: "xrp" | "stellar";
-  serverFee: BigNumber;
-  baseReserve: BigNumber;
+  // family: "xrp" | "stellar";
+  // serverFee: BigNumber;
+  // baseReserve: BigNumber;
   fees: BigNumber;
-  baseFee: BigNumber;
-  networkCongestionLevel?: NetworkCongestionLevel | undefined;
+  // baseFee: BigNumber;
+  // networkCongestionLevel?: NetworkCongestionLevel | undefined;
 };
 
 export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
@@ -28,6 +28,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   mode?: "send" | "changeTrust";
   assetReference?: string;
   assetOwner?: string;
+  networkInfo?: NetworkInfo | null;
 } {
   const currency =
     account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
@@ -54,6 +55,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         mode: "send",
         assetReference: "",
         assetOwner: "",
+        networkInfo: null,
       };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);

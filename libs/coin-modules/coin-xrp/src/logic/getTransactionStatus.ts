@@ -61,7 +61,6 @@ export const getTransactionStatus = async (
     transactionIntent.amount < BigInt(reserveBaseXRP.toString())
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      // minimalAmount: 0,
       minimalAmount: transactionIntent.asset.unit
         ? formatCurrencyUnit(transactionIntent.asset.unit, reserveBaseXRP, {
             disableRounding: true,

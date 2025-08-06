@@ -171,8 +171,6 @@ export const buildOptimisticOperation = (
     transactionSequenceNumber: sequenceNumber ?? 0,
     accountId: account.id,
     date: new Date(),
-    // TODO: double check
-    // asset: { type: "native" },
     extra: {
       ledgerOpType: type,
       blockTime: new Date(),

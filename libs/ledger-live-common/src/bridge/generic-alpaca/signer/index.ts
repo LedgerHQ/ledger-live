@@ -51,9 +51,6 @@ export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {
-      // const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
-      //   return new Xrp(transport);
-      // };
       return {
         getAddress: xrpGetAddress(signerContextXrp),
         signTransaction: signTransaction(signerContextXrp),
@@ -61,9 +58,6 @@ export function getSigner(network): AlpacaSigner {
       };
     }
     case "stellar": {
-      // const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
-      //   return new Stellar(transport);
-      // };
       return {
         getAddress: stellarGetAddress(signerContextStellar),
         signTransaction: stellarSignTransaction(signerContextStellar),
