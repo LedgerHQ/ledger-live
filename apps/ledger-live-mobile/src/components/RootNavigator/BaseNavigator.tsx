@@ -88,6 +88,7 @@ import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
+import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -432,6 +433,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.ModularDrawer}
+          component={ModularDrawerNavigator}
           options={{ headerShown: false }}
         />
         {MarketNavigator({ Stack })}

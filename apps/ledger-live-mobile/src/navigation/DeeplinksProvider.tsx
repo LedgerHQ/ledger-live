@@ -350,6 +350,7 @@ export const DeeplinksProvider = ({
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const modularDrawer = useFeature("llmModularDrawer");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
   const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
 
@@ -371,19 +372,31 @@ export const DeeplinksProvider = ({
                     ...linkingOptions().config.screens[NavigatorName.Base],
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
-                      // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
-                      [AddAccountNavigatorEntryPoint]: {
-                        screens: {
-                          /**
-                           * ie: "ledgerlive://add-account" will open the add account flow
-                           *
-                           * @params ?currency: string
-                           * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-                           *
-                           */
-                          [ScreenName.AddAccountsSelectCrypto]: "add-account",
-                        },
-                      },
+
+                      ...(modularDrawer?.enabled
+                        ? {
+                            [NavigatorName.ModularDrawer]: {
+                              screens: {
+                                [ScreenName.ModularDrawerDeepLinkHandler]: "add-account",
+                              },
+                            },
+                          }
+                        : {
+                            // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
+                            [AddAccountNavigatorEntryPoint]: {
+                              screens: {
+                                /**
+                                 * ie: "ledgerlive://add-account" will open the add account flow
+                                 *
+                                 * @params ?currency: string
+                                 * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+                                 *
+                                 */
+                                [ScreenName.AddAccountsSelectCrypto]: "add-account",
+                              },
+                            },
+                          }),
+
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
                         [NavigatorName.Assets]: {
@@ -661,8 +674,9 @@ export const DeeplinksProvider = ({
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
-      llmAccountListUI?.enabled,
+      modularDrawer?.enabled,
       AddAccountNavigatorEntryPoint,
+      llmAccountListUI?.enabled,
       AccountsListScreenName,
       userAcceptedTerms,
       buySellUiManifestId,
