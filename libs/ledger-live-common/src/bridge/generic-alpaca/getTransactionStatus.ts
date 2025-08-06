@@ -24,6 +24,7 @@ export function genericGetTransactionStatus(
   ) => {
     const alpacaApi = getAlpacaApi(network, kind);
     const draftTransaction = {
+      mode: transaction?.mode,
       recipient: transaction.recipient,
       amount: transaction.amount ?? new BigNumber(0),
       fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,

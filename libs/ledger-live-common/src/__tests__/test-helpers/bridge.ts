@@ -253,7 +253,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                   account,
                 });
                 expect(estimation.gte(0)).toBe(true);
-                if (!(account.spendableBalance.lt(0) && estimation.eq(0))) {
+                if (estimation.isGreaterThan(0)) {
                   expect(estimation.lte(account.spendableBalance)).toBe(true);
                 }
 

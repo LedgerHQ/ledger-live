@@ -6,6 +6,7 @@ import FeeField from "./FeeField";
 import Box from "~/renderer/components/Box";
 import { track } from "~/renderer/analytics/segment";
 import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 type Props = {
   account: Account;
@@ -18,23 +19,24 @@ type Props = {
 
 const Root = (props: Props) => {
   const { transaction, trackProperties } = props;
-  const { fees, networkInfo } = transaction;
-  const isCustomFee = !fees?.eq(networkInfo?.fees || 0);
+  const { fees } = transaction;
+  console.log("transaction", fees);
+  const isCustomFee = !fees?.eq(100);
   const [isCustomMode, setCustomMode] = useState(isCustomFee);
-  if (!networkInfo || !fees) return null; // these were loaded on the previous send step
+  if (!fees) return null; // these were loaded on the previous send step
   const bridge = getAccountBridge(props.account);
   const onFeeModeChange = (isCustom: boolean) => {
     track("button_clicked2", {
       ...trackProperties,
       button: "fee",
       isCustom,
-      fees: networkInfo.fees,
+      fees: fees,
     });
     setCustomMode(isCustom);
     if (!isCustom) {
       props.updateTransaction(t =>
         bridge.updateTransaction(t, {
-          fees: networkInfo.fees,
+          fees: new BigNumber(100),
         }),
       );
     }
