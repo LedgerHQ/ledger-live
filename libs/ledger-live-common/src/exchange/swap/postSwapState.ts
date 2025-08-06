@@ -131,7 +131,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     toAccountId &&
     refundAddress &&
     payoutAddress &&
-    (fromAccountId.includes(refundAddress) && toAccountId.includes(payoutAddress));
+    fromAccountId.includes(refundAddress) &&
+    toAccountId.includes(payoutAddress);
 
   try {
     const ipHeader = getSwapUserIP();
