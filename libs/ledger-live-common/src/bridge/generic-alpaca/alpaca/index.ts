@@ -14,8 +14,7 @@ export function getAlpacaApi(network, kind): Api<any> {
       case "xrp":
         return createXrpApi(
           getCurrencyConfiguration<XrpCoinConfig>(getCryptoCurrencyById("ripple")),
-        ) as Api<any>;
-      // as unknown as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
+        ) as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
       case "stellar":
         return createStellarApi(
           getCurrencyConfiguration<StellarCoinConfig>(getCryptoCurrencyById("stellar")),

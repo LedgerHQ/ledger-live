@@ -44,11 +44,6 @@ export const getTransactionStatus = async (
     minimalAmount: `${MIN_BALANCE} XLM`,
   });
 
-  // NOTE: recheck this
-  // if (!transaction.fee || !transaction.baseReserve) {
-  //   errors.fees = new FeeNotLoaded();
-  // const sellingLiabilities =
-  //   (await fetchSellingLiabilities(transactionIntent.sender, transactionIntent.asset)) || "0";
   const { spendableBalance, balance } = await fetchAccount(transactionIntent.sender);
   const networkInfo = await fetchAccountNetworkInfo(transactionIntent.sender);
 
@@ -136,8 +131,6 @@ export const getTransactionStatus = async (
       if (asset.type === "native" || (!("assetReference" in asset) && !("assetOwner" in asset))) {
         throw new StellarAssetNotFound();
       }
-      // NOTE: previously, fetched with coin-framework's findSubAccountById, move logic in generic-bridge
-      // const asset = findSubAccountById(account, transaction.subAccountId || "");
 
       // Check recipient account accepts asset
       if (
@@ -151,7 +144,6 @@ export const getTransactionStatus = async (
         });
       }
 
-      // const assetBalance = BigInt(asset?.balance.toString()) || 0n;
       const assetBalance = balances.find(
         b =>
           b.asset.type !== "native" &&

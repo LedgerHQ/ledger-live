@@ -83,6 +83,7 @@ async function formatOperation(
   minHeight: number,
 ): Promise<StellarOperation | undefined> {
   const transaction = await rawOperation.transaction();
+
   if (transaction.ledger_attr < minHeight) return undefined;
 
   const { hash: blockHash, closed_at: blockTime } = await transaction.ledger();

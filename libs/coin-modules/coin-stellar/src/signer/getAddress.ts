@@ -12,6 +12,7 @@ function getAddress(signerContext: SignerContext<StellarSigner>): GetAddressFn {
     });
 
     const publicKey = StrKey.encodeEd25519PublicKey(rawPublicKey);
+
     return {
       path,
       address: publicKey,

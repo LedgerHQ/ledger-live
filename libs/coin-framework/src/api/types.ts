@@ -71,11 +71,9 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
-  // baseReserve?: bigint; // NOTE: used for changeTrust mode in stellar
-  // networkInfo?: {
-  //   baseFee?: bigint;
-  //   fees?: bigint;
-  // };
+  networkInfo?: {
+    fees?: bigint;
+  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 /**
@@ -164,7 +162,6 @@ export type Account = {
   balance: bigint;
   currencyUnit: Unit;
   spendableBalance: bigint; // NOTE:: check if we can get rid of this one
-  // subAccount?: TokenAccount;
 };
 
 export type Balance = {
