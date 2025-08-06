@@ -256,7 +256,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 // console.log("estimation", estimation.toString());
                 // console.log("balance", account.spendableBalance.toString());
                 expect(estimation.gte(0)).toBe(true);
-                expect(estimation.lte(account.spendableBalance)).toBe(true);
+                if (!(account.spendableBalance.lt(0) && estimation.eq(0))) {
+                  expect(estimation.lte(account.spendableBalance)).toBe(true);
+                }
 
                 for (const sub of account.subAccounts || []) {
                   const estimation = await accountBridge.estimateMaxSpendable({

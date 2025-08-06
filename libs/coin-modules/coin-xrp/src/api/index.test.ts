@@ -39,7 +39,7 @@ describe("listOperations", () => {
   }
 
   function givenTxs(
-    fee: bigint,
+    fees: bigint,
     deliveredAmount: bigint,
     opSender: string,
     opDestination: string,
@@ -52,7 +52,7 @@ describe("listOperations", () => {
         meta: { delivered_amount: deliveredAmount.toString() },
         tx_json: {
           TransactionType: "Payment",
-          Fee: fee.toString(),
+          Fee: fees.toString(),
           ledger_index: 1,
           date: 1000,
           Account: opSender,
@@ -67,7 +67,7 @@ describe("listOperations", () => {
         meta: { delivered_amount: deliveredAmount.toString() },
         tx_json: {
           TransactionType: "Payment",
-          Fee: fee.toString(),
+          Fee: fees.toString(),
           ledger_index: 1,
           date: 1000,
           Account: opSender,
@@ -83,7 +83,7 @@ describe("listOperations", () => {
         meta: { delivered_amount: deliveredAmount.toString() },
         tx_json: {
           TransactionType: "Payment",
-          Fee: fee.toString(),
+          Fee: fees.toString(),
           ledger_index: 1,
           date: 1000,
           Account: opSender,
@@ -162,9 +162,9 @@ describe("listOperations", () => {
     async ({ address, opSender, opDestination, expectedType }) => {
       // Givem
       const deliveredAmount = BigInt(100);
-      const fee = BigInt(10);
+      const fees = BigInt(10);
       mockGetTransactions.mockResolvedValueOnce(
-        mockNetworkTxs(givenTxs(fee, deliveredAmount, opSender, opDestination), defaultMarker),
+        mockNetworkTxs(givenTxs(fees, deliveredAmount, opSender, opDestination), defaultMarker),
       );
 
       // second call to kill the loop
@@ -179,7 +179,7 @@ describe("listOperations", () => {
       expect(mockGetTransactions).toHaveBeenCalledTimes(2);
 
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
+      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fees;
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
@@ -187,7 +187,7 @@ describe("listOperations", () => {
           asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
-            fees: fee,
+            fees: fees,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
@@ -215,7 +215,7 @@ describe("listOperations", () => {
           asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
-            fees: fee,
+            fees: fees,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
@@ -238,7 +238,7 @@ describe("listOperations", () => {
           asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
-            fees: fee,
+            fees: fees,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
@@ -291,7 +291,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: customFees,
+        fees: customFees,
       }),
       undefined,
     );
@@ -303,7 +303,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       }),
       undefined,
     );
