@@ -66,7 +66,6 @@ function fromTransactionRaw(tr: TransactionRaw): Transaction {
 }
 
 function toTransactionRaw(transaction: Transaction): TransactionRaw {
-  console.log("toTransactionRaw", transaction);
   const common = toTransactionCommonRaw(transaction);
   const { networkInfo } = transaction;
   const [assetReference, assetOwner] = getAssetCodeIssuer(transaction);
