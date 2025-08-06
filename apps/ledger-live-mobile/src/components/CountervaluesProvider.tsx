@@ -33,18 +33,11 @@ function Effect() {
   return null;
 }
 
-export function CountervaluesBridgedProvider({
-  children,
-  initialState,
-}: {
-  children: React.ReactNode;
-  initialState?: CounterValuesStateRaw;
-}) {
+export function useCountervaluesBridge() {
   const userSettings = useUserSettings();
-
   const dispatch = useDispatch();
 
-  const bridge = useMemo(
+  return useMemo(
     (): CountervaluesBridge => ({
       setPollingIsPolling: flow(setCountervaluesPollingIsPolling, dispatch),
       setPollingTriggerLoad: flow(setCountervaluesPollingTriggerLoad, dispatch),
@@ -61,6 +54,16 @@ export function CountervaluesBridgedProvider({
     }),
     [dispatch, userSettings],
   );
+}
+
+export function CountervaluesBridgedProvider({
+  children,
+  initialState,
+}: {
+  children: React.ReactNode;
+  initialState?: CounterValuesStateRaw;
+}) {
+  const bridge = useCountervaluesBridge();
 
   return (
     <CountervaluesProvider bridge={bridge} savedState={initialState}>

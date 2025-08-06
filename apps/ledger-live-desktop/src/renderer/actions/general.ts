@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
 // eslint-disable-next-line no-restricted-imports
@@ -34,7 +34,7 @@ export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
 ) {
   const accounts = useSelector(accountsSelector);
-  const to = useSelector(counterValueCurrencySelector, shallowEqual);
+  const to = useSelector(counterValueCurrencySelector);
   return useDistributionRaw({
     accounts,
     to,
@@ -42,7 +42,7 @@ export function useDistribution(
   });
 }
 export function useCalculateCountervalueCallback() {
-  const to = useSelector(counterValueCurrencySelector, shallowEqual);
+  const to = useSelector(counterValueCurrencySelector);
   return useCalculateCountervalueCallbackCommon({
     to,
   });
@@ -123,7 +123,6 @@ export function useCalculateCountervaluesUserSettings() {
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
 
   useEffect(() => {
-    // we merge all usecases that require tracking pairs
     const trackingPairs = resolveTrackingPairs(
       extraSessionTrackingPairs.concat(trPairs).concat(trackingPairsForTopCoins),
     );

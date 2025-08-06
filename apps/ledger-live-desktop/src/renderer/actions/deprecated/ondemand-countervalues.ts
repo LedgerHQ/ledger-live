@@ -43,7 +43,6 @@ function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
     extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
 }
 
-// TODO put in the reducer
 export function useExtraSessionTrackingPair() {
   const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
   useEffect(() => {

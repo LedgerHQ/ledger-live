@@ -17,6 +17,7 @@ export default function RebootProvider({
   children: React.ReactNode;
 }) {
   const [rebootId, setRebootId] = useState(0);
+  // TODO decouple countervalues state from polling actions so that RebootProvider can be moved back to the root of the Provider tree.
   const { wipe } = useCountervaluesPolling();
   const reboot: RebootFunc = useCallback(
     async (resetData = false) => {
