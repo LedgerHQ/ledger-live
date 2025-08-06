@@ -233,17 +233,13 @@ export class SwapPage extends AppPage {
   @step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer(electronApp: ElectronApplication) {
     const quoteContainers = await this.getAllSwapProviders(electronApp);
-    try {
-      const quotes = await this.extractQuotesAndFees(quoteContainers);
-      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
-        (max, current) =>
-          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
-        null,
-      );
-      expect(bestOffer?.quote).toMatch(quoteContainers[0]);
-    } catch (error) {
-      console.error("Error checking Best offer:", error);
-    }
+    const quotes = await this.extractQuotesAndFees(quoteContainers);
+    const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+      (max, current) =>
+        current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+      null,
+    );
+    expect(bestOffer?.quote).toMatch(quoteContainers[0]);
   }
 
   @step("Wait for exchange to be available")
