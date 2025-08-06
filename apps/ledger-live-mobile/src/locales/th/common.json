@@ -3656,7 +3656,8 @@
           "refunded" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
           "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
           "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
-          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว"
+          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
+          "unknown" : "เรากำลังรอข้อมูลจากผู้ให้บริการ"
         }
       },
       "missingApp" : {
@@ -3761,6 +3762,8 @@
         "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
         "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "hedera_title" : "Ledger Nano S™ ไม่รองรับการสวอป Hedera",
+        "hedera_description" : "เพื่อสวอป Hedera ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
         "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
@@ -4042,6 +4045,10 @@
       "quantityAvailable" : "ปริมาณที่ใช้ได้"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "จำเป็นต้องมีการ Blind Signing",
+        "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+      },
       "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
       "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
@@ -7761,7 +7768,7 @@
   },
   "geoBlocking" : {
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
-    "description" : "Ledger Live ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "description" : "แอป Ledger Live ไม่สามารถใช้ได้ในพื้นที่ของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม"
   },
   "versionBlocking" : {
@@ -7773,7 +7780,10 @@
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
     "selectAccount" : "เลือกบัญชี",
-    "searchPlaceholder" : "ค้นหา"
+    "searchPlaceholder" : "ค้นหา",
+    "emptyAssetList" : "ไม่พบสินทรัพย์",
+    "accountCount" : "{{count}} บัญชี (ตรวจพบ)",
+    "accountCount_plural" : "{{count}} บัญชี (ตรวจพบ)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
