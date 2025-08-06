@@ -126,10 +126,10 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
   // returns true if any value is missing to not send false in error cases where the values are not set
   const payloadAddressMatchAccountAddress =
-    !fromAccountId ||
-    !toAccountId ||
-    !rest.refundAddress ||
-    !rest.payoutAddress ||
+    fromAccountId &&
+    toAccountId &&
+    rest.refundAddress &&
+    rest.payoutAddress &&
     (fromAccountId.includes(rest.refundAddress) && toAccountId.includes(rest.payoutAddress));
 
   try {
