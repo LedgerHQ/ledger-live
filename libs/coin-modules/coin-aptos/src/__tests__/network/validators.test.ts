@@ -96,10 +96,6 @@ describe("getValidators", () => {
     mockedApolloClient.mockImplementation(() => ({
       query: mockedGetValidatorsQuery,
     }));
-    const mockedGetValidatorsQuerySpy = jest.spyOn(
-      { getValidators: mockedGetValidatorsQuery },
-      "getValidators",
-    );
 
     jest.useFakeTimers().setSystemTime(new Date("2025-05-15"));
 
@@ -108,6 +104,6 @@ describe("getValidators", () => {
 
     expect(validators1).toMatchObject(expectedResponse);
     expect(validators1).toMatchObject(validators2);
-    expect(mockedGetValidatorsQuerySpy).toHaveBeenCalledTimes(1);
+    expect(mockedGetValidatorsQuery.mock.calls.length).toBe(1);
   });
 });
