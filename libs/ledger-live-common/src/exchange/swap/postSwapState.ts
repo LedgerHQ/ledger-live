@@ -145,7 +145,12 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithProvider,
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
-      seedMatch: seedIdFrom === seedIdTo,
+      fromAccountId,
+      toAccountId,
+      payloadRefundAddress: rest.refundAddress,
+      payloadPayoutAddress: rest.payoutAddress,
+      maybeSeedMatch: seedIdFrom === seedIdTo, // should only matters for EVM to EVM
+      ...rest 
     };
 
     await network({
