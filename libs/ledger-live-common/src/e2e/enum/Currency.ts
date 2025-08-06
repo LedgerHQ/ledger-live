@@ -194,4 +194,7 @@ export class Currency {
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
     Network.OPTIMISM,
   ]);
+
+  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
+  static readonly SUI_USDC = new Currency("USDC", "USDC", "sui", AppInfos.SUI, [Network.SUI]);
 }
