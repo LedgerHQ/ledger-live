@@ -3656,7 +3656,8 @@
           "refunded" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات.",
           "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
           "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
-          "finished" : "تم تنفيذ مبادلتك بنجاح."
+          "finished" : "تم تنفيذ مبادلتك بنجاح.",
+          "unknown" : "نحن بانتظار معلومات من المزود."
         }
       },
       "missingApp" : {
@@ -3761,6 +3762,8 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -4042,6 +4045,10 @@
       "quantityAvailable" : "الكمية المتاحة"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "التوقيع بدون اطلاع مطلوب",
+        "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+      },
       "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن من هذا الحساب",
       "tag" : "علامة (اختيارية)",
       "validateTag" : "التحقق من العلامة",
@@ -6390,7 +6397,7 @@
       }
     },
     "staking" : {
-      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
       "info" : "كيف يعمل التكديس",
       "add" : "إضافة",
       "stakingEarn" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
@@ -6522,7 +6529,7 @@
       }
     },
     "staking" : {
-      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
       "info" : "كيف يعمل التكديس",
       "add" : "إضافة",
       "stakingEarn" : "يمكنك كسب مكافآت Aptos عن طريق تكديس أصولك.",
@@ -7761,7 +7768,7 @@
   },
   "geoBlocking" : {
     "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "description" : "Ledger Live غير متاح في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
   },
   "versionBlocking" : {
@@ -7773,7 +7780,10 @@
     "selectAsset" : "اختر أصل",
     "selectNetwork" : "اختر شبكة",
     "selectAccount" : "اختر حساب",
-    "searchPlaceholder" : "بحث"
+    "searchPlaceholder" : "بحث",
+    "emptyAssetList" : "لم يتم العثور على أصول",
+    "accountCount" : "{{count}} حساب (تم اكتشافه)",
+    "accountCount_plural" : "{{count}} حساب (تم اكتشافه)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
