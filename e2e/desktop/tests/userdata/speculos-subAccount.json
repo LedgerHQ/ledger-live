@@ -6,9 +6,15 @@
       }
     },
     "wallet": {
-      "walletSyncState": { "data": null, "version": 0 },
+      "walletSyncState": {
+        "data": null,
+        "version": 0
+      },
       "nonImportedAccountInfos": [],
-      "accountsData": { "accountNames": [], "starredAccountIds": [] }
+      "accountsData": {
+        "accountNames": [],
+        "starredAccountIds": []
+      }
     },
     "settings": {
       "hasCompletedOnboarding": true,
@@ -61,7 +67,12 @@
           "bootloaderVersion": "1.23.1",
           "hardwareVersion": 1,
           "languageId": 0,
-          "seFlags": { "0": 238, "1": 0, "2": 0, "3": 11 }
+          "seFlags": {
+            "0": 238,
+            "1": 0,
+            "2": 0,
+            "3": 11
+          }
         },
         "apps": []
       },
@@ -69,8 +80,13 @@
       "marketPerformanceWidget": true,
       "hasSeenOrdinalsDiscoveryDrawer": false,
       "hasProtectedOrdinalsAssets": false,
-      "devicesModelList": ["nanoX"],
-      "lastSeenCustomImage": { "size": 0, "hash": "" },
+      "devicesModelList": [
+        "nanoX"
+      ],
+      "lastSeenCustomImage": {
+        "size": 0,
+        "hash": ""
+      },
       "latestFirmware": null,
       "blacklistedTokenIds": [],
       "nftCollectionsStatusByNetwork": {},
@@ -398,10 +414,26 @@
             "color": "#ffae35",
             "symbol": "Ƀ",
             "units": [
-              { "name": "bitcoin", "code": "BTC", "magnitude": 8 },
-              { "name": "mBTC", "code": "mBTC", "magnitude": 5 },
-              { "name": "bit", "code": "bit", "magnitude": 2 },
-              { "name": "satoshi", "code": "sat", "magnitude": 0 }
+              {
+                "name": "bitcoin",
+                "code": "BTC",
+                "magnitude": 8
+              },
+              {
+                "name": "mBTC",
+                "code": "mBTC",
+                "magnitude": 5
+              },
+              {
+                "name": "bit",
+                "code": "bit",
+                "magnitude": 2
+              },
+              {
+                "name": "satoshi",
+                "code": "sat",
+                "magnitude": 0
+              }
             ],
             "supportsSegwit": true,
             "supportsNativeSegwit": true,
@@ -422,7 +454,10 @@
                 "tx": "https://blockchain.info/btc/tx/$hash"
               }
             ],
-            "keywords": ["btc", "bitcoin"],
+            "keywords": [
+              "btc",
+              "bitcoin"
+            ],
             "explorerId": "btc"
           }
         },
@@ -993,13 +1028,35 @@
             "family": "evm",
             "blockAvgTime": 15,
             "units": [
-              { "name": "ether", "code": "ETH", "magnitude": 18 },
-              { "name": "Gwei", "code": "Gwei", "magnitude": 9 },
-              { "name": "Mwei", "code": "Mwei", "magnitude": 6 },
-              { "name": "Kwei", "code": "Kwei", "magnitude": 3 },
-              { "name": "wei", "code": "wei", "magnitude": 0 }
+              {
+                "name": "ether",
+                "code": "ETH",
+                "magnitude": 18
+              },
+              {
+                "name": "Gwei",
+                "code": "Gwei",
+                "magnitude": 9
+              },
+              {
+                "name": "Mwei",
+                "code": "Mwei",
+                "magnitude": 6
+              },
+              {
+                "name": "Kwei",
+                "code": "Kwei",
+                "magnitude": 3
+              },
+              {
+                "name": "wei",
+                "code": "wei",
+                "magnitude": 0
+              }
             ],
-            "ethereumLikeInfo": { "chainId": 1 },
+            "ethereumLikeInfo": {
+              "chainId": 1
+            },
             "explorerViews": [
               {
                 "tx": "https://etherscan.io/tx/$hash",
@@ -1007,7 +1064,10 @@
                 "token": "https://etherscan.io/token/$contractAddress?a=$address"
               }
             ],
-            "keywords": ["eth", "ethereum"],
+            "keywords": [
+              "eth",
+              "ethereum"
+            ],
             "explorerId": "eth"
           }
         },
@@ -2888,7 +2948,9 @@
       "alwaysShowMemoTagInfo": true,
       "anonymousUserNotifications": {}
     },
-    "user": { "id": "e82db5a5-8a10-4fcb-bbd6-acfa19754c95" },
+    "user": {
+      "id": "e82db5a5-8a10-4fcb-bbd6-acfa19754c95"
+    },
     "announcements": {
       "announcements": [],
       "seenIds": [],
@@ -19973,8 +20035,12 @@
               "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xf39c3bc7f257fd672a7937e45574169d7fc659413cabaf9797aa94c2cf6263d7-NONE",
               "hash": "0xf39c3bc7f257fd672a7937e45574169d7fc659413cabaf9797aa94c2cf6263d7",
               "type": "NONE",
-              "senders": ["0x76e6E81DDA4404f08d2C1b05DE124939D9514678"],
-              "recipients": ["0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146"],
+              "senders": [
+                "0x76e6E81DDA4404f08d2C1b05DE124939D9514678"
+              ],
+              "recipients": [
+                "0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146"
+              ],
               "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0xc6e4c5e0160080f3a1dd78b355ee66266b6ff175600103d07b1636d84e72e701",
               "blockHeight": 22895728,
@@ -19990,8 +20056,12 @@
               "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xdcf597f814fdf1b51a854def1ba9fba3cca9dd66f234abcc771fc37196cf1e62-IN",
               "hash": "0xdcf597f814fdf1b51a854def1ba9fba3cca9dd66f234abcc771fc37196cf1e62",
               "type": "IN",
-              "senders": ["0x016606Acc6B0cFE537acc221e3bf1bb44B4049Ee"],
-              "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+              "senders": [
+                "0x016606Acc6B0cFE537acc221e3bf1bb44B4049Ee"
+              ],
+              "recipients": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
               "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x0a5623aebee79c54c1fcd05b376a15392b04edfd1f0c1863f059f2ad812a8c8b",
               "blockHeight": 22895319,
@@ -20007,8 +20077,12 @@
               "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0x0514e24f823a2c7110a556a0dd7c7c0d9ee4cb1a76a0166d52cf51a1a2ccc7ac-IN",
               "hash": "0x0514e24f823a2c7110a556a0dd7c7c0d9ee4cb1a76a0166d52cf51a1a2ccc7ac",
               "type": "IN",
-              "senders": ["0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"],
-              "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+              "senders": [
+                "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"
+              ],
+              "recipients": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
               "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x5f8984228b08df9bb8dc2eae79efe2a89b28250258978cb2e3f56fe4cb7dfbd7",
               "blockHeight": 22895173,
@@ -20024,8 +20098,12 @@
               "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xbab7bf1e8700fcf18824e797005f6e3eb15f67263e967a54c92336fe75e1b5ac-NONE",
               "hash": "0xbab7bf1e8700fcf18824e797005f6e3eb15f67263e967a54c92336fe75e1b5ac",
               "type": "NONE",
-              "senders": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
-              "recipients": ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"],
+              "senders": [
+                "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+              ],
+              "recipients": [
+                "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+              ],
               "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0xb189b8d08b0d1f61e61f48c46b8b3c0cf905ad5769a61c7a9ef8c24d2ba92d01",
               "blockHeight": 22889976,
@@ -20046,13 +20124,44 @@
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7984542181229398,
-                84946924729229390, 84946924729229390, 84946924729229390
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                7984542181229398,
+                84946924729229390,
+                84946924729229390,
+                84946924729229390
               ],
               "latestDate": 1752238800000
             },
-            "DAY": { "balances": [0, 0], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [0], "latestDate": 1751752800000 }
+            "DAY": {
+              "balances": [
+                0,
+                0
+              ],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1751752800000
+            }
           },
           "subAccounts": [
             {
@@ -20063,9 +20172,18 @@
               "balance": "103361779",
               "spendableBalance": "103361779",
               "balanceHistoryCache": {
-                "HOUR": { "latestDate": null, "balances": [] },
-                "DAY": { "latestDate": null, "balances": [] },
-                "WEEK": { "latestDate": null, "balances": [] }
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
               },
               "creationDate": "2025-07-11T13:03:56.662Z",
               "operationsCount": 1,
@@ -20074,8 +20192,12 @@
                   "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0xf39c3bc7f257fd672a7937e45574169d7fc659413cabaf9797aa94c2cf6263d7-IN-i0",
                   "hash": "0xf39c3bc7f257fd672a7937e45574169d7fc659413cabaf9797aa94c2cf6263d7",
                   "type": "IN",
-                  "senders": ["0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146"],
-                  "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+                  "senders": [
+                    "0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146"
+                  ],
+                  "recipients": [
+                    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+                  ],
                   "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
                   "blockHash": "0xc6e4c5e0160080f3a1dd78b355ee66266b6ff175600103d07b1636d84e72e701",
                   "blockHeight": 22895728,
@@ -20099,9 +20221,18 @@
               "balance": "69917465",
               "spendableBalance": "69917465",
               "balanceHistoryCache": {
-                "HOUR": { "latestDate": null, "balances": [] },
-                "DAY": { "latestDate": null, "balances": [] },
-                "WEEK": { "latestDate": null, "balances": [] }
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
               },
               "creationDate": "2025-07-11T13:03:56.662Z",
               "operationsCount": 1,
@@ -20110,8 +20241,12 @@
                   "id": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xbab7bf1e8700fcf18824e797005f6e3eb15f67263e967a54c92336fe75e1b5ac-IN-i0",
                   "hash": "0xbab7bf1e8700fcf18824e797005f6e3eb15f67263e967a54c92336fe75e1b5ac",
                   "type": "IN",
-                  "senders": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
-                  "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+                  "senders": [
+                    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+                  ],
+                  "recipients": [
+                    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+                  ],
                   "accountId": "js:2:ethereum:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
                   "blockHash": "0xb189b8d08b0d1f61e61f48c46b8b3c0cf905ad5769a61c7a9ef8c24d2ba92d01",
                   "blockHeight": 22889976,
@@ -20152,8 +20287,12 @@
               "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5-8a3f707a9a41d34435e677ddca1930da281d8b47b97ccaaef8e2be29f9b3e664-IN",
               "hash": "8a3f707a9a41d34435e677ddca1930da281d8b47b97ccaaef8e2be29f9b3e664",
               "type": "IN",
-              "senders": ["GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"],
-              "recipients": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
+              "senders": [
+                "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"
+              ],
+              "recipients": [
+                "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+              ],
               "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5",
               "blockHash": "6ecdde7a5d5a99092e3db8efc682e524a2bd0ca5289abb148885f58faee6f39a",
               "blockHeight": 57953268,
@@ -20173,8 +20312,12 @@
               "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5-4c7a271dfe964f5517d77bf14e58b53da6db4141da49153afb66b0cd0507f288-IN",
               "hash": "4c7a271dfe964f5517d77bf14e58b53da6db4141da49153afb66b0cd0507f288",
               "type": "NONE",
-              "senders": ["GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"],
-              "recipients": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
+              "senders": [
+                "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"
+              ],
+              "recipients": [
+                "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+              ],
               "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5",
               "blockHash": "8e91018d75f9e098e1a8f2336cc5d3fe5a89038e1ea86f143a6e26d12e0a7117",
               "blockHeight": 57953262,
@@ -20197,8 +20340,12 @@
               "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5-8a6190016dd3d9b818b4e58cd61331333b3d62ccaa0af4c959e57c3f5b15e0df-OUT",
               "hash": "8a6190016dd3d9b818b4e58cd61331333b3d62ccaa0af4c959e57c3f5b15e0df",
               "type": "OUT",
-              "senders": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
-              "recipients": ["GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"],
+              "senders": [
+                "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+              ],
+              "recipients": [
+                "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"
+              ],
               "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5",
               "blockHash": "b3c2581d0f0b5da2fe84b6e871bf02a2cd17b9e7c419f256c24f6af7bd1a4b15",
               "blockHeight": 57953248,
@@ -20218,7 +20365,9 @@
               "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5-81b47a93fe123b690cdc7b05fe9ff74ba0c2a522b224cb03b4c2b1512da332a9-OPT_IN",
               "hash": "81b47a93fe123b690cdc7b05fe9ff74ba0c2a522b224cb03b4c2b1512da332a9",
               "type": "OPT_IN",
-              "senders": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
+              "senders": [
+                "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+              ],
               "recipients": [],
               "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5",
               "blockHash": "5e49d7a55d4daf9e6a23cc7be22446d7ce7b60464a0bc62ec2be2fda837548a0",
@@ -20242,8 +20391,12 @@
               "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5-243cf89288276db5842ff9306c12cb92f3d8078b89580179204f31d9ee9a97b5-IN",
               "hash": "243cf89288276db5842ff9306c12cb92f3d8078b89580179204f31d9ee9a97b5",
               "type": "IN",
-              "senders": ["GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"],
-              "recipients": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
+              "senders": [
+                "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"
+              ],
+              "recipients": [
+                "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+              ],
               "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5",
               "blockHash": "03a36b448b1fd347b5b382c251c449b45d7c3cc815919bd6f588c2216c5c93bd",
               "blockHeight": 57940846,
@@ -20268,15 +20421,44 @@
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
-                0, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165,
-                2648432165, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165,
-                2648432165, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165, 2648432165,
+                0,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
+                2648432165,
                 2648431865
               ],
               "latestDate": 1752238800000
             },
-            "DAY": { "balances": [0, 2648432165], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [0], "latestDate": 1751752800000 }
+            "DAY": {
+              "balances": [
+                0,
+                2648432165
+              ],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1751752800000
+            }
           },
           "subAccounts": [
             {
@@ -20287,9 +20469,18 @@
               "balance": "6415000",
               "spendableBalance": "6415000",
               "balanceHistoryCache": {
-                "HOUR": { "latestDate": null, "balances": [] },
-                "DAY": { "latestDate": null, "balances": [] },
-                "WEEK": { "latestDate": null, "balances": [] }
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
               },
               "creationDate": "2025-07-11T12:19:42.000Z",
               "operationsCount": 1,
@@ -20298,8 +20489,12 @@
                   "id": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5+USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN-4c7a271dfe964f5517d77bf14e58b53da6db4141da49153afb66b0cd0507f288-IN",
                   "hash": "4c7a271dfe964f5517d77bf14e58b53da6db4141da49153afb66b0cd0507f288",
                   "type": "IN",
-                  "senders": ["GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"],
-                  "recipients": ["GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"],
+                  "senders": [
+                    "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX"
+                  ],
+                  "recipients": [
+                    "GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG"
+                  ],
                   "accountId": "js:2:stellar:GDHHTG3TIVJUCR6WHJEY7CWZPCD7I2CSQHCXC6S7MVH2EN626VDZKNEG:sep5+USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
                   "blockHash": "8e91018d75f9e098e1a8f2336cc5d3fe5a89038e1ea86f143a6e26d12e0a7117",
                   "blockHeight": 57953262,
@@ -20347,8 +20542,12 @@
               "id": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:-053b44b1f64db75521ebbd467c71241a8c64e64942798f1202c8bb7773336385-OUT",
               "hash": "053b44b1f64db75521ebbd467c71241a8c64e64942798f1202c8bb7773336385",
               "type": "OUT",
-              "senders": ["TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"],
-              "recipients": ["TAkZqkk6Ns4ErfTpeuMQkpbtPhD9GTPPH6"],
+              "senders": [
+                "TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"
+              ],
+              "recipients": [
+                "TAkZqkk6Ns4ErfTpeuMQkpbtPhD9GTPPH6"
+              ],
               "accountId": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:",
               "blockHash": null,
               "blockHeight": 73857913,
@@ -20362,8 +20561,12 @@
               "id": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:-becd7923bbbc0a0cd7c1ecc08baf95ef09d7ebaafa5f570ac524784fe782da9b-IN",
               "hash": "becd7923bbbc0a0cd7c1ecc08baf95ef09d7ebaafa5f570ac524784fe782da9b",
               "type": "IN",
-              "senders": ["TVqJXAMhPimSVtD5iLpHksXNHM2fCmYhs1"],
-              "recipients": ["TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"],
+              "senders": [
+                "TVqJXAMhPimSVtD5iLpHksXNHM2fCmYhs1"
+              ],
+              "recipients": [
+                "TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"
+              ],
               "accountId": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:",
               "blockHash": null,
               "blockHeight": 73836191,
@@ -20377,8 +20580,12 @@
               "id": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:-12f0270ed4f141c5387fcc5306719773a3beba04b98387e54e6b5de1bf28a467-IN",
               "hash": "12f0270ed4f141c5387fcc5306719773a3beba04b98387e54e6b5de1bf28a467",
               "type": "IN",
-              "senders": ["TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1"],
-              "recipients": ["TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"],
+              "senders": [
+                "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1"
+              ],
+              "recipients": [
+                "TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"
+              ],
               "accountId": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:",
               "blockHash": null,
               "blockHeight": 73836184,
@@ -20397,20 +20604,53 @@
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
-                0, 70803512, 70803512, 70803512, 70803512, 70803512, 70803512, 70803512, 70803512,
-                70803512, 70803512, 70803512, 70803512, 70803512, 70803512, 70803512, 70803512,
-                70803512, 70803512, 70803512, 70793512, 70793512
+                0,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70803512,
+                70793512,
+                70793512
               ],
               "latestDate": 1752238800000
             },
-            "DAY": { "balances": [0, 70803512], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [0], "latestDate": 1751752800000 }
+            "DAY": {
+              "balances": [
+                0,
+                70803512
+              ],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1751752800000
+            }
           },
           "subAccounts": [],
           "tronResources": {
             "frozen": {},
             "delegatedFrozen": {},
-            "unFrozen": { "bandwidth": [], "energy": [] },
+            "unFrozen": {
+              "bandwidth": [],
+              "energy": []
+            },
             "legacyFrozen": {},
             "votes": [],
             "tronPower": 0,
@@ -20466,12 +20706,19 @@
               "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:-TLGDKRW2LQAEPYKNY3U3UL4F25ML5XOUM65LZDR4IINXY3OAJ5SA-FEES",
               "hash": "TLGDKRW2LQAEPYKNY3U3UL4F25ML5XOUM65LZDR4IINXY3OAJ5SA",
               "type": "FEES",
-              "senders": ["HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"],
-              "recipients": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
+              "senders": [
+                "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"
+              ],
+              "recipients": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
               "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:",
               "blockHash": null,
               "blockHeight": 51696679,
-              "extra": { "rewards": "0", "assetId": "312769" },
+              "extra": {
+                "rewards": "0",
+                "assetId": "312769"
+              },
               "date": "2025-07-11T11:59:15.000Z",
               "value": "0",
               "fee": "1000"
@@ -20480,12 +20727,19 @@
               "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:-YICKXJCTP6GRDP5TF5LYGVV7NETESZARM3FX2LOU47AAZOL2V6GA-OPT_IN",
               "hash": "YICKXJCTP6GRDP5TF5LYGVV7NETESZARM3FX2LOU47AAZOL2V6GA",
               "type": "OPT_IN",
-              "senders": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
-              "recipients": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
+              "senders": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
+              "recipients": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
               "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:",
               "blockHash": null,
               "blockHeight": 51696621,
-              "extra": { "rewards": "0", "assetId": "312769" },
+              "extra": {
+                "rewards": "0",
+                "assetId": "312769"
+              },
               "date": "2025-07-11T11:56:26.000Z",
               "value": "1000",
               "fee": "1000"
@@ -20494,12 +20748,18 @@
               "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:-IQMM4UG2DJKZVS7XQCAZXWV3QJPGSK6HSD5PNEVUH3DGQUOZ3SZQ-OUT",
               "hash": "IQMM4UG2DJKZVS7XQCAZXWV3QJPGSK6HSD5PNEVUH3DGQUOZ3SZQ",
               "type": "OUT",
-              "senders": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
-              "recipients": ["ZOAMLQDG5BRPVQ4T32DDRRYO4XZAZIAIKDO62POUWA6PMXRW7QFRIWYF3I"],
+              "senders": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
+              "recipients": [
+                "ZOAMLQDG5BRPVQ4T32DDRRYO4XZAZIAIKDO62POUWA6PMXRW7QFRIWYF3I"
+              ],
               "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:",
               "blockHash": null,
               "blockHeight": 51696444,
-              "extra": { "rewards": "0" },
+              "extra": {
+                "rewards": "0"
+              },
               "date": "2025-07-11T11:47:46.000Z",
               "value": "2000",
               "fee": "1000"
@@ -20508,12 +20768,18 @@
               "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:-BG2SBD6ZVNTUREY5JOJSN4NZV2M27VVZTKM247XAWYWE4PS5PANQ-OUT",
               "hash": "BG2SBD6ZVNTUREY5JOJSN4NZV2M27VVZTKM247XAWYWE4PS5PANQ",
               "type": "OUT",
-              "senders": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
-              "recipients": ["ZOAMLQDG5BRPVQ4T32DDRRYO4XZAZIAIKDO62POUWA6PMXRW7QFRIWYF3I"],
+              "senders": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
+              "recipients": [
+                "ZOAMLQDG5BRPVQ4T32DDRRYO4XZAZIAIKDO62POUWA6PMXRW7QFRIWYF3I"
+              ],
               "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:",
               "blockHash": null,
               "blockHeight": 51696437,
-              "extra": { "rewards": "0" },
+              "extra": {
+                "rewards": "0"
+              },
               "date": "2025-07-11T11:47:25.000Z",
               "value": "101000",
               "fee": "1000"
@@ -20522,12 +20788,18 @@
               "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:-W6MFK756MWFYK2KFJCLAFPDKUJBM2ZWWW2KCKLY5UC6A4MXXNWCQ-IN",
               "hash": "W6MFK756MWFYK2KFJCLAFPDKUJBM2ZWWW2KCKLY5UC6A4MXXNWCQ",
               "type": "IN",
-              "senders": ["HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"],
-              "recipients": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
+              "senders": [
+                "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"
+              ],
+              "recipients": [
+                "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+              ],
               "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:",
               "blockHash": null,
               "blockHeight": 51672482,
-              "extra": { "rewards": "0" },
+              "extra": {
+                "rewards": "0"
+              },
               "date": "2025-07-10T17:02:50.000Z",
               "value": "64831510",
               "fee": "1000"
@@ -20541,14 +20813,43 @@
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
-                0, 64831510, 64831510, 64831510, 64831510, 64831510, 64831510, 64831510, 64831510,
-                64831510, 64831510, 64831510, 64831510, 64831510, 64831510, 64831510, 64831510,
-                64831510, 64831510, 64727510, 64727510
+                0,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64831510,
+                64727510,
+                64727510
               ],
               "latestDate": 1752238800000
             },
-            "DAY": { "balances": [0, 64831510], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [0], "latestDate": 1751752800000 }
+            "DAY": {
+              "balances": [
+                0,
+                64831510
+              ],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1751752800000
+            }
           },
           "xpub": "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM",
           "subAccounts": [
@@ -20560,9 +20861,18 @@
               "balance": "100000",
               "spendableBalance": "100000",
               "balanceHistoryCache": {
-                "HOUR": { "latestDate": null, "balances": [] },
-                "DAY": { "latestDate": null, "balances": [] },
-                "WEEK": { "latestDate": null, "balances": [] }
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
               },
               "creationDate": "2025-07-11T11:59:15.000Z",
               "operationsCount": 1,
@@ -20571,8 +20881,12 @@
                   "id": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:+312769-TLGDKRW2LQAEPYKNY3U3UL4F25ML5XOUM65LZDR4IINXY3OAJ5SA-IN",
                   "hash": "TLGDKRW2LQAEPYKNY3U3UL4F25ML5XOUM65LZDR4IINXY3OAJ5SA",
                   "type": "IN",
-                  "senders": ["HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"],
-                  "recipients": ["FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"],
+                  "senders": [
+                    "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU"
+                  ],
+                  "recipients": [
+                    "FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM"
+                  ],
                   "accountId": "js:2:algorand:FKB5Q57PE4RCZ2FC3QNLKXYWEYYYLNSHJDBIBCMGLJOMU22IGMEFVV2SWM:+312769",
                   "blockHash": null,
                   "blockHeight": 51696679,
@@ -20587,7 +20901,10 @@
               "starred": false
             }
           ],
-          "algorandResources": { "rewards": "0", "nbAssets": 1 },
+          "algorandResources": {
+            "rewards": "0",
+            "nbAssets": 1
+          },
           "swapHistory": [],
           "name": "Algorand 1",
           "starred": false
@@ -20612,8 +20929,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xeb47da37ecc1393e92ed6b02b7467a9f58604d773cde75e206292fb194859c8e-IN",
               "hash": "0xeb47da37ecc1393e92ed6b02b7467a9f58604d773cde75e206292fb194859c8e",
               "type": "IN",
-              "senders": ["0xB909b0Ddfd627284d39dA17070F1E628E83a67f6"],
-              "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+              "senders": [
+                "0xB909b0Ddfd627284d39dA17070F1E628E83a67f6"
+              ],
+              "recipients": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0xe2dfa294fa4ffa9451bff08250ec9b160d85fe2df205241cc8201786cfff4876",
               "blockHeight": 73836418,
@@ -20629,8 +20950,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xfbbd10d1f6fd9ca8a7cf93b8b229450305b3118d3650b8a039f4caf8339b45b0-NONE",
               "hash": "0xfbbd10d1f6fd9ca8a7cf93b8b229450305b3118d3650b8a039f4caf8339b45b0",
               "type": "NONE",
-              "senders": ["0xcF56B6F3eAed63E1281A3b3775A95D443e4C5d0f"],
-              "recipients": ["0x32fe90BbF842B92FaB000E21020870D69ec0039C"],
+              "senders": [
+                "0xcF56B6F3eAed63E1281A3b3775A95D443e4C5d0f"
+              ],
+              "recipients": [
+                "0x32fe90BbF842B92FaB000E21020870D69ec0039C"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0xd19a311d7c45810432ceffa120b142a9819ea252f6a14b89528c6b5386dd3c13",
               "blockHeight": 73835904,
@@ -20646,8 +20971,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0x1790f437840b7ad12441ae93ed77a2326170b5dc4b2206020d68d3e9d48e9152-NONE",
               "hash": "0x1790f437840b7ad12441ae93ed77a2326170b5dc4b2206020d68d3e9d48e9152",
               "type": "NONE",
-              "senders": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
-              "recipients": ["0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"],
+              "senders": [
+                "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+              ],
+              "recipients": [
+                "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x63e909642c5235a3734b9add798a1c9d4c2081e1e1be01a81a0c9ec1ce94f9fb",
               "blockHeight": 73835828,
@@ -20663,8 +20992,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xf74031399bc40fe9941715e91f14898f5674faa36336b530e697de60be232019-OUT",
               "hash": "0xf74031399bc40fe9941715e91f14898f5674faa36336b530e697de60be232019",
               "type": "OUT",
-              "senders": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
-              "recipients": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
+              "senders": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
+              "recipients": [
+                "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x1a8be9b0e56ef416cbd418638c3f77384e4b60bd3f5caa2135a2e9f4170df7df",
               "blockHeight": 73835806,
@@ -20680,8 +21013,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0x57dae88ac006a9ba205d501b0cbb660fd750ff1a9b68742f020bc516611ef0c0-NONE",
               "hash": "0x57dae88ac006a9ba205d501b0cbb660fd750ff1a9b68742f020bc516611ef0c0",
               "type": "NONE",
-              "senders": ["0x7c42642e2E49E7a46923DB7DC1213dea91cE16CD"],
-              "recipients": ["0x32fe90BbF842B92FaB000E21020870D69ec0039C"],
+              "senders": [
+                "0x7c42642e2E49E7a46923DB7DC1213dea91cE16CD"
+              ],
+              "recipients": [
+                "0x32fe90BbF842B92FaB000E21020870D69ec0039C"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0xe2511f3b35652b85599080e3e871421821e771ab79da9ae4eeee2023f147ffef",
               "blockHeight": 73835315,
@@ -20697,8 +21034,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0x42b099d497716fa179665e235852f53862d535a7625f007552aa3dcdd4615e50-OUT",
               "hash": "0x42b099d497716fa179665e235852f53862d535a7625f007552aa3dcdd4615e50",
               "type": "OUT",
-              "senders": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
-              "recipients": ["0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"],
+              "senders": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
+              "recipients": [
+                "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x88fd3c501dfac8dea990f94a434f8b905c2b311935d8831eff65c3239e4857d2",
               "blockHeight": 73834340,
@@ -20714,8 +21055,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0x6db5722b81ab5f83b93f503528a2994f3aa6b4aab600caec3430a8c6769ae8f6-OUT",
               "hash": "0x6db5722b81ab5f83b93f503528a2994f3aa6b4aab600caec3430a8c6769ae8f6",
               "type": "OUT",
-              "senders": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
-              "recipients": ["0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"],
+              "senders": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
+              "recipients": [
+                "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x3003fc4215a7e6c50db9761a02a3464bb00b37c8b690d290c40471e92ed622cb",
               "blockHeight": 73833800,
@@ -20731,8 +21076,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xceb774cf127ee96b4b074cbc21ccfdbedc0713525132cea61f4d5ad5b91c137f-IN",
               "hash": "0xceb774cf127ee96b4b074cbc21ccfdbedc0713525132cea61f4d5ad5b91c137f",
               "type": "IN",
-              "senders": ["0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad"],
-              "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+              "senders": [
+                "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad"
+              ],
+              "recipients": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x775445683752f90eb473f9817ced94179a3ed0ae95249180beb9defba616eae8",
               "blockHeight": 73833772,
@@ -20748,8 +21097,12 @@
               "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:-0xf9e49c5e82a3580966906a42dd5f7ff21b030429a7f9ceefed7b3d3af9df8cb1-IN",
               "hash": "0xf9e49c5e82a3580966906a42dd5f7ff21b030429a7f9ceefed7b3d3af9df8cb1",
               "type": "IN",
-              "senders": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
-              "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+              "senders": [
+                "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+              ],
+              "recipients": [
+                "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+              ],
               "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:",
               "blockHash": "0x1589b74933dcea0cc7b0163969f630693a094c91ab5466c538e42a1aa4a5bf05",
               "blockHeight": 73833768,
@@ -20769,11 +21122,26 @@
           "spendableBalance": "17906102787128997573",
           "balanceHistoryCache": {
             "HOUR": {
-              "balances": [0, 18908262022577484000, 18906646850659295000, 17906102787128998000],
+              "balances": [
+                0,
+                18908262022577484000,
+                18906646850659295000,
+                17906102787128998000
+              ],
               "latestDate": 1752238800000
             },
-            "DAY": { "balances": [0], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [0], "latestDate": 1751752800000 }
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1751752800000
+            }
           },
           "subAccounts": [
             {
@@ -20784,9 +21152,18 @@
               "balance": "5000000000000000000",
               "spendableBalance": "5000000000000000000",
               "balanceHistoryCache": {
-                "HOUR": { "latestDate": null, "balances": [] },
-                "DAY": { "latestDate": null, "balances": [] },
-                "WEEK": { "latestDate": null, "balances": [] }
+                "HOUR": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "DAY": {
+                  "latestDate": null,
+                  "balances": []
+                },
+                "WEEK": {
+                  "latestDate": null,
+                  "balances": []
+                }
               },
               "creationDate": "2025-07-11T13:07:45.239Z",
               "operationsCount": 1,
@@ -20795,8 +21172,12 @@
                   "id": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin-0x1790f437840b7ad12441ae93ed77a2326170b5dc4b2206020d68d3e9d48e9152-IN-i0",
                   "hash": "0x1790f437840b7ad12441ae93ed77a2326170b5dc4b2206020d68d3e9d48e9152",
                   "type": "IN",
-                  "senders": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
-                  "recipients": ["0x4BE2E2B8872AA298D6d123b9211B53E41f611566"],
+                  "senders": [
+                    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"
+                  ],
+                  "recipients": [
+                    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566"
+                  ],
                   "accountId": "js:2:polygon:0x4BE2E2B8872AA298D6d123b9211B53E41f611566:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin",
                   "blockHash": "0x63e909642c5235a3734b9add798a1c9d4c2081e1e1be01a81a0c9ec1ce94f9fb",
                   "blockHeight": 73835828,
@@ -20840,14 +21221,993 @@
           "balance": "0",
           "spendableBalance": "0",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [], "latestDate": 1752238800000 },
-            "DAY": { "balances": [], "latestDate": 1752184800000 },
-            "WEEK": { "balances": [], "latestDate": 1751752800000 }
+            "HOUR": {
+              "balances": [],
+              "latestDate": 1752238800000
+            },
+            "DAY": {
+              "balances": [],
+              "latestDate": 1752184800000
+            },
+            "WEEK": {
+              "balances": [],
+              "latestDate": 1751752800000
+            }
           },
           "subAccounts": [],
           "swapHistory": [],
           "nfts": [],
           "name": "BNB Chain 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+          "seedIdentifier": "62ede75d9ed421367ae421542bea3355089898a0e7dcc5b78d137c8aa43dbe44",
+          "used": true,
+          "derivationMode": "sui",
+          "index": 0,
+          "freshAddress": "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58",
+          "freshAddressPath": "44'/784'/0'/0'/0'",
+          "blockHeight": 5,
+          "syncHash": "CKkvCScTT4DuYF9DivindjcpNikMknPrHT2gevSMT2bh",
+          "creationDate": "2025-07-11T15:16:43.661Z",
+          "operationsCount": 6,
+          "operations": [
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-1pqxmGozbuZgw4DpjtU6oDAqQEMjA2JAmfPdvgXADoN-OUT",
+              "hash": "1pqxmGozbuZgw4DpjtU6oDAqQEMjA2JAmfPdvgXADoN",
+              "type": "OUT",
+              "senders": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "recipients": [
+                "0x07facaf0aa6277980666cf78e05ff846dfa80cffd46d15692eaebcf24998c8be"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "1pqxmGozbuZgw4DpjtU6oDAqQEMjA2JAmfPdvgXADoN",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-08-01T08:51:45.432Z",
+              "value": "5001502880",
+              "fee": "1502880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-C9fc5jXQcePbAPWc4XgKYNJVmuoXj32dFGTM1hquhR85-IN",
+              "hash": "C9fc5jXQcePbAPWc4XgKYNJVmuoXj32dFGTM1hquhR85",
+              "type": "IN",
+              "senders": [
+                "0x861284f9839a0334f8bbdbc4d9b254769ca74a5139636de9785ab2b7814dca9c"
+              ],
+              "recipients": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "C9fc5jXQcePbAPWc4XgKYNJVmuoXj32dFGTM1hquhR85",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-07-16T20:42:40.728Z",
+              "value": "20754533160",
+              "fee": "1707880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-6dxGzxgv8AXD52pYkhM3iZUaDziC2bdheLbfW2uqXAxd-OUT",
+              "hash": "6dxGzxgv8AXD52pYkhM3iZUaDziC2bdheLbfW2uqXAxd",
+              "type": "OUT",
+              "senders": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "recipients": [
+                "0x058bc1abb65efd7f8972baf5b0fb3516d1228823c0feffa40b49bde211f1e389"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "6dxGzxgv8AXD52pYkhM3iZUaDziC2bdheLbfW2uqXAxd",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-07-14T15:20:06.739Z",
+              "value": "101738880",
+              "fee": "1738880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-AKKQq8x3Eo8U4WTV7UPpfXwNTU362GcdNemKYhHbfoFE-OUT",
+              "hash": "AKKQq8x3Eo8U4WTV7UPpfXwNTU362GcdNemKYhHbfoFE",
+              "type": "OUT",
+              "senders": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "recipients": [
+                "0xe4af2c326d2e7cdbe1f14c8c0ab2f0185b7228bf94c975f54a59ee09c60def5d"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "AKKQq8x3Eo8U4WTV7UPpfXwNTU362GcdNemKYhHbfoFE",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-07-12T13:37:12.259Z",
+              "value": "301738880",
+              "fee": "1738880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-3RwWixu8QDHii9dpHixvPgSa5LLZ3fAxp5myqkybVVGS-OUT",
+              "hash": "3RwWixu8QDHii9dpHixvPgSa5LLZ3fAxp5myqkybVVGS",
+              "type": "OUT",
+              "senders": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "recipients": [
+                "0x56ffc48838727e5105edf128010d36e098ac80e1de20b0c84094d71973ded156"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "3RwWixu8QDHii9dpHixvPgSa5LLZ3fAxp5myqkybVVGS",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-07-11T15:24:42.543Z",
+              "value": "2738880",
+              "fee": "1738880",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-9GkaaLUBaY3Ee5iekWfznRuPu4ztFg3i9kb1Cu4N5JFv-IN",
+              "hash": "9GkaaLUBaY3Ee5iekWfznRuPu4ztFg3i9kb1Cu4N5JFv",
+              "type": "IN",
+              "senders": [
+                "0x68e297ccda17cb666be182100c5d82affb60dd7a5e337c970772cd07c8b16921"
+              ],
+              "recipients": [
+                "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+              ],
+              "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "blockHash": "9GkaaLUBaY3Ee5iekWfznRuPu4ztFg3i9kb1Cu4N5JFv",
+              "blockHeight": 5,
+              "extra": {},
+              "date": "2025-07-11T15:16:43.661Z",
+              "value": "615123270",
+              "fee": "1738880",
+              "hasFailed": false
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "sui",
+          "lastSyncDate": "2025-08-12T15:33:51.336Z",
+          "balance": "15952518510",
+          "spendableBalance": "15952518510",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "balances": [
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510
+              ],
+              "latestDate": 1755075600000
+            },
+            "DAY": {
+              "balances": [
+                0,
+                602965990,
+                301227110,
+                301227110,
+                199488230,
+                199488230,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                20954021390,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510,
+                15952518510
+              ],
+              "latestDate": 1755039600000
+            },
+            "WEEK": {
+              "balances": [
+                0,
+                301227110,
+                20954021390,
+                20954021390,
+                15952518510,
+                15952518510
+              ],
+              "latestDate": 1754780400000
+            }
+          },
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
+              "parentId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "tokenId": "sui/coin/usdc_0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::usdc",
+              "balance": "29542984",
+              "spendableBalance": "29542984",
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "balances": [
+                    0,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984
+                  ],
+                  "latestDate": 1755075600000
+                },
+                "DAY": {
+                  "balances": [
+                    0,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984,
+                    29542984
+                  ],
+                  "latestDate": 1755039600000
+                },
+                "WEEK": {
+                  "balances": [
+                    0,
+                    29542984
+                  ],
+                  "latestDate": 1754780400000
+                }
+              },
+              "creationDate": "2025-08-07T16:25:08.876Z",
+              "operationsCount": 1,
+              "operations": [
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-CKkvCScTT4DuYF9DivindjcpNikMknPrHT2gevSMT2bh-IN",
+                  "hash": "CKkvCScTT4DuYF9DivindjcpNikMknPrHT2gevSMT2bh",
+                  "type": "IN",
+                  "senders": [
+                    "0x861284f9839a0334f8bbdbc4d9b254769ca74a5139636de9785ab2b7814dca9c"
+                  ],
+                  "recipients": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fusdc~!underscore!~0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7%3A%3Ausdc%3A%3Ausdc",
+                  "blockHash": "CKkvCScTT4DuYF9DivindjcpNikMknPrHT2gevSMT2bh",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-08-07T16:25:08.876Z",
+                  "value": "29542984",
+                  "fee": "541328",
+                  "hasFailed": false
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "starred": false
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+              "parentId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui",
+              "tokenId": "sui/coin/deepbook_token_0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::deep",
+              "balance": "50168",
+              "spendableBalance": "50168",
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "balances": [
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168
+                  ],
+                  "latestDate": 1755075600000
+                },
+                "DAY": {
+                  "balances": [
+                    0,
+                    230168,
+                    130168,
+                    130168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    100168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168,
+                    50168
+                  ],
+                  "latestDate": 1755039600000
+                },
+                "WEEK": {
+                  "balances": [
+                    0,
+                    130168,
+                    100168,
+                    50168,
+                    50168,
+                    50168
+                  ],
+                  "latestDate": 1754780400000
+                }
+              },
+              "creationDate": "2025-07-11T15:19:18.142Z",
+              "operationsCount": 6,
+              "operations": [
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-6TxySj8Lo6gwAPFxtp7FPVyjgJChHJcujvAU9L9pY4Pc-OUT",
+                  "hash": "6TxySj8Lo6gwAPFxtp7FPVyjgJChHJcujvAU9L9pY4Pc",
+                  "type": "OUT",
+                  "senders": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "recipients": [
+                    "0x66e7fafca3736f08d0e554c28ffc8ac0ad772c52cbbf8e54b3039e167c9b0bda"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "6TxySj8Lo6gwAPFxtp7FPVyjgJChHJcujvAU9L9pY4Pc",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-23T16:39:28.319Z",
+                  "value": "50000",
+                  "fee": "1072384",
+                  "hasFailed": false
+                },
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-H6XJ2aTy61CHCsudMnHEEriwvxePBJ8t4HCaNFGLhGSZ-OUT",
+                  "hash": "H6XJ2aTy61CHCsudMnHEEriwvxePBJ8t4HCaNFGLhGSZ",
+                  "type": "OUT",
+                  "senders": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "recipients": [
+                    "0x058bc1abb65efd7f8972baf5b0fb3516d1228823c0feffa40b49bde211f1e389"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "H6XJ2aTy61CHCsudMnHEEriwvxePBJ8t4HCaNFGLhGSZ",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-14T15:22:30.762Z",
+                  "value": "30000",
+                  "fee": "2086504",
+                  "hasFailed": false
+                },
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-CcrH1UDM3YpAatsgStMfNQntpKcRB2NeucFa6kafgbvM-OUT",
+                  "hash": "CcrH1UDM3YpAatsgStMfNQntpKcRB2NeucFa6kafgbvM",
+                  "type": "OUT",
+                  "senders": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "recipients": [
+                    "0xe4af2c326d2e7cdbe1f14c8c0ab2f0185b7228bf94c975f54a59ee09c60def5d"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "CcrH1UDM3YpAatsgStMfNQntpKcRB2NeucFa6kafgbvM",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-12T14:02:47.416Z",
+                  "value": "100000",
+                  "fee": "2086504",
+                  "hasFailed": false
+                },
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-93RQjiKDXxTt1QjbH5TWGiTeYwXhtiVWacRBT6bCr8dP-OUT",
+                  "hash": "93RQjiKDXxTt1QjbH5TWGiTeYwXhtiVWacRBT6bCr8dP",
+                  "type": "OUT",
+                  "senders": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "recipients": [
+                    "0x56ffc48838727e5105edf128010d36e098ac80e1de20b0c84094d71973ded156"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "93RQjiKDXxTt1QjbH5TWGiTeYwXhtiVWacRBT6bCr8dP",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-11T16:17:42.848Z",
+                  "value": "300000",
+                  "fee": "2086504",
+                  "hasFailed": false
+                },
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-CkTjRYGvAMhf4kbgkXfeZscQvqihoq7CgZ3uHPgXLahy-OUT",
+                  "hash": "CkTjRYGvAMhf4kbgkXfeZscQvqihoq7CgZ3uHPgXLahy",
+                  "type": "OUT",
+                  "senders": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "recipients": [
+                    "0x56ffc48838727e5105edf128010d36e098ac80e1de20b0c84094d71973ded156"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "CkTjRYGvAMhf4kbgkXfeZscQvqihoq7CgZ3uHPgXLahy",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-11T16:12:48.928Z",
+                  "value": "1000000",
+                  "fee": "2086504",
+                  "hasFailed": false
+                },
+                {
+                  "id": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui-CnrE4GDQBxcenAyAFhUc3jXo3tatspGtxyymKbCvxofC-IN",
+                  "hash": "CnrE4GDQBxcenAyAFhUc3jXo3tatspGtxyymKbCvxofC",
+                  "type": "IN",
+                  "senders": [
+                    "0x56ffc48838727e5105edf128010d36e098ac80e1de20b0c84094d71973ded156"
+                  ],
+                  "recipients": [
+                    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58"
+                  ],
+                  "accountId": "js:2:sui:0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58:sui+sui%2Fcoin%2Fdeepbook~!underscore!~token~!underscore!~0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270%3A%3Adeep%3A%3Adeep",
+                  "blockHash": "CnrE4GDQBxcenAyAFhUc3jXo3tatspGtxyymKbCvxofC",
+                  "blockHeight": 5,
+                  "extra": {},
+                  "date": "2025-07-11T15:19:18.142Z",
+                  "value": "1530168",
+                  "fee": "2086504",
+                  "hasFailed": false
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "starred": false
+            }
+          ],
+          "suiResources": {},
+          "swapHistory": [],
+          "name": "Sui 1",
           "starred": false
         },
         "version": 1

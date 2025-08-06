@@ -11,6 +11,7 @@ import {
   verifyAmountsAndRejectSwap,
   activateExpertMode,
   activateContractData,
+  providePublickKey,
   removeMemberLedgerSync,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -72,5 +73,10 @@ export class SpeculosPage extends AppPage {
   @step("Activate contract data")
   async activateContractData() {
     await activateContractData();
+  }
+
+  @step("Provide Public Key")
+  async providePublickKey() {
+    await providePublickKey();
   }
 }
