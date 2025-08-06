@@ -139,18 +139,22 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
     };
 
+    const shouldIncludeAddresses =
+      rest.statusCode === "WrongDeviceForAccountPayout" ||
+      rest.statusCode === "WrongDeviceForAccountRefund";
+
     const requestData = {
       provider,
       swapId,
       swapIntentWithProvider,
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
-      fromAccountId,
-      toAccountId,
-      payloadRefundAddress: rest.refundAddress,
-      payloadPayoutAddress: rest.payoutAddress,
+      fromAccountId: shouldIncludeAddresses ? fromAccountId : undefined,
+      toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
+      payloadRefundAddress: shouldIncludeAddresses ? rest.refundAddress : undefined,
+      payloadPayoutAddress: shouldIncludeAddresses ? rest.payoutAddress : undefined,
       maybeSeedMatch: seedIdFrom === seedIdTo, // should only matters for EVM to EVM
-      ...rest 
+      ...rest,
     };
 
     await network({
