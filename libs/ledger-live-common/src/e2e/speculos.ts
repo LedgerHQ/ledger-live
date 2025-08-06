@@ -39,6 +39,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import { sendSui } from "./families/sui";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -217,6 +218,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Stellar",
+    },
+    dependency: "",
+  },
+  Sui: {
+    currency: getCryptoCurrencyById("sui"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Sui",
     },
     dependency: "",
   },
@@ -597,6 +606,10 @@ export async function activateLedgerSync() {
   await pressBoth();
 }
 
+export async function providePublickKey() {
+  await pressRightButton();
+}
+
 export async function activateExpertMode() {
   await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
   await pressBoth();
@@ -676,6 +689,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.APT:
       await sendAptos();
+      break;
+    case Currency.SUI:
+      await sendSui();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);

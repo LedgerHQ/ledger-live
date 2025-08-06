@@ -23,7 +23,7 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
   });
 
 const swaps = [
-  {
+{
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620, B2CQA-3450",
@@ -147,6 +147,12 @@ const swaps = [
     fromAccount: Account.APTOS_1,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
+    tag: ["@NanoSP", "@NanoX"],
+  },
+  {
+    fromAccount: TokenAccount.SUI_USDC_1,
+    toAccount: Account.XRP_1,
+    xrayTicket: "B2CQA-3081",
     tag: ["@NanoSP", "@NanoX"],
   },
 ];
