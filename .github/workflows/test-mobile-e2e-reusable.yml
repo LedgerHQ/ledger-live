@@ -648,6 +648,7 @@ jobs:
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
