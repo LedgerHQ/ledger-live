@@ -32,13 +32,15 @@ const AccountSelection = ({
   source,
   accounts$,
   onAddNewAccount,
+  onAccountSelected,
   onClose,
 }: Readonly<AccountSelectionStepProps>) => {
-  const { detailedAccounts, onAccountSelected } = useDetailedAccounts(
+  const { detailedAccounts, handleAccountSelected } = useDetailedAccounts(
     asset!,
     flow,
     source,
     onClose,
+    onAccountSelected,
     accounts$,
   );
   const listRef = useRef<FlatList>(null);
@@ -46,9 +48,9 @@ const AccountSelection = ({
 
   const renderItem = useCallback(
     ({ item }: { item: AccountUI }) => {
-      return <AccountItem account={item} onClick={() => onAccountSelected(item)} />;
+      return <AccountItem account={item} onClick={() => handleAccountSelected(item)} />;
     },
-    [onAccountSelected],
+    [handleAccountSelected],
   );
 
   const renderFooter = useCallback(() => {

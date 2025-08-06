@@ -23,6 +23,7 @@ import {
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export const sortAccountsByBalance = (
   a: { balance: BigNumber } | undefined,
@@ -39,6 +40,7 @@ export const useDetailedAccounts = (
   flow: string,
   source: string,
   onClose: (() => void) | undefined,
+  onAccountSelected: ((account: AccountLike, parentAccount?: AccountLike) => void) | undefined,
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
   const state = useCountervaluesState();
@@ -103,25 +105,41 @@ export const useDetailedAccounts = (
     return sortAccountsByFiatValue(formattedAccounts);
   }, [accounts, state, counterValueCurrency, isATokenCurrency, overridedAccountName]);
 
-  const onAccountSelected = useCallback(
+  const handleAccountSelected = useCallback(
     (account: AccountUI) => {
+      const specificAccount = accounts.find(tuple => tuple.account.id === account.id)?.account;
+
       trackModularDrawerEvent("button_clicked", {
         button: "Add a new account",
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
         flow,
         source,
       });
+
+      if (onAccountSelected && specificAccount) {
+        onAccountSelected?.(specificAccount);
+      } else {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.Account,
+          params: {
+            currencyId: asset.id,
+            accountId: account.id,
+          },
+        });
+      }
       onClose?.();
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Account,
-        params: {
-          currencyId: asset.id,
-          accountId: account.id,
-        },
-      });
     },
-    [trackModularDrawerEvent, flow, source, onClose, navigation, asset.id],
+    [
+      accounts,
+      trackModularDrawerEvent,
+      flow,
+      source,
+      onClose,
+      onAccountSelected,
+      navigation,
+      asset.id,
+    ],
   );
 
-  return { detailedAccounts, accounts, onAccountSelected };
+  return { detailedAccounts, accounts, handleAccountSelected };
 };
