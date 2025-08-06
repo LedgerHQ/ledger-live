@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import expect from "expect";
 import { NFTTransaction, Transaction } from "../models/Transaction";
 import { pressBoth, pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
@@ -6,6 +7,7 @@ import { Device } from "../enum/Device";
 
 export async function sendEVM(tx: Transaction) {
   const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+  console.log("events", events);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS) {

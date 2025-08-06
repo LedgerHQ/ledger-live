@@ -495,10 +495,10 @@ export async function pressUntilTextFound(
   maxAttempts: number = 15,
 ): Promise<string[]> {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-
+  const texts: string[] = [];
   for (let attempts = 0; attempts < maxAttempts; attempts++) {
-    const texts = await fetchCurrentScreenTexts(speculosApiPort);
-
+    const text = await fetchCurrentScreenTexts(speculosApiPort);
+    texts.push(text);
     if (texts.includes(targetText)) {
       return await fetchAllEvents(speculosApiPort);
     }
@@ -508,9 +508,32 @@ export async function pressUntilTextFound(
   }
 
   throw new Error(
-    `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+    `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen\n Instead found: ${texts.join(
+      ", ",
+    )}`,
   );
 }
+// export async function pressUntilTextFound(
+//   targetText: string,
+//   maxAttempts: number = 15,
+// ): Promise<string[]> {
+//   const speculosApiPort = getEnv("SPECULOS_API_PORT");
+
+//   for (let attempts = 0; attempts < maxAttempts; attempts++) {
+//     const texts = await fetchCurrentScreenTexts(speculosApiPort);
+
+//     if (texts.includes(targetText)) {
+//       return await fetchAllEvents(speculosApiPort);
+//     }
+
+//     await pressRightButton();
+//     await waitForTimeOut(200);
+//   }
+
+//   throw new Error(
+//     `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+//   );
+// }
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
   const speculosAddress = getSpeculosAddress();
