@@ -392,6 +392,7 @@ jobs:
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
