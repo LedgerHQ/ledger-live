@@ -385,6 +385,7 @@
         "onhold" : "Удерживается",
         "expired" : "Просрочено",
         "finished" : "Завершено",
+        "unknown" : "Обрабатываем...",
         "refunded" : "Произведён возврат"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Подождите, оператор обрабатывает транзакцию",
         "onhold" : "Чтобы решить эту проблему, обратитесь к поставщику услуг обмена и сообщите ID операции.",
         "finished" : "Обмен произведён успешно.",
-        "unknown" : "Чтобы решить эту проблему, обратитесь к оператору услуг обмена и сообщите ID операции."
+        "unknown" : "Ждём информацию от оператора..."
       },
       "date" : "Дата",
       "from" : "Откуда",
@@ -2386,6 +2387,10 @@
         "title" : "Устройство"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Требуется слепая подпись",
+          "description" : "Невозможно проверить данные транзакции на устройстве Ledger. Её подписание может привести к потере криптоактивов. Одобряйте транзакцию только в том случае, если доверяете сайту."
+        },
         "utxoLag" : "Подтверждение и подписание операции может занять много времени ввиду большого количества монет на счету.",
         "subaccountsWarning" : "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {{ currency }}",
         "from" : "Откуда",
@@ -4468,6 +4473,40 @@
             "check" : "Оценка спама"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Отправить",
           "contractAddress" : "Адрес контракта",
@@ -5907,10 +5946,6 @@
       "title" : "Устройство отключено",
       "description" : "Ledger Live не удалось подключиться к устройству. Пожалуйста, попробуйте ещё раз."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Устройство отключено",
-      "description" : "Ledger Live не удалось подключиться к устройству. Пожалуйста, попробуйте ещё раз."
-    },
     "EConnReset" : {
       "title" : "Мой Ledger недоступен",
       "description" : "Скорее всего, интернет-подключение неактивно или использует необычную конфигурацию. Для начала уточните, не блокирует ли его что-либо по типу прокси или фаервола. Если неполадка не уходит, нажмите ниже для поиска решений неисправности или свяжитесь с Поддержкой."
@@ -6728,10 +6763,10 @@
       "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Ваш Ledger ещё не настроен",
-      "description" : "Сделайте это, чтобы взаимодействовать с ним. Мы вам поможем.",
-      "goToOnboardingButton" : "Настроить мой Ledger",
-      "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+      "title" : "Your Ledger is not set up",
+      "description" : "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my Ledger",
+      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "Сбой при загрузке транзакций",
@@ -6807,6 +6842,118 @@
     "AddressesSanctionedError" : {
       "title" : "Ради вашей безопасности",
       "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DisconnectError" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Ошибка способа соединения",
+      "description" : "Возникла неполадка с выбранным способом подключения устройства. Выберите другой способ или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Ошибка способа соединения",
+      "description" : "Возникла неполадка с выбранным способом подключения устройства. Выберите другой способ или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Ошибка способа соединения",
+      "description" : "Возникла неполадка с выбранным способом подключения устройства. Выберите другой способ или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Ошибка способа соединения",
+      "description" : "Возникла неполадка с выбранным способом подключения устройства. Выберите другой способ или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Ошибка способа соединения",
+      "description" : "Возникла неполадка с выбранным способом подключения устройства. Выберите другой способ или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Устройство не настроено",
+      "description" : "Ваш девайс не готов к использованию. Пройдите процедуру настройки, после чего повторите попытку."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Устройство не настроено",
+      "description" : "Ваш девайс не готов к использованию. Пройдите процедуру настройки, после чего повторите попытку."
+    },
+    "DeviceLockedError" : {
+      "title" : "Устройство заблокировано",
+      "description" : "Ваше устройство заблокировано. Разблокируйте его и повторите попытку."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Недостаточно памяти",
+      "description" : "На вашем устройстве не хватает свободной памяти. Удалите приложения и повторите попытку."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "ОС не поддерживается",
+      "description" : "ОС вашего устройства не поддерживается. Обновите её через Ledger Live или обратитесь в Поддержку Ledger, если в процессе возникнут проблемы."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Ошибка аккумулятора",
+      "description" : "Что-то пошло не так. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Ошибка аккумулятора",
+      "description" : "Ошибка состояния аккумулятора. Обратитесь в Поддержку Ledger."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Ошибка подключения устройства",
+      "description" : "Что-то пошло не так. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Ошибка подключения устройства",
+      "description" : "Что-то пошло не так. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "UnknownDAError" : {
+      "title" : "Ошибка подключения устройства",
+      "description" : "Что-то пошло не так. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Устройство не распознано",
+      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Устройство не распознано",
+      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Устройство не распознано",
+      "description" : "Ledger Live не может определить ваше устройство. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "ReceiverApduError" : {
+      "title" : "Ошибка связи",
+      "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "FramerApduError" : {
+      "title" : "Ошибка связи",
+      "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Ошибка связи",
+      "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Ошибка связи",
+      "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Ошибка связи",
+      "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     }
   },
   "cryptoOrg" : {
@@ -7349,7 +7496,7 @@
   },
   "geoBlocking" : {
     "title" : "Страна не обслуживается",
-    "description" : "Кошелёк Ledger недоступен в этой локации.",
+    "description" : "Ledger Live недоступно в этой локации.",
     "learnMore" : "Подробнее..."
   },
   "versionBlocking" : {
