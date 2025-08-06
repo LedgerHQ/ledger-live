@@ -142,6 +142,7 @@ jobs:
           XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
