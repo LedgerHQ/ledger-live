@@ -344,7 +344,7 @@
           "provider" : "sağlayıcı",
           "rate" : "kur",
           "fees" : "Ağ Ücretleri",
-          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
+          "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -385,6 +385,7 @@
         "onhold" : "Durduruldu",
         "expired" : "Süresi doldu",
         "finished" : "Tamamlandı",
+        "unknown" : "İşleniyor",
         "refunded" : "Para iadesi yapıldı"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
         "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
         "finished" : "Takas işleminiz başarıyla tamamlandı.",
-        "unknown" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun."
+        "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
       },
       "date" : "Tarih",
       "from" : "Gönderici",
@@ -2386,6 +2387,10 @@
         "title" : "Cihaz"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Kör imzalama gerekir",
+          "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+        },
         "utxoLag" : "Hesapta yüksek miktarda coin bulunduğu için bu işlemin doğrulanması ve imzalanması uzun sürebilir.",
         "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
         "from" : "Gönderici",
@@ -4244,6 +4249,113 @@
             "success" : {
               "title" : "Varlıklarınızı başarıyla çektiniz.",
               "description" : "<0>{{validator}}</0> doğrulayıcısından <0>{{amount}}</0> tutarında çekim yapıldı",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Yetkisi devredilen varlık",
+      "stakedBalanceTooltip" : "Doğrulayıcılarla stake edilmiş olan güncel miktar.",
+      "availableBalance" : "Çekilebilir bakiye",
+      "availableBalanceTooltip" : "Stake’i durdurulmuş ve çekilebilecek olan güncel miktar.",
+      "pendingBalance" : "Bekleyen bakiye",
+      "pendingBalanceTooltip" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar.",
+      "storageUsageBalance" : "Minimum bakiye",
+      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir.",
+      "subHeader" : {
+        "cardTitle" : "Figment desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Figment desteğiyle",
+        "title" : "SUI token artık Ledger Live’da",
+        "description" : "Artık SUI token’larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "description2" : "SUI token, SUI zincirinin native token’ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
+        "website" : "Figment desteğiyle"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Stake edilmiş miktar"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Varlıklarınızı stake ederek Sui ödülleri kazanabilirsiniz.",
+        "info" : "Staking Nasıl Çalışır?",
+        "earnRewards" : "Ödüller kazanın"
+      },
+      "table" : {
+        "header" : "Staking Pozisyonları",
+        "stake" : "Ekle",
+        "staked" : "Yetki devredildi",
+        "pending" : "Bırakılmayı bekleyen",
+        "available" : "Çekilebilir bakiye"
+      },
+      "unstake" : "Staking'i durdur",
+      "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
+      "inactiveTooltip" : "Stake’i durdurulan miktarlar ödül kazandırmaz",
+      "commission" : "Komisyon",
+      "totalStake" : "Toplam Stake",
+      "minSafeWarning" : "Yetersiz fon miktarı",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "starter" : {
+            "description" : "SUI varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Stake ettiğiniz varlıkların mülkiyeti sizde kalır", "Ledger cihazınızı kullanarak stake edin", "Stake'i durdurulan varlıklar 52 ila 65 saat sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            }
+          },
+          "amount" : {
+            "title" : "Miktar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Stake edilen varlık miktarı stake durdurma için yeterli değil",
+      "flow" : {
+        "title" : "Varlıkların Yetki Devrini İptal Edin",
+        "steps" : {
+          "amount" : {
+            "title" : "Miktar",
+            "subtitle" : "Yetki iptali işleminin sonuçlanması <0>52 ila 65 saat</0> sürer.",
+            "warning" : "Ödüller anında hesaba alınır. Stake’i iptal edilen tutar <0>52 ila 65 saatlik zaman kilidinden</0> sonra çekilebilir.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Staking'i durdurulacak miktar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetkilendirme iptal edildi",
               "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "Teknik hata: ",
       "saveLogs" : "Logları kaydedin"
     },
+    "OneSuiMinForStake" : {
+      "title" : "Stake etmeye başlamak için asgari miktar 1 SUI’dir"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Staking'i durdurulacak tutar en az 1 SUI olmalıdır"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Staking’de en az 1 SUI bırakılmalıdır"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "İleride gerekecek ağ ücretlerini karşılamak ve stake’inizin yetki devrini sonlandırmak üzere cüzdanınızda en az 0,1 SUI bulunduğundan lütfen emin olun"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor.",
       "oneCta" : "Hesabınıza {{assetName}} <cta1>{{cta1Label}}</cta1>",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "description" : "Ledger Live bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
