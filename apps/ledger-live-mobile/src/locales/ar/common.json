@@ -690,6 +690,15 @@
       "title" : "لم يتم إجراء الإقران بنجاح",
       "description" : "يرجى إعادة المحاولة مرة أخرى أو مراجعة مقالتنا عن استكشاف أخطاء البلوتوث وإصلاحها."
     },
+    "OneSuiMinForStake" : {
+      "title" : "الحد الأدنى لبدء التكديس هو 1 سوي (SUI)"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "إلغاء التكديس الجزئي يجب أن يكون 1 سوي (SUI) على الأقل"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "يجب ترك 1 سوي (SUI) على الأقل في التكديس"
+    },
     "PasswordIncorrect" : {
       "title" : "كلمة مرور غير صحيحة",
       "description" : "يرجى إعادة المحاولة."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "مُعرّف التحويل (ملاحظة)",
       "resource" : "مورد",
+      "validator" : "المدقق",
       "frozenAmount" : "المبلغ المُجمد",
       "unfreezeAmount" : "إزالة تجميد المبلغ",
       "address" : "عنوان",
@@ -3659,7 +3669,8 @@
           "refunded" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات.",
           "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
           "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
-          "finished" : "تم تنفيذ مبادلتك بنجاح."
+          "finished" : "تم تنفيذ مبادلتك بنجاح.",
+          "unknown" : "نحن بانتظار معلومات من المزود."
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "الكمية المتاحة"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "التوقيع بدون اطلاع مطلوب",
+        "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+      },
       "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن من هذا الحساب",
       "tag" : "علامة (اختيارية)",
       "validateTag" : "التحقق من العلامة",
@@ -6393,7 +6408,7 @@
       }
     },
     "staking" : {
-      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
       "info" : "كيف يعمل التكديس",
       "add" : "إضافة",
       "stakingEarn" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
@@ -6434,6 +6449,104 @@
           "amount" : {
             "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
             "allAssetsUsed" : "جميع الأصول مستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
+            }
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI متاحة",
+        "description" : "هذا المبلغ قابل للتصرف."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للتخزين والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الأصل المفوض",
+        "description" : "الرصيد الذي تم تفويضه"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تفويضه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد ألغيت تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "المركز (المراكز) المفوّض",
+      "info" : "كيف يعمل التفويض",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت سوي (SUI) عن طريق تفويض أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "iStake" : "أنا أفوّض",
+      "actions" : {
+        "unstake" : "إلغاء التفويض"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "pending" : "مُعلقّ",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتكديس سوي (SUI) خاصتك لكسب المكافآت بأمان، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المفوضة تظل ملكك.",
+              "1" : "يجب عليك الانتظار من 52 إلى 65 ساعة حتى يكتمل إلغاء التكديس.",
+              "2" : "قم بالتفويض بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
             "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
             "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
             "cta" : "متابعة"
@@ -6525,7 +6638,7 @@
       }
     },
     "staking" : {
-      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
       "info" : "كيف يعمل التكديس",
       "add" : "إضافة",
       "stakingEarn" : "يمكنك كسب مكافآت Aptos عن طريق تكديس أصولك.",
@@ -6635,6 +6748,7 @@
       "undelegate" : "سينتهي تفويض حسابك عندما يتم تأكيد العملية. يمكنك تفويض حسابك مرة أخرى في أي وقت."
     },
     "summaryTitle" : "الملخص",
+    "delegate" : "تفويض",
     "goToAccount" : "الذهاب إلى الحسابات",
     "howDelegationWorks" : "كيف يعمل التفويض",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "description" : "Ledger Live غير متاح في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "اختر أصل",
     "selectNetwork" : "اختر شبكة",
     "selectAccount" : "اختر حساب",
-    "searchPlaceholder" : "بحث"
+    "searchPlaceholder" : "بحث",
+    "emptyAssetList" : "لم يتم العثور على أصول",
+    "accountCount" : "{{count}} حساب (تم اكتشافه)",
+    "accountCount_plural" : "{{count}} حساب (تم اكتشافه)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
