@@ -40,8 +40,9 @@ const useQueuedDrawerGorhom = ({
 
   const triggerClose = useCallback(() => {
     setIsDisplayed(false);
-    if (drawerInQueueRef.current?.getPositionInQueue() !== 0) {
-      drawerInQueueRef.current?.removeDrawerFromQueue();
+    // Always clean up the queue reference when closing
+    if (drawerInQueueRef.current) {
+      drawerInQueueRef.current.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     }
     onCloseRef.current?.();
@@ -58,9 +59,14 @@ const useQueuedDrawerGorhom = ({
     }
     logDrawer("handleDismiss");
     onModalHide?.();
-    setIsDisplayed(false);
-    drawerInQueueRef.current?.removeDrawerFromQueue();
-    drawerInQueueRef.current = undefined;
+    // handleDismiss is called by BottomSheetModal after the sheet is fully dismissed
+    // The queue cleanup should already be handled by handleCloseUserEvent -> triggerClose
+    // But ensure cleanup in case of edge cases
+    if (drawerInQueueRef.current) {
+      logDrawer("handleDismiss: cleaning up remaining queue reference");
+      drawerInQueueRef.current.removeDrawerFromQueue();
+      drawerInQueueRef.current = undefined;
+    }
   }, [onModalHide]);
 
   const handleSheetChanges = useCallback(
