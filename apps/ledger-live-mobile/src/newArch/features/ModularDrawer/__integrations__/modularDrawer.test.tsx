@@ -4,8 +4,13 @@ import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
   WITH_ACCOUNT_SELECTION,
+  mockedFF,
+  mockedAccounts,
+  ARB_ACCOUNT,
 } from "./shared";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { State } from "~/reducers/types";
+import { INITIAL_STATE } from "~/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
@@ -112,7 +117,23 @@ describe("ModularDrawer integration", () => {
   });
 
   it("should allow full navigation: asset → network → account", async () => {
-    const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+    const { getByText, user } = render(<ModularDrawerSharedNavigator />, {
+      ...INITIAL_STATE,
+      overrideInitialState: (state: State) => ({
+        ...state,
+        accounts: {
+          active: mockedAccounts,
+        },
+        settings: {
+          ...state.settings,
+          overriddenFeatureFlags: mockedFF,
+        },
+        wallet: {
+          ...state.wallet,
+          accountNames: new Map([[ARB_ACCOUNT.id, "Arbitrum One"]]),
+        },
+      }),
+    });
 
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
 
@@ -132,5 +153,15 @@ describe("ModularDrawer integration", () => {
     advanceTimers();
 
     expect(getByText(/select account/i)).toBeVisible();
+    expect(getByText(/Arbitrum One/i)).toBeVisible();
+
+    expect(getByText(/add new or existing account/i)).toBeVisible();
+
+    // Select new account (should go to Device Selection)
+    await user.press(getByText(/add new or existing account/i));
+
+    advanceTimers();
+
+    expect(getByText(/Connect Device/i)).toBeVisible();
   });
 });

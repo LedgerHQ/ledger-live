@@ -33,6 +33,8 @@ const currencies = [
   mockBaseCryptoCurrency,
 ];
 
+export { ETH_ACCOUNT, ETH_ACCOUNT_2, BTC_ACCOUNT, ARB_ACCOUNT, BASE_ACCOUNT };
+
 export const mockedAccounts = [
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,

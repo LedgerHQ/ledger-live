@@ -1,9 +1,9 @@
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { formatAddress } from "LLD/utils/formatAddress";
-import { Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
+import { AccountUI as DetailedAccount } from "@ledgerhq/native-ui/pre-ldls/index";
 import { isAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { formatAddress } from "../../Accounts/utils/formatAddress";
 import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
 
 /**
@@ -25,10 +25,8 @@ export const formatDetailedAccount = (
   const isAnAccount = isAccount(account);
   const details = isAnAccount ? account.currency : account.token;
   const parentId = isAnAccount ? undefined : account.token.parentCurrency.id;
-
   const { id } = account;
   const { name, ticker, id: cryptoId } = details;
-
   const { balance, fiatValue } = getBalanceAndFiatValue(account, state, to, discreet);
   const address = formatAddress(parentAddress);
 
