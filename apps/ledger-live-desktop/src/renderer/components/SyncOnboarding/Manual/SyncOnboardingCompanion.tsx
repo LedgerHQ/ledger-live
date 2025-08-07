@@ -213,8 +213,10 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
         background:
           seedPathStatus === "new_seed" ? (
+            // Secret Phrase screen
             <SetupBackground />
           ) : seedPathStatus === "backup_charon" ? (
+            // Recovery Key screen
             <BackupBackground />
           ) : null,
         renderBody: () => (
@@ -326,8 +328,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       lastCompanionStepKey.current <= StepKey.Seed &&
       stepKey === StepKey.Seed &&
       !analyticsSeedingTracked.current &&
-      seedPathStatus === "backup_charon"
+      (seedPathStatus === "backup_charon" ||
+        (seedPathStatus === "restore_charon" && deviceOnboardingState?.isOnboarded))
     ) {
+      /**
+       * Now we have four ways to seed a device:
+       * - new seed => Backup Recovery Key
+       * - restore using Secret Recovery Phrase => Backup Recovery Key
+       * - restore using Recovery Key => Next step
+       * - restore using Recover subscription => Backup Recovery Key
+       * Three of them will trigger the Backup Recovery Key step, but the last one
+       * will trigger directly the install apps step, so its tracking is treated separately.
+       */
       trackPage(
         `Set up ${productName}: Step 3 Seed Success`,
         undefined,
@@ -344,7 +356,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [productName, seedPathStatus, stepKey]);
+  }, [deviceOnboardingState?.isOnboarded, productName, seedPathStatus, stepKey]);
 
   useEffect(() => {
     if (lockedDevice) {

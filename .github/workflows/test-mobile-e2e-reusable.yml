@@ -372,6 +372,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
@@ -391,6 +392,7 @@ jobs:
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -628,6 +630,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+          build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
@@ -645,6 +648,7 @@ jobs:
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

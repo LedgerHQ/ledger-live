@@ -67,10 +67,9 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const value = BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
-  const cvPolling = useCountervaluesPolling();
+  const { poll } = useCountervaluesPolling();
   const hasTrackingPair = useMemo(
     () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
     [counterValueCurrency, currency, trackingPairs],
@@ -84,20 +83,24 @@ export default function CounterValue({
         to: counterValueCurrency,
         startDate: new Date(),
       });
-      t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
+      t = setTimeout(poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
     }
 
     return () => {
       if (t) clearTimeout(t);
     };
-  }, [counterValueCurrency, currency, cvPolling, cvPolling.poll, hasTrackingPair, trackingPairs]);
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value,
-    disableRounding: true,
-    date,
-  });
+  }, [counterValueCurrency, currency, poll, hasTrackingPair, trackingPairs]);
+  const param = useMemo(
+    () => ({
+      from: currency,
+      to: counterValueCurrency,
+      value: BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp,
+      disableRounding: true,
+      date,
+    }),
+    [currency, counterValueCurrency, valueProp, date],
+  );
+  const countervalue = useCalculate(param);
 
   if (typeof countervalue !== "number") {
     return withPlaceholder ? <NoCountervaluePlaceholder /> : null;

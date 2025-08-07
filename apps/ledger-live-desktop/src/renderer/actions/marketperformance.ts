@@ -29,8 +29,9 @@ export function useMarketPerformanceFeatureFlag() {
 export function useMarketPerformanceReferenceDate() {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   return useMemo(() => {
+    // TODO getPortfolioRangeConfig should return null if the range is not supported
     const conf = getPortfolioRangeConfig(selectedTimeRange === "all" ? "year" : selectedTimeRange);
-    return conf.startOf(new Date(Date.now() - (conf.count || 0) * conf.increment));
+    return conf?.startOf(new Date(Date.now() - (conf?.count || 0) * conf?.increment));
   }, [selectedTimeRange]);
 }
 

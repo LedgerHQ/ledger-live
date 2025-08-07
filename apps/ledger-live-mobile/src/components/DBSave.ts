@@ -1,33 +1,33 @@
-import { useRef, useEffect, useMemo, useCallback } from "react";
-import identity from "lodash/identity";
-import throttleFn from "lodash/throttle";
-import { Maybe } from "../types/helpers";
-import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import isEqual from "lodash/isEqual";
+import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import identity from "lodash/identity";
+import isEqual from "lodash/isEqual";
+import throttleFn from "lodash/throttle";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
+import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
-  saveSettings,
   saveCountervalues,
-  savePostOnboardingState,
+  saveLargeMoverState,
   saveMarketState,
+  savePostOnboardingState,
+  saveSettings,
   saveTrustchainState,
   saveWalletExportState,
-  saveLargeMoverState,
 } from "~/db";
-import { exportSelector as settingsExportSelector } from "~/reducers/settings";
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
-import type { State } from "~/reducers/types";
-import { useTrackingPairs } from "~/actions/general";
-import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { walletSelector } from "~/reducers/wallet";
-import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
-import { exportMarketSelector } from "~/reducers/market";
+import { useCountervaluesStateExport } from "~/reducers/countervalues";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
+import { exportMarketSelector } from "~/reducers/market";
+import { exportSelector as settingsExportSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
+import { walletSelector } from "~/reducers/wallet";
+import { Maybe } from "../types/helpers";
 
 type MaybeState = Maybe<State>;
 
@@ -133,7 +133,7 @@ export const ConfigureDBSaveEffects = () => {
     [],
   );
 
-  const rawState = useCountervaluesExport();
+  const rawState = useCountervaluesStateExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [trackingPairs]);
 

@@ -118,9 +118,7 @@ export default function DebugFeatureFlags() {
   const config = useFeature("firebaseEnvironmentReadOnly");
   const params = config?.params;
   const project =
-    params !== null && typeof params === "object" && "project" in params
-      ? (params as { project: string }).project
-      : "";
+    params !== null && typeof params === "object" && "project" in params ? params.project : "";
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   useEffect(() => {

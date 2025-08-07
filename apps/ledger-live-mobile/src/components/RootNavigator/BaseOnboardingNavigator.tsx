@@ -19,6 +19,7 @@ import { RootComposite, StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
+import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -103,6 +104,11 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.WalletSync}
         component={WalletSyncNavigator}
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ModularDrawer}
+        component={ModularDrawerNavigator}
         options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack.Navigator>

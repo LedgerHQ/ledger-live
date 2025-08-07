@@ -71,7 +71,7 @@ export const useCountervaluesPolling = () => ({
   error: null,
 });
 
-export const useCountervaluesUserSettingsContext = () => ({ trackingPairs: [] });
+export const useCountervaluesUserSettings = () => ({ trackingPairs: [] });
 
 export const userThemeSelector = () => "light";
 

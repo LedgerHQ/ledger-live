@@ -15,11 +15,6 @@ export type Scalars = {
   timestamptz: any;
 };
 
-export type GetAccountTransactionsDataQueryVariables = Exact<{
-  address?: InputMaybe<Scalars["String"]>;
-  limit?: InputMaybe<Scalars["Int"]>;
-}>;
-
 export type GetAccountTransactionsDataQuery = {
   account_transactions: Array<{
     transaction_version: number;
@@ -38,59 +33,12 @@ export type GetAccountTransactionsDataGtQuery = {
   }>;
 };
 
-export type GetAccountTransactionsDataLtQueryVariables = Exact<{
-  address?: InputMaybe<Scalars["String"]>;
-  limit?: InputMaybe<Scalars["Int"]>;
-  lt?: InputMaybe<Scalars["bigint"]>;
-}>;
-
-export type GetAccountTransactionsDataLtQuery = {
-  account_transactions: Array<{
-    transaction_version: number;
-  }>;
-};
-
-export type DelegatedStakingActivity = {
-  amount: number;
-  delegator_address: string;
-  pool_address: string;
-  transaction_version: bigint;
-};
-
-export type GetDelegatedStakingActivitiesQuery = {
-  delegated_staking_activities: Array<DelegatedStakingActivity>;
-};
-
-export type PartitionedDelegatedStakingActivities = Record<string, DelegatedStakingActivity[]>;
-
-export type StakePrincipals = {
-  activePrincipals: number;
-  pendingInactivePrincipals: number;
-};
-
 export type StakeDetails = {
   active: number;
   inactive: number;
   pendingInactive: number;
   canWithdrawPendingInactive: boolean;
   poolAddress: string;
-};
-
-export type GetNumActiveDelegatorPerPoolQuery = {
-  num_active_delegator_per_pool: Array<{
-    pool_address: string;
-    num_active_delegator: number;
-  }>;
-  delegated_staking_pools: Array<{
-    staking_pool_address: string;
-    current_staking_pool: {
-      operator_address: string;
-      operator_aptos_name: Array<{
-        domain: string;
-        is_primary: boolean;
-      }>;
-    };
-  }>;
 };
 
 export type GetCurrentDelegatorBalancesQuery = {
@@ -111,10 +59,6 @@ export type GetCurrentDelegatorBalancesQuery = {
     };
   }>;
 };
-
-export interface DelegationPoolAddress {
-  staking_pool_address: string;
-}
 
 interface CurrentPoolBalance {
   total_coins: string;

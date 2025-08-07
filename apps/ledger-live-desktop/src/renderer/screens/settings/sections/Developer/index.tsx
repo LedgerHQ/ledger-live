@@ -30,6 +30,7 @@ import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import NftsTools from "./NftsTools";
 import CustomCALRefInput from "./CustomCALRefInput";
 import ModularDrawerDevTool from "./ModularDrawer";
+import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -132,6 +133,7 @@ const Default = () => {
         </Row>
       )}
       <ModularDrawerDevTool />
+      <MockAccountGeneratorSection />
     </Body>
   );
 };

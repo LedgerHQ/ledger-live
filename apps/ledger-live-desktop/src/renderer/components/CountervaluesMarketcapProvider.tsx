@@ -1,29 +1,34 @@
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react";
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
-import {
-  setCountervaluesMarketcapError,
-  setCountervaluesMarketcapIds,
-  setCountervaluesMarketcapLoading,
-} from "../actions/countervalues";
+import { bindActionCreators } from "redux";
+import { countervaluesActions } from "../actions/countervalues";
 import {
   useCountervaluesMarketcapIds,
   useCountervaluesMarketcapLastUpdated,
 } from "../reducers/countervalues";
 
-export function CountervaluesMarketcapBridgedProvider({ children }: { children: React.ReactNode }) {
+export function useCountervaluesMarketcapBridge() {
   const dispatch = useDispatch();
-
-  const bridge = useMemo(
+  return useMemo(
     () => ({
+      ...bindActionCreators(
+        {
+          setError: countervaluesActions.COUNTERVALUES_MARKETCAP_SET_ERROR,
+          setIds: countervaluesActions.COUNTERVALUES_MARKETCAP_SET_IDS,
+          setLoading: countervaluesActions.COUNTERVALUES_MARKETCAP_SET_LOADING,
+        },
+        dispatch,
+      ),
       useIds: useCountervaluesMarketcapIds,
       useLastUpdated: useCountervaluesMarketcapLastUpdated,
-      setLoading: (loading: boolean) => dispatch(setCountervaluesMarketcapLoading(loading)),
-      setIds: (next: string[]) => dispatch(setCountervaluesMarketcapIds(next)),
-      setError: (msg: string) => dispatch(setCountervaluesMarketcapError(msg)),
     }),
     [dispatch],
   );
+}
+
+export function CountervaluesMarketcapBridgedProvider({ children }: { children: React.ReactNode }) {
+  const bridge = useCountervaluesMarketcapBridge();
 
   return (
     <CountervaluesMarketcapProvider bridge={bridge}>{children}</CountervaluesMarketcapProvider>

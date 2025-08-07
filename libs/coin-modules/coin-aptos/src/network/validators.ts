@@ -6,15 +6,11 @@ import { AptosValidator } from "../types";
 import { isTestnet } from "../logic/isTestnet";
 import { APTOS_EXPLORER_ACCOUNT_URL } from "../constants";
 import { formatUnlockTime } from "../logic/staking";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 export async function getValidators(currencyId: string): Promise<AptosValidator[]> {
   const api = new AptosAPI(currencyId);
-  const query = GetCurrentDelegatorBalancesData;
-  const queryResponse = await api.apolloClient.query<GetCurrentDelegatorBalancesQuery, object>({
-    query: query,
-    fetchPolicy: "network-only",
-  });
-
+  const queryResponse = await cachedValidators(api, currencyId);
   const stakingData: CurrentDelegatorBalance[] = queryResponse.data.current_delegator_balances;
 
   const list: AptosValidator[] = await Promise.all(
@@ -46,3 +42,17 @@ export async function getValidators(currencyId: string): Promise<AptosValidator[
 
   return list.sort((a, b) => b.activeStake.toNumber() - a.activeStake.toNumber());
 }
+
+const fetchValidatorsData = async (api: AptosAPI, _currencyId: string) => {
+  const query = GetCurrentDelegatorBalancesData;
+  return await api.apolloClient.query<GetCurrentDelegatorBalancesQuery, object>({
+    query: query,
+    fetchPolicy: "network-only",
+  });
+};
+
+const cachedValidators = makeLRUCache(
+  fetchValidatorsData,
+  (_api: AptosAPI, currencyId: string) => currencyId,
+  minutes(30),
+);

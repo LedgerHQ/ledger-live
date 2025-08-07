@@ -9,6 +9,7 @@ import {
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { BridgeStrategy } from "./types";
 
 export type ScenarioTransaction<T extends TransactionCommon, A extends Account> = Partial<T> & {
   name: string;
@@ -30,7 +31,7 @@ export type ScenarioTransaction<T extends TransactionCommon, A extends Account> 
 
 export type Scenario<T extends TransactionCommon, A extends Account> = {
   name: string;
-  setup: () => Promise<{
+  setup: (strategy: BridgeStrategy) => Promise<{
     accountBridge: AccountBridge<T, A>;
     currencyBridge: CurrencyBridge;
     account: A;
@@ -50,6 +51,7 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
 
 export async function executeScenario<T extends TransactionCommon, A extends Account>(
   scenario: Scenario<T, A>,
+  strategy: BridgeStrategy = "legacy",
 ) {
   try {
     const {
@@ -59,7 +61,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       retryInterval,
       retryLimit,
       onSignerConfirmation,
-    } = await scenario.setup();
+    } = await scenario.setup(strategy);
 
     console.log("Setup completed ✓");
 

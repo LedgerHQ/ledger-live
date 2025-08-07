@@ -8,6 +8,7 @@ import { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
 import { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
 import { PasswordModifyFlowParamList } from "./PasswordModifyFlowNavigator";
 import { SyncOnboardingStackParamList } from "./SyncOnboardingNavigator";
+import { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 
 export type BaseOnboardingNavigatorParamList = {
@@ -29,4 +30,5 @@ export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.PasswordModifyFlow]: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.SyncOnboarding]: NavigatorScreenParams<SyncOnboardingStackParamList>;
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
+  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
 };

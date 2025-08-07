@@ -1,10 +1,4 @@
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import BigNumber from "bignumber.js";
-import React from "react";
-import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
@@ -13,6 +7,12 @@ import {
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import BigNumber from "bignumber.js";
+import React from "react";
+import { renderWithMockedCounterValuesProvider, screen } from "tests/testSetup";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   arbitrumCurrency,
   baseCurrency,
@@ -236,7 +236,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
 
     const ethereumBalance = screen.getByText(/23.4663 eth/i);
     expect(ethereumBalance).toBeVisible();
-    const usdBalance = screen.getByText(/\$64,796.91/i);
+    const usdBalance = screen.getByText(/\$65,081.79/i);
     expect(usdBalance).toBeVisible();
     const arbitrumBalance = screen.getByText(/0 eth/i);
     expect(arbitrumBalance).toBeVisible();
