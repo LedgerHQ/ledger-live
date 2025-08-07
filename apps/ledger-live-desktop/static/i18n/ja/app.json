@@ -385,6 +385,7 @@
         "onhold" : "保留中",
         "expired" : "期限切れ",
         "finished" : "完了",
+        "unknown" : "処理中",
         "refunded" : "返金済み"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
         "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
         "finished" : "スワップが正常に完了しました。",
-        "unknown" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。"
+        "unknown" : "プロバイダーからの情報を待っています。"
       },
       "date" : "日付",
       "from" : "送付元",
@@ -2386,6 +2387,10 @@
         "title" : "デバイス"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "ブラインド署名が必要です",
+          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -4244,6 +4249,113 @@
             "success" : {
               "title" : "資産の引き出しに成功しました。",
               "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>から引き出されました",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "デリゲートされた資産",
+      "stakedBalanceTooltip" : "この数量は現在、バリデーターにステーキングされています。",
+      "availableBalance" : "出金可能残高",
+      "availableBalanceTooltip" : "この数量はステーキング解除されており、現在出金可能です。",
+      "pendingBalance" : "保留中残高",
+      "pendingBalanceTooltip" : "この数量はステーキング解除されており、現在利用可能待ちです。",
+      "storageUsageBalance" : "最低残高",
+      "storageUsageBalanceTooltip" : "この数量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "SUIトークンがLedger Liveでご利用可能になりました",
+        "description" : "SUIトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2" : "SUIトークンはSUIチェーンのネイティブトークンで、トランザクションやステーキング、今後の新機能など、あらゆる用途に利用されます。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "ステーキング済み量"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "資産をステーキングして、SUI報酬を獲得できます。",
+        "info" : "ステーキングの仕組み",
+        "earnRewards" : "報酬を獲得する"
+      },
+      "table" : {
+        "header" : "ステーキングポジション",
+        "stake" : "追加",
+        "staked" : "デリゲート",
+        "pending" : "リリース保留中",
+        "available" : "引き出し可能"
+      },
+      "unstake" : "ステーキングの解除",
+      "activeTooltip" : "ステーキングされた量は報酬を生みます",
+      "inactiveTooltip" : "ステーキング解除された量は報酬を生みません",
+      "commission" : "コミッション",
+      "totalStake" : "合計ステーキング量",
+      "minSafeWarning" : "資金不足",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "starter" : {
+            "description" : "SUI資産をバリデーターにステーキングして、報酬獲得が可能です。",
+            "bullet" : ["ステーキングされた資産の所有権はお客様が保持します", "Ledgerデバイスを使用してステーキング", "資産はステーキング解除後52～65時間で利用可能になります"],
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            }
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "validator" : {
+            "title" : "バリデーター",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One利用規約",
+            "ledgerByFigmentTC" : "Ledger by Figment利用規約"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ステーキングを解除するのに十分なステーキング済みの資産がありません",
+      "flow" : {
+        "title" : "資産のデリゲートを解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "subtitle" : "ステーキングの解除プロセスは、完了するまでに <0>52〜65時間</0>かかります。",
+            "warning" : "報酬はすぐにキャッシュイン（獲得）されます。ステーキング解除された資産は、<0>52〜65時間のタイムロック</0>後に引き出し可能となります。",
+            "fields" : {
+              "validator" : "バリデータ",
+              "amount" : "ステーキングを解除する数量"
+            }
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産のデリゲートを正常に解除しました。",
+              "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>からデリゲート解除されました。",
               "cta" : "詳細を表示"
             },
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "技術的なエラー： ",
       "saveLogs" : "ログを保存"
     },
+    "OneSuiMinForStake" : {
+      "title" : "ステーキングを開始するための最低数量は、1 SUIです"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "部分的なステーキング解除には、最低1 SUIが必要です"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "最低1SUIをステーキングに残しておく必要があります"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "今後のネットワーク手数料とステーキング解除に備えて、ウォレットに最低0.1 SUIを残しておいてください。"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "現在利用可能な（ステーキングされていない）残高は{{currentBalance}}ですが、これは{{assetName}}のステーキングを解除するためのネットワーク手数料を支払うには不十分です。",
       "oneCta" : "アカウントに{{assetName}}を<cta1>{{cta1Label}}</cta1>してください。",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "恐れ入りますが、現在の地域ではLedger Liveをご利用いただけません。",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {
