@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.3.9-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.0.14-nightly.1
+
 ## 0.3.9-nightly.0
 
 ### Patch Changes

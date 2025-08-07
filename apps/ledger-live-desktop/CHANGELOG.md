@@ -1,5 +1,42 @@
 # ledger-live-desktop
 
+## 2.124.0-nightly.3
+
+### Minor Changes
+
+- [#11119](https://github.com/LedgerHQ/ledger-live/pull/11119) [`77d0a95`](https://github.com/LedgerHQ/ledger-live/commit/77d0a954d458d8def722e4fa2daf9f47edd3c50e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a tracking issue during Recovery Key onboarding
+
+- [#11230](https://github.com/LedgerHQ/ledger-live/pull/11230) [`ef11c6d`](https://github.com/LedgerHQ/ledger-live/commit/ef11c6d4f738d3ad7e1753875a02eb12156be28e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Generate Accounts tools in LLD
+
+### Patch Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2)]:
+  - @ledgerhq/live-countervalues-react@0.2.45-nightly.1
+  - @ledgerhq/live-common@34.44.0-nightly.3
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-evm@2.26.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.8.3-nightly.3
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.20.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.5-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.0-nightly.2
+  - @ledgerhq/domain-service@1.2.39-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.1-nightly.1
+  - @ledgerhq/devices@8.4.9-nightly.0
+  - @ledgerhq/hw-transport@6.31.9-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.9-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.10-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.9-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.1
+  - @ledgerhq/live-countervalues@0.6.0-nightly.1
+  - @ledgerhq/live-nft@0.8.16-nightly.1
+  - @ledgerhq/live-nft-react@0.9.16-nightly.1
+  - @ledgerhq/live-wallet@0.12.0-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.11-nightly.1
+
 ## 2.124.0-nightly.2
 
 ### Minor Changes

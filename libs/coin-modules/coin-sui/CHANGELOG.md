@@ -1,5 +1,15 @@
 # @ledgerhq/coin-sui
 
+## 0.8.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/live-network@2.0.14-nightly.1
+  - @ledgerhq/hw-app-sui@1.2.0
+
 ## 0.8.1-nightly.0
 
 ### Patch Changes

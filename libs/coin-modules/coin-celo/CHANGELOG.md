@@ -1,5 +1,19 @@
 # @ledgerhq/coin-celo
 
+## 1.1.14-nightly.2
+
+### Patch Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2)]:
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-evm@2.26.0-nightly.2
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/devices@8.4.9-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.14-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.1
+
 ## 1.1.14-nightly.1
 
 ### Patch Changes

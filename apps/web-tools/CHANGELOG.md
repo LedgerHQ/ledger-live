@@ -1,5 +1,26 @@
 # web-tools
 
+## 0.20.8-nightly.3
+
+### Patch Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/live-common@34.44.0-nightly.3
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/domain-service@1.2.39-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.14-nightly.0
+  - @ledgerhq/hw-transport@6.31.9-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.9-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.29.9-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.30.5-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.29.9-nightly.0
+  - @ledgerhq/live-wallet@0.12.0-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.11-nightly.1
+
 ## 0.20.8-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tester
 
+## 0.8.0-nightly.1
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-nightly.0
+
 ## 0.8.0-nightly.0
 
 ### Minor Changes

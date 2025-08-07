@@ -1,5 +1,20 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.4.0-nightly.2
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2)]:
+  - @ledgerhq/live-common@34.44.0-nightly.3
+  - @ledgerhq/coin-tester@0.8.0-nightly.1
+  - @ledgerhq/coin-evm@2.26.0-nightly.2
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/live-signer-evm@0.6.3-nightly.2
+
 ## 1.4.0-nightly.1
 
 ### Patch Changes

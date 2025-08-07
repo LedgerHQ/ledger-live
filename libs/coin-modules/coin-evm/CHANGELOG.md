@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 2.26.0-nightly.2
+
+### Minor Changes
+
+- [#11248](https://github.com/LedgerHQ/ledger-live/pull/11248) [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-evm): improve Alpaca integration tests
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/domain-service@1.2.39-nightly.0
+  - @ledgerhq/devices@8.4.9-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.1
+
 ## 2.26.0-nightly.1
 
 ### Minor Changes

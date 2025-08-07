@@ -1,5 +1,14 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.8.3-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba)]:
+  - @ledgerhq/live-common@34.44.0-nightly.3
+  - @ledgerhq/hw-transport@6.31.9-nightly.0
+  - @ledgerhq/live-dmk-shared@0.11.2-nightly.0
+
 ## 0.8.3-nightly.2
 
 ### Patch Changes

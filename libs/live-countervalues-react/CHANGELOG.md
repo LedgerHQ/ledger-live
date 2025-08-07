@@ -1,5 +1,15 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.2.45-nightly.1
+
+### Patch Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/live-countervalues@0.6.0-nightly.1
+
 ## 0.2.45-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-aptos
 
+## 2.8.0-nightly.1
+
+### Minor Changes
+
+- [#11245](https://github.com/LedgerHQ/ledger-live/pull/11245) [`4acc4f4`](https://github.com/LedgerHQ/ledger-live/commit/4acc4f46018739e38eaec1d9943c797322bdb854) Thanks [@semeano](https://github.com/semeano)! - Improve indexer queries for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/errors@6.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.1
+  - @ledgerhq/devices@8.4.9-nightly.0
+  - @ledgerhq/live-network@2.0.14-nightly.1
+
 ## 2.7.1-nightly.0
 
 ### Patch Changes
