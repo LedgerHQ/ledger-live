@@ -311,10 +311,9 @@ export function useModularDrawerState({
     });
 
     onClose?.();
-    setTimeout(() => {
-      reset();
-      navigationStepManager.reset();
-    }, 500);
+
+    reset();
+    navigationStepManager.reset();
   }, [trackModularDrawerEvent, flow, navigationStepManager, onClose, reset]);
 
   // Back button visibility logic
