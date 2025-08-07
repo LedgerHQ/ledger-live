@@ -385,6 +385,7 @@
         "onhold" : "En attente",
         "expired" : "Expiré",
         "finished" : "Terminé",
+        "unknown" : "Traitement",
         "refunded" : "Remboursé"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
         "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
         "finished" : "Votre échange a bien été réalisé.",
-        "unknown" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap."
+        "unknown" : "En attente des informations de la part du prestataire."
       },
       "date" : "Date",
       "from" : "De",
@@ -2386,6 +2387,10 @@
         "title" : "Appareil"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Demande de signature aveugle",
+          "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        },
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
         "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
         "from" : "De",
@@ -2554,7 +2559,7 @@
         "drawerTitle" : "Intégration de MultiversX",
         "title" : "Le token MultiversX eGold (EGLD) est désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant sécuriser et gérer vos tokens eGold (EGLD) via Ledger Live.",
-        "description2" : "Le token MultiversX eGold (EGLD) est natif au réseau MultiversX. Il est utilisé pour les transactions, le staking, les contrats intelligents, la gouvernance et les récompenses de validateur.",
+        "description2" : "MultiversX eGold (EGLD) est le token natif du réseau MultiversX. Il est utilisé pour les transactions, le staking, les contrats intelligents, la gouvernance et les récompenses de validateur.",
         "description3" : "Nous travaillons avec l’équipe de MultiversX pour ajouter plus de fonctionnalités, comme le staking, la prise en charge native de l’ESDT (Elrond Standard Digital Token), et bien plus.",
         "website" : "The Internet Scale Blockchain"
       }
@@ -2902,7 +2907,7 @@
         "drawerTitle" : "Propulsé par Figment",
         "title" : "Le token CELO désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens CELO via Ledger Live.",
-        "description2" : "Le token Celo est natif de la chaîne Celo. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "description2" : "CELO est le token natif de la chaîne Celo. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
         "website" : "Propulsé par Figment"
       }
     },
@@ -4133,7 +4138,7 @@
         "drawerTitle" : "Propulsé par Figment",
         "title" : "Le token NEAR désormais disponible sur Ledger Live",
         "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens NEAR via Ledger Live.",
-        "description2" : "Le token NEAR est natif de la chaîne NEAR. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "description2" : "NEAR est le token natif de la chaîne Near. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
         "website" : "Propulsé par Figment"
       }
     },
@@ -4247,6 +4252,113 @@
               "cta" : "Voir les détails"
             },
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Actif délégué",
+      "stakedBalanceTooltip" : "Montant actuellement staké auprès de validateurs.",
+      "availableBalance" : "Solde pouvant être retiré",
+      "availableBalanceTooltip" : "Montant des actifs déstakés qui peuvent actuellement être retirés.",
+      "pendingBalance" : "Solde en attente",
+      "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles.",
+      "storageUsageBalance" : "Solde minimum",
+      "storageUsageBalanceTooltip" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif.",
+      "subHeader" : {
+        "cardTitle" : "Propulsé par Figment",
+        "moreInfo" : "Plus d’informations",
+        "drawerTitle" : "Propulsé par Figment",
+        "title" : "Le token SUI est désormais disponible sur Ledger Live",
+        "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens SUI via Ledger Live.",
+        "description2" : "SUI est le token natif de la chaîne Sui. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "website" : "Propulsé par Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Montant staké"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses en SUI en stakant vos actifs.",
+        "info" : "Fonctionnement du staking",
+        "earnRewards" : "Gagner des récompenses"
+      },
+      "table" : {
+        "header" : "Position(s) de staking",
+        "stake" : "Ajouter",
+        "staked" : "Délégué",
+        "pending" : "En attente de libération",
+        "available" : "Disponible au retrait"
+      },
+      "unstake" : "Déstaker",
+      "activeTooltip" : "Les montants stakés génèrent des récompenses.",
+      "inactiveTooltip" : "Les montants déstakés ne génèrent plus de récompenses.",
+      "commission" : "Commission",
+      "totalStake" : "Stake total",
+      "minSafeWarning" : "Solde insuffisant",
+      "flow" : {
+        "title" : "Déléguer",
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en stakant vos SUI auprès d’un validateur.",
+            "bullet" : ["Vous gardez la propriété de vos actifs stakés.", "Stakez avec votre appareil Ledger.", "Vos actifs seront disponibles 52 à 65 heures après avoir été déstakés."],
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            }
+          },
+          "amount" : {
+            "title" : "Montant"
+          },
+          "validator" : {
+            "title" : "Validateurs",
+            "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "CG de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur la blockchain.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Solde d’actifs stakés insuffisant pour déstaker.",
+      "flow" : {
+        "title" : "Arrêter la délégation des actifs",
+        "steps" : {
+          "amount" : {
+            "title" : "Montant",
+            "subtitle" : "Le processus de déstaking est finalisé entre <0>52 à 65 heures</0>.",
+            "warning" : "Les récompenses seront immédiatement encaissées. Le montant déstaké sera disponible pour retrait après un <0>délai de 52 à 65 heures</0>.",
+            "fields" : {
+              "validator" : "Validateur",
+              "amount" : "Montant à déstaker"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Délégation des actifs arrêtée",
+              "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
       }
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "Erreur technique : ",
       "saveLogs" : "Enregistrer les logs"
     },
+    "OneSuiMinForStake" : {
+      "title" : "Le montant minimal pour commencer à staker est de 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Le montant minimal à déstaker (déstaking partiel) de 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Vous devez conserver au moins 1 SUI en staking"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "Conservez au minimum 0,1 SUI dans votre wallet pour couvrir les frais de réseau futurs et arrêter la délégation de vos actifs"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Votre solde disponible (non-staké) est de {{currentBalance}}. C’est insuffisant pour couvrir les frais de réseau afin de déstaker vos {{assetName}}.",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> des {{assetName}} pour approvisionner votre compte.",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "Région indisponible",
-    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "description" : "Ledger Live n’est pas disponible dans ce pays/région.",
     "learnMore" : "En savoir plus"
   },
   "versionBlocking" : {
