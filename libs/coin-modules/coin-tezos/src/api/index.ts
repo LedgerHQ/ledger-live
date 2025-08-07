@@ -24,7 +24,7 @@ import {
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
-import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
 
 export function createApi(config: TezosConfig): TezosApi {
@@ -38,14 +38,20 @@ export function createApi(config: TezosConfig): TezosApi {
     getBalance: balance,
     lastBlock,
     listOperations: operations,
+    getStakes: stakes,
+    // ask later if i can do that (adding more stuff to the api surface)...
+    // idk, i think this is a good idea? or not, depends on the actual architecture, talk with @qperrot
+    validateIntent,
+    // required by signer to compute next valid sequence/counter
+    getSequence: async (address: string) => {
+      const accountInfo = await api.getAccountByAddress(address);
+      return accountInfo.type === "user" ? accountInfo.counter + 1 : 0;
+    },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
-    },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
@@ -53,16 +59,51 @@ export function createApi(config: TezosConfig): TezosApi {
   };
 }
 
-function isTezosTransactionType(type: string): type is "send" | "delegate" | "undelegate" {
-  return ["send", "delegate", "undelegate"].includes(type);
+function isTezosTransactionType(
+  type: string,
+): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" {
+  return ["send", "delegate", "undelegate", "stake", "unstake"].includes(type);
+}
+
+async function stakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+  // tezos exposes a single staking position via delegation when a delegate is set
+  const accountInfo = await api.getAccountByAddress(address);
+  if (accountInfo.type !== "user") return { items: [] };
+  if (!accountInfo.delegate?.address) return { items: [] };
+  return {
+    items: [
+      {
+        uid: address,
+        address,
+        delegate: accountInfo.delegate.address,
+        state: "active",
+        asset: { type: "native" },
+        amount: BigInt(accountInfo.balance ?? 0),
+      },
+    ],
+  };
 }
 
 async function balance(address: string): Promise<Balance[]> {
   const value = await getBalance(address);
+  const accountInfo = await api.getAccountByAddress(address);
+  // include stake information so ui can reflect delegation on account page
+  const stake: Stake | undefined =
+    accountInfo.type === "user" && accountInfo.delegate?.address
+      ? {
+          uid: address,
+          address,
+          delegate: accountInfo.delegate.address,
+          state: "active",
+          asset: { type: "native" },
+          amount: BigInt(accountInfo.balance ?? 0),
+        }
+      : undefined;
   return [
     {
       value,
       asset: { type: "native" },
+      stake,
     },
   ];
 }
@@ -82,10 +123,18 @@ async function craft(
     storageLimit: fees.parameters?.storageLimit?.toString(),
   }));
 
+  // map generic staking intents to deal with tezos operation modes (delegate/undelegate)
+  const mappedType =
+    transactionIntent.type === "stake"
+      ? "delegate"
+      : transactionIntent.type === "unstake"
+      ? "undelegate"
+      : (transactionIntent.type as "send" | "delegate" | "undelegate");
+
   const { contents } = await craftTransaction(
     { address: transactionIntent.sender },
     {
-      type: transactionIntent.type,
+      type: mappedType,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee,
@@ -108,16 +157,22 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       address: transactionIntent.sender,
       revealed: senderAccountInfo.revealed,
       balance: BigInt(senderAccountInfo.balance),
-      // NOTE: previously we checked for .sender.xpub
+      // try intent public key first and fallback to tzkt public key
       xpub: transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey,
     },
     transaction: {
-      mode: transactionIntent.type as TezosOperationMode,
+      // reuse the same mapping as craft, keeping generic intent at the api boundary
+      mode: (transactionIntent.type === "stake"
+        ? "delegate"
+        : transactionIntent.type === "unstake"
+        ? "undelegate"
+        : transactionIntent.type) as TezosOperationMode,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
     },
   });
 
+  // deal with taquitoError (see later what is it????)
   if (taquitoError !== undefined) {
     throw new Error(`Fees estimation failed: ${taquitoError}`);
   }
@@ -189,4 +244,45 @@ async function operations(
   pagination: Pagination = { minHeight: 0 },
 ): Promise<[Operation[], string]> {
   return operationsFromHeight(address, pagination.minHeight);
+}
+
+async function validateIntent(intent: TransactionIntent): Promise<TransactionValidation> {
+  // central place to validate amounts/fees for generic bridge
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  let estimatedFees: bigint;
+  let amount: bigint;
+  let totalSpent: bigint;
+
+  try {
+    const estimation = await estimate(intent);
+    estimatedFees = estimation.value;
+
+    // tezos staking uses full account balance beause only fees are effectively spent
+    if (intent.type === "stake" || intent.type === "unstake") {
+      const accountInfo = await api.getAccountByAddress(intent.sender);
+      amount = BigInt(accountInfo.type === "user" ? accountInfo.balance : 0);
+      totalSpent = estimatedFees;
+    } else {
+      amount = intent.amount;
+      totalSpent = amount + estimatedFees;
+    }
+
+    // basic sanity check on balance coverage
+    const accountInfo = await api.getAccountByAddress(intent.sender);
+    if (accountInfo.type === "user") {
+      const accountBalance = BigInt(accountInfo.balance);
+      if (totalSpent > accountBalance) {
+        errors.amount = new Error("Insufficient balance");
+      }
+    }
+
+  } catch (e) {
+    errors.estimation = e as Error;
+    estimatedFees = 0n;
+    amount = intent.amount;
+    totalSpent = intent.amount;
+  }
+
+  return { errors, warnings, estimatedFees, amount, totalSpent };
 }

@@ -52,6 +52,17 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         assetOwner: "",
         networkInfo: null,
       };
+    case "tezos":
+      // note: default transaction for tezos, mode will be set by UI (send, stake, unstake)
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        fees: null,
+        recipient: "",
+        useAllAmount: false,
+        mode: "send",
+        networkInfo: null,
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

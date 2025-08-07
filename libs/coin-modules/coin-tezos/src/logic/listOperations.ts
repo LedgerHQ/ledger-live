@@ -83,7 +83,7 @@ function convertOperation(
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
 
-  return {
+  const coreOp: Operation = {
     id: `${hash ?? ""}-${id}`,
     asset: { type: "native" },
     tx: {
@@ -108,4 +108,20 @@ function convertOperation(
       storageLimit: operation.storageLimit,
     },
   };
+
+  // tzkt exposes staking as 'delegation' operations.
+  // if a newDelegate is present it mean its a stake if not its an unstake.
+  if (isAPIDelegationType(operation)) {
+    coreOp.details = {
+      ...coreOp.details,
+      ledgerOpType: operation.type === "delegation" && operation.newDelegate?.address
+        ? "DELEGATE"
+        : operation.type === "delegation" && !operation.newDelegate?.address
+        ? "UNDELEGATE"
+        : undefined,
+    };
+    coreOp.type = operation.newDelegate?.address ? ("STAKE" as Operation["type"]) : ("UNSTAKE" as Operation["type"]);
+  }
+
+  return coreOp;
 }

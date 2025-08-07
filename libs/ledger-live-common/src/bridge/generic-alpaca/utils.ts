@@ -108,18 +108,31 @@ export function transactionToIntent(
       case "send":
         transactionType = "send";
         break;
+      case "stake":
+        // generic staking intent for chains that support delegation/staking
+        transactionType = "stake";
+        break;
+      case "unstake":
+        // generic unstake intent for chains that support undelegation
+        transactionType = "unstake";
+        break;
       default:
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
+  // tezos staking always uses full amount, ignore specified amount
+  const isTezosStaking = account.currency.family === "tezos" && (transactionType === "stake" || transactionType === "unstake");
+  const amount = isTezosStaking ? BigInt(0) : fromBigNumberToBigInt(transaction.amount, BigInt(0));
+  const useAllAmount = isTezosStaking ? true : !!transaction.useAllAmount;
+
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
     fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
-    amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
+    amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
-    useAllAmount: !!transaction.useAllAmount,
+    useAllAmount,
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;

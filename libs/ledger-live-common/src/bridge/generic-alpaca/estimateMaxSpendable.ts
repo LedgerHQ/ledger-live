@@ -30,6 +30,13 @@ export function genericEstimateMaxSpendable(
     if (network === "stellar") {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
     }
+    if (network === "tezos") {
+      // for tezos staking, return full balance minus fees
+      const isStaking = draftTransaction.mode === "stake" || draftTransaction.mode === "unstake";
+      if (isStaking) {
+        return BigNumber.max(0, account.spendableBalance.minus(fees.value.toString()));
+      }
+    }
     const bnFee = BigNumber(fees.value.toString());
     return BigNumber.max(0, account.spendableBalance.minus(bnFee));
   };
