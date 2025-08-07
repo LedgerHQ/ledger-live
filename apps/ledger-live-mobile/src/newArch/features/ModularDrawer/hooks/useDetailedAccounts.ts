@@ -39,7 +39,6 @@ export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   flow: string,
   source: string,
-  onClose: (() => void) | undefined,
   onAccountSelected: ((account: AccountLike, parentAccount?: AccountLike) => void) | undefined,
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
@@ -110,7 +109,7 @@ export const useDetailedAccounts = (
       const specificAccount = accounts.find(tuple => tuple.account.id === account.id)?.account;
 
       trackModularDrawerEvent("button_clicked", {
-        button: "Add a new account",
+        button: "select_account",
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
         flow,
         source,
@@ -127,18 +126,8 @@ export const useDetailedAccounts = (
           },
         });
       }
-      onClose?.();
     },
-    [
-      accounts,
-      trackModularDrawerEvent,
-      flow,
-      source,
-      onClose,
-      onAccountSelected,
-      navigation,
-      asset.id,
-    ],
+    [accounts, trackModularDrawerEvent, flow, source, onAccountSelected, navigation, asset.id],
   );
 
   return { detailedAccounts, accounts, handleAccountSelected };

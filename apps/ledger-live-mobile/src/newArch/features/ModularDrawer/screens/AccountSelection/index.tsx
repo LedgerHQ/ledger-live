@@ -19,27 +19,24 @@ export type AccountSelectionStepProps = {
   flow: string;
   source: string;
   onAddNewAccount: () => void;
-  onClose: (() => void) | undefined;
 };
 
 const HEADER_HEIGHT = 64;
 const ROW_HEIGHT = 80;
 const MARGIN_BOTTOM = HEADER_HEIGHT + ROW_HEIGHT;
 
-const AccountSelection = ({
+const AccountSelectionContent = ({
   asset,
   flow,
   source,
   accounts$,
   onAddNewAccount,
   onAccountSelected,
-  onClose,
-}: Readonly<AccountSelectionStepProps>) => {
+}: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
   const { detailedAccounts, handleAccountSelected } = useDetailedAccounts(
-    asset!,
+    asset,
     flow,
     source,
-    onClose,
     onAccountSelected,
     accounts$,
   );
@@ -77,6 +74,10 @@ const AccountSelection = ({
       />
     </>
   );
+};
+const AccountSelection = (props: AccountSelectionStepProps) => {
+  if (!props.asset) return null;
+  return <AccountSelectionContent {...props} asset={props.asset} />;
 };
 
 export default React.memo(AccountSelection);

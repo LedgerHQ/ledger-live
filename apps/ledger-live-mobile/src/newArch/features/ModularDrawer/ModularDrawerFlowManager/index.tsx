@@ -19,6 +19,7 @@ export interface ModularDrawerFlowProps {
  * @param {StepFlowManagerReturnType} props.navigationStepViewModel - The navigation step view model.
  * @param {AssetSelectionStepProps} props.assetsViewModel - The asset selection view model.
  * @param {NetworkSelectionStepProps} props.networksViewModel - The network selection view model.
+ * @param {AccountSelectionStepProps} props.accountsViewModel - The account selection view model.
  * @param {boolean} [props.isReadyToBeDisplayed] - Whether the drawer is ready to be displayed.
  */
 export default function ModularDrawerFlow(props: ModularDrawerFlowProps) {

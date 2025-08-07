@@ -135,7 +135,6 @@ export function ModularDrawer({
           onAccountSelected,
           flow,
           source,
-          onClose,
         }}
         isReadyToBeDisplayed={isReadyToBeDisplayed}
       />

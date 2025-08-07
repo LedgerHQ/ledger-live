@@ -28,7 +28,6 @@ export function ModularDrawerFlowView({
       case ModularDrawerStep.Network:
         return <NetworkSelection {...networksViewModel} />;
       case ModularDrawerStep.Account:
-        if (!accountsViewModel.asset) return null;
         return <AccountSelection {...accountsViewModel} />;
       default:
         return null;

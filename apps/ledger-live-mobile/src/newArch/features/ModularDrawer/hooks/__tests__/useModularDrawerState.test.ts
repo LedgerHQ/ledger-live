@@ -200,8 +200,6 @@ describe("useModularDrawerState", () => {
     expect(result.current.asset).toBeUndefined();
   });
 
-  // test handleSingleCurrencyFlow
-
   it("should handle single currency flow", () => {
     const { result } = renderHook(() =>
       useModularDrawerState({
