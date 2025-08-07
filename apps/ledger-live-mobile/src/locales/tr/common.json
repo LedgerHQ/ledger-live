@@ -690,6 +690,15 @@
       "title" : "Eşleme başarısız",
       "description" : "Lütfen tekrar deneyin veya Bluetooth sorun giderme makalemize bakın."
     },
+    "OneSuiMinForStake" : {
+      "title" : "Stake etmeye başlamak için asgari miktar 1 SUI’dir"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Staking'i durdurulacak tutar en az 1 SUI olmalıdır"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Staking’de en az 1 SUI bırakılmalıdır"
+    },
     "PasswordIncorrect" : {
       "title" : "Yanlış parola",
       "description" : "Lütfen tekrar deneyin."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "Transfer Kimliği (Memo)",
       "resource" : "Kaynak",
+      "validator" : "Doğrulayıcı",
       "frozenAmount" : "Dondurulan tutar",
       "unfreezeAmount" : "Çözülen tutar",
       "address" : "Adres",
@@ -3659,7 +3669,8 @@
           "refunded" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
           "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
           "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
-          "finished" : "Takas işleminiz başarıyla tamamlandı."
+          "finished" : "Takas işleminiz başarıyla tamamlandı.",
+          "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
         }
       },
       "missingApp" : {
@@ -3720,7 +3731,7 @@
             "provider" : "Sağlayıcı",
             "rate" : "Kur",
             "fees" : "Ağ ücretleri",
-            "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
+            "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
             "target" : "Hedef hesap"
           },
           "noAccount" : "{{name}} almak için bir hesap oluşturun",
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "Mevcut miktar"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Kör imzalama gerekir",
+        "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+      },
       "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
       "tag" : "Etiket (İsteğe Bağlı)",
       "validateTag" : "Etiketi onayla",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI Ledger Live™’da",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "storageUsage" : {
+        "title" : "Minimum bakiye",
+        "description" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir."
+      },
+      "staked" : {
+        "title" : "Yetkisi devredilen varlık",
+        "description" : "Yetkisi devredilen bakiye"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Yetki devri iptal edilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı stake etmeyi başarıyla durdurdunuz"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Çekilecek tutar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla çektiniz"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Yetkisi Devredilen Pozisyon/Pozisyonlar",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "add" : "Ekle",
+      "stakingEarn" : "Varlıklarınızla yetki devrederek SUI ödülleri kazanabilirsiniz.",
+      "totalStake" : "Toplam Stake",
+      "commission" : "Komisyon",
+      "iStake" : "Yetkisi devredilecek:",
+      "actions" : {
+        "unstake" : "Yetki devrini iptal et"
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "pending" : "Beklemede",
+        "available" : "Çekilebilir bakiye"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Stake edilecek miktar",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "SUI varlıklarınızı stake edin ve varlıklarınızın kontrolünü bırakmadan, güvenle ödüller kazanın.",
+            "steps" : {
+              "0" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
+              "1" : "Stake iptali işleminin tamamlanması için 52 ila 65 saat beklemeniz gerekebilir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle yetki devredin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatli seçin! Doğrulayıcının yanlış kararlar vermesi hâlinde stake ettiğiniz varlıkların bir kısmını kalıcı olarak kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızı başarıyla stake ettiniz",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "İşlem onaylandığında hesap yetkilendirmeniz iptal edilecektir. Hesabınızın yetkisini istediğiniz zaman tekrar devredebilirsiniz."
     },
     "summaryTitle" : "Özet",
+    "delegate" : "Yetki Devret",
     "goToAccount" : "Hesaplara Git",
     "howDelegationWorks" : "Yetki devri nasıl çalışır?",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "description" : "Ledger Live bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
-    "searchPlaceholder" : "Ara"
+    "searchPlaceholder" : "Ara",
+    "emptyAssetList" : "Hiçbir varlık bulunamadı",
+    "accountCount" : "{{count}} hesap (algılanan)",
+    "accountCount_plural" : "{{count}} hesap (algılanan)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
