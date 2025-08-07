@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor } from "@tests/test-renderer";
+import { render, waitFor, act } from "@tests/test-renderer";
 import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
@@ -12,6 +12,12 @@ jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", (
 }));
 
 describe("ModularDrawer integration", () => {
+  const advanceTimers = () => {
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+  };
+
   it("should allow full navigation: asset → network → Device Selection, with back navigation at each step", async () => {
     const { getByText, getByTestId, user } = render(<ModularDrawerSharedNavigator />);
 
@@ -22,16 +28,30 @@ describe("ModularDrawer integration", () => {
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
+
+    advanceTimers();
+
     expect(getByText(/select network/i)).toBeVisible();
 
+    advanceTimers();
+
     await user.press(getByTestId("drawer-back-button"));
+
+    advanceTimers();
+
     expect(getByText(/select asset/i)).toBeVisible();
 
     await user.press(getByText(/ethereum/i));
+
+    advanceTimers();
+
     expect(getByText(/select network/i)).toBeVisible();
 
     // Select Arbitrum (Network) (should go to account selection)
     await user.press(getByText(/arbitrum/i));
+
+    advanceTimers();
+
     expect(getByText(/Connect Device/i)).toBeVisible();
   });
 
@@ -40,10 +60,14 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
+    advanceTimers();
+
     expect(getByText(/select asset/i)).toBeVisible();
 
     // Select Bitcoin (should go directly to Device Selection)
     await user.press(getByText(/bitcoin/i));
+
+    advanceTimers();
 
     expect(getByText(/Connect Device/i)).toBeVisible();
   });
@@ -97,10 +121,15 @@ describe("ModularDrawer integration", () => {
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
+
+    advanceTimers();
+
     expect(getByText(/select network/i)).toBeVisible();
 
     // Select Arbitrum (Network) (should go to account selection)
     await user.press(getByText(/arbitrum/i));
+
+    advanceTimers();
 
     expect(getByText(/select account/i)).toBeVisible();
   });

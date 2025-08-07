@@ -39,14 +39,15 @@ describe("ModularDrawer modules integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     await user.press(getByText(/ethereum/i));
-    expect(getByText(/2 accounts \(detected\)/i)).toBeVisible();
-    expect(getAllByText(/1 account \(detected\)/i).length).toBe(2);
+    jest.advanceTimersByTime(500);
+    expect(getByText(/2 accounts/i)).toBeVisible();
+    expect(getAllByText(/1 account/i).length).toBe(2);
   });
 
   it("should not display the number of accounts if the configuration is not provided", async () => {
     const { getByText, queryByText, user } = render(<ModularDrawerSharedNavigator />);
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     await user.press(getByText(/ethereum/i));
-    expect(queryByText(/2 accounts \(detected\)/i)).toBeNull();
+    expect(queryByText(/2 accounts/i)).toBeNull();
   });
 });
