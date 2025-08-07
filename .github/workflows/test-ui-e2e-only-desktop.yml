@@ -6,12 +6,6 @@ on:
     - cron: "0 5 * * 1-5"
   workflow_dispatch:
     inputs:
-      ref:
-        description: the branch which triggered this workflow
-        required: false
-      base_ref:
-        description: The base branch to merge the head into when checking out the code
-        required: false
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
@@ -85,8 +79,6 @@ jobs:
         shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup caches
         id: caches
@@ -207,8 +199,6 @@ jobs:
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
 
       - name: Download Xray Results
         uses: actions/download-artifact@v4.1.3
