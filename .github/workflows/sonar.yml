@@ -18,12 +18,10 @@ jobs:
     name: Scan LLM && LLD
     runs-on: [ ubuntu-24.04 ]
     steps:
+
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
