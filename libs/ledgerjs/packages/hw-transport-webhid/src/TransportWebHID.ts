@@ -159,7 +159,9 @@ export default class TransportWebHID extends Transport {
    * Create a Ledger transport with a HIDDevice
    */
   static async open(device: HIDDevice) {
-    await device.open();
+    if (!device.opened) {
+      await device.open();
+    }
     const transport = new TransportWebHID(device);
 
     const onDisconnect = e => {
