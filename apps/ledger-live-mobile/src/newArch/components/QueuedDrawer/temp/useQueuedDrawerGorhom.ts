@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
@@ -24,77 +24,80 @@ const useQueuedDrawerGorhom = ({
   onModalHide,
   preventBackdropClick,
 }: UseQueuedDrawerGorhomProps) => {
-  const [isDisplayed, setIsDisplayed] = useState(false);
   const { addDrawerToQueue } = useQueuedDrawerContext();
   const drawerInQueueRef = useRef<DrawerInQueue>();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const isFocused = useIsFocused();
   const areDrawersLocked = useSelector(isModalLockedSelector);
 
-  const triggerOpen = useCallback(() => {
-    setIsDisplayed(true);
-  }, []);
-
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
-  const triggerClose = useCallback(() => {
-    setIsDisplayed(false);
-    // Always clean up the queue reference when closing
+  const isClosedRef = useRef(true);
+
+  const cleanupQueue = useCallback(() => {
     if (drawerInQueueRef.current) {
       drawerInQueueRef.current.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     }
-    onCloseRef.current?.();
   }, []);
 
-  const handleCloseUserEvent = useCallback(() => {
-    logDrawer("handleClose");
-    triggerClose();
-  }, [triggerClose]);
+  const handleOpen = useCallback(() => {
+    if (!isClosedRef.current) return;
+
+    logDrawer("Opening drawer");
+    isClosedRef.current = false;
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const handleClose = useCallback(() => {
+    if (isClosedRef.current) return;
+
+    logDrawer("Closing drawer");
+    isClosedRef.current = true;
+    bottomSheetRef.current?.dismiss();
+    cleanupQueue();
+    onCloseRef.current?.();
+  }, [cleanupQueue]);
+
+  const handleUserClose = useCallback(() => {
+    logDrawer("User initiated close");
+    bottomSheetRef.current?.dismiss();
+  }, []);
 
   const handleDismiss = useCallback(() => {
+    logDrawer("BottomSheet dismissed");
+
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
     }
-    logDrawer("handleDismiss");
+
+    handleClose();
     onModalHide?.();
-    // handleDismiss is called by BottomSheetModal after the sheet is fully dismissed
-    // The queue cleanup should already be handled by handleCloseUserEvent -> triggerClose
-    // But ensure cleanup in case of edge cases
-    if (drawerInQueueRef.current) {
-      logDrawer("handleDismiss: cleaning up remaining queue reference");
-      drawerInQueueRef.current.removeDrawerFromQueue();
-      drawerInQueueRef.current = undefined;
-    }
-  }, [onModalHide]);
+  }, [handleClose, onModalHide]);
 
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      if (index === -1) {
-        handleCloseUserEvent();
-      }
-    },
-    [handleCloseUserEvent],
-  );
-
+  // Queue management effect
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      logDrawer("trigger close because not focused");
-      triggerClose();
-    } else if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
+      logDrawer("Closing drawer - screen not focused");
+      handleClose();
+      return;
+    }
+
+    if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
       const onDrawerStateChanged = (isOpen: boolean) => {
         if (isOpen) {
-          triggerOpen();
+          handleOpen();
         } else {
-          logDrawer("setDrawerOpenedCallback triggerClose");
-          triggerClose();
+          handleClose();
         }
       };
+
       drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
+
       return () => {
-        logDrawer("trigger close in cleanup");
-        triggerClose();
+        logDrawer("Effect cleanup - closing drawer");
+        handleClose();
       };
     }
   }, [
@@ -102,33 +105,23 @@ const useQueuedDrawerGorhom = ({
     isFocused,
     isForcingToBeOpened,
     isRequestingToBeOpened,
-    triggerClose,
-    triggerOpen,
+    handleOpen,
+    handleClose,
   ]);
 
-  useEffect(() => {
-    if (isDisplayed) {
-      bottomSheetRef.current?.present();
-    } else {
-      bottomSheetRef.current?.dismiss();
-    }
-  }, [isDisplayed]);
-
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      logDrawer("UNMOUNT drawer...");
-      drawerInQueueRef.current?.removeDrawerFromQueue();
-      drawerInQueueRef.current = undefined;
+      logDrawer("Component unmounting - cleaning up");
+      cleanupQueue();
     };
-  }, []);
+  }, [cleanupQueue]);
 
   return {
     bottomSheetRef,
-    isDisplayed,
     areDrawersLocked,
-    handleCloseUserEvent,
+    handleUserClose,
     handleDismiss,
-    handleSheetChanges,
     onBack,
     enablePanDownToClose: !areDrawersLocked && !preventBackdropClick,
     showBackdropPress: areDrawersLocked || preventBackdropClick,

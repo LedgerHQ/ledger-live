@@ -62,9 +62,8 @@ const QueuedDrawerGorhom = ({
   const {
     bottomSheetRef,
     areDrawersLocked,
-    handleCloseUserEvent,
+    handleUserClose,
     handleDismiss,
-    handleSheetChanges,
     onBack: hookOnBack,
     enablePanDownToClose,
     showBackdropPress,
@@ -78,12 +77,12 @@ const QueuedDrawerGorhom = ({
   });
 
   const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 250,
+    duration: 150,
   });
 
   const onBackdropPress = useCallback(() => {
-    handleCloseUserEvent();
-  }, [handleCloseUserEvent]);
+    handleUserClose();
+  }, [handleUserClose]);
 
   const renderBackdrop = useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
@@ -104,10 +103,10 @@ const QueuedDrawerGorhom = ({
         hookOnBack={hookOnBack}
         noCloseButton={noCloseButton}
         areDrawersLocked={areDrawersLocked}
-        handleCloseUserEvent={handleCloseUserEvent}
+        handleCloseUserEvent={handleUserClose}
       />
     );
-  }, [title, hasBackButton, noCloseButton, areDrawersLocked, hookOnBack, handleCloseUserEvent]);
+  }, [title, hasBackButton, noCloseButton, areDrawersLocked, hookOnBack, handleUserClose]);
 
   const finalSnapPoints = useMemo(
     () => (enableDynamicSizing ? undefined : snapPoints),
@@ -151,7 +150,6 @@ const QueuedDrawerGorhom = ({
       backdropComponent={renderBackdrop}
       onDismiss={handleDismiss}
       animationConfigs={animationConfigs}
-      onChange={handleSheetChanges}
       backgroundStyle={backgroundStyle}
       handleIndicatorStyle={handleIndicatorStyle}
       style={combinedStyle}

@@ -28,10 +28,10 @@ const useScreenTransition = (currentStep: ModularDrawerStep) => {
   const assetTranslateY = useSharedValue(0);
   const assetOpacity = useSharedValue(1);
   const networkScale = useSharedValue(0.95);
-  const networkTranslateY = useSharedValue(32);
+  const networkTranslateY = useSharedValue(0);
   const networkOpacity = useSharedValue(1);
   const accountScale = useSharedValue(0.95);
-  const accountTranslateY = useSharedValue(32);
+  const accountTranslateY = useSharedValue(0);
   const accountOpacity = useSharedValue(1);
 
   const assetAnimatedStyle = useAnimatedStyle(
