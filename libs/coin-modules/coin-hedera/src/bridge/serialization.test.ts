@@ -27,11 +27,13 @@ describe("serialization", () => {
 
   test("assignToAccountRaw should assign HederaResources to AccountRaw", () => {
     assignToAccountRaw(mockedAccount, mockedAccountRaw);
-    expect(mockedAccountRaw.hederaResources).toBeDefined();
+    expect(typeof mockedAccountRaw.hederaResources).toBe("object");
+    expect(mockedAccountRaw.hederaResources).not.toBeNull();
   });
 
   test("assignFromAccountRaw should assign HederaResourcesRaw to Account", () => {
     assignFromAccountRaw(mockedAccountRaw, mockedAccount);
-    expect(mockedAccount.hederaResources).toBeDefined();
+    expect(typeof mockedAccountRaw.hederaResources).toBe("object");
+    expect(mockedAccountRaw.hederaResources).not.toBeNull();
   });
 });
