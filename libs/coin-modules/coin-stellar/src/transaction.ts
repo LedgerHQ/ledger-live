@@ -49,7 +49,6 @@ function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...common,
     family: tr.family,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
-    // baseReserve: tr.baseReserve ? new BigNumber(tr.baseReserve) : null,
     memoValue: tr.memoValue ? tr.memoValue : null,
     memoType: tr.memoType ? tr.memoType : null,
     networkInfo: networkInfo && {

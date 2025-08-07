@@ -9,12 +9,7 @@ export enum NetworkCongestionLevel {
 }
 
 export type NetworkInfo = {
-  // family: "xrp" | "stellar";
-  // serverFee: BigNumber;
-  // baseReserve: BigNumber;
   fees: BigNumber;
-  // baseFee: BigNumber;
-  // networkCongestionLevel?: NetworkCongestionLevel | undefined;
 };
 
 export function createTransaction(account: Account | TokenAccount): TransactionCommon & {

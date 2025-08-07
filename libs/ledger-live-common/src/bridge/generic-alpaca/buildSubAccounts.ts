@@ -4,7 +4,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import { AssetInfo, Balance } from "@ledgerhq/coin-framework/lib/api/types";
+import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 export interface OperationCommon extends Operation {

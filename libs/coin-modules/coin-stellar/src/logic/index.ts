@@ -5,5 +5,5 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
-export { getTransactionStatus } from "./getTransactionStatus";
+export { validateIntent } from "./validateIntent";
 export { isMemoValid, getAssetCodeIssuer, STELLAR_BURN_ADDRESS } from "./utils";
