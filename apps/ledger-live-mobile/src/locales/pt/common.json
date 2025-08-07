@@ -3656,7 +3656,8 @@
           "refunded" : "Para mais informações, contate o provedor da troca com sua Swap ID.",
           "pending" : "Aguarde enquanto o provedor da troca processa a transação.",
           "onhold" : "Para resolver a situação, contate o provedor da troca com sua Swap ID.",
-          "finished" : "Sua troca foi concluída com sucesso."
+          "finished" : "Sua troca foi concluída com sucesso.",
+          "unknown" : "Estamos aguardando informações do provedor."
         }
       },
       "missingApp" : {
@@ -4042,6 +4043,10 @@
       "quantityAvailable" : "Quantidade Disponível"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Assinatura cega necessária",
+        "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+      },
       "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} a fim de enviar os tokens desta conta",
       "tag" : "Tag (Opcional)",
       "validateTag" : "Validar Tag",
@@ -7761,7 +7766,7 @@
   },
   "geoBlocking" : {
     "title" : "Local indisponível",
-    "description" : "A carteira Ledger não está disponível neste local.",
+    "description" : "O Ledger Live não está disponível nesta localização.",
     "learnMore" : "Saiba mais"
   },
   "versionBlocking" : {
@@ -7773,7 +7778,10 @@
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecionar rede",
     "selectAccount" : "Selecionar conta",
-    "searchPlaceholder" : "Buscar"
+    "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "Nenhum ativo encontrado",
+    "accountCount" : "{{count}} account",
+    "accountCount_plural" : "{{count}} accounts"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
