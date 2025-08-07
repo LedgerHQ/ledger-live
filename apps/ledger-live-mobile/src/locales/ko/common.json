@@ -690,6 +690,15 @@
       "title" : "페어링 실패",
       "description" : "다시 시도하거나 블루투스 문제 해결 관련 글을 참조해주세요."
     },
+    "OneSuiMinForStake" : {
+      "title" : "스테이킹을 시작하려면 최소 1 SUI 이상이 필요합니다."
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "부분 언스테이킹은 1 SUI 이상부터 가능합니다."
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+    },
     "PasswordIncorrect" : {
       "title" : "잘못된 패스워드",
       "description" : "다시 시도해 주세요."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "전송 ID(메모)",
       "resource" : "리소스",
+      "validator" : "검증인",
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
       "address" : "주소",
@@ -3659,7 +3669,8 @@
           "refunded" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
           "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
           "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
-          "finished" : "스왑이 성공적으로 완료되었습니다."
+          "finished" : "스왑이 성공적으로 완료되었습니다.",
+          "unknown" : "제공업체의 정보를 기다리는 중입니다."
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "이용 가능한 수량"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "블라인드 서명 필요",
+        "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+      },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
       "validateTag" : "태그 검증",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI 이용 가능",
+        "description" : "자유롭게 사용할 수 있는 수량입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 수량",
+        "description" : "저장 및 트랜잭션용으로 예약된 수량이며, 계정이 활성 상태를 유지하기 위해 필요한 최소 수량입니다."
+      },
+      "staked" : {
+        "title" : "위임한 자산",
+        "description" : "위임한 수량"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "위임 해제 수량"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 수량"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "위임한 포지션",
+      "info" : "위임은 어떤 원리인가요?",
+      "add" : "추가",
+      "stakingEarn" : "보유 자산을 위임하고 SUI 보상을 받아보세요.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "iStake" : "위임",
+      "actions" : {
+        "unstake" : "위임 해제"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "스테이킹할 수량",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "SUI를 스테이킹해 자산은 직접 관리하고, 리워드는 안전하게 쌓아보세요.",
+            "steps" : {
+              "0" : "위임된 자산도 여전히 사용자 소유입니다.",
+              "1" : "언스테이킹 완료까지 52~65시간이 소요됩니다.",
+              "2" : "Ledger 장치로 안전하게 위임하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 수량: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 수량: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "거래가 확인되면 계정 위임이 종료됩니다. 계정을 언제든 다시 위임할 수 있습니다."
     },
     "summaryTitle" : "요약",
+    "delegate" : "위임하기",
     "goToAccount" : "계정으로 이동",
     "howDelegationWorks" : "위임은 어떤 원리인가요?",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
-    "searchPlaceholder" : "검색"
+    "searchPlaceholder" : "검색",
+    "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "accountCount" : "{{count}}개의 계정 (감지됨)",
+    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
