@@ -385,6 +385,7 @@
         "onhold" : "已暂停",
         "expired" : "已逾期",
         "finished" : "已完成",
+        "unknown" : "正在处理",
         "refunded" : "已退款"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "请稍候片刻，互换提供方正在处理该交易。",
         "onhold" : "请使用您的互换代码联系互换服务提供方以解决这一情况。",
         "finished" : "您的互换已成功完成",
-        "unknown" : "请使用您的互换 ID 联系互换服务提供商以了解更多详情。"
+        "unknown" : "我们正在等待提供商的信息。"
       },
       "date" : "日期",
       "from" : "从",
@@ -2386,6 +2387,10 @@
         "title" : "设备"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "需要盲签名",
+          "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+        },
         "utxoLag" : "由于该账户持有大量硬币，本次交易可能需要花费较长时间来验证和签署。",
         "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
         "from" : "从",
@@ -4247,6 +4252,113 @@
               "cta" : "查看详情"
             },
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "已委托资产",
+      "stakedBalanceTooltip" : "此数额目前已质押给验证者。",
+      "availableBalance" : "可提取余额",
+      "availableBalanceTooltip" : "此数额已解除质押，现已可以提取。",
+      "pendingBalance" : "待处理余额",
+      "pendingBalanceTooltip" : "此数额已解除质押，目前正在等待成为可用余额。",
+      "storageUsageBalance" : "最低余额",
+      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。",
+      "subHeader" : {
+        "cardTitle" : "由 Figment 提供支持",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "由 Figment 提供支持",
+        "title" : "Ledger Live 现已支持 SUI 代币",
+        "description" : "您现在可以通过 Ledger Live 管理并保护您的 SUI 代币。",
+        "description2" : "SUI 代币是 SUI 链的原生代币，可用于交易、质押以及即将推出的许多功能。",
+        "website" : "由 Figment 提供支持"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "已质押数额"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "您可以通过质押您的资产来赚取 SUI 奖励。",
+        "info" : "权益质押的运作方式",
+        "earnRewards" : "赚取奖励"
+      },
+      "table" : {
+        "header" : "质押持仓",
+        "stake" : "添加",
+        "staked" : "已委托",
+        "pending" : "等待解除",
+        "available" : "可提取"
+      },
+      "unstake" : "解除质押",
+      "activeTooltip" : "权益质押的数额可以产生奖励",
+      "inactiveTooltip" : "解除质押的数额不会产生奖励",
+      "commission" : "佣金",
+      "totalStake" : "质押总额",
+      "minSafeWarning" : "资金不足",
+      "flow" : {
+        "title" : "委托",
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 SUI 资产质押给验证者来赚取奖励。",
+            "bullet" : ["您仍然保持对已质押资产的所有权", "使用 Ledger 设备进行质押", "资产将在解除质押 52 至 65 小时后可用"],
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分质押资产并且无法挽回。"
+            }
+          },
+          "amount" : {
+            "title" : "数额"
+          },
+          "validator" : {
+            "title" : "验证者",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+            "ledgerByFigmentTC" : "Ledger by Figment 条款与条件"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您已成功质押资产",
+              "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "没有足够的质押资产可解除质押",
+      "flow" : {
+        "title" : "解除资产委托",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "subtitle" : "解除质押流程需要 <0>52 至 65 小时</0>才能完成。",
+            "warning" : "奖励将立即兑现。解除质押的数额在 <0>52 至 65 小时的锁定期</0>结束后才能提取。",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要解除质押的数额"
+            }
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已成功解除委托",
+              "description" : "<0>{{amount}}</0>已从<0>{{validator}}</0>解除委托",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
           }
         }
       }
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "技术错误： ",
       "saveLogs" : "保存日志"
     },
+    "OneSuiMinForStake" : {
+      "title" : "开始质押的最低数额为 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "部分解除质押数额至少为 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "应保留至少 1 SUI 的质押余额"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "请确保您的钱包中至少保留 0.1 SUI，用于支付未来的网络费用和解除委托质押所需费用"
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "您目前的可用（非质押）余额为 {{currentBalance}}，不足以支付解除质押 {{assetName}} 的网络费用。",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} 到您的账户",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "所在地区不可用",
-    "description" : "此地区无法使用 Ledger 钱包。",
+    "description" : "此地区无法使用 Ledger Live。",
     "learnMore" : "了解更多"
   },
   "versionBlocking" : {
