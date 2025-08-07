@@ -10,5 +10,5 @@ describe("scan UTXOs function", () => {
     const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
 
     expect(utxos.length).toBeGreaterThan(0);
-  });
+  }, 10000);
 });

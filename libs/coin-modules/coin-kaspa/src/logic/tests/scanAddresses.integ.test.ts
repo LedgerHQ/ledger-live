@@ -23,5 +23,5 @@ describe("scanAddresses function", () => {
 
     expect(accountAddresses.usedReceiveAddresses.length).toBeGreaterThan(0);
     expect(accountAddresses.totalBalance.eq(sumBalance)).toBe(true);
-  });
+  }, 10000);
 });

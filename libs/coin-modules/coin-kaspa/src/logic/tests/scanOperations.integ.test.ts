@@ -267,5 +267,5 @@ describe("scan transactions for multiple addresses", () => {
     expect(result.find(res => res.recipients.includes(addresses[0]))).toBeDefined();
     expect(result.find(res => res.recipients.includes(addresses[1]))).toBeDefined();
     expect(timeTakenInSeconds).toBeLessThan(10);
-  });
+  }, 15000);
 });
