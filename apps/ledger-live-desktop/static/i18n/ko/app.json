@@ -385,6 +385,7 @@
         "onhold" : "보류 중",
         "expired" : "만료됨",
         "finished" : "완료됨",
+        "unknown" : "처리 중",
         "refunded" : "환불 처리됨"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "finished" : "스왑이 성공적으로 완료되었습니다.",
-        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
+        "unknown" : "제공업체의 정보를 기다리는 중입니다."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -2386,6 +2387,10 @@
         "title" : "장치"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "블라인드 서명 필요",
+          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -4244,6 +4249,113 @@
             "success" : {
               "title" : "자산을 성공적으로 출금했습니다.",
               "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>에서 출금되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "위임한 자산",
+      "stakedBalanceTooltip" : "검증인에게 스테이킹된 수량입니다.",
+      "availableBalance" : "출금 가능 수량",
+      "availableBalanceTooltip" : "언스테이킹된 수량으로 현재 출금이 가능합니다.",
+      "pendingBalance" : "승인 대기 수량",
+      "pendingBalanceTooltip" : "언스테이킹된 수량으로 현재 사용 승인 대기 중입니다.",
+      "storageUsageBalance" : "최소 수량",
+      "storageUsageBalanceTooltip" : "저장 및 트랜잭션용으로 예약된 수량이며, 계정이 활성 상태를 유지하기 위해 필요한 최소 수량입니다.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "자세한 정보",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "이제 Ledger Live에서 SUI 토큰을 사용할 수 있습니다.",
+        "description" : "Ledger Live에서 SUI 토큰을 관리하고 안전하게 보호하세요.",
+        "description2" : "SUI 토큰은 SUI 체인의 네이티브 토큰입니다. 트랜잭션과 스테이킹뿐 아니라, 앞으로 도입될 다양한 서비스에 활용될 예정입니다.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "스테이킹 수량"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "보유 자산을 스테이킹하고 SUI 보상을 받아보세요.",
+        "info" : "스테이킹 작동 방식",
+        "earnRewards" : "보상 받기"
+      },
+      "table" : {
+        "header" : "스테이킹 포지션",
+        "stake" : "추가",
+        "staked" : "위임됨",
+        "pending" : "보류 중인 릴리스",
+        "available" : "출금 가능"
+      },
+      "unstake" : "언스테이킹",
+      "activeTooltip" : "스테이킹된 수량은 보상을 생성합니다",
+      "inactiveTooltip" : "언스테이킹된 수량은 보상을 생성하지 않습니다",
+      "commission" : "수수료",
+      "totalStake" : "총 스테이킹",
+      "minSafeWarning" : "자금이 부족합니다",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "starter" : {
+            "description" : "SUI를 검증인에게 위임하고 보상을 받아보세요.",
+            "bullet" : ["스테이킹된 자산의 소유권은 귀하에게 있습니다", "Ledger 장치로 스테이킹", "언스테이킹한 자산은 52~65시간 이후에 이용 가능합니다"],
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            }
+          },
+          "amount" : {
+            "title" : "수량"
+          },
+          "validator" : {
+            "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "스테이킹된 자산이 충분하지 않아 언스테이킹이 불가능합니다.",
+      "flow" : {
+        "title" : "위임 해제 자산",
+        "steps" : {
+          "amount" : {
+            "title" : "수량",
+            "subtitle" : "언스테이킹 프로세스는 완료까지 <0>52~65시간</0>이 소요됩니다.",
+            "warning" : "보상은 즉시 현금화할 수 있습니다. 언스테이킹된 금액은 <0>52~65시간 타임락</0>후에 출금이 가능합니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "언스테이킹할 금액"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
+              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
               "cta" : "세부사항 보기"
             },
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "기술적 에러: ",
       "saveLogs" : "로그 저장"
     },
+    "OneSuiMinForStake" : {
+      "title" : "스테이킹을 시작하려면 최소 1 SUI 이상이 필요합니다."
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "부분 언스테이킹은 1 SUI 이상부터 가능합니다."
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "향후 네트워크 수수료 지불과 위임 철회를 위해 지갑에 최소 0.1 SUI를 남겨주세요."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다.",
       "oneCta" : "본인 계정에 {{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
