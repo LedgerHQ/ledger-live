@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo } from "react";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
+import { View as RNView } from "react-native";
 import useAccountsListViewModel, { type Props } from "./useAccountsListViewModel";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { Pressable } from "react-native";
 import AccountItem from "./components/AccountItem";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import isEqual from "lodash/isEqual";
 import { getEstimatedListSize } from "LLM/utils/getEstimatedListSize";
+import { Button as LdlsButton } from "@ldls/ui-rnative";
 
 const ESTIMED_ITEM_SIZE = 150;
 
@@ -50,17 +52,23 @@ const View: React.FC<ViewProps> = ({
   });
 
   return (
-    <List
-      testID="AccountsList"
-      estimatedItemSize={ESTIMED_ITEM_SIZE}
-      estimatedListSize={estimatedListSize}
-      renderItem={renderItem}
-      data={accountsToDisplay}
-      ListFooterComponent={ListFooterComponent}
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-      onContentSizeChange={onContentChange}
-    />
+    <>
+      <LdlsButton appearance="primary">
+        <Text>{"Hello"}</Text>
+        <RNView className="bg-red-500" />
+      </LdlsButton>
+      <List
+        testID="AccountsList"
+        estimatedItemSize={ESTIMED_ITEM_SIZE}
+        estimatedListSize={estimatedListSize}
+        renderItem={renderItem}
+        data={accountsToDisplay}
+        ListFooterComponent={ListFooterComponent}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        onContentSizeChange={onContentChange}
+      />
+    </>
   );
 };
 

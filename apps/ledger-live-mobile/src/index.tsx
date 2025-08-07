@@ -90,6 +90,7 @@ import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
+import "./global.css";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();

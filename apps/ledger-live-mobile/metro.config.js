@@ -9,6 +9,7 @@
 
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
+const { withNativeWind } = require("nativewind/metro");
 
 const forcedDependencies = [
   "react-redux",
@@ -62,6 +63,7 @@ const nodeModulesPaths = [
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
   watchFolders: [projectRootDir],
+
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -105,4 +107,8 @@ const metroConfig = {
   },
 };
 
-module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig));
+module.exports = withNativeWind(
+  withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig), {
+    input: "./src/global.css",
+  }),
+);
