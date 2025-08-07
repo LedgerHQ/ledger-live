@@ -71,6 +71,7 @@ libs/coin-modules/coin-aptos/                                            @ledger
 libs/coin-modules/coin-near/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support
 libs/coin-modules/coin-cardano/                                          @ledgerhq/coin-integration @ledgerhq/blockchain-support
 libs/coin-modules/coin-tezos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-vechain/                                          @ledgerhq/coin-integration @ledgerhq/blockchain-support
 
 ## Zondax
 libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
