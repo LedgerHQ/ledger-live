@@ -41,7 +41,7 @@ export default function AnimatedBar({
     );
 
     return {
-      backgroundColor: backgroundColor,
+      backgroundColor,
       paddingTop: pt,
       height: headerHeight + pt,
     };
@@ -73,7 +73,7 @@ export default function AnimatedBar({
       height: opacityHeight,
       opacity: interpolate(layoutY.value, [0, animationHeight], [1, 0], Extrapolation.CLAMP),
     };
-  }, [layoutY, animationHeight, totalHeight, opacityHeight]);
+  }, [layoutY, animationHeight, opacityHeight]);
 
   return (
     <Animated.View style={[style, heightStyle]}>
