@@ -14,7 +14,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  getTransactionStatus,
+  validateIntent,
   lastBlock,
   listOperations,
   STELLAR_BURN_ADDRESS,
@@ -43,9 +43,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    validateIntent: async (transactionIntent: TransactionIntent<StellarMemo>) => {
-      return getTransactionStatus(transactionIntent);
-    },
+    validateIntent,
     getSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
@@ -69,12 +67,9 @@ async function craft(
   transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: FeeEstimation,
 ): Promise<string> {
-  let fees = transactionIntent.fees;
-  if (customFees?.value) {
-    fees = customFees?.value ?? (await estimateFees(transactionIntent.sender));
-  } else {
-    fees = transactionIntent.fees ?? (await estimateFees(transactionIntent.sender));
-  }
+  const fees =
+    customFees?.value || transactionIntent.fees || (await estimateFees(transactionIntent.sender));
+
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
   //   throw new Error("Stellar only supports one memo per transaction.");
@@ -113,14 +108,14 @@ function compose(tx: string, signature: string, pubkey?: string): string {
 
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const value = transactionIntent?.fees
-    ? BigInt(transactionIntent?.fees.toString())
+    ? transactionIntent?.fees
     : await estimateFees(transactionIntent.sender);
   return { value };
 }
 
 async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  const minHeight = pagination.minHeight as number | undefined;
-  const lastPagingToken = pagination.lastPagingToken as string | undefined;
+  const minHeight = pagination.minHeight;
+  const lastPagingToken = pagination.lastPagingToken ?? "";
   if (minHeight) {
     return operationsFromHeight(address, minHeight);
   }

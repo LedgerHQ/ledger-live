@@ -33,7 +33,7 @@ import BigNumber from "bignumber.js";
 import { getBalance } from "./getBalance";
 import { fetchAccount } from "../network/horizon";
 
-export const getTransactionStatus = async (
+export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
@@ -227,4 +227,4 @@ export const getTransactionStatus = async (
   };
 };
 
-export default getTransactionStatus;
+export default validateIntent;
