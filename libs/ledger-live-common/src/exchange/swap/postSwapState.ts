@@ -155,7 +155,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
       payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
       payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
-      maybeSeedMatch: seedIdFrom === seedIdTo, // should only matters for EVM to EVM
+      maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
       ...rest,
     };
 
