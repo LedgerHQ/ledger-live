@@ -36,6 +36,7 @@ libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
 # Coin integration team
 .github/**/bot-*.yml                                     @ledgerhq/coin-integration
+.github/workflows/coin-monitoring-*.yml                  @ledgerhq/coin-integration
 .github/workflows/import-cal-tokens.yml                  @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                   @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml            @ledgerhq/coin-integration
@@ -59,6 +60,7 @@ libs/live-config/                                        @ledgerhq/coin-integrat
 libs/live-network/                                       @ledgerhq/coin-integration
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
+tools/actions/composites/monitor/                        @ledgerhq/coin-integration
 
 # Cloud Wallet team
 libs/coin-framework/src/api/                             @ledgerhq/cloud-wallet
