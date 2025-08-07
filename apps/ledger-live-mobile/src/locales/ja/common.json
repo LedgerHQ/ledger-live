@@ -690,6 +690,15 @@
       "title" : "ペアリングに失敗しました",
       "description" : "もう一度お試しいただくか、Bluetoothのトラブル解決記事を参照してください。"
     },
+    "OneSuiMinForStake" : {
+      "title" : "ステーキングを開始するための最低数量は1 SUIです"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "部分的なステーキング解除には、最低1 SUIが必要です"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "最低1 SUIをステーキングに残しておく必要があります"
+    },
     "PasswordIncorrect" : {
       "title" : "パスワードが間違っています。",
       "description" : "もう一度お試しください。"
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "送金ID（メモ）",
       "resource" : "リソース",
+      "validator" : "バリデータ",
       "frozenAmount" : "凍結額",
       "unfreezeAmount" : "凍結解除額",
       "address" : "アドレス",
@@ -3659,7 +3669,8 @@
           "refunded" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
           "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
           "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
-          "finished" : "スワップが正常に完了しました。"
+          "finished" : "スワップが正常に完了しました。",
+          "unknown" : "プロバイダーからの情報を待っています。"
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "利用可能な数量"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "ブラインド署名が必要です",
+        "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+      },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
       "validateTag" : "タグを検証",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "利用可能なSUI",
+        "description" : "これは、利用可能額です。"
+      },
+      "storageUsage" : {
+        "title" : "最低残高",
+        "description" : "この数量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
+      },
+      "staked" : {
+        "title" : "デリゲートされた資産",
+        "description" : "デリゲートされた残高"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "デリゲート解除額"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産のステーキングを正常に解除しました"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "引き出す数量"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "資産の引き出しに成功しました"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "デリゲート済みポジション",
+      "info" : "デリゲートの仕組み",
+      "add" : "追加",
+      "stakingEarn" : "資産をデリゲートすることで、SUI報酬を獲得できます。",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "iStake" : "デリゲートする",
+      "actions" : {
+        "unstake" : "デリゲート解除"
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "pending" : "保留中",
+        "available" : "引き出し可能"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "ステーキングする数量",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "SUIをステーキングして、報酬を安全に獲得しながら、資産の管理権も保持できます。",
+            "steps" : {
+              "0" : "資産をデリゲートしても、資産の所有者は変わりません。",
+              "1" : "ステーキング解除が完了するまで52〜65時間待つ必要があります。",
+              "2" : "Ledgerデバイスを使って安全にデリゲートできます。"
+            },
+            "warning" : {
+              "description" : "バリデーターを賢く選択：バリデーターが適切に動作しない場合、ステーキングされた資産の一部が失われて、取り返せない可能性があります。"
+            },
+            "cta" : "続行"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。"
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "処理が承認された時点で、アカウントのデリゲートは終了します。アカウントはいつでも再びデリゲート可能です。"
     },
     "summaryTitle" : "概要",
+    "delegate" : "デリゲート",
     "goToAccount" : "アカウントに移動",
     "howDelegationWorks" : "デリゲートの仕組み",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "恐れ入りますが、現在の地域ではLedger Liveをご利用いただけません。",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
     "selectAccount" : "アカウントを選択",
-    "searchPlaceholder" : "検索"
+    "searchPlaceholder" : "検索",
+    "emptyAssetList" : "資産が見つかりません",
+    "accountCount" : "{{count}}個のアカウント（検出済み）",
+    "accountCount_plural" : "{{count}}個のアカウント（検出済み）"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
