@@ -690,6 +690,15 @@
       "title" : "Kopplung fehlgeschlagen",
       "description" : "Bitte versuchen Sie es erneut oder lesen Sie unseren Artikel zur Bluetooth-Fehlerbehebung."
     },
+    "OneSuiMinForStake" : {
+      "title" : "Der Mindestbetrag für das Staking beläuft sich auf 1 SUI."
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Eine Teilauszahlung eines Stakes muss mindestens 1 SUI betragen."
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Mindestens 1 SUI muss im Stake verbleiben"
+    },
     "PasswordIncorrect" : {
       "title" : "Falsches Passwort",
       "description" : "Bitte versuchen Sie es erneut."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "Transfer-ID (Memo)",
       "resource" : "Ressource",
+      "validator" : "Validator",
       "frozenAmount" : "Eingefrorener Betrag",
       "unfreezeAmount" : "Betrag entsperren",
       "address" : "Adresse",
@@ -3659,7 +3669,8 @@
           "refunded" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID für weitere Informationen.",
           "pending" : "Bitte warten Sie, während der Swap-Provider die Transaktion verarbeitet.",
           "onhold" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID, um die Situation zu lösen.",
-          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen."
+          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen.",
+          "unknown" : "Wir warten auf Informationen vom Anbieter."
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "Verfügbare Menge"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Blindsignatur erforderlich",
+        "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+      },
       "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
       "tag" : "Markierung (optional)",
       "validateTag" : "Markierung validieren",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI erhältlich",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "storageUsage" : {
+        "title" : "Minimales Guthaben",
+        "description" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und ist das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben."
+      },
+      "staked" : {
+        "title" : "Delegiertes Asset",
+        "description" : "Delegiertes Guthaben"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Nicht zu delegierender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Du hast das Staking deiner Assets erfolgreich aufgehoben."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Abzuhebender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich abgehoben."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Delegierte Position(en)",
+      "info" : "So funktioniert Delegierung",
+      "add" : "Hinzufügen",
+      "stakingEarn" : "Du kannst SUI-Prämien verdienen, indem du deine Assets delegierst.",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "iStake" : "Ich delegiere",
+      "actions" : {
+        "unstake" : "Delegierung aufheben"
+      },
+      "drawer" : {
+        "status" : "Status",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "pending" : "Ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Staking-Betrag",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Stake deine SUI, um sicher Prämien zu verdienen, und behalte gleichzeitig die Kontrolle über deine Assets.",
+            "steps" : {
+              "0" : "Delegierte Assets bleiben dein Eigentum.",
+              "1" : "Du musst 52–65 Stunden warten, bis das Unstaking abgeschlossen ist.",
+              "2" : "Delegiere sicher mit deinem Ledger-Gerät."
+            },
+            "warning" : {
+              "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner gestaketen Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Assets: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Assets",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich gestaket",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "Deine Kontodelegierung endet, sobald der Vorgang bestätigt ist. Du kannst dein Konto jederzeit erneut delegieren."
     },
     "summaryTitle" : "Zusammenfassung",
+    "delegate" : "Delegieren",
     "goToAccount" : "Zu den Konten gehen",
     "howDelegationWorks" : "So funktioniert Delegation",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "Nicht am Ort verfügbar",
-    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "description" : "Ledger Live ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
-    "searchPlaceholder" : "Suche"
+    "searchPlaceholder" : "Suche",
+    "emptyAssetList" : "Keine Assets gefunden",
+    "accountCount" : "{{count}} Konto (erkannt)",
+    "accountCount_plural" : "{{count}} Konten (erkannt)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
