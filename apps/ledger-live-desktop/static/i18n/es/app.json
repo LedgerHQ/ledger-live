@@ -385,6 +385,7 @@
         "onhold" : "En espera",
         "expired" : "Caducado",
         "finished" : "Finalizado",
+        "unknown" : "Procesando",
         "refunded" : "Reembolsado"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
         "onhold" : "Contacta al proveedor de permuta mediante tu ID de permuta para resolver la situación.",
         "finished" : "Tu permuta se ha completado correctamente.",
-        "unknown" : "Contacta al proveedor de permuta y ten a mano tu ID de permuta para obtener más información."
+        "unknown" : "Estamos a la espera de información del proveedor."
       },
       "date" : "Fecha",
       "from" : "De",
@@ -2386,6 +2387,10 @@
         "title" : "Dispositivo"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Firma a ciegas requerida",
+          "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+        },
         "utxoLag" : "La firma y verificación de esta transacción puede llevar un tiempo prolongado porque la cuenta presenta una cantidad significativa de monedas.",
         "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
         "from" : "De",
@@ -4247,6 +4252,113 @@
               "cta" : "Ver detalles"
             },
             "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Activo delegado",
+      "stakedBalanceTooltip" : "Esta cantidad está en participación con validadores.",
+      "availableBalance" : "Saldo retirable",
+      "availableBalanceTooltip" : "Esta cantidad se ha quitado de participación y se puede retirar.",
+      "pendingBalance" : "Saldo pendiente",
+      "pendingBalanceTooltip" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad.",
+      "storageUsageBalance" : "Saldo mínimo",
+      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa.",
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token SUI ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens SUI y protegerlos con Ledger Live.",
+        "description2" : "El token SUI es nativo de la cadena SUI y se utiliza para transacciones, puesta en participación y muchas características futuras.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Cantidad en participación"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Puedes obtener recompensas en SUI al poner tus activos en participación.",
+        "info" : "Cómo funciona la participación",
+        "earnRewards" : "Ganar recompensas"
+      },
+      "table" : {
+        "header" : "Posiciones en participación",
+        "stake" : "Agregar",
+        "staked" : "Delegado",
+        "pending" : "Pendiente de liberación",
+        "available" : "Puede retirarse"
+      },
+      "unstake" : "Cancelar la puesta en participación",
+      "activeTooltip" : "Las cantidades en participación generan recompensas",
+      "inactiveTooltip" : "Las cantidades quitadas de participación no generan recompensas",
+      "commission" : "Comisión",
+      "totalStake" : "Participación total",
+      "minSafeWarning" : "No hay fondos suficientes",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes obtener recompensas poniendo en participación tus activos SUI con un validador.",
+            "bullet" : ["Conservas la propiedad de los activos puestos en participación.", "Pon en participación con tu dispositivo Ledger.", "Los activos estarán disponibles entre 52 y 65 horas después de quitarlos de participación."],
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "No hay activos en participación suficientes para quitarlos de participación",
+      "flow" : {
+        "title" : "Desdelegar activos",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de retirada de participación tarda entre <0>52 y 65 horas</0> en finalizar.",
+            "warning" : "Las recompensas se cobran inmediatamente. La cantidad retirada de participación estará disponible para su retirada tras el <0>periodo de inmovilización de 52 a 65 horas</0>.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe de la cancelación de la puesta en participación"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has desdelegado con éxito tus activos.",
+              "description" : "<0>{{amount}}</0> fueron desdelegados de <0>{{validator}}</0>.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
           }
         }
       }
@@ -6787,6 +6899,18 @@
       "technicalErrorTitle" : "Error técnico: ",
       "saveLogs" : "Guardar registros"
     },
+    "OneSuiMinForStake" : {
+      "title" : "La cantidad mínima con la que empezar a participar es de 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "La cancelación parcial de la puesta en participación debe ser, como mínimo, de 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Debes mantener en participación 1 SUI como mínimo"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "Asegúrate de reservar al menos 0,1 SUI en tu wallet para cubrir las futuras tarifas de red y cancelar tu puesta en participación."
+    },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Tu saldo disponible (no puesto en participación) es de {{currentBalance}}. Esta cantidad no es suficiente para pagar las tarifas de red necesarias para retirar tu {{assetName}} de la puesta en participación.",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} en tu cuenta.",
@@ -7352,7 +7476,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
