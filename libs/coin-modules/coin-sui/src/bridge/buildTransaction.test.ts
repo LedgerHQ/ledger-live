@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { buildTransaction } from "./buildTransaction";
 import type { SuiAccount, Transaction } from "../types";
+import { createFixtureAccount } from "../types/bridge.fixture";
 
 // Mock the craftTransaction function
 jest.mock("../logic", () => ({
@@ -65,7 +66,7 @@ describe("buildTransaction", () => {
   });
 
   describe("buildTransaction", () => {
-    it("should call craftTransaction with correct parameters", async () => {
+    it("should call craftTransaction with correct parameters for native asset", async () => {
       // WHEN
       await buildTransaction(mockAccount, mockTransaction);
 
@@ -79,35 +80,35 @@ describe("buildTransaction", () => {
       });
     });
 
-    it("should handle craftTransaction for token asset", async () => {
-      // WHEN
-      await buildTransaction(
-        {
-          ...mockAccount,
-          id: "parentAccountId",
-          balance: BigNumber(0),
-          spendableBalance: BigNumber(0),
-          subAccounts: [
-            {
-              ...mockAccount,
-              id: "subAccountId",
-              parentId: "parentAccountId",
-              type: "TokenAccount",
-              token: {
-                contractAddress: "0x3::usdt::USDT",
-              } as unknown as TokenCurrency,
+    it("should call craftTransaction with correct parameters for token asset", async () => {
+      const account = createFixtureAccount({
+        id: "parentAccountId",
+        balance: BigNumber(0),
+        spendableBalance: BigNumber(0),
+        subAccounts: [
+          createFixtureAccount({
+            id: "subAccountId",
+            parentId: "parentAccountId",
+            type: "TokenAccount",
+            token: {
+              contractAddress: "0x3::usdt::USDT",
             },
-          ],
-        },
-        { ...mockTransaction, subAccountId: "subAccountId", coinType: "0x3::usdt::USDT" },
-      );
+          }),
+        ],
+      });
+
+      // WHEN
+      await buildTransaction(account, {
+        ...mockTransaction,
+        subAccountId: "subAccountId",
+        coinType: "0x3::usdt::USDT",
+      });
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith({
-        sender: mockAccount.freshAddress,
+        sender: account.freshAddress,
         recipient: mockTransaction.recipient,
         type: mockTransaction.mode,
-
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "token", assetReference: "0x3::usdt::USDT" },
       });
