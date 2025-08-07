@@ -28,6 +28,7 @@ import { sendStellar } from "./families/stellar";
 import { delegateCardano, sendCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
 import { delegateAptos, sendAptos } from "./families/aptos";
+import { sendHedera } from "./families/hedera";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
