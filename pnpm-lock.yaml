@@ -2185,6 +2185,9 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.3.2(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
+      tsx:
+        specifier: ^4.7.1
+        version: 4.10.3
 
   libs/coin-modules/coin-algorand:
     dependencies:
