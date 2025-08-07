@@ -385,6 +385,7 @@
         "onhold" : "หยุดชั่วคราว",
         "expired" : "หมดอายุแล้ว",
         "finished" : "เสร็จแล้ว",
+        "unknown" : "กำลังประมวลผล",
         "refunded" : "คืนเงินแล้ว"
       }
     },
@@ -462,6 +463,8 @@
       "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
       "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "hedera_title" : "Ledger Nano S™ ไม่รองรับการสวอป Hedera",
+      "hedera_description" : "เพื่อสวอป Hedera ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
       "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
@@ -571,7 +574,7 @@
         "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
         "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
         "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
-        "unknown" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม"
+        "unknown" : "เรากำลังรอข้อมูลจากผู้ให้บริการ"
       },
       "date" : "วันที่",
       "from" : "จาก",
@@ -2386,6 +2389,10 @@
         "title" : "อุปกรณ์"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "จำเป็นต้องมีการ Blind Signing",
+          "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+        },
         "utxoLag" : "ธุรกรรมนี้อาจใช้เวลานานในการตรวจสอบและลงนามเนื่องจากบัญชีมีเหรียญจำนวนมาก",
         "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
         "from" : "จาก",
@@ -4466,6 +4473,40 @@
             "spam" : "รายงานสแปม",
             "refresh" : "รีเฟรช Metadata",
             "check" : "คะแนนสแปม"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
           }
         },
         "debugSpamNft" : {
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
-    "description" : "Ledger Live ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "description" : "แอป Ledger Live ไม่สามารถใช้ได้ในพื้นที่ของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม"
   },
   "versionBlocking" : {
