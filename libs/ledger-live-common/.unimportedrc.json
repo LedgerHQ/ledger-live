@@ -337,6 +337,7 @@
     "src/e2e/enum/Account.ts",
     "src/e2e/enum/AppInfos.ts",
     "src/e2e/enum/Currency.ts",
+    "src/e2e/enum/Network.ts",
     "src/e2e/enum/Device.ts",
     "src/e2e/enum/DeviceLabels.ts",
     "src/e2e/enum/Fee.ts",
