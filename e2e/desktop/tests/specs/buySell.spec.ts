@@ -20,7 +20,8 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       amount: "900",
       operation: OperationType.Buy,
     },
-    xrayTicket: "B2CQA-3391, B2CQA-3412, B2CQA-3467, B2CQA-3520, B2CQA-3521",
+    xrayTicket:
+      "B2CQA-3391, B2CQA-3412, B2CQA-3467, B2CQA-3520, B2CQA-3521, B2CQA-3449, B2CQA-3282",
     provider: Provider.MOONPAY,
   },
   {
@@ -30,7 +31,8 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       amount: "230",
       operation: OperationType.Buy,
     },
-    xrayTicket: "B2CQA-3392, B2CQA-3413, B2CQA-3466, B2CQA-3519, B2CQA-3522",
+    xrayTicket:
+      "B2CQA-3392, B2CQA-3413, B2CQA-3466, B2CQA-3519, B2CQA-3522, B2CQA-3449, B2CQA-3289",
     provider: Provider.MOONPAY,
   },
   {
@@ -40,7 +42,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       amount: "900",
       operation: OperationType.Buy,
     },
-    xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523",
+    xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523 B2CQA-3449",
     provider: Provider.TRANSAK,
   },
 ];

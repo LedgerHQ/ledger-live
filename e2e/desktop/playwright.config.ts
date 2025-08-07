@@ -2,11 +2,11 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
   expect: {
-    timeout: 41000,
+    timeout: 60000,
   },
   globalTimeout: 0,
   globalSetup: require.resolve("./tests/utils/global.setup"),
