@@ -29,7 +29,8 @@ export class ModularAccountDrawer extends Drawer {
 
   @step("Click on add and existing account button")
   async clickOnAddAndExistingAccountButton() {
-    await this.isModularAccountDrawerVisible();
-    await this.clickOnAddAccountButton();
+    if (await this.isModularAccountDrawerVisible()) {
+      await this.clickOnAddAccountButton();
+    }
   }
 }

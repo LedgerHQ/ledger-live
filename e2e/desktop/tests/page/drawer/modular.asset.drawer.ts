@@ -13,8 +13,16 @@ export class ModularAssetDrawer extends Drawer {
   private assetItemByTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
 
+  @step("Wait for drawer to be visible")
+  async waitForDrawerToBeVisible() {
+    await this.content.waitFor({ state: "visible" });
+    await this.drawerCloseButton.waitFor({ state: "visible" });
+    await this.drawerOverlay.waitFor({ state: "attached" });
+  }
+
   @step("Validate modular asset drawer is visible")
   async isModularDrawerVisible(): Promise<boolean> {
+    await this.waitForDrawerToBeVisible();
     return await this.modularAssetSelectorContainer.isVisible();
   }
 
