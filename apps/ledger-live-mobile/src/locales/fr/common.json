@@ -690,6 +690,15 @@
       "title" : "Échec de l’appairage",
       "description" : "Réessayez ou consultez notre article de dépannage Bluetooth."
     },
+    "OneSuiMinForStake" : {
+      "title" : "Le montant minimal pour commencer à staker est de 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Le montant minimal à déstaker (déstaking partiel) de 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Vous devez conserver au moins 1 SUI en staking"
+    },
     "PasswordIncorrect" : {
       "title" : "Mot de passe incorrect",
       "description" : "Veuillez réessayer."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "Identifiant de transfert (mémo)",
       "resource" : "Ressource",
+      "validator" : "Validateur",
       "frozenAmount" : "Montant gelé",
       "unfreezeAmount" : "Dégeler le montant",
       "address" : "Adresse",
@@ -3659,7 +3669,8 @@
           "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
           "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
           "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-          "finished" : "Votre échange a bien été réalisé."
+          "finished" : "Votre échange a bien été réalisé.",
+          "unknown" : "En attente des informations de la part du prestataire."
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "Quantité disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Demande de signature aveugle",
+        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+      },
       "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
       "validateTag" : "Valider le tag",
@@ -4564,7 +4579,7 @@
       "showAllCTA" : "Afficher les {{count}} wallets Ledger",
       "showLessCTA" : "Afficher moins",
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
-      "connectExistingLedger" : "Connecter un Ledger existant",
+      "connectExistingLedger" : "Connecter un appareil configuré",
       "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
       "setUpNewLedger" : "Configurer un nouveau wallet",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI disponibles",
+        "description" : "Ce montant est disponible."
+      },
+      "storageUsage" : {
+        "title" : "Solde minimum",
+        "description" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif."
+      },
+      "staked" : {
+        "title" : "Actif délégué",
+        "description" : "Solde actifs délégués"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à arrêter"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien déstakés"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à retirer"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Retrait des actifs effectué"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Délégation(s)",
+      "info" : "Fonctionnement de la délégation",
+      "add" : "Ajouter",
+      "stakingEarn" : "Vous pouvez gagner des récompenses en SUI en déléguant vos actifs.",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "iStake" : "Je délègue",
+      "actions" : {
+        "unstake" : "Arrêter la délégation"
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "pending" : "En attente",
+        "available" : "Disponible au retrait"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à staker",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Stakez vos SUI pour gagner des récompenses en toute sécurité et en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "0" : "Vous conservez la propriété de vos actifs délégués.",
+              "1" : "Vous devrez attendre 52 à 65 heures pour que le déstaking soit finalisé.",
+              "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur avec soin : une partie de vos actifs stakés peut être perdue si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "assetsRemaining" : "Actifs restants : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "minAmount" : "Montant minimal : <0>{{min}}</0>",
+            "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien stakés",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "La délégation de votre compte se terminera une fois l’opération confirmée. Vous pouvez à nouveau déléguer votre compte à tout moment."
     },
     "summaryTitle" : "Récapitulatif",
+    "delegate" : "Déléguer",
     "goToAccount" : "Accéder aux Comptes",
     "howDelegationWorks" : "Fonctionnement de la délégation",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "Région indisponible",
-    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "description" : "Ledger Live n’est pas disponible dans ce pays/région.",
     "learnMore" : "En savoir plus"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
     "selectAccount" : "Sélectionner un compte",
-    "searchPlaceholder" : "Rechercher"
+    "searchPlaceholder" : "Rechercher",
+    "emptyAssetList" : "Aucun actif trouvé",
+    "accountCount" : "{{count}} compte (détecté)",
+    "accountCount_plural" : "{{count}} comptes (détectés)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
