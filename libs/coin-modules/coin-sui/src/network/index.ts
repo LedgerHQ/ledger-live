@@ -1,6 +1,6 @@
 import {
-  getAccount,
   getAccountBalances,
+  getAllBalancesCached,
   getOperations,
   getBlock,
   getBlockInfo,
@@ -11,8 +11,8 @@ import {
 } from "./sdk";
 
 export {
-  getAccount,
   getAccountBalances,
+  getAllBalancesCached,
   getOperations,
   getBlock,
   getBlockInfo,
@@ -23,8 +23,8 @@ export {
 };
 
 export default {
-  getAccount,
   getAccountBalances,
+  getAllBalancesCached,
   getOperations,
   getBlock,
   getBlockInfo,
