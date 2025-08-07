@@ -33,6 +33,8 @@ export class Drawer extends Component {
 
   @step("Click on add account button")
   async clickOnAddAccountButton() {
-    await this.addAccountButton.click();
+    if (await this.addAccountButton.isVisible()) {
+      await this.addAccountButton.click();
+    }
   }
 }
