@@ -23,7 +23,7 @@ permissions:
 jobs:
   scan-sonar:
     name: "Sonar Cloud"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ ubuntu-24.04 ]
     steps:
       - uses: actions/checkout@v4
         with:

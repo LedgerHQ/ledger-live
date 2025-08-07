@@ -74,7 +74,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds & Generate Shards"
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate-shards.outputs.matrix }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}

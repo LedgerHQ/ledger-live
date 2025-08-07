@@ -16,7 +16,7 @@ permissions:
 jobs:
   scan:
     name: Scan LLM && LLD
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ ubuntu-24.04 ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup git user
