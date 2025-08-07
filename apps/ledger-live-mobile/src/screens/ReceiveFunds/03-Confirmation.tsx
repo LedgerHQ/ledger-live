@@ -261,7 +261,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }),
       opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    [bannerHeight, bannerOpacity],
+    [bannerHeight.value, bannerOpacity.value, hideBanner],
   );
 
   const handleBannerClose = useCallback(() => {
