@@ -385,6 +385,7 @@
         "onhold" : "保留中",
         "expired" : "期限切れ",
         "finished" : "完了",
+        "unknown" : "処理中",
         "refunded" : "返金済み"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
         "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
         "finished" : "スワップが正常に完了しました。",
-        "unknown" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。"
+        "unknown" : "プロバイダーからの情報を待っています。"
       },
       "date" : "日付",
       "from" : "送付元",
@@ -2386,6 +2387,10 @@
         "title" : "デバイス"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "ブラインド署名が必要です",
+          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -4466,6 +4471,40 @@
             "spam" : "スパム報告",
             "refresh" : "メタデータを更新",
             "check" : "スパムスコア"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "モックアカウントの生成",
+          "description" : "テスト目的でモック（模擬）アカウントを生成します。これらのツールを使用すると、さまざまな通貨と構成でテストアカウントを作成できます。",
+          "customGenerate" : {
+            "title" : "カスタム生成",
+            "desc" : "特定の通貨を選択し、トークンを追加します"
+          },
+          "quickGenerate" : {
+            "title" : "クイック生成",
+            "desc" : "ランダムな通貨を持つランダムなアカウントを10個生成します"
+          },
+          "currencySelector" : {
+            "placeholder" : "通貨を選択...",
+            "searchPlaceholder" : "通貨を検索...",
+            "noCurrenciesFound" : "通貨が見つかりません",
+            "noCurrenciesAvailable" : "利用可能な通貨がありません",
+            "selectedCount" : "{{count}}個の通貨が選択されました",
+            "selectedCount_other" : "{{count}}個の通貨が選択されました"
+          },
+          "tokenIds" : {
+            "label" : "トークンID（オプション）",
+            "placeholder" : "トークン1、トークン2、トークン3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}}個のアカウントを生成",
+            "generateAccounts_other" : "{{count}}アカウントを生成",
+            "generateAccountsQuick" : "{{count}}アカウントを生成"
+          },
+          "alerts" : {
+            "selectCurrency" : "少なくとも1つの通貨を選択してください",
+            "confirmErase" : "これにより既存のアカウントが消去されます。続行しますか？",
+            "generateError" : "モックアカウントの生成に失敗しました。もう一度お試しください。"
           }
         },
         "debugSpamNft" : {
@@ -7349,7 +7388,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "恐れ入りますが、現在の地域ではLedger Liveをご利用いただけません。",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {
