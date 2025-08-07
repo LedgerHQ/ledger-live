@@ -81,11 +81,15 @@ const QueuedDrawerGorhom = ({
     duration: 250,
   });
 
+  const onBackdropPress = useCallback(() => {
+    handleCloseUserEvent();
+  }, [handleCloseUserEvent]);
+
   const renderBackdrop = useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
-      <BackDrop showBackdropPress={showBackdropPress} {...props} />
+      <BackDrop showBackdropPress={showBackdropPress} onPress={onBackdropPress} {...props} />
     ),
-    [showBackdropPress],
+    [showBackdropPress, onBackdropPress],
   );
 
   const renderHeader = useCallback(() => {
