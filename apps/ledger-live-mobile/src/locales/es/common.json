@@ -690,6 +690,15 @@
       "title" : "Emparejamiento fallido",
       "description" : "Inténtalo de nuevo o consulta nuestro artículo sobre la solución de problemas de Bluetooth."
     },
+    "OneSuiMinForStake" : {
+      "title" : "La cantidad mínima con la que empezar a participar es de 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "La cancelación parcial de la puesta en participación debe ser, como mínimo, de 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Debes mantener en participación 1 SUI como mínimo"
+    },
     "PasswordIncorrect" : {
       "title" : "Contraseña incorrecta",
       "description" : "Inténtalo de nuevo."
@@ -2758,6 +2767,7 @@
     "extra" : {
       "transferId" : "ID de transferencia (Memo)",
       "resource" : "Recurso",
+      "validator" : "Validador",
       "frozenAmount" : "Importe inmovilizado",
       "unfreezeAmount" : "Desinmovilizar importe",
       "address" : "Dirección",
@@ -3659,7 +3669,8 @@
           "refunded" : "Contacta con el proveedor de permuta mediante tu ID de permuta para obtener más información.",
           "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
           "onhold" : "Contacta con el proveedor de permuta mediante tu ID de permuta para resolver la situación.",
-          "finished" : "Tu permuta se ha completado correctamente."
+          "finished" : "Tu permuta se ha completado correctamente.",
+          "unknown" : "Estamos a la espera de información del proveedor."
         }
       },
       "missingApp" : {
@@ -4045,6 +4056,10 @@
       "quantityAvailable" : "Cantidad disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Firma a ciegas requerida",
+        "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+      },
       "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
       "tag" : "Etiqueta (opcional)",
       "validateTag" : "Validar etiqueta",
@@ -6448,6 +6463,104 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI disponibles",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Activo delegado",
+        "description" : "El saldo que está delegado"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a desdelegar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has cancelado la puesta en participación de tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones delegadas",
+      "info" : "Cómo funciona la delegación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes recibir recompensas en SUI delegando tus activos.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "iStake" : "Delego",
+      "actions" : {
+        "unstake" : "Desdelegar"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a poner en participación",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Pon en participación tus SUI para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos delegados siguen siendo tuyos.",
+              "1" : "Deberás esperar entre 52 y 65 horas para que el proceso de quitar de participación finalice.",
+              "2" : "Delega y vota de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos puestos en participación si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has puesto en participación tus activos correctamente",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6635,6 +6748,7 @@
       "undelegate" : "La delegación de tu cuenta finalizará cuando se confirme la operación. Puedes volver a delegar tu cuenta en cualquier momento."
     },
     "summaryTitle" : "Resumen",
+    "delegate" : "Delegar",
     "goToAccount" : "Ir a Cuentas",
     "howDelegationWorks" : "Cómo funciona la delegación",
     "actions" : {
@@ -7764,7 +7878,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
@@ -7776,7 +7890,10 @@
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
     "selectAccount" : "Seleccionar cuenta",
-    "searchPlaceholder" : "Buscar"
+    "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "No se encontraron activos",
+    "accountCount" : "{{count}} cuenta (detectada)",
+    "accountCount_plural" : "{{count}} cuentas (detectadas)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
