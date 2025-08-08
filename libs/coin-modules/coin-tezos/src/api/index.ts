@@ -87,6 +87,9 @@ async function stakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
 async function balance(address: string): Promise<Balance[]> {
   const value = await getBalance(address);
   const accountInfo = await api.getAccountByAddress(address);
+  // tzkt returns `type: "empty"` for untouched accounts; legacy logic returns -1 in that case
+  // the generic bridge expects non-negative balances
+  const normalized = value < 0n ? 0n : value;
   // include stake information so ui can reflect delegation on account page
   const stake: Stake | undefined =
     accountInfo.type === "user" && accountInfo.delegate?.address
@@ -101,7 +104,7 @@ async function balance(address: string): Promise<Balance[]> {
       : undefined;
   return [
     {
-      value,
+      value: normalized,
       asset: { type: "native" },
       stake,
     },
@@ -144,6 +147,10 @@ async function craft(
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
+  // avoid taquito error when estimating a 0-amount transfer during input
+  if (transactionIntent.type === "send" && transactionIntent.amount === 0n) {
+    return { value: 0n } as TezosFeeEstimation;
+  }
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
   if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
@@ -253,6 +260,14 @@ async function validateIntent(intent: TransactionIntent): Promise<TransactionVal
   let estimatedFees: bigint;
   let amount: bigint;
   let totalSpent: bigint;
+
+  // avoid taquito error `contract.empty_transaction` when amount is 0 during typing
+  if (intent.type === "send" && intent.amount === 0n) {
+    estimatedFees = 0n;
+    amount = 0n;
+    totalSpent = 0n;
+    return { errors, warnings, estimatedFees, amount, totalSpent };
+  }
 
   try {
     const estimation = await estimate(intent);

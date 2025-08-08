@@ -50,7 +50,16 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
-const createSignerTezos: CreateSigner<Tezos> = (transport: Transport) => new Tezos(transport);
+const createSignerTezos: CreateSigner<Tezos> = (transport: Transport) => {
+  const tezos = new Tezos(transport);
+  // align with genericSignOperation that calls signer.signTransaction
+  return Object.assign(tezos, {
+    async signTransaction(path: string, rawTxHex: string) {
+      const { signature } = await tezos.signOperation(path, rawTxHex, {});
+      return signature;
+    },
+  });
+};
 const signerContextTezos = executeWithSigner(createSignerTezos) as unknown as SignerContext<TezosSigner>;
 
 export function getSigner(network): AlpacaSigner {

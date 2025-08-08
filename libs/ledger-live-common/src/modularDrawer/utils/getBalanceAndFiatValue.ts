@@ -44,7 +44,11 @@ export const getBalanceAndFiatValue = (
   if (!countervalueAvailable) return { balance, fiatValue: undefined };
 
   const { countervalue } = history[history.length - 1] ?? {};
-  const fiatValue = formatCurrencyUnit(toCurrency.units[0], BigNumber(countervalue ?? 0), {
+  // clamp tiny absolute countervalues to 0 to avoid rendering "-$0.00"
+  const raw = BigNumber(countervalue ?? 0);
+  const minUnit = BigNumber(10).pow(-toCurrency.units[0].magnitude);
+  const safe = raw.abs().lt(minUnit) ? BigNumber(0) : raw;
+  const fiatValue = formatCurrencyUnit(toCurrency.units[0], safe, {
     showCode,
     discreet,
   });

@@ -120,10 +120,10 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
-  // tezos staking always uses full amount, ignore specified amount
-  const isTezosStaking = account.currency.family === "tezos" && (transactionType === "stake" || transactionType === "unstake");
-  const amount = isTezosStaking ? BigInt(0) : fromBigNumberToBigInt(transaction.amount, BigInt(0));
-  const useAllAmount = isTezosStaking ? true : !!transaction.useAllAmount;
+
+  const isStaking = transactionType === "stake" || transactionType === "unstake";
+  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = isStaking ? true : !!transaction.useAllAmount;
 
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
     fees: transaction?.fees ? transaction.fees : null,
