@@ -43,7 +43,7 @@ for (const token of subAccounts) {
       speculosApp: token.account.currency.speculosApp,
     });
 
-    test.only(
+    test(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
         tag: ["@NanoSP", "@LNS", "@NanoX"],
