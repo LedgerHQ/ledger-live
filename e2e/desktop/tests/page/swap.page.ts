@@ -70,9 +70,10 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
-    return await webview
+    const providers = await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
+    return providers;
   }
 
   @step("Check quotes container infos")
@@ -161,7 +162,7 @@ export class SwapPage extends AppPage {
       }
     }
 
-    throw new Error("No providers without KYC found");
+    throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
   }
 
   @step("Select available provider")
