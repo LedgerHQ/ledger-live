@@ -22,6 +22,20 @@ export function genericGetTransactionStatus(
     },
   ) => {
     const alpacaApi = getAlpacaApi(network, kind);
+    // basic self-transfer guard for native send
+    if (
+      transaction?.mode === "send" &&
+      transaction.recipient &&
+      transaction.recipient === account.freshAddress
+    ) {
+      return Promise.resolve({
+        errors: { recipient: new Error("Recipient address must differ from sender") },
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      });
+    }
     const draftTransaction = {
       mode: transaction?.mode,
       recipient: transaction.recipient,

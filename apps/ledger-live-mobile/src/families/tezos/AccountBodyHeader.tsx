@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import { useDelegation, useStakingPositions } from "@ledgerhq/live-common/families/tezos/react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -98,17 +98,22 @@ export default function TezosAccountBodyHeader({
   }, []);
 
   const delegation = useDelegation(account);
+  const stakingPositions = useStakingPositions(account as any);
 
   const unit = useAccountUnit(account);
 
-  if (!delegation) {
+  if (!delegation && stakingPositions.length === 0) {
     return null;
   }
 
-  const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
+  const name = delegation
+    ? delegation.baker
+      ? delegation.baker.name
+      : shortAddressPreview(delegation.address)
+    : shortAddressPreview(stakingPositions[0].delegate!);
   const amount = account.balance;
   const currency = getAccountCurrency(account);
-  const days = differenceInCalendarDays(Date.now(), delegation.operation.date);
+  const days = delegation ? differenceInCalendarDays(Date.now(), delegation.operation.date) : 0;
 
   return (
     <View style={styles.root}>
@@ -123,11 +128,11 @@ export default function TezosAccountBodyHeader({
           py={6}
           style={[
             {
-              opacity: delegation.isPending ? 0.5 : 1,
+              opacity: delegation?.isPending ? 0.5 : 1,
             },
           ]}
         >
-          <BakerImage size={40} baker={delegation.baker} />
+          <BakerImage size={40} baker={delegation?.baker} />
           <View style={styles.cardHeadBody}>
             <View style={styles.row}>
               <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1}>
@@ -139,11 +144,13 @@ export default function TezosAccountBodyHeader({
             </View>
             <View style={styles.row}>
               <LText style={styles.subtitle} color="grey">
-                {days ? (
-                  <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
-                ) : (
-                  <Trans i18nKey="delegation.durationDays0" />
-                )}
+                {delegation ? (
+                  days ? (
+                    <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
+                  ) : (
+                    <Trans i18nKey="delegation.durationDays0" />
+                  )
+                ) : null}
               </LText>
 
               <CounterValue
@@ -157,6 +164,7 @@ export default function TezosAccountBodyHeader({
             </View>
           </View>
         </Flex>
+        {delegation ? (
         <Button
           event="ViewDelegationDetails"
           size={"small"}
@@ -167,8 +175,10 @@ export default function TezosAccountBodyHeader({
         >
           <Trans i18nKey="delegation.viewDetails" />
         </Button>
+        ) : null}
       </View>
 
+      {delegation ? (
       <DelegationDetailsModal
         isOpened={openedModal}
         onClose={onModalClose}
@@ -176,6 +186,7 @@ export default function TezosAccountBodyHeader({
         account={account}
         parentAccount={parentAccount}
       />
+      ) : null}
     </View>
   );
 }

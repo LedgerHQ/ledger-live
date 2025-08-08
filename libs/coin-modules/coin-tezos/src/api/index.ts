@@ -148,7 +148,11 @@ async function craft(
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   // avoid taquito error when estimating a 0-amount transfer during input
-  if (transactionIntent.type === "send" && transactionIntent.amount === 0n) {
+  if (
+    transactionIntent.type === "send" &&
+    transactionIntent.amount === 0n &&
+    !transactionIntent.useAllAmount
+  ) {
     return { value: 0n } as TezosFeeEstimation;
   }
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
@@ -176,6 +180,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
         : transactionIntent.type) as TezosOperationMode,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
+      // important for send max: legacy estimator needs this flag to pre-estimate fees
+      useAllAmount: !!transactionIntent.useAllAmount,
     },
   });
 
@@ -278,6 +284,17 @@ async function validateIntent(intent: TransactionIntent): Promise<TransactionVal
       const accountInfo = await api.getAccountByAddress(intent.sender);
       amount = BigInt(accountInfo.type === "user" ? accountInfo.balance : 0);
       totalSpent = estimatedFees;
+    } else if (intent.type === "send" && intent.useAllAmount) {
+      // send max: amount = balance - fees (clamped to >= 0)
+      const accountInfo = await api.getAccountByAddress(intent.sender);
+      if (accountInfo.type === "user") {
+        const bal = BigInt(accountInfo.balance);
+        amount = bal > estimatedFees ? bal - estimatedFees : 0n;
+        totalSpent = amount + estimatedFees;
+      } else {
+        amount = 0n;
+        totalSpent = 0n;
+      }
     } else {
       amount = intent.amount;
       totalSpent = amount + estimatedFees;

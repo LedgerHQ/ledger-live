@@ -2,7 +2,8 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import { useBaker, useDelegation, useStakingPositions } from "@ledgerhq/live-common/families/tezos/react";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -55,6 +56,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   );
   const accountName = useAccountName(account);
   const delegation = useDelegation(account);
+  const stakingPositions = useStakingPositions(account as TezosAccount);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
@@ -168,7 +170,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                 )}
               </Container>
             </Box>
-          ) : delegation ? (
+          ) : (delegation || stakingPositions.length > 0) ? (
             <Box>
               <Box horizontal justifyContent="space-between">
                 <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
@@ -176,13 +178,15 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                 </Text>
               </Box>
               <Container my={1}>
-                <BakerImage size={32} baker={delegation.baker} />
+                <BakerImage size={32} baker={delegation?.baker} />
                 <Ellipsis>
                   <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
-                    {getBakerName(delegation.baker, delegation.address)}
+                    {delegation
+                      ? getBakerName(delegation.baker, delegation.address)
+                      : stakingPositions[0].delegate}
                   </Text>
                 </Ellipsis>
-                {delegation.baker ? (
+                {delegation?.baker ? (
                   <Text
                     textAlign="center"
                     ff="Inter|Medium"
