@@ -36,7 +36,14 @@ export async function performSwapUntilQuoteSelectionStep(
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
   }
+
   await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+
+  // THIS IS A WORK AROUND AS THE HBAR IS HAVING ISSUES
+  if (swap.accountToDebit.currency === Currency.HBAR) {
+    await hederaDoubleClickingSwap(app, electronApp, swap, minAmount);
+  }
+
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
@@ -44,6 +51,32 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
+}
+
+async function hederaDoubleClickingSwap(
+  app: Application,
+  electronApp: ElectronApplication,
+  swap: Swap,
+  minAmount: string,
+) {
+
+  await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
+  await app.swapDrawer.selectAccountByName(swap.accountToDebit);
+  await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
+  await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
+  await app.swapDrawer.selectAccountByName(swap.accountToCredit);
+  await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+  await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
+
+  await app.swap.switchYouSendAndYouReceive(electronApp);
+
+  await app.swap.selectAssetFrom(electronApp, swap.accountToCredit);
+  await app.swapDrawer.selectAccountByName(swap.accountToCredit);
+
+  await app.swap.selectAssetTo(electronApp, swap.accountToDebit.currency.name);
+  await app.swapDrawer.selectAccountByName(swap.accountToDebit);
+
+  await app.swap.switchYouSendAndYouReceive(electronApp);
 }
 
 export async function performSwapUntilDeviceVerificationStep(
