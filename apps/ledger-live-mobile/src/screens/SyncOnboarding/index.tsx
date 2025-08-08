@@ -18,9 +18,11 @@ import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseB
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
+const A_B_FLAG = true;
 
 /**
  * Synchronous onboarding screen composed of the "early security/onboarding checks" step and the "synchronous companion" step
@@ -281,7 +283,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       />
     );
   } else if (currentStep === "companion") {
-    stepContent = (
+    stepContent = A_B_FLAG ? (
+      <TwoStepSyncOnboardingCompanion
+        navigation={navigation}
+        device={device}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onLostDevice={onLostDevice}
+        onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
+        updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
+      />
+    ) : (
       <SyncOnboardingCompanion
         navigation={navigation}
         device={device}
