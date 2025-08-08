@@ -611,7 +611,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Canton Network",
     managerAppName: "Canton",
     ticker: "CC",
-    scheme: "canton",
+    scheme: "canton_network",
     color: "#F8FFAE",
     family: "canton",
     blockAvgTime: 20,

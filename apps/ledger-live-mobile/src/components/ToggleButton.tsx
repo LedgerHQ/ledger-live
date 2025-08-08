@@ -45,14 +45,17 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
 
   // The indicator is the component highlighting the currently active option.
   // `left` is interpolated from the animated-new-active-index state.
-  const indicatorStyle = useAnimatedStyle(() => ({
-    width: `${100 / options.length}%`,
-    left: interpolate(
-      animatedIndex.value,
-      [0, options.length - 1],
-      [0, ((options.length - 1) * width) / options.length],
-    ),
-  }));
+  const indicatorStyle = useAnimatedStyle(
+    () => ({
+      width: `${100 / options.length}%`,
+      left: interpolate(
+        animatedIndex.value,
+        [0, options.length - 1],
+        [0, ((options.length - 1) * width) / options.length],
+      ),
+    }),
+    [animatedIndex, options, width],
+  );
 
   if (!options.length) return null;
 

@@ -400,6 +400,63 @@ const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
   },
 };
 
+const apex: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
+  plugAndPinCode: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  enterPinCode: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  quitApp: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  allowManager: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  openApp: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  verify: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  sign: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  firmwareUpdating: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  installLoading: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  // Keep
+  confirmLockscreen: {
+    light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
+    dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
+  },
+  recoverWithProtect: {
+    light: FLEX_LIGHT_PAIRED,
+    dark: FLEX_DARK_PAIRED,
+  },
+  connectionSuccess: {
+    light: FLEX_LIGHT_PAIRED,
+    dark: FLEX_DARK_PAIRED,
+  },
+  // Keep
+  onboardingSuccess: {
+    light: FLEX_LIGHT_ONBOARDING_SUCCESS,
+    dark: FLEX_DARK_ONBOARDING_SUCCESS,
+  },
+};
+
 const blue: DeviceAnimations = {
   plugAndPinCode: {
     light: BLUE_LIGHT_plugAndPinCode,
@@ -452,7 +509,7 @@ const blue: DeviceAnimations = {
   },
 };
 
-const animations = { nanoX, nanoS, nanoSP, stax, europa, blue };
+const animations = { nanoX, nanoS, nanoSP, stax, europa, apex, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,

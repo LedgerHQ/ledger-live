@@ -9,6 +9,8 @@ import {
   getBlock,
   getBlockInfo,
   craftTransaction,
+  getStakes,
+  getRewards,
 } from "../logic";
 import type {
   AlpacaApi,
@@ -31,6 +33,8 @@ export function createApi(config: SuiConfig): AlpacaApi {
     getBlock,
     getBlockInfo,
     listOperations: list,
+    getStakes,
+    getRewards,
   };
 }
 

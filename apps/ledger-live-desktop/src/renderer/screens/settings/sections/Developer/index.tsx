@@ -31,6 +31,7 @@ import NftsTools from "./NftsTools";
 import CustomCALRefInput from "./CustomCALRefInput";
 import ModularDrawerDevTool from "./ModularDrawer";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
+import CustomLockScreenTester from "./CustomLockScreenTester";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -88,6 +89,7 @@ const Default = () => {
         <EnableAnalyticsConsole />
       </Row>
       <RunLocalAppButton />
+      <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
       <Row

@@ -677,6 +677,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
+  supportDeviceApex: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

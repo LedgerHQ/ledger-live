@@ -90,7 +90,7 @@ export function BottomBar({
       backgroundColor: colors.background,
       height: headerHeight,
     };
-  });
+  }, [layoutY, colors]);
 
   const opacityStyle = useAnimatedStyle(() => {
     if (!layoutY) return {};
@@ -99,7 +99,7 @@ export function BottomBar({
       height: BAR_HEIGHT,
       opacity: interpolate(layoutY.value, LAYOUT_RANGE, [1, 0], Extrapolation.CLAMP),
     };
-  });
+  }, [layoutY]);
 
   return (
     <Animated.View style={heightStyle}>

@@ -3,7 +3,7 @@ declare global {
     ReactNativeWebView: {
       postMessage(message: string): void;
     };
-    reconstructImage: (width: number, height: number, hexData: string) => void;
+    reconstructImage: (width: number, height: number, hexData: string, bitsPerPixel: 1 | 4) => void;
   }
 }
 
@@ -40,7 +40,7 @@ function codeToInject() {
   /**
    * store functions as a property of window so we can access them easily after minification
    * */
-  window.reconstructImage = (width, height, hexData) => {
+  window.reconstructImage = (width, height, hexData, bitsPerPixel) => {
     try {
       const canvas = document.createElement("canvas");
       canvas.width = width;
@@ -51,18 +51,38 @@ function codeToInject() {
 
       const imageData: number[] = [];
 
-      const numLevelsOfGray = 16;
+      const numLevelsOfGray = Math.pow(2, bitsPerPixel);
+
       const rgbStep = 255 / (numLevelsOfGray - 1);
 
       const pixels256 = Array.from(Array(height), () => Array(width));
 
       hexData.split("").forEach((char, index) => {
         /** running from top right to bottom left, column after column */
-        const y = index % height;
-        const x = width - 1 - (index - y) / height;
-        const numericVal16 = Number.parseInt(char, 16);
-        const numericVal256 = numericVal16 * rgbStep;
-        pixels256[y][x] = numericVal256;
+        if (bitsPerPixel === 4) {
+          const y = index % height;
+          const x = width - 1 - (index - y) / height;
+          const numericVal16Colors = Number.parseInt(char, 16);
+          const numericVal256Colors = numericVal16Colors * rgbStep;
+          pixels256[y][x] = numericVal256Colors;
+        } else {
+          // bitsPerPixel === 1
+          const numericalVal = Number.parseInt(char, 16);
+          // each hexadecimal character is 4 bits, so 4 pixels
+          for (let i = 0; i < 4; i++) {
+            const pixelIndex = index * 4 + i;
+            if (pixelIndex >= width * height) break;
+
+            const x = width - 1 - Math.floor(pixelIndex / height);
+            const y = pixelIndex % height;
+
+            // Extract bits from left to right (MSB first)
+            const mask = 1 << (3 - i);
+            const bit = numericalVal & mask ? 1 : 0;
+            const pixelVal = bit ? 0 : 255; // Colors are inverted in this mode
+            pixels256[y][x] = pixelVal;
+          }
+        }
       });
 
       for (let y = 0; y < height; y++) {

@@ -1,4 +1,12 @@
-import type { AlpacaApi, Block, BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type {
+  AlpacaApi,
+  Block,
+  BlockInfo,
+  Cursor,
+  Stake,
+  Reward,
+  Page,
+} from "@ledgerhq/coin-framework/api/index";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import type { Balance, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
@@ -27,6 +35,12 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
     },
   };
 }

@@ -2,9 +2,13 @@ import {
   type Balance,
   Block,
   BlockInfo,
+  Cursor,
+  Page,
   IncorrectTypeError,
   type Operation,
   type Pagination,
+  Reward,
+  Stake,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
@@ -39,6 +43,12 @@ export function createApi(config: TezosConfig): TezosApi {
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
     },
   };
 }

@@ -25,10 +25,13 @@ const Header = ({
   const backButtonOpacity = useSharedValue(hasBackButton ? 1 : 0);
   const backButtonScale = useSharedValue(hasBackButton ? 1 : 0);
 
-  const backButtonAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: backButtonOpacity.value,
-    transform: [{ scale: backButtonScale.value }],
-  }));
+  const backButtonAnimatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: backButtonOpacity.value,
+      transform: [{ scale: backButtonScale.value }],
+    }),
+    [backButtonOpacity, backButtonScale],
+  );
 
   useEffect(() => {
     if (hasBackButton) {

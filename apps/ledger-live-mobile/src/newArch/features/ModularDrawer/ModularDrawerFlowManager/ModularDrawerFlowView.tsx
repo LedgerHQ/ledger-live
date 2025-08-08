@@ -1,5 +1,6 @@
 import React from "react";
 import Animated from "react-native-reanimated";
+import { View, StyleSheet } from "react-native";
 import { ModularDrawerStep } from "../types";
 import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
@@ -18,32 +19,50 @@ export function ModularDrawerFlowView({
 }: ModularDrawerFlowProps) {
   const { currentStep } = navigationStepViewModel;
 
-  const { animatedStyle, displayedStep } = useScreenTransition(currentStep);
+  const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
-  const renderStepContent = () => {
-    switch (displayedStep) {
+  const renderStepContent = (step: ModularDrawerStep) => {
+    switch (step) {
       case ModularDrawerStep.Asset:
         return <AssetSelection {...assetsViewModel} />;
       case ModularDrawerStep.Network:
         return <NetworkSelection {...networksViewModel} />;
       case ModularDrawerStep.Account:
-        if (!accountsViewModel.asset) return null;
         return <AccountSelection {...accountsViewModel} />;
       default:
         return null;
     }
   };
 
-  return (
-    <Animated.View style={[{ flex: 1 }, animatedStyle]}>
-      {isReadyToBeDisplayed ? (
-        <>
-          <Title step={currentStep} />
-          {renderStepContent()}
-        </>
-      ) : (
-        <SkeletonList />
-      )}
-    </Animated.View>
-  );
+  const renderAnimatedStep = (step: ModularDrawerStep, index: number) => {
+    const stepAnimations = getStepAnimations(step);
+
+    if (!stepAnimations) return null;
+
+    return (
+      <Animated.View
+        key={`${step}-${index}`}
+        style={[{ flex: 1 }, stepAnimations.animatedStyle]}
+        testID={`${step}-screen`}
+      >
+        {isReadyToBeDisplayed ? (
+          <>
+            <Title step={step} />
+            {renderStepContent(step)}
+          </>
+        ) : (
+          <SkeletonList />
+        )}
+      </Animated.View>
+    );
+  };
+
+  return <View style={styles.container}>{activeSteps.map(renderAnimatedStep)}</View>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+  },
+});

@@ -10,6 +10,7 @@ import {
   paymentInfo,
   getBlock,
   getBlockInfo,
+  getStakes,
 } from "./sdk";
 import { getFullnodeUrl } from "@mysten/sui/client";
 
@@ -189,26 +190,6 @@ describe("SUI SDK Integration tests", () => {
       expect(checkpointById.transactions.length).toEqual(19);
       expect(checkpointById.digest).toEqual(checkpointBySequenceNumber.digest);
     });
-    /*
-    test("getCheckpointWithTransactions", async () => {
-      const { checkpoint: checkpointById, transactions: checkpointByIdTransactions } =
-        await getCheckpointWithTransactions("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      const {
-        checkpoint: checkpointBySequenceNumber,
-        transactions: checkpointBySequenceNumberTransactions,
-      } = await getCheckpointWithTransactions("164167623");
-      expect(checkpointById.epoch).toEqual("814");
-      expect(checkpointById.sequenceNumber).toEqual("164167623");
-      expect(checkpointById.timestampMs).toEqual("1751696298663");
-      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
-      expect(checkpointById.transactions.length).toEqual(19);
-      expect(checkpointById).toEqual(checkpointBySequenceNumber);
-      expect(checkpointByIdTransactions.length).toEqual(19);
-      expect(checkpointBySequenceNumberTransactions.length).toEqual(19);
-      expect(checkpointByIdTransactions).toEqual(checkpointBySequenceNumberTransactions);
-    });
-    */
   });
 
   describe("getBlockInfo", () => {
@@ -219,7 +200,7 @@ describe("SUI SDK Integration tests", () => {
       expect(blockById.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(blockById.time).toEqual(new Date(1751696298663));
       expect(blockById.parent?.height).toEqual(164167622);
-      // expect(blockById.parent?.hash).toEqual("TODO");
+      expect(blockById.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
       expect(blockById).toEqual(blockBySequenceNumber);
     });
   });
@@ -232,9 +213,31 @@ describe("SUI SDK Integration tests", () => {
       expect(blockById.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(blockById.info.time).toEqual(new Date(1751696298663));
       expect(blockById.info.parent?.height).toEqual(164167622);
-      // expect(blockById.info.parent?.hash).toEqual("TODO");
+      expect(blockById.info.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
       expect(blockById.transactions.length).toEqual(19);
       expect(blockById).toEqual(blockBySequenceNumber);
+    });
+  });
+
+  describe("getStakes", () => {
+    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+      const stakes = await getStakes(
+        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+      );
+      expect(stakes.length).toBeGreaterThan(0);
+      stakes.forEach(stake => {
+        expect(stake.uid).toMatch(/0x[0-9a-z]+/);
+        expect(stake.address).toMatch(/0x[0-9a-z]+/);
+        expect(stake.delegate).toMatch(/0x[0-9a-z]+/);
+        expect(stake.state).toMatch(/(activating|active|inactive)/);
+        expect(stake.asset).toEqual({ type: "native" });
+        expect(stake.amount).toBeGreaterThan(0);
+        expect(stake.amountDeposited).toBeGreaterThan(0);
+        expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
+        // @ts-expect-error properties are defined
+        expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
+        expect(stake.details).toBeDefined();
+      });
     });
   });
 });

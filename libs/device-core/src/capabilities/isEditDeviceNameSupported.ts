@@ -6,5 +6,6 @@ export function isEditDeviceNameSupported(deviceModelId: DeviceModelId) {
     DeviceModelId.nanoSP,
     DeviceModelId.stax,
     DeviceModelId.europa,
+    DeviceModelId.apex,
   ].includes(deviceModelId);
 }

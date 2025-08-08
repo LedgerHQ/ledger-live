@@ -74,10 +74,7 @@ const getTransactions = () => {
         ).toFixed(),
       ).toBe("50000000000000000000000");
       expect(currentAccount.balance.toFixed()).toBe(
-        previousAccount.balance
-          .minus(latestOperation.value)
-          .minus(new BigNumber("5000000000000"))
-          .toFixed(),
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
     },
   };

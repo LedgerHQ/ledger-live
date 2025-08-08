@@ -1,11 +1,11 @@
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { Account as FormattedAccount } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { formatAddress } from "LLD/utils/formatAddress";
-import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";

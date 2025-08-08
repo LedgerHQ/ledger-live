@@ -2,9 +2,13 @@ import {
   AlpacaApi,
   Block,
   BlockInfo,
+  Cursor,
+  Page,
   FeeEstimation,
   Operation,
   Pagination,
+  Reward,
+  Stake,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
@@ -36,6 +40,12 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
     },
   };
 }

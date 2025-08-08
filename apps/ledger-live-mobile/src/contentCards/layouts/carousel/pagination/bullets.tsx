@@ -52,7 +52,7 @@ const Bullet = ({ type }: { type: ItemStatus }) => {
       height: withSpring(bulletStyles[type].height),
       backgroundColor: withSpring(bulletStyles[type].backgroundColor),
     }),
-    [type],
+    [type, bulletStyles],
   );
 
   return (

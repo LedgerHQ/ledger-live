@@ -130,8 +130,8 @@ export function runSwapWithDifferentSeedTest(
         swap.accountToCredit,
         minAmount,
       );
-      const { providerName } = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.checkExchangeButtonHasProviderName(providerName);
+      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
       await app.swapLiveApp.checkErrorMessage(errorMessage);
@@ -279,11 +279,11 @@ export function runUserRefusesTransactionTest(
         rejectedSwap.accountToCredit,
         minAmount,
       );
-      const { providerName } = await app.swapLiveApp.selectExchange();
+      const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 
-      await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, providerName, minAmount);
+      await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, provider.uiName, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
@@ -388,12 +388,12 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.tapGetQuotesButton();
       await app.swapLiveApp.waitForQuotes();
 
-      const { providerName } = await app.swapLiveApp.selectExchange();
+      const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await checkSwapInfosOnDeviceVerificationStep(swap, providerName, amountToSend);
+      await checkSwapInfosOnDeviceVerificationStep(swap, provider.uiName, amountToSend);
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.verifyDeviceActionLoadingNotVisible();
@@ -560,8 +560,8 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
         actualAmount,
       );
       await app.swapLiveApp.checkQuotes();
-      const { index } = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.tapQuoteInfosFeesSelector(index);
+      await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.tapQuoteInfosFeesSelector(1);
       await app.swapLiveApp.tapFeeContainer("fast");
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
     });

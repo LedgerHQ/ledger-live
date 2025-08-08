@@ -77,7 +77,7 @@ const TokenContextualModal = ({
     () => ({
       height: sharedHeight.value ?? 0,
     }),
-    [],
+    [sharedHeight.value],
   );
 
   if (!isOpened || !account) return null;

@@ -69,24 +69,27 @@ export default function AnimatedHeaderView({
   });
 
   // Animated style moving and scaling the header title depending on the scroll y value
-  const transformStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
-      },
-      {
-        translateX: interpolate(
-          scrollY.value,
-          [0, 76],
-          [space[6], space[6] + (hasBackButton ? -5 : -40)],
-          Extrapolate.CLAMP,
-        ),
-      },
-      {
-        scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
-      },
-    ],
-  }));
+  const transformStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        {
+          translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
+        },
+        {
+          translateX: interpolate(
+            scrollY.value,
+            [0, 76],
+            [space[6], space[6] + (hasBackButton ? -5 : -40)],
+            Extrapolate.CLAMP,
+          ),
+        },
+        {
+          scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
+        },
+      ],
+    }),
+    [scrollY, hasBackButton, space],
+  );
 
   return (
     <SafeAreaView

@@ -265,6 +265,7 @@ export type Features = CurrencyFeatures & {
   };
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
+  supportDeviceApex: DefaultFeature;
 };
 
 /**
@@ -701,6 +702,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
+
+export type Feature_SupportDeviceApex = DefaultFeature;
 
 /**
  * Array of firmware versions that are ignored for the given device model

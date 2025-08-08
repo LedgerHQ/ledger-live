@@ -71,6 +71,7 @@ export interface SidecarAccountBalanceInfo {
   reserved: string;
   miscFrozen: string;
   feeFrozen: string;
+  transferable: string;
   frozen: string;
   locks: IBalanceLock[];
 }

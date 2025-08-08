@@ -11,6 +11,10 @@ import {
   TransactionValidation,
   AccountInfo,
   Api,
+  Cursor,
+  Page,
+  Stake,
+  Reward,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -191,5 +195,11 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
     },
   }) satisfies Api<any>;

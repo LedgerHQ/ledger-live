@@ -87,7 +87,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-io-revamp-20250711135456",
+    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

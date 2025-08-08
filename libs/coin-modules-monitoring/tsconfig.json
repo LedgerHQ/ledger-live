@@ -8,7 +8,7 @@
       "es2020",
       "dom"
     ],
-    "outDir": "lib",
+    "outDir": "lib"
   },
   "include": [
     "src/**/*"

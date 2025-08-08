@@ -1,5 +1,4 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { allure } from "jest-allure2-reporter/api";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addDelayBeforeInteractingWithDevice } from "../../helpers/commonHelpers";
@@ -14,7 +13,7 @@ export default class SwapLiveAppPage {
   quotesButtonDisabled = "mobile-get-quotes-button-disabled";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
-  quoteProviderName = "quote-card-provider-name";
+  quoteCardProviderName = "compact-quote-card-provider-";
   executeSwapButton = "execute-button";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
@@ -25,6 +24,8 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   liveAppTitle = "live-app-title";
   quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
+  specificQuoteCardProviderName = (provider: string) =>
+    `compact-quote-card-provider-name-${provider}`;
 
   feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
 
@@ -52,11 +53,9 @@ export default class SwapLiveAppPage {
 
   @Step("Verify currency is selected $0")
   async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
-    if (isFromCurrency) {
-      await detoxExpect(getWebElementByTestId(this.fromSelector)).toHaveText(ticker);
-    } else {
-      await detoxExpect(getWebElementByTestId(this.toSelector)).toHaveText(ticker);
-    }
+    const selector = isFromCurrency ? this.fromSelector : this.toSelector;
+    const actualText = await getWebElementText(selector);
+    jestExpect(actualText).toContain(ticker);
   }
 
   @Step("Tap to currency")
@@ -81,6 +80,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap get quotes button")
   async tapGetQuotesButton() {
+    await getValueByWebTestId(this.toAmountInput);
     await tapWebElementByTestId(this.getQuotesButton);
   }
 
@@ -96,35 +96,32 @@ export default class SwapLiveAppPage {
 
   @Step("Select available provider")
   async selectExchange() {
-    let index = 1;
+    const providersList = await this.getProviderList();
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const providerName = await getWebElementText(this.quoteProviderName, index);
-        const provider = Object.values(Provider).find(
-          p => p.uiName === providerName && p.uiName !== Provider.LIFI.uiName,
+    const providersWithoutKYC = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      return provider && !provider.kyc;
+    });
+    for (const providerName of providersWithoutKYC) {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      if (provider && provider.isNative) {
+        await waitWebElementByTestId(this.specificQuoteCardProviderName(provider.name));
+        const selectedProvider = getWebElementsByIdAndText(
+          this.specificQuoteCardProviderName(provider.name),
+          provider.uiName,
         );
+        await tapWebElementByElement(selectedProvider);
 
-        if (provider && !provider.kyc && provider.isNative) {
-          await waitWebElementByTestId(this.quoteProviderName);
-          await getWebElementByTestId(this.quoteProviderName, index).tap();
-          await allure.attachment("Selected provider: ", providerName, "text/plain");
-          return { providerName, index };
-        }
-
-        index++;
-      } catch (e) {
-        break;
+        return provider;
       }
     }
-    throw new Error("No valid providers found");
+    throw new Error("No providers without KYC found");
   }
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
     await waitWebElementByTestId(this.executeSwapButton);
-    await tapWebElementByTestId(this.executeSwapButton, 1);
+    await tapWebElementByTestId(this.executeSwapButton);
   }
 
   @Step("Get minimum amount for swap")
@@ -136,9 +133,11 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
-    const providerList = await getWebElementsText(this.quoteProviderName);
+    const providerList = await getWebElementsByCssSelector(
+      `[data-testid^='${this.quoteCardProviderName}']`,
+    );
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    jestExpect(numberOfQuotesText).toEqual(`${providerList.length - 1} quotes found`);
+    jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
     return providerList;
   }
 
@@ -159,24 +158,18 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "fiatAmount-label")).toExist();
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-heading")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-infoIcon"),
-    ).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-value")).toExist();
-    await detoxExpect(
-      getWebElementByTestId(baseProviderLocator + "networkFees-fiat-value"),
-    ).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-heading")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-value")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-fiat-value")).toExist();
+
+    const extraFeesContainer = getWebElementByTestId(baseProviderLocator + "extraFeesContainer");
+    await detoxExpect(extraFeesContainer).toExist();
+    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-infoIcon")).toExist();
+
     if (
       provider === Provider.ONE_INCH.name ||
       provider === Provider.VELORA.name ||
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-heading")).toExist();
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-value")).toExist();
+      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-infoIcon")).toExist();
     }
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
@@ -255,7 +248,7 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.showDetailslink);
     const showDetailsLink = getWebElementByTestId(this.showDetailslink);
     await showDetailsLink.runScript(el => el.click());
-    await detoxExpect(getWebElementByTestId(this.quotesContainerErrorIcon)).toExist();
+    await waitWebElementByTestId(this.quotesContainerErrorIcon);
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
 
@@ -302,19 +295,18 @@ export default class SwapLiveAppPage {
   @Step("Select specific provider $0")
   async selectSpecificProvider(provider: string) {
     const providersList = await this.getProviderList();
-
     if (!providersList.includes(provider)) {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
-
-    await waitWebElementByTestId(this.quoteProviderName);
-    const selectedProvider = getWebElementsByIdAndText(this.quoteProviderName, provider);
-    await tapWebElementByElement(selectedProvider);
+    const providerName = Provider.getNameByUiName(provider);
+    const providerTestId = this.specificQuoteCardProviderName(providerName);
+    await waitWebElementByTestId(providerTestId);
+    await tapWebElementByTestId(providerTestId);
   }
 
   @Step("Go to $0 live app")
   async goToProviderLiveApp(provider: string) {
-    const continueButton = getWebElementByTestId(this.executeSwapButton, 1);
+    const continueButton = getWebElementByTestId(this.executeSwapButton);
     await detoxExpect(continueButton).toExist();
     await this.checkExchangeButtonHasProviderName(provider);
     await this.tapExecuteSwap();

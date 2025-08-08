@@ -16,6 +16,7 @@ import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
 import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -34,20 +35,22 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
           <DeviceManagementKitProvider dmkEnabled={dmkEnabled}>
             <CountervaluesMarketcapBridgedProvider>
               <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                <AppDataStorageProvider>
-                  <OnboardingContextProvider>
-                    <PostOnboardingProviderWrapped>
-                      <NotificationsProvider>
-                        <SnackbarContainer />
-                        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                          <InViewContextProvider>
-                            <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                          </InViewContextProvider>
-                        </NftMetadataProvider>
-                      </NotificationsProvider>
-                    </PostOnboardingProviderWrapped>
-                  </OnboardingContextProvider>
-                </AppDataStorageProvider>
+                <BottomSheetModalProvider>
+                  <AppDataStorageProvider>
+                    <OnboardingContextProvider>
+                      <PostOnboardingProviderWrapped>
+                        <NotificationsProvider>
+                          <SnackbarContainer />
+                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                            <InViewContextProvider>
+                              <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                            </InViewContextProvider>
+                          </NftMetadataProvider>
+                        </NotificationsProvider>
+                      </PostOnboardingProviderWrapped>
+                    </OnboardingContextProvider>
+                  </AppDataStorageProvider>
+                </BottomSheetModalProvider>
               </CountervaluesBridgedProvider>
             </CountervaluesMarketcapBridgedProvider>
           </DeviceManagementKitProvider>

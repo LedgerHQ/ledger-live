@@ -25,6 +25,7 @@ const illustrations = {
   [DeviceModelId.blue]: NanoS,
   [DeviceModelId.stax]: Stax,
   [DeviceModelId.europa]: Europa,
+  [DeviceModelId.apex]: Europa,
 };
 
 const RemoveDeviceMenu = ({

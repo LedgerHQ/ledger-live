@@ -88,11 +88,14 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
   // is not maintained and its animation dependency too. The internal animation is flaky and not
   // working properly on Android. So, we are using reanimated to enforce redraw after animation.
   const sharedHeight = useSharedValue<DimensionValue>(0);
-  const animatedStyle = useAnimatedStyle(() => ({
-    height: sharedHeight.value,
-    rowGap: 24,
-    display: "flex",
-  }));
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: sharedHeight.value,
+      rowGap: 24,
+      display: "flex",
+    }),
+    [sharedHeight],
+  );
   const onLayout = useCallback(
     (_: LayoutChangeEvent) => {
       if (!Number.isNaN(sharedHeight.value) && sharedHeight.value === 0) {

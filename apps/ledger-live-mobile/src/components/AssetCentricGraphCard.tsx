@@ -118,7 +118,7 @@ function AssetCentricGraphCard({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 

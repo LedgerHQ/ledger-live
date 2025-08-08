@@ -35,6 +35,11 @@ const Europa = styled.div`
   background: url('${europa}') no-repeat center;
 `;
 
+const Apex = styled.div`
+  // prettier-ignore
+  background: url('${europa}') no-repeat center;
+`;
+
 type Illustration = {
   Illustration: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never>;
   width: number;
@@ -64,6 +69,11 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
   },
   europa: {
     Illustration: Europa,
+    width: 200,
+    height: 200,
+  },
+  apex: {
+    Illustration: Apex,
     width: 200,
     height: 200,
   },
