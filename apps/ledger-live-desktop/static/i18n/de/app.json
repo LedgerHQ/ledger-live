@@ -385,6 +385,7 @@
         "onhold" : "Zurückgestellt",
         "expired" : "Abgelaufen",
         "finished" : "Abgeschlossen",
+        "unknown" : "In Bearbeitung",
         "refunded" : "Zurückerstattet"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Bitte warte, während der Swap-Provider die Transaktion verarbeitet.",
         "onhold" : "Bitte kontaktiere den Swap-Anbieter unter Angabe deiner Swap-ID, um das Problem zu beheben.",
         "finished" : "Dein Swap wurde erfolgreich abgeschlossen.",
-        "unknown" : "Bitte kontaktiere den Swap-Anbieter mit deiner Swap-ID für weitere Informationen."
+        "unknown" : "Wir warten auf Informationen vom Anbieter."
       },
       "date" : "Datum",
       "from" : "Von",
@@ -2386,6 +2387,10 @@
         "title" : "Gerät"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Blindsignatur erforderlich",
+          "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
         "from" : "Von",
@@ -4468,6 +4473,40 @@
             "check" : "Spam-Bewertung"
           }
         },
+        "mockAccounts" : {
+          "title" : "Pseudokonten generieren",
+          "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
+          "customGenerate" : {
+            "title" : "Benutzerdefiniert generieren",
+            "desc" : "Bestimmte Währungen auswählen und Token hinzufügen"
+          },
+          "quickGenerate" : {
+            "title" : "Schnell generieren",
+            "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
+          },
+          "currencySelector" : {
+            "placeholder" : "Währungen auswählen…",
+            "searchPlaceholder" : "Währungen durchsuchen…",
+            "noCurrenciesFound" : "Keine Währungen gefunden",
+            "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+            "selectedCount" : "{{count}} Währung ausgewählt",
+            "selectedCount_other" : "{{count}} Währungen ausgewählt"
+          },
+          "tokenIds" : {
+            "label" : "Token-IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}} Konto generieren",
+            "generateAccounts_other" : "{{count}} Konten generieren",
+            "generateAccountsQuick" : "{{count}} Konten generieren"
+          },
+          "alerts" : {
+            "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+            "confirmErase" : "Dadurch werden bestehende Konten gelöscht. Vorgang fortsetzen?",
+            "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Melden",
           "contractAddress" : "Vertragsadresse",
@@ -4595,6 +4634,8 @@
       "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "customLockScreenTester" : "Tester für den individuellen Sperrbildschirm",
+      "customLockScreenTesterDesc" : "Individuellen Sperrbildschirm auf unterstützten Geräten testen",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
       "customLockScreenDesc" : "Debuggen von individuellen Grafikelementen für den Sperrbildschirm",
       "customLockScreenCTA" : "Starten",
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "Nicht am Ort verfügbar",
-    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "description" : "Ledger Live ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {
