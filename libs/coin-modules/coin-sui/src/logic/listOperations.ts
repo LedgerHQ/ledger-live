@@ -6,5 +6,5 @@ export const listOperations = async (
   { cursor }: Pagination,
 ): Promise<[Operation[], string]> => {
   const ops = await getListOperations(address, cursor);
-  return [ops.operations, ops.cursor || ""];
+  return [ops.items, ops.next || ""];
 };

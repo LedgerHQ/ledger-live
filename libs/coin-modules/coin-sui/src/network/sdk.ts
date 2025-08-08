@@ -22,6 +22,7 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  Page,
   Stake,
   StakeState,
   AssetInfo,
@@ -430,11 +431,6 @@ export const filterOperations = (
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
-type OperationPage = {
-  operations: Op[];
-  cursor?: QueryTransactionBlocksParams["cursor"];
-};
-
 /**
  * Fetch operations for Alpaca
  */
@@ -442,7 +438,7 @@ export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
   withApiImpl: typeof withApi = withApi,
-): Promise<OperationPage> =>
+): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const opsOut = await loadOperations({
       api,
@@ -454,7 +450,6 @@ export const getListOperations = async (
     });
     const opsIn = await loadOperations({
       api,
-
       addr,
       type: "IN",
       cursor,
@@ -463,7 +458,7 @@ export const getListOperations = async (
     });
     const list = filterOperations(opsIn, opsOut, true);
 
-    return { operations: list.operations.map(t => transactionToOp(addr, t)), cursor: list.cursor };
+    return { items: list.operations.map(t => transactionToOp(addr, t)), next: list.cursor ?? undefined};
   });
 
 /**

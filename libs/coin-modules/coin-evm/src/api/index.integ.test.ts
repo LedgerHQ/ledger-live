@@ -139,6 +139,7 @@ describe.each([
       expect(
         await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
+          order: "asc",
         }),
       ).toEqual([[], ""]);
     });
