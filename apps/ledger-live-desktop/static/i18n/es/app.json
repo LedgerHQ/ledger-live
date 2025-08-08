@@ -385,6 +385,7 @@
         "onhold" : "En espera",
         "expired" : "Caducado",
         "finished" : "Finalizado",
+        "unknown" : "Procesando",
         "refunded" : "Reembolsado"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
         "onhold" : "Contacta al proveedor de permuta mediante tu ID de permuta para resolver la situación.",
         "finished" : "Tu permuta se ha completado correctamente.",
-        "unknown" : "Contacta al proveedor de permuta y ten a mano tu ID de permuta para obtener más información."
+        "unknown" : "Estamos a la espera de información del proveedor."
       },
       "date" : "Fecha",
       "from" : "De",
@@ -2386,6 +2387,10 @@
         "title" : "Dispositivo"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Firma a ciegas requerida",
+          "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+        },
         "utxoLag" : "La firma y verificación de esta transacción puede llevar un tiempo prolongado porque la cuenta presenta una cantidad significativa de monedas.",
         "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
         "from" : "De",
@@ -4468,6 +4473,40 @@
             "check" : "Calificación de spam"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generar cuentas ficticias",
+          "description" : "Genera cuentas ficticias con fines de prueba. Estas herramientas te permiten crear cuentas de prueba con diversas divisas y configuraciones.",
+          "customGenerate" : {
+            "title" : "Generación personalizada",
+            "desc" : "Selecciona divisas concretas y agrega tokens."
+          },
+          "quickGenerate" : {
+            "title" : "Generación rápida",
+            "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
+          },
+          "currencySelector" : {
+            "placeholder" : "Elegir divisas...",
+            "searchPlaceholder" : "Buscar divisas...",
+            "noCurrenciesFound" : "No se encontró ninguna divisa",
+            "noCurrenciesAvailable" : "No hay divisas disponibles",
+            "selectedCount" : "{{count}} divisa seleccionada",
+            "selectedCount_other" : "{{count}} divisas seleccionadas"
+          },
+          "tokenIds" : {
+            "label" : "IDs de los tokens (opcional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generar {{count}} cuenta",
+            "generateAccounts_other" : "Generar {{count}} cuentas",
+            "generateAccountsQuick" : "Generar {{count}} cuentas"
+          },
+          "alerts" : {
+            "selectCurrency" : "Selecciona al menos una divisa",
+            "confirmErase" : "Esta acción borrará las cuentas existentes. ¿Quieres continuar?",
+            "generateError" : "No se pudieron generar las cuentas ficticias. Inténtalo de nuevo."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Denunciar",
           "contractAddress" : "Dirección del contrato",
@@ -4595,6 +4634,8 @@
       "customCALRefDesc" : "Especifica una rama, commit o etiqueta personalizados para usarlos con todas las solicitudes CAL",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "customLockScreenTester" : "Probador de pantalla de bloqueo personalizada",
+      "customLockScreenTesterDesc" : "Prueba la pantalla de bloqueo personalizada en dispositivos compatibles",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
