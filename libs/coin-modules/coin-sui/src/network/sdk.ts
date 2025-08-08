@@ -395,7 +395,7 @@ export const getOperations = async (
     const rawTransactions = filterOperations(sendOps, receivedOps, !cursor);
 
     return rawTransactions.operations.map(transaction =>
-      transactionToOperation(accountId, addr, transaction)
+      transactionToOperation(accountId, addr, transaction),
     );
   });
 
@@ -412,10 +412,13 @@ export const filterOperations = (
     shouldFilter &&
     sendOps.operations.length &&
     receiveOps.operations.length &&
-    (sendOps.operations.length === TRANSACTIONS_LIMIT || receiveOps.operations.length === TRANSACTIONS_LIMIT)
+    (sendOps.operations.length === TRANSACTIONS_LIMIT ||
+      receiveOps.operations.length === TRANSACTIONS_LIMIT)
   ) {
     const sendTime = Number(sendOps.operations[sendOps.operations.length - 1].timestampMs ?? 0);
-    const receiveTime = Number(receiveOps.operations[receiveOps.operations.length - 1].timestampMs ?? 0);
+    const receiveTime = Number(
+      receiveOps.operations[receiveOps.operations.length - 1].timestampMs ?? 0,
+    );
     if (sendTime >= receiveTime) {
       nextCursor = sendOps.cursor;
       filterTimestamp = sendTime;
@@ -458,7 +461,10 @@ export const getListOperations = async (
     });
     const list = filterOperations(opsIn, opsOut, true);
 
-    return { items: list.operations.map(t => transactionToOp(addr, t)), next: list.cursor ?? undefined};
+    return {
+      items: list.operations.map(t => transactionToOp(addr, t)),
+      next: list.cursor ?? undefined,
+    };
   });
 
 /**

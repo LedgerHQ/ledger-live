@@ -48,7 +48,7 @@ describe("Polkadot Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 , order: "asc" });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
@@ -59,7 +59,7 @@ describe("Polkadot Api", () => {
 
     it.skip("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 , order: "asc" });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       const checkSet = new Set(tx.map(elt => elt.tx.hash));

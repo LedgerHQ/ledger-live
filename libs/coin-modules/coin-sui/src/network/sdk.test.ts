@@ -929,7 +929,9 @@ describe("getOperations filtering logic", () => {
       } else if (type === "IN") {
         return {
           operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-            createMockTransaction(`received${i + 1}`, String(1000 + i * 100), otherAddr, [mockAddr]),
+            createMockTransaction(`received${i + 1}`, String(1000 + i * 100), otherAddr, [
+              mockAddr,
+            ]),
           ),
           cursor: null,
         };
@@ -961,7 +963,9 @@ describe("getOperations filtering logic", () => {
       } else if (type === "IN") {
         return {
           operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-            createMockTransaction(`received${i + 1}`, String(2000 + i * 100), otherAddr, [mockAddr]),
+            createMockTransaction(`received${i + 1}`, String(2000 + i * 100), otherAddr, [
+              mockAddr,
+            ]),
           ),
           cursor: null,
         };
@@ -1162,17 +1166,11 @@ describe("filterOperations", () => {
   describe("when cursor is provided", () => {
     test("should not apply timestamp filtering", () => {
       const operationList1 = {
-        operations: [
-          createMockTransaction("tx1", "1000"),
-          createMockTransaction("tx2", "2000"),
-        ],
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
         cursor: null,
       };
       const operationList2 = {
-        operations: [
-          createMockTransaction("tx3", "1500"),
-          createMockTransaction("tx4", "2500"),
-        ],
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
         cursor: null,
       };
       const result = sdk.filterOperations(operationList1, operationList2);
@@ -1184,17 +1182,11 @@ describe("filterOperations", () => {
 
     test("should handle null cursor", () => {
       const operationList1 = {
-        operations: [
-          createMockTransaction("tx1", "1000"),
-          createMockTransaction("tx2", "2000"),
-        ],
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
         cursor: null,
       };
       const operationList2 = {
-        operations: [
-          createMockTransaction("tx3", "1500"),
-          createMockTransaction("tx4", "2500"),
-        ],
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
         cursor: null,
       };
 
@@ -1207,17 +1199,11 @@ describe("filterOperations", () => {
 
     test("should handle undefined cursor", () => {
       const operationList1 = {
-        operations: [
-          createMockTransaction("tx1", "1000"),
-          createMockTransaction("tx2", "2000"),
-        ],
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
         cursor: null,
       };
       const operationList2 = {
-        operations: [
-          createMockTransaction("tx3", "1500"),
-          createMockTransaction("tx4", "2500"),
-        ],
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
         cursor: null,
       };
 
@@ -1264,10 +1250,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
       const operationList2 = {
-        operations: [
-          createMockTransaction("tx2_1", "500"),
-          createMockTransaction("tx2_2", "1500"),
-        ],
+        operations: [createMockTransaction("tx2_1", "500"), createMockTransaction("tx2_2", "1500")],
         cursor: null,
       };
 
@@ -1285,10 +1268,7 @@ describe("filterOperations", () => {
 
     test("should apply timestamp filtering when only second list reaches limit", () => {
       const operationList1 = {
-        operations: [
-          createMockTransaction("tx1_1", "500"),
-          createMockTransaction("tx1_2", "1500"),
-        ],
+        operations: [createMockTransaction("tx1_1", "500"), createMockTransaction("tx1_2", "1500")],
         cursor: null,
       };
       const operationList2 = {
@@ -1418,10 +1398,7 @@ describe("filterOperations", () => {
 
     test("should remove duplicate transactions by digest", () => {
       const operationList1 = {
-        operations: [
-          createMockTransaction("tx1", "1000"),
-          createMockTransaction("tx2", "2000"),
-        ],
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
         cursor: null,
       };
       const operationList2 = {

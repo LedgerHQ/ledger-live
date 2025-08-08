@@ -38,7 +38,7 @@ describe("Sui Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(SENDER, { minHeight: 0 , order: "asc" });
+      [txs] = await module.listOperations(SENDER, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -67,7 +67,10 @@ describe("Sui Api", () => {
     });
 
     it("uses the minHeight to filter", async () => {
-      const minHeightTxs = await module.listOperations(SENDER, { minHeight: 154925948, order: "asc" });
+      const minHeightTxs = await module.listOperations(SENDER, {
+        minHeight: 154925948,
+        order: "asc",
+      });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
   });

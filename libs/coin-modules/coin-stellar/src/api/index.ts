@@ -101,10 +101,7 @@ async function estimate(): Promise<FeeEstimation> {
   return { value };
 }
 
-async function operations(
-  address: string,
-  pagination: Pagination,
-): Promise<[Operation[], string]> {
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
   return operationsFromHeight(address, pagination.minHeight || 0);
 }
 

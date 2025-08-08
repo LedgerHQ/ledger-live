@@ -46,7 +46,6 @@ import {
   BlockInfo,
   FeeEstimation,
   Operation,
-  Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
