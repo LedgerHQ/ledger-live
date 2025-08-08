@@ -112,7 +112,7 @@ async function executeCommandAttempt(
   log.info(`\n🔄 [${app.name}] Attempt ${attempt}/${maxRetries}`);
 
   await waitForSpeculosIfRemote(entry, app.name);
-  await commonPage.addRegisterSpeculos(speculosPort, proxyPort);
+  await commonPage.registerSpeculos(speculosPort, proxyPort);
 
   try {
     await executeCliCommand(cmd, userdataPath, runId);
@@ -219,7 +219,7 @@ async function setupMainSpeculosAttempt(
 
   try {
     await waitForSpeculosIfRemote(entry, speculosApp.name);
-    await commonPage.addRegisterSpeculos(entry.speculosPort, entry.proxyPort);
+    await commonPage.registerSpeculos(entry.speculosPort, entry.proxyPort);
     log.info(
       `✅ [${speculosApp.name}] Main Speculos registered successfully on port ${entry.speculosPort}`,
     );

@@ -101,7 +101,7 @@ export default class CommonPage {
     await tapByElement(accountTitle);
   }
 
-  async addRegisterSpeculos(speculosPort: number, proxyPort: number) {
+  async registerSpeculos(speculosPort: number, proxyPort: number) {
     unregisterAllTransportModules();
     const speculosAddress = process.env.SPECULOS_ADDRESS;
     await launchProxy(proxyPort, speculosAddress, speculosPort);
