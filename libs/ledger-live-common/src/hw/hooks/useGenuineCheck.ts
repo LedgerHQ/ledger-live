@@ -7,6 +7,8 @@ import type {
   GetGenuineCheckFromDeviceIdResult,
   GetGenuineCheckFromDeviceIdOutput,
 } from "../getGenuineCheckFromDeviceId";
+import { isDmkError } from "../../deviceSDK/tasks/core";
+import { DmkError } from "@ledgerhq/device-management-kit";
 
 export type GenuineState = "unchecked" | "genuine" | "non-genuine";
 export type DevicePermissionState =
@@ -33,7 +35,7 @@ export type UseGenuineCheckDependencies = {
 export type UseGenuineCheckResult = {
   genuineState: GenuineState;
   devicePermissionState: DevicePermissionState;
-  error: Error | null;
+  error: Error | DmkError | null;
   resetGenuineCheckState: () => void;
 };
 
@@ -45,6 +47,9 @@ const clearTimeoutRef = (timeoutRef: MutableRefObject<NodeJS.Timeout | null>) =>
     timeoutRef.current = null;
   }
 };
+
+const isDmkDeviceDisconnectedError = (e: unknown): e is DmkError =>
+  isDmkError(e) && e._tag === "DeviceDisconnectedWhileSendingError";
 
 /**
  * Hook to check that a device is genuine
@@ -71,7 +76,7 @@ export const useGenuineCheck = ({
   const [genuineState, setGenuineState] = useState<GenuineState>("unchecked");
   const [devicePermissionState, setDevicePermissionState] =
     useState<DevicePermissionState>("unrequested");
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | DmkError | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetGenuineCheckState = useCallback(() => {
@@ -126,7 +131,7 @@ export const useGenuineCheck = ({
         clearTimeoutRef(timeoutRef);
         if (e instanceof UserRefusedAllowManager) {
           setDevicePermissionState("refused");
-        } else if (e instanceof Error) {
+        } else if (e instanceof Error || isDmkDeviceDisconnectedError(e)) {
           // Probably an error of type DisconnectedDeviceDuringOperation or something else
           setError(e);
         } else {
@@ -138,7 +143,13 @@ export const useGenuineCheck = ({
     return () => {
       sub.unsubscribe();
     };
-  }, [isHookEnabled, deviceId, lockedDeviceTimeoutMs, getGenuineCheckFromDeviceId]);
+  }, [
+    isHookEnabled,
+    deviceId,
+    lockedDeviceTimeoutMs,
+    getGenuineCheckFromDeviceId,
+    permissionTimeoutMs,
+  ]);
 
   return {
     genuineState,
