@@ -33,13 +33,13 @@ export function addNotCreatedRippleMockAddress(addr: string) {
   notCreatedAddresses.push(addr);
 }
 
-const defaultGetFees = (a: Account, t: any) => t.fee || new BigNumber(0);
+const defaultGetFees = (a: Account, t: any) => t.fees;
 
 const createTransaction = (): Transaction => ({
   family: "xrp",
   amount: new BigNumber(0),
   recipient: "",
-  fee: new BigNumber(10),
+  fees: new BigNumber(10),
   feeCustomUnit: getCryptoCurrencyById("ripple").units[1],
   tag: undefined,
   networkInfo: null,
