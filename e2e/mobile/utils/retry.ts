@@ -23,6 +23,6 @@ export async function retryUntilTimeout<T>(
         : JSON.stringify(lastError);
 
   throw new Error(
-    [`❌ [retryUntilTimeout] Timed out after ${timeout}ms`, `🧪 ${errMsg}`].join("\n"),
+    `[retryUntilTimeout] ❌ Timeout (${timeout}ms) exceeded while waiting for condition. Last error: ${errMsg}`,
   );
 }

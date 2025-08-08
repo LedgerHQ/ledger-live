@@ -64,13 +64,7 @@ const GenericErrorView = ({
   }
 
   return (
-    <Flex
-      flexDirection={"column"}
-      alignItems={"center"}
-      alignSelf="stretch"
-      mt={7}
-      testID="generic-error-modal"
-    >
+    <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch" mt={7}>
       <GenericInformationBody
         Icon={Icon}
         iconColor={iconColor}

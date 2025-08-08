@@ -15,9 +15,9 @@ export default class CommonPage {
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
-  deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
-  deviceItemRegex = /device-item-.*/;
+  deviceRowRegex = /device-item-.*/;
   parentCurrencyIcon = "parent-currency-icon";
+
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
   backButton = () => getElementById("navigation-header-back-button");
@@ -119,14 +119,8 @@ export default class CommonPage {
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
     if (isIos()) await device.disableSynchronization();
-    const proxyUrl = process.env.DEVICE_PROXY_URL;
-    if (proxyUrl) {
-      const deviceId = this.deviceItem(`httpdebug|${proxyUrl}`);
-      await waitForElementById(deviceId);
-      await tapById(deviceId);
-    } else {
-      await tapById(this.deviceItemRegex, index);
-    }
+    await waitForElementById(this.deviceRowRegex);
+    await tapById(this.deviceRowRegex, index);
   }
 
   @Step("Tap proceed button")

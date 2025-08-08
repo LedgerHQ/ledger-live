@@ -65,9 +65,11 @@ async function cleanupDetox() {
 async function cleanupUserdata() {
   try {
     const files = await glob(USERDATA_GLOB);
-    await Promise.all(files.map(file => fs.unlink(file)));
-    log.info(`Cleaned up ${files.length} userdata files`);
-  } catch (error) {
-    log.warn("Failed to cleanup userdata files:", error);
+    for (const f of files) {
+      await fs.unlink(f);
+      log.info(`🧹 removed temp‑userdata file: ${path.basename(f)}`);
+    }
+  } catch (err) {
+    log.warn("🧹 failed to cleanup temp‑userdata files:", err);
   }
 }

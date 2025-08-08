@@ -17,7 +17,7 @@ beforeAll(
     const testFileName = expect.getState().testPath?.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1");
     allure.description("Test file : " + testFileName);
   },
-  process.env.CI ? 150000 : 120000,
+  process.env.CI ? 150000 : 300000,
 );
 
 afterAll(async () => {
