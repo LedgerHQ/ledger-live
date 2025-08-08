@@ -1,12 +1,15 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import xrpGetAddress from "@ledgerhq/coin-xrp/signer/getAddress";
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
+import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
+import type { TezosSigner } from "@ledgerhq/coin-tezos/types/signer";
 import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Stellar from "@ledgerhq/hw-app-str";
+import Tezos from "@ledgerhq/hw-app-tezos";
 
 import Transport from "@ledgerhq/hw-transport";
-import { signTransaction, stellarSignTransaction } from "./signTransaction";
+import { signTransaction, stellarSignTransaction, tezosSignTransaction } from "./signTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SignTransactionOptions } from "./types";
 import { StrKey } from "@stellar/stellar-sdk";
@@ -47,6 +50,9 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
+const createSignerTezos: CreateSigner<Tezos> = (transport: Transport) => new Tezos(transport);
+const signerContextTezos = executeWithSigner(createSignerTezos) as unknown as SignerContext<TezosSigner>;
+
 export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
@@ -62,6 +68,13 @@ export function getSigner(network): AlpacaSigner {
         getAddress: stellarGetAddress(signerContextStellar),
         signTransaction: stellarSignTransaction(signerContextStellar),
         context: signerContextStellar,
+      };
+    }
+    case "tezos": {
+      return {
+        getAddress: tezosGetAddress(signerContextTezos),
+        signTransaction: tezosSignTransaction(executeWithSigner(createSignerTezos)),
+        context: signerContextTezos,
       };
     }
   }
