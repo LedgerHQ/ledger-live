@@ -156,6 +156,7 @@ function View({
   return (
     <RefreshableCollapsibleHeaderFlatList
       {...listProps}
+      testID="market-list"
       stickyHeaderIndices={[0]}
       ListHeaderComponent={
         <WalletTabSafeAreaView edges={["left", "right"]}>
