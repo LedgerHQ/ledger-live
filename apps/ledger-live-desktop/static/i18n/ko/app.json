@@ -385,6 +385,7 @@
         "onhold" : "보류 중",
         "expired" : "만료됨",
         "finished" : "완료됨",
+        "unknown" : "처리 중",
         "refunded" : "환불 처리됨"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "finished" : "스왑이 성공적으로 완료되었습니다.",
-        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
+        "unknown" : "제공업체의 정보를 기다리는 중입니다."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -2386,6 +2387,10 @@
         "title" : "장치"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "블라인드 서명 필요",
+          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -4468,6 +4473,40 @@
             "check" : "스팸 점수"
           }
         },
+        "mockAccounts" : {
+          "title" : "Generate Mock Accounts",
+          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate" : {
+            "title" : "Custom Generate",
+            "desc" : "Select specific currencies and add tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Quick Generate",
+            "desc" : "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choose currencies...",
+            "searchPlaceholder" : "Search currencies...",
+            "noCurrenciesFound" : "No currencies found",
+            "noCurrenciesAvailable" : "No currencies available",
+            "selectedCount" : "{{count}} currency selected",
+            "selectedCount_other" : "{{count}} currencies selected"
+          },
+          "tokenIds" : {
+            "label" : "Token IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Generate {{count}} Account",
+            "generateAccounts_other" : "Generate {{count}} Accounts",
+            "generateAccountsQuick" : "Generate {{count}} Accounts"
+          },
+          "alerts" : {
+            "selectCurrency" : "Please select at least one currency",
+            "confirmErase" : "This will erase existing accounts. Continue?",
+            "generateError" : "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft" : {
           "report" : "신고하기",
           "contractAddress" : "계약 주소",
@@ -4595,6 +4634,8 @@
       "customCALRefDesc" : "모든 CAL 요청에 사용할 사용자 지정 브랜치, 커밋 또는 태그를 지정하세요",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "customLockScreenTester" : "커스텀 잠금 화면 테스트",
+      "customLockScreenTesterDesc" : "지원되는 장치에서 커스텀 잠금 화면을 미리 확인해 보세요.",
       "customLockScreen" : "맞춤식 잠금 화면 자산",
       "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
       "customLockScreenCTA" : "실행",
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
