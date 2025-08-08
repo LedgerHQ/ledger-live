@@ -385,6 +385,7 @@
         "onhold" : "已暂停",
         "expired" : "已逾期",
         "finished" : "已完成",
+        "unknown" : "正在处理",
         "refunded" : "已退款"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "请稍候片刻，互换提供方正在处理该交易。",
         "onhold" : "请使用您的互换代码联系互换服务提供方以解决这一情况。",
         "finished" : "您的互换已成功完成",
-        "unknown" : "请使用您的互换 ID 联系互换服务提供商以了解更多详情。"
+        "unknown" : "我们正在等待提供商的信息。"
       },
       "date" : "日期",
       "from" : "从",
@@ -2386,6 +2387,10 @@
         "title" : "设备"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "需要盲签名",
+          "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+        },
         "utxoLag" : "由于该账户持有大量硬币，本次交易可能需要花费较长时间来验证和签署。",
         "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
         "from" : "从",
@@ -4468,6 +4473,40 @@
             "check" : "垃圾邮件评分"
           }
         },
+        "mockAccounts" : {
+          "title" : "生成 Mock（模拟）账户",
+          "description" : "生成模拟账户用于测试目的。这些工具支持您创建各种货币和配置的测试账户。",
+          "customGenerate" : {
+            "title" : "自定义生成",
+            "desc" : "选择特定货币，并添加代币"
+          },
+          "quickGenerate" : {
+            "title" : "快速生成",
+            "desc" : "生成 10 个随机账户，币种随机"
+          },
+          "currencySelector" : {
+            "placeholder" : "选择货币...",
+            "searchPlaceholder" : "搜索货币...",
+            "noCurrenciesFound" : "未找到货币",
+            "noCurrenciesAvailable" : "无可用货币",
+            "selectedCount" : "已选择 {{count}} 种货币",
+            "selectedCount_other" : "已选择 {{count}} 种货币"
+          },
+          "tokenIds" : {
+            "label" : "代币 ID（可选）",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "生成 {{count}} 个账户",
+            "generateAccounts_other" : "生成 {{count}} 个账户",
+            "generateAccountsQuick" : "生成 {{count}} 个账户"
+          },
+          "alerts" : {
+            "selectCurrency" : "请至少选择一种货币",
+            "confirmErase" : "这将删除现有账户。继续？",
+            "generateError" : "未能生成模拟账户。请重试。"
+          }
+        },
         "debugSpamNft" : {
           "report" : "报告",
           "contractAddress" : "合约地址",
@@ -4595,6 +4634,8 @@
       "customCALRefDesc" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "customLockScreenTester" : "自定义锁屏界面测试器",
+      "customLockScreenTesterDesc" : "测试支持设备的自定义锁屏界面",
       "customLockScreen" : "自定义锁屏素材资源",
       "customLockScreenDesc" : "调试自定义锁屏图形素材资源",
       "customLockScreenCTA" : "启动",
@@ -7349,7 +7390,7 @@
   },
   "geoBlocking" : {
     "title" : "所在地区不可用",
-    "description" : "此地区无法使用 Ledger 钱包。",
+    "description" : "此地区无法使用 Ledger Live。",
     "learnMore" : "了解更多"
   },
   "versionBlocking" : {
