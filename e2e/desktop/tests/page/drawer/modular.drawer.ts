@@ -26,8 +26,8 @@ export class ModularDrawer extends Drawer {
     return await this.assetDrawer.validateDrawerItems();
   }
 
-  async selectAssetByTicker(currency: Currency) {
-    return await this.assetDrawer.selectAssetByTicker(currency);
+  async selectAssetByTickerAndName(currency: Currency) {
+    return await this.assetDrawer.selectAssetByTickerAndName(currency);
   }
 
   async selectNetwork(currency?: Currency, networkIndex: number = 0) {

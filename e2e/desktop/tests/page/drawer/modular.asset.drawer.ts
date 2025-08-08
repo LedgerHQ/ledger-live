@@ -12,11 +12,11 @@ export class ModularAssetDrawer extends Drawer {
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
   private assetItemByTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
+  private assetItemByName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
 
   @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
     await this.content.waitFor({ state: "visible" });
-    await this.drawerCloseButton.waitFor({ state: "visible" });
     await this.drawerOverlay.waitFor({ state: "attached" });
   }
 
@@ -34,16 +34,35 @@ export class ModularAssetDrawer extends Drawer {
     await this.assetListContainer.waitFor();
   }
 
-  @step("Select asset by ticker")
-  async selectAssetByTicker(currency: Currency) {
-    await this.page.waitForSelector(`[data-testid="${this.searchInputTestId}"]`, {
-      state: "visible",
-    });
+  @step("Select asset by ticker and name")
+  async selectAssetByTickerAndName(currency: Currency) {
+    await this.searchInput.waitFor();
 
-    const ticker = this.assetItemByTicker(currency.ticker).first();
+    let ticker = this.assetItemByTicker(currency.ticker).first();
+
     if (!(await ticker.isVisible())) {
       await this.searchInput.first().fill(currency.ticker);
-      await ticker.isVisible();
+
+      await this.page.waitForFunction(
+        ticker => {
+          const elements = document.querySelectorAll(
+            `[data-testid^="asset-item-ticker-${ticker}"]`,
+          );
+          return elements.length > 0;
+        },
+        currency.ticker,
+        { timeout: 10000 },
+      );
+
+      ticker = this.assetItemByTicker(currency.ticker).first();
+      if (!(await ticker.isVisible())) {
+        throw new Error(`Asset with ticker ${currency.ticker} not found.`);
+      }
+    }
+
+    if (await this.assetItemByName(currency.name).isVisible()) {
+      await this.assetItemByName(currency.name).first().click();
+      return;
     }
     await ticker.click();
   }

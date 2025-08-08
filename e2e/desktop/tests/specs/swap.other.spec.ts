@@ -453,12 +453,12 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
 
         const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
         if (isModularDrawer) {
-          await app.modularDrawer.selectAssetByTicker(debitAccount.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(debitAccount.currency);
           await app.modularDrawer.selectNetwork(debitAccount.currency);
           await app.modularDrawer.selectAccountByName(debitAccount);
 
           await app.swap.selectToAccountCoinSelector(electronApp);
-          await app.modularDrawer.selectAssetByTicker(creditAccount.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(creditAccount.currency);
           await app.modularDrawer.selectNetwork(creditAccount.currency);
           await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
@@ -507,7 +507,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
 
       const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
       if (isModularDrawer) {
-        await app.modularDrawer.selectAssetByTicker(account1.currency);
+        await app.modularDrawer.selectAssetByTickerAndName(account1.currency);
         await app.modularDrawer.selectNetwork(account1.currency);
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
@@ -516,7 +516,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
         await app.modularDrawer.selectAccountByName(account1);
 
         await app.swap.selectToAccountCoinSelector(electronApp);
-        await app.modularDrawer.selectAssetByTicker(account2.currency);
+        await app.modularDrawer.selectAssetByTickerAndName(account2.currency);
         await app.modularDrawer.selectNetwork(account2.currency);
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
@@ -987,12 +987,12 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 
         const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
         if (isModularDrawer) {
-          await app.modularDrawer.selectAssetByTicker(fromAccount.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(fromAccount.currency);
           await app.modularDrawer.selectNetwork(fromAccount.currency);
           await app.modularDrawer.selectAccountByName(fromAccount);
 
           await app.swap.selectToAccountCoinSelector(electronApp);
-          await app.modularDrawer.selectAssetByTicker(toAccount.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(toAccount.currency);
           await app.modularDrawer.selectNetwork(toAccount.currency);
           await app.modularDrawer.selectAccountByName(toAccount);
         } else {

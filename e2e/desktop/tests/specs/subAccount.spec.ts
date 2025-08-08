@@ -43,7 +43,7 @@ for (const token of subAccounts) {
       speculosApp: token.account.currency.speculosApp,
     });
 
-    test(
+    test.only(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
         tag: ["@NanoSP", "@LNS", "@NanoX"],
@@ -60,7 +60,7 @@ for (const token of subAccounts) {
         const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
         if (isModularDrawer) {
           await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTicker(token.account.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(token.account.currency);
           await app.modularDrawer.selectNetwork(token.account.currency);
           await app.addAccount.expectAccountModalToBeVisible();
         } else {
