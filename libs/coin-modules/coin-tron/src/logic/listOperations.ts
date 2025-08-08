@@ -6,7 +6,6 @@ import {
   getBlock,
 } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
-import { TronAsset } from "../types";
 
 export type Options = {
   // the soft limit is an indicative number of transactions to fetch
@@ -27,7 +26,7 @@ export const defaultOptions: Options = {
 export async function listOperations(
   address: string,
   options: Options,
-): Promise<[Operation<TronAsset>[], string]> {
+): Promise<[Operation[], string]> {
   // there is a possible optimisation here: when height is 0, set the minTimestamp to 0
   const block = await getBlock(options.minHeight);
   const minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;

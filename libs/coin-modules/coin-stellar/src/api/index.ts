@@ -18,11 +18,12 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
-export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, StellarMemo> {
+
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -33,7 +34,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block<StellarAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -43,10 +44,10 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarAsset, Stella
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<StellarAsset, StellarMemo>,
-  customFees?: bigint,
+  transactionIntent: TransactionIntent<StellarMemo>,
+  customFees?: FeeEstimation,
 ): Promise<string> {
-  const fees = customFees !== undefined ? customFees : await estimateFees();
+  const fees = customFees?.value ?? (await estimateFees());
 
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
@@ -64,8 +65,8 @@ async function craft(
       fee: fees,
       ...(transactionIntent.asset.type === "token"
         ? {
-            assetCode: transactionIntent.asset.assetCode,
-            assetIssuer: transactionIntent.asset.assetIssuer,
+            assetCode: transactionIntent.asset.assetReference,
+            assetIssuer: transactionIntent.asset.assetOwner,
           }
         : {}),
       memoType: memo?.type,
@@ -93,7 +94,7 @@ async function estimate(): Promise<FeeEstimation> {
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<StellarAsset>[], string]> {
+): Promise<[Operation[], string]> {
   return operationsFromHeight(address, minHeight);
 }
 
@@ -102,13 +103,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<StellarAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<StellarAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,

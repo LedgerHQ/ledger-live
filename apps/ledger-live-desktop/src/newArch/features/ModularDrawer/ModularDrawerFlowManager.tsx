@@ -24,7 +24,7 @@ import {
   buildProviderCoverageMap,
   filterProvidersByIds,
   extractProviderCurrencies,
-} from "./utils/currencyUtils";
+} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
 import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 

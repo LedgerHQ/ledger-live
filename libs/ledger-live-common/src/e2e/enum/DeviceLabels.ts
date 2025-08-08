@@ -49,4 +49,8 @@ export enum DeviceLabels {
   CONTRACT_DATA = "Contract data",
   REMOVE_PHONE_OR_COMPUTER = "Remove phone or",
   AFTER_REMOVING = "After removing, you",
+  VERIFY_ETHEREUM = "Verify Ethereum",
+  VERIFY_BSC = "Verify BSC",
+  SIGN_TRANSACTION = "Sign transaction",
+  VERIFY_POLYGON = "Verify Polygon",
 }

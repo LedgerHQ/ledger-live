@@ -135,6 +135,7 @@
     "src/families/stacks/deviceTransactionConfig.ts",
     "src/families/stacks/types.ts",
     "src/families/stellar/types.ts",
+    "src/families/stellar/ui.ts",
     "src/families/tezos/bakers.ts",
     "src/families/tezos/bakers.whitelist-default.ts",
     "src/families/tezos/types.ts",
@@ -280,6 +281,8 @@
     "src/transactionsAlerts/index.ts",
     "src/user.ts",
     "src/utils/runOnceWhen.ts",
+    "src/utils/composeHooks.ts",
+    "src/utils/getAccountTuplesForCurrency.ts",
     "src/wallet-api/ACRE/server.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
@@ -370,6 +373,7 @@
     "src/market/utils/types.ts",
     "src/modularDrawer/enums.ts",
     "src/modularDrawer/utils/index.ts",
+    "src/modularDrawer/utils/currencyUtils.ts",
     "src/modularDrawer/utils/haveOneCommonProvider.ts",
     "src/modularDrawer/useModularDrawerVisibility.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
@@ -382,7 +386,10 @@
     "src/families/aptos/react.ts",
     "src/families/aptos/staking.ts",
     "src/families/aptos/types.ts",
-    "src/families/aptos/utils.ts"
+    "src/families/aptos/utils.ts",
+    "src/families/canton/config.ts",
+    "src/families/canton/logic.ts",
+    "src/families/canton/types.ts"
   ],
   "ignoreUnused": [
     "@dfinity/agent",

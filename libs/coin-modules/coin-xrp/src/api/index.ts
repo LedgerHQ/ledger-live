@@ -22,9 +22,9 @@ import {
   getTransactionStatus,
   MemoInput,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset, XrpMapMemo } from "../types";
+import { ListOperationsOptions, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
+export function createApi(config: XrpConfig): Api<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -37,7 +37,7 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
     listOperations: operations,
     validateIntent: getTransactionStatus,
     getAccountInfo,
-    getBlock(_height): Promise<Block<XrpAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -47,11 +47,11 @@ export function createApi(config: XrpConfig): Api<XrpAsset, XrpMapMemo> {
 }
 
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, XrpMapMemo>,
-  customFees?: bigint,
+  transactionIntent: TransactionIntent<XrpMapMemo>,
+  customFees?: FeeEstimation,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
+  const estimatedFees = customFees?.value ?? (await estimateFees()).fee;
 
   const memosMap =
     transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
@@ -96,13 +96,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation<XrpAsset>[];
+  accumulator: Operation[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation<XrpAsset>[], string]> {
+): Promise<[Operation[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -150,7 +150,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<XrpAsset>[], string]> {
-  // TODO token must be implemented properly (waiting ack from the design document)
+): Promise<[Operation[], string]> {
   return await operationsFromHeight(address, minHeight);
 }

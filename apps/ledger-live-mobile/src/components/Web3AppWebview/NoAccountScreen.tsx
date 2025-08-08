@@ -1,27 +1,47 @@
 import React from "react";
+import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import Button from "../Button";
+import { Trans } from "react-i18next";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
-import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import Button from "../Button";
 import { useSelectAccount } from "./helpers";
-
-type Props = {
+import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+type NoAccountScreenProps = {
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
+  openModularDrawer?: OpenModularDrawerFunction;
 };
 
-export function NoAccountScreen({ manifest, currentAccountHistDb }: Props) {
-  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+export function NoAccountScreen({
+  manifest,
+  currentAccountHistDb,
+  openModularDrawer,
+}: NoAccountScreenProps) {
+  const { onSelectAccount, onSelectAccountSuccess, currencies } = useSelectAccount({
+    manifest,
+    currentAccountHistDb,
+  });
+
+  const handleAddAccountPress = () => {
+    if (openModularDrawer) {
+      openModularDrawer({
+        currencies,
+        enableAccountSelection: true,
+        onAccountSelected: onSelectAccountSuccess,
+      });
+    } else {
+      onSelectAccount();
+    }
+  };
 
   return (
-    <View style={styles.overlay}>
+    <View style={styles.container}>
       <Flex flexDirection="column" alignItems="center">
         <Text variant="large" fontWeight="semiBold">
           <Trans i18nKey="webview.noAccounts.title" />
         </Text>
-        <Button marginTop={10} onPress={onSelectAccount} type="primary">
+        <Button marginTop={10} onPress={handleAddAccountPress} type="primary">
           <Trans i18nKey="webview.noAccounts.add" />
         </Button>
       </Flex>
@@ -30,7 +50,7 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: Props) {
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  container: {
     display: "flex",
     marginTop: "40%",
     width: "100%",

@@ -1,6 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { EvmAsset } from "../types";
 
 import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
@@ -9,13 +8,10 @@ import { getExplorerApi } from "../network/explorer";
  * Get all assets linked to the user (native, tokens, ...)
  * @param currency - The currency we must get the balances of
  * @param address - The user's address
- * @returns Promise<Balance<EvmAsset>[]> - Array of balances for all assets (first element will always be the native asset)
+ * @returns Promise<Balance[]> - Array of balances for all assets (first element will always be the native asset)
  */
-export async function getBalance(
-  currency: CryptoCurrency,
-  address: string,
-): Promise<Balance<EvmAsset>[]> {
-  const balance: Balance<EvmAsset>[] = [];
+export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
+  const balance: Balance[] = [];
 
   const nodeApi = getNodeApi(currency);
   const explorerApi = getExplorerApi(currency);
@@ -23,7 +19,7 @@ export async function getBalance(
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
   balance.push({
-    value: BigInt(nativeBalance.toString()),
+    value: BigInt(nativeBalance.toFixed(0)),
     asset: { type: "native" },
   });
 
@@ -40,13 +36,18 @@ export async function getBalance(
     if (operation.contract && !contractAddresses.has(operation.contract)) {
       const tokenBalance = await nodeApi.getTokenBalance(currency, address, operation.contract);
       const integerString = tokenBalance.toFixed(0);
+      let assetType = "erc20";
+      if (operation.standard === "ERC721") {
+        assetType = "erc721";
+      } else if (operation.standard === "ERC1155") {
+        assetType = "erc1155";
+      }
 
       balance.push({
         value: BigInt(integerString),
         asset: {
-          type: "token",
-          contractAddress: operation.contract,
-          standard: "erc",
+          type: assetType,
+          assetReference: operation.contract,
         },
       });
       contractAddresses.add(operation.contract);

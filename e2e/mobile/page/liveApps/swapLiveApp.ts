@@ -16,7 +16,6 @@ export default class SwapLiveAppPage {
   quotesCountDown = "quotes-countdown";
   quoteProviderName = "quote-card-provider-name";
   executeSwapButton = "execute-button";
-  executeSwapButtonDisabled = "execute-button-disabled";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
   showDetailslink = "show-details-link";
@@ -41,9 +40,23 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
   }
 
+  @Step("Check if the from currency is already selected")
+  async getFromCurrencyTexts() {
+    return await getWebElementText(this.fromSelector);
+  }
+
   @Step("Tap from currency")
   async tapFromCurrency() {
     await tapWebElementByTestId(this.fromSelector);
+  }
+
+  @Step("Verify currency is selected $0")
+  async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
+    if (isFromCurrency) {
+      await detoxExpect(getWebElementByTestId(this.fromSelector)).toHaveText(ticker);
+    } else {
+      await detoxExpect(getWebElementByTestId(this.toSelector)).toHaveText(ticker);
+    }
   }
 
   @Step("Tap to currency")
@@ -83,7 +96,7 @@ export default class SwapLiveAppPage {
 
   @Step("Select available provider")
   async selectExchange() {
-    let index = 0;
+    let index = 1;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -110,7 +123,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
-    await detoxExpect(getWebElementByTestId(this.executeSwapButtonDisabled)).not.toExist();
+    await waitWebElementByTestId(this.executeSwapButton);
     await tapWebElementByTestId(this.executeSwapButton, 1);
   }
 
@@ -125,7 +138,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
     const providerList = await getWebElementsText(this.quoteProviderName);
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    jestExpect(numberOfQuotesText).toEqual(`${providerList.length} quotes found`);
+    jestExpect(numberOfQuotesText).toEqual(`${providerList.length - 1} quotes found`);
     return providerList;
   }
 
@@ -178,6 +191,7 @@ export default class SwapLiveAppPage {
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
 
+    await waitWebElementByTestId(this.executeSwapButton);
     const actualButtonText = await getWebElementText(this.executeSwapButton);
     jestExpect(actualButtonText).toEqual(expectedButtonText);
   }

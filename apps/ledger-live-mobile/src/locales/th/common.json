@@ -3659,7 +3659,8 @@
           "refunded" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
           "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
           "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
-          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว"
+          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
+          "unknown" : "เรากำลังรอข้อมูลจากผู้ให้บริการ"
         }
       },
       "missingApp" : {
@@ -4045,6 +4046,10 @@
       "quantityAvailable" : "ปริมาณที่ใช้ได้"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "จำเป็นต้องมีการ Blind Signing",
+        "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+      },
       "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
       "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
@@ -7764,7 +7769,7 @@
   },
   "geoBlocking" : {
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
-    "description" : "Ledger Wallet ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "description" : "แอป Ledger Live ไม่สามารถใช้ได้ในพื้นที่ของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม"
   },
   "versionBlocking" : {
@@ -7776,7 +7781,10 @@
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
     "selectAccount" : "เลือกบัญชี",
-    "searchPlaceholder" : "ค้นหา"
+    "searchPlaceholder" : "ค้นหา",
+    "emptyAssetList" : "ไม่พบสินทรัพย์",
+    "accountCount" : "{{count}} บัญชี (ตรวจพบ)",
+    "accountCount_plural" : "{{count}} บัญชี (ตรวจพบ)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

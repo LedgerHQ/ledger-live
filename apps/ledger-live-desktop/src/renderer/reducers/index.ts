@@ -16,6 +16,7 @@ import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
+import countervalues from "./countervalues";
 
 export type State = {
   accounts: AccountsState;
@@ -36,6 +37,7 @@ export type State = {
 export default combineReducers({
   accounts,
   application,
+  countervalues,
   devices,
   dynamicContent,
   modals,

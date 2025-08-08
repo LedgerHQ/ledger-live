@@ -62,7 +62,7 @@ export const AssetItem = ({
     <Wrapper
       onPress={() => onClick({ name, ticker, id })}
       style={({ pressed }) => ({
-        padding: Number(tokens["spacing-xxs"]),
+        paddingVertical: Number(tokens["spacing-xxs"]),
         borderRadius: Number(tokens["radius-s"]),
         backgroundColor: String(tokens["colors-surface-transparent-default"]),
         opacity: pressed ? 0.7 : 1,

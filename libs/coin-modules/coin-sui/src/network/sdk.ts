@@ -20,6 +20,7 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import uniqBy from "lodash/unionBy";
@@ -30,7 +31,6 @@ import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
-import { SuiAsset } from "../api/types";
 import { getEnv } from "@ledgerhq/live-env";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -253,7 +253,7 @@ export function transactionToOperation(
   };
 }
 
-function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op<SuiAsset> {
+export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
   const type = getOperationType(address, transaction.transaction?.data);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -270,7 +270,7 @@ function transactionToOp(address: string, transaction: SuiTransactionBlockRespon
         time: getOperationDate(transaction),
       },
     },
-    asset: { type: "native" },
+    asset: toSuiAsset(coinType),
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
@@ -312,9 +312,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  *
  * @param transaction SUI RPC transaction block response
  */
-export function toBlockTransaction(
-  transaction: SuiTransactionBlockResponse,
-): BlockTransaction<SuiAsset> {
+export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status != "success",
@@ -329,7 +327,7 @@ export function toBlockTransaction(
  *
  * @param change balance change
  */
-export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset>[] {
+export function toBlockOperation(change: BalanceChange): BlockOperation[] {
   if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
   return [
     {
@@ -346,12 +344,12 @@ export function toBlockOperation(change: BalanceChange): BlockOperation<SuiAsset
  *
  * @param coinType coin type, as returned from SUI RPC
  */
-export function toSuiAsset(coinType: string): SuiAsset {
+export function toSuiAsset(coinType: string): AssetInfo {
   switch (coinType) {
     case DEFAULT_COIN_TYPE:
       return { type: "native" };
     default:
-      return { type: "token", coinType };
+      return { type: "token", assetReference: coinType };
   }
 }
 
@@ -426,7 +424,7 @@ export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
   withApiImpl: typeof withApi = withApi,
-): Promise<Op<SuiAsset>[]> =>
+): Promise<Op[]> =>
   withApiImpl(async api => {
     const opsOut = await loadOperations({
       api,
@@ -475,7 +473,7 @@ export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlockInfo}
  */
-export const getBlock = async (id: string): Promise<Block<SuiAsset>> =>
+export const getBlock = async (id: string): Promise<Block> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });

@@ -25,9 +25,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc10",
-        tokenId: "1002000",
+        type: "trc10",
+        assetReference: "1002000",
       },
       sender,
       recipient,
@@ -67,9 +66,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        type: "trc20",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -107,9 +105,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        type: "trc20",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -136,15 +133,14 @@ describe("Testing craftTransaction function", () => {
       {
         type: "send",
         asset: {
-          type: "token",
-          standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,
         amount,
       },
-      customFees,
+      { value: customFees },
     );
 
     const decodeResult = await decodeTransaction(result);
@@ -233,9 +229,8 @@ describe("Testing craftTransaction function", () => {
       craftTransaction({
         type: "send",
         asset: {
-          type: "token",
-          standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,

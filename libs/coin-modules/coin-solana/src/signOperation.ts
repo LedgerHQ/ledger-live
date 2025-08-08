@@ -3,6 +3,7 @@ import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live
 import type {
   Command,
   CommandDescriptor,
+  RawCommand,
   SolanaOperation,
   SolanaOperationExtra,
   StakeCreateAccountCommand,
@@ -168,10 +169,32 @@ function buildOptimisticOperationForCommand(
       return optimisticOpForStakeWithdraw(account, command, commandDescriptor);
     case "stake.split":
       return optimisticOpForStakeSplit(account, command, commandDescriptor);
+    case "raw":
+      return optimisticOpForRaw(account, transaction, command, commandDescriptor);
     default:
       return assertUnreachable(command);
   }
 }
+
+function optimisticOpForRaw(
+  account: Account,
+  transaction: Transaction,
+  command: RawCommand,
+  commandDescriptor: CommandDescriptor,
+): SolanaOperation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", "OUT"),
+    type: "OUT",
+    accountId: account.id,
+    senders: [account.freshAddress],
+    recipients: [transaction.recipient],
+    value: new BigNumber(commons.fee ?? 0),
+    extra: getOpExtras(command),
+  };
+}
+
 function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
@@ -307,6 +330,7 @@ function getOpExtras(command: Command): SolanaOperationExtra {
     case "stake.undelegate":
     case "stake.withdraw":
     case "stake.split":
+    case "raw":
       break;
     default:
       return assertUnreachable(command);

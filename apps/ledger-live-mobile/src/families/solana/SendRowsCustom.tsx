@@ -1,12 +1,12 @@
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
+  TransactionModel,
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -28,11 +28,17 @@ type Props = {
   transaction: Transaction;
 } & Navigation;
 
+export function isModelSupported(model: TransactionModel) {
+  if (model.kind === "transfer" || model.kind === "token.transfer") return model;
+  return undefined;
+}
+
 export default function SolanaSendRowsCustom({ account, transaction, navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { model } = transaction as SolanaTransaction;
-  invariant(model.kind === "transfer", "must be a transfer tx");
+
+  const modelSupported = isModelSupported(model);
 
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.SolanaEditMemo, {
@@ -44,10 +50,14 @@ export default function SolanaSendRowsCustom({ account, transaction, navigation,
     });
   }, [navigation, route.params, account, transaction]);
 
+  if (!modelSupported) {
+    return null;
+  }
+
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
-        {model.uiState.memo ? (
+        {modelSupported.uiState.memo ? (
           <Text
             fontWeight="semiBold"
             style={styles.tagText}
@@ -55,7 +65,7 @@ export default function SolanaSendRowsCustom({ account, transaction, navigation,
             numberOfLines={1}
             testID="summary-memo-tag"
           >
-            {model.uiState.memo}
+            {modelSupported.uiState.memo}
           </Text>
         ) : (
           <Text

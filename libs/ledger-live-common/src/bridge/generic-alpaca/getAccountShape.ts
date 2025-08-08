@@ -2,7 +2,7 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
-import { adaptCoreOperationToLiveOperation } from "./utils";
+import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
 
 export function genericGetAccountShape(network: string, kind: "local" | "remote"): GetAccountShape {
   return async info => {
@@ -18,15 +18,14 @@ export function genericGetAccountShape(network: string, kind: "local" | "remote"
 
       const blockInfo = await getAlpacaApi(network, kind).lastBlock();
 
-      const balanceRes = await getAlpacaApi(network, kind).getBalance(address);
-      // FIXME: fix type Balance -> check "native" balance
-      // is balance[0] always the native ?
-      const balance = BigNumber(balanceRes[0].value.toString());
+      const balances = await getAlpacaApi(network, kind).getBalance(address);
+      const nativeBalance = extractBalance(balances, "native");
+      const balance = BigNumber(nativeBalance.value.toString());
 
       let spendableBalance: BigNumber;
-      if (balanceRes[0]?.locked) {
+      if (nativeBalance.locked) {
         spendableBalance = BigNumber.max(
-          balance.minus(BigNumber(balanceRes[0].locked.toString())),
+          balance.minus(BigNumber(nativeBalance.locked.toString())),
           BigNumber(0),
         );
       } else {

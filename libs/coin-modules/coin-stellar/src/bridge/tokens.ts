@@ -5,30 +5,31 @@ import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
-import type { BalanceAsset, StellarOperation } from "../types";
+import { BalanceAsset, StellarOperation } from "../types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 function buildStellarTokenAccount({
   parentAccountId,
-  stellarAsset,
+  balance,
+  sellingLiabilities,
   token,
   operations,
 }: {
   parentAccountId: string;
-  stellarAsset: BalanceAsset;
+  balance: string;
+  sellingLiabilities: string;
   token: TokenCurrency;
   operations: StellarOperation[];
 }): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
-  const balance = parseCurrencyUnit(token.units[0], stellarAsset.balance || "0");
 
-  const reservedBalance = new BigNumber(stellarAsset.balance).minus(
-    stellarAsset.selling_liabilities || 0,
-  );
+  const parsedBalance = parseCurrencyUnit(token.units[0], balance);
+  const reservedBalance = new BigNumber(balance).minus(sellingLiabilities || 0);
   const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
   return {
@@ -45,7 +46,7 @@ function buildStellarTokenAccount({
       value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
     })),
     pendingOperations: [],
-    balance,
+    balance: parsedBalance,
     spendableBalance,
     swapHistory: [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
@@ -82,7 +83,8 @@ export function buildSubAccounts({
       tokenAccounts.push(
         buildStellarTokenAccount({
           parentAccountId: accountId,
-          stellarAsset: asset,
+          balance: asset.balance || "0",
+          sellingLiabilities: asset.selling_liabilities || "0",
           token,
           operations: operations.filter(
             op =>

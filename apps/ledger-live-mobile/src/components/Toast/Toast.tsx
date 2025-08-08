@@ -1,11 +1,14 @@
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
+import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { useEffect, useState } from "react";
+import { useToastsActions } from "~/actions/toast";
+import { useToasts } from "~/reducers/toast";
 
 type Props = Omit<ToastData, "id"> & { id: string; onClose(): void };
 
 export function Toast({ onClose, ...props }: Props) {
-  const { pushToast, dismissToast, toasts } = useToasts();
+  const toasts = useToasts();
+  const { pushToast, dismissToast } = useToastsActions();
+
   const [hasPushedToast, setHasPushedToast] = useState(false);
 
   useEffect(() => {

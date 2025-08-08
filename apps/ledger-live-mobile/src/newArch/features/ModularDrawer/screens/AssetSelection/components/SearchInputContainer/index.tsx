@@ -4,7 +4,10 @@ import { SearchProps, useSearch } from "./useSearch";
 import { Flex } from "@ledgerhq/native-ui";
 import { Search } from "@ledgerhq/native-ui/pre-ldls/index";
 
-type Props = SearchProps;
+type Props = SearchProps & {
+  onFocus: () => void;
+  onBlur: () => void;
+};
 
 const SearchInputContainer = ({
   setItemsToDisplay,
@@ -15,6 +18,11 @@ const SearchInputContainer = ({
   source,
   flow,
   items,
+  assetsConfiguration,
+  formatAssetConfig,
+  onPressIn,
+  onFocus,
+  onBlur,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -27,11 +35,16 @@ const SearchInputContainer = ({
     flow,
     assetsToDisplay,
     originalAssets,
+    assetsConfiguration,
+    formatAssetConfig,
   });
 
   return (
-    <Flex paddingX="8px" mb={24}>
+    <Flex mb={4}>
       <Search
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onPressIn={onPressIn}
         value={displayedValue}
         placeholder={t("modularDrawer.searchPlaceholder")}
         onDebouncedChange={handleDebouncedChange}

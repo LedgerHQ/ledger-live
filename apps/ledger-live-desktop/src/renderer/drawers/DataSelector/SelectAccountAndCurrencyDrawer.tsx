@@ -13,6 +13,9 @@ import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
+import { track } from "~/renderer/analytics/segment";
+
+const TRACK_PAGE_NAME = "Asset/Network selection";
 
 const options = {
   includeScore: false,
@@ -53,6 +56,8 @@ export type SelectAccountAndCurrencyDrawerProps = {
   currencies: CryptoOrTokenCurrency[];
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
+  flow?: string;
+  source?: string;
 };
 const SearchInputContainer = styled.div`
   padding: 0px 40px 16px 40px;
@@ -60,7 +65,7 @@ const SearchInputContainer = styled.div`
 `;
 
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAccountSelected, onClose, accounts$ } = props;
+  const { currencies, onAccountSelected, onClose, accounts$, flow, source } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -74,8 +79,22 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     }
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
+
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
+      const selectedCurrency = currencies.find(({ id }) => id === currency.id);
+      if (!selectedCurrency) return;
+
+      const network =
+        currency.type === "TokenCurrency" ? currency.parentCurrency?.name : currency.name;
+
+      track("asset_network_clicked ", {
+        asset: selectedCurrency.ticker,
+        network,
+        flow,
+        source,
+        page: TRACK_PAGE_NAME,
+      });
       setDrawer(
         SelectAccountDrawer,
         {
@@ -92,7 +111,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
         },
       );
     },
-    [onAccountSelected, props, onClose, accounts$],
+    [currencies, flow, source, accounts$, onAccountSelected, onClose, props],
   );
   if (currencies.length === 1) {
     return (

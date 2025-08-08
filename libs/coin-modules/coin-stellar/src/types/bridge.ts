@@ -117,7 +117,7 @@ export type StellarOperationExtra = {
   assetIssuer?: string;
   assetAmount?: string | undefined;
   ledgerOpType: OperationType;
-  memo?: string;
+  memo?: StellarMemo;
   blockTime: Date;
   index: string;
 };

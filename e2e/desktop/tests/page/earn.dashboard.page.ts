@@ -8,15 +8,15 @@ export class EarnPage extends WebViewAppPage {
   private earnMoreRewardTabButton = "tab-earn-more";
   private earnAppContainer = this.page.getByTestId("earn-app-container");
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
-  private rewardsBalanceCard = "Est. rewards-balance-card";
-  private holdingsBalanceCard = "Your holdings-balance-card";
-  private rewardsPotentialText = "Rewards potential";
-  private yourEligibleAssetsText = "Your eligible assets";
-  private eligibleAssetsText = "Eligible assets";
-  private totalRewardsEarnedText = "Total rewards earned";
-  private totalAssetsEarningRewardsCard = "Total assets earning rewards-balance-card";
+  private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";
+  private amountAvailableBalanceCard = "Amount available to earn-balance-card";
+  private amountAvailableAssetsText = "  Amount available to earn";
+  private rewardsPotentialText = "Rewards you could earn";
+  private availableAssetsText = "Available assets";
+  private totalRewardsText = "Total rewards";
+  private totalDepositedBalanceCard = "Total deposited-balance-card";
   private totalRewardsBalanceCard = "Total rewards-balance-card";
-  private assetsEarningRewardsText = "Assets earning rewards";
+  private depositedAssetsText = "Deposited assets";
   private tabAssetsButton = "tab-assets";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
@@ -70,14 +70,14 @@ export class EarnPage extends WebViewAppPage {
   async verifyRewardsPotentials() {
     const webview = await this.getWebView();
     await this.expectTextToBeVisible(this.rewardsPotentialText);
-    await expect(webview.getByTestId(this.holdingsBalanceCard)).toBeVisible();
-    await expect(webview.getByTestId(this.rewardsBalanceCard)).toBeVisible();
+    await expect(webview.getByTestId(this.amountAvailableBalanceCard)).toBeVisible();
+    await expect(webview.getByTestId(this.potentialRewardsBalanceCard)).toBeVisible();
   }
 
   @step("Verify total rewards earned is visible")
   async verifyTotalRewardsEarned() {
-    await this.expectTextToBeVisible(this.totalRewardsEarnedText);
-    await this.verifyElementIsVisible(this.totalAssetsEarningRewardsCard);
+    await this.expectTextToBeVisible(this.totalRewardsText);
+    await this.verifyElementIsVisible(this.totalDepositedBalanceCard);
     await this.verifyElementIsVisible(this.totalRewardsBalanceCard);
   }
 
@@ -85,7 +85,7 @@ export class EarnPage extends WebViewAppPage {
   async verifyAssetsEarningRewards(account: string) {
     const webview = await this.getWebView();
     await expect(
-      webview.getByRole("heading", { name: this.assetsEarningRewardsText, exact: true }),
+      webview.getByRole("heading", { name: this.depositedAssetsText, exact: true }),
     ).toBeVisible();
     await expect(webview.getByText(account).first()).toBeVisible();
   }
@@ -93,16 +93,9 @@ export class EarnPage extends WebViewAppPage {
   @step("Verify 'your eligible assets' is visible")
   async verifyYourEligibleAssets(account: string) {
     const webview = await this.getWebView();
-    await this.expectTextToBeVisible(this.yourEligibleAssetsText);
+    await this.expectTextToBeVisible(this.amountAvailableAssetsText);
     const row = webview.locator("tr", { hasText: `${account}` });
     await expect(row.getByRole("button", { name: "Earn" }).first()).toBeEnabled();
-  }
-
-  @step("Verify eligible assets are visible")
-  async verifyEligibleAssets(account: Account) {
-    const webview = await this.getWebView();
-    await this.expectTextToBeVisible(this.eligibleAssetsText);
-    await expect(webview.getByTestId(this.learnMoreButton(account.currency.id))).toBeEnabled();
   }
 
   @step("Verify earn by stacking button is visible")

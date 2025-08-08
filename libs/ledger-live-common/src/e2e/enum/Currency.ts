@@ -87,7 +87,7 @@ export class Currency {
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
-    "ethereum",
+    "ethereum/erc20/steth",
     AppInfos.ETHEREUM,
   );
   static readonly XLM_USCD = new Currency("USDC", "usdc", "stellar", AppInfos.STELLAR);

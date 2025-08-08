@@ -247,6 +247,7 @@ describe("listOperations", () => {
           transaction: () => ({
             fee_charged: "111900",
             ledger_attr: 42,
+            memo_type: "text",
             memo: "momo",
             ledger: () => ({
               hash: "block_hash1",
@@ -273,7 +274,10 @@ describe("listOperations", () => {
           type: "OUT",
           value: 460600000n,
           details: {
-            memo: "momo",
+            memo: {
+              type: "MEMO_TEXT",
+              value: "momo",
+            },
           },
         },
       ],

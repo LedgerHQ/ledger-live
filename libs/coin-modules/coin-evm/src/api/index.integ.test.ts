@@ -1,6 +1,5 @@
 import { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
 import { EvmConfig } from "../config";
-import { EvmAsset } from "../types";
 import { createApi } from "./index";
 
 describe.each([
@@ -25,7 +24,7 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: AlpacaApi<EvmAsset>;
+  let module: AlpacaApi;
 
   beforeAll(() => {
     module = createApi(config as EvmConfig, "ethereum");
@@ -63,9 +62,8 @@ describe.each([
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
         asset: {
-          type: "token",
-          standard: "erc",
-          contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          type: "erc20",
+          assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         },
       });
 
@@ -106,7 +104,7 @@ describe.each([
   describe("estimateFees", () => {
     it("estimates fees for native asset transfer", async () => {
       const result: FeeEstimation = await module.estimateFees({
-        type: "send",
+        type: "send-legacy",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -121,14 +119,13 @@ describe.each([
 
     it("estimates fees for USDC token transfer", async () => {
       const result = await module.estimateFees({
-        type: "send",
+        type: "send-legacy",
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
         asset: {
-          type: "token",
-          standard: "erc",
-          contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          type: "erc20",
+          assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         },
       });
 

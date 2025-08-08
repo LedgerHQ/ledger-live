@@ -20,6 +20,7 @@ import { State } from "~/reducers/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
+import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
@@ -33,15 +34,19 @@ import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
+import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
+import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modularDrawer";
 
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
-const initialState = {
+const initialState: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
+  countervalues: COUNTERVALUES_INITIAL_STATE,
   settings: SETTINGS_INITIAL_STATE,
   appstate: APP_STATE_INITIAL_STATE,
   ble: BLE_INITIAL_STATE,
@@ -59,6 +64,8 @@ const initialState = {
   trustchain: TRUSTCHAIN_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
+  toasts: TOASTS_INITIAL_STATE,
+  modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -124,9 +131,11 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <QueuedDrawersContextProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          <BottomSheetModalProvider>
+            <QueuedDrawersContextProvider>
+              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+            </QueuedDrawersContextProvider>
+          </BottomSheetModalProvider>
         </I18nextProvider>
       </StyleProvider>
     );
