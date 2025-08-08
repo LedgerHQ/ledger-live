@@ -85,45 +85,29 @@ export async function withApi<T>(execute: AsyncApiFunction<T>) {
   return result;
 }
 
-export const getBalanceCached = makeLRUCache(
-  ({ api, owner }: { api: SuiClient; owner: string }) => api.getBalance({ owner }),
-  (params: { api: SuiClient; owner: string }) => params.owner,
-  minutes(1),
-);
-
 export const getAllBalancesCached = makeLRUCache(
-  ({ api, owner }: { api: SuiClient; owner: string }) =>
-    api.getAllBalances({
-      owner,
-    }),
-  (params: { api: SuiClient; owner: string }) => params.owner,
+  async (owner: string) =>
+    withApi(
+      async api =>
+        await api.getAllBalances({
+          owner,
+        }),
+    ),
+  (owner: string) => owner,
   minutes(1),
 );
-
-/**
- * Get account balance
- */
-export const getAccount = async (addr: string) =>
-  withApi(async api => {
-    const balance = await getBalanceCached({ api, owner: addr });
-    return {
-      blockHeight: BLOCK_HEIGHT * 2,
-      balance: BigNumber(balance.totalBalance),
-    };
-  });
 
 /**
  * Get account balance (native and tokens)
  */
-export const getAccountBalances = async (addr: string) =>
-  withApi(async api => {
-    const balances = await getAllBalancesCached({ api, owner: addr });
-    return balances.map(({ coinType, totalBalance }) => ({
-      coinType,
-      blockHeight: BLOCK_HEIGHT * 2,
-      balance: BigNumber(totalBalance),
-    }));
-  });
+export const getAccountBalances = async (addr: string) => {
+  const balances = await getAllBalancesCached(addr);
+  return balances.map(({ coinType, totalBalance }) => ({
+    coinType,
+    blockHeight: BLOCK_HEIGHT * 2,
+    balance: BigNumber(totalBalance),
+  }));
+};
 
 /**
  * Returns true if account is the signer

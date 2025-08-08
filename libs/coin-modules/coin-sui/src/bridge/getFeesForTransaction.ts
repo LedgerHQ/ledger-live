@@ -1,3 +1,4 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { SuiAccount, Transaction } from "../types";
@@ -32,12 +33,17 @@ export default async function getEstimatedFees({
     }), // Remove fees if present since we are fetching fees
   };
 
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const asset = subAccount
+    ? { type: "token" as const, coinType: subAccount?.token.contractAddress }
+    : { type: "native" as const };
+
   const fees = await estimateFees({
     recipient: getAbandonSeedAddress(account.currency.id),
     sender: account.freshAddress,
     amount: BigInt(t.amount.toString()),
     type: "send",
-    asset: { type: "native" },
+    asset,
   });
   return new BigNumber(fees.toString());
 }
