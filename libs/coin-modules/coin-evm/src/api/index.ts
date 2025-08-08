@@ -48,7 +48,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination),
+      listOperations(currency, address, pagination.minHeight || 0),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },

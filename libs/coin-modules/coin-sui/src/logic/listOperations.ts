@@ -3,8 +3,8 @@ import { getListOperations } from "../network/sdk";
 
 export const listOperations = async (
   address: string,
-  { cursor }: Pagination & { cursor?: string },
+  { cursor }: Pagination,
 ): Promise<[Operation[], string]> => {
   const ops = await getListOperations(address, cursor);
-  return [ops, ops.length ? ops[0].tx.hash : ""];
+  return [ops.operations, ops.cursor || ""];
 };

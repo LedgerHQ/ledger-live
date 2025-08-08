@@ -146,6 +146,7 @@ describe.each([
     it("list operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
         minHeight: 200,
+        order: "asc",
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {

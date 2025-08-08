@@ -50,6 +50,7 @@ describe("List Operations", () => {
   const mockAddress = "0x1234567890abcdef";
   const mockPagination: Pagination = {
     minHeight: 0,
+    order: "asc",
   };
 
   beforeEach(() => {

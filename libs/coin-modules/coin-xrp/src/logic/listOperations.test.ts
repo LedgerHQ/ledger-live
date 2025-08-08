@@ -41,7 +41,7 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
-    const [results, token] = await listOperations("any address", { minHeight: 0 });
+    const [results, token] = await listOperations("any address", { minHeight: 0 , order: "asc" });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);

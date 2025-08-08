@@ -52,14 +52,14 @@ const toOperation = (
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  pagination: Pagination,
+  minHeight: number,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
   const { lastCoinOperations, lastTokenOperations } = await explorerApi.getLastOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,
-    pagination.minHeight,
+    minHeight,
   );
   const nativeOperations = lastCoinOperations.map<Operation<MemoNotSupported>>(op =>
     toOperation({ type: "native" }, op),

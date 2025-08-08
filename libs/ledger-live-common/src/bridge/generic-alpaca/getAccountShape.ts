@@ -37,6 +37,7 @@ export function genericGetAccountShape(network: string, kind: "local" | "remote"
 
       const [newOperations] = await getAlpacaApi(network, kind).listOperations(address, {
         minHeight: blockHeight,
+        order: "asc",
       });
 
       const operations = mergeOps(

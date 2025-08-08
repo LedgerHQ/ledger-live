@@ -235,6 +235,7 @@ describe("createApi", () => {
 
       const [operations] = await api.listOperations(sender.freshAddress, {
         minHeight: block.height,
+        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
@@ -282,6 +283,7 @@ describe("createApi", () => {
 
       const [operations] = await api.listOperations(tokenAccount.freshAddress, {
         minHeight: block.height,
+        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);

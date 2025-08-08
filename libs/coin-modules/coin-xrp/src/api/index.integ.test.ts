@@ -33,7 +33,7 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200 });
+      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
@@ -51,7 +51,10 @@ describe("Xrp Api", () => {
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
 
       // When
-      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, { minHeight: 0 });
+      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+        minHeight: 0,
+        order: "asc",
+      });
       // Then
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);

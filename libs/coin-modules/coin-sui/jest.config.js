@@ -6,5 +6,4 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s"],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

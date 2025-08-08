@@ -44,7 +44,7 @@ describe.skip("Stellar Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
+      [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {

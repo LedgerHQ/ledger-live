@@ -161,5 +161,5 @@ async function operations(
   address: string,
   { minHeight }: Pagination,
 ): Promise<[Operation[], string]> {
-  return await operationsFromHeight(address, minHeight);
+  return await operationsFromHeight(address, minHeight || 0);
 }

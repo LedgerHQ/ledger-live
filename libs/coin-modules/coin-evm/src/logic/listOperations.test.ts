@@ -63,7 +63,7 @@ describe("listOperations", () => {
       lastInternalOperations: [],
     });
 
-    expect(await listOperations({} as CryptoCurrency, "address", { minHeight: 5 })).toEqual([
+    expect(await listOperations({} as CryptoCurrency, "address", 5)).toEqual([
       [
         {
           id: "native-op-1",

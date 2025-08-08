@@ -860,7 +860,7 @@ describe("Aptos API", () => {
     it("list of operations", async () => {
       const api = new AptosAPI("aptos");
       const address = "0x12345";
-      const pagination: Pagination = { minHeight: 0 };
+      const pagination: Pagination = { minHeight: 0, order: "asc" };
 
       const txs: AptosTransaction[] = [
         {
@@ -1297,7 +1297,7 @@ describe("Aptos API", () => {
 
       api.getAccountInfo = jest.fn().mockResolvedValue({ transactions });
 
-      const ops = await api.listOperations(address, pagination);
+      const ops = await api.listOperations(address, pagination.minHeight || 0);
 
       expect(ops[0]).toHaveLength(2);
       expect(ops[1]).toBe("");

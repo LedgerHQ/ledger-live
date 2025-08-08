@@ -265,7 +265,7 @@ const LLDSignature = () => {
                 name={checksumsFilename || "checksum"}
               />
             </FieldHeader>
-            <Textarea id="checksums" style={{ minHeight: 100 }} defaultValue={checksums} />
+            <Textarea id="checksums" style={{ minHeight: 100 , order: "asc" }} defaultValue={checksums} />
           </Field>
 
           <BlockCode>

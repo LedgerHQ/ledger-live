@@ -306,7 +306,11 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
+export type Pagination = {
+  minHeight?: number;
+  cursor?: string;
+  order: "asc" | "desc";
+};
 
 /** A pagination cursor. */
 export type Cursor = string;
