@@ -49,7 +49,7 @@ for (const currency of currencies) {
         const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
         if (isModularDrawer) {
           await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTicker(currency.currency);
+          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
           await app.modularDrawer.selectNetwork(currency.currency);
           await app.addAccount.expectAccountModalToBeVisible();
         } else {

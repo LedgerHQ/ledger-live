@@ -72,6 +72,7 @@ export const AssetItem = ({
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          data-testid={`asset-item-name-${name}`}
           fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"

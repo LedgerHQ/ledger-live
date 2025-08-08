@@ -78,7 +78,7 @@ async function modularDrawerFullFlow(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  await app.modularDrawer.selectAssetByTicker(swap.accountToDebit.currency);
+  await app.modularDrawer.selectAssetByTickerAndName(swap.accountToDebit.currency);
   await app.modularDrawer.selectNetwork(swap.accountToDebit.currency);
   await app.modularDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
@@ -92,7 +92,7 @@ async function modularDrawerSelectToAssetOnlyFlow(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  await app.modularDrawer.selectAssetByTicker(swap.accountToCredit.currency);
+  await app.modularDrawer.selectAssetByTickerAndName(swap.accountToCredit.currency);
   await app.modularDrawer.selectNetwork(swap.accountToCredit.currency);
   await app.modularDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
