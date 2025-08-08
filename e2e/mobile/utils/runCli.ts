@@ -12,12 +12,6 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function extractFlagValue(command: string, flag: string): string | undefined {
-  const parts = command.split("+");
-  const idx = parts.findIndex(p => p === `--${flag}`);
-  return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
-}
-
 export function runCliCommand(command: string, speculosAddress?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
@@ -42,17 +36,7 @@ export function runCliCommand(command: string, speculosAddress?: string): Promis
       if (code === 0) {
         resolve(output);
       } else {
-        const currency = extractFlagValue(command, "currency");
-        const index = extractFlagValue(command, "index");
-
-        const errorDetails = [
-          `❌ Failed to setup account.`,
-          currency ? `💱 Currency: ${currency}` : `💱 Currency not specified`,
-          index ? `🔢 Index: ${index}` : `🔢 Index not specified`,
-          errorOutput ? `🧾 CLI Error: ${errorOutput.trim()}` : "",
-        ].join("\n");
-
-        reject(new Error(errorDetails));
+        reject(new Error(`CLI command failed with exit code ${code}: ${errorOutput}`));
       }
     });
 
@@ -70,14 +54,6 @@ export async function runCliCommandWithRetry(
 ): Promise<string> {
   let lastError: Error | null = null;
 
-  const currency = extractFlagValue(command, "currency");
-
-  if (!currency) {
-    throw new Error(
-      "🚫 CLI command missing required --currency flag for Speculos readiness check.",
-    );
-  }
-
   if (isRemoteIos() && speculosAddress) {
     await waitForSpeculosReady(speculosAddress);
   }
@@ -90,15 +66,13 @@ export async function runCliCommandWithRetry(
       err: any
     ) {
       lastError = err;
-      const willRetry = attempt < retries;
+      const willRetry = attempt < retries && /status code 503/.test(err.message);
 
       if (!willRetry) {
         throw err;
       }
 
-      console.warn(
-        `⚠️ CLI attempt ${attempt}/${currency} failed while trying to setup test account – retrying in ${delayMs}ms…`,
-      );
+      console.warn(`CLI attempt ${attempt} failed with 503 – retrying in ${delayMs}ms…`);
       await sleep(delayMs);
     }
   }

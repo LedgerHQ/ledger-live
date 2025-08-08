@@ -30,17 +30,17 @@ export async function openDeeplink(path?: string) {
 export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
   process.env.SPECULOS_DEVICE !== Device.LNS
     ? describe(...args)
-    : describe.skip("[not available on LNS] " + args[0], args[1]);
+    : describe.skip("[not avilable on LNS] " + args[0], args[1]);
 
-export function isAndroid(): boolean {
+export function isAndroid() {
   return device.getPlatform() === "android";
 }
 
-export function isIos(): boolean {
+export function isIos() {
   return device.getPlatform() === "ios";
 }
 
-export function isSpeculosRemote(): boolean {
+export function isSpeculosRemote() {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
