@@ -1,5 +1,48 @@
 # live-mobile
 
+## 3.89.0-nightly.4
+
+### Minor Changes
+
+- [#11188](https://github.com/LedgerHQ/ledger-live/pull/11188) [`ec0cb33`](https://github.com/LedgerHQ/ledger-live/commit/ec0cb3389d56830fda440cf8bbbb5e98424960aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump crypto icons, fix reanimated jest support, enhance MAD Drawer animation
+
+- [#11293](https://github.com/LedgerHQ/ledger-live/pull/11293) [`d1971b8`](https://github.com/LedgerHQ/ledger-live/commit/d1971b8291fb0612c184f8b1081489395383648a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - New drawer onbackdropress shouldn't reopen the drawer
+
+- [#11153](https://github.com/LedgerHQ/ledger-live/pull/11153) [`df9c266`](https://github.com/LedgerHQ/ledger-live/commit/df9c2667ca638d4ba52c469737566f7ce6b08e08) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD AccountItem, AccountList, AccountSelection
+
+- [#11289](https://github.com/LedgerHQ/ledger-live/pull/11289) [`7545db0`](https://github.com/LedgerHQ/ledger-live/commit/7545db00ce0d68de618c49f5162174997876dae8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add an eslint rule for reanimated hooks
+
+- [#11296](https://github.com/LedgerHQ/ledger-live/pull/11296) [`a4dbfa6`](https://github.com/LedgerHQ/ledger-live/commit/a4dbfa637d8f96d039bbfd0a7241298e27e73c2c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Clean up the new queuedDrawer, fix mad integration with the new queuedDrawer, fix transition animations original states
+
+### Patch Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+- Updated dependencies [[`ec0cb33`](https://github.com/LedgerHQ/ledger-live/commit/ec0cb3389d56830fda440cf8bbbb5e98424960aa), [`df9c266`](https://github.com/LedgerHQ/ledger-live/commit/df9c2667ca638d4ba52c469737566f7ce6b08e08), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/native-ui@0.42.0-nightly.0
+  - @ledgerhq/coin-evm@2.26.0-nightly.3
+  - @ledgerhq/coin-framework@5.9.0-nightly.2
+  - @ledgerhq/types-devices@6.25.4-nightly.0
+  - @ledgerhq/types-live@6.79.1-nightly.0
+  - @ledgerhq/devices@8.4.9-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.10.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.5-nightly.2
+  - @ledgerhq/coin-filecoin@1.10.0-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.16-nightly.2
+  - @ledgerhq/coin-stacks@0.8.16-nightly.2
+  - @ledgerhq/live-countervalues@0.6.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.45-nightly.2
+  - @ledgerhq/live-nft@0.8.16-nightly.2
+  - @ledgerhq/live-nft-react@0.9.16-nightly.2
+  - @ledgerhq/live-wallet@0.12.0-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.1-nightly.2
+  - @ledgerhq/domain-service@1.2.39-nightly.1
+  - @ledgerhq/hw-transport@6.31.9-nightly.1
+  - @ledgerhq/react-native-hid@6.32.9-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.35.2-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.11-nightly.2
+  - @ledgerhq/hw-transport-http@6.30.9-nightly.1
+
 ## 3.89.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.24.0-nightly.0
+
+### Minor Changes
+
+- [#11294](https://github.com/LedgerHQ/ledger-live/pull/11294) [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Add dmc to supported sui tokens
+
 ## 13.23.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # dummy-wallet-app
 
+## 0.6.15-nightly.4
+
+### Patch Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+- Updated dependencies [[`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-common@34.44.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.45.14-nightly.1
+  - @ledgerhq/hw-transport@6.31.9-nightly.1
+
 ## 0.6.15-nightly.3
 
 ### Patch Changes

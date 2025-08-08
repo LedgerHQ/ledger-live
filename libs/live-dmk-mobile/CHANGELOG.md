@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.10.1-nightly.1
+
+### Patch Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+- Updated dependencies [[`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/types-devices@6.25.4-nightly.0
+  - @ledgerhq/devices@8.4.9-nightly.1
+  - @ledgerhq/live-dmk-shared@0.11.2-nightly.1
+  - @ledgerhq/hw-transport@6.31.9-nightly.1
+
 ## 0.10.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # @ledgerhq/live-cli
 
+## 24.21.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/cryptoassets@13.24.0-nightly.0
+  - @ledgerhq/live-common@34.44.0-nightly.4
+  - @ledgerhq/coin-framework@5.9.0-nightly.2
+  - @ledgerhq/types-devices@6.25.4-nightly.0
+  - @ledgerhq/devices@8.4.9-nightly.1
+  - @ledgerhq/device-core@0.5.5-nightly.1
+  - @ledgerhq/coin-bitcoin@0.20.0-nightly.2
+  - @ledgerhq/live-countervalues@0.6.0-nightly.2
+  - @ledgerhq/live-wallet@0.12.0-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.1-nightly.2
+  - @ledgerhq/hw-transport@6.31.9-nightly.1
+  - @ledgerhq/hw-transport-node-hid@6.29.10-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.11-nightly.2
+  - @ledgerhq/hw-app-btc@10.10.1-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.9-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.9-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.9-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-nightly.1
+
 ## 24.21.0-nightly.3
 
 ### Patch Changes

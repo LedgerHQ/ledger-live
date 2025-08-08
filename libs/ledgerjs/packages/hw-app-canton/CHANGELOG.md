@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-canton
 
+## 0.2.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-canton@0.2.0-nightly.4
+  - @ledgerhq/hw-transport@6.31.9-nightly.1
+
 ## 0.2.0-nightly.1
 
 ### Patch Changes

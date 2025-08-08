@@ -1,5 +1,19 @@
 # @ledgerhq/coin-sui
 
+## 0.9.0-nightly.2
+
+### Minor Changes
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+### Patch Changes
+
+- Updated dependencies [[`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/cryptoassets@13.24.0-nightly.0
+  - @ledgerhq/coin-framework@5.9.0-nightly.2
+  - @ledgerhq/types-live@6.79.1-nightly.0
+  - @ledgerhq/hw-app-sui@1.2.0
+
 ## 0.8.1-nightly.1
 
 ### Patch Changes
