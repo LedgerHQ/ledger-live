@@ -27,7 +27,11 @@ import type { TezosApi, TezosFeeEstimation } from "./types";
 import { FeeEstimation, TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
 import { validateAddress, ValidationResult } from "@taquito/utils";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import { InvalidAddress, RecipientRequired, RecommendUndelegation } from "@ledgerhq/errors";
+import { DerivationType } from "@taquito/ledger-signer";
+import { b58cencode, Prefix, prefix } from "@taquito/utils";
+import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
+import { DEFAULT_FEE } from "@taquito/taquito";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -41,8 +45,6 @@ export function createApi(config: TezosConfig): TezosApi {
     lastBlock,
     listOperations: operations,
     getStakes: stakes,
-    // ask later if i can do that (adding more stuff to the api surface)...
-    // idk, i think this is a good idea? or not, depends on the actual architecture, talk with @qperrot
     validateIntent,
     // required by signer to compute next valid sequence/counter
     getSequence: async (address: string) => {
@@ -136,15 +138,61 @@ async function craft(
       ? "undelegate"
       : (transactionIntent.type as "send" | "delegate" | "undelegate");
 
-  const { contents } = await craftTransaction(
-    { address: transactionIntent.sender },
-    {
-      type: mappedType,
-      recipient: transactionIntent.recipient,
-      amount: transactionIntent.amount,
-      fee,
-    },
-  );
+  // guard: send max is incompatible with delegated accounts
+  if (
+    mappedType === "send" &&
+    transactionIntent.useAllAmount
+  ) {
+    const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
+    if (senderInfo.type === "user" && senderInfo.delegate?.address) {
+      throw new RecommendUndelegation();
+    }
+  }
+
+  // compute amount to use in forge
+  let amountToUse = transactionIntent.amount;
+  if (mappedType === "send" && transactionIntent.useAllAmount) {
+    const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
+    if (senderInfo.type === "user") {
+      const bal = BigInt(senderInfo.balance);
+      const feeBI = BigInt(fee.fees || "0");
+      amountToUse = bal > feeBI ? bal - feeBI : 0n;
+    } else {
+      amountToUse = 0n;
+    }
+  }
+
+  const accountForCraft = {
+    address: transactionIntent.sender,
+    // craftTransaction expects the current counter, it will increment internally per content
+    counter: typeof transactionIntent.sequence === "number" ? transactionIntent.sequence - 1 : undefined,
+  };
+  const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
+  const needsReveal = senderApiAcc.type === "user" ? senderApiAcc.revealed === false : false;
+  const totalFeeBI = BigInt(fee.fees || "0");
+  const txFeeBI = needsReveal ? (totalFeeBI > BigInt(DEFAULT_FEE.REVEAL) ? totalFeeBI - BigInt(DEFAULT_FEE.REVEAL) : 0n) : totalFeeBI;
+
+  const txForCraft = {
+    type: mappedType,
+    recipient: transactionIntent.recipient,
+    amount: amountToUse,
+    fee: { ...fee, fees: txFeeBI.toString() },
+  } as const;
+  const publicKeyForCraft = needsReveal && transactionIntent.senderPublicKey
+    ? (() => {
+        let pk = transactionIntent.senderPublicKey;
+        const isBase58 =
+          pk.startsWith("edpk") || pk.startsWith("sppk") || pk.startsWith("p2pk") || pk.startsWith("BLpk");
+        if (!isBase58) {
+          pk = b58cencode(
+            compressPublicKey(Buffer.from(pk, "hex"), DerivationType.ED25519),
+            prefix[Prefix.EDPK],
+          );
+        }
+        return { publicKey: pk, publicKeyHash: transactionIntent.sender };
+      })()
+    : undefined;
+  const { contents } = await craftTransaction(accountForCraft, txForCraft, publicKeyForCraft);
   return rawEncode(contents);
 }
 
@@ -291,10 +339,18 @@ async function validateIntent(intent: TransactionIntent): Promise<TransactionVal
   }
 
   try {
+    // send max not allowed on delegated accounts (must undelegate acc first)
+    if (intent.type === "send" && intent.useAllAmount) {
+      const senderInfo = await api.getAccountByAddress(intent.sender);
+      if (senderInfo.type === "user" && senderInfo.delegate?.address) {
+        errors.amount = new RecommendUndelegation();
+        return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+      }
+    }
+
     const estimation = await estimate(intent);
     estimatedFees = estimation.value;
 
-    // tezos staking uses full account balance beause only fees are effectively spent
     if (intent.type === "stake" || intent.type === "unstake") {
       const accountInfo = await api.getAccountByAddress(intent.sender);
       amount = BigInt(accountInfo.type === "user" ? accountInfo.balance : 0);

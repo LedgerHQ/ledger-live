@@ -132,7 +132,14 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
-    if (patch.mode === "delegate" && !transaction.recipient && stepId !== "custom") {
+    if (
+      patch.mode === "delegate" &&
+      !transaction.recipient &&
+      stepId !== "custom" &&
+      defaultBaker &&
+      defaultBaker.address
+    ) {
+      // guard against an empty bakers list while the hook loads
       patch.recipient = defaultBaker.address;
     }
 

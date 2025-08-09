@@ -2,6 +2,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import { Baker, Delegation, TezosAccount, StakingPosition } from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import tzkt from "@ledgerhq/coin-tezos/network/tzkt";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
   const [whitelistedBakers, setWhitelistedBakers] = useState<Baker[]>(() =>
@@ -58,9 +59,32 @@ export function useRandomBaker(bakers: Baker[]): Baker {
 
 // expose staking positions via generic bridge getStakes
 export function useStakingPositions(account: TezosAccount): StakingPosition[] {
-  // derive synchronously from cached delegation info to avoid side effects in UI
+  const [delegation, setDelegation] = useState(() => bakers.getAccountDelegationSync(account));
+
+  // ensure delegation is loaded when needed
+  useEffect(() => {
+    let cancelled = false;
+    bakers.loadAccountDelegation(account).then(async d => {
+      if (cancelled) return;
+      if (d && ("address" in d) && d.address) {
+        setDelegation(d);
+      } else {
+        // fallback: query tzkt directly in dev if cache is empty
+        try {
+          const info = await tzkt.getAccountByAddress(account.freshAddress);
+          if (info.type === "user" && info.delegate?.address) {
+            setDelegation({ address: info.delegate.address } as any);
+          }
+        } catch {}
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [account]);
+
   return useMemo(() => {
-    const d = bakers.getAccountDelegationSync(account);
+    const d = delegation;
     if (!d || !("address" in d) || !d.address) return [];
     return [
       {
@@ -72,5 +96,5 @@ export function useStakingPositions(account: TezosAccount): StakingPosition[] {
         amount: BigInt(account.balance.toString()),
       },
     ];
-  }, [account]);
+  }, [account, delegation]);
 }

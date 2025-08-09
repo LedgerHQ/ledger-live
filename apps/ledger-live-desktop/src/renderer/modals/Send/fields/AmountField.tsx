@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
@@ -63,13 +64,14 @@ const AmountField = <T extends TransactionCommon>({
       onChangeTransaction(nextTx);
       if (useAllAmount) {
         // reflect validated max amount (balance - fees)
+        const main = getMainAccount(account, parentAccount);
         bridge
-          .getTransactionStatus(account, nextTx)
+          .getTransactionStatus(main, nextTx)
           .then(s => onChangeTransaction(bridge.updateTransaction(nextTx, { amount: s.amount })))
           .catch(() => undefined);
       }
     },
-    [account, bridge, transaction, onChangeTransaction],
+    [account, parentAccount, bridge, transaction, onChangeTransaction],
   );
 
   if (!status) return null;

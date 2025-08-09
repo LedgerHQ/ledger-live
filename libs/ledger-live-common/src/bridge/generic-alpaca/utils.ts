@@ -108,6 +108,12 @@ export function transactionToIntent(
       case "send":
         transactionType = "send";
         break;
+      case "delegate":
+        transactionType = "stake";
+        break;
+      case "undelegate":
+        transactionType = "unstake";
+        break;
       case "stake":
         // generic staking intent for chains that support delegation/staking
         transactionType = "stake";

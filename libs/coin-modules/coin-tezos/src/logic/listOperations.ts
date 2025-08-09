@@ -83,6 +83,14 @@ function convertOperation(
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
 
+  // normalize operation type for UI: map tzkt "transaction" to IN/OUT
+  let normalizedType: Operation["type"] = type as Operation["type"]; // default, will be overridden for tx & delegation
+  if (isAPITransactionType(operation)) {
+    const isOut = sender?.address === address;
+    const isIn = targetAddress === address;
+    normalizedType = (isOut ? "OUT" : isIn ? "IN" : "OUT") as Operation["type"]; // self-send -> OUT
+  }
+
   const coreOp: Operation = {
     id: `${hash ?? ""}-${id}`,
     asset: { type: "native" },
@@ -98,7 +106,7 @@ function convertOperation(
       },
       date: new Date(operation.timestamp),
     },
-    type: type,
+    type: normalizedType,
     value: amount,
     senders: senders,
     recipients: recipients,
@@ -108,6 +116,14 @@ function convertOperation(
       storageLimit: operation.storageLimit,
     },
   };
+
+  // preserve original semantic in detail
+  if (isAPITransactionType(operation)) {
+    coreOp.details = {
+      ...coreOp.details,
+      ledgerOpType: normalizedType,
+    };
+  }
 
   // tzkt exposes staking as 'delegation' operations.
   // if a newDelegate is present it mean its a stake if not its an unstake.

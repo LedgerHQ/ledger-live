@@ -41,10 +41,19 @@ export async function estimateFees({
   account: CoreAccountInfo;
   transaction: CoreTransactionInfo;
 }): Promise<EstimatedFees> {
-  const encodedPubKey = b58cencode(
-    compressPublicKey(Buffer.from(account.xpub || "", "hex"), DerivationType.ED25519),
-    prefix[Prefix.EDPK],
-  );
+  let encodedPubKey = account.xpub || "";
+  // support both hex and base58 pubkeys
+  const isBase58Pk =
+    encodedPubKey.startsWith("edpk") ||
+    encodedPubKey.startsWith("sppk") ||
+    encodedPubKey.startsWith("p2pk") ||
+    encodedPubKey.startsWith("BLpk");
+  if (!isBase58Pk && encodedPubKey.length > 0) {
+    encodedPubKey = b58cencode(
+      compressPublicKey(Buffer.from(encodedPubKey, "hex"), DerivationType.ED25519),
+      prefix[Prefix.EDPK],
+    );
+  }
 
   const tezosToolkit = getTezosToolkit();
   tezosToolkit.setProvider({
