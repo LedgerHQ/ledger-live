@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.9.0-nightly.3
+
+### Minor Changes
+
+- [#11128](https://github.com/LedgerHQ/ledger-live/pull/11128) [`8ee9b34`](https://github.com/LedgerHQ/ledger-live/commit/8ee9b3462aee8fd40a4ff42cdd032be2da6a4969) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add sui alpaca api support for tokens
+
 ## 0.9.0-nightly.2
 
 ### Minor Changes

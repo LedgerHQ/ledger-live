@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.9.0-nightly.5
+
+### Minor Changes
+
+- [#10829](https://github.com/LedgerHQ/ledger-live/pull/10829) [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix genuine check error, expose dmk error in LL
+
+### Patch Changes
+
+- Updated dependencies [[`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8)]:
+  - @ledgerhq/live-common@34.44.0-nightly.5
+
 ## 0.8.3-nightly.4
 
 ### Patch Changes

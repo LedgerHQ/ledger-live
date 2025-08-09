@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.89.0-nightly.5
+
+### Minor Changes
+
+- [#11258](https://github.com/LedgerHQ/ledger-live/pull/11258) [`dc54e32`](https://github.com/LedgerHQ/ledger-live/commit/dc54e32b27e3cb953bd6ef33a241f64e1bed4994) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Simplify and update animations
+
+- [#10829](https://github.com/LedgerHQ/ledger-live/pull/10829) [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix genuine check error, expose dmk error in LL
+
+### Patch Changes
+
+- [#11152](https://github.com/LedgerHQ/ledger-live/pull/11152) [`9478c4d`](https://github.com/LedgerHQ/ledger-live/commit/9478c4d98565c771a173363ed2a9e5d68b6f6c17) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix a bug that caused duplicates to appear on the Market list
+
 ## 3.89.0-nightly.4
 
 ### Minor Changes
