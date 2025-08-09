@@ -26,6 +26,8 @@ import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 import { FeeEstimation, TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
+import { validateAddress, ValidationResult } from "@taquito/utils";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 
 export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -267,8 +269,21 @@ async function validateIntent(intent: TransactionIntent): Promise<TransactionVal
   let amount: bigint;
   let totalSpent: bigint;
 
+  // basic recipient validation for send
+  if (intent.type === "send") {
+    if (!intent.recipient) {
+      errors.recipient = new RecipientRequired("");
+      return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+    }
+    if (validateAddress(intent.recipient) !== ValidationResult.VALID) {
+      errors.recipient = new InvalidAddress(undefined, { currencyName: "Tezos" });
+      return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+    }
+  }
+
   // avoid taquito error `contract.empty_transaction` when amount is 0 during typing
-  if (intent.type === "send" && intent.amount === 0n) {
+  // do not short-circuit when useAllAmount is enabled (send max path)
+  if (intent.type === "send" && intent.amount === 0n && !intent.useAllAmount) {
     estimatedFees = 0n;
     amount = 0n;
     totalSpent = 0n;

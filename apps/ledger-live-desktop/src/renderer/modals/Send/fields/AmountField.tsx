@@ -56,14 +56,20 @@ const AmountField = <T extends TransactionCommon>({
 
   const onChangeSendMax = useCallback(
     (useAllAmount: boolean) => {
-      onChangeTransaction(
-        bridge.updateTransaction(transaction, {
-          useAllAmount,
-          amount: new BigNumber(0),
-        }),
-      );
+      const nextTx = bridge.updateTransaction(transaction, {
+        useAllAmount,
+        amount: new BigNumber(0),
+      });
+      onChangeTransaction(nextTx);
+      if (useAllAmount) {
+        // reflect validated max amount (balance - fees)
+        bridge
+          .getTransactionStatus(account, nextTx)
+          .then(s => onChangeTransaction(bridge.updateTransaction(nextTx, { amount: s.amount })))
+          .catch(() => undefined);
+      }
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, bridge, transaction, onChangeTransaction],
   );
 
   if (!status) return null;

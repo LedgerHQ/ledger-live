@@ -23,18 +23,18 @@ export function genericPrepareTransaction(
     },
   ) => {
     const [assetReference, assetOwner] = getAssetInfos(transaction);
-    const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(account, {
-        ...transaction,
-        fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
-      }),
-    );
+    const alpacaApi = getAlpacaApi(network, kind);
+    const intent = transactionToIntent(account, {
+      ...transaction,
+      fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
+    });
+    const fees = await alpacaApi.estimateFees(intent);
     // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
     // for reference, stellar checked this:
     // transaction.networkInfo !== networkInfo ||
     // transaction.baseReserve !== baseReserve
     if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
-      return {
+      const next: any = {
         ...transaction,
         fees: new BigNumber(fees.value.toString()),
         assetReference,
@@ -43,6 +43,12 @@ export function genericPrepareTransaction(
           fees: new BigNumber(fees.value.toString()),
         },
       };
+      // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
+      if (transaction.useAllAmount || transaction["mode"] === "stake" || transaction["mode"] === "unstake") {
+        const { amount } = await alpacaApi.validateIntent(intent);
+        next.amount = new BigNumber(amount.toString());
+      }
+      return next;
     }
 
     return transaction;
