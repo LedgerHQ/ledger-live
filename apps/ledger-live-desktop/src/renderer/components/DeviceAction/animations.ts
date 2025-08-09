@@ -57,39 +57,21 @@ import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen
  * ⬆️ The imports above are old assets used somewhere and no new assets to replace them ⬆️
  */
 
-/****** ⬇️ NEW ASSETS START @13.12.2024 ⬇️ *****/
-
 // @ts-ignore
 import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
-// // @ts-ignore
-// import STAX_DARK_PAIRING from "~/renderer/animations/stax/dark/pairing.json";
-// @ts-ignore
-import STAX_DARK_PAIRED from "~/renderer/animations/stax/dark/paired.json";
 // @ts-ignore
 import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
 // @ts-ignore
 import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
-// // @ts-ignore
-// import STAX_LIGHT_PAIRING from "~/renderer/animations/stax/light/pairing.json";
-// @ts-ignore
-import STAX_LIGHT_PAIRED from "~/renderer/animations/stax/light/paired.json";
 // @ts-ignore
 import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
 
 // @ts-ignore
 import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
-// // @ts-ignore
-// import FLEX_DARK_PAIRING from "~/renderer/animations/flex/dark/pairing.json";
-// @ts-ignore
-import FLEX_DARK_PAIRED from "~/renderer/animations/flex/dark/paired.json";
 // @ts-ignore
 import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
 // @ts-ignore
 import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
-// // @ts-ignore
-// import FLEX_LIGHT_PAIRING from "~/renderer/animations/flex/light/pairing.json";
-// @ts-ignore
-import FLEX_LIGHT_PAIRED from "~/renderer/animations/flex/light/paired.json";
 // @ts-ignore
 import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
 
@@ -334,12 +316,12 @@ const stax: DeviceAnimations = {
     dark: STAX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: STAX_LIGHT_PAIRED,
-    dark: STAX_DARK_PAIRED,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: STAX_LIGHT_PAIRED,
-    dark: STAX_DARK_PAIRED,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
 };
 
@@ -380,20 +362,18 @@ const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
     light: FLEX_LIGHT_CONTINUE,
     dark: FLEX_DARK_CONTINUE,
   },
-  // Keep
   confirmLockscreen: {
     light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
     dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: FLEX_LIGHT_PAIRED,
-    dark: FLEX_DARK_PAIRED,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: FLEX_LIGHT_PAIRED,
-    dark: FLEX_DARK_PAIRED,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
-  // Keep
   onboardingSuccess: {
     light: FLEX_LIGHT_ONBOARDING_SUCCESS,
     dark: FLEX_DARK_ONBOARDING_SUCCESS,
@@ -443,12 +423,12 @@ const apex: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
     dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: FLEX_LIGHT_PAIRED,
-    dark: FLEX_DARK_PAIRED,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: FLEX_LIGHT_PAIRED,
-    dark: FLEX_DARK_PAIRED,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   // Keep
   onboardingSuccess: {

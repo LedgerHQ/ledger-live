@@ -5,3 +5,4 @@ export {
   isAllowedOnboardingStatePollingErrorDmk,
   isDisconnectedWhileSendingApduError,
 } from "./errors";
+export type { DmkError } from "@ledgerhq/device-management-kit";

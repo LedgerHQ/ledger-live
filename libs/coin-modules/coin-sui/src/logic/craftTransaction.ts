@@ -5,18 +5,18 @@ import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
 export type CreateExtrinsicArg = {
-  mode: SuiTransactionMode;
   amount: BigNumber;
   coinType: string;
+  mode: SuiTransactionMode;
   recipient: string;
   useAllAmount?: boolean | undefined;
 };
 
 export async function craftTransaction({
-  sender,
   amount,
-  recipient,
   asset,
+  recipient,
+  sender,
   type,
 }: TransactionIntent): Promise<CoreTransaction> {
   let coinType = DEFAULT_COIN_TYPE;
