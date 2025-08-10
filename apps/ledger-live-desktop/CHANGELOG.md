@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.124.0-nightly.6
+
+### Minor Changes
+
+- [#11312](https://github.com/LedgerHQ/ledger-live/pull/11312) [`e525709`](https://github.com/LedgerHQ/ledger-live/commit/e525709ca9f7bb07de6e8fe061af7e11594be81c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: onCancel wrapper to prevent many on cancel (user closed after an error)
+
 ## 2.124.0-nightly.5
 
 ### Minor Changes
