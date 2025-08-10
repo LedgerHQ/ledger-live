@@ -142,6 +142,15 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             console.info("Earn Live App Loaded");
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            let cancelCalled = false;
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                console.error(error);
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
             dispatch(
               openExchangeDrawer({
                 type: "EXCHANGE_COMPLETE",
@@ -155,10 +164,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                 },
-                onCancel: (error: Error) => {
-                  console.error(error);
-                  onCancel(error);
-                },
+                onCancel: safeOnCancel,
               }),
             );
           },
