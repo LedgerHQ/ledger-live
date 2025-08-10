@@ -83,14 +83,32 @@ function convertOperation(
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
 
-  // normalize operation type for UI: map tzkt "transaction" to IN/OUT
-  let normalizedType: Operation["type"] = type as Operation["type"]; // default, will be overridden for tx & delegation
+  // normalize operation type for UI (rn issue with i18n keys?)
+  let normalizedType: Operation["type"];
+  
   if (isAPITransactionType(operation)) {
     const isOut = sender?.address === address;
     const isIn = targetAddress === address;
-    normalizedType = (isOut ? "OUT" : isIn ? "IN" : "OUT") as Operation["type"]; // self-send -> OUT
+    if ((isOut && isIn) || amount === 0n) {
+      normalizedType = "FEES" as Operation["type"];
+    } else {
+      normalizedType = (isOut ? "OUT" : isIn ? "IN" : "OUT") as Operation["type"];
+    }
+  } else if (isAPIDelegationType(operation)) {
+    // map delegation operations to DELEGATE/UNDELEGATE for Generic Bridge
+    normalizedType = operation.newDelegate?.address 
+      ? ("DELEGATE" as Operation["type"]) 
+      : ("UNDELEGATE" as Operation["type"]);
+  } else if (isAPIRevealType(operation)) {
+    normalizedType = "REVEAL" as Operation["type"];
+  } else {
+    // fallback for unknown types
+    normalizedType = "OUT" as Operation["type"];
   }
 
+  // Tezos uses "applied" for every sucess operation (something else=failed )
+  const hasFailed = operation.status && operation.status !== "applied";
+  
   const coreOp: Operation = {
     id: `${hash ?? ""}-${id}`,
     asset: { type: "native" },
@@ -114,29 +132,25 @@ function convertOperation(
       counter: operation.counter,
       gasLimit: operation.gasLimit,
       storageLimit: operation.storageLimit,
+      status: hasFailed ? "failed" : operation.status,
     },
   };
 
-  // preserve original semantic in detail
-  if (isAPITransactionType(operation)) {
-    coreOp.details = {
-      ...coreOp.details,
-      ledgerOpType: normalizedType,
-    };
-  }
-
-  // tzkt exposes staking as 'delegation' operations.
-  // if a newDelegate is present it mean its a stake if not its an unstake.
   if (isAPIDelegationType(operation)) {
     coreOp.details = {
       ...coreOp.details,
-      ledgerOpType: operation.type === "delegation" && operation.newDelegate?.address
-        ? "DELEGATE"
-        : operation.type === "delegation" && !operation.newDelegate?.address
-        ? "UNDELEGATE"
-        : undefined,
+      ledgerOpType: operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE",
     };
-    coreOp.type = operation.newDelegate?.address ? ("STAKE" as Operation["type"]) : ("UNSTAKE" as Operation["type"]);
+  } else if (isAPIRevealType(operation)) {
+    coreOp.details = {
+      ...coreOp.details,
+      ledgerOpType: "REVEAL",
+    };
+  } else if (normalizedType === "FEES") {
+    coreOp.details = {
+      ...coreOp.details,
+      ledgerOpType: "FEES",
+    };
   }
 
   return coreOp;

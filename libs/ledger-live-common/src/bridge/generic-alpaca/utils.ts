@@ -60,6 +60,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
     extra,
+    hasFailed: op.details?.status === "failed" || op.details?.status === "backtracked",
   };
 
   return res;
