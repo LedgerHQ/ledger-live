@@ -1,47 +1,54 @@
 import { listOperations } from "./listOperations";
 import { getListOperations } from "../network/sdk";
-import { Operation, Pagination } from "@ledgerhq/coin-framework/lib/api/types";
+import {
+  type Operation as Op,
+  type Page,
+  Pagination,
+} from "@ledgerhq/coin-framework/lib/api/types";
 
 jest.mock("../network/sdk");
 
-const mockOperations: Operation[] = [
-  {
-    tx: {
-      date: new Date("2024-03-20T10:00:00.000Z"),
-      hash: "0x1234567890abcdef",
-      fees: BigInt("1000000"),
-      block: {
-        height: 5,
+const mockOperations: Page<Op> = {
+  items: [
+    {
+      tx: {
+        date: new Date("2024-03-20T10:00:00.000Z"),
+        hash: "0x1234567890abcdef",
+        fees: BigInt("1000000"),
+        block: {
+          height: 5,
+        },
+      },
+      id: "1",
+      recipients: ["0xrecipient1"],
+      senders: ["0xsender1"],
+      type: "OUT",
+      value: BigInt("1000000000"),
+      asset: {
+        type: "native",
       },
     },
-    id: "1",
-    recipients: ["0xrecipient1"],
-    senders: ["0xsender1"],
-    type: "OUT",
-    value: BigInt("1000000000"),
-    asset: {
-      type: "native",
-    },
-  },
-  {
-    tx: {
-      date: new Date("2024-03-20T11:00:00.000Z"),
-      hash: "0xabcdef1234567890",
-      fees: BigInt("2000000"),
-      block: {
-        height: 5,
+    {
+      tx: {
+        date: new Date("2024-03-20T11:00:00.000Z"),
+        hash: "0xabcdef1234567890",
+        fees: BigInt("2000000"),
+        block: {
+          height: 5,
+        },
+      },
+      id: "2",
+      recipients: ["0xrecipient2"],
+      senders: ["0xsender2"],
+      type: "IN",
+      value: BigInt("2000000000"),
+      asset: {
+        type: "native",
       },
     },
-    id: "2",
-    recipients: ["0xrecipient2"],
-    senders: ["0xsender2"],
-    type: "IN",
-    value: BigInt("2000000000"),
-    asset: {
-      type: "native",
-    },
-  },
-];
+  ],
+  next: "0x1234567890abcdef",
+};
 
 const mockGetListOperations = getListOperations as jest.Mock;
 mockGetListOperations.mockResolvedValue(mockOperations);
@@ -60,13 +67,13 @@ describe("List Operations", () => {
   it("should return operations and last hash", async () => {
     const [operations, lastHash] = await listOperations(mockAddress, mockPagination);
 
-    expect(operations).toEqual(mockOperations);
-    expect(lastHash).toBe(mockOperations[0].tx.hash);
+    expect(operations).toEqual(mockOperations.items);
+    expect(lastHash).toBe(mockOperations.items[0].tx.hash);
     expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, undefined);
   });
 
   it("should return empty array and empty string when no operations", async () => {
-    mockGetListOperations.mockResolvedValueOnce([]);
+    mockGetListOperations.mockResolvedValueOnce({ items: [], next: "" });
 
     const [operations, lastHash] = await listOperations(mockAddress, mockPagination);
 
@@ -77,7 +84,7 @@ describe("List Operations", () => {
   it("should handle pagination parameters", async () => {
     const [operations] = await listOperations(mockAddress, mockPagination);
 
-    expect(operations).toEqual(mockOperations);
+    expect(operations).toEqual(mockOperations.items);
   });
 
   it("should return operations sorted by date in ascending order", async () => {
