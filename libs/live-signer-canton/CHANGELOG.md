@@ -1,4 +1,4 @@
-# @ledgerhq/hw-app-canton
+# @ledgerhq/live-signer-canton
 
 ## 0.2.0
 
@@ -10,7 +10,8 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+- Updated dependencies [[`4d14752`](https://github.com/LedgerHQ/ledger-live/commit/4d14752360435f27f07768302a715cd2f39f59ac), [`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/hw-app-canton@0.2.0
   - @ledgerhq/coin-canton@0.2.0
 
 ## 0.2.0-next.0
@@ -23,5 +24,6 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+- Updated dependencies [[`4d14752`](https://github.com/LedgerHQ/ledger-live/commit/4d14752360435f27f07768302a715cd2f39f59ac), [`6398e5f`](https://github.com/LedgerHQ/ledger-live/commit/6398e5f90bd6ca5c1c4d850da731d4e7f020ea3a), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/hw-app-canton@0.2.0-next.0
   - @ledgerhq/coin-canton@0.2.0-next.0
