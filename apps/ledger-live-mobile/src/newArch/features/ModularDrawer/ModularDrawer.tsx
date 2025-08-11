@@ -130,7 +130,7 @@ export function ModularDrawer({
         }}
         accountsViewModel={{
           accounts$,
-          onAddNewAccount,
+          onAddNewAccount: () => onAddNewAccount(source),
           asset,
           onAccountSelected,
           flow,
