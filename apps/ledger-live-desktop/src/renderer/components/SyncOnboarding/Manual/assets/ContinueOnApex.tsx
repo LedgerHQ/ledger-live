@@ -1,9 +1,11 @@
 import React from "react";
 import { useTheme } from "styled-components";
 
-const ContinueOnEuropa = () => {
+/**
+ * This component renders an SVG Apex icon in each step in the Sync Onboarding process.
+ */
+export default React.memo(function ContinueOnApex() {
   const { theme } = useTheme();
-
   if (theme === "light") {
     return (
       <svg
@@ -90,6 +92,4 @@ const ContinueOnEuropa = () => {
       </defs>
     </svg>
   );
-};
-
-export default React.memo(ContinueOnEuropa);
+});
