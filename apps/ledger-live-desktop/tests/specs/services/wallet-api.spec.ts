@@ -385,7 +385,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
           "8vCyX7oB6Pc3pbWMGYYZF5pbSnAdQ7Gyr32JqxqCy8ZR",
           "11111111111111111111111111111111",
         ],
-        recentBlockhash: "2btcs2WqZ7xXxjLsmmBxgNQYUv22EoMzVmSz92KJob13",
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "2btcs2WqZ7xXxjLsmmBxgNQYUv22EoMzVmSz92KJob13",
         compiledInstructions: [
           {
             programIdIndex: 2,
@@ -448,7 +449,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
           "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
           "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
         ],
-        recentBlockhash: "2Xie6kgDVTCMsGYDJXA3h1EDaMRV4Yk3rWy3isWPVyRY",
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "2Xie6kgDVTCMsGYDJXA3h1EDaMRV4Yk3rWy3isWPVyRY",
         compiledInstructions: [
           {
             programIdIndex: 7,
