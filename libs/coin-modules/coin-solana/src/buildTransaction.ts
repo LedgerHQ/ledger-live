@@ -41,7 +41,9 @@ export const buildTransactionWithAPI = async (
     web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
     // If we want to retry correctly we want to update the recent blockhash
     // NOTE: we could also make use of the isBlockHashValid rpc method
-    web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+    if (web3SolanaTransaction.message) {
+      web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+    }
   } else {
     const instructions = await buildInstructions(api, transaction);
     const transactionMessage = new TransactionMessage({
