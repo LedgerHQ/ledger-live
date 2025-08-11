@@ -385,6 +385,7 @@
         "onhold" : "Retida",
         "expired" : "Expirada",
         "finished" : "Finalizada",
+        "unknown" : "Processando",
         "refunded" : "Reembolsada"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Aguarde enquanto o provedor da troca processa a transação.",
         "onhold" : "Para resolver a situação, contate o provedor da troca com sua Swap ID.",
         "finished" : "Sua troca foi concluída com sucesso.",
-        "unknown" : "Para mais informações, fale com o provedor da troca e informe a sua Swap ID."
+        "unknown" : "Estamos aguardando informações do provedor."
       },
       "date" : "Data",
       "from" : "De",
@@ -2386,6 +2387,10 @@
         "title" : "Dispositivo"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Assinatura cega necessária",
+          "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+        },
         "utxoLag" : "Esta transação pode demorar muito para ser verificada e assinada porque a conta tem um número significativo de moedas.",
         "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} para enviar os tokens desta conta",
         "from" : "De",
@@ -3679,6 +3684,7 @@
     "delegation" : {
       "totalStake" : "Aplicação Total",
       "commission" : "Comissão",
+      "netApy" : "APY líquido",
       "delegate" : "Adicionar",
       "listHeader" : "Delegações",
       "availableBalance" : "Sacáveis",
@@ -7352,7 +7358,7 @@
   },
   "geoBlocking" : {
     "title" : "Local indisponível",
-    "description" : "A carteira Ledger não está disponível neste local.",
+    "description" : "O Ledger Live não está disponível nesta localização.",
     "learnMore" : "Saiba mais"
   },
   "versionBlocking" : {
