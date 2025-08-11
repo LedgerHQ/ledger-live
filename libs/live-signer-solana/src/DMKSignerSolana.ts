@@ -25,6 +25,7 @@ export class DMKSignerSolana implements SolanaSigner {
    */
   constructor(dmk: DeviceManagementKit, sessionId: string) {
     this.dmkSigner = new SignerSolanaBuilder({ dmk, sessionId }).build();
+    console.log("DMKSignerSolana initialized with session ID:", sessionId);
   }
 
   /**
@@ -57,6 +58,7 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param display - whether to prompt user confirmation on device
    */
   async getAddress(path: string, display?: boolean): Promise<SolanaAddress> {
+    console.log("Fetching address for path via DMK");
     const { observable } = this.dmkSigner.getAddress(path, { checkOnDevice: !!display });
     return new Promise<SolanaAddress>((resolve, reject) => {
       observable.subscribe({
@@ -80,6 +82,7 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param txBuffer - transaction data as a uint8 array
    */
   async signTransaction(path: string, txBuffer: Uint8Array): Promise<SolanaSignature> {
+    console.log("Signing transaction via DMK");
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer);
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
@@ -102,6 +105,7 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param messageHex - message to sign in hexadecimal format
    */
   async signMessage(path: string, messageHex: string): Promise<SolanaSignature> {
+    console.log("Signing message via DMK");
     const { observable } = this.dmkSigner.signMessage(path, messageHex);
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
