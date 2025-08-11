@@ -5,9 +5,22 @@ import {
   SolanaSignature,
   SolanaSigner,
 } from "@ledgerhq/coin-solana/signer";
-import { SignerSolanaBuilder } from "@ledgerhq/device-signer-kit-solana";
+import {
+  SignerSolanaBuilder,
+  GetAddressDAError,
+  GetAppConfigurationDAError,
+  SignMessageDAError,
+  SignTransactionDAError,
+} from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+
+export type DAError =
+  | GetAddressDAError
+  | GetAppConfigurationDAError
+  | SignMessageDAError
+  | SignTransactionDAError;
 
 /**
  * DMK-based Solana signer using DMK signer-kit
@@ -24,8 +37,38 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param sessionId - active session ID of the connected device
    */
   constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.dmkSigner = new SignerSolanaBuilder({ dmk, sessionId }).build();
+    this.dmkSigner = new SignerSolanaBuilder({
+      dmk,
+      sessionId,
+      originToken: "Solana",
+    }).build();
     console.log("DMKSignerSolana initialized with session ID:", sessionId);
+  }
+
+  private _mapError<E extends DAError>(error: E): Error {
+    console.log("ERROR", error);
+    if (
+      typeof error.originalError !== "object" ||
+      error.originalError === null ||
+      !("errorCode" in error.originalError)
+    ) {
+      return new Error(error._tag);
+    }
+    if (
+      typeof error.originalError === "object" &&
+      error.originalError !== null &&
+      "errorCode" in error.originalError &&
+      typeof error.originalError.errorCode === "string"
+    ) {
+      switch (error.originalError.errorCode) {
+        case "6985":
+          return new UserRefusedOnDevice();
+        default:
+          return new Error(error._tag);
+      }
+    } else {
+      return new Error(error._tag);
+    }
   }
 
   /**
@@ -37,7 +80,7 @@ export class DMKSignerSolana implements SolanaSigner {
       observable.subscribe({
         next: state => {
           if (state.status === DeviceActionStatus.Error) {
-            reject(state.error);
+            reject(this._mapError<GetAppConfigurationDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
             const { version, blindSigningEnabled, pubKeyDisplayMode } = state.output;
@@ -67,7 +110,7 @@ export class DMKSignerSolana implements SolanaSigner {
       observable.subscribe({
         next: state => {
           if (state.status === DeviceActionStatus.Error) {
-            reject(state.error);
+            reject(this._mapError<GetAddressDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
             const addressString = state.output;
@@ -94,7 +137,7 @@ export class DMKSignerSolana implements SolanaSigner {
       observable.subscribe({
         next: state => {
           if (state.status === DeviceActionStatus.Error) {
-            reject(state.error);
+            reject(this._mapError<SignTransactionDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
             const signatureBuffer = Buffer.from(state.output);
@@ -120,7 +163,7 @@ export class DMKSignerSolana implements SolanaSigner {
       observable.subscribe({
         next: state => {
           if (state.status === DeviceActionStatus.Error) {
-            reject(state.error);
+            reject(this._mapError<SignMessageDAError>(state.error));
           }
           if (state.status === DeviceActionStatus.Completed) {
             const signatureBuffer = Buffer.from(state.output);
