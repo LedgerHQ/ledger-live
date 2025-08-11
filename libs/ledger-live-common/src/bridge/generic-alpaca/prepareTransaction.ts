@@ -43,6 +43,18 @@ export function genericPrepareTransaction(
           fees: new BigNumber(fees.value.toString()),
         },
       };
+      // propagate storageLimit fee parameter when present (ex: tezos)
+      const params = fees?.parameters as Record<string, unknown> | undefined;
+      if (params) {
+        const storageLimit = params["storageLimit"];
+        if (
+          storageLimit !== undefined &&
+          (typeof storageLimit === "bigint" || typeof storageLimit === "number" || typeof storageLimit === "string")
+        ) {
+          (next as any).storageLimit = new BigNumber(storageLimit.toString());
+        }
+      }
+
       // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
       if (transaction.useAllAmount || transaction["mode"] === "stake" || transaction["mode"] === "unstake") {
         const { amount } = await alpacaApi.validateIntent(intent);
