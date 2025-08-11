@@ -25,10 +25,7 @@ import {
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
-import {
-  FeeEstimation,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { DerivationType } from "@taquito/ledger-signer";
@@ -243,7 +240,6 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       useAllAmount: !!transactionIntent.useAllAmount,
     },
   });
-
 
   return {
     value,

@@ -85,7 +85,7 @@ function convertOperation(
 
   // normalize operation type for UI (rn issue with i18n keys?)
   let normalizedType: Operation["type"];
-  
+
   if (isAPITransactionType(operation)) {
     const isOut = sender?.address === address;
     const isIn = targetAddress === address;
@@ -108,7 +108,7 @@ function convertOperation(
 
   // Tezos uses "applied" for every sucess operation (something else=failed )
   const hasFailed = operation.status && operation.status !== "applied";
-  
+
   const coreOp: Operation = {
     id: `${hash ?? ""}-${id}`,
     asset: { type: "native" },

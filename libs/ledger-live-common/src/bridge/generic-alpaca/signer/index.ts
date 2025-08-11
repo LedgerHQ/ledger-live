@@ -60,7 +60,9 @@ const createSignerTezos: CreateSigner<Tezos> = (transport: Transport) => {
     },
   });
 };
-const signerContextTezos = executeWithSigner(createSignerTezos) as unknown as SignerContext<TezosSigner>;
+const signerContextTezos = executeWithSigner(
+  createSignerTezos,
+) as unknown as SignerContext<TezosSigner>;
 
 export function getSigner(network): AlpacaSigner {
   switch (network) {

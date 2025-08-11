@@ -24,7 +24,6 @@ export const stellarSignTransaction = (signerContext: SignerContext<StellarSigne
   };
 };
 
-
 export const tezosSignTransaction = (signerContext: SignerContext<TezosApp>) => {
   return async (deviceId: string, { path, rawTxHex }: SignTransactionOptions) => {
     const signed = await signerContext(deviceId, signer =>

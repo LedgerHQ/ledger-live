@@ -47,32 +47,32 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     if (senderInfo.type !== "user") throw new Error("unexpected account type");
 
     if (intent.type === "send" && intent.useAllAmount) {
-        if (senderInfo.type === "user" && senderInfo.delegate?.address) {
+      if (senderInfo.type === "user" && senderInfo.delegate?.address) {
         errors.amount = new RecommendUndelegation();
         return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
       }
     }
 
     const estimation = await estimateFees({
-        account: {
-          address: intent.sender,
-          revealed: senderInfo.revealed,
-          balance: BigInt(senderInfo.balance),
-          // try intent public key first and fallback to tzkt public key
-          xpub: intent.senderPublicKey ?? senderInfo.publicKey,
-        },
-        transaction: {
-          // reuse the same mapping as craft, keeping generic intent at the api boundary
-          mode: (intent.type === "stake"
-            ? "delegate"
-            : intent.type === "unstake"
+      account: {
+        address: intent.sender,
+        revealed: senderInfo.revealed,
+        balance: BigInt(senderInfo.balance),
+        // try intent public key first and fallback to tzkt public key
+        xpub: intent.senderPublicKey ?? senderInfo.publicKey,
+      },
+      transaction: {
+        // reuse the same mapping as craft, keeping generic intent at the api boundary
+        mode: (intent.type === "stake"
+          ? "delegate"
+          : intent.type === "unstake"
             ? "undelegate"
             : intent.type) as TezosOperationMode,
-          recipient: intent.recipient,
-          amount: intent.amount,
-          // important for send max: legacy estimator needs this flag to pre-estimate fees
-          useAllAmount: !!intent.useAllAmount,
-        },
+        recipient: intent.recipient,
+        amount: intent.amount,
+        // important for send max: legacy estimator needs this flag to pre-estimate fees
+        useAllAmount: !!intent.useAllAmount,
+      },
     });
     estimatedFees = estimation.estimatedFees;
 
@@ -123,7 +123,6 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
         errors.amount = new Error("Insufficient balance");
       }
     }
-
   } catch (e) {
     errors.estimation = e as Error;
     estimatedFees = 0n;

@@ -81,7 +81,10 @@ export type Delegation = {
 };
 
 export type StakingPosition = Stake;
-export type TezosAccount = Account & { tezosResources: TezosResources; stakingPositions: StakingPosition[] };
+export type TezosAccount = Account & {
+  tezosResources: TezosResources;
+  stakingPositions: StakingPosition[];
+};
 export function isTezosAccount(account: Account): account is TezosAccount {
   return "tezosResources" in account;
 }

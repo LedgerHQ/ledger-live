@@ -66,7 +66,7 @@ export function useStakingPositions(account: TezosAccount): StakingPosition[] {
     let cancelled = false;
     bakers.loadAccountDelegation(account).then(async d => {
       if (cancelled) return;
-      if (d && ("address" in d) && d.address) {
+      if (d && "address" in d && d.address) {
         setDelegation(d);
       } else {
         // fallback: query tzkt directly in dev if cache is empty
