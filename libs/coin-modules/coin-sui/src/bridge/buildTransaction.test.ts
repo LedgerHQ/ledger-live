@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { buildTransaction } from "./buildTransaction";
 import type { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount } from "../types/bridge.fixture";
