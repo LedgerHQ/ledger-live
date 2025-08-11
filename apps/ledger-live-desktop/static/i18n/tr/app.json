@@ -6519,9 +6519,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Bakiye {{minimumBalance}} altında olamaz Maksimum miktarı bir boş hesaba gönder."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Bağlanılacak tutar en az {{minimumBondAmount}} olmalıdır."
     },
@@ -6735,7 +6732,7 @@
       "description" : "Cihazınızın kilidini açın ve tekrar deneyin.",
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledger cihazınızın kurulumu yapılmadı",
       "description" : "Kullanmaya başlamak için cihazınızın kurulumunu yapın. Kurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Ledger'ımı kur",

@@ -87,7 +87,6 @@ import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 
@@ -304,60 +303,58 @@ export default class Root extends Component {
 
   render() {
     return (
-      <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-          {(ready, initialCountervalues) =>
-            ready ? (
-              <>
-                <SetEnvsFromSettings />
-                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-                <HookSentry />
-                <SegmentSetup />
-                <HookNotifications />
-                <HookDynamicContentCards />
-                <TermsAndConditionMigrateLegacyData />
-                <QueuedDrawersContextProvider>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <I18nextProvider i18n={i18n}>
-                        <LocaleProvider>
-                          <PlatformAppProviderWrapper>
-                            <SafeAreaProvider>
-                              <PerformanceProvider>
-                                <StorylyProvider>
-                                  <StylesProvider>
-                                    <StyledStatusBar />
-                                    <NavBarColorHandler />
-                                    <AuthPass>
-                                      <GestureHandlerRootView style={styles.root}>
-                                        <BottomSheetModalProvider>
-                                          <AppProviders initialCountervalues={initialCountervalues}>
-                                            <AppGeoBlocker>
-                                              <AppVersionBlocker>
-                                                <App />
-                                              </AppVersionBlocker>
-                                            </AppGeoBlocker>
-                                          </AppProviders>
-                                        </BottomSheetModalProvider>
-                                      </GestureHandlerRootView>
-                                    </AuthPass>
-                                  </StylesProvider>
-                                </StorylyProvider>
-                              </PerformanceProvider>
-                            </SafeAreaProvider>
-                          </PlatformAppProviderWrapper>
-                        </LocaleProvider>
-                      </I18nextProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </QueuedDrawersContextProvider>
-              </>
-            ) : (
-              <LoadingApp />
-            )
-          }
-        </LedgerStoreProvider>
-      </RebootProvider>
+      <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
+        {(ready, initialCountervalues) =>
+          ready ? (
+            <>
+              <SetEnvsFromSettings />
+              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
+              <HookSentry />
+              <SegmentSetup />
+              <HookNotifications />
+              <HookDynamicContentCards />
+              <TermsAndConditionMigrateLegacyData />
+              <QueuedDrawersContextProvider>
+                <FirebaseRemoteConfigProvider>
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <I18nextProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <PerformanceProvider>
+                              <StorylyProvider>
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <AuthPass>
+                                    <GestureHandlerRootView style={styles.root}>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <RebootProvider onRebootStart={this.onRebootStart}>
+                                          <AppGeoBlocker>
+                                            <AppVersionBlocker>
+                                              <App />
+                                            </AppVersionBlocker>
+                                          </AppGeoBlocker>
+                                        </RebootProvider>
+                                      </AppProviders>
+                                    </GestureHandlerRootView>
+                                  </AuthPass>
+                                </StylesProvider>
+                              </StorylyProvider>
+                            </PerformanceProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nextProvider>
+                  </FirebaseFeatureFlagsProvider>
+                </FirebaseRemoteConfigProvider>
+              </QueuedDrawersContextProvider>
+            </>
+          ) : (
+            <LoadingApp />
+          )
+        }
+      </LedgerStoreProvider>
     );
   }
 }

@@ -6519,9 +6519,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "El saldo no puede ser inferior a {{minimumBalance}} Envía el máximo a una cuenta vacía."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Tienes que vincular al menos {{minimumBondAmount}}."
     },
@@ -6735,7 +6732,7 @@
       "description" : "Desbloquea tu dispositivo e inténtalo de nuevo.",
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Tu Ledger no está configurado",
       "description" : "Configúralo para empezar a usarlo. Te guiaremos a lo largo del proceso de configuración.",
       "goToOnboardingButton" : "Configurar mi Ledger",

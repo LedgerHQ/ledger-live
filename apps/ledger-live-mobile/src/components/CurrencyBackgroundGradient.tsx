@@ -23,7 +23,7 @@ function BackgroundGradient({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const { colors } = useTheme();
 

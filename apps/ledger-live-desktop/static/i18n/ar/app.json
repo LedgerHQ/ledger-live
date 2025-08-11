@@ -6519,9 +6519,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "لا يمكن للرصيد أن يقل عن {{minimumBalance}} أرسل الحد الأقصى الى حساب خالي."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
     },
@@ -6735,7 +6732,7 @@
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "لم يتم إعداد جهازك Ledger",
       "description" : "قم بإعداده لتبدأ استخدامه. سنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي Ledger",

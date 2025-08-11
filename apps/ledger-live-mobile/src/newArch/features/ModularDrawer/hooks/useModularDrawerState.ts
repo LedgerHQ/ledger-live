@@ -57,6 +57,7 @@ export function useModularDrawerState({
 
   useEffect(() => {
     if (isDrawerOpen) {
+      setDefaultSearchValue("");
       hasClosedRef.current = false;
     }
   }, [isDrawerOpen]);
@@ -310,10 +311,9 @@ export function useModularDrawerState({
     });
 
     onClose?.();
-    setTimeout(() => {
-      reset();
-      navigationStepManager.reset();
-    }, 500);
+
+    reset();
+    navigationStepManager.reset();
   }, [trackModularDrawerEvent, flow, navigationStepManager, onClose, reset]);
 
   // Back button visibility logic
@@ -348,6 +348,10 @@ export function useModularDrawerState({
     }
   };
 
+  const onAddNewAccount = useCallback(() => {
+    navigateToDevice(asset as CryptoCurrency);
+  }, [asset, navigateToDevice]);
+
   return {
     // State
     asset,
@@ -380,5 +384,6 @@ export function useModularDrawerState({
 
     defaultSearchValue,
     setDefaultSearchValue,
+    onAddNewAccount,
   };
 }
