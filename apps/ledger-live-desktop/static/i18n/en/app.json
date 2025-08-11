@@ -3700,6 +3700,7 @@
     "delegation": {
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "delegate": "Add",
       "listHeader": "Delegations",
       "availableBalance": "Withdrawable",
