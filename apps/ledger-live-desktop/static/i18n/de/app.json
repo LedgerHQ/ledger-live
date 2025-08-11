@@ -6727,7 +6727,7 @@
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
       "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",

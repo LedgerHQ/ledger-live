@@ -4,5 +4,6 @@ export { DeviceManagementKitTransport } from "./transport/DeviceManagementKitTra
 export {
   isAllowedOnboardingStatePollingErrorDmk,
   isDisconnectedWhileSendingApduError,
+  isDmkError,
 } from "./errors";
 export type { DmkError } from "@ledgerhq/device-management-kit";

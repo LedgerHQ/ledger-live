@@ -6727,7 +6727,7 @@
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledgerが設定されていません",
       "description" : "セットアップして使用を開始してください。セットアッププロセスをご案内します。",
       "goToOnboardingButton" : "Ledgerをセットアップ",

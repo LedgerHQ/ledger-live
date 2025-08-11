@@ -6727,7 +6727,7 @@
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Votre wallet Ledger n’est pas configuré",
       "description" : "Configurez-le pour commencer à l’utiliser. Nous vous guiderons à chaque étape.",
       "goToOnboardingButton" : "Configurer mon wallet",

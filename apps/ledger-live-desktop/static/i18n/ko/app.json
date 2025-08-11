@@ -6727,7 +6727,7 @@
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledger 설정이 완료되지 않았습니다",
       "description" : "장치를 사용하려면 먼저 설정이 필요합니다. 설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 Ledger 설정",
