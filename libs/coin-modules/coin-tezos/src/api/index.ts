@@ -24,7 +24,11 @@ import {
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
-import { FeeEstimation, TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/api/types";
+import {
+  FeeEstimation,
+  TransactionIntent,
+  TransactionValidation,
+} from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import { InvalidAddress, RecipientRequired, RecommendUndelegation } from "@ledgerhq/errors";
@@ -135,14 +139,11 @@ async function craft(
     transactionIntent.type === "stake"
       ? "delegate"
       : transactionIntent.type === "unstake"
-      ? "undelegate"
-      : (transactionIntent.type as "send" | "delegate" | "undelegate");
+        ? "undelegate"
+        : (transactionIntent.type as "send" | "delegate" | "undelegate");
 
   // guard: send max is incompatible with delegated accounts
-  if (
-    mappedType === "send" &&
-    transactionIntent.useAllAmount
-  ) {
+  if (mappedType === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
     if (senderInfo.type === "user" && senderInfo.delegate?.address) {
       throw new RecommendUndelegation();
@@ -165,12 +166,17 @@ async function craft(
   const accountForCraft = {
     address: transactionIntent.sender,
     // craftTransaction expects the current counter, it will increment internally per content
-    counter: typeof transactionIntent.sequence === "number" ? transactionIntent.sequence - 1 : undefined,
+    counter:
+      typeof transactionIntent.sequence === "number" ? transactionIntent.sequence - 1 : undefined,
   };
   const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
   const needsReveal = senderApiAcc.type === "user" ? senderApiAcc.revealed === false : false;
   const totalFeeBI = BigInt(fee.fees || "0");
-  const txFeeBI = needsReveal ? (totalFeeBI > BigInt(DEFAULT_FEE.REVEAL) ? totalFeeBI - BigInt(DEFAULT_FEE.REVEAL) : 0n) : totalFeeBI;
+  const txFeeBI = needsReveal
+    ? totalFeeBI > BigInt(DEFAULT_FEE.REVEAL)
+      ? totalFeeBI - BigInt(DEFAULT_FEE.REVEAL)
+      : 0n
+    : totalFeeBI;
 
   const txForCraft = {
     type: mappedType,
@@ -178,20 +184,24 @@ async function craft(
     amount: amountToUse,
     fee: { ...fee, fees: txFeeBI.toString() },
   } as const;
-  const publicKeyForCraft = needsReveal && transactionIntent.senderPublicKey
-    ? (() => {
-        let pk = transactionIntent.senderPublicKey;
-        const isBase58 =
-          pk.startsWith("edpk") || pk.startsWith("sppk") || pk.startsWith("p2pk") || pk.startsWith("BLpk");
-        if (!isBase58) {
-          pk = b58cencode(
-            compressPublicKey(Buffer.from(pk, "hex"), DerivationType.ED25519),
-            prefix[Prefix.EDPK],
-          );
-        }
-        return { publicKey: pk, publicKeyHash: transactionIntent.sender };
-      })()
-    : undefined;
+  const publicKeyForCraft =
+    needsReveal && transactionIntent.senderPublicKey
+      ? (() => {
+          let pk = transactionIntent.senderPublicKey;
+          const isBase58 =
+            pk.startsWith("edpk") ||
+            pk.startsWith("sppk") ||
+            pk.startsWith("p2pk") ||
+            pk.startsWith("BLpk");
+          if (!isBase58) {
+            pk = b58cencode(
+              compressPublicKey(Buffer.from(pk, "hex"), DerivationType.ED25519),
+              prefix[Prefix.EDPK],
+            );
+          }
+          return { publicKey: pk, publicKeyHash: transactionIntent.sender };
+        })()
+      : undefined;
   const { contents } = await craftTransaction(accountForCraft, txForCraft, publicKeyForCraft);
   return rawEncode(contents);
 }
@@ -226,8 +236,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       mode: (transactionIntent.type === "stake"
         ? "delegate"
         : transactionIntent.type === "unstake"
-        ? "undelegate"
-        : transactionIntent.type) as TezosOperationMode,
+          ? "undelegate"
+          : transactionIntent.type) as TezosOperationMode,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       // important for send max: legacy estimator needs this flag to pre-estimate fees
@@ -379,7 +389,6 @@ async function validateIntent(intent: TransactionIntent): Promise<TransactionVal
         errors.amount = new Error("Insufficient balance");
       }
     }
-
   } catch (e) {
     errors.estimation = e as Error;
     estimatedFees = 0n;
