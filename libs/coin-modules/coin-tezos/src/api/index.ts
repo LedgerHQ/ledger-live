@@ -21,19 +21,18 @@ import {
   lastBlock,
   listOperations,
   rawEncode,
+  validateIntent,
 } from "../logic";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 import {
   FeeEstimation,
   TransactionIntent,
-  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/types";
 import { TezosOperationMode } from "../types";
-import { validateAddress, ValidationResult } from "@taquito/utils";
-import { InvalidAddress, RecipientRequired, RecommendUndelegation } from "@ledgerhq/errors";
+import { RecommendUndelegation } from "@ledgerhq/errors";
 import { DerivationType } from "@taquito/ledger-signer";
-import { b58cencode, Prefix, prefix } from "@taquito/utils";
+import { b58cencode, Prefix, prefix, validateAddress, ValidationResult } from "@taquito/utils";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import { DEFAULT_FEE } from "@taquito/taquito";
 
@@ -316,85 +315,12 @@ async function operations(
   address: string,
   pagination: Pagination = { minHeight: 0 },
 ): Promise<[Operation[], string]> {
-  return operationsFromHeight(address, pagination.minHeight);
-}
-
-async function validateIntent(intent: TransactionIntent): Promise<TransactionValidation> {
-  // central place to validate amounts/fees for generic bridge
-  const errors: Record<string, Error> = {};
-  const warnings: Record<string, Error> = {};
-  let estimatedFees: bigint;
-  let amount: bigint;
-  let totalSpent: bigint;
-
-  // basic recipient validation for send
-  if (intent.type === "send") {
-    if (!intent.recipient) {
-      errors.recipient = new RecipientRequired("");
-      return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
-    }
-    if (validateAddress(intent.recipient) !== ValidationResult.VALID) {
-      errors.recipient = new InvalidAddress(undefined, { currencyName: "Tezos" });
-      return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
-    }
-  }
-
-  // avoid taquito error `contract.empty_transaction` when amount is 0 during typing
-  // do not short-circuit when useAllAmount is enabled (send max path)
-  if (intent.type === "send" && intent.amount === 0n && !intent.useAllAmount) {
-    estimatedFees = 0n;
-    amount = 0n;
-    totalSpent = 0n;
-    return { errors, warnings, estimatedFees, amount, totalSpent };
-  }
-
-  try {
-    // send max not allowed on delegated accounts (must undelegate acc first)
-    if (intent.type === "send" && intent.useAllAmount) {
-      const senderInfo = await api.getAccountByAddress(intent.sender);
-      if (senderInfo.type === "user" && senderInfo.delegate?.address) {
-        errors.amount = new RecommendUndelegation();
-        return { errors, warnings, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
-      }
-    }
-
-    const estimation = await estimate(intent);
-    estimatedFees = estimation.value;
-
-    if (intent.type === "stake" || intent.type === "unstake") {
-      const accountInfo = await api.getAccountByAddress(intent.sender);
-      amount = BigInt(accountInfo.type === "user" ? accountInfo.balance : 0);
-      totalSpent = estimatedFees;
-    } else if (intent.type === "send" && intent.useAllAmount) {
-      // send max: amount = balance - fees (clamped to >= 0)
-      const accountInfo = await api.getAccountByAddress(intent.sender);
-      if (accountInfo.type === "user") {
-        const bal = BigInt(accountInfo.balance);
-        amount = bal > estimatedFees ? bal - estimatedFees : 0n;
-        totalSpent = amount + estimatedFees;
-      } else {
-        amount = 0n;
-        totalSpent = 0n;
-      }
-    } else {
-      amount = intent.amount;
-      totalSpent = amount + estimatedFees;
-    }
-
-    // basic sanity check on balance coverage
-    const accountInfo = await api.getAccountByAddress(intent.sender);
-    if (accountInfo.type === "user") {
-      const accountBalance = BigInt(accountInfo.balance);
-      if (totalSpent > accountBalance) {
-        errors.amount = new Error("Insufficient balance");
-      }
-    }
-  } catch (e) {
-    errors.estimation = e as Error;
-    estimatedFees = 0n;
-    amount = intent.amount;
-    totalSpent = intent.amount;
-  }
-
-  return { errors, warnings, estimatedFees, amount, totalSpent };
+  const [ops, next] = await operationsFromHeight(address, pagination.minHeight);
+  // Keep failed operations only if they were sent by this address (=don't keep received failures)
+  const filtered = ops.filter(op => {
+    const isFailed = op?.details?.status === "failed";
+    const isSender = (op.senders || []).includes(address);
+    return !isFailed || isSender;
+  });
+  return [filtered, next];
 }

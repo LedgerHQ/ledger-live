@@ -96,8 +96,8 @@ function convertOperation(
     }
   } else if (isAPIDelegationType(operation)) {
     // map delegation operations to DELEGATE/UNDELEGATE for Generic Bridge
-    normalizedType = operation.newDelegate?.address 
-      ? ("DELEGATE" as Operation["type"]) 
+    normalizedType = operation.newDelegate?.address
+      ? ("DELEGATE" as Operation["type"])
       : ("UNDELEGATE" as Operation["type"]);
   } else if (isAPIRevealType(operation)) {
     normalizedType = "REVEAL" as Operation["type"];
