@@ -341,7 +341,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
           "8vCyX7oB6Pc3pbWMGYYZF5pbSnAdQ7Gyr32JqxqCy8ZR",
           "11111111111111111111111111111111",
         ],
-        recentBlockhash: "49xM1QggKfcKj2ixPYyAgMfoD3oPne8Fj9WdCLjsLuMo",
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "49xM1QggKfcKj2ixPYyAgMfoD3oPne8Fj9WdCLjsLuMo",
         instructions: [
           {
             programIdIndex: 2,
