@@ -36,6 +36,9 @@ export class DMKSignerSolana implements SolanaSigner {
     return new Promise<AppConfig>((resolve, reject) => {
       observable.subscribe({
         next: state => {
+          if (state.status === DeviceActionStatus.Error) {
+            reject(state.error);
+          }
           if (state.status === DeviceActionStatus.Completed) {
             const { version, blindSigningEnabled, pubKeyDisplayMode } = state.output;
             const mode =
@@ -63,6 +66,9 @@ export class DMKSignerSolana implements SolanaSigner {
     return new Promise<SolanaAddress>((resolve, reject) => {
       observable.subscribe({
         next: state => {
+          if (state.status === DeviceActionStatus.Error) {
+            reject(state.error);
+          }
           if (state.status === DeviceActionStatus.Completed) {
             const addressString = state.output;
             const addressBytes = Buffer.from(bs58.decode(addressString));
@@ -87,6 +93,9 @@ export class DMKSignerSolana implements SolanaSigner {
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
         next: state => {
+          if (state.status === DeviceActionStatus.Error) {
+            reject(state.error);
+          }
           if (state.status === DeviceActionStatus.Completed) {
             const signatureBuffer = Buffer.from(state.output);
             resolve({ signature: signatureBuffer });
@@ -110,6 +119,9 @@ export class DMKSignerSolana implements SolanaSigner {
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
         next: state => {
+          if (state.status === DeviceActionStatus.Error) {
+            reject(state.error);
+          }
           if (state.status === DeviceActionStatus.Completed) {
             const signatureBuffer = Buffer.from(state.output);
             resolve({ signature: signatureBuffer });
