@@ -3659,7 +3659,8 @@
           "refunded" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID für weitere Informationen.",
           "pending" : "Bitte warten Sie, während der Swap-Provider die Transaktion verarbeitet.",
           "onhold" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID, um die Situation zu lösen.",
-          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen."
+          "finished" : "Ihr Swap wurde erfolgreich abgeschlossen.",
+          "unknown" : "Wir warten auf Informationen vom Anbieter."
         }
       },
       "missingApp" : {
@@ -4045,6 +4046,10 @@
       "quantityAvailable" : "Verfügbare Menge"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Blindsignatur erforderlich",
+        "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+      },
       "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
       "tag" : "Markierung (optional)",
       "validateTag" : "Markierung validieren",
@@ -6243,6 +6248,7 @@
       "iWithdraw" : "Ich entziehe mich",
       "totalStake" : "Stake-Gesamtsumme",
       "commission" : "Provision",
+      "netApy" : "Netto-APY",
       "stakeActivationState" : "Status",
       "stakeActivePercent" : "Aktiv",
       "stakeAvailableBalance" : "Verfügbares Guthaben",
@@ -7764,7 +7770,7 @@
   },
   "geoBlocking" : {
     "title" : "Nicht am Ort verfügbar",
-    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "description" : "Ledger Live ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {
@@ -7776,7 +7782,10 @@
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
-    "searchPlaceholder" : "Suche"
+    "searchPlaceholder" : "Suche",
+    "emptyAssetList" : "Keine Assets gefunden",
+    "accountCount" : "{{count}} Konto (erkannt)",
+    "accountCount_plural" : "{{count}} Konten (erkannt)"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
