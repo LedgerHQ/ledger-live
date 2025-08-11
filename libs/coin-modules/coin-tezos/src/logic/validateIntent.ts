@@ -1,9 +1,16 @@
 import { TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/lib/api/types";
-import { InvalidAddress, RecipientRequired, RecommendUndelegation } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  RecipientRequired,
+  RecommendUndelegation,
+  NotEnoughBalance,
+  NotEnoughBalanceToDelegate,
+} from "@ledgerhq/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import { estimateFees } from "./estimateFees";
 import { TezosOperationMode } from "../types";
+import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
 
 export async function validateIntent(intent: TransactionIntent): Promise<TransactionValidation> {
   // central place to validate amounts/fees for generic bridge
@@ -68,6 +75,28 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
         },
     });
     estimatedFees = estimation.estimatedFees;
+
+    // Map Taquito specific errors
+    if (estimation.taquitoError) {
+      const id = estimation.taquitoError;
+      if (id.endsWith("balance_too_low") || id.endsWith("subtraction_underflow")) {
+        // generic low balance mapping
+        if (intent.type === "send") {
+          errors.amount = new NotEnoughBalance();
+        } else if (intent.type === "stake") {
+          errors.amount = new NotEnoughBalanceToDelegate();
+        } else {
+          // undelegate or others: not enough to pay fees
+          errors.amount = new NotEnoughBalance();
+        }
+      } else if (id.endsWith("delegate.unchanged")) {
+        if (intent.type === "stake") {
+          errors.recipient = new InvalidAddressBecauseAlreadyDelegated();
+        }
+      } else if (!errors.amount) {
+        errors.amount = new Error(id);
+      }
+    }
 
     if (intent.type === "stake" || intent.type === "unstake") {
       amount = BigInt(senderInfo.type === "user" ? senderInfo.balance : 0);

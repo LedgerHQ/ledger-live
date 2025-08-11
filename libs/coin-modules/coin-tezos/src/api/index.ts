@@ -244,10 +244,6 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
     },
   });
 
-  // deal with taquitoError (see later what is it????)
-  if (taquitoError !== undefined) {
-    throw new Error(`Fees estimation failed: ${taquitoError}`);
-  }
 
   return {
     value,
