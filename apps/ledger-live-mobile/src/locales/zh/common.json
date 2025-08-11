@@ -3659,7 +3659,8 @@
           "refunded" : "请使用您的互换 ID 联系互换服务提供方以了解更多详情。",
           "pending" : "请稍候片刻，互换提供方正在处理该交易。",
           "onhold" : "请使用您的互换 ID 联系互换服务提供方以解决这一情况。",
-          "finished" : "您的互换已成功完成"
+          "finished" : "您的互换已成功完成",
+          "unknown" : "我们正在等待提供商的信息。"
         }
       },
       "missingApp" : {
@@ -4045,6 +4046,10 @@
       "quantityAvailable" : "可用数量"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "需要盲签名",
+        "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+      },
       "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
       "tag" : "标签 (可选)",
       "validateTag" : "验证标签",
@@ -6243,6 +6248,7 @@
       "iWithdraw" : "我提取",
       "totalStake" : "质押总额",
       "commission" : "佣金",
+      "netApy" : "净年收益率",
       "stakeActivationState" : "状态",
       "stakeActivePercent" : "活跃",
       "stakeAvailableBalance" : "可用余额",
@@ -7764,7 +7770,7 @@
   },
   "geoBlocking" : {
     "title" : "所在地区不可用",
-    "description" : "此地区无法使用 Ledger 钱包。",
+    "description" : "此地区无法使用 Ledger Live。",
     "learnMore" : "了解更多"
   },
   "versionBlocking" : {
@@ -7776,7 +7782,10 @@
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
     "selectAccount" : "选择账户",
-    "searchPlaceholder" : "搜索"
+    "searchPlaceholder" : "搜索",
+    "emptyAssetList" : "未找到资产",
+    "accountCount" : "{{count}} 个账户（已检测到）",
+    "accountCount_plural" : "{{count}} 个账户（已检测到）"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
