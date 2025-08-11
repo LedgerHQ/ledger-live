@@ -3659,7 +3659,8 @@
           "refunded" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
           "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
           "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
-          "finished" : "スワップが正常に完了しました。"
+          "finished" : "スワップが正常に完了しました。",
+          "unknown" : "プロバイダーからの情報を待っています。"
         }
       },
       "missingApp" : {
@@ -4045,6 +4046,10 @@
       "quantityAvailable" : "利用可能な数量"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "ブラインド署名が必要です",
+        "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+      },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
       "validateTag" : "タグを検証",
@@ -6243,6 +6248,7 @@
       "iWithdraw" : "引き出す",
       "totalStake" : "合計ステーキング量",
       "commission" : "コミッション",
+      "netApy" : "実質年利",
       "stakeActivationState" : "状態",
       "stakeActivePercent" : "アクティブ",
       "stakeAvailableBalance" : "利用可能残高",
@@ -7764,7 +7770,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "恐れ入りますが、現在の地域ではLedger Liveをご利用いただけません。",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {
@@ -7776,7 +7782,10 @@
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
     "selectAccount" : "アカウントを選択",
-    "searchPlaceholder" : "検索"
+    "searchPlaceholder" : "検索",
+    "emptyAssetList" : "資産が見つかりません",
+    "accountCount" : "{{count}}個のアカウント（検出済み）",
+    "accountCount_plural" : "{{count}}個のアカウント（検出済み）"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
