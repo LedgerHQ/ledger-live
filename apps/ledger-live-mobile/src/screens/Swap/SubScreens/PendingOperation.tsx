@@ -47,6 +47,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         providerName={provider}
         targetCurrency={toCurrency}
         sourceCurrency={fromCurrency?.id}
+        avoidDuplicates={true}
       />
       <View style={styles.wrapper}>
         <View style={styles.content}>
