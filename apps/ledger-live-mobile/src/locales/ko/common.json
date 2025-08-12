@@ -306,6 +306,10 @@
       "title" : "장치 연결 실패",
       "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
+    "ReconnectionFailedError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "장치 연결 실패",
       "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
@@ -6245,6 +6249,7 @@
       "iWithdraw" : "출금",
       "totalStake" : "총 스테이킹",
       "commission" : "커미션",
+      "netApy" : "순 연간 수익률",
       "stakeActivationState" : "상태",
       "stakeActivePercent" : "활성",
       "stakeAvailableBalance" : "이용 가능 잔액",
@@ -7780,8 +7785,8 @@
     "selectAccount" : "계정 선택",
     "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
-    "accountCount" : "{{count}}개의 계정 (감지됨)",
-    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
+    "accountCount" : "{{count}} account",
+    "accountCount_plural" : "{{count}} accounts"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
