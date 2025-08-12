@@ -32,6 +32,7 @@ import CustomCALRefInput from "./CustomCALRefInput";
 import ModularDrawerDevTool from "./ModularDrawer";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
+import MockFetchDemoButton from "./MockFetchDemoButton";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -134,6 +135,7 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <MockFetchDemoButton />
       <ModularDrawerDevTool />
       <MockAccountGeneratorSection />
     </Body>

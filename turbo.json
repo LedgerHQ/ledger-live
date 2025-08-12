@@ -101,6 +101,11 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "start:mock-fetch": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "unimported": {
       "cache": false
     },
