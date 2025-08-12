@@ -245,6 +245,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
           if (ignore) return;
           const preparedTransaction = await bridge.prepareTransaction(mainAccount, transaction);
           if (ignore) return;
+          console.log('%clibs/ledger-live-common/src/bridge/useBridgeTransaction.ts:248 object', 'color: #007acc;', preparedTransaction);
           const status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
           if (ignore) return;
           return {

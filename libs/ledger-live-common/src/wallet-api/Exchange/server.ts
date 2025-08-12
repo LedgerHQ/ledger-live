@@ -79,6 +79,7 @@ export type CompleteExchangeUiRequest = {
   magnitudeAwareRate?: BigNumber;
   refundAddress?: string;
   payoutAddress?: string;
+  isSponsored?: boolean;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -387,6 +388,7 @@ export const handlers = ({
         toNewTokenId,
         customFeeConfig,
         swapAppVersion,
+        isSponsored
       } = params;
 
       const trackingParams = {
@@ -442,7 +444,7 @@ export const handlers = ({
       };
 
       const { transactionId, device: deviceInfo } = await startExchange();
-
+console.log('%clibs/ledger-live-common/src/wallet-api/Exchange/server.ts:447 object', 'color: #007acc;', transactionId);
       const {
         binaryPayload,
         signature,
@@ -552,6 +554,7 @@ export const handlers = ({
               toCurrency: toCurrency!,
             },
             feesStrategy: params.feeStrategy,
+            isSponsored: true,
             swapId: swapId,
             amountExpectedTo: amountExpectedTo.toNumber(),
             magnitudeAwareRate,

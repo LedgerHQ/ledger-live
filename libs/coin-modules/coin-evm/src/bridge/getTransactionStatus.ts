@@ -258,7 +258,8 @@ export const getTransactionStatus: AccountBridge<
   EvmTransaction,
   Account,
   TransactionStatus
->["getTransactionStatus"] = async (account, tx) => {
+>["getTransactionStatus"] = async (account, tx, isSponsored) => {
+  console.log('%clibs/coin-modules/coin-evm/src/bridge/getTransactionStatus.ts:262 isSponsored', 'color: #007acc;', isSponsored);
   const subAccount = findSubAccountById(account, tx.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const { gasLimit, customGasLimit, additionalFees, amount } = tx;
@@ -271,7 +272,7 @@ export const getTransactionStatus: AccountBridge<
   // Amount related errors and warnings
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
-  const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
+  const [gasErr, gasWarn] = !isSponsored ? validateGas(account, tx, totalFees, gasLimit, customGasLimit) : [{}, {}];
   // NFT related errors and warnings
   const [nftErr, nftWarn] = validateNft(account, tx);
   // Fee ratio related errors and warnings

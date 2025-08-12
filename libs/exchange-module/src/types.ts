@@ -28,6 +28,7 @@ export type ExchangeStartSwapParams = {
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
+  isSponsored?: boolean;
 };
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {

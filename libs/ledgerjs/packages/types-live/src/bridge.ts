@@ -168,7 +168,7 @@ interface SendReceiveAccountBridge<
   // it must return the unmodified input transaction object (reference stability)
   prepareTransaction(account: A, transaction: T): Promise<T>;
   // calculate derived state of the Transaction, useful to display summary / errors / warnings. tells if the transaction is ready.
-  getTransactionStatus(account: A, transaction: T): Promise<U>;
+  getTransactionStatus(account: A, transaction: T, isSponsored?: boolean): Promise<U>;
   // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
   // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).

@@ -32,6 +32,7 @@ export type Params = {
   stepId?: StepId;
   useApp?: string;
   dependencies?: string[];
+  sponsored?: boolean;
   account: AccountLike;
   transactionData: Partial<Transaction>;
   onResult: (signedOperation: SignedOperation) => void;
@@ -112,6 +113,7 @@ function getStatusError(status: TransactionStatus, type = "errors"): Error | und
   return firstKey ? status[type][firstKey] : null;
 }
 export default function Body({ onChangeStepId, onClose, setError, stepId, params }: Props) {
+  console.log('%capps/ledger-live-desktop/src/renderer/modals/SignTransaction/Body.tsx:116 params', 'color: #007acc;', params);
   useEffect(() => {
     // Check for stepId params on first mount to update if diff
     if (params.stepId && stepId !== params.stepId) {
@@ -135,6 +137,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
+    console.log('%capps/ledger-live-desktop/src/renderer/modals/SignTransaction/Body.tsx:139 signTx useBridgeTransaction', 'color: #007acc;');
     const parentAccount = params && params.parentAccount;
     const account = params && params.account;
     const bridge = getAccountBridge(account, parentAccount);

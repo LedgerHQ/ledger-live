@@ -35,8 +35,8 @@ const completeExchange = (
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
-  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
-
+  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType, isSponsored } = input;
+ console.log('%clibs/ledger-live-common/src/exchange/swap/completeExchange.ts:39 isSponsored', 'color: #007acc;', isSponsored);
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
 
@@ -121,6 +121,7 @@ const completeExchange = (
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
           transaction,
+          isSponsored
         );
         if (unsubscribed) return;
 

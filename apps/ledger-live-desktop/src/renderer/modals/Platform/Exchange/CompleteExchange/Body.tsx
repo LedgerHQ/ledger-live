@@ -78,6 +78,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     payoutAddress,
     ...exchangeParams
   } = data;
+  console.log('%capps/ledger-live-desktop/src/renderer/modals/Platform/Exchange/CompleteExchange/Body.tsx:81 exchangeParams', 'color: #007acc;', exchangeParams);
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   // toAccount exists only in swap mode

@@ -90,6 +90,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
                 transactionData: liveTx,
                 useApp: options?.hwAppId,
                 dependencies: options?.dependencies,
+                sponsored: options?.sponsored,
                 account,
                 parentAccount,
                 onResult: onSuccess,

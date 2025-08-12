@@ -50,6 +50,7 @@ export type MessageSignResult = {
 export type TransactionOptions = {
   hwAppId?: string;
   dependencies?: string[];
+  sponsored?: boolean;
 };
 
 export type TransactionSignParams = {

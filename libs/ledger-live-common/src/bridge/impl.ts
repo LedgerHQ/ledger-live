@@ -139,6 +139,7 @@ function mergeResults(
 async function commonGetTransactionStatus(
   account: Account,
   transaction: TransactionCommon,
+  isSponsored: boolean = false,
 ): Promise<Partial<TransactionStatusCommon>> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};

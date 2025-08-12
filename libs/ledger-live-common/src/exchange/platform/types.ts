@@ -48,6 +48,7 @@ interface CompleteExchangeInputCommon {
   signature: string;
   transaction: Transaction;
   amountExpectedTo?: number;
+  isSponsored?: boolean;
 }
 export interface CompleteExchangeInputSell extends CompleteExchangeInputCommon {
   readonly exchangeType: ExchangeTypes.Sell;
