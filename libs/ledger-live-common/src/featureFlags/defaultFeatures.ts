@@ -617,8 +617,8 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       add_account: true,
       live_app: true,
-      live_apps_whitelisted: [],
-      live_apps_blacklisted: [],
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -630,8 +630,8 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       add_account: true,
       live_app: true,
-      live_apps_whitelisted: [],
-      live_apps_blacklisted: [],
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,

@@ -657,8 +657,8 @@ export type Feature_LlmMmkvMigration = Feature<{
 type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
-  live_apps_whitelisted: string[];
-  live_apps_blacklisted: string[];
+  live_apps_allowlist: string[];
+  live_apps_blocklist: string[];
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;

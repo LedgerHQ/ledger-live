@@ -177,8 +177,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: false,
-              live_apps_whitelisted: ["earn"],
-              live_apps_blacklisted: [],
+              live_apps_allowlist: ["earn"],
+              live_apps_blocklist: [],
             },
           },
         };
@@ -207,8 +207,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: ["earn", "swap"],
-              live_apps_blacklisted: [],
+              live_apps_allowlist: ["earn", "swap"],
+              live_apps_blocklist: [],
             },
           },
         };
@@ -244,8 +244,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: ["earn"],
-              live_apps_blacklisted: [],
+              live_apps_allowlist: ["earn"],
+              live_apps_blocklist: [],
             },
           },
         };
@@ -281,8 +281,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: [],
-              live_apps_blacklisted: ["blocked-app", "another-blocked-app"],
+              live_apps_allowlist: [],
+              live_apps_blocklist: ["blocked-app", "another-blocked-app"],
             },
           },
         };
@@ -318,8 +318,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: [],
-              live_apps_blacklisted: ["blocked-app"],
+              live_apps_allowlist: [],
+              live_apps_blocklist: ["blocked-app"],
             },
           },
         };
@@ -355,8 +355,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: ["earn", "swap"],
-              live_apps_blacklisted: ["swap"],
+              live_apps_allowlist: ["earn", "swap"],
+              live_apps_blocklist: ["swap"],
             },
           },
         };
@@ -422,8 +422,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: ["earn", "swap"],
-              live_apps_blacklisted: [],
+              live_apps_allowlist: ["earn", "swap"],
+              live_apps_blocklist: [],
             },
           },
         };
@@ -452,8 +452,8 @@ describe("useModularDrawerVisibility", () => {
             enabled: true,
             params: {
               [ModularDrawerLocation.LIVE_APP]: true,
-              live_apps_whitelisted: ["earn", "swap"],
-              live_apps_blacklisted: ["swap"],
+              live_apps_allowlist: ["earn", "swap"],
+              live_apps_blocklist: ["swap"],
             },
           },
         };
