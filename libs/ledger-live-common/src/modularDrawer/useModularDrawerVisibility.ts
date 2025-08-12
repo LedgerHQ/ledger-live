@@ -24,14 +24,14 @@ export function useModularDrawerVisibility({
         if (!isLiveAppEnabled) return false;
 
         const { liveAppId } = params;
-        const whitelisted = featureModularDrawer.params?.live_apps_allowlist ?? [];
-        const blacklisted = featureModularDrawer.params?.live_apps_blocklist ?? [];
+        const allowed = featureModularDrawer.params?.live_apps_allowlist ?? [];
+        const blocked = featureModularDrawer.params?.live_apps_blocklist ?? [];
 
-        if (whitelisted.length > 0 && !whitelisted.includes(liveAppId)) {
+        if (allowed.length > 0 && !allowed.includes(liveAppId)) {
           return false;
         }
 
-        if (blacklisted.includes(liveAppId)) {
+        if (blocked.includes(liveAppId)) {
           return false;
         }
 
