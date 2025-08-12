@@ -53,6 +53,14 @@ const e2eDelegationAccountsWithoutBroadcast = [
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-3020",
   },
+  {
+    delegate: new Delegate(
+      Account.APTOS_1,
+      "11.00000000",
+      "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
+    ),
+    xrayTicket: "B2CQA-3564",
+  },
 ];
 
 const validators = [
