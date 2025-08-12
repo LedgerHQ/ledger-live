@@ -10,9 +10,9 @@ export class ModularAssetDrawer extends Drawer {
   private searchInput = this.page.getByTestId(this.searchInputTestId);
   private drawerCloseButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
-  private assetItemByTicker = (ticker: string) =>
+  private assetItemTicker = (ticker: string) =>
     this.page.getByTestId(`asset-item-ticker-${ticker}`);
-  private assetItemByName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
+  private assetItemName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
 
   @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
@@ -40,7 +40,7 @@ export class ModularAssetDrawer extends Drawer {
 
     const tickerElement = await this.ensureTickerVisible(currency);
 
-    const nameElement = this.assetItemByName(currency.name);
+    const nameElement = this.assetItemName(currency.name);
     if (await nameElement.isVisible()) {
       await nameElement.first().click();
       return;
@@ -50,11 +50,11 @@ export class ModularAssetDrawer extends Drawer {
   }
 
   async ensureTickerVisible(currency: Currency) {
-    let tickerElement = this.assetItemByTicker(currency.ticker).first();
+    let tickerElement = this.assetItemTicker(currency.ticker).first();
     if (!(await tickerElement.isVisible())) {
       await this.searchInput.first().fill(currency.ticker);
       await this.waitForTickerToAppear(currency.ticker);
-      tickerElement = this.assetItemByTicker(currency.ticker).first();
+      tickerElement = this.assetItemTicker(currency.ticker).first();
       if (!(await tickerElement.isVisible())) {
         throw new Error(`Asset with ticker ${currency.ticker} not found.`);
       }
