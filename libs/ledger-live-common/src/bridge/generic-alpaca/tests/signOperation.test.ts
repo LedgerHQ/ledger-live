@@ -14,7 +14,7 @@ jest.mock("../utils", () => ({
   transactionToIntent: jest.fn(),
 }));
 describe("genericSignOperation", () => {
-  const networks = ["xrp", "stellar"];
+  const networks = ["xrp", "stellar", "tezos"];
   const kind = "local";
 
   const mockSignerContext = jest.fn();
