@@ -1,18 +1,18 @@
 # @ledgerhq/domain-service
 
-## 1.2.39-nightly.1
+## 1.2.39
 
 ### Patch Changes
 
-- Updated dependencies [[`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
-  - @ledgerhq/types-live@6.79.1-nightly.0
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0
 
-## 1.2.39-nightly.0
+## 1.2.39-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
-  - @ledgerhq/errors@6.24.0-nightly.0
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0-next.0
 
 ## 1.2.38
 

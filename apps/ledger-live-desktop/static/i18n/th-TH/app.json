@@ -6409,7 +6409,7 @@
       "description" : "ปลดล็อกอุปกรณ์แล้วลองอีกครั้ง",
       "descriptionWithProductName" : "ปลดล็อก {{ productName }} แล้วลองอีกครั้ง"
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "ยังไม่ได้ติดตั้ง Ledger ของคุณ",
       "description" : "ติดตั้งเพื่อเริ่มใช้ เราจะแนะนำคุณตลอดกระบวนการติดตั้ง",
       "goToOnboardingButton" : "ตั้งค่า Ledger ของฉัน",

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { Cluster } from "@solana/web3.js";
 import { compact } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
@@ -24,6 +24,13 @@ export type ValidatorsAppValidator = {
   name?: string | undefined;
   avatarUrl?: string | undefined;
   wwwUrl?: string | undefined;
+  apy?: number | undefined;
+};
+
+type ValidatorApyRaw = {
+  address: string;
+  delegator_apy: number;
+  name: string;
 };
 
 const URLS = {
@@ -36,18 +43,46 @@ const URLS = {
     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
     return baseUrl;
   },
+  validatorApylist: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
 };
+
+async function fetchFigmentApy(
+  cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
+): Promise<Record<string, number>> {
+  if (cluster !== "mainnet-beta") return {};
+  try {
+    const response = await network({
+      method: "GET",
+      url: URLS.validatorApylist,
+    });
+
+    if (response.status === 200 && Array.isArray(response.data)) {
+      return response.data.reduce((acc: Record<string, number>, item: ValidatorApyRaw) => {
+        if (typeof item.address === "string" && typeof item.delegator_apy === "number") {
+          acc[item.address] = item.delegator_apy;
+        }
+        return acc;
+      }, {});
+    }
+  } catch (error) {
+    console.warn("Failed to fetch Figment APY", error);
+  }
+
+  return {};
+}
 
 export async function getValidators(
   cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
 ): Promise<ValidatorsAppValidator[]> {
-  const response = await network({
-    method: "GET",
-    url: URLS.validatorList(cluster),
-  });
+  const [validatorsResponse, apyMap] = await Promise.all([
+    network({ method: "GET", url: URLS.validatorList(cluster) }),
+    fetchFigmentApy(cluster),
+  ]);
 
   const allRawValidators =
-    response.status === 200 ? (response.data as ValidatorsAppValidatorRaw[]) : [];
+    validatorsResponse.status === 200
+      ? (validatorsResponse.data as ValidatorsAppValidatorRaw[])
+      : [];
 
   // validators app data is not clean: random properties can randomly contain
   // data, null, undefined
@@ -69,6 +104,7 @@ export async function getValidators(
         name: validator.name ?? undefined,
         avatarUrl: validator.avatar_url ?? undefined,
         wwwUrl: validator.www_url ?? undefined,
+        apy: apyMap[validator.vote_account],
       };
     }
 

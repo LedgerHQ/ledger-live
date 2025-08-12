@@ -835,7 +835,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://rpc.blast.io" },
-      explorer: { type: "blockscout", uri: "https://blast.blockscout.com/api" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
+      },
       showNfts: false,
     },
   },
@@ -844,7 +847,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://sepolia.blast.io" },
-      explorer: { type: "blockscout", uri: "https://blast-testnet.blockscout.com/api" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
+      },
       showNfts: false,
     },
   },
