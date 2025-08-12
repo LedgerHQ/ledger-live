@@ -3,6 +3,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHel
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
+import { normalizeLegacyOperation } from "./normalizeLegacyOps";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { findToken } from "./buildSubAccounts";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
@@ -39,7 +40,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
 
-    const oldOps = (initialAccount?.operations || []) as OperationCommon[];
+    const oldOpsRaw = (initialAccount?.operations || []) as OperationCommon[];
+    const oldOps: OperationCommon[] = oldOpsRaw.map(op =>
+      normalizeLegacyOperation(op, address),
+    );
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
     const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
@@ -64,6 +68,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         assetOperations.push(operation);
       }
     });
+
+    console.log('--------------------------------');
+    console.log("Old ops raw: ", oldOpsRaw);
+    console.log("Old ops: ", oldOps);
+    console.log("New ops: ", newOps);
+    console.log("Merged ops: ", mergedOps);
+    console.log('--------------------------------');
 
     const subAccounts =
       buildSubAccounts({
