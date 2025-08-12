@@ -1,22 +1,22 @@
 ---
-"@ledgerhq/hw-app-multiversx": patch
-"@ledgerhq/hw-app-exchange": patch
-"@ledgerhq/types-devices": patch
-"@ledgerhq/hw-app-celo": patch
-"@ledgerhq/types-live": patch
-"@ledgerhq/devices": patch
-"@ledgerhq/wallet-api-acre-module": patch
-"ledger-live-desktop": patch
-"@ledgerhq/ledger-cal-service": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/dummy-wallet-app": patch
-"@ledgerhq/live-dmk-desktop": patch
-"@ledgerhq/wallet-api-exchange-module": patch
-"@ledgerhq/live-dmk-mobile": patch
-"@ledgerhq/live-dmk-shared": patch
-"@ledgerhq/live-signer-evm": patch
-"@ledgerhq/device-core": patch
+"@ledgerhq/hw-app-multiversx": minor
+"@ledgerhq/hw-app-exchange": minor
+"@ledgerhq/types-devices": minor
+"@ledgerhq/hw-app-celo": minor
+"@ledgerhq/types-live": minor
+"@ledgerhq/devices": minor
+"@ledgerhq/wallet-api-acre-module": minor
+"ledger-live-desktop": minor
+"@ledgerhq/ledger-cal-service": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/dummy-wallet-app": minor
+"@ledgerhq/live-dmk-desktop": minor
+"@ledgerhq/wallet-api-exchange-module": minor
+"@ledgerhq/live-dmk-mobile": minor
+"@ledgerhq/live-dmk-shared": minor
+"@ledgerhq/live-signer-evm": minor
+"@ledgerhq/device-core": minor
 ---
 
 Support Apex
