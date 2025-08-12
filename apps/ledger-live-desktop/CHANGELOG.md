@@ -1,5 +1,63 @@
 # ledger-live-desktop
 
+## 2.125.0-next.0
+
+### Minor Changes
+
+- [#11119](https://github.com/LedgerHQ/ledger-live/pull/11119) [`77d0a95`](https://github.com/LedgerHQ/ledger-live/commit/77d0a954d458d8def722e4fa2daf9f47edd3c50e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a tracking issue during Recovery Key onboarding
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+- [#11258](https://github.com/LedgerHQ/ledger-live/pull/11258) [`dc54e32`](https://github.com/LedgerHQ/ledger-live/commit/dc54e32b27e3cb953bd6ef33a241f64e1bed4994) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Simplify and update animations
+
+- [#10829](https://github.com/LedgerHQ/ledger-live/pull/10829) [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix genuine check error, expose dmk error in LL
+
+- [#11299](https://github.com/LedgerHQ/ledger-live/pull/11299) [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix some UI regressions on stellar detailed operations display introduced in #11120
+
+- [#11312](https://github.com/LedgerHQ/ledger-live/pull/11312) [`e525709`](https://github.com/LedgerHQ/ledger-live/commit/e525709ca9f7bb07de6e8fe061af7e11594be81c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: onCancel wrapper to prevent many on cancel (user closed after an error)
+
+- [#11230](https://github.com/LedgerHQ/ledger-live/pull/11230) [`ef11c6d`](https://github.com/LedgerHQ/ledger-live/commit/ef11c6d4f738d3ad7e1753875a02eb12156be28e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Generate Accounts tools in LLD
+
+- [#11264](https://github.com/LedgerHQ/ledger-live/pull/11264) [`168a1bd`](https://github.com/LedgerHQ/ledger-live/commit/168a1bdf039c75ba674394824e84483e823f0890) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Dmk error tracking
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+- [#11228](https://github.com/LedgerHQ/ledger-live/pull/11228) [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: remove send max error on Polkadot
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`168a1bd`](https://github.com/LedgerHQ/ledger-live/commit/168a1bdf039c75ba674394824e84483e823f0890), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8), [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`8189aaf`](https://github.com/LedgerHQ/ledger-live/commit/8189aaf419d383158185ae3182a1b61fabd61e11), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-countervalues-react@0.4.0-next.0
+  - @ledgerhq/live-common@34.45.0-next.0
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/coin-evm@2.27.0-next.0
+  - @ledgerhq/live-dmk-desktop@0.9.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/coin-framework@6.1.0-next.0
+  - @ledgerhq/coin-filecoin@1.10.0-next.0
+  - @ledgerhq/types-devices@6.26.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/coin-bitcoin@0.20.1-next.0
+  - @ledgerhq/coin-cosmos@0.16.6-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.12-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-next.0
+  - @ledgerhq/live-countervalues@0.6.1-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+  - @ledgerhq/live-nft@0.8.17-next.0
+  - @ledgerhq/live-wallet@0.12.1-next.0
+  - @ledgerhq/live-nft-react@0.9.17-next.0
+  - @ledgerhq/react-ui@0.35.1-next.0
+  - @ledgerhq/domain-service@1.2.40-next.0
+  - @ledgerhq/hw-transport@6.31.9-next.0
+  - @ledgerhq/hw-transport-http@6.30.9-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.10-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-next.0
+  - @ledgerhq/hw-transport-vault@1.3.9-next.0
+
 ## 2.124.0
 
 ### Minor Changes

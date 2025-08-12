@@ -1,5 +1,32 @@
 # @ledgerhq/live-cli
 
+## 24.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8), [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-common@34.45.0-next.0
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/coin-framework@6.1.0-next.0
+  - @ledgerhq/types-devices@6.26.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/device-core@0.6.0-next.0
+  - @ledgerhq/coin-bitcoin@0.20.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.12-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-next.0
+  - @ledgerhq/live-countervalues@0.6.1-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+  - @ledgerhq/live-wallet@0.12.1-next.0
+  - @ledgerhq/hw-transport@6.31.9-next.0
+  - @ledgerhq/hw-transport-http@6.30.9-next.0
+  - @ledgerhq/hw-transport-node-hid@6.29.10-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.29.9-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-next.0
+  - @ledgerhq/hw-app-btc@10.10.1-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.9-next.0
+
 ## 24.21.0
 
 ### Minor Changes

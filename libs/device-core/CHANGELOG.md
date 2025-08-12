@@ -1,5 +1,20 @@
 # @ledgerhq/device-core
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+  - @ledgerhq/hw-transport@6.31.9-next.0
+
 ## 0.5.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.17.0-next.0
+
+### Minor Changes
+
+- [#11225](https://github.com/LedgerHQ/ledger-live/pull/11225) [`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - add canton icon
+
 ## 1.16.0
 
 ### Minor Changes

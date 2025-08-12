@@ -1,5 +1,18 @@
 # @ledgerhq/native-ui
 
+## 0.43.0-next.0
+
+### Minor Changes
+
+- [#11188](https://github.com/LedgerHQ/ledger-live/pull/11188) [`ec0cb33`](https://github.com/LedgerHQ/ledger-live/commit/ec0cb3389d56830fda440cf8bbbb5e98424960aa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump crypto icons, fix reanimated jest support, enhance MAD Drawer animation
+
+- [#11153](https://github.com/LedgerHQ/ledger-live/pull/11153) [`df9c266`](https://github.com/LedgerHQ/ledger-live/commit/df9c2667ca638d4ba52c469737566f7ce6b08e08) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD AccountItem, AccountList, AccountSelection
+
+### Patch Changes
+
+- Updated dependencies [[`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c)]:
+  - @ledgerhq/crypto-icons-ui@1.17.0-next.0
+
 ## 0.42.0
 
 ### Minor Changes
