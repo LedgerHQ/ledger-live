@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.125.0-nightly.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+- [#11264](https://github.com/LedgerHQ/ledger-live/pull/11264) [`168a1bd`](https://github.com/LedgerHQ/ledger-live/commit/168a1bdf039c75ba674394824e84483e823f0890) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Dmk error tracking
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`168a1bd`](https://github.com/LedgerHQ/ledger-live/commit/168a1bdf039c75ba674394824e84483e823f0890), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8)]:
+  - @ledgerhq/live-env@2.14.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.0-nightly.0
+  - @ledgerhq/live-common@34.45.0-nightly.0
+  - @ledgerhq/coin-framework@6.0.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.0
+  - @ledgerhq/coin-evm@2.26.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.12-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-nightly.0
+  - @ledgerhq/cryptoassets@13.24.1-nightly.0
+  - @ledgerhq/live-countervalues@0.6.1-nightly.0
+  - @ledgerhq/live-network@2.0.15-nightly.0
+  - @ledgerhq/live-nft@0.8.17-nightly.0
+  - @ledgerhq/live-wallet@0.12.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.0
+  - @ledgerhq/live-nft-react@0.9.17-nightly.0
+
 ## 2.124.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.9.0-nightly.0
+
+### Minor Changes
+
+- [#11264](https://github.com/LedgerHQ/ledger-live/pull/11264) [`168a1bd`](https://github.com/LedgerHQ/ledger-live/commit/168a1bdf039c75ba674394824e84483e823f0890) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Export isDmkError
+
+### Patch Changes
+
+- Updated dependencies [[`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8)]:
+  - @ledgerhq/live-common@34.45.0-nightly.0
+
 ## 0.8.3
 
 ### Patch Changes

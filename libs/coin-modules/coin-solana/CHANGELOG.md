@@ -1,5 +1,21 @@
 # @ledgerhq/coin-solana
 
+## 0.31.0-nightly.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+### Patch Changes
+
+- [#11271](https://github.com/LedgerHQ/ledger-live/pull/11271) [`5698516`](https://github.com/LedgerHQ/ledger-live/commit/5698516e45934e51f2c3e1019b8cade898d425bb) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: re-set the blockhash when building raw solana txs
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0-nightly.0
+  - @ledgerhq/coin-framework@6.0.1-nightly.0
+  - @ledgerhq/cryptoassets@13.24.1-nightly.0
+  - @ledgerhq/live-network@2.0.15-nightly.0
+
 ## 0.30.0
 
 ### Minor Changes

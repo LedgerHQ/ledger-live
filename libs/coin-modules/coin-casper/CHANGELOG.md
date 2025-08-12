@@ -1,5 +1,14 @@
 # @ledgerhq/coin-casper
 
+## 2.0.8-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.0.1-nightly.0
+  - @ledgerhq/cryptoassets@13.24.1-nightly.0
+  - @ledgerhq/live-network@2.0.15-nightly.0
+
 ## 2.0.7
 
 ### Patch Changes
