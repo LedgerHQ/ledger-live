@@ -38,32 +38,38 @@ export class ModularAssetDrawer extends Drawer {
   async selectAssetByTickerAndName(currency: Currency) {
     await this.searchInput.waitFor();
 
-    let ticker = this.assetItemByTicker(currency.ticker).first();
+    const tickerElement = await this.ensureTickerVisible(currency);
 
-    if (!(await ticker.isVisible())) {
+    const nameElement = this.assetItemByName(currency.name);
+    if (await nameElement.isVisible()) {
+      await nameElement.first().click();
+      return;
+    }
+
+    await tickerElement.click();
+  }
+
+  async ensureTickerVisible(currency: Currency) {
+    let tickerElement = this.assetItemByTicker(currency.ticker).first();
+    if (!(await tickerElement.isVisible())) {
       await this.searchInput.first().fill(currency.ticker);
-
-      await this.page.waitForFunction(
-        ticker => {
-          const elements = document.querySelectorAll(
-            `[data-testid^="asset-item-ticker-${ticker}"]`,
-          );
-          return elements.length > 0;
-        },
-        currency.ticker,
-        { timeout: 10000 },
-      );
-
-      ticker = this.assetItemByTicker(currency.ticker).first();
-      if (!(await ticker.isVisible())) {
+      await this.waitForTickerToAppear(currency.ticker);
+      tickerElement = this.assetItemByTicker(currency.ticker).first();
+      if (!(await tickerElement.isVisible())) {
         throw new Error(`Asset with ticker ${currency.ticker} not found.`);
       }
     }
+    return tickerElement;
+  }
 
-    if (await this.assetItemByName(currency.name).isVisible()) {
-      await this.assetItemByName(currency.name).first().click();
-      return;
-    }
-    await ticker.click();
+  async waitForTickerToAppear(ticker: string) {
+    await this.page.waitForFunction(
+      ticker => {
+        const elements = document.querySelectorAll(`[data-testid^="asset-item-ticker-${ticker}"]`);
+        return elements.length > 0;
+      },
+      ticker,
+      { timeout: 10000 },
+    );
   }
 }
