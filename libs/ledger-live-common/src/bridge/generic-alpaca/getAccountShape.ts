@@ -41,9 +41,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
 
     const oldOpsRaw = (initialAccount?.operations || []) as OperationCommon[];
-    const oldOps: OperationCommon[] = oldOpsRaw.map(op =>
-      normalizeLegacyOperation(op, address),
-    );
+    const oldOps: OperationCommon[] = oldOpsRaw
+      .map(op => normalizeLegacyOperation(op, address))
+      .filter(op => !op.hasFailed || (op.senders ?? []).includes(address));
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
     const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
