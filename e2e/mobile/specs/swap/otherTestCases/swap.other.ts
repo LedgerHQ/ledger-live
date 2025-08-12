@@ -40,6 +40,9 @@ async function beforeAllFunction(options: ApplicationOptions) {
           entryPoints: [],
         },
       },
+      // ptxOneQuote: {
+      //   enabled: false,
+      // },
     },
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
