@@ -3,13 +3,14 @@
  */
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
+import reducer, {
   lastSeenDeviceSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   localeSelector,
 } from "./settings";
 import { State } from ".";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
+import { PURGE_ANONYMOUS_USER_NOTIFICATIONS } from "../actions/constants";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -88,5 +89,90 @@ describe("lastSeenDeviceSelector", () => {
       },
     };
     expect(localeSelector(state)).toEqual("en-US");
+  });
+});
+
+describe("action: purgeAnonymousUserNotifications", () => {
+  it("should remove notifications older than cutoff but keep newer ones", () => {
+    const oldTimestamp = Date.now() - 100000; // old enough to purge
+    const newTimestamp = Date.now() + 100000; // keep
+    const cutoff = Date.now();
+
+    const state = {
+      ...SETTINGS_INITIAL_STATE,
+      anonymousUserNotifications: {
+        a: oldTimestamp,
+        b: newTimestamp,
+        LNSUpsell: oldTimestamp, // should always be kept
+      },
+    };
+
+    const newState = reducer(state, {
+      type: PURGE_ANONYMOUS_USER_NOTIFICATIONS,
+      payload: { cutoff },
+    });
+
+    expect(newState.anonymousUserNotifications).toEqual({
+      b: newTimestamp,
+      LNSUpsell: oldTimestamp,
+    });
+  });
+
+  it("should keep all notifications if none are expired", () => {
+    const ts = Date.now();
+    const cutoff = ts - 1000;
+
+    const state = {
+      ...SETTINGS_INITIAL_STATE,
+      anonymousUserNotifications: {
+        a: ts,
+        b: ts,
+        LNSUpsell: ts,
+      },
+    };
+
+    const newState = reducer(state, {
+      type: PURGE_ANONYMOUS_USER_NOTIFICATIONS,
+      payload: { cutoff },
+    });
+
+    expect(newState).toBe(state);
+  });
+
+  it("should keep LNSUpsell even if expired", () => {
+    const oldTimestamp = Date.now() - 100000;
+    const cutoff = Date.now();
+
+    const state = {
+      ...SETTINGS_INITIAL_STATE,
+      anonymousUserNotifications: {
+        x: oldTimestamp,
+        LNSUpsell: oldTimestamp,
+      },
+    };
+
+    const newState = reducer(state, {
+      type: PURGE_ANONYMOUS_USER_NOTIFICATIONS,
+      payload: { cutoff },
+    });
+
+    expect(newState.anonymousUserNotifications).toEqual({
+      LNSUpsell: oldTimestamp,
+    });
+  });
+
+  it("should return original state if anonymousUserNotifications is empty", () => {
+    const cutoff = Date.now();
+    const state = {
+      ...SETTINGS_INITIAL_STATE,
+      anonymousUserNotifications: {},
+    };
+
+    const newState = reducer(state, {
+      type: PURGE_ANONYMOUS_USER_NOTIFICATIONS,
+      payload: { cutoff },
+    });
+
+    expect(newState).toBe(state);
   });
 });

@@ -26,6 +26,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
+  PURGE_ANONYMOUS_USER_NOTIFICATIONS,
   RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
@@ -457,6 +458,13 @@ export const setMarketWidget = (payload: boolean) => ({
 export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
   return {
     type: TOGGLE_MEMOTAG_INFO,
+    payload,
+  };
+};
+
+export const purgeAnonymousUserNotifications = (payload: { cutoff: number }) => {
+  return {
+    type: PURGE_ANONYMOUS_USER_NOTIFICATIONS,
     payload,
   };
 };

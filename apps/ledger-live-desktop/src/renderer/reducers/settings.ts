@@ -40,6 +40,7 @@ import {
   UPDATE_NFT_COLLECTION_STATUS,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
   RESET_HIDDEN_NFT_COLLECTIONS,
+  PURGE_ANONYMOUS_USER_NOTIFICATIONS,
 } from "../actions/constants";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
@@ -314,12 +315,12 @@ type HandlersPayloads = {
   SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
   SET_LAST_ONBOARDED_DEVICE: Device | null;
 
+  [PURGE_ANONYMOUS_USER_NOTIFICATIONS]: { cutoff: number };
   [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
   [TOGGLE_MARKET_WIDGET]: boolean;
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
     notifications: Record<string, number>;
-    purgeState?: boolean;
   };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -561,6 +562,19 @@ const handlers: SettingsHandlers = {
     ...state,
     lastOnboardedDevice: payload,
   }),
+
+  [PURGE_ANONYMOUS_USER_NOTIFICATIONS]: (state, { payload: { cutoff } }) => {
+    const { LNSUpsell, ...rest } = state.anonymousUserNotifications;
+
+    const next: typeof rest = {
+      ...(LNSUpsell ? { LNSUpsell } : {}),
+      ...Object.fromEntries(Object.entries(rest).filter(([_, ts]) => ts >= cutoff)),
+    };
+
+    return Object.keys(next).length === Object.keys(state.anonymousUserNotifications).length
+      ? state
+      : { ...state, anonymousUserNotifications: next };
+  },
   [TOGGLE_MEV]: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
@@ -573,15 +587,16 @@ const handlers: SettingsHandlers = {
     ...state,
     alwaysShowMemoTagInfo: payload,
   }),
-  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => {
-    const { anonymousUserNotifications: prev } = state;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const next = {
-      ...(payload.purgeState ? { LNSUpsell: prev.LNSUpsell } : prev),
-      ...payload.notifications,
-    } as SettingsState["anonymousUserNotifications"];
-    return { ...state, anonymousUserNotifications: next };
-  },
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (
+    state: SettingsState,
+    { payload: { notifications } },
+  ) => ({
+    ...state,
+    anonymousUserNotifications: {
+      ...state.anonymousUserNotifications,
+      ...notifications,
+    },
+  }),
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -844,10 +859,10 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
-export const trackingEnabledSelector = createSelector(
-  storeSelector,
-  s => s.shareAnalytics || s.sharePersonalizedRecommandations,
-);
+export const trackingEnabledSelector = createSelector(storeSelector, s => {
+  console.log("INIT BRAZE", s);
+  return s.shareAnalytics || s.sharePersonalizedRecommandations;
+});
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>
