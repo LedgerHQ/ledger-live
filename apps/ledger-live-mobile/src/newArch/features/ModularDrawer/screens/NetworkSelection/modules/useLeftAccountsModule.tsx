@@ -24,7 +24,7 @@ const createAccountsCountAndApy = ({
 }: {
   label: string;
   value: number;
-  type: "APY" | "APR";
+  type: "NRR" | "APY" | "APR";
 }) => (
   <>
     {createAccountsCount({ label })}
