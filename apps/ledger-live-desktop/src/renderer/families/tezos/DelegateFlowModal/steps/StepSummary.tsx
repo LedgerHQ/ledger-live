@@ -2,7 +2,11 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation, useStakingPositions } from "@ledgerhq/live-common/families/tezos/react";
+import {
+  useBaker,
+  useDelegation,
+  useStakingPositions,
+} from "@ledgerhq/live-common/families/tezos/react";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
@@ -170,7 +174,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                 )}
               </Container>
             </Box>
-          ) : (delegation || stakingPositions.length > 0) ? (
+          ) : delegation || stakingPositions.length > 0 ? (
             <Box>
               <Box horizontal justifyContent="space-between">
                 <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>

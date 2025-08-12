@@ -2,7 +2,11 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useDelegation, useStakingPositions, useBaker } from "@ledgerhq/live-common/families/tezos/react";
+import {
+  useDelegation,
+  useStakingPositions,
+  useBaker,
+} from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
@@ -60,7 +64,10 @@ const Delegation = ({ account, parentAccount }: Props) => {
               ({
                 address: stakingPositions[0]?.delegate!,
                 baker: fallbackBaker,
-                operation: { hash: lastStake?.hash || "", date: lastStake?.date || new Date() } as any,
+                operation: {
+                  hash: lastStake?.hash || "",
+                  date: lastStake?.date || new Date(),
+                } as any,
                 isPending: false,
                 receiveShouldWarnDelegation: false,
                 sendShouldWarnDelegation: false,
