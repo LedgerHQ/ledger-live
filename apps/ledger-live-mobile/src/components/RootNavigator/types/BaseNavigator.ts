@@ -348,6 +348,7 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapLoading]: undefined;
   [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
 };
 

@@ -319,4 +319,5 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapCustomError]: {
     error?: SwapLiveError | Error;
   };
+  [ScreenName.SwapLoading]: undefined;
 };

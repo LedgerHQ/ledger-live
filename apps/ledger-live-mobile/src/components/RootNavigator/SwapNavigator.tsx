@@ -19,6 +19,7 @@ import {
   SelectCurrency,
   SelectFees,
   SelectProvider,
+  SwapLoading,
 } from "~/screens/Swap/index";
 import { SwapLiveApp } from "~/screens/Swap/LiveApp";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
@@ -203,6 +204,15 @@ export default function SwapNavigator(
         component={SwapCustomError}
         options={{
           headerTitle: "",
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.SwapLoading}
+        component={SwapLoading}
+        options={{
+          headerTitle: t("transfer.swap.loading.title", "Processing Exchange"),
+          headerLeft: () => null, // Prevent going back while loading
         }}
       />
 

@@ -55,12 +55,17 @@ export function useSwapCustomHandlers(
     [navigation],
   );
 
+  const handleShowLoadingDrawer = useCallback(() => {
+     navigation.navigate(ScreenName.SwapLoading);
+  }, [navigation]);
+
   const walletAPISwapHandlers = useCustomExchangeHandlers({
     manifest,
     accounts,
     onCompleteResult: navigateToSwapPendingOperation,
     onCompleteError: navigateToSwapCustomError,
     sendAppReady: sendSwapLiveAppReady,
+    onShowLoadingDrawer: handleShowLoadingDrawer,
   });
 
   const swapCustomHandlers = {
