@@ -59,13 +59,9 @@ type Inputs = GenericInput<typeof fetch>;
 
 const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
   if (options) {
-    const headerValue =
-      process.env.NODE_ENV === "production"
-        ? getEnv("LEDGER_CLIENT_VERSION")
-        : `lld/${__APP_VERSION__}-dev`;
     options.headers = {
       ...options.headers,
-      "X-Ledger-Client-Version": headerValue,
+      "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
     };
   }
   if (retry === 1) return fetch(url, options);
