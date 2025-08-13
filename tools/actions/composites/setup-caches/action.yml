@@ -96,7 +96,7 @@ runs:
 
     - name: Cache pnpm store
       uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
-      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
+      if: inputs.skip-pnpm-cache != 'true'
       id: pnpm-cache
       with:
         path: ${{ env.STORE_PATH }}
