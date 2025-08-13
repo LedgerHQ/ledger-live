@@ -1,3 +1,5 @@
+import { setEnv } from "@ledgerhq/live-env";
+
 let ledgerClientVersion = `lld/${__APP_VERSION__}`;
 
 if (process.env.NODE_ENV !== "production") {
