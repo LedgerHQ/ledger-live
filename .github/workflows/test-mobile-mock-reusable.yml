@@ -412,7 +412,7 @@ jobs:
           install-proto: true
           skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
-          region: auto
+          region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           cache-endpoint: ${{ secrets.R2_ENDPOINT }}
           cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
