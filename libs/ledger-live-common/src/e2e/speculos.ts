@@ -260,7 +260,7 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-  Binance_Smart_Chain: {
+  BNB_Chain: {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
       model: getSpeculosModel(),
@@ -620,7 +620,7 @@ export async function goToSettings() {
 
 const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
-  [AppInfos.BINANCE_SMART_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
+  [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
   [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
   [AppInfos.SOLANA, [DeviceLabels.PUBKEY, DeviceLabels.APPROVE]],
   [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
