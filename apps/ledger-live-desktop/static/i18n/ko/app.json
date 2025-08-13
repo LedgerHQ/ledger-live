@@ -385,6 +385,7 @@
         "onhold" : "보류 중",
         "expired" : "만료됨",
         "finished" : "완료됨",
+        "unknown" : "처리 중",
         "refunded" : "환불 처리됨"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "finished" : "스왑이 성공적으로 완료되었습니다.",
-        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
+        "unknown" : "제공업체의 정보를 기다리는 중입니다."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -2386,6 +2387,10 @@
         "title" : "장치"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "블라인드 서명 필요",
+          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -4466,6 +4471,40 @@
             "spam" : "스팸 신고",
             "refresh" : "메타데이터 갱신",
             "check" : "스팸 점수"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "모의 계좌 생성",
+          "description" : "테스트용 모의 계좌를 생성합니다. 이 도구를 사용하면 다양한 통화와 설정으로 테스트 계좌를 만들 수 있습니다.",
+          "customGenerate" : {
+            "title" : "맞춤 생성",
+            "desc" : "특정 통화를 선택하고 토큰을 추가합니다."
+          },
+          "quickGenerate" : {
+            "title" : "빠른 생성",
+            "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
+          },
+          "currencySelector" : {
+            "placeholder" : "통화 선택",
+            "searchPlaceholder" : "통화 검색",
+            "noCurrenciesFound" : "검색 결과가 없습니다",
+            "noCurrenciesAvailable" : "사용 가능한 통화가 없습니다",
+            "selectedCount" : "{{count}}개 통화 선택됨",
+            "selectedCount_other" : "{{count}}개 통화 선택됨"
+          },
+          "tokenIds" : {
+            "label" : "토큰 ID(선택 사항)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "계좌 {{count}}개 생성",
+            "generateAccounts_other" : "계좌 {{count}}개 생성",
+            "generateAccountsQuick" : "계좌 {{count}}개 생성"
+          },
+          "alerts" : {
+            "selectCurrency" : "통화를 1개 이상 선택하세요.",
+            "confirmErase" : "기존 계좌가 삭제됩니다. 계속하시겠습니까?",
+            "generateError" : "모의 계좌 생성에 실패했습니다. 다시 시도해 주세요."
           }
         },
         "debugSpamNft" : {
@@ -7352,7 +7391,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {
