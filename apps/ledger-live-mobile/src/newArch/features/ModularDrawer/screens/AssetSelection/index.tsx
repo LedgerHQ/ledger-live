@@ -16,6 +16,9 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook";
+import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { useRightBalanceModule } from "./modules/useRightBalanceModule";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -48,6 +51,9 @@ const AssetSelection = ({
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+  const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
+
+  const enrichedAssets = useRightBalanceModule(availableAssets, result.currenciesByProvider);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -139,7 +145,7 @@ const AssetSelection = ({
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled={true}
-        data={itemsToDisplay}
+        data={enrichedAssets}
         keyExtractor={item => item.id}
         getItemCount={itemsToDisplay => itemsToDisplay.length}
         getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
