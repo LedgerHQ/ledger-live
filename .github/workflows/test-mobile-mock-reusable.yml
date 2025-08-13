@@ -299,6 +299,23 @@ jobs:
           name: "ios-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts
 
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Upload caches
+        if: steps.setup-caches.outputs.cache-hit != 'true'
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          region: "auto"
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+
   detox-tests-android:
     name: "Android Build / Android Detox"
     needs: [ build-android, determine-builds ]
@@ -395,9 +412,7 @@ jobs:
           install-proto: true
           skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
+          region: auto
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           cache-endpoint: ${{ secrets.R2_ENDPOINT }}
           cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
@@ -502,6 +517,23 @@ jobs:
         id: set-output
         if: ${{ !cancelled() }}
         run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Upload caches
+        if: steps.setup-caches.outputs.cache-hit != 'true'
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          region: "auto"
+          endpoint: ${{ secrets.R2_ENDPOINT }}
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"

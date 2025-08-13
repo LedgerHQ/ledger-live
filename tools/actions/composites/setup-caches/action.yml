@@ -56,6 +56,9 @@ outputs:
   port:
     description: "The port the local server runs on"
     value: ${{ steps.turborepo-cache-server.outputs.port }}
+  pnpm-cache-hit:
+    description: "Indicates if the pnpm cache was successfully restored"
+    value: ${{ steps.pnpm-cache.outputs.cache-hit }}
 
 runs:
   using: "composite"
@@ -92,8 +95,9 @@ runs:
         aws-region: ${{ inputs.region }}
 
     - name: Cache pnpm store
-      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
+      id: pnpm-cache
       with:
         path: ${{ env.STORE_PATH }}
         key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -120,9 +124,9 @@ runs:
       if: inputs.skip-pod-cache == 'true' && runner.os == 'macOS'
       shell: bash
       run: |
-          rm -rf ~/.cocoapods/
-          rm -rf ~/Library/Caches/CocoaPods
-          rm -rf apps/ledger-live-mobile/ios/Pods
+        rm -rf ~/.cocoapods/
+        rm -rf ~/Library/Caches/CocoaPods
+        rm -rf apps/ledger-live-mobile/ios/Pods
 
     - name: TurboRepo local caching server
       id: turborepo-cache-server
