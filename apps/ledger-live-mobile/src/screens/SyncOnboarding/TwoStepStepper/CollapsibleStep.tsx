@@ -9,9 +9,16 @@ interface CollapsibleStepProps extends PropsWithChildren {
   status: CollapsibleStepStatus;
   title?: string;
   isCollapsed: boolean;
+  isFirst?: boolean;
+  hideTitle?: boolean;
 }
 
-const CenterCircle = styled(Flex)<{ status: CollapsibleStepStatus }>`
+interface CenterCircleProps {
+  status: CollapsibleStepStatus;
+  isAbsolute?: boolean;
+}
+
+const CenterCircle = styled(Flex)<CenterCircleProps>`
   border-radius: 9999px;
   width: 16px;
   height: 16px;
@@ -22,33 +29,61 @@ const CenterCircle = styled(Flex)<{ status: CollapsibleStepStatus }>`
   justify-content: center;
 `;
 
-const StatusIcon = ({ status }: { status: CollapsibleStepStatus }) => {
+const CollapsibleCard = styled(Flex)`
+  background: ${p => p.theme.colors.neutral.c20};
+  padding: 16px;
+  border-radius: 12px;
+`;
+
+const StatusIcon = (props: CenterCircleProps) => {
   const { colors } = useTheme();
   return (
-    <CenterCircle status={status}>
-      {status === "complete" && <CircledCheckSolidMedium color={colors.success.c70} size={20} />}
+    <CenterCircle {...props}>
+      {props.status === "complete" && (
+        <CircledCheckSolidMedium color={colors.success.c70} size={20} />
+      )}
     </CenterCircle>
   );
 };
 
-const CollapsibleStep = ({ status, title, isCollapsed, children }: CollapsibleStepProps) => {
+const CollapsibleStep = ({
+  status,
+  title,
+  isCollapsed,
+  children,
+  isFirst,
+  hideTitle,
+}: CollapsibleStepProps) => {
   if (isCollapsed) {
     return (
-      <Flex justifyContent="space-between" flexDirection="row">
-        <Text>{title}</Text>
+      <CollapsibleCard
+        justifyContent="space-between"
+        flexDirection="row"
+        marginTop={isFirst ? "" : "8px"}
+        alignItems="center"
+      >
+        <Text fontSize="16px" fontWeight="bold">
+          {title}
+        </Text>
         <StatusIcon status={status} />
-      </Flex>
+      </CollapsibleCard>
     );
   }
 
   return (
-    <Flex>
-      <Flex justifyContent="space-between" flexDirection="row">
-        <Text>{title}</Text>
-        <StatusIcon status={status} />
-      </Flex>
+    <CollapsibleCard>
+      {hideTitle ? (
+        <StatusIcon status={status} isAbsolute={hideTitle} />
+      ) : (
+        <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+          <Text variant="h5" fontWeight="semiBold">
+            {title}
+          </Text>
+          <StatusIcon status={status} />
+        </Flex>
+      )}
       {children}
-    </Flex>
+    </CollapsibleCard>
   );
 };
 

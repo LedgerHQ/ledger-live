@@ -1,87 +1,34 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-  useRef,
-  useLayoutEffect,
-} from "react";
-import { Image, Linking } from "react-native";
-import { Flex, VerticalTimeline, Text, ContinueOnDevice, Link } from "@ledgerhq/native-ui";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import {
-  CharonStatus,
-  OnboardingStep as DeviceOnboardingStep,
-  fromSeedPhraseTypeToNbOfSeedWords,
-} from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Flex } from "@ledgerhq/native-ui";
+
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch, useSelector } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
+import { useDispatch } from "react-redux";
 
-import { SeedOriginType, SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { addKnownDevice } from "~/actions/ble";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import HelpDrawer from "../HelpDrawer";
 import DesyncOverlay from "../DesyncOverlay";
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setIsReborn,
-  setLastConnectedDevice,
-  setOnboardingHasDevice,
-  setReadOnlyMode,
-} from "~/actions/settings";
-import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
-import Stories from "~/components/StorylyStories";
-import { TrackScreen, screen, useTrack } from "~/analytics";
-import ContinueOnStax from "../assets/ContinueOnStax";
-import ContinueOnEuropa from "../assets/ContinueOnEuropa";
+// import { TrackScreen } from "~/analytics";
+
 import type { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import {
-  ExternalLinkMedium,
-  RecoveryKey,
-  Note,
-  ShieldCheck,
-} from "@ledgerhq/native-ui/assets/icons";
-import SecretRecoveryPhraseImage from "../assets/srp.png";
-import BackgroundBlue from "../assets/BackgroundBlue";
-import BackgroundRed from "../assets/BackgroundRed";
-import Animation from "~/components/Animation";
-import CHARON from "~/animations/device/charon/charon.json";
-import { ShadowedView } from "react-native-fast-shadow";
+import useTwoStepDesync from "./useTwoStepDesync";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
+import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
 
-const { BodyText, SubtitleText } = VerticalTimeline;
+/*
+ * Constants
+ */
 
-type StepStatus = "completed" | "active" | "inactive";
+const READY_REDIRECT_DELAY_MS = 2500;
 
-type Step = {
-  key: CompanionStepKey;
-  status: StepStatus;
-  title: string;
-  doneTitle?: string;
-  estimatedTime?: number;
-  renderBody?: (isDisplayed?: boolean) => ReactNode;
-};
-
-export type SeedPathStatus =
-  | "choice_new_or_restore"
-  | "new_seed"
-  | "choice_restore_direct_or_recover"
-  | "restore_seed"
-  | "recover_seed"
-  | "backup_charon"
-  | "restore_charon";
+/*
+ * Types
+ */
+export type ExitState = "new_seed" | "restore_no_LL" | "restore_with_LL" | "exit";
+export type CompanionStep = "setup" | ExitState;
 
 export type TwoStepSyncOnboardingCompanionProps = {
   /**
@@ -115,40 +62,6 @@ export type TwoStepSyncOnboardingCompanionProps = {
   notifyEarlySecurityCheckShouldReset: () => void;
 };
 
-const POLLING_PERIOD_MS = 1000;
-
-const NORMAL_DESYNC_TIMEOUT_MS = 60000;
-const LONG_DESYNC_TIMEOUT_MS = 120000;
-
-export const NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 10000;
-const LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 60000;
-const READY_REDIRECT_DELAY_MS = 2500;
-
-const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
-
-const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
-  [SeedPhraseType.TwentyFour, "TwentyFour"],
-  [SeedPhraseType.Eighteen, "Eighteen"],
-  [SeedPhraseType.Twelve, "Twelve"],
-]);
-
-const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
-
-const ContinueOnDeviceWithAnim: React.FC<{
-  deviceModelId: DeviceModelId;
-  text: string;
-  withTopDivider?: boolean;
-}> = ({ text, withTopDivider, deviceModelId }) => {
-  // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
-  return (
-    <ContinueOnDevice
-      Icon={deviceModelId === DeviceModelId.stax ? ContinueOnStax : ContinueOnEuropa}
-      text={text}
-      withTopDivider={withTopDivider}
-    />
-  );
-};
-
 /**
  * Component representing the synchronous companion step, which polls the current device state
  * to display correctly information about the onboarding to the user
@@ -166,127 +79,40 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   notifyEarlySecurityCheckShouldReset,
 }) => {
   /*
-   *  NPM hooks
-   */
-  const { t } = useTranslation();
-  const safeAreaInsets = useSafeAreaInsets();
-
-  /*
    * Local State
    */
-  const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.EarlySecurityCheckCompleted,
-  );
-  const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
-  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
-  const [desyncOverlayDisplayDelayMs, setDesyncOverlayDisplayDelayMs] = useState<number>(
-    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
-  );
-  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(NORMAL_DESYNC_TIMEOUT_MS);
+  const [companionStep, _ /*setCompanionStep*/] = useState<CompanionStep>("setup");
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
-
-  /*
-   * Feature Flags
-   */
-  const servicesConfig = useFeature("protectServicesMobile");
-  const deviceInitialApps = useFeature("deviceInitialApps");
-  const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
   /*
    * Refs
    */
-  const lastCompanionStepKey = useRef<CompanionStepKey>();
-  const desyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const seededDeviceHandled = useRef(false);
   const preventNavigation = useRef(false);
-  const addedToKnownDevices = useRef(false);
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
-  const analyticsSeedingTracked = useRef(false);
-  /**
-   * True if the device was initially onboarded/seeded when this component got
-   * mounted. False otherwise.
-   * Value is undefined until the onboarding state polling returns a first
-   * result.
-   * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
-  /**
-   * Variable holding the seed phrase type (number of words) until we are
-   * ready to track the event (when the seeding step finishes).
-   * Should only be maintained if the device is not onboarded/not seeded as the
-   * onboarding flags can only be trusted for a non-onboarded device.
-   */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
 
   /*
    * Redux State
    */
   const dispatchRedux = useDispatch();
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   /*
    * Custom hooks/state
    */
-  const track = useTrack();
-
-  useTrackOnboardingFlow({
-    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
-    device,
-    seedPathStatus,
-  });
-
   const isFocused = useIsFocused();
   useKeepScreenAwake(isFocused);
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
+  const twoStepDesync = useTwoStepDesync({
+    onLostDevice,
+    onShouldHeaderBeOverlaid,
+    updateHeaderOverlayDelay,
+    setIsPollingOn,
+  });
+
   /*
    * Callbacks
    */
-  const getNextStepKey = useCallback(
-    (step: CompanionStepKey) => {
-      if (step === CompanionStepKey.Exit) {
-        return CompanionStepKey.Exit;
-      }
-      let nextStep = step + 1; // by default, just increment the step
-      if (nextStep === CompanionStepKey.Apps && !deviceInitialApps?.enabled) {
-        nextStep += 1; // skip "Apps" step if flag is disabled
-      }
-      if (nextStep === CompanionStepKey.Ready) {
-        nextStep += 1; // always skip "Ready" step and go straight to "Exit" to have the "Ready" step as "completed" right away
-      }
-      return nextStep;
-    },
-    [deviceInitialApps?.enabled],
-  );
-
-  const handleInstallAppsComplete = useCallback(() => {
-    setCompanionStepKey(getNextStepKey(CompanionStepKey.Apps));
-  }, [getNextStepKey]);
-
-  const handleDesyncTimedOut = useCallback(() => {
-    setIsPollingOn(false);
-
-    onShouldHeaderBeOverlaid(false);
-    setIsDesyncOverlayOpen(false);
-
-    onLostDevice();
-  }, [onShouldHeaderBeOverlaid, onLostDevice]);
-
-  /**
-   * Adds the device to the list of known devices
-   */
-  const addToKnownDevices = useCallback(() => {
-    dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(
-      addKnownDevice({
-        id: device.deviceId,
-        name: device.deviceName ?? device.modelId,
-        modelId: device.modelId,
-      }),
-    );
-  }, [device, dispatchRedux]);
 
   /**
    * Triggers the end of the onboarding
@@ -298,248 +124,21 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
-  const handleLearnMoreClick = useCallback(() => {
-    track("button_clicked", {
-      button: "Learn More",
-      page: "Charon Start",
-    });
-    Linking.openURL(CHARON_LEARN_MORE_URL);
-  }, [track]);
-
-  const {
-    onboardingState: deviceOnboardingState,
-    allowedError,
-    fatalError,
-  } = useOnboardingStatePolling({
-    device,
-    pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
-    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
-  });
-
   /*
    * useEffects
    */
 
-  // Unmount cleanup to make sure the polling is stopped.
-  // The cleanup function triggered by the useEffect of useOnboardingStatePolling
-  // has been observed to be called after, and some apdu could still be exchanged with the device
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", e => {
+        if (preventNavigation.current) e.preventDefault();
+      }),
+    [navigation],
+  );
+
+  // Handle exit status
   useEffect(() => {
-    return () => {
-      setIsPollingOn(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!fatalError) {
-      return;
-    }
-    setIsPollingOn(false);
-    onLostDevice();
-  }, [fatalError, onLostDevice]);
-
-  // Reacts to allowedError from the polling to set or clean the desync timeout
-  useEffect(() => {
-    if (allowedError) {
-      desyncTimerRef.current = setTimeout(handleDesyncTimedOut, desyncTimeoutMs);
-
-      // Displays an overlay to alert the user. This overlay should also hide the screen header
-      setIsDesyncOverlayOpen(true);
-      onShouldHeaderBeOverlaid(true);
-    } else if (!allowedError) {
-      // desyncTimer is cleared in the useEffect cleanup function
-      setIsDesyncOverlayOpen(false);
-      onShouldHeaderBeOverlaid(false);
-    }
-
-    return () => {
-      // Note if you update `allowedError`: `allowedError` needs to stay stable,
-      // and not change its reference if the error is the same to avoid resetting the timer
-      if (desyncTimerRef.current) {
-        clearTimeout(desyncTimerRef.current);
-        desyncTimerRef.current = null;
-      }
-    };
-  }, [allowedError, handleDesyncTimedOut, desyncTimeoutMs, onShouldHeaderBeOverlaid]);
-
-  useEffect(() => {
-    if (!deviceOnboardingState) return;
-
-    if (deviceInitiallyOnboarded.current === undefined) {
-      deviceInitiallyOnboarded.current = deviceOnboardingState.isOnboarded;
-    }
-
-    if (
-      !deviceOnboardingState.isOnboarded && // onboarding state flags can only be trusted for a non-onboarded/non-seeded device
-      deviceOnboardingState.seedPhraseType
-    ) {
-      analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
-    }
-  }, [deviceOnboardingState]);
-
-  /**
-   * Analytics: track complete seeding of device
-   * We use useLayoutEffect to ensure the event is sent before the following
-   * step gets rendered and its corresponding analytics event gets dispatched
-   */
-  useLayoutEffect(() => {
-    if (
-      deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
-      lastCompanionStepKey.current !== undefined &&
-      lastCompanionStepKey.current <= CompanionStepKey.Seed &&
-      companionStepKey === CompanionStepKey.Seed &&
-      !analyticsSeedingTracked.current &&
-      (seedPathStatus === "backup_charon" ||
-        (seedPathStatus === "restore_charon" && deviceOnboardingState?.isOnboarded))
-    ) {
-      /**
-       * Now we have four ways to seed a device:
-       * - new seed => Backup Recovery Key
-       * - restore using Secret Recovery Phrase => Backup Recovery Key
-       * - restore using Recovery Key => Next step
-       * - restore using Recover subscription => Backup Recovery Key
-       * Three of them will trigger the Backup Recovery Key step, but the last one
-       * will trigger directly the install apps step, so its tracking is treated separately.
-       */
-      screen(
-        "Set up device: Step 3 Seed Success",
-        undefined,
-        {
-          seedPhraseType: analyticsSeedPhraseType.current
-            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
-            : undefined,
-          seedConfiguration: analyticsSeedConfiguration.current,
-        },
-        true,
-        true,
-      );
-
-      analyticsSeedingTracked.current = true;
-    }
-    lastCompanionStepKey.current = companionStepKey;
-  }, [companionStepKey, deviceOnboardingState?.isOnboarded, productName, seedPathStatus]);
-
-  useEffect(() => {
-    // When the device is seeded, there are 2 cases before triggering the applications install step:
-    // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
-    // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      !seededDeviceHandled.current &&
-      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
-        deviceOnboardingState.currentOnboardingStep,
-      )
-    ) {
-      setCompanionStepKey(
-        deviceInitialApps?.enabled ? CompanionStepKey.Apps : CompanionStepKey.Ready,
-      );
-      seededDeviceHandled.current = true;
-      return;
-    }
-
-    // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
-    switch (deviceOnboardingState?.currentOnboardingStep) {
-      // Those cases could happen if the device restarted
-      case DeviceOnboardingStep.WelcomeScreen1:
-      case DeviceOnboardingStep.WelcomeScreen2:
-      case DeviceOnboardingStep.WelcomeScreen3:
-      case DeviceOnboardingStep.WelcomeScreen4:
-      case DeviceOnboardingStep.WelcomeScreenReminder:
-      case DeviceOnboardingStep.OnboardingEarlyCheck:
-        notifyEarlySecurityCheckShouldReset();
-        break;
-
-      case DeviceOnboardingStep.ChooseName:
-        setCompanionStepKey(CompanionStepKey.EarlySecurityCheckCompleted);
-        break;
-      case DeviceOnboardingStep.Pin:
-        setCompanionStepKey(CompanionStepKey.Pin);
-        break;
-      case DeviceOnboardingStep.SetupChoice:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("choice_new_or_restore");
-        break;
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setShouldRestoreApps(false);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("new_seed");
-        analyticsSeedConfiguration.current = "new_seed";
-        break;
-      case DeviceOnboardingStep.SetupChoiceRestore:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("choice_restore_direct_or_recover");
-        break;
-      case DeviceOnboardingStep.RestoreSeed:
-        setShouldRestoreApps(true);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("restore_seed");
-        analyticsSeedConfiguration.current = "restore_seed";
-        break;
-      case DeviceOnboardingStep.RecoverRestore:
-        setShouldRestoreApps(true);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("recover_seed");
-        analyticsSeedConfiguration.current = "recover_seed";
-        break;
-      case DeviceOnboardingStep.RestoreCharon:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("restore_charon");
-        analyticsSeedConfiguration.current = "restore_charon";
-        break;
-      case DeviceOnboardingStep.BackupCharon:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedPathStatus("backup_charon");
-        break;
-      default:
-        break;
-    }
-  }, [
-    deviceInitialApps?.enabled,
-    deviceOnboardingState,
-    notifyEarlySecurityCheckShouldReset,
-    shouldRestoreApps,
-  ]);
-
-  // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // and timers to a higher value. It avoids having a warning message while the connection is lost
-  // because the device is generating the seed.
-  useEffect(() => {
-    if (
-      deviceOnboardingState?.seedPhraseType &&
-      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
-    ) {
-      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
-        deviceOnboardingState.seedPhraseType,
-      );
-
-      if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setDesyncOverlayDisplayDelayMs(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
-        updateHeaderOverlayDelay(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
-        setDesyncTimeoutMs(LONG_DESYNC_TIMEOUT_MS);
-      }
-    }
-  }, [deviceOnboardingState, updateHeaderOverlayDelay]);
-
-  useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.Apps) {
-      // Stops the polling once the device is seeded
-      setIsPollingOn(false);
-      // At this step, device has been successfully setup so it can be saved in
-      // the list of known devices
-      dispatchRedux(setIsReborn(false));
-      if (!hasCompletedOnboarding) {
-        dispatchRedux(setOnboardingHasDevice(true));
-      }
-      if (!addedToKnownDevices.current) {
-        addedToKnownDevices.current = true;
-        addToKnownDevices();
-      }
-    }
-
-    if (companionStepKey === CompanionStepKey.Exit) {
+    if (companionStep === "exit") {
       preventNavigation.current = true;
       readyRedirectTimerRef.current = setTimeout(() => {
         preventNavigation.current = false;
@@ -554,424 +153,35 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [
-    companionStepKey,
-    addToKnownDevices,
-    handleOnboardingDone,
-    dispatchRedux,
-    hasCompletedOnboarding,
-  ]);
-
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", e => {
-        if (preventNavigation.current) e.preventDefault();
-      }),
-    [navigation],
-  );
-
-  useEffect(() => {
-    if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {
-      navigation.navigate(NavigatorName.Base, {
-        screen: ScreenName.Recover,
-        params: {
-          fromOnboarding: true,
-          device,
-          platform: servicesConfig.params?.protectId,
-          redirectTo: "restore",
-          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
-        },
-      });
-    }
-  }, [
-    device,
-    navigation,
-    seedPathStatus,
-    servicesConfig?.enabled,
-    servicesConfig?.params?.protectId,
-  ]);
-
-  const companionSteps: Step[] = useMemo(
-    () =>
-      [
-        {
-          key: CompanionStepKey.EarlySecurityCheckCompleted,
-          title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
-          renderBody: () => (
-            <>
-              <TrackScreen category={"Set up device: Step 1 device paired"} />
-              <Text variant="body" color="neutral.c80" mb={6}>
-                {t("syncOnboarding.earlySecurityCheckCompletedStep.subtitle", {
-                  productName,
-                })}
-              </Text>
-              <ContinueOnDeviceWithAnim
-                deviceModelId={device.modelId}
-                text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
-                  productName,
-                })}
-                withTopDivider={true}
-              />
-            </>
-          ),
-        },
-        {
-          key: CompanionStepKey.Pin,
-          title: t("syncOnboarding.pinStep.title"),
-          doneTitle: t("syncOnboarding.pinStep.doneTitle"),
-          renderBody: () => (
-            <Flex>
-              <TrackScreen category={"Set up device: Step 2 PIN"} />
-              <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
-              <ContinueOnDeviceWithAnim
-                deviceModelId={device.modelId}
-                text={t("syncOnboarding.pinStep.continueOnDevice", {
-                  productName,
-                })}
-              />
-            </Flex>
-          ),
-        },
-        {
-          key: CompanionStepKey.Seed,
-          title: t("syncOnboarding.seedStep.title"),
-          doneTitle: t("syncOnboarding.seedStep.doneTitle"),
-          background:
-            seedPathStatus === "new_seed" ? (
-              <BackgroundBlue />
-            ) : seedPathStatus === "backup_charon" ? (
-              <BackgroundRed />
-            ) : null,
-          renderBody: () => (
-            <Flex>
-              <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
-              {seedPathStatus === "new_seed" ? (
-                <Flex pb={1}>
-                  <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 150 }}>
-                      <Image source={SecretRecoveryPhraseImage} height={200} />
-                    </Flex>
-                    <Text variant="h5" fontWeight="semiBold" mb={6}>
-                      {t("syncOnboarding.seedStep.newSeedTitle")}
-                    </Text>
-                    <BodyText mb={8} textAlign="center">
-                      {t("syncOnboarding.seedStep.newSeedDescription", {
-                        productName,
-                      })}
-                    </BodyText>
-                  </Flex>
-                  <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
-                <Flex>
-                  <BodyText color="neutral.c80">
-                    {t("syncOnboarding.seedStep.selectionRestoreChoice.description")}
-                  </BodyText>
-                  {/* Secret Recovery Phrase */}
-                  <Flex flexDirection="row" mt={6}>
-                    <Note size="M" />
-                    <Flex ml={5} flex={1}>
-                      <SubtitleText mb={2}>
-                        {t(
-                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.title",
-                        )}
-                      </SubtitleText>
-                      <BodyText>
-                        {t(
-                          "syncOnboarding.seedStep.selectionRestoreChoice.secretRecoveryPhrase.description",
-                        )}
-                      </BodyText>
-                    </Flex>
-                  </Flex>
-                  {/* Recovery Key */}
-                  {deviceOnboardingState?.charonSupported && (
-                    <Flex flexDirection="row" mt={6}>
-                      <RecoveryKey size="M" />
-                      <Flex ml={5} flex={1}>
-                        <SubtitleText mb={2}>
-                          {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.title")}
-                        </SubtitleText>
-                        <BodyText>
-                          {t(
-                            "syncOnboarding.seedStep.selectionRestoreChoice.ledgerCharon.description",
-                          )}
-                        </BodyText>
-                      </Flex>
-                    </Flex>
-                  )}
-                  {/* Recover subscription */}
-                  <Flex flexDirection="row" mt={6} mb={6}>
-                    <ShieldCheck size="M" />
-                    <Flex ml={5} flex={1}>
-                      <SubtitleText mb={2}>
-                        {t("syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.title")}
-                      </SubtitleText>
-                      <BodyText>
-                        {t(
-                          "syncOnboarding.seedStep.selectionRestoreChoice.ledgerRecover.description",
-                        )}
-                      </BodyText>
-                    </Flex>
-                  </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              ) : seedPathStatus === "restore_seed" ? (
-                <Flex>
-                  <SubtitleText>{t("syncOnboarding.seedStep.restoreSeed.title")}</SubtitleText>
-                  <BodyText>{t("syncOnboarding.seedStep.restoreSeed.description")}</BodyText>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.restoreSeed.continueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              ) : seedPathStatus === "recover_seed" ? (
-                <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
-              ) : seedPathStatus === "backup_charon" ? (
-                <Flex>
-                  {deviceOnboardingState?.charonStatus === CharonStatus.Choice ? (
-                    <TrackScreen category="Set up device: Step 3 Charon Start" />
-                  ) : null}
-                  {deviceOnboardingState?.charonStatus === CharonStatus.Rejected ? (
-                    <TrackScreen category="Set up device: Step 3 Charon Backup Rejected" />
-                  ) : null}
-                  {deviceOnboardingState?.charonStatus === CharonStatus.Ready ? (
-                    <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
-                  ) : null}
-                  <Flex alignItems="center" justifyContent="center">
-                    <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
-                      <ShadowedView
-                        style={{
-                          shadowOpacity: 0.15,
-                          shadowRadius: 35.633,
-                          shadowOffset: {
-                            width: 0,
-                            height: 53.291,
-                          },
-                        }}
-                      >
-                        <ShadowedView
-                          style={{
-                            shadowOpacity: 0.14,
-                            shadowRadius: 21.153,
-                            shadowOffset: {
-                              width: 0,
-                              height: 26.442,
-                            },
-                          }}
-                        >
-                          <ShadowedView
-                            style={{
-                              shadowOpacity: 0.11,
-                              shadowRadius: 11.31,
-                              shadowOffset: {
-                                width: 0,
-                                height: 14.137,
-                              },
-                            }}
-                          >
-                            <ShadowedView
-                              style={{
-                                shadowOpacity: 0.09,
-                                shadowRadius: 6.34,
-                                shadowOffset: {
-                                  width: 0,
-                                  height: 7.925,
-                                },
-                              }}
-                            >
-                              <ShadowedView
-                                style={{
-                                  shadowOpacity: 0.08,
-                                  shadowRadius: 3.367,
-                                  shadowOffset: {
-                                    width: 0,
-                                    height: 4.209,
-                                  },
-                                }}
-                              >
-                                <ShadowedView
-                                  style={{
-                                    shadowOpacity: 0.05,
-                                    shadowRadius: 1.401,
-                                    shadowOffset: {
-                                      width: 0,
-                                      height: 1.751,
-                                    },
-                                  }}
-                                >
-                                  <Animation style={{ height: 100 }} source={CHARON} />
-                                </ShadowedView>
-                              </ShadowedView>
-                            </ShadowedView>
-                          </ShadowedView>
-                        </ShadowedView>
-                      </ShadowedView>
-                    </Flex>
-                    <Text variant="h5" fontWeight="semiBold" mb={24}>
-                      {t("syncOnboarding.seedStep.backupCharon.title")}
-                    </Text>
-                    <BodyText mb={24} textAlign="center">
-                      {t("syncOnboarding.seedStep.backupCharon.desc")}
-                    </BodyText>
-                  </Flex>
-                  <Flex mb={6} width="100%" justifyContent="center" alignItems="center">
-                    <Link
-                      Icon={ExternalLinkMedium}
-                      onPress={handleLearnMoreClick}
-                      style={{ justifyContent: "flex-start" }}
-                    >
-                      {t("syncOnboarding.seedStep.backupCharon.cta")}
-                    </Link>
-                  </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.backupCharon.continueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              ) : seedPathStatus === "restore_charon" ? (
-                <Flex>
-                  <SubtitleText>
-                    {t("syncOnboarding.seedStep.restoreLedgerCharon.title")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t("syncOnboarding.seedStep.restoreLedgerCharon.description")}
-                  </BodyText>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.restoreLedgerCharon.continueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              ) : (
-                <Flex>
-                  <BodyText color="neutral.c80">
-                    {t("syncOnboarding.seedStep.selection", {
-                      productName,
-                    })}
-                  </BodyText>
-
-                  <Flex mt={6}>
-                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
-                      {t("syncOnboarding.seedStep.selectionNewLedger.title")}
-                    </Text>
-                    <Text color="neutral.c80">
-                      {t("syncOnboarding.seedStep.selectionNewLedger.desc")}
-                    </Text>
-                  </Flex>
-                  <Flex my={6}>
-                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
-                      {t("syncOnboarding.seedStep.selectionRestore.title")}
-                    </Text>
-                    <Text color="neutral.c80">
-                      {deviceOnboardingState?.charonSupported
-                        ? t("syncOnboarding.seedStep.selectionRestore.descWithCharon")
-                        : t("syncOnboarding.seedStep.selectionRestore.desc")}
-                    </Text>
-                  </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
-                    text={t("syncOnboarding.seedStep.selectionContinueOnDevice", {
-                      productName,
-                    })}
-                  />
-                </Flex>
-              )}
-            </Flex>
-          ),
-        },
-        ...(deviceInitialApps?.enabled
-          ? [
-              {
-                key: CompanionStepKey.Apps,
-                title: t("syncOnboarding.appsStep.title", { productName }),
-                renderBody: () => (
-                  <InstallSetOfApps
-                    restore={shouldRestoreApps}
-                    device={device}
-                    onResult={handleInstallAppsComplete}
-                    dependencies={initialAppsToInstall}
-                  />
-                ),
-              },
-            ]
-          : []),
-        {
-          key: CompanionStepKey.Ready,
-          title: t("syncOnboarding.readyStep.title"),
-          doneTitle: t("syncOnboarding.readyStep.doneTitle", { productName }),
-        },
-      ].map(step => ({
-        ...step,
-        status:
-          step.key > companionStepKey
-            ? "inactive"
-            : step.key < companionStepKey
-              ? "completed"
-              : "active",
-      })),
-    [
-      t,
-      productName,
-      seedPathStatus,
-      deviceInitialApps?.enabled,
-      device,
-      deviceOnboardingState?.charonSupported,
-      deviceOnboardingState?.charonStatus,
-      handleLearnMoreClick,
-      shouldRestoreApps,
-      handleInstallAppsComplete,
-      initialAppsToInstall,
-      companionStepKey,
-    ],
-  );
+  }, [companionStep, handleOnboardingDone]);
 
   return (
     <>
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <Flex position="relative" flex={1} px={6}>
         <DesyncOverlay
-          isOpen={isDesyncOverlayOpen}
-          delay={desyncOverlayDisplayDelayMs}
+          isOpen={twoStepDesync.isDesyncOverlayOpen}
+          delay={twoStepDesync.desyncOverlayDisplayDelayMs}
           productName={productName}
         />
         <Flex>
-          <VerticalTimeline
-            steps={companionSteps}
-            formatEstimatedTime={formatEstimatedTime}
-            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
-            header={
-              <Flex mb={8} flexDirection="row" alignItems="center">
-                <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { productName })}
-                </Text>
-                {/* TODO: disabled for now but will be used in the future */}
-                {/* <Button
-                      ml={2}
-                      Icon={Question}
-                      onPress={() => setHelpDrawerOpen(true)}
-                    /> */}
-              </Flex>
-            }
+          <FirstStepSyncOnboarding
+            device={device}
+            productName={productName}
+            navigation={navigation}
+            onLostDevice={onLostDevice}
+            handleSeedGenerationDelay={twoStepDesync.handleSeedGenerationDelay}
+            notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+            handlePollingError={twoStepDesync.handlePollingError}
+            //   handleFinishStep,
+            isCollapsed={companionStep !== "setup"}
+            isPollingOn={isPollingOn}
+            setIsPollingOn={setIsPollingOn}
           />
-          {companionStepKey === CompanionStepKey.Exit ? (
+          <SecondStepSyncOnboarding isCollapsed={true} />
+          {/* {companionStepKey === CompanionStepKey.Exit ? (
             <TrackScreen category="Set up device: Final Step Your device is ready" />
-          ) : null}
+          ) : null} */}
         </Flex>
       </Flex>
     </>
