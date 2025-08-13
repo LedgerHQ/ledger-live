@@ -211,7 +211,7 @@ jobs:
           skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: auto
+          region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           cache-endpoint: ${{ secrets.R2_ENDPOINT }}
           cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
@@ -418,6 +418,8 @@ jobs:
           cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
           cache-secret-key: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           cache-bucket: ledger-live-cache
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable Hardware Acceleration

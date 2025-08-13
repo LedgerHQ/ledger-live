@@ -107,7 +107,7 @@ runs:
         secretKey: ${{ inputs.cache-secret-key != '' && inputs.cache-secret-key || env.AWS_SECRET_ACCESS_KEY }}
         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
         bucket: ${{ inputs.cache-bucket }}
-        region: ${{ inputs.region }}
+        region: auto
         endpoint: ${{ inputs.cache-endpoint != '' && inputs.cache-endpoint || format('https://s3.{0}.amazonaws.com', inputs.region) }}
 
     - name: Cache LLM pods
