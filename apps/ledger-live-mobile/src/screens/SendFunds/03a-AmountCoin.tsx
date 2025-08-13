@@ -10,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
@@ -85,15 +85,26 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     [setTransaction, account, parentAccount, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
-    if (!account) return;
+    if (!account || !transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
-    if (!transaction) return;
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        amount: new BigNumber(0),
-        useAllAmount: !transaction.useAllAmount,
-      }),
-    );
+
+    const toggledTx = bridge.updateTransaction(transaction, {
+      amount: new BigNumber(0),
+      useAllAmount: !transaction.useAllAmount,
+    });
+    setTransaction(toggledTx);
+
+    (async () => {
+      try {
+        const main = getMainAccount(account, parentAccount);
+        const s = await bridge.getTransactionStatus(main, toggledTx);
+        if (s?.amount) {
+          setTransaction(bridge.updateTransaction(toggledTx, { amount: s.amount }));
+        }
+      } catch {
+        // no-op
+      }
+    })();
   }, [setTransaction, account, parentAccount, transaction]);
   const onContinue = useCallback(() => {
     if (!transaction) return;

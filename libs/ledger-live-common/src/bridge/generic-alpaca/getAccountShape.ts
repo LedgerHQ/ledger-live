@@ -69,13 +69,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       }
     });
 
-    console.log('--------------------------------');
-    console.log("Old ops raw: ", oldOpsRaw);
-    console.log("Old ops: ", oldOps);
-    console.log("New ops: ", newOps);
-    console.log("Merged ops: ", mergedOps);
-    console.log('--------------------------------');
-
     const subAccounts =
       buildSubAccounts({
         currency,
