@@ -166,7 +166,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/r2-osx-pnpm-cache
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
