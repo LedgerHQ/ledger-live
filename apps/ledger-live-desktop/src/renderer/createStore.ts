@@ -1,6 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
+import { assetsDataApi } from "~/newArch/features/ModularDrawer/data/state-manager/api";
 
 type Props = {
   state?: State;
@@ -17,6 +18,7 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
         serializableCheck: false,
       }).concat(
         logger,
+        assetsDataApi.middleware,
         ...(analyticsMiddleware ? [analyticsMiddleware] : []),
         ...(dbMiddleware ? [dbMiddleware] : []),
       ),
