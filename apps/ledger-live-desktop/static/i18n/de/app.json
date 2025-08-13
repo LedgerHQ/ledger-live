@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "Pseudokonten generieren",
+          "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "Benutzerdefiniert generieren",
+            "desc" : "Bestimmte Währungen auswählen und Token hinzufügen"
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "Schnell generieren",
+            "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "Währungen auswählen…",
+            "searchPlaceholder" : "Währungen durchsuchen…",
+            "noCurrenciesFound" : "Keine Währungen gefunden",
+            "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+            "selectedCount" : "{{count}} Währung ausgewählt",
+            "selectedCount_other" : "{{count}} Währungen ausgewählt"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
+            "label" : "Token-IDs (optional)",
             "placeholder" : "token1, token2, token3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "{{count}} Konto generieren",
+            "generateAccounts_other" : "{{count}} Konten generieren",
+            "generateAccountsQuick" : "{{count}} Konten generieren"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+            "confirmErase" : "Dadurch werden bestehende Konten gelöscht. Vorgang fortsetzen?",
+            "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
+      "description" : "Richte es für die Nutzung ein. Wir begleiten dich durch den Einrichtungsprozess.",
+      "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
+      "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
     "EtherscanAPIError" : {
       "title" : "Abruf der Transaktionen fehlgeschlagen",
