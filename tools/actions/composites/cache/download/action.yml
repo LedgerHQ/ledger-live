@@ -24,6 +24,11 @@ inputs:
   region:
     type: string
     required: true
+  restore-keys:
+    description: "Optional restore keys for cache download"
+    type: string
+    required: false
+    default: ""
 outputs:
   cache-hit:
     description: "Indicates if the cache was successfully downloaded"
