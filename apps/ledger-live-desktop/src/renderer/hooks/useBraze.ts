@@ -1,10 +1,6 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
-import {
-  cutoffDate,
-  generateAnonymousId,
-  getOldCampaignIds,
-} from "@ledgerhq/live-common/braze/anonymousUsers";
+import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +22,7 @@ import {
 } from "../actions/dynamicContent";
 import {
   clearDismissedContentCards,
-  purgeAnonymousUserNotifications,
+  purgeExpiredAnonymousUserNotifications,
   setAnonymousBrazeId,
 } from "../actions/settings";
 import {
@@ -95,6 +91,9 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   viewed: card.viewed,
 });
 
+/**
+ * TODO put this effectful logic into a provider instead
+ */
 export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
@@ -106,7 +105,6 @@ export async function useBraze() {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
-    dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
 
     if (!anonymousBrazeId.current) {
       anonymousBrazeId.current = generateAnonymousId();
@@ -175,15 +173,16 @@ export async function useBraze() {
     initBraze();
   }, [initBraze]);
 
+  // TODO should there be an interval to periodically purge dismissed cards?
+  useEffect(() => {
+    dispatch(clearDismissedContentCards({ now: new Date() }));
+  }, [dispatch]);
+
   // TODO should there be an interval to periodically purge old notifications?
   useEffect(() => {
     // If the user is opt-out from analytics, we need to purge expired notifications persisted in the store/offline storage
     if (!isTrackedUser) {
-      dispatch(
-        purgeAnonymousUserNotifications({
-          cutoff: cutoffDate(),
-        }),
-      );
+      dispatch(purgeExpiredAnonymousUserNotifications({ now: new Date() }));
     }
   }, [dispatch, isTrackedUser]);
 }

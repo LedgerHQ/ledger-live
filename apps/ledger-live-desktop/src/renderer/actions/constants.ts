@@ -1,7 +1,8 @@
 // Action types
 
 /** Settings --------- */
-export const PURGE_ANONYMOUS_USER_NOTIFICATIONS = "settings/purgeAnonymousUserNotifications";
+export const PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS =
+  "settings/purgeExpiredAnonymousUserNotifications";
 export const RESET_HIDDEN_NFT_COLLECTIONS = "settings/resetHiddenNftCollections";
 export const TOGGLE_MARKET_WIDGET = "settings/toggleMarketWidget";
 export const TOGGLE_MEMOTAG_INFO = "settings/toggleShouldDisplayMemoTagInfo";
