@@ -344,7 +344,7 @@
           "provider" : "sağlayıcı",
           "rate" : "kur",
           "fees" : "Ağ Ücretleri",
-          "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
+          "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -385,6 +385,7 @@
         "onhold" : "Durduruldu",
         "expired" : "Süresi doldu",
         "finished" : "Tamamlandı",
+        "unknown" : "İşleniyor",
         "refunded" : "Para iadesi yapıldı"
       }
     },
@@ -571,7 +572,7 @@
         "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
         "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
         "finished" : "Takas işleminiz başarıyla tamamlandı.",
-        "unknown" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun."
+        "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
       },
       "date" : "Tarih",
       "from" : "Gönderici",
@@ -2386,6 +2387,10 @@
         "title" : "Cihaz"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Kör imzalama gerekir",
+          "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+        },
         "utxoLag" : "Hesapta yüksek miktarda coin bulunduğu için bu işlemin doğrulanması ve imzalanması uzun sürebilir.",
         "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
         "from" : "Gönderici",
@@ -4466,6 +4471,40 @@
             "spam" : "Spam İhbarı",
             "refresh" : "Metaverileri Yenile",
             "check" : "Spam Puanı"
+          }
+        },
+        "mockAccounts" : {
+          "title" : "Test Hesapları Oluşturun",
+          "description" : "Test etmek amacıyla test hesapları oluşturun. Bu araçlar, çeşitli para birimlerine ve yapılandırmalara sahip test hesapları oluşturmanıza olanak tanır.",
+          "customGenerate" : {
+            "title" : "Özel Oluşturma",
+            "desc" : "Belirli para birimlerini seçin ve token’lar ekleyin"
+          },
+          "quickGenerate" : {
+            "title" : "Hızlı Oluşturma",
+            "desc" : "Rastgele para birimlerinin yer aldığı rastgele 10 hesap oluşturun"
+          },
+          "currencySelector" : {
+            "placeholder" : "Para birimleri seçin...",
+            "searchPlaceholder" : "Para birimlerini arayın...",
+            "noCurrenciesFound" : "Hiçbir para birimi bulunamadı",
+            "noCurrenciesAvailable" : "Kullanılabilir hiçbir para birimi yok",
+            "selectedCount" : "{{count}} para birimi seçildi",
+            "selectedCount_other" : "{{count}} para birimi seçildi"
+          },
+          "tokenIds" : {
+            "label" : "Token Kimlikleri (isteğe bağlı)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}} Hesap Oluştur",
+            "generateAccounts_other" : "{{count}} Hesap Oluştur",
+            "generateAccountsQuick" : "{{count}} Hesap Oluştur"
+          },
+          "alerts" : {
+            "selectCurrency" : "Lütfen en az bir para birimi seçin",
+            "confirmErase" : "Bu, mevcut hesapları silecektir. Devam etmek istiyor musunuz?",
+            "generateError" : "Test hesapları oluşturulamadı. Lütfen tekrar deneyin."
           }
         },
         "debugSpamNft" : {
@@ -7352,7 +7391,7 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "description" : "Ledger Live bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
