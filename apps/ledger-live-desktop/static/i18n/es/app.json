@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "Generar cuentas ficticias",
+          "description" : "Genera cuentas ficticias con fines de prueba. Estas herramientas te permiten crear cuentas de prueba con diversas divisas y configuraciones.",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "Generación personalizada",
+            "desc" : "Selecciona divisas concretas y agrega tokens."
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "Generación rápida",
+            "desc" : "Genera 10 cuentas aleatorias con divisas al azar."
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "Elegir divisas...",
+            "searchPlaceholder" : "Buscar divisas...",
+            "noCurrenciesFound" : "No se encontró ninguna divisa",
+            "noCurrenciesAvailable" : "No hay divisas disponibles",
+            "selectedCount" : "{{count}} divisa seleccionada",
+            "selectedCount_other" : "{{count}} divisas seleccionadas"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
+            "label" : "IDs de los tokens (opcional)",
             "placeholder" : "token1, token2, token3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "Generar {{count}} cuenta",
+            "generateAccounts_other" : "Generar {{count}} cuentas",
+            "generateAccountsQuick" : "Generar {{count}} cuentas"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "Selecciona al menos una divisa",
+            "confirmErase" : "Esta acción borrará las cuentas existentes. ¿Quieres continuar?",
+            "generateError" : "No se pudieron generar las cuentas ficticias. Inténtalo de nuevo."
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "Tu Ledger no está configurado",
+      "description" : "Configúralo para empezar a usarlo. Te guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi Ledger",
+      "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "Se produjo un fallo al recuperar las transacciones",
