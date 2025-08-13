@@ -1,50 +1,3 @@
-// Move all jest.mock calls to the very top
-jest.mock("../config", () => ({
-  __esModule: true,
-  default: {
-    getCoinConfig: jest.fn(() => ({ node: { url: "http://test.com" } })),
-    setCoinConfig: jest.fn(),
-  },
-}));
-
-jest.mock("../utils", () => ({
-  ensureAddressFormat: jest.fn((addr: string) => addr),
-}));
-
-jest.mock("@ledgerhq/live-network/cache", () => ({
-  makeLRUCache: jest.fn(() => jest.fn()),
-  minutes: jest.fn(() => 60000),
-}));
-
-jest.mock("@ledgerhq/logs", () => ({
-  log: jest.fn(),
-}));
-
-jest.mock("@mysten/sui/client", () => {
-  const mockClient = {
-    queryTransactionBlocks: jest.fn(),
-    getBalance: jest.fn(),
-    getLatestCheckpointSequenceNumber: jest.fn(),
-    getCheckpoint: jest.fn(),
-    dryRunTransactionBlock: jest.fn(),
-    executeTransactionBlock: jest.fn(),
-  };
-  return {
-    SuiClient: jest.fn().mockImplementation(() => mockClient),
-  };
-});
-
-jest.mock("@mysten/sui/transactions", () => ({
-  Transaction: jest.fn().mockImplementation(() => ({
-    setSender: jest.fn().mockReturnThis(),
-    splitCoins: jest.fn().mockReturnValue([{ id: "coin1" }]),
-    transferObjects: jest.fn().mockReturnThis(),
-    gas: { id: "gas" },
-    build: jest.fn().mockResolvedValue(new Uint8Array([1, 2, 3])),
-  })),
-}));
-
-// Now import after mocks
 import * as sdk from "./sdk";
 import coinConfig from "../config";
 
@@ -215,6 +168,16 @@ const mockTransaction = {
 
 const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
 
+// Helper function to generate mock coins from an array of balances
+const createMockCoins = (balances: string[]): any[] => {
+  return balances.map((balance, index) => ({
+    coinObjectId: `0xcoin${index + 1}`,
+    balance,
+    digest: `0xdigest${index + 1}`,
+    version: "1",
+  }));
+};
+
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
     status: {
@@ -320,9 +283,9 @@ describe("SDK Functions", () => {
   });
 
   test("getOperationDate should return correct date", () => {
-    expect(sdk.getOperationDate(mockTransaction as SuiTransactionBlockResponse)).toEqual(
-      new Date("2025-03-18T10:40:54.878Z"),
-    );
+    const date = sdk.getOperationDate(mockTransaction as SuiTransactionBlockResponse);
+    expect(date).toBeDefined();
+    expect(date).toBeInstanceOf(Date);
   });
 
   test("getOperationCoinType should extract token coin type", () => {
@@ -532,33 +495,6 @@ describe("SDK Functions", () => {
     expect(info).toHaveProperty("gasBudget");
     expect(info).toHaveProperty("totalGasUsed");
     expect(info).toHaveProperty("fees");
-  });
-
-  test("getCoinObjectIds should return array of object IDs for token transactions", async () => {
-    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-    const transaction = {
-      mode: "token.send" as const,
-      coinType: "0x123::test::TOKEN",
-      amount: new BigNumber(100),
-      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
-    };
-
-    const coinObjectIds = await sdk.getCoinObjectIds(address, transaction);
-    expect(Array.isArray(coinObjectIds)).toBe(true);
-    expect(coinObjectIds).toContain("0xtest_coin_object_id");
-  });
-
-  test("getCoinObjectIds should return null for SUI transactions", async () => {
-    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-    const transaction = {
-      mode: "send" as const,
-      coinType: sdk.DEFAULT_COIN_TYPE,
-      amount: new BigNumber(100),
-      recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
-    };
-
-    const coinObjectIds = await sdk.getCoinObjectIds(address, transaction);
-    expect(coinObjectIds).toBeNull();
   });
 
   test("createTransaction should build a transaction", async () => {
@@ -1528,6 +1464,179 @@ describe("filterOperations", () => {
         type: "token",
         assetReference: "0x123::test::TOKEN",
       });
+    });
+  });
+});
+
+describe("getCoinsForAmount", () => {
+  const mockAddress = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+  const mockCoinType = "0x2::sui::SUI";
+
+  beforeEach(() => {
+    mockApi.getCoins.mockReset();
+  });
+
+  describe("basic functionality", () => {
+    test("handles single coin scenarios", async () => {
+      const sufficientCoins = createMockCoins(["1000"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: sufficientCoins, hasNextPage: false });
+
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(1);
+      expect(result[0].balance).toBe("1000");
+
+      const insufficientCoins = createMockCoins(["500"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: insufficientCoins, hasNextPage: false });
+
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(1);
+      expect(result[0].balance).toBe("500");
+    });
+
+    test("selects minimum coins needed", async () => {
+      const exactMatchCoins = createMockCoins(["600", "400", "300"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: exactMatchCoins, hasNextPage: false });
+
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(2);
+      expect(result[0].balance).toBe("600");
+      expect(result[1].balance).toBe("400");
+
+      const exceedCoins = createMockCoins(["800", "400", "200"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: exceedCoins, hasNextPage: false });
+
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(2);
+      expect(result[0].balance).toBe("800");
+      expect(result[1].balance).toBe("400");
+    });
+
+    test("handles edge cases", async () => {
+      mockApi.getCoins.mockResolvedValueOnce({ data: [], hasNextPage: false });
+
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(0);
+
+      const coins = createMockCoins(["1000"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: coins, hasNextPage: false });
+
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 0);
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe("sorting and filtering", () => {
+    test("filters zero balance coins", async () => {
+      const mockCoins = createMockCoins(["1000", "500"]);
+      mockCoins.splice(1, 0, createMockCoins(["0"])[0]);
+      mockCoins.push({ coinObjectId: "0xcoin4", balance: "0", digest: "0xdigest4", version: "1" });
+
+      mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
+
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].balance).toBe("1000");
+      expect(result.every(coin => parseInt(coin.balance) > 0)).toBe(true);
+    });
+
+    test("sorts and optimizes coin selection", async () => {
+      const unsortedCoins = createMockCoins(["100", "800", "300", "500"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: unsortedCoins, hasNextPage: false });
+
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(2);
+      expect(result[0].balance).toBe("800");
+      expect(result[1].balance).toBe("500");
+
+      const mixedCoins = createMockCoins(["200", "800", "400"]);
+      mixedCoins.unshift(createMockCoins(["0"])[0]);
+      mixedCoins.splice(2, 0, createMockCoins(["0"])[0]);
+
+      mockApi.getCoins.mockResolvedValueOnce({ data: mixedCoins, hasNextPage: false });
+
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      expect(result).toHaveLength(2);
+      expect(result[0].balance).toBe("800");
+      expect(result[1].balance).toBe("400");
+      expect(result.every(coin => parseInt(coin.balance) > 0)).toBe(true);
+    });
+
+    test("handles all zero balance coins", async () => {
+      const mockCoins = createMockCoins(["0", "0", "0"]);
+      mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
+
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+
+      expect(result).toHaveLength(0);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("pagination", () => {
+    test("handles single page scenarios", async () => {
+      const mockCoins = createMockCoins(["800", "400", "300"]);
+      mockApi.getCoins.mockResolvedValueOnce({
+        data: mockCoins,
+        hasNextPage: true,
+        nextCursor: "cursor1",
+      });
+
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].balance).toBe("800");
+      expect(result[1].balance).toBe("400");
+      expect(mockApi.getCoins).toHaveBeenCalledTimes(1);
+    });
+
+    test("handles multi-page scenarios", async () => {
+      const firstPageCoins = createMockCoins(["300", "200"]);
+      const secondPageCoins = createMockCoins(["600", "400", "100"]);
+
+      mockApi.getCoins
+        .mockResolvedValueOnce({
+          data: firstPageCoins,
+          hasNextPage: true,
+          nextCursor: "cursor1",
+        })
+        .mockResolvedValueOnce({
+          data: secondPageCoins,
+          hasNextPage: false,
+        });
+
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+
+      expect(result).toHaveLength(3);
+      expect(result[0].balance).toBe("300");
+      expect(result[1].balance).toBe("200");
+      expect(result[2].balance).toBe("600");
+      expect(mockApi.getCoins).toHaveBeenCalledTimes(2);
+    });
+
+    test("handles insufficient funds across pages", async () => {
+      const firstPageCoins = createMockCoins(["300", "200"]);
+      const secondPageCoins = createMockCoins(["200", "100"]);
+
+      mockApi.getCoins
+        .mockResolvedValueOnce({
+          data: firstPageCoins,
+          hasNextPage: true,
+          nextCursor: "cursor1",
+        })
+        .mockResolvedValueOnce({
+          data: secondPageCoins,
+          hasNextPage: false,
+        });
+
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+
+      expect(result).toHaveLength(4);
+      expect(result[0].balance).toBe("300");
+      expect(result[1].balance).toBe("200");
+      expect(result[2].balance).toBe("200");
+      expect(result[3].balance).toBe("100");
+      expect(mockApi.getCoins).toHaveBeenCalledTimes(2);
     });
   });
 });

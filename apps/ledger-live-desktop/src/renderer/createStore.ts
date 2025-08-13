@@ -1,5 +1,4 @@
-import { applyMiddleware, compose, createStore, Middleware } from "redux";
-import thunk from "redux-thunk";
+import { configureStore, Middleware } from "@reduxjs/toolkit";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 
@@ -10,19 +9,19 @@ type Props = {
 };
 
 const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) => {
-  const middlewares: Middleware[] = [thunk, logger];
-
-  // middlewares.push(require('./../middlewares/sentry').default)
-  if (analyticsMiddleware) {
-    middlewares.push(analyticsMiddleware);
-  }
-  if (dbMiddleware) {
-    middlewares.push(dbMiddleware);
-  }
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  const enhancers = composeEnhancers(applyMiddleware(...middlewares));
-
-  return createStore(reducers, state, enhancers);
+  return configureStore({
+    reducer: reducers,
+    preloadedState: state,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }).concat(
+        logger,
+        ...(analyticsMiddleware ? [analyticsMiddleware] : []),
+        ...(dbMiddleware ? [dbMiddleware] : []),
+      ),
+    devTools: __DEV__,
+  });
 };
 
 export type ReduxStore = ReturnType<typeof customCreateStore>;

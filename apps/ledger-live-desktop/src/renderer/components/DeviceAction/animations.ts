@@ -417,7 +417,6 @@ const apex: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
     light: FLEX_LIGHT_CONTINUE,
     dark: FLEX_DARK_CONTINUE,
   },
-  // Keep
   confirmLockscreen: {
     light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
     dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
@@ -430,7 +429,6 @@ const apex: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
     light: FLEX_LIGHT_CONTINUE,
     dark: FLEX_DARK_CONTINUE,
   },
-  // Keep
   onboardingSuccess: {
     light: FLEX_LIGHT_ONBOARDING_SUCCESS,
     dark: FLEX_DARK_ONBOARDING_SUCCESS,

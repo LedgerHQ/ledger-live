@@ -70,28 +70,28 @@ const DeviceName = styled(Text).attrs({
   height: 60,
 })``;
 
-interface DeviceSelectOptionProps {
-  label: string;
-  Illu: React.ReactNode;
-  onClick: () => void;
+type DeviceSelectOptionProps = {
   id: string;
+  illustration: React.ReactNode;
   isFirst: boolean;
   isLast: boolean;
-}
+  label: string;
+  onClick: () => void;
+};
 
 export function DeviceSelectorOption({
   id,
-  label,
-  Illu,
-  onClick,
+  illustration,
   isFirst,
   isLast,
+  label,
+  onClick,
 }: DeviceSelectOptionProps) {
   const { t } = useTranslation();
   return (
     <Container data-testid={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
-        <DeviceIllustrationContainer>{Illu}</DeviceIllustrationContainer>
+        <DeviceIllustrationContainer>{illustration}</DeviceIllustrationContainer>
         <DeviceName>{label}</DeviceName>
         <SelectButton data-testid={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}

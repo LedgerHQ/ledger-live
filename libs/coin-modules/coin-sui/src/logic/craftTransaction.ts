@@ -25,9 +25,9 @@ export async function craftTransaction({
   }
   const unsigned = await suiAPI.createTransaction(sender, {
     amount: BigNumber(amount.toString()),
-    recipient,
     coinType,
     mode: type as SuiTransactionMode,
+    recipient,
   });
 
   return { unsigned };
