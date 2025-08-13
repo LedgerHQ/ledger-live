@@ -4,6 +4,7 @@ import { close as closeBridge, getLogs } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
+// import { removeSpeculos } from "./utils/speculosUtils";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
@@ -28,4 +29,5 @@ afterAll(async () => {
   closeBridge();
   closeProxy();
   await app.common.removeSpeculos();
+  //await removeSpeculos();
 });

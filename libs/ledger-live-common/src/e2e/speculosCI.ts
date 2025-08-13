@@ -153,8 +153,8 @@ export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
   runId?: string,
 ): Promise<SpeculosDevice | undefined> {
+  runId = uniqueId();
   try {
-    runId ??= uniqueId();
     const data = createStartPayload(deviceParams, runId);
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
     return {
@@ -165,6 +165,10 @@ export async function createSpeculosDeviceCI(
     console.warn(
       `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
     );
+    return {
+      id: runId,
+      port: 0,
+    };
   }
 }
 

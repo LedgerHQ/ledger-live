@@ -1,16 +1,15 @@
 import { findFreePort, loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
-import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { isRemoteIos, slugify } from "../helpers/commonHelpers";
-import { launchSpeculos } from "./speculosUtils";
+import { launchSpeculos, registerSpeculos, removeSpeculos } from "./speculosUtils";
 import {
   getSpeculosAddress,
   uniqueId,
   waitForSpeculosReady,
-} from "@ledgerhq/live-common/lib/e2e/speculosCI";
+} from "@ledgerhq/live-common/e2e/speculosCI";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import CommonPage from "../page/common.page";
 
 type CliCommand = (
   userdataPath?: string,
@@ -18,10 +17,10 @@ type CliCommand = (
 ) => Observable<unknown> | Promise<unknown> | string;
 
 export type InitOptions = {
-  speculosApp?: AppInfosType;
+  speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
-    app: AppInfosType;
+    app: SpeculosAppType;
     cmd: CliCommand;
   }[];
   userdata?: string;
@@ -60,7 +59,7 @@ async function executeCliCommand(
 }
 
 // Setup all Speculos devices in parallel for better performance
-async function setupSpeculosDevices(toStart: AppInfosType[]): Promise<Record<string, Entry>> {
+async function setupSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record<string, Entry>> {
   const entries: Entry[] = await Promise.all(
     toStart.map(async app => {
       const proxyPort = await findFreePort();
@@ -86,24 +85,20 @@ async function setupSpeculosDevices(toStart: AppInfosType[]): Promise<Record<str
 }
 
 // Wait for remote Speculos to be ready before proceeding
-async function waitForSpeculosIfRemote(entry: Entry, appName: string): Promise<void> {
+async function waitForSpeculosIfRemote(entry: Entry): Promise<void> {
   if (isRemoteIos() && entry.runId) {
     const address = getSpeculosAddress(entry.runId);
     log.info(`⏳ Waiting for remote Speculos at ${address}`);
-    await waitForSpeculosReady(
-      address,
-      `Unable to reach remote Speculos at: ${address} to create an account for ${appName}`,
-    );
+    await waitForSpeculosReady(address);
   }
 }
 
 // Single attempt to execute a command with proper cleanup on failure
 async function executeCommandAttempt(
-  app: AppInfosType,
+  app: SpeculosAppType,
   cmd: CliCommand,
   entry: Entry,
   userdataPath: string,
-  commonPage: CommonPage,
   attempt: number,
   maxRetries: number,
 ): Promise<boolean> {
@@ -111,39 +106,41 @@ async function executeCommandAttempt(
 
   log.info(`\n🔄 [${app.name}] Attempt ${attempt}/${maxRetries}`);
 
-  await waitForSpeculosIfRemote(entry, app.name);
-  await commonPage.registerSpeculos(speculosPort, proxyPort);
+  await waitForSpeculosIfRemote(entry);
+  await registerSpeculos(speculosPort, proxyPort);
 
   try {
     await executeCliCommand(cmd, userdataPath, runId);
     return true;
   } catch (err) {
     // Clean up failed instance before retry
-    await commonPage.removeSpeculos(isRemoteIos() && runId ? runId : speculosPort);
+    await removeSpeculos(isRemoteIos() && runId ? runId : speculosPort);
     throw err;
   }
 }
 
 // Create fresh Speculos instance for retry attempts
-async function createNewSpeculosInstance(app: AppInfosType, currentEntry: Entry): Promise<Entry> {
-  const newRunId = isRemoteIos() ? `${slugify(app.name)}-${uniqueId()}` : undefined;
-  const device = await launchSpeculos(app.name, newRunId);
+async function createNewSpeculosInstance(
+  app: SpeculosAppType,
+  currentEntry: Entry,
+): Promise<Entry> {
+  const runId = isRemoteIos() ? `${slugify(app.name)}-${uniqueId()}` : undefined;
+  const device = await launchSpeculos(app.name, runId);
 
   return {
     name: app.name,
     speculosPort: device.port,
     proxyPort: currentEntry.proxyPort,
-    runId: newRunId,
+    runId: device.id,
   };
 }
 
 // Retry logic with fresh instance creation on failures
 async function executeAppCommandWithRetry(
-  app: AppInfosType,
+  app: SpeculosAppType,
   cmd: CliCommand,
   entryMap: Record<string, Entry>,
   userdataPath: string,
-  commonPage: CommonPage,
 ): Promise<void> {
   let entry = entryMap[app.name];
   if (!entry) {
@@ -163,7 +160,6 @@ async function executeAppCommandWithRetry(
         cmd,
         entry,
         userdataPath,
-        commonPage,
         attempt,
         maxRetries,
       );
@@ -177,9 +173,7 @@ async function executeAppCommandWithRetry(
 
       if (attempt < maxRetries) {
         // Create fresh instance for next retry attempt
-        await commonPage.removeSpeculos(
-          isRemoteIos() && entry.runId ? entry.runId : entry.speculosPort,
-        );
+        await removeSpeculos(isRemoteIos() && entry.runId ? entry.runId : entry.speculosPort);
         entry = await createNewSpeculosInstance(app, entry);
         entryMap[app.name] = entry;
       }
@@ -192,34 +186,32 @@ async function executeAppCommandWithRetry(
     );
   }
 
-  await commonPage.removeSpeculos(isRemoteIos() && entry.runId ? entry.runId : entry.speculosPort);
+  await removeSpeculos(isRemoteIos() && entry.runId ? entry.runId : entry.speculosPort);
 }
 
 // Execute commands for each app with retry mechanism
 async function executeCliCommandsOnApp(
-  uniqueOnApp: Array<{ app: AppInfosType; cmd: CliCommand }>,
+  uniqueOnApp: Array<{ app: SpeculosAppType; cmd: CliCommand }>,
   entryMap: Record<string, Entry>,
   userdataPath: string,
-  commonPage: CommonPage,
 ): Promise<void> {
   for (const { app, cmd } of uniqueOnApp) {
-    await executeAppCommandWithRetry(app, cmd, entryMap, userdataPath, commonPage);
+    await executeAppCommandWithRetry(app, cmd, entryMap, userdataPath);
   }
 }
 
 // Single attempt to setup main Speculos app
 async function setupMainSpeculosAttempt(
-  speculosApp: AppInfosType,
+  speculosApp: SpeculosAppType,
   entry: Entry,
-  commonPage: CommonPage,
   attempt: number,
   maxRetries: number,
 ): Promise<boolean> {
   log.info(`\n🔄 [${speculosApp.name}] Main setup attempt ${attempt}/${maxRetries}`);
 
   try {
-    await waitForSpeculosIfRemote(entry, speculosApp.name);
-    await commonPage.registerSpeculos(entry.speculosPort, entry.proxyPort);
+    await waitForSpeculosIfRemote(entry);
+    await registerSpeculos(entry.speculosPort, entry.proxyPort);
     log.info(
       `✅ [${speculosApp.name}] Main Speculos registered successfully on port ${entry.speculosPort}`,
     );
@@ -232,9 +224,8 @@ async function setupMainSpeculosAttempt(
 
 // Retry logic for main Speculos app setup with instance recreation
 async function setupMainSpeculosApp(
-  speculosApp: AppInfosType,
+  speculosApp: SpeculosAppType,
   entryMap: Record<string, Entry>,
-  commonPage: CommonPage,
 ): Promise<void> {
   let main = entryMap[speculosApp.name];
   if (!main) {
@@ -249,13 +240,7 @@ async function setupMainSpeculosApp(
     attempt++;
 
     try {
-      const success = await setupMainSpeculosAttempt(
-        speculosApp,
-        main,
-        commonPage,
-        attempt,
-        maxRetries,
-      );
+      const success = await setupMainSpeculosAttempt(speculosApp, main, attempt, maxRetries);
 
       if (success) {
         lastError = undefined;
@@ -268,9 +253,7 @@ async function setupMainSpeculosApp(
         log.info(`[${speculosApp.name}] Creating new main Speculos instance for retry`);
 
         // Clean up failed instance and create fresh one
-        await commonPage.removeSpeculos(
-          isRemoteIos() && main.runId ? main.runId : main.speculosPort,
-        );
+        await removeSpeculos(isRemoteIos() && main.runId ? main.runId : main.speculosPort);
 
         main = await createNewSpeculosInstance(speculosApp, main);
         entryMap[speculosApp.name] = main;
@@ -289,7 +272,7 @@ async function setupMainSpeculosApp(
 async function executeCliCommands(
   cliCommands: CliCommand[],
   userdataPath: string,
-  speculosApp?: AppInfosType,
+  speculosApp?: SpeculosAppType,
   entryMap?: Record<string, Entry>,
 ): Promise<void> {
   for (const cmd of cliCommands) {
@@ -297,10 +280,7 @@ async function executeCliCommands(
     if (speculosApp && isRemoteIos() && entryMap) {
       const main = entryMap[speculosApp.name];
       if (main?.runId) {
-        await waitForSpeculosReady(
-          getSpeculosAddress(main.runId),
-          `Unable to reach remote Speculos at: ${getSpeculosAddress(main.runId)} before executing global command`,
-        );
+        await waitForSpeculosReady(getSpeculosAddress(main.runId));
       }
     }
 
@@ -312,7 +292,6 @@ export class InitializationManager {
   static async initialize(
     options: InitOptions,
     userdataPath: string,
-    commonPage: CommonPage,
     userdataSpeculos: string,
   ): Promise<void> {
     const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
@@ -327,11 +306,11 @@ export class InitializationManager {
     const speculosDevices = await setupSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(uniqueOnApp, speculosDevices, userdataPath, commonPage);
+    await executeCliCommandsOnApp(uniqueOnApp, speculosDevices, userdataPath);
 
     // Setup main Speculos app if specified
     if (speculosApp) {
-      await setupMainSpeculosApp(speculosApp, speculosDevices, commonPage);
+      await setupMainSpeculosApp(speculosApp, speculosDevices);
       const mainEntry = speculosDevices[speculosApp.name];
       log.info(
         `✅ Main Speculos app [${speculosApp.name}] setup complete. Port: ${mainEntry.speculosPort}, RunId: ${mainEntry.runId || "N/A"}`,

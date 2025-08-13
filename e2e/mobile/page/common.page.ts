@@ -1,8 +1,6 @@
-import { deleteSpeculos, launchProxy } from "../utils/speculosUtils";
-import { addKnownSpeculos, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { deleteSpeculos } from "../utils/speculosUtils";
+import { removeKnownSpeculos } from "../bridge/server";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { setEnv } from "@ledgerhq/live-env";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 
@@ -99,16 +97,6 @@ export default class CommonPage {
     const id = await getIdOfElement(accountTitle);
     jestExpect(id).toContain(this.accountItemId);
     await tapByElement(accountTitle);
-  }
-
-  async registerSpeculos(speculosPort: number, proxyPort: number) {
-    unregisterAllTransportModules();
-    const speculosAddress = process.env.SPECULOS_ADDRESS;
-    await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
-    setEnv("SPECULOS_API_PORT", speculosPort);
   }
 
   async removeSpeculos(apiPortOrRunId?: number | string) {

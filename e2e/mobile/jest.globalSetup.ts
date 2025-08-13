@@ -16,6 +16,7 @@ import fs from "fs";
 import path from "path";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import { log } from "detox";
+import { removeSpeculos } from "./utils/speculosUtils";
 
 global.Step = Step;
 global.$TmsLink = $TmsLink;
@@ -26,10 +27,8 @@ import { Application } from "./page";
 
 // Cleanup logic
 async function cleanupSpeculos() {
-  if (global.app?.common?.removeSpeculos) {
-    await global.app.common.removeSpeculos();
-    log.info("✅ Speculos cleanup completed.");
-  }
+  await removeSpeculos();
+  log.info("✅ Speculos cleanup completed.");
 }
 
 // Handle graceful exits

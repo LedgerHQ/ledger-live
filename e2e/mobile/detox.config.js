@@ -89,7 +89,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        name: "iOS Simulator",
+        name: "iOS Simulator-Detox",
       },
     },
     emulator: {
