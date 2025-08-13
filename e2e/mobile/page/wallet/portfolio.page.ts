@@ -31,6 +31,7 @@ export default class PortfolioPage {
   baseBigCurrency = "big-currency";
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
+  tabBarEarnButton = "tab-bar-earn";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -225,5 +226,10 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
     await app.common.expectSearchBarVisible();
     jestExpect(await countElementsById(this.bigCurrencyRowRegex)).toBeGreaterThan(6);
+  }
+
+  @Step("Open Earn tab from navigation bar")
+  async openEarnTab() {
+    await tapById(this.tabBarEarnButton);
   }
 }
