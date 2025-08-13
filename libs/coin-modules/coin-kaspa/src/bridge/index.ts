@@ -16,7 +16,7 @@ import getTransactionStatus from "./getTransactionStatus";
 import { getAccountShape } from "./synchronization";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
-import { updateTransaction } from "./updateTransaction";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { broadcast } from "./broadcast";
 import { initAccount } from "./initAccount";
 import resolver from "../hw-getAddress";

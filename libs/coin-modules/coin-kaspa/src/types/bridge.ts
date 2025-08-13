@@ -1,5 +1,6 @@
 import type {
   Account,
+  AccountRaw,
   SignedOperation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -19,6 +20,8 @@ export type KaspaAccount = Account & {
   nextReceiveAddressType: number;
   nextReceiveAddressIndex: number;
 };
+
+export type KaspaAccountRaw = AccountRaw;
 
 export type KaspaSignedOperation = SignedOperation & {
   signedTxJson: string;

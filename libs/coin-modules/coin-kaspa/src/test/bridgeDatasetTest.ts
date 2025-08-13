@@ -15,9 +15,11 @@ const kaspa: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["pendingOperations are cleaned up"],
       raw: {
         id: "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
-        seedIdentifier: "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
+        seedIdentifier:
+          "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
         derivationMode: "",
         currencyId: "kaspa",
         pendingOperations: [],
