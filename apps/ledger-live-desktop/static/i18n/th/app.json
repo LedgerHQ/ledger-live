@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "สร้างบัญชีจำลอง",
+          "description" : "สร้างบัญชีจำลองเพื่อวัตถุประสงค์ในการทดสอบ เครื่องมือเหล่านี้ช่วยให้คุณสามารถสร้างบัญชีทดสอบด้วยสกุลเงินและการกำหนดค่าต่าง ๆ",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "สร้างแบบกำหนดเอง",
+            "desc" : "เลือกสกุลเงินเฉพาะและเพิ่มโทเคน"
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "สร้างแบบเร็ว ๆ",
+            "desc" : "สร้างบัญชีสุ่ม 10 บัญชีพร้อมสกุลเงินแบบสุ่ม"
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "เลือกสกุลเงิน...",
+            "searchPlaceholder" : "ค้นหาสกุลเงิน...",
+            "noCurrenciesFound" : "ไม่พบสกุลเงิน",
+            "noCurrenciesAvailable" : "ไม่มีสกุลเงินที่ใช้ได้",
+            "selectedCount" : "เลือกแล้ว {{count}} สกุลเงิน",
+            "selectedCount_other" : "เลือกแล้ว {{count}} สกุลเงิน"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
-            "placeholder" : "token1, token2, token3"
+            "label" : "Token ID (ไม่บังคับ)",
+            "placeholder" : "โทเคน1, โทเคน2, โทเคน3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "สร้าง {{count}} บัญชี",
+            "generateAccounts_other" : "สร้าง {{count}} บัญชี",
+            "generateAccountsQuick" : "สร้าง {{count}} บัญชี"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
+            "confirmErase" : "การดำเนินการนี้จะเป็นการลบบัญชีที่มีอยู่ ดำเนินการต่อ?",
+            "generateError" : "ไม่สามารถสร้างบัญชีจำลองได้ โปรดลองอีกครั้ง"
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "ปลดล็อก {{ productName }} แล้วลองอีกครั้ง"
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "Ledger ของคุณยังไม่ได้รับการติดตั้ง",
+      "description" : "ติดตั้งเพื่อเริ่มใช้ เราจะแนะนำคุณตลอดกระบวนการติดตั้ง",
+      "goToOnboardingButton" : "ตั้งค่า Ledger ของฉัน",
+      "goToOnboardingButtonWithProductName" : "ตั้งค่า {{ productName }} ของฉัน"
     },
     "EtherscanAPIError" : {
       "title" : "เรียกดูธุรกรรมไม่สำเร็จ",
