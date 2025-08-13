@@ -23,6 +23,7 @@ export function useNotifications() {
     setCachedNotifications(cards);
   }, [dispatch, notificationsCards]);
 
+  // TODO use date library
   function startOfDayTime(date: Date): number {
     const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     return startOfDate.getTime();
@@ -37,8 +38,7 @@ export function useNotifications() {
     const notifsByDay: Record<string, NotificationContentCard[]> = notifs.reduce(
       (sum: Record<string, NotificationContentCard[]>, notif: NotificationContentCard) => {
         // group by publication date
-        const k = startOfDayTime(notif.created);
-
+        const k = notif.created ? `${startOfDayTime(notif.created)}` : "no-date";
         return { ...sum, [`${k}`]: [...(sum[k] || []), notif] };
       },
       {},
