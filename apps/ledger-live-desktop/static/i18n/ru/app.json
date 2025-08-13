@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "Фиктивные счета",
+          "description" : "Создавайте фиктивные счета для тестирования. Этот инструмент позволяет создать тестовые счета с различными валютами и настройками.",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "Создать вручную",
+            "desc" : "Выберите определённые валюты и добавьте токены."
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "Быстрое создание",
+            "desc" : "Сгенерируйте 10 случайных счетов со случайными валютами."
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "Выбор валют...",
+            "searchPlaceholder" : "Поиск валют...",
+            "noCurrenciesFound" : "Валюты не найдены",
+            "noCurrenciesAvailable" : "Валюты недоступны",
+            "selectedCount" : "Выбрана валюта {{count}}",
+            "selectedCount_other" : "Выбраны валюты: {{count}}"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
-            "placeholder" : "token1, token2, token3"
+            "label" : "ID токена (опционально)",
+            "placeholder" : "токен1, токен2, токен3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "Сгенерировать {{count}} счёт",
+            "generateAccounts_other" : "Сгенерировать счета: {{count}}",
+            "generateAccountsQuick" : "Сгенерировать счета: {{count}}"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "Выберите хотя бы одну валюту",
+            "confirmErase" : "Это действие удалит существующие счета. Продолжить?",
+            "generateError" : "Не удалось создать фиктивные счета. Повторите попытку."
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "Ваш Ledger ещё не настроен",
+      "description" : "Сделайте это, чтобы взаимодействовать с ним. Мы вам поможем.",
+      "goToOnboardingButton" : "Настроить мой Ledger",
+      "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
     },
     "EtherscanAPIError" : {
       "title" : "Сбой при загрузке транзакций",
@@ -6983,7 +6983,7 @@
     },
     "selectAccount" : {
       "title" : "выберите счёт",
-      "addAccount" : "Добавить ещё один счёт"
+      "addAccount" : "Добавить счёт"
     }
   },
   "customImage" : {
