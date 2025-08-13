@@ -152,7 +152,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/r2-osx-pnpm-cache
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -202,17 +202,21 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: setup caches
+      - name: Setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/r2-osx-pnpm-cache
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
+          skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          cache-endpoint: ${{ secrets.R2_ENDPOINT }}
+          cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          cache-secret-key: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          cache-bucket: ledger-live-cache
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -384,8 +388,8 @@ jobs:
           /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      - name: Setup caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/r2-osx-pnpm-cache
         id: setup-caches
         with:
           install-proto: true
@@ -395,6 +399,10 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          cache-endpoint: ${{ secrets.R2_ENDPOINT }}
+          cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          cache-secret-key: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          cache-bucket: ledger-live-cache
 
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable Hardware Acceleration

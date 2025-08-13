@@ -35,6 +35,22 @@ inputs:
     description: "custom token for local s3 server"
     required: false
     default: "yolo"
+  cache-endpoint:
+    description: "Endpoint for the S3 compatible caching"
+    required: false
+    default: ""
+  cache-access-key:
+    description: "Access key for the S3 compatible caching"
+    required: false
+    default: ""
+  cache-secret-key:
+    description: "Secret key for the S3 compatible caching"
+    required: false
+    default: ""
+  cache-bucket:
+    description: "S3 compatible bucket name for caching"
+    required: false
+    default: "ll-gha-s3-cache"
 
 outputs:
   port:
@@ -43,6 +59,8 @@ outputs:
 
 runs:
   using: "composite"
+  env:
+    S3_ENDPOINT: ${{ inputs.cache-endpoint != '' && inputs.cache-endpoint || format('https://s3.{0}.amazonaws.com', inputs.region) }}
   steps:
     - name: Setup proto
       if: inputs.install-proto == 'true'
@@ -69,7 +87,7 @@ runs:
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
-      if: inputs.accountId != '' && inputs.roleName != ''
+      if: inputs.accountId != '' && inputs.roleName != '' && inputs.cache-access-key == ''
       id: aws
       with:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
@@ -80,15 +98,16 @@ runs:
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+        key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        accessKey: ${{ inputs.cache-access-key != '' && inputs.cache-access-key || env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ inputs.cache-secret-key != '' && inputs.cache-secret-key || env.AWS_SECRET_ACCESS_KEY }}
         sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-        bucket: ll-gha-s3-cache
+        bucket: ${{ inputs.cache-bucket }}
         region: ${{ inputs.region }}
         use-fallback: false
+        endpoint: ${{ env.S3_ENDPOINT }}
 
     - name: Cache LLM pods
       uses: actions/cache@v3

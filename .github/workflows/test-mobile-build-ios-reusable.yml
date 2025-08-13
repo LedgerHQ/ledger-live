@@ -113,7 +113,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/r2-osx-pnpm-cache
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -122,6 +122,10 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          cache-endpoint: ${{ secrets.R2_ENDPOINT }}
+          cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          cache-secret-key: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          cache-bucket: ledger-live-cache
 
       - uses: nick-fields/retry@v3
         name: install dependencies
