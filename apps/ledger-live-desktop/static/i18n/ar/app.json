@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "إنشاء حسابات تجريبية",
+          "description" : "إنشاء حسابات تجريبية لأغراض الاختبار. هذه الأدوات تسمح لك بإنشاء حسابات اختبار بعملات وتكوينات مختلفة.",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "إنشاء مخصص",
+            "desc" : "قم باختيار عملات محددة وإضافة رموز توكن"
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "إنشاء سريع",
+            "desc" : "قم بإنشاء 10 حسابات عشوائية بعملات عشوائية"
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "اختيار العملات...",
+            "searchPlaceholder" : "البحث عن العملات...",
+            "noCurrenciesFound" : "لم يتم العثور على عملات",
+            "noCurrenciesAvailable" : "لا توجد عملات متاحة",
+            "selectedCount" : "{{count}} عملة تم اختيارها",
+            "selectedCount_other" : "{{count}} عملة تم اختيارها"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
-            "placeholder" : "token1, token2, token3"
+            "label" : "مُعرّفات رمز التوكن (اختياري)",
+            "placeholder" : "رمز التوكن1، رمز التوكن2، رمز التوكن3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "إنشاء {{count}} حساب",
+            "generateAccounts_other" : "إنشاء {{count}} حساب",
+            "generateAccountsQuick" : "إنشاء {{count}} حساب"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "يُرجى اختيار عملة واحدة على الأقل",
+            "confirmErase" : "سيحذف ذلك حسابات قائمة. متابعة؟",
+            "generateError" : "فشل إنشاء الحسابات التجريبية. يُرجى إعادة المحاولة."
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "لم يتم إعداد جهازك Ledger",
+      "description" : "قم بإعداده لتبدأ استخدامه. سنرشدك خلال عملية الإعداد.",
+      "goToOnboardingButton" : "إعداد جهازي Ledger",
+      "goToOnboardingButtonWithProductName" : "إعداد {{ productName }} الخاص بي"
     },
     "EtherscanAPIError" : {
       "title" : "فشل إحضار المعاملات",
