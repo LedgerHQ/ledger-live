@@ -9,6 +9,8 @@ import {
   TransactionSignAndBroadcastResult,
   TransactionSignParams,
   TransactionSignResult,
+  RegisterYieldBearingEthereumAddressParams,
+  RegisterYieldBearingEthereumAddressResult,
 } from "./types";
 
 export * from "./types";
@@ -20,7 +22,7 @@ export class AcreModule extends CustomModule {
    * @param accountId - Ledger Live id of the account
    * @param message - Message the user should sign
    * @param derivationPath - The derivation path is a relative derivation path from the account
-   * e.g to use the first address of an account, one will request for the “0/0“ derivation path
+   * e.g to use the first address of an account, one will request for the "0/0" derivation path
    * @param options - Extra parameters
    *
    * @returns Message signed
@@ -101,5 +103,36 @@ export class AcreModule extends CustomModule {
     });
 
     return result.transactionHash;
+  }
+
+  /**
+   * Register a new yield-bearing Ethereum address for BTC reception.
+   * Creates an Ethereum parent account and ERC20 token sub-account in Ledger Live with automatic naming.
+   * Resilient to multiple calls - won't create duplicates.
+   *
+   * @param ethereumAddress - The Ethereum address to register as parent account
+   * @param tokenContractAddress - ERC20 contract address (optional, defaults to acreBTC)
+   * @param meta - Extra metadata
+   *
+   * @returns Success status, account names, and token account information
+   * @throws {@link RpcError} if an error occured on server side
+   */
+  async registerYieldBearingEthereumAddress(
+    ethereumAddress: string,
+    tokenContractAddress?: string,
+    tokenTicker?: string,
+    meta?: Record<string, unknown>,
+  ) {
+    const result = await this.request<
+      RegisterYieldBearingEthereumAddressParams,
+      RegisterYieldBearingEthereumAddressResult
+    >("custom.acre.registerYieldBearingEthereumAddress", {
+      ethereumAddress,
+      tokenContractAddress,
+      tokenTicker,
+      meta,
+    });
+
+    return result;
   }
 }
