@@ -12,12 +12,69 @@ import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import BigNumber from "bignumber.js";
 
+/**
+ * Applies memo information to transaction intent
+ * Handles both destination tags (XRP-like) and Stellar-style memos
+ */
+function applyMemoToIntent(
+  transactionIntent: TransactionIntent<any>,
+  transaction: TransactionCommon,
+): TransactionIntent<any> {
+  // Handle destination tag memo (for XRP-like chains)
+  if (transaction["tag"]) {
+    const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
+    const txMemo = String(transaction["tag"]);
+
+    txWithMemoTag.memo = {
+      type: "map",
+      memos: new Map(),
+    };
+    txWithMemoTag.memo.memos.set("destinationTag", txMemo);
+
+    return txWithMemoTag;
+  }
+
+  // Handle Stellar-style memo
+  if (transaction["memoType"] && transaction["memoValue"]) {
+    const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
+    const txMemoType = String(transaction["memoType"]);
+    const txMemoValue = String(transaction["memoValue"]);
+
+    txWithMemo.memo = {
+      type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
+      value: txMemoValue,
+    };
+
+    return txWithMemo;
+  }
+
+  return transactionIntent;
+}
+
+/**
+ * Enriches transaction intent with memo and asset information
+ */
+function enrichTransactionIntent(
+  transactionIntent: TransactionIntent<any>,
+  transaction: TransactionCommon,
+  publicKey: string,
+): TransactionIntent<any> {
+  // Set sender public key
+  transactionIntent.senderPublicKey = publicKey;
+
+  // Apply memo information
+  transactionIntent = applyMemoToIntent(transactionIntent, transaction);
+
+  return transactionIntent;
+}
 /**
  * Sign Transaction with Ledger hardware
  */
 export const genericSignOperation =
-  (network: string, kind: "local" | "remote") =>
+  (network, kind) =>
   (signerContext: SignerContext<any>): AccountBridge<TransactionCommon>["signOperation"] =>
   ({
     account,
@@ -30,30 +87,40 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
+        // NOTE: checking field that's not inside TransactionCommon, improve
         if (!transaction["fees"]) throw new FeeNotLoaded();
-
+        const fees = BigInt(transaction["fees"]?.toString() || "0");
+        if (transaction["useAllAmount"]) {
+          const draftTransaction = {
+            recipient: transaction.recipient,
+            amount: transaction.amount ?? 0,
+            fees: fees,
+            useAllAmount: !!transaction.useAllAmount,
+            assetReference: transaction?.["assetReference"] || "",
+            assetOwner: transaction?.["assetOwner"] || "",
+            subAccountId: transaction.subAccountId || "",
+          };
+          const { amount } = await getAlpacaApi(network, kind).validateIntent(
+            transactionToIntent(account, draftTransaction),
+          );
+          transaction.amount = new BigNumber(amount.toString());
+        }
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
-
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-          const transactionIntent = transactionToIntent(account, transaction);
+          let transactionIntent = transactionToIntent(account, { ...transaction, fees });
           transactionIntent.senderPublicKey = publicKey;
-          // NOTE: is setting the memo here instead of transactionToIntent sensible?
-          const txWithMemo = transactionIntent as TransactionIntent<MapMemo<string, string>>;
-          if (transaction["tag"]) {
-            const txMemo = String(transaction["tag"]);
-            txWithMemo.memo = {
-              type: "map",
-              memos: new Map(),
-            };
-            txWithMemo.memo.memos.set("destinationTag", txMemo);
-          }
 
-          const accountInfo = await getAlpacaApi(network, kind).getAccountInfo(
+          // Enrich with memo and asset information
+          transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
+
+          // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
+          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
             transactionIntent.sender,
           );
-          transactionIntent.sequence = accountInfo.sequence;
+          transactionIntent.sequence = sequenceNumber;
+
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
@@ -76,8 +143,8 @@ export const genericSignOperation =
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
-
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
+
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({

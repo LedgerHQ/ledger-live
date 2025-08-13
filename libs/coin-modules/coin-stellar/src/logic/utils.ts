@@ -3,9 +3,12 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { StrKey } from "@stellar/stellar-sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { fetchSigners } from "../network";
-import type { Transaction, TransactionRaw } from "../types";
+import type { BalanceAsset, Transaction, TransactionRaw } from "../types";
 
 export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+
+export const getAssetIdFromAsset = (asset: BalanceAsset) =>
+  `${asset.asset_code}:${asset.asset_issuer}`;
 
 export function getAmountValue(
   account: Account,
@@ -15,12 +18,16 @@ export function getAmountValue(
   // Asset
   if (transaction.subAccountId) {
     const asset = findSubAccountById(account, transaction.subAccountId) as TokenAccount;
-    return transaction.useAllAmount ? new BigNumber(asset.spendableBalance) : transaction.amount;
+    if (!asset) {
+      throw new Error(`Sub-account with ID ${transaction.subAccountId} not found`);
+    }
+    return transaction.useAllAmount
+      ? new BigNumber(asset.spendableBalance.toString())
+      : transaction.amount;
   }
-
   // Native
   return transaction.useAllAmount && transaction.networkInfo
-    ? BigNumber.max(account.spendableBalance.minus(fees), 0)
+    ? BigNumber.max(new BigNumber(account.spendableBalance.toString()).minus(fees), 0)
     : transaction.amount;
 }
 
@@ -30,7 +37,7 @@ export function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
     return assetString.split(":");
   }
 
-  return [tr.assetCode || "", tr.assetIssuer || ""];
+  return [tr.assetReference || "", tr.assetOwner || ""];
 }
 
 export function isMemoValid(memoType: string, memoValue: string): boolean {
@@ -61,7 +68,7 @@ export function isMemoValid(memoType: string, memoValue: string): boolean {
   return true;
 }
 
-export async function isAccountMultiSign(account: Account): Promise<boolean> {
+export async function isAccountMultiSign(account: string): Promise<boolean> {
   const signers = await fetchSigners(account);
   return signers.length > 1;
 }

@@ -11,66 +11,91 @@ jest.mock("../alpaca", () => ({
 const mockedGetAlpacaApi = alpaca.getAlpacaApi as jest.Mock;
 
 // Dummy data
-const dummyAccount = {
-  id: "js:2:ripple:r123:",
-  type: "Account", // <-- this is mandatory for getMainAccount to work
-  spendableBalance: new BigNumber(50000000),
-  currency: { id: "ripple", name: "XRP", units: [{ name: "XRP", magnitude: 6 }] },
-  freshAddress: "r123",
-} as unknown as Account;
+const dummyAccounts = [
+  {
+    id: "js:2:ripple:r123:",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: { id: "ripple", family: "xrp", name: "XRP", units: [{ name: "XRP", magnitude: 6 }] },
+    freshAddress: "r123",
+    pendingOperations: [],
+  },
+  {
+    id: "js:2:stellar:s123:",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: {
+      id: "stellar",
+      family: "stellar",
+      name: "Stellar",
+      units: [{ name: "XLM", magnitude: 7 }],
+    },
+    freshAddress: "s123",
+    pendingOperations: [],
+  },
+] as unknown as Account[];
 
-describe("genericEstimateMaxSpendable", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+["xrp", "stellar"].forEach((currencyName, idx) => {
+  describe(`genericEstimateMaxSpendable for ${currencyName}`, () => {
+    const dummyAccount = dummyAccounts[idx];
 
-  it("subtracts estimated fee from spendable balance", async () => {
-    mockedGetAlpacaApi.mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 10000n }), // 0.01 XRP
+    afterEach(() => {
+      jest.clearAllMocks();
     });
 
-    const estimate = genericEstimateMaxSpendable("xrp", "local");
-    const result = await estimate({
-      account: dummyAccount,
-      parentAccount: null,
-      transaction: {},
+    it("subtracts estimated fee from spendable balance", async () => {
+      mockedGetAlpacaApi.mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 10000n }),
+        validateIntent: jest.fn().mockResolvedValue({ amount: 49990000n }),
+      });
+
+      const estimate = genericEstimateMaxSpendable(currencyName, "local");
+      const result = await estimate({
+        account: dummyAccount,
+        parentAccount: null,
+        transaction: {},
+      });
+
+      expect(result.toString()).toBe("49990000");
     });
 
-    expect(result.toString()).toBe("49990000"); // 50_000_000 - 10_000
-  });
+    it("returns 0 if fee is higher than spendable", async () => {
+      const poorAccount = {
+        ...dummyAccount,
+        spendableBalance: new BigNumber(5000),
+      };
 
-  it("returns 0 if fee is higher than spendable", async () => {
-    const poorAccount = {
-      ...dummyAccount,
-      spendableBalance: new BigNumber(5000), // very low
-    };
+      mockedGetAlpacaApi.mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 10000n }),
+        validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
+      });
 
-    mockedGetAlpacaApi.mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 10000n }),
+      const estimate = genericEstimateMaxSpendable(currencyName, "local");
+      const result = await estimate({
+        account: poorAccount,
+        parentAccount: null,
+        transaction: {},
+      });
+
+      expect(result.toString()).toBe("0");
     });
 
-    const estimate = genericEstimateMaxSpendable("xrp", "local");
-    const result = await estimate({
-      account: poorAccount,
-      parentAccount: null,
-      transaction: {},
+    it("returns full spendable balance if fee is 0", async () => {
+      mockedGetAlpacaApi.mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 0n }),
+        validateIntent: jest.fn().mockResolvedValue({ amount: 50000000n }),
+      });
+
+      const estimate = genericEstimateMaxSpendable(currencyName, "local");
+      const result = await estimate({
+        account: dummyAccount,
+        parentAccount: null,
+        transaction: {},
+      });
+
+      expect(result.toString()).toBe("50000000");
     });
-
-    expect(result.toString()).toBe("0");
-  });
-
-  it("returns full spendable balance if fee is 0", async () => {
-    mockedGetAlpacaApi.mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 0n }),
-    });
-
-    const estimate = genericEstimateMaxSpendable("xrp", "local");
-    const result = await estimate({
-      account: dummyAccount,
-      parentAccount: null,
-      transaction: {},
-    });
-
-    expect(result.toString()).toBe("50000000");
   });
 });

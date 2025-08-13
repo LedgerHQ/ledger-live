@@ -1,4 +1,4 @@
-import { extractBalance } from "./utils";
+import { extractBalance } from "../utils";
 
 describe("Alpaca utils", () => {
   describe("extractBalance", () => {
