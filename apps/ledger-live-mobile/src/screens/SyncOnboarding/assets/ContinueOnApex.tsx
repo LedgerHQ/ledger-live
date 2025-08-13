@@ -3,9 +3,9 @@ import Svg, { ClipPath, Defs, G, Path, Rect } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 
 /**
- * This component renders an SVG Europa icon in each step in the Sync Onboarding process.
+ * This component renders an SVG Apex icon in each step in the Sync Onboarding process.
  */
-export default React.memo(function ContinueOnEuropa() {
+export default React.memo(function ContinueOnApex() {
   const { theme } = useTheme();
   if (theme === "light") {
     return (
