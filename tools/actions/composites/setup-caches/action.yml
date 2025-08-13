@@ -88,7 +88,7 @@ runs:
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
-      if: inputs.accountId != '' && inputs.roleName != '' && inputs.cache-access-key == ''
+      if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
@@ -119,14 +119,6 @@ runs:
           ~/Library/Caches/CocoaPods
           ~/.cocoapods
         key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-
-    - name: Clear LLM pods
-      if: inputs.skip-pod-cache == 'true' && runner.os == 'macOS'
-      shell: bash
-      run: |
-        rm -rf ~/.cocoapods/
-        rm -rf ~/Library/Caches/CocoaPods
-        rm -rf apps/ledger-live-mobile/ios/Pods
 
     - name: TurboRepo local caching server
       id: turborepo-cache-server

@@ -211,7 +211,7 @@ jobs:
           skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
+          region: auto
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           cache-endpoint: ${{ secrets.R2_ENDPOINT }}
           cache-access-key: "${{ secrets.R2_ACCESS_KEY_ID }}"
