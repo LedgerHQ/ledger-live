@@ -353,7 +353,7 @@ export default class Root extends Component {
               <LoadingApp />
             )
           }
-        </LedgerStoreProvider>{" "}
+        </LedgerStoreProvider>
       </RebootProvider>
     );
   }
