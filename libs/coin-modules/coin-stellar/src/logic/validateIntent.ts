@@ -8,7 +8,11 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { TransactionValidation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  TransactionValidation,
+  TransactionIntent,
+  FeeEstimation,
+} from "@ledgerhq/coin-framework/api/types";
 import { isAddressValid, isAccountMultiSign, isMemoValid } from "./utils";
 import {
   BASE_RESERVE,
@@ -35,6 +39,7 @@ import { fetchAccount } from "../network/horizon";
 
 export const validateIntent = async (
   transactionIntent: TransactionIntent<StellarMemo>,
+  customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -47,7 +52,7 @@ export const validateIntent = async (
   const { spendableBalance, balance } = await fetchAccount(transactionIntent.sender);
   const networkInfo = await fetchAccountNetworkInfo(transactionIntent.sender);
 
-  const estimatedFees = transactionIntent.fees ?? 0n;
+  const estimatedFees = customFees?.value ?? 0n;
   const baseReserve = networkInfo.baseReserve
     ? BigInt(Math.round(networkInfo.baseReserve.toNumber() * 10)) / 10n
     : 0n;
@@ -203,7 +208,7 @@ export const validateIntent = async (
       }
     }
 
-    if (!errors.amount && amount === 0n) {
+    if (amount === 0n) {
       errors.amount = new AmountRequired();
     }
   }
