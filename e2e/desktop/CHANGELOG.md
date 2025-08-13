@@ -1,5 +1,20 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.0-nightly.1
+
+### Minor Changes
+
+- [#11322](https://github.com/LedgerHQ/ledger-live/pull/11322) [`5098bbb`](https://github.com/LedgerHQ/ledger-live/commit/5098bbbb637c9290e662f7ad1794ee10bed0da8c) Thanks [@semeano](https://github.com/semeano)! - Remove E2E delegate tests for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1)]:
+  - @ledgerhq/live-common@34.45.0-nightly.1
+  - @ledgerhq/live-cli@24.21.1-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-nightly.1
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/live-wallet@0.12.1-nightly.1
+
 ## 0.5.1-nightly.0
 
 ### Patch Changes

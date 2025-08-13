@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.125.0-nightly.1
+
+### Minor Changes
+
+- [#11266](https://github.com/LedgerHQ/ledger-live/pull/11266) [`787e44e`](https://github.com/LedgerHQ/ledger-live/commit/787e44ef025d34ae8bfda1122f56ba044b027590) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Setup RTK
+
+- [#11281](https://github.com/LedgerHQ/ledger-live/pull/11281) [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device selection for Apex
+
+### Patch Changes
+
+- Updated dependencies [[`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1)]:
+  - @ledgerhq/live-common@34.45.0-nightly.1
+  - @ledgerhq/types-devices@6.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.25.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.9.0-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-nightly.1
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/coin-framework@6.0.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.1
+  - @ledgerhq/coin-evm@2.26.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.1
+  - @ledgerhq/live-countervalues@0.6.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.1
+  - @ledgerhq/live-nft@0.8.17-nightly.1
+  - @ledgerhq/live-nft-react@0.9.17-nightly.1
+  - @ledgerhq/live-wallet@0.12.1-nightly.1
+
 ## 2.125.0-nightly.0
 
 ### Minor Changes

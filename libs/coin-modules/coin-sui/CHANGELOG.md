@@ -1,5 +1,21 @@
 # @ledgerhq/coin-sui
 
+## 0.10.0-nightly.1
+
+### Minor Changes
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - add sui swap tokens support
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+### Patch Changes
+
+- Updated dependencies [[`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.1
+  - @ledgerhq/hw-app-sui@1.3.0-nightly.0
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/coin-framework@6.0.1-nightly.1
+
 ## 0.9.1-nightly.0
 
 ### Patch Changes

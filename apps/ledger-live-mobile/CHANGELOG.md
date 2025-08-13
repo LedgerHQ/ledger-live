@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.90.0-nightly.1
+
+### Minor Changes
+
+- [#11281](https://github.com/LedgerHQ/ledger-live/pull/11281) [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device selection for Apex
+
+- [#11318](https://github.com/LedgerHQ/ledger-live/pull/11318) [`39336ed`](https://github.com/LedgerHQ/ledger-live/commit/39336ed96c326046243b42a425b2749e5f573f59) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Prevent Android app locks on transient state changes
+
+### Patch Changes
+
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.26.0-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2-nightly.1
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/live-dmk-mobile@0.10.1-nightly.2
+  - @ledgerhq/coin-framework@6.0.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.1
+  - @ledgerhq/coin-evm@2.26.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.17-nightly.1
+  - @ledgerhq/coin-stacks@0.8.17-nightly.1
+  - @ledgerhq/live-countervalues@0.6.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.1
+  - @ledgerhq/live-nft@0.8.17-nightly.1
+  - @ledgerhq/live-nft-react@0.9.17-nightly.1
+  - @ledgerhq/live-wallet@0.12.1-nightly.1
+
 ## 3.90.0-nightly.0
 
 ### Minor Changes

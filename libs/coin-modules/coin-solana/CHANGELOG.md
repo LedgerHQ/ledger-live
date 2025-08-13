@@ -1,5 +1,14 @@
 # @ledgerhq/coin-solana
 
+## 0.31.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.1
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/coin-framework@6.0.1-nightly.1
+
 ## 0.31.0-nightly.0
 
 ### Minor Changes

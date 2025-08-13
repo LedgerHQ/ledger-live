@@ -1,5 +1,51 @@
 # @ledgerhq/live-common
 
+## 34.45.0-nightly.1
+
+### Patch Changes
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - add sui swap tokens support
+
+- Updated dependencies [[`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1)]:
+  - @ledgerhq/coin-sui@0.10.0-nightly.1
+  - @ledgerhq/cryptoassets@13.25.0-nightly.1
+  - @ledgerhq/hw-app-sui@1.3.0-nightly.0
+  - @ledgerhq/live-dmk-shared@0.11.2-nightly.2
+  - @ledgerhq/coin-framework@6.0.1-nightly.1
+  - @ledgerhq/coin-algorand@0.9.17-nightly.1
+  - @ledgerhq/coin-aptos@3.0.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.1
+  - @ledgerhq/coin-canton@0.2.1-nightly.1
+  - @ledgerhq/coin-cardano@0.11.1-nightly.1
+  - @ledgerhq/coin-casper@2.0.8-nightly.1
+  - @ledgerhq/coin-celo@1.1.15-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.1
+  - @ledgerhq/coin-evm@2.26.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.1
+  - @ledgerhq/coin-hedera@1.9.3-nightly.1
+  - @ledgerhq/coin-icon@0.11.4-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.17-nightly.1
+  - @ledgerhq/coin-mina@1.1.16-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.17-nightly.1
+  - @ledgerhq/coin-near@0.11.17-nightly.1
+  - @ledgerhq/coin-polkadot@6.6.1-nightly.1
+  - @ledgerhq/coin-solana@0.31.0-nightly.1
+  - @ledgerhq/coin-stacks@0.8.17-nightly.1
+  - @ledgerhq/coin-stellar@6.0.1-nightly.1
+  - @ledgerhq/coin-tezos@6.0.1-nightly.1
+  - @ledgerhq/coin-ton@0.13.6-nightly.1
+  - @ledgerhq/coin-tron@5.0.1-nightly.1
+  - @ledgerhq/coin-vechain@2.8.1-nightly.1
+  - @ledgerhq/coin-xrp@7.0.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.5.13-nightly.1
+  - @ledgerhq/live-countervalues@0.6.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.1
+  - @ledgerhq/live-nft@0.8.17-nightly.1
+  - @ledgerhq/live-wallet@0.12.1-nightly.1
+  - @ledgerhq/live-signer-canton@0.2.1-nightly.1
+  - @ledgerhq/live-signer-evm@0.6.4-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.2-nightly.1
+
 ## 34.45.0-nightly.0
 
 ### Minor Changes

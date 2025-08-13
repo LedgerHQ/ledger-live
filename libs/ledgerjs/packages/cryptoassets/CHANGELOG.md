@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.25.0-nightly.1
+
+### Minor Changes
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
 ## 13.24.1-nightly.0
 
 ### Patch Changes
