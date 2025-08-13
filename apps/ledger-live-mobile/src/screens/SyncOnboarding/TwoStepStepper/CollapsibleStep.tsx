@@ -22,11 +22,11 @@ const CenterCircle = styled(Flex)<CenterCircleProps>`
   border-radius: 9999px;
   width: 16px;
   height: 16px;
-  background: ${p =>
-    p.status === "complete" ? p.theme.colors.success.c70 : p.theme.colors.primary.c40};
+  ${p => p.status !== "complete" && `background: ${p.theme.colors.primary.c40};`}
   ${p => p.status === "unfinished" && `border: 2px solid ${p.theme.colors.primary.c80};`}
   align-items: center;
   justify-content: center;
+  ${p => p.isAbsolute && `position: absolute; right: 16px; top: 16px;`}
 `;
 
 const CollapsibleCard = styled(Flex)`
@@ -59,7 +59,7 @@ const CollapsibleStep = ({
       <CollapsibleCard
         justifyContent="space-between"
         flexDirection="row"
-        marginTop={isFirst ? "" : "8px"}
+        marginTop={isFirst ? "16px" : "8px"}
         alignItems="center"
       >
         <Text fontSize="16px" fontWeight="bold">
@@ -71,7 +71,7 @@ const CollapsibleStep = ({
   }
 
   return (
-    <CollapsibleCard>
+    <CollapsibleCard marginTop={isFirst ? "16px" : "8px"}>
       {hideTitle ? (
         <StatusIcon status={status} isAbsolute={hideTitle} />
       ) : (

@@ -17,6 +17,9 @@ import useTwoStepDesync from "./useTwoStepDesync";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
+import { useTranslation } from "react-i18next";
+import { Text } from "@ledgerhq/native-ui";
+import { ScrollView } from "react-native";
 
 /*
  * Constants
@@ -78,10 +81,11 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   onLostDevice,
   notifyEarlySecurityCheckShouldReset,
 }) => {
+  const { t } = useTranslation();
   /*
    * Local State
    */
-  const [companionStep, _ /*setCompanionStep*/] = useState<CompanionStep>("setup");
+  const [companionStep, setCompanionStep] = useState<CompanionStep>("setup");
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
@@ -164,25 +168,30 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
           delay={twoStepDesync.desyncOverlayDisplayDelayMs}
           productName={productName}
         />
-        <Flex>
-          <FirstStepSyncOnboarding
-            device={device}
-            productName={productName}
-            navigation={navigation}
-            onLostDevice={onLostDevice}
-            handleSeedGenerationDelay={twoStepDesync.handleSeedGenerationDelay}
-            notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
-            handlePollingError={twoStepDesync.handlePollingError}
-            //   handleFinishStep,
-            isCollapsed={companionStep !== "setup"}
-            isPollingOn={isPollingOn}
-            setIsPollingOn={setIsPollingOn}
-          />
-          <SecondStepSyncOnboarding isCollapsed={true} />
-          {/* {companionStepKey === CompanionStepKey.Exit ? (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Flex paddingBottom={10}>
+            <Text variant="h4" fontWeight="semiBold">
+              {t("syncOnboarding.twoStepTitle")}
+            </Text>
+            <FirstStepSyncOnboarding
+              device={device}
+              productName={productName}
+              navigation={navigation}
+              onLostDevice={onLostDevice}
+              handleSeedGenerationDelay={twoStepDesync.handleSeedGenerationDelay}
+              notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+              handlePollingError={twoStepDesync.handlePollingError}
+              handleFinishStep={(nextStep: ExitState) => setCompanionStep(nextStep)}
+              isCollapsed={companionStep !== "setup"}
+              isPollingOn={isPollingOn}
+              setIsPollingOn={setIsPollingOn}
+            />
+            <SecondStepSyncOnboarding isCollapsed={companionStep === "setup"} />
+            {/* {companionStepKey === CompanionStepKey.Exit ? (
             <TrackScreen category="Set up device: Final Step Your device is ready" />
           ) : null} */}
-        </Flex>
+          </Flex>
+        </ScrollView>
       </Flex>
     </>
   );

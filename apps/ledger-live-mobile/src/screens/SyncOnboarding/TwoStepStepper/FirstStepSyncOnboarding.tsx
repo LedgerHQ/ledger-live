@@ -24,12 +24,14 @@ import useFirstStepCompanionState from "./useFirstStepCompanionState";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
+import { ExitState } from "./TwoStepSyncOnboardingCompanion";
 
 /*
  * Constants
  */
 
 const POLLING_PERIOD_MS = 1000;
+const READY_SHOW_SUCCESS_DELAY_MS = 2000;
 
 const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
   [SeedPhraseType.TwentyFour, "TwentyFour"],
@@ -72,6 +74,7 @@ interface FirstStepSyncOnboardingProps {
   // Polling state
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
+  handleFinishStep: (nextStep: ExitState) => void;
 }
 
 const FirstStepSyncOnboarding = ({
@@ -86,6 +89,7 @@ const FirstStepSyncOnboarding = ({
   isCollapsed,
   isPollingOn,
   setIsPollingOn,
+  handleFinishStep,
 }: FirstStepSyncOnboardingProps) => {
   const { t } = useTranslation();
   const safeAreaInsets = useSafeAreaInsets();
@@ -95,7 +99,7 @@ const FirstStepSyncOnboarding = ({
    */
 
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
-
+  const [hasFinishedAnimation, setHasFinishedAnimation] = useState<boolean>(false);
   /*
    * Feature Flags
    */
@@ -108,6 +112,7 @@ const FirstStepSyncOnboarding = ({
   const analyticsSeedingTracked = useRef(false);
   const analyticsSeedConfiguration = useRef<SeedOriginType>();
   const addedToKnownDevices = useRef(false);
+  const readyShowSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * True if the device was initially onboarded/seeded when this component got
@@ -190,6 +195,11 @@ const FirstStepSyncOnboarding = ({
       }),
     );
   }, [device, dispatchRedux]);
+
+  const handleNextStep = useCallback(() => {
+    companionSteps.setStep(FirstStepCompanionStepKey.Exit);
+    handleFinishStep("new_seed");
+  }, [handleFinishStep, companionSteps]);
 
   /*
    * useEffects
@@ -333,6 +343,23 @@ const FirstStepSyncOnboarding = ({
       }
     }
   }, [deviceOnboardingState, handleSeedGenerationDelay]);
+
+  // Handle delay for animation to success step
+  useEffect(() => {
+    if (companionSteps.activeStep === FirstStepCompanionStepKey.Ready) {
+      readyShowSuccessTimerRef.current = setTimeout(
+        () => setHasFinishedAnimation(true),
+        READY_SHOW_SUCCESS_DELAY_MS,
+      );
+    }
+
+    return () => {
+      if (readyShowSuccessTimerRef.current) {
+        clearTimeout(readyShowSuccessTimerRef.current);
+        readyShowSuccessTimerRef.current = null;
+      }
+    };
+  }, [companionSteps.activeStep, setHasFinishedAnimation]);
   /*
    * Exit effects
    */
@@ -353,22 +380,22 @@ const FirstStepSyncOnboarding = ({
       title={
         companionSteps.activeStep < FirstStepCompanionStepKey.Seed
           ? t("syncOnboarding.title", { productName })
-          : t("syncOnboarding.firstStepReadyTitle")
+          : t("syncOnboarding.firstStepReadyTitle", { productName })
       }
       status={
         companionSteps.activeStep >= FirstStepCompanionStepKey.Ready ? "complete" : "unfinished"
       }
       hideTitle={companionSteps.activeStep === FirstStepCompanionStepKey.Ready}
     >
-      {companionSteps.activeStep <= FirstStepCompanionStepKey.Seed && (
+      {companionSteps.activeStep <= FirstStepCompanionStepKey.Ready && !hasFinishedAnimation && (
         <VerticalTimeline
           steps={companionSteps.steps}
           formatEstimatedTime={formatEstimatedTime}
           contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
         />
       )}
-      {companionSteps.activeStep === FirstStepCompanionStepKey.Ready && (
-        <DeviceSeededSuccessPanel />
+      {companionSteps.activeStep === FirstStepCompanionStepKey.Ready && hasFinishedAnimation && (
+        <DeviceSeededSuccessPanel handleNextStep={handleNextStep} />
       )}
     </CollapsibleStep>
   );

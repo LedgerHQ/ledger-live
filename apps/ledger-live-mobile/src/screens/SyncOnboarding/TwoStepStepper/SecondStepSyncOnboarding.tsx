@@ -1,6 +1,7 @@
 import React from "react";
 import CollapsibleStep from "./CollapsibleStep";
 import { useTranslation } from "react-i18next";
+import { Flex, Text } from "@ledgerhq/native-ui";
 // import { useDispatch } from "react-redux";
 // import { ScreenName } from "~/const";
 // import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
@@ -27,7 +28,11 @@ const SecondStepSyncOnboarding = ({
       isCollapsed={isCollapsed}
       title={t("syncOnboarding.secureCryptoStep.title")}
       status="unfinished"
-    ></CollapsibleStep>
+    >
+      <Flex>
+        <Text>OPEN SECOND STEP</Text>
+      </Flex>
+    </CollapsibleStep>
   );
 };
 
