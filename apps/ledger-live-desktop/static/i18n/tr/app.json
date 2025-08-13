@@ -4474,37 +4474,37 @@
           }
         },
         "mockAccounts" : {
-          "title" : "Generate Mock Accounts",
-          "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "title" : "Test Hesapları Oluşturun",
+          "description" : "Test etmek amacıyla test hesapları oluşturun. Bu araçlar, çeşitli para birimlerine ve yapılandırmalara sahip test hesapları oluşturmanıza olanak tanır.",
           "customGenerate" : {
-            "title" : "Custom Generate",
-            "desc" : "Select specific currencies and add tokens"
+            "title" : "Özel Oluşturma",
+            "desc" : "Belirli para birimlerini seçin ve token’lar ekleyin"
           },
           "quickGenerate" : {
-            "title" : "Quick Generate",
-            "desc" : "Generate 10 random accounts with random currencies"
+            "title" : "Hızlı Oluşturma",
+            "desc" : "Rastgele para birimlerinin yer aldığı rastgele 10 hesap oluşturun"
           },
           "currencySelector" : {
-            "placeholder" : "Choose currencies...",
-            "searchPlaceholder" : "Search currencies...",
-            "noCurrenciesFound" : "No currencies found",
-            "noCurrenciesAvailable" : "No currencies available",
-            "selectedCount" : "{{count}} currency selected",
-            "selectedCount_other" : "{{count}} currencies selected"
+            "placeholder" : "Para birimleri seçin...",
+            "searchPlaceholder" : "Para birimlerini arayın...",
+            "noCurrenciesFound" : "Hiçbir para birimi bulunamadı",
+            "noCurrenciesAvailable" : "Kullanılabilir hiçbir para birimi yok",
+            "selectedCount" : "{{count}} para birimi seçildi",
+            "selectedCount_other" : "{{count}} para birimi seçildi"
           },
           "tokenIds" : {
-            "label" : "Token IDs (optional)",
+            "label" : "Token Kimlikleri (isteğe bağlı)",
             "placeholder" : "token1, token2, token3"
           },
           "buttons" : {
-            "generateAccounts" : "Generate {{count}} Account",
-            "generateAccounts_other" : "Generate {{count}} Accounts",
-            "generateAccountsQuick" : "Generate {{count}} Accounts"
+            "generateAccounts" : "{{count}} Hesap Oluştur",
+            "generateAccounts_other" : "{{count}} Hesap Oluştur",
+            "generateAccountsQuick" : "{{count}} Hesap Oluştur"
           },
           "alerts" : {
-            "selectCurrency" : "Please select at least one currency",
-            "confirmErase" : "This will erase existing accounts. Continue?",
-            "generateError" : "Failed to generate mock accounts. Please try again."
+            "selectCurrency" : "Lütfen en az bir para birimi seçin",
+            "confirmErase" : "Bu, mevcut hesapları silecektir. Devam etmek istiyor musunuz?",
+            "generateError" : "Test hesapları oluşturulamadı. Lütfen tekrar deneyin."
           }
         },
         "debugSpamNft" : {
@@ -6763,10 +6763,10 @@
       "descriptionWithProductName" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
     },
     "DeviceNotOnboardedDAError" : {
-      "title" : "Your Ledger is not set up",
-      "description" : "Set it up to start using it. We will guide you through the setup process.",
-      "goToOnboardingButton" : "Set up my Ledger",
-      "goToOnboardingButtonWithProductName" : "Set up my {{ productName }}"
+      "title" : "Ledger cihazınızın kurulumu yapılmadı",
+      "description" : "Kullanmaya başlamak için cihazınızın kurulumunu yapın. Kurulum sürecinde size yardımcı olacağız.",
+      "goToOnboardingButton" : "Ledger'ımı kur",
+      "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
     },
     "EtherscanAPIError" : {
       "title" : "İşlemler alınamadı",
