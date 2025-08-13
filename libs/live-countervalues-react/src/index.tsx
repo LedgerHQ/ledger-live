@@ -205,6 +205,17 @@ export function useCountervaluesState(): CounterValuesState {
   return useCountervaluesBridgeContext().useState();
 }
 
+export function useCountervaluesWipeIfAvailable(): () => void {
+  const bridge = useContext(CountervaluesContext);
+  return useCallback(() => {
+    if (!bridge) {
+      console.warn("'CountervaluesContext' is not provided, cannot wipe countervalues state.");
+      return;
+    }
+    bridge.wipe();
+  }, [bridge]);
+}
+
 /** Allows consumer to access the countervalues polling control object */
 export function useCountervaluesPolling(): Polling {
   const bridge = useCountervaluesBridgeContext();
