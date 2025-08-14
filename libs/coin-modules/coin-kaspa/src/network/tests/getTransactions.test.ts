@@ -160,4 +160,14 @@ describe("getTransactions function", () => {
     const result = await getTransactions(address);
     expect(result.transactions.length).toBe(3);
   });
+
+  it("should return an error if fetch returns a 500 response", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    await expect(getTransactions(address)).rejects.toThrowError("Network response was not ok.");
+  });
 });

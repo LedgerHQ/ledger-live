@@ -16,7 +16,7 @@ export const calcMaxSpendableAmount = (
     new BigNumber(0),
   );
 
-  //  storage mass can be neglected here
+  // storage mass can be neglected here
   // max compute mass for one output and 88 inputs is 98901
   let maxSpendableAmount = maxInputAmount.minus(
     BigNumber(

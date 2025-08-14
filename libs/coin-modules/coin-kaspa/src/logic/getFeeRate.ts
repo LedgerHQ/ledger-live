@@ -12,7 +12,7 @@ export const getFeeRate = (transaction: Transaction | null | undefined): BigNumb
     ni => ni.label === transaction.feesStrategy,
   );
 
-  if (!filteredNetworkInfo) {
+  if (filteredNetworkInfo.length === 0) {
     throw new Error("Invalid fee strategy provided");
   }
 

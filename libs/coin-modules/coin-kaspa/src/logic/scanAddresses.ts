@@ -23,7 +23,7 @@ const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size with 2 outputs) ) 
 export async function scanAddresses(
   compressedPublicKey: Buffer,
   chainCode: Buffer,
-  startIndex: number = 0,
+  startIndex: number,
 ): Promise<AccountAddresses> {
   const kaspaBip32: KaspaBIP32 = new KaspaBIP32(compressedPublicKey, chainCode);
 

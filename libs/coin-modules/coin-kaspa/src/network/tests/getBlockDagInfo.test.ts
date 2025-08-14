@@ -28,3 +28,13 @@ describe("getBlockDagInfo", () => {
     expect(result.blockCount).toBe("220840");
   });
 });
+it("Should throw an error when fetch returns a 500 response", async () => {
+  global.fetch = jest.fn().mockResolvedValueOnce({
+    ok: false,
+    status: 500,
+  });
+
+  await expect(getBlockDagInfo()).rejects.toThrow(
+    "Failed to fetch BlockDAG info. Error: Error: Status: 500",
+  );
+});

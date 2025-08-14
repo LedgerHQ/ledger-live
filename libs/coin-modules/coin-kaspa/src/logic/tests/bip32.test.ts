@@ -39,6 +39,10 @@ describe("KaspaBIP32", () => {
       const path = testCase.derivationPath.split("/");
       expect(bip32.getAddress(Number(path[3]), Number(path[4]))).toBe(testCase.address);
     }
+
+    expect(bip32.getAddress()).toBe(
+      "kaspa:qzese5lc37m2a9np8k5gect4l2jj8svyqq392p7aa7mxsqarjg9sjgxr4wvru",
+    );
   });
   it("result from ledger hw device", () => {
     const testCases = [

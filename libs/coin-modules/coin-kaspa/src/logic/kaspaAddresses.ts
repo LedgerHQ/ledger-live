@@ -106,7 +106,6 @@ export function isValidKaspaAddress(address: string): boolean {
     }
   } catch (e) {
     // Unable to translate address to ScriptPublicKey
-    console.error("Error validating Kaspa address", e);
     return false;
   }
 

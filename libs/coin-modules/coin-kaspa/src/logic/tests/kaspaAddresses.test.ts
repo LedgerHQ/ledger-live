@@ -55,6 +55,13 @@ describe("addressToPublicKey", () => {
     expect(Buffer.from(result.publicKey)).toStrictEqual(expectedPublicKey);
     expect(result.version).toBe(expectedVersion);
   });
+
+  it("should throw error for unknown type", () => {
+    const address = "kaspa:dppdtlw845g6vhgtheug9lpahjgmtpsarqkueeul0sd7t07npfnhe4s7fd82n0v";
+    expect(() => addressToPublicKey(address)).toThrowError(
+      /Unable to translate address to ScriptPublicKey/,
+    );
+  });
 });
 
 describe("publicKeyToAddress", () => {
@@ -162,6 +169,13 @@ describe("parseExtendedPublicKey", () => {
     expect(result.chainCode).toStrictEqual(expectedParsedKey.chainCode);
     expect(result.compressedPublicKey).toStrictEqual(expectedParsedKey.compressedPublicKey);
   });
+  it("throw error when inputs is broken", () => {
+    const extendedPublicKey = Buffer.from("41", "hex");
+
+    expect(() => parseExtendedPublicKey(extendedPublicKey)).toThrowError(
+      /Invalid extended public key length. Expected length is 99 bytes./,
+    );
+  });
   it("another public key", () => {
     const extendedPublicKey = Buffer.from(
       "41" +
@@ -214,6 +228,12 @@ describe("isValidKaspaAddress", () => {
 
   it("should verify that a Kaspa address without prefix returns false", () => {
     const address = "qqs7krzzwqfgk9kf830smtzg64s9rf3r0khfj76cjynf2pfgrr35saatu88xq";
+    const verificationStatus = isValidKaspaAddress(address);
+    expect(verificationStatus).toBe(false);
+  });
+
+  it("Error", () => {
+    const address = "kaspa:rqs7krzzwqfgk9kf830smttg64s9rf3r0khfj76cjynf2pfgrr35saatu88xq";
     const verificationStatus = isValidKaspaAddress(address);
     expect(verificationStatus).toBe(false);
   });

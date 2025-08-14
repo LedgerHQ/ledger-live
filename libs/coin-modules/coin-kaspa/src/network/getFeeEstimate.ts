@@ -16,7 +16,6 @@ export const getFeeEstimate = async (): Promise<ApiResponseFeeEstimate> => {
     const fees: ApiResponseFeeEstimate = await response.json();
     return fees;
   } catch (error) {
-    console.error("Failed to fetch fee estimate:", error);
-    throw error;
+    throw new Error(`Failed to fetch fee estimate. ${error}`);
   }
 };

@@ -48,14 +48,3 @@ export function calcStorageMass(inputs: BigNumber[], outputs: BigNumber[]): numb
   ).toNumber();
   return Math.max(P - N, 0);
 }
-
-export function calcTotalMass(
-  inputs: BigNumber[],
-  outputs: BigNumber[],
-  recipientIsECDSA: boolean = false,
-): number {
-  return Math.max(
-    calcStorageMass(inputs, outputs),
-    calcComputeMass(inputs.length, outputs.length === 2, recipientIsECDSA),
-  );
-}

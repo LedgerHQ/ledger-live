@@ -6,6 +6,16 @@ describe("getFees", () => {
     jest.clearAllMocks();
   });
 
+  it("Error response", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+
+    await expect(getFeeEstimate()).rejects.toThrow("Network response was not ok");
+  });
+
   it("Check if getFees gives correct output", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: true,

@@ -1,6 +1,7 @@
 import { selectUtxos } from "../utxos/selection";
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
+import * as lib from "../utxos/lib";
 
 const TX_MASS_PER_INPUT = 1118;
 const TX_MASS_FOR_TWO_OUTPUTS = 918;
@@ -241,5 +242,49 @@ describe("1 output without discard", () => {
     expect(selectedUtxos.utxos.length).toBe(2);
     expect(selectedUtxos.fee.toNumber()).toBe(2 * 1118 + 506);
     expect(selectedUtxos.changeAmount.toNumber()).toBe(0);
+  });
+
+  test("should throw an error if UTXO count exceeds maximum limit", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(100, BigNumber(1_0000_0000), "0");
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+
+    expect(() => {
+      selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000_0000), feeRate);
+    }).toThrow("UTXO count exceeds the limit of 88 for a TX.");
+  });
+
+  test("should throw an error if discarded change exceeds maximum allowable discard value", () => {
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(10, BigNumber(1_0000_0000), "0");
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+
+    expect(() => {
+      selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000), feeRate);
+    }).toThrow(/Change \d+ Sompis is too high to be discarded./);
+  });
+
+  test("should throw - UTXOs can't be determined to fulfill the specified amount", () => {
+    jest.spyOn(lib, "calcMaxSpendableAmount").mockReturnValue(BigNumber(1_2345_0000));
+    const feeRate = 1;
+    const isEcdsaRecipient = false;
+
+    expect(() => {
+      selectUtxos([], isEcdsaRecipient, BigNumber(1_0000), feeRate);
+    }).toThrow("UTXOs can't be determined to fulfill the specified amount");
+  });
+
+  test("same blockdaascore, still working.", () => {
+    // Generate more UTXOs than the allowed limit (88)
+    const utxos = KaspaUtxoGenerator.generateUtxoSet(2, BigNumber(1_0000_0000), "0");
+    const isEcdsaRecipient = false;
+
+    utxos[1].utxoEntry.blockDaaScore = "0";
+
+    expect(selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000_0000)).utxos.length).toBe(2);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 });
