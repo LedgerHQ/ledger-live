@@ -140,58 +140,58 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  // {
-  //   transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
-  //   xrayTicket: "B2CQA-2574",
-  // },
-  // {
-  //   transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
-  //   xrayTicket: "B2CQA-2807",
-  // },
-  // {
-  //   transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
-  //   xrayTicket: "B2CQA-2573",
-  // },
-  // {
-  //   transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
-  //   xrayTicket: "B2CQA-2808",
-  // },
-  // {
-  //   transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
-  //   xrayTicket: "B2CQA-2809",
-  // },
-  // {
-  //   transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
-  //   xrayTicket: "B2CQA-2810",
-  // },
-  // {
-  //   transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
-  //   xrayTicket: "B2CQA-2811",
-  // },
-  // {
-  //   transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
-  //   xrayTicket: "B2CQA-2812",
-  // },
-  // {
-  //   transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
-  //   xrayTicket: "B2CQA-2813",
-  // },
-  // {
-  //   transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
-  //   xrayTicket: "B2CQA-2814",
-  // },
-  // {
-  //   transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
-  //   xrayTicket: "B2CQA-2815",
-  // },
-  // {
-  //   transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
-  //   xrayTicket: "B2CQA-2816",
-  // },
-  // {
-  //   transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
-  //   xrayTicket: "B2CQA-2920",
-  // },
+  {
+    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+    xrayTicket: "B2CQA-2574",
+  },
+  {
+    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+    xrayTicket: "B2CQA-2807",
+  },
+  {
+    transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
+    xrayTicket: "B2CQA-2573",
+  },
+  {
+    transaction: new Transaction(Account.BCH_1, Account.BCH_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-2808",
+  },
+  {
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
+    xrayTicket: "B2CQA-2809",
+  },
+  {
+    transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
+    xrayTicket: "B2CQA-2810",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2811",
+  },
+  {
+    transaction: new Transaction(Account.TRX_1, Account.TRX_2, "0.01"),
+    xrayTicket: "B2CQA-2812",
+  },
+  {
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2813",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2814",
+  },
+  {
+    transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
+    xrayTicket: "B2CQA-2815",
+  },
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-2816",
+  },
+  {
+    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
+    xrayTicket: "B2CQA-2920",
+  },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
     xrayTicket: "XXXXX-XXXX",
@@ -272,256 +272,256 @@ test.describe("Send flows", () => {
     });
   }
 
-  // for (const transaction of transactionsAmountInvalid) {
-  //   test.describe("Check invalid amount input error", () => {
-  //     test.use({
-  //       userdata: "skip-onboarding",
-  //       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-  //       cliCommands: [
-  //         (appjsonPath: string) => {
-  //           return CLI.liveData({
-  //             currency: transaction.transaction.accountToDebit.currency.id,
-  //             index: transaction.transaction.accountToDebit.index,
-  //             add: true,
-  //             appjson: appjsonPath,
-  //           });
-  //         },
-  //       ],
-  //     });
+  for (const transaction of transactionsAmountInvalid) {
+    test.describe("Check invalid amount input error", () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.transaction.accountToDebit.currency.id,
+              index: transaction.transaction.accountToDebit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+        ],
+      });
 
-  //     test(
-  //       `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
-  //       {
-  //         tag: ["@NanoSP", "@LNS", "@NanoX"],
-  //         annotation: { type: "TMS", description: transaction.xrayTicket },
-  //       },
-  //       async ({ app }) => {
-  //         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      test(
+        `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
+        {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          annotation: { type: "TMS", description: transaction.xrayTicket },
+        },
+        async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-  //         await app.layout.goToAccounts();
-  //         await app.accounts.navigateToAccountByName(
-  //           transaction.transaction.accountToDebit.accountName,
-  //         );
-  //         await app.account.clickSend();
+          await app.layout.goToAccounts();
+          await app.accounts.navigateToAccountByName(
+            transaction.transaction.accountToDebit.accountName,
+          );
+          await app.account.clickSend();
 
-  //         await app.send.craftTx(transaction.transaction);
-  //         await app.send.checkContinueButtonDisabled();
-  //         await app.send.checkErrorMessage(transaction.expectedErrorMessage);
-  //       },
-  //     );
-  //   });
-  // }
+          await app.send.craftTx(transaction.transaction);
+          await app.send.checkContinueButtonDisabled();
+          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+        },
+      );
+    });
+  }
 
-  // test.describe("Verify send max user flow", () => {
-  //   const transactionInputValid = new Transaction(
-  //     Account.ETH_1,
-  //     Account.ETH_2,
-  //     "send max",
-  //     Fee.MEDIUM,
-  //   );
+  test.describe("Verify send max user flow", () => {
+    const transactionInputValid = new Transaction(
+      Account.ETH_1,
+      Account.ETH_2,
+      "send max",
+      Fee.MEDIUM,
+    );
 
-  //   test.use({
-  //     userdata: "skip-onboarding",
-  //     speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
-  //     cliCommands: [
-  //       (appjsonPath: string) => {
-  //         return CLI.liveData({
-  //           currency: transactionInputValid.accountToDebit.currency.id,
-  //           index: transactionInputValid.accountToDebit.index,
-  //           add: true,
-  //           appjson: appjsonPath,
-  //         });
-  //       },
-  //     ],
-  //   });
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transactionInputValid.accountToDebit.currency.id,
+            index: transactionInputValid.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
 
-  //   test(
-  //     `Check Valid amount input (${transactionInputValid.amount})`,
-  //     {
-  //       tag: ["@NanoSP", "@LNS", "@NanoX"],
-  //       annotation: {
-  //         type: "TMS",
-  //         description: "B2CQA-473",
-  //       },
-  //     },
-  //     async ({ app }) => {
-  //       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+    test(
+      `Check Valid amount input (${transactionInputValid.amount})`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-473",
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-  //       await app.layout.goToAccounts();
-  //       await app.accounts.navigateToAccountByName(
-  //         transactionInputValid.accountToDebit.accountName,
-  //       );
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transactionInputValid.accountToDebit.accountName,
+        );
 
-  //       await app.account.clickSend();
-  //       await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
-  //       await app.send.continue();
-  //       await app.send.fillAmount(transactionInputValid.amount);
-  //       await app.send.checkContinueButtonEnable();
-  //       await app.send.checkInputErrorVisibility("hidden");
-  //     },
-  //   );
-  // });
+        await app.account.clickSend();
+        await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
+        await app.send.continue();
+        await app.send.fillAmount(transactionInputValid.amount);
+        await app.send.checkContinueButtonEnable();
+        await app.send.checkInputErrorVisibility("hidden");
+      },
+    );
+  });
 
-  // for (const transaction of transactionAddressValid) {
-  //   test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
-  //     test.use({
-  //       userdata: "skip-onboarding",
-  //       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-  //       cliCommands: [
-  //         (appjsonPath: string) => {
-  //           return CLI.liveData({
-  //             currency: transaction.transaction.accountToDebit.currency.id,
-  //             index: transaction.transaction.accountToDebit.index,
-  //             scheme: transaction.transaction.accountToDebit.derivationMode,
-  //             add: true,
-  //             appjson: appjsonPath,
-  //           });
-  //         },
-  //       ],
-  //     });
+  for (const transaction of transactionAddressValid) {
+    test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.transaction.accountToDebit.currency.id,
+              index: transaction.transaction.accountToDebit.index,
+              scheme: transaction.transaction.accountToDebit.derivationMode,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+        ],
+      });
 
-  //     test(
-  //       `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
-  //       {
-  //         tag: ["@NanoSP", "@LNS", "@NanoX"],
-  //         annotation: {
-  //           type: "TMS",
-  //           description: transaction.xrayTicket,
-  //         },
-  //       },
-  //       async ({ app }) => {
-  //         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      test(
+        `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
+        {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          annotation: {
+            type: "TMS",
+            description: transaction.xrayTicket,
+          },
+        },
+        async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-  //         await app.layout.goToAccounts();
-  //         await app.accounts.navigateToAccountByName(
-  //           transaction.transaction.accountToDebit.accountName,
-  //         );
+          await app.layout.goToAccounts();
+          await app.accounts.navigateToAccountByName(
+            transaction.transaction.accountToDebit.accountName,
+          );
 
-  //         await app.account.clickSend();
-  //         await app.send.fillRecipientInfo(transaction.transaction);
-  //         await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
-  //         await app.send.checkContinueButtonEnable();
-  //       },
-  //     );
-  //   });
-  // }
+          await app.account.clickSend();
+          await app.send.fillRecipientInfo(transaction.transaction);
+          await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
+          await app.send.checkContinueButtonEnable();
+        },
+      );
+    });
+  }
 
-  // for (const transaction of transactionsAddressInvalid) {
-  //   test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
-  //     test.use({
-  //       userdata: "skip-onboarding",
-  //       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-  //       cliCommands: [
-  //         (appjsonPath: string) => {
-  //           return CLI.liveData({
-  //             currency: transaction.transaction.accountToDebit.currency.id,
-  //             index: transaction.transaction.accountToDebit.index,
-  //             add: true,
-  //             appjson: appjsonPath,
-  //           });
-  //         },
-  //       ],
-  //     });
+  for (const transaction of transactionsAddressInvalid) {
+    test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+        cliCommands: [
+          (appjsonPath: string) => {
+            return CLI.liveData({
+              currency: transaction.transaction.accountToDebit.currency.id,
+              index: transaction.transaction.accountToDebit.index,
+              add: true,
+              appjson: appjsonPath,
+            });
+          },
+        ],
+      });
 
-  //     test(
-  //       `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
-  //       {
-  //         tag: ["@NanoSP", "@LNS", "@NanoX"],
-  //         annotation: {
-  //           type: "TMS",
-  //           description: transaction.xrayTicket,
-  //         },
-  //       },
-  //       async ({ app }) => {
-  //         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      test(
+        `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
+        {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
+          annotation: {
+            type: "TMS",
+            description: transaction.xrayTicket,
+          },
+        },
+        async ({ app }) => {
+          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-  //         await app.layout.goToAccounts();
-  //         await app.accounts.navigateToAccountByName(
-  //           transaction.transaction.accountToDebit.accountName,
-  //         );
+          await app.layout.goToAccounts();
+          await app.accounts.navigateToAccountByName(
+            transaction.transaction.accountToDebit.accountName,
+          );
 
-  //         await app.account.clickSend();
-  //         await app.send.fillRecipientInfo(transaction.transaction);
-  //         await app.send.checkErrorMessage(transaction.expectedErrorMessage);
-  //         await app.send.checkContinueButtonDisabled();
-  //       },
-  //     );
-  //   });
-  // }
+          await app.account.clickSend();
+          await app.send.fillRecipientInfo(transaction.transaction);
+          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          await app.send.checkContinueButtonDisabled();
+        },
+      );
+    });
+  }
 
-  // const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+  const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
 
-  // test.describe("User sends funds to ENS address", () => {
-  //   const transactionEnsAddress = new Transaction(
-  //     Account.ETH_1,
-  //     Account.ETH_2,
-  //     "0.0001",
-  //     Fee.MEDIUM,
-  //   );
+  test.describe("User sends funds to ENS address", () => {
+    const transactionEnsAddress = new Transaction(
+      Account.ETH_1,
+      Account.ETH_2,
+      "0.0001",
+      Fee.MEDIUM,
+    );
 
-  //   test.beforeAll(async () => {
-  //     process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  //   });
+    test.beforeAll(async () => {
+      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
+    });
 
-  //   test.use({
-  //     userdata: "skip-onboarding",
-  //     speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
-  //     cliCommands: [
-  //       (appjsonPath: string) => {
-  //         return CLI.liveData({
-  //           currency: transactionEnsAddress.accountToCredit.currency.id,
-  //           index: transactionEnsAddress.accountToCredit.index,
-  //           add: true,
-  //           appjson: appjsonPath,
-  //         });
-  //       },
-  //       (appjsonPath: string) => {
-  //         return CLI.liveData({
-  //           currency: transactionEnsAddress.accountToDebit.currency.id,
-  //           index: transactionEnsAddress.accountToDebit.index,
-  //           add: true,
-  //           appjson: appjsonPath,
-  //         });
-  //       },
-  //     ],
-  //   });
-  //   test(
-  //     `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
-  //     {
-  //       tag: ["@NanoSP", "@LNS", "@NanoX"],
-  //       annotation: {
-  //         type: "TMS",
-  //         description: "B2CQA-2202",
-  //       },
-  //     },
-  //     async ({ app }) => {
-  //       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transactionEnsAddress.accountToCredit.currency.id,
+            index: transactionEnsAddress.accountToCredit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transactionEnsAddress.accountToDebit.currency.id,
+            index: transactionEnsAddress.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+    test(
+      `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
+      {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-2202",
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-  //       await app.layout.goToAccounts();
-  //       await app.accounts.navigateToAccountByName(
-  //         transactionEnsAddress.accountToDebit.accountName,
-  //       );
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transactionEnsAddress.accountToDebit.accountName,
+        );
 
-  //       await app.account.clickSend();
-  //       await app.send.craftTx(transactionEnsAddress);
-  //       await app.send.continueAmountModal();
-  //       await app.send.expectTxInfoValidity(transactionEnsAddress);
-  //       await app.send.clickContinueToDevice();
+        await app.account.clickSend();
+        await app.send.craftTx(transactionEnsAddress);
+        await app.send.continueAmountModal();
+        await app.send.expectTxInfoValidity(transactionEnsAddress);
+        await app.send.clickContinueToDevice();
 
-  //       await app.speculos.signSendTransaction(transactionEnsAddress);
-  //       await app.send.expectTxSent();
-  //       await app.account.navigateToViewDetails();
-  //       await app.sendDrawer.addressValueIsVisible(transactionEnsAddress.accountToCredit.address);
-  //       await app.drawer.closeDrawer();
-  //     },
-  //   );
+        await app.speculos.signSendTransaction(transactionEnsAddress);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(transactionEnsAddress.accountToCredit.address);
+        await app.drawer.closeDrawer();
+      },
+    );
 
-  //   test.afterAll(() => {
-  //     if (originalValue !== undefined) {
-  //       process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
-  //     } else {
-  //       delete process.env.DISABLE_TRANSACTION_BROADCAST;
-  //     }
-  //   });
-  // });
+    test.afterAll(() => {
+      if (originalValue !== undefined) {
+        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+      } else {
+        delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      }
+    });
+  });
 });
