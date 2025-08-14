@@ -73,18 +73,20 @@ const getSendTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  if (!errors.amount && !transaction.useAllAmount && account.spendableBalance.isZero()) {
-    errors.amount = new NotEnoughBalance();
-  } else if (totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
-  }
+  if (!(errors.amount instanceof AmountRequired)) {
+    if (!transaction.useAllAmount && account.spendableBalance.isZero()) {
+      errors.amount = new NotEnoughBalance();
+    } else if (totalSpent.gt(account.spendableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
 
-  if (
-    !errors.amount &&
-    account.polkadotResources?.lockedBalance.gt(0) &&
-    (transaction.useAllAmount || account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
-  ) {
-    warnings.amount = new PolkadotAllFundsWarning();
+    if (
+      account.polkadotResources?.lockedBalance.gt(0) &&
+      (transaction.useAllAmount ||
+        account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+    ) {
+      warnings.amount = new PolkadotAllFundsWarning();
+    }
   }
 
   if (
@@ -299,7 +301,7 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new NotEnoughBalance();
   }
 
-  if (totalSpent.gt(account.spendableBalance)) {
+  if (!(errors.amount instanceof AmountRequired) && totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 
