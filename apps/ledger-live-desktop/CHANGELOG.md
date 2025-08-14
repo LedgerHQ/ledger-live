@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.125.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`1210876`](https://github.com/LedgerHQ/ledger-live/commit/121087684a4170a4a6092d5e1eb24087957a408a)]:
+  - @ledgerhq/live-countervalues-react@0.4.0-next.1
+  - @ledgerhq/live-common@34.45.0-next.2
+  - @ledgerhq/live-dmk-desktop@0.9.0-next.2
+
 ## 2.125.0-next.1
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.4.0-next.1
+
+### Minor Changes
+
+- [#11345](https://github.com/LedgerHQ/ledger-live/pull/11345) [`1210876`](https://github.com/LedgerHQ/ledger-live/commit/121087684a4170a4a6092d5e1eb24087957a408a) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix clearing cache crashes on Android
+
 ## 0.4.0-next.0
 
 ### Minor Changes
