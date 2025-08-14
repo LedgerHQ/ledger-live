@@ -10,7 +10,8 @@ export enum ExchangeType {
 export type ExchangeStartParams =
   | ExchangeStartFundParams
   | ExchangeStartSellParams
-  | ExchangeStartSwapParams;
+  | ExchangeStartSwapParams
+  | ExchangeStartFundParams;
 
 export type ExchangeStartFundParams = {
   exchangeType: "FUND";

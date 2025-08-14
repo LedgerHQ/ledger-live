@@ -22,6 +22,7 @@ import {
   ExchangeStartResult,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeStartFundParams,
   ExchangeSwapParams,
   ExchangeType,
   SwapLiveError,
@@ -44,6 +45,7 @@ import {
   createAccounIdNotFound,
   createWrongSellParams,
   createWrongSwapParams,
+  createWrongFundParams,
   ExchangeError,
 } from "./error";
 import { TrackingAPI } from "./tracking";
@@ -158,8 +160,6 @@ export const handlers = ({
         }
 
         const trackingParams = {
-          // @ts-expect-error ExchangeStartFundParams does not yet have the provider. Will be added in another iteration after a bugfix is confirmed
-          // TODO: expect-error to be deleted after
           provider: params.provider,
           exchangeType: params.exchangeType,
         };
@@ -173,6 +173,8 @@ export const handlers = ({
           exchangeParams = extractSwapStartParam(params, accounts);
         } else if (params.exchangeType == "SELL") {
           exchangeParams = extractSellStartParam(params, accounts);
+        } else if (params.exchangeType == "FUND") {
+          exchangeParams = extractFundStartParam(params, accounts);
         } else {
           exchangeParams = {
             exchangeType: params.exchangeType,
@@ -678,6 +680,45 @@ function extractSellStartParam(
 ): ExchangeStartParamsUiRequest {
   if (!("provider" in params)) {
     throw new ExchangeError(createWrongSellParams(params));
+  }
+
+  if (!params.fromAccountId) {
+    return {
+      exchangeType: params.exchangeType,
+      provider: params.provider,
+    } as ExchangeStartParamsUiRequest;
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params?.fromAccountId);
+
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
+  }
+
+  const fromAccount = accounts?.find(acc => acc.id === realFromAccountId);
+
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+    },
+  };
+}
+
+function extractFundStartParam(
+  params: ExchangeStartFundParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
+  if (!("provider" in params)) {
+    throw new ExchangeError(createWrongFundParams(params));
   }
 
   if (!params.fromAccountId) {
