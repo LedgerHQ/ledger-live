@@ -306,6 +306,10 @@
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
       "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
+    "ReconnectionFailedError" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
       "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 นาที",
       "medium" : "≈ 30 วินาที",
-      "fast" : "≈ 15 วินาที"
+      "fast" : "≈ 15 วินาที",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
-        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, Binance Smart Chain, Avalanche และ Ethereum Classic"
+        "desc" : "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
@@ -3762,6 +3767,8 @@
         "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
         "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "hedera_title" : "Ledger Nano S™ ไม่รองรับการสวอป Hedera",
+        "hedera_description" : "เพื่อสวอป Hedera ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
         "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
@@ -6245,6 +6252,7 @@
       "iWithdraw" : "ฉันถอน",
       "totalStake" : "Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
+      "netApy" : "อัตราผลตอบแทนต่อปี (APY) สุทธิ",
       "stakeActivationState" : "State",
       "stakeActivePercent" : "ใช้งานอยู่",
       "stakeAvailableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
@@ -7780,8 +7788,8 @@
     "selectAccount" : "เลือกบัญชี",
     "searchPlaceholder" : "ค้นหา",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
-    "accountCount" : "{{count}} บัญชี (ตรวจพบ)",
-    "accountCount_plural" : "{{count}} บัญชี (ตรวจพบ)"
+    "accountCount" : "{{count}} บัญชี",
+    "accountCount_plural" : "{{count}} บัญชี"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
