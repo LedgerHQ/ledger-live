@@ -21,6 +21,7 @@ const transformIncludePatterns = [
   "react-native-qrcode-svg",
   "react-native-video",
   "ky",
+  "@gorhom/bottom-sheet",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -60,10 +61,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "llm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {

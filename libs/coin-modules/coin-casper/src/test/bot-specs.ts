@@ -19,6 +19,7 @@ const casperSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Casper",
+    appVersion: "3.0.7",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 6 * 60 * 1000,

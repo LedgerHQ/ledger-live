@@ -4,10 +4,11 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./network";
 import {
   getMaybeMintAccount,
@@ -74,10 +75,13 @@ import type {
 } from "./types";
 import { assertUnreachable } from "./utils";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateFeeAndSpendable, extimateTokenMaxSpendable } from "./estimateMaxSpendable";
+import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
 import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
 import { calculateToken2022TransferFees } from "./helpers/token";
 import { TokenAccountInfo } from "./network/chain/account/token";
+import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
+import BigNumber from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -106,6 +110,8 @@ async function deriveCommandDescriptor(
       return deriveStakeWithdrawCommandDescriptor(mainAccount, tx, model, api);
     case "stake.split":
       return deriveStakeSplitCommandDescriptor(mainAccount, tx, model, api);
+    case "raw":
+      return deriveRawCommandDescriptor(tx, api);
     default:
       return assertUnreachable(model);
   }
@@ -116,6 +122,10 @@ const prepareTransaction = async (
   tx: Transaction,
   api: ChainAPI,
 ): Promise<Transaction> => {
+  if (tx.raw) {
+    return toLiveTransaction(api, tx.raw);
+  }
+
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
 
   const commandDescriptor = await deriveCommandDescriptor(mainAccount, txToDeriveFrom, api);
@@ -214,14 +224,22 @@ const deriveTokenTransferCommandDescriptor = async (
   const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
   if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
-    errors.fee = new NotEnoughBalance();
+    const query = new URLSearchParams({
+      ...(mainAccount?.id ? { account: mainAccount.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), new BigNumber(fee)),
+      ticker: mainAccount.currency.ticker,
+      cryptoName: mainAccount.currency.name,
+      links: [`ledgerlive://buy?${query.toString()}`],
+    });
   }
 
   if (!tx.useAllAmount && tx.amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 
-  const spendableBalance = await extimateTokenMaxSpendable(api, tokenAccount, tx);
+  const spendableBalance = await estimateTokenMaxSpendable(api, tokenAccount, tx);
   const txAmount = tx.useAllAmount ? spendableBalance.toNumber() : tx.amount.toNumber();
 
   if (!errors.amount && txAmount > spendableBalance.toNumber()) {
@@ -242,6 +260,7 @@ const deriveTokenTransferCommandDescriptor = async (
       amount: txAmount,
       mintAddress,
       mintDecimals,
+      tokenId: tokenAccount.token.id,
       recipientDescriptor: recipientDescriptor,
       memo: model.uiState.memo,
       tokenProgram: tokenProgram,
@@ -591,7 +610,8 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const warnings: Record<string, Error> = {};
 
   const commandDescriptor = tx.model.commandDescriptor;
-  if (isValidStakeCreateAccountCommandDescriptor(commandDescriptor)) return commandDescriptor;
+  if (isValidStakeCreateAccountCommandDescriptor(commandDescriptor, tx.amount.toNumber()))
+    return commandDescriptor;
 
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
@@ -1011,6 +1031,7 @@ function validateRecipientRequiredMemo(
 
 function isValidStakeCreateAccountCommandDescriptor(
   commandDescriptor: CommandDescriptor | undefined,
+  amount: number,
 ): commandDescriptor is CommandDescriptor {
   const txCommand = commandDescriptor?.command as StakeCreateAccountCommand | undefined;
 
@@ -1018,6 +1039,7 @@ function isValidStakeCreateAccountCommandDescriptor(
   if (
     commandDescriptor &&
     txCommand?.amount &&
+    txCommand.amount == amount &&
     txCommand.stakeAccRentExemptAmount &&
     txCommand.fromAccAddress &&
     txCommand.stakeAccAddress &&

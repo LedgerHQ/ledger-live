@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.1.2",
+  "version": "1.1.15",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",
@@ -104,7 +104,7 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -118,11 +118,11 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@types/invariant": "^2.2.2",
     "@types/bs58check": "^2.1.2",
-    "expect": "^27.4.6",
+    "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
+    "expect": "^27.4.6",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "@ledgerhq/disable-network-setup": "workspace:^"

@@ -6,8 +6,7 @@ import {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
-import buildOptimisticOperation from "../../buildOptimisticOperation";
-import { getEstimatedFees } from "../../logic";
+import buildOptimisticOperation from "../../bridge/buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import {
@@ -15,6 +14,7 @@ import {
   erc20TokenTransactionRaw,
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
+import { getEstimatedFees } from "../../utils";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");

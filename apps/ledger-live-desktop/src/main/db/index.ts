@@ -230,6 +230,7 @@ async function cleanCache() {
 async function resetAll() {
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
+  encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
   await fs.unlink(path.resolve(DBPath, "app.json"));
 }
 function isEncryptionKeyCorrect(encryptionKey: string) {

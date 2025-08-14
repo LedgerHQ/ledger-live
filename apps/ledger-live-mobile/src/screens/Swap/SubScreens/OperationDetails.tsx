@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -55,9 +55,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     fromCurrency?.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
 
-  const openProvider = useCallback(() => {
-    Linking.openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers].main);
-  }, [provider]);
+  const providerUrl =
+    urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main || undefined;
 
   const fromAccountName = useMaybeAccountName(fromAccount);
   const toAccountName = useMaybeAccountName(toAccount);
@@ -94,28 +93,42 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
             style={{ ...styles.statusText, ...textColorStyles }}
             color={statusColorKey}
             tooltip={<Trans i18nKey={`transfer.swap.operationDetails.statusTooltips.${status}`} />}
+            testID="swap-status"
           />
         </View>
         <View style={styles.fieldsWrapper}>
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.swapId"} />
           </LText>
-          <LText selectable style={styles.value}>
+          <LText selectable style={styles.value} testID="swap-operation-details-swapId">
             {swapId}
           </LText>
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.provider"} />
           </LText>
-          <TouchableOpacity style={styles.providerLinkContainer} onPress={openProvider}>
-            <Text paddingRight={2} color="primary.c100">
+          {providerUrl ? (
+            <TouchableOpacity
+              style={styles.providerLinkContainer}
+              onPress={() => Linking.openURL(providerUrl)}
+            >
+              <Text
+                paddingRight={2}
+                color="primary.c100"
+                testID="swap-operation-details-provider-link"
+              >
+                {getProviderName(provider)}
+              </Text>
+              <ExternalLink size={11} color={colors.live} />
+            </TouchableOpacity>
+          ) : (
+            <Text marginBottom={8} color="primary.c100" testID="swap-operation-details-provider">
               {getProviderName(provider)}
             </Text>
-            <ExternalLink size={11} color={colors.live} />
-          </TouchableOpacity>
+          )}
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.date"} />
           </LText>
-          <LText style={styles.value}>
+          <LText style={styles.value} testID="swap-operation-details-date">
             <FormatDate date={operation.date} />
           </LText>
 
@@ -127,7 +140,13 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           <View style={styles.account}>
             {fromCurrency && <CurrencyIcon size={16} currency={fromCurrency} />}
             {fromAccount && (
-              <LText numberOfLines={1} ellipsizeMode="middle" semiBold style={styles.accountName}>
+              <LText
+                numberOfLines={1}
+                ellipsizeMode="middle"
+                semiBold
+                style={styles.accountName}
+                testID="swap-operation-details-fromAccount"
+              >
                 {fromAccountName}
               </LText>
             )}
@@ -136,7 +155,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
             <Trans i18nKey={"transfer.swap.operationDetails.fromAmount"} />
           </LText>
           {fromAccount && unitFrom && (
-            <LText style={styles.value}>
+            <LText style={styles.value} testID="swap-operation-details-fromAmount">
               <CurrencyUnitValue showCode unit={unitFrom} value={fromAmount} />
             </LText>
           )}
@@ -149,7 +168,13 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           <View style={styles.account}>
             {toCurrency ? <CurrencyIcon size={16} currency={toCurrency} /> : null}
             {toAccount ? (
-              <LText numberOfLines={1} ellipsizeMode="middle" semiBold style={styles.accountName}>
+              <LText
+                numberOfLines={1}
+                ellipsizeMode="middle"
+                semiBold
+                style={styles.accountName}
+                testID="swap-operation-details-toAccount"
+              >
                 {toAccountName}
               </LText>
             ) : null}
@@ -157,7 +182,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.toAmount"} />
           </LText>
-          <LText style={styles.value}>
+          <LText style={styles.value} testID="swap-operation-details-toAmount">
             {toAccount && unitTo ? (
               <CurrencyUnitValue showCode unit={unitTo} value={toAmount} />
             ) : null}

@@ -1,4 +1,4 @@
-import { CLPublicKeyTag } from "casper-js-sdk";
+import { KeyAlgorithm } from "casper-js-sdk";
 import { casperAddressFromPubKey, isAddressValid } from "../bridge/bridgeHelpers/addresses";
 
 describe("Casper addresses", () => {
@@ -20,6 +20,8 @@ describe("Casper addresses", () => {
   test("Check if valid addresses are valid", () => {
     expect(isAddressValid(pubKeys.validEd25519)).toBe(true);
     expect(isAddressValid(pubKeys.validSecp256k1)).toBe(true);
+    expect(isAddressValid(pubKeys.validSecp256k1Checksum)).toBe(true);
+    expect(isAddressValid(pubKeys.validEd25519Checksum)).toBe(true);
   });
 
   test("Check if invalid addresses are invalid", () => {
@@ -39,9 +41,9 @@ describe("Casper addresses", () => {
      */
     function casperPubKeyFromAddress(address: string): {
       pubkey: Buffer;
-      keySig: CLPublicKeyTag;
+      keySig: KeyAlgorithm;
     } {
-      const keySig = parseInt(address.slice(0, 2), 10) as CLPublicKeyTag;
+      const keySig = parseInt(address.slice(0, 2), 10) as KeyAlgorithm;
       const pubkeyHex = address.slice(2);
       const pubkey = Buffer.from(pubkeyHex, "hex");
       return { pubkey, keySig };
@@ -50,25 +52,25 @@ describe("Casper addresses", () => {
     expect(
       casperAddressFromPubKey(
         casperPubKeyFromAddress(pubKeys.validSecp256k1).pubkey,
-        CLPublicKeyTag.SECP256K1,
+        KeyAlgorithm.SECP256K1,
       ),
     ).toBe(pubKeys.validSecp256k1);
     expect(
       casperAddressFromPubKey(
         casperPubKeyFromAddress(pubKeys.validSecp256k1Checksum).pubkey,
-        CLPublicKeyTag.SECP256K1,
+        KeyAlgorithm.SECP256K1,
       ),
     ).toBe(pubKeys.validSecp256k1Checksum.toLowerCase());
     expect(
       casperAddressFromPubKey(
         casperPubKeyFromAddress(pubKeys.validEd25519).pubkey,
-        CLPublicKeyTag.ED25519,
+        KeyAlgorithm.ED25519,
       ),
     ).toBe(pubKeys.validEd25519);
     expect(
       casperAddressFromPubKey(
         casperPubKeyFromAddress(pubKeys.validEd25519Checksum).pubkey,
-        CLPublicKeyTag.ED25519,
+        KeyAlgorithm.ED25519,
       ),
     ).toBe(pubKeys.validEd25519Checksum.toLowerCase());
   });

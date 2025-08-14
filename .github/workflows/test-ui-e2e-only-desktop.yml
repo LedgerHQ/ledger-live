@@ -1,20 +1,11 @@
-name: "@Desktop • UI e2e • Test App"
-run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "[Desktop] - E2E Test - Scheduled"
+run-name: "@Desktop • UI e2e • Test App triggered by ${{ github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   schedule:
     - cron: "0 5 * * 1-5"
   workflow_dispatch:
     inputs:
-      ref:
-        description: the branch which triggered this workflow
-        required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        required: false
-      base_ref:
-        description: The base branch to merge the head into when checking out the code
-        required: false
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
@@ -51,6 +42,15 @@ on:
           - staging
           - testing
         default: testing
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -62,7 +62,7 @@ permissions:
 
 jobs:
   e2e-tests-linux:
-    name: "Desktop Tests E2E (Ubuntu)"
+    name: "Ubuntu E2E"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -70,16 +70,15 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
+      SPECULOS_DEVICE: ${{ inputs.speculos_device }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup caches
         id: caches
@@ -122,20 +121,20 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}
 
-      - name: Run playwright tests [Linux => xvfb-run]
-        id: tests
-        run: |
-          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-          export COINAPPS=$PWD/coin-apps
-          export MOCK=0
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm e2e:desktop test:playwright --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Tests
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        with:
+          speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
+          test_filter: ${{ inputs.test_filter }}
+          invert_filter: ${{ inputs.invert_filter || false }}
+          shard_index: ${{ matrix.shardIndex }}
+          shard_total: ${{ matrix.shardTotal }}
         env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
+          SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
@@ -200,8 +199,6 @@ jobs:
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
 
       - name: Download Xray Results
         uses: actions/download-artifact@v4.1.3
@@ -267,14 +264,11 @@ jobs:
               attempt_number: "${{ github.run_attempt }}",
             });
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
-
             const keys = {
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Linux")
+                jobUrl: jobs.find(job => job.name == `Ubuntu E2E`)?.html_url
               },
             };
 
@@ -344,7 +338,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}",
                         "emoji": true
                       }
                     },
@@ -355,7 +349,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                        "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
                       }
                     },
                     {

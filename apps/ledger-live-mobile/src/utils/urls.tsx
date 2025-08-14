@@ -63,8 +63,7 @@ export const urls = {
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
-  applestore:
-    "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
+  applestore: "https://apps.apple.com/app/id1361671700",
   feesMoreInfo: "https://support.ledger.com/article/360021039173-zd",
   feesEthereum: "https://support.ledger.com/article/4406211657233-zd",
   feesPolkadot: "https://support.ledger.com/article/360016289919-zd",
@@ -81,6 +80,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning: "https://support.ledger.com/article/115005175329-zd",
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
+    AddressesSanctionedError:
+      "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
   multipleAddresses: "https://support.ledger.com/article/360033802154-zd",
   delegation:
@@ -107,6 +108,7 @@ export const urls = {
   polkadotStaking: "https://support.ledger.com/article/360018131260-zd",
   multiversxStaking: "https://support.ledger.com/article/360016750819-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
+  stakingRewards: "https://support.ledger.com/article/5961622776861-zd",
   swap: {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
     learnMore:
@@ -169,6 +171,7 @@ export const urls = {
     stakingPage: "https://support.ledger.com/article/4731749170461-zd",
     splTokenInfo:
       "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
+    splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
   },
   resources: {
     gettingStarted:
@@ -227,5 +230,8 @@ export const urls = {
     badTxns: "https://support.ledger.com/article/5129526865821-zd",
     blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
     txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
+  },
+  geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
 };

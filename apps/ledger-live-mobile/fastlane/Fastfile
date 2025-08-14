@@ -40,6 +40,14 @@ def trim_version_number(version)
   SemVer.parse(version).format "%M.%m.%p"
 end
 
+def handle_dry_run(options, action_name)
+  if options[:dry_run]
+    UI.important "🔍 DRY RUN MODE - #{action_name} will be skipped"
+    return true
+  end
+  false
+end
+
 lane :beta do |options|
   ensure_git_status_clean
 
@@ -90,21 +98,6 @@ platform :ios do
 
   desc "private: refresh profiles"
   private_lane :refresh_ios_profiles do
-    match(
-      type: "development",
-      app_identifier: ["com.ledger.live", "com.ledger.live.dev"],
-      force: true,
-      force_for_new_devices: true,
-      include_all_certificates: true,
-      force_for_new_certificates: true,
-      generate_apple_certs: true,
-      git_url: ENV["GIT_REPO_URL"],
-      username: ENV["APPLE_ID"],
-      team_id: ENV["DEVELOPER_TEAM_ID"],
-      keychain_name: ENV["CI_KEYCHAIN_NAME"],
-      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
-      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
-    )
     match(
       type: "adhoc",
       app_identifier: ["com.ledger.live", "com.ledger.live.dev"],
@@ -163,7 +156,7 @@ platform :ios do
     MY_APP_BUNDLE_ID = ENV["MY_APP_BUNDLE_ID"]
     MY_APP_ID = ENV["APP_IDENTIFIER"]
 
-    MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
+    MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID} 1754305777" : "match AppStore #{MY_APP_BUNDLE_ID}")
     MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
 
     if (!options[:local])
@@ -278,9 +271,7 @@ platform :ios do
           export_options: {
             method: export_options_method,
             signingStyle: "manual",
-            provisioningProfiles: {
-                MY_APP_ID => MY_PROFILE
-            }
+            provisioningProfiles: ENV['MATCH_PROVISIONING_PROFILE_MAPPING']
           },
         )
       end
@@ -359,22 +350,34 @@ platform :ios do
 
   desc "ci: create testflight version"
   lane :ci_testflight do |options|
+    if options[:dry_run]
+      UI.important "🔍 DRY RUN MODE - No actual upload will be performed"
+    end
+    
     setup_ios_ci
     build(ci: true)
-    upload(
-      prerelease: true,
-      ci: true
-    )
+    
+    unless options[:dry_run]
+      upload(
+        prerelease: true,
+        ci: true
+      )
+    else
+      UI.success "✅ DRY RUN: Build completed successfully (upload skipped)"
+    end
   end
 
   desc "ci: create nightly version"
   lane :ci_nightly do |options|
     setup_ios_ci
     build(ci: true)
-    upload(
-      nightly: true,
-      ci: true
-    )
+    
+    unless handle_dry_run(options, "nightly upload")
+      upload(
+        nightly: true,
+        ci: true
+      )
+    end
   end
 
   desc "ci: create adhoc version"
@@ -531,27 +534,40 @@ platform :android do
   end
 
   desc "build APKs + AAB and send the AAB to the Google Play Store "
-  lane :ci_playstore do
+  lane :ci_playstore do |options|
+    if options[:dry_run]
+      UI.important "🔍 DRY RUN MODE - No actual upload will be performed"
+    end
+    
     prepare_android_internal
     build(
       type: "Release",
       ci: true,
       apk_and_aab: true
     )
-    upload(ci: true)
+    
+    unless options[:dry_run]
+      upload(ci: true)
+    else
+      UI.success "✅ DRY RUN: Build completed successfully (upload skipped)"
+    end
   end
 
   desc "build nightly version"
-  lane :ci_nightly do
+  lane :ci_nightly do |options|
     prepare_android_internal
     build(
       type: "Release",
-      ci: true
+      ci: true,
+      apk_and_aab: true
     )
-    upload(
-      nightly: true,
-      ci: true
-    )
+    
+    unless handle_dry_run(options, "nightly upload")
+      upload(
+        nightly: true,
+        ci: true
+      )
+    end
   end
 
   desc "build recover version"

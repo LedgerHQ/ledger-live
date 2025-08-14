@@ -18,12 +18,12 @@ function expectedAmount({
   status: TransactionStatus;
   transaction: Transaction;
 }) {
-  if (transaction.assetCode && transaction.assetIssuer) {
+  if (transaction.assetReference && transaction.assetOwner) {
     const amount = formatDeviceAmount(account.currency, status.amount, {
       hideCode: true,
     });
 
-    return `${amount} ${transaction.assetCode}@${truncateAddress(transaction.assetIssuer, 3, 4)}`;
+    return `${amount} ${transaction.assetReference}@${truncateAddress(transaction.assetOwner, 3, 4)}`;
   }
 
   return formatDeviceAmount(account.currency, status.amount, {
@@ -74,7 +74,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Change Trust",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) =>
-        `${transaction.assetCode || ""}@${truncateAddress(transaction.assetIssuer || "", 3, 4)}`,
+        `${transaction.assetReference || ""}@${truncateAddress(transaction.assetOwner || "", 3, 4)}`,
       maxY: 5,
     },
     {

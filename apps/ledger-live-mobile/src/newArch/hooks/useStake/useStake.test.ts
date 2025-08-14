@@ -9,6 +9,8 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -41,6 +43,8 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({} as CryptoAssetsStore);
 const mockEthereumAccount = fromAccountRaw(raw);
 const mockTronAccount = fromAccountRaw(rawTron);
 
@@ -94,6 +98,26 @@ const mockUSDCTokenAccount: TokenAccount = {
   balance: new BigNumber(123456),
 };
 
+const mockUSDSTokenAccount: TokenAccount = {
+  ...mockUSDCTokenAccount,
+  id: "js:2:ethereum:0x01:usds:",
+  parentId: "js:2:ethereum:0x01:",
+  type: "TokenAccount",
+  token: {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+    contractAddress: "",
+    parentCurrency: {
+      id: "ethereum",
+      type: "CryptoCurrency",
+    } as CryptoCurrency,
+    tokenType: "",
+    name: "",
+    ticker: "",
+    units: [],
+  },
+};
+
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
@@ -131,6 +155,7 @@ const feature_stake_programs_json = {
       "cardano",
       "dydx",
       "injective",
+      "aptos",
     ],
     redirects: {
       tron: {
@@ -152,6 +177,15 @@ const feature_stake_programs_json = {
         name: "Dapp",
         queryParams: {
           chainId: 1,
+        },
+      },
+      "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f": {
+        platform: "earn",
+        name: "Earn",
+        queryParams: {
+          intent: "deposit",
+          cryptoAssetId:
+            "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
         },
       },
     },
@@ -190,12 +224,14 @@ describe("useStake()", () => {
       "cardano",
       "dydx",
       "injective",
+      "aptos",
     ]);
 
     expect(result.current.partnerSupportedAssets).toEqual([
       "tron",
       "ethereum/erc20/usd_tether__erc20_",
       "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
     ]);
   });
 
@@ -321,5 +357,48 @@ describe("useStake()", () => {
         yieldId: "native-staking",
       },
     });
+  });
+
+  it("should get earn live app deposit route params for a USDS account with the intent to deposit", async () => {
+    const { result } = renderHook(() => useStake(), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          overriddenFeatureFlags: {
+            stakePrograms: feature_stake_programs_json,
+          },
+        },
+      }),
+    });
+
+    expect(
+      result.current.getRouteParamsForPlatformApp(
+        mockUSDSTokenAccount,
+        walletState,
+        mockEthereumAccount,
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        screen: "EarnNavigator",
+        params: {
+          screen: "Earn",
+          platform: "earn",
+          params: {
+            name: "Mock Earn Live App",
+            intent: "deposit",
+            platform: "earn",
+            accountId: "b166652b-2771-5ed3-a4b1-f13917ddb3c1",
+            cryptoAssetId:
+              "ethereum/erc20/usds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+            customDappURL:
+              "https://earn-live-app.com/?intent=deposit&cryptoAssetId=ethereum%2Ferc20%2Fusds_stablecoin_0xdc035d45d973e3ec169d2276ddab16f1e407384f&accountId=b166652b-2771-5ed3-a4b1-f13917ddb3c1",
+            ledgerAccountId: "js:2:ethereum:0x01:usds:",
+            parentAccountId: "38161079-22bd-58c4-8438-f39775016cb2",
+            walletAccountId: "b166652b-2771-5ed3-a4b1-f13917ddb3c1",
+          },
+        },
+      }),
+    );
   });
 });

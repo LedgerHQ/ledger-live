@@ -17,12 +17,9 @@ import LiveAppDisclaimer from "./WebPlatformPlayer/LiveAppDisclaimer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import {
-  createAction,
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
-import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
 import CompleteExchange, {
   Data as CompleteExchangeData,
@@ -36,6 +33,7 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useStartExchangeAction } from "../hooks/useConnectAppAction";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -104,6 +102,8 @@ export const LiveAppDrawer = () => {
     dispatch(closePlatformAppDrawer());
   }, [dispatch]);
 
+  const action = useStartExchangeAction();
+
   const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
@@ -111,7 +111,6 @@ export const LiveAppDrawer = () => {
 
     const { type, manifest, data } = payload;
 
-    const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
         return manifest ? (
@@ -221,6 +220,7 @@ export const LiveAppDrawer = () => {
     onContinue,
     onCloseExchangeComplete,
     device?.modelId,
+    action,
     dispatch,
   ]);
 

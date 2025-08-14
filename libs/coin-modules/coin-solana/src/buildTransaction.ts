@@ -18,8 +18,10 @@ import {
   TransactionInstruction,
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./network";
+import { trace } from "@ledgerhq/logs";
 
 export const buildTransactionWithAPI = async (
   address: string,
@@ -32,27 +34,33 @@ export const buildTransactionWithAPI = async (
     (signature: Buffer) => OnChainTransaction,
   ]
 > => {
-  const [instructions, recentBlockhash] = await Promise.all([
-    buildInstructions(api, transaction),
-    api.getLatestBlockhash(),
-  ]);
+  const recentBlockhash = await api.getLatestBlockhash();
 
-  const feePayer = new PublicKey(address);
+  let web3SolanaTransaction: VersionedTransaction;
+  if (transaction.raw) {
+    web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
+    // If we want to retry correctly we want to update the recent blockhash
+    // NOTE: we could also make use of the isBlockHashValid rpc method
+    if (web3SolanaTransaction.message) {
+      web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+    }
+  } else {
+    const instructions = await buildInstructions(api, transaction);
+    const transactionMessage = new TransactionMessage({
+      payerKey: new PublicKey(address),
+      recentBlockhash: recentBlockhash.blockhash,
+      instructions,
+    });
 
-  const tm = new TransactionMessage({
-    payerKey: feePayer,
-    recentBlockhash: recentBlockhash.blockhash,
-    instructions,
-  });
-
-  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
+    web3SolanaTransaction = new OnChainTransaction(transactionMessage.compileToLegacyMessage());
+  }
 
   return [
-    tx,
+    web3SolanaTransaction,
     recentBlockhash,
     (signature: Buffer) => {
-      tx.addSignature(new PublicKey(address), signature);
-      return tx;
+      web3SolanaTransaction.addSignature(new PublicKey(address), signature);
+      return web3SolanaTransaction;
     },
   ];
 };
@@ -65,7 +73,14 @@ async function buildInstructions(
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  if (Object.keys(commandDescriptor.errors).length > 0) {
+  const errorEntries = Object.entries(commandDescriptor.errors);
+  if (errorEntries.length > 0) {
+    trace({
+      type: "solana/buildTransaction",
+      message: "can not build invalid command",
+      data: Object.fromEntries(errorEntries.map(([key, value]) => [key, value.message])),
+      context: { commandKind: commandDescriptor.command.kind },
+    });
     throw new Error("can not build invalid command");
   }
   return buildInstructionsForCommand(api, commandDescriptor.command);
@@ -96,6 +111,8 @@ async function buildInstructionsForCommand(
       return buildStakeWithdrawInstructions(api, command);
     case "stake.split":
       return buildStakeSplitInstructions(api, command);
+    case "raw":
+      throw new Error("Raw transactions should not be built with this function");
     default:
       return assertUnreachable(command);
   }

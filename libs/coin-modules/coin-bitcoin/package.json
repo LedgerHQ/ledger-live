@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.15.3",
+  "version": "0.20.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -74,6 +74,7 @@
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bchaddrjs": "^0.4.3",
     "@types/bs58": "^4.0.1",
     "@types/bs58check": "^2.1.2",
@@ -92,8 +93,7 @@
     "jest": "^29.7.0",
     "jest-file-snapshot": "^0.5.0",
     "object-hash": "^2.2.0",
-    "ts-jest": "^29.1.1",
-    "jest-sonar": "0.2.16"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -106,6 +106,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

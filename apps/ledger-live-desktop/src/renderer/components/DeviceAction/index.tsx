@@ -7,10 +7,10 @@ import {
   EConnResetError,
   ImageDoesNotExistOnDevice,
   LanguageInstallRefusedOnDevice,
-  LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
   OutdatedApp,
 } from "@ledgerhq/live-common/errors";
+import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -89,6 +89,7 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
+import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -155,6 +156,7 @@ type States = PartialNullable<{
   manifestName: string;
   manifestId: string;
   transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type InnerProps<P> = {
@@ -229,6 +231,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     deviceSignatureRequested,
     deviceStreamingProgress,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
     displayUpgradeWarning,
     passWarning,
     initSwapRequested,
@@ -328,8 +331,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     deviceInfo,
     appAndVersion,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
     isTrackingEnabled,
   });
+
+  useTrackDmkErrorsEvents({ error });
 
   const type = useTheme().colors.palette.type;
 

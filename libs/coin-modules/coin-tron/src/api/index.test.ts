@@ -9,9 +9,8 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-import { TronAsset } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -49,16 +48,15 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: Api<TronAsset> = createApi(mockTronConfig);
-    const intent: TransactionIntent<TronAsset> = {
+    const api: AlpacaApi = createApi(mockTronConfig);
+    const intent: TransactionIntent = {
       type: "send",
       sender: "sender",
       recipient: "recipient",
       amount: BigInt(10),
       asset: {
-        type: "token",
-        standard: "trc10",
-        tokenId: "1002000",
+        type: "trc10",
+        assetReference: "1002000",
       },
     };
     // Simulate calling all methods
@@ -68,7 +66,8 @@ describe("createApi", () => {
     await api.estimateFees(intent);
     await api.getBalance("address");
     await api.lastBlock();
-    await api.listOperations("address", {} as Pagination);
+    const minHeight = 14;
+    await api.listOperations("address", { minHeight: minHeight } as Pagination);
 
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
@@ -77,6 +76,10 @@ describe("createApi", () => {
     expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
-    expect(listOperations).toHaveBeenCalledWith("address", {});
+    expect(listOperations).toHaveBeenCalledWith("address", {
+      minHeight: minHeight,
+      order: "asc",
+      softLimit: 200,
+    });
   });
 });

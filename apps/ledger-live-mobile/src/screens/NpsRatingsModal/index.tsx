@@ -8,7 +8,7 @@ import Form from "./Form";
 
 import Enjoy from "./Enjoy";
 import DisappointedDone from "./DisappointedDone";
-import { LayoutChangeEvent } from "react-native";
+import { DimensionValue, LayoutChangeEvent } from "react-native";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",
@@ -31,31 +31,19 @@ const RatingsModal = () => {
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
-  /**
-   * Having an initial value of null will prevent having "height: 0" before the
-   * initial call of onLayout.
-   * The component will just layout normally without an animation which is ok
-   * since this will happen only on the first step.
-   * Without this default behavior, there are issues on iOS where sometimes the
-   * height is stuck at 0.
-   */
-  const sharedHeight = useSharedValue<number | null>(null);
+
+  const sharedHeight = useSharedValue<DimensionValue>(0);
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 200 });
     },
     [sharedHeight],
   );
-
   const animatedStyle = useAnimatedStyle(
     () => ({
-      /**
-       * If it's null the component still renders normally at its full height
-       * without its height being derived from an animated value.
-       */
-      height: sharedHeight.value ?? undefined,
+      height: sharedHeight.value ?? 0,
     }),
-    [],
+    [sharedHeight.value],
   );
 
   const closeModal = useCallback(() => {

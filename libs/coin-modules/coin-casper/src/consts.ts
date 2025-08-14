@@ -6,6 +6,7 @@ export const CASPER_MINIMUM_VALID_AMOUNT_MOTES = 2.5 * 1e9;
 export const CASPER_MINIMUM_VALID_AMOUNT_CSPR = 2.5;
 export const CASPER_NETWORK = "casper";
 export const CASPER_CHECKSUM_HEX_LEN = 32;
+export const CASPER_DEFAULT_TTL = 1800000;
 
 export const CASPER_MAX_TRANSFER_ID = "18446744073709551615";
 
@@ -16,3 +17,7 @@ export const MayBlockAccountError = new MayBlockAccount("", {
 export const InvalidMinimumAmountError = new InvalidMinimumAmount("", {
   minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR} CSPR`,
 });
+
+// Known Error Codes
+export const NodeErrorCodeAccountNotFound = -32009;
+export const NodeErrorCodeQueryFailed = -32003;

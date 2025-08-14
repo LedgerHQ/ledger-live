@@ -1,5 +1,5 @@
 import React from "react";
-import type { ComponentMeta, ComponentStory } from "@storybook/react-native";
+import type { Meta, StoryFn } from "@storybook/react";
 import FullBackgroundCard from "../../../src/components/Cards/FullBackgroundCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionFullBackgroundCard } from "./descriptionsCards";
@@ -14,9 +14,9 @@ export default {
       },
     },
   },
-} as ComponentMeta<typeof FullBackgroundCard>;
+} as Meta<typeof FullBackgroundCard>;
 
-export const FullBackgroundCardStory: ComponentStory<typeof FullBackgroundCard> = (
+export const FullBackgroundCardStory: StoryFn<typeof FullBackgroundCard> = (
   args: typeof FullBackgroundCardStoryArgs,
 ) => {
   return (

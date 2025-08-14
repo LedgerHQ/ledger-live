@@ -4,7 +4,6 @@ export const MEMO_TAG_COINS: string[] = [
   "cosmos",
   "crypto_org",
   "hedera",
-  "internet_computer",
   "solana",
   "stacks",
   "stellar",

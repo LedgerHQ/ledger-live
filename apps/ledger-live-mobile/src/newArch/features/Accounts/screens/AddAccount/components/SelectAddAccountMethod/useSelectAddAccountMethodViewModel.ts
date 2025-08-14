@@ -8,21 +8,33 @@ import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "../../enums";
+import {
+  useModularDrawerController,
+  useModularDrawerVisibility,
+  ModularDrawerLocation,
+} from "LLM/features/ModularDrawer";
+import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 
-type AddAccountScreenProps = {
+const currencies = listAndFilterCurrencies({ includeTokens: true });
+
+type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   onClose?: () => void;
-  setWalletSyncDrawerVisible?: () => void;
+  onShowWalletSyncDrawer?: () => void;
+  onCloseAddAccountDrawer?: () => void;
 };
 
 const useSelectAddAccountMethodViewModel = ({
   currency,
   onClose,
-  setWalletSyncDrawerVisible,
-}: AddAccountScreenProps) => {
+  onShowWalletSyncDrawer,
+  onCloseAddAccountDrawer,
+}: AddAccountMethodViewModelProps) => {
   const navigation = useNavigation<BaseNavigation>();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
   const route = useRoute();
@@ -33,24 +45,20 @@ const useSelectAddAccountMethodViewModel = ({
       if (currency?.type === "TokenCurrency") {
         return {
           token: currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && {
-            context: AddAccountContexts.AddAccounts,
-          }),
+
+          context: AddAccountContexts.AddAccounts,
         };
       } else {
         return {
           currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && {
-            context: AddAccountContexts.AddAccounts,
-          }),
+
+          context: AddAccountContexts.AddAccounts,
         };
       }
     } else {
-      return llmNetworkBasedAddAccountFlow?.enabled
-        ? { context: AddAccountContexts.AddAccounts, sourceScreenName: route.name }
-        : {};
+      return { context: AddAccountContexts.AddAccounts, sourceScreenName: route.name };
     }
-  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled, route.name]);
+  }, [hasCurrency, currency, route.name]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
@@ -59,41 +67,57 @@ const useSelectAddAccountMethodViewModel = ({
     });
   }, []);
 
-  const onClickImport = useCallback(() => {
+  const handleImportAccounts = useCallback(() => {
     trackButtonClick("Import via another Ledger Live app");
     onClose?.();
     navigation.navigate(NavigatorName.ImportAccounts);
   }, [navigation, trackButtonClick, onClose]);
 
-  const onClickImportLedgerSync = useCallback(() => {
+  const handleWalletSync = useCallback(() => {
     trackButtonClick("Account Use Ledger Sync");
-    setWalletSyncDrawerVisible?.();
-  }, [trackButtonClick, setWalletSyncDrawerVisible]);
+    onShowWalletSyncDrawer?.();
+  }, [trackButtonClick, onShowWalletSyncDrawer]);
 
-  const onClickAdd = useCallback(() => {
+  const { openDrawer } = useModularDrawerController();
+
+  const handleOpenModularDrawer = useCallback(() => {
+    const currenciesToUse = currency ? [currency] : currencies;
+    return openDrawer({
+      currencies: currenciesToUse,
+      enableAccountSelection: false,
+      flow: "add_account",
+      source: "add_account_button",
+    });
+  }, [currency, openDrawer]);
+
+  const handleAddAccount = useCallback(() => {
     trackButtonClick("With your Ledger");
-    onClose?.();
-    const EntryNavigatorName = llmNetworkBasedAddAccountFlow?.enabled
-      ? NavigatorName.AssetSelection
-      : NavigatorName.AddAccounts;
-    // to delete after llmNetworkBasedAddAccountFlow is fully enabled (ts inference not working well based on navigationParams)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    navigation.navigate(EntryNavigatorName, navigationParams);
+
+    onCloseAddAccountDrawer?.();
+
+    if (isModularDrawerVisible({ location: ModularDrawerLocation.ADD_ACCOUNT })) {
+      handleOpenModularDrawer();
+    } else {
+      const entryNavigatorName = NavigatorName.AssetSelection;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      navigation.navigate(entryNavigatorName, navigationParams);
+    }
   }, [
+    trackButtonClick,
+    onCloseAddAccountDrawer,
+    isModularDrawerVisible,
+    handleOpenModularDrawer,
     navigation,
     navigationParams,
-    trackButtonClick,
-    onClose,
-    llmNetworkBasedAddAccountFlow?.enabled,
   ]);
 
   return {
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
-    onClickAdd,
-    onClickImport,
-    onClickImportLedgerSync,
+    handleAddAccount,
+    handleImportAccounts,
+    handleWalletSync,
   };
 };
 

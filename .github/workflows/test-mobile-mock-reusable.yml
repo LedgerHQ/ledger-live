@@ -1,0 +1,591 @@
+name: "[Mobile] - Mock Test - Called"
+
+on:
+  workflow_call:
+    inputs:
+      macos-specificity-runner-label:
+        description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
+        required: false
+        type: string
+        default: "general-pool"
+      disable-turbo-cache:
+        description: Disable turbo caching
+        required: false
+        type: boolean
+        default: false
+      ref:
+        description: Ref to checkout
+        required: false
+        type: string
+      skip-bundle-size-reporting:
+        description: Whether to skip the bundle size reporting
+        required: false
+        type: boolean
+        default: false
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        type: string
+        required: false
+      macos-specificity-runner-label:
+        description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
+        required: false
+        type: string
+        default: "general-pool"
+      production_firebase:
+        description: "Target Firebase Production env"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
+  cache-bucket: ll-gha-s3-cache
+  ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
+  ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
+  ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+
+jobs:
+  determine-builds:
+    name: "Determine Builds"
+    runs-on: ubuntu-22.04
+    outputs:
+      ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
+      ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
+      android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
+      android_js_exists: ${{ steps.check-android-js.outputs.cache-hit }}
+      ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
+      ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
+      android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
+      android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          sparse-checkout: apps/ledger-live-mobile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Determine cache keys
+        id: cache-keys
+        run: |
+          echo "ios_native_key=${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-2" >> $GITHUB_OUTPUT
+          echo "android_native_key=${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android" >> $GITHUB_OUTPUT
+          echo "ios_js_key=${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+
+      - name: Check if iOS Native Build exists already
+        id: check-ios-native
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ steps.cache-keys.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if Android Native Build exists already
+        id: check-android-native
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ steps.cache-keys.outputs.android_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if iOS JS Build exists already
+        id: check-ios-js
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ steps.cache-keys.outputs.ios_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+      - name: Check if Android JS Build exists already
+        id: check-android-js
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          key: ${{ steps.cache-keys.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+          lookup-only: true
+
+  build-ios:
+    name: "iOS Build"
+    needs: [ determine-builds ]
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
+      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
+      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
+      ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
+      ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
+    secrets: inherit
+
+  build-android:
+    name: "Android Build"
+    needs: [ determine-builds ]
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
+      build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
+      android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
+      android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
+    secrets: inherit
+
+  detox-tests-ios:
+    name: "iOS Build / iOS Detox"
+    needs: [ build-ios, determine-builds ]
+    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      SEED: ${{ vars.SEED_QAA_B2C }}
+    outputs:
+      status: ${{ steps.detox.outcome }}
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "true"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Detox Post Install
+        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+
+      - name: Download Native Build
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          path: ${{ env.IOS_NATIVE_PATH }}
+          key: ${{ needs.determine-builds.outputs.ios_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Download JS Build
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          path: apps/ledger-live-mobile/main.jsbundle
+          key: ${{ needs.determine-builds.outputs.ios_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Copy JS build
+        run: |
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
+          cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        run: |
+          pnpm build:dummy-apps
+        shell: bash
+
+      - name: Test iOS app
+        id: detox
+        timeout-minutes: 75
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm mobile e2e:ci -- -p ios -t --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "test-artifacts"
+        with:
+          name: "ios-test-artifacts-${{ matrix.shardIndex }}"
+          path: apps/ledger-live-mobile/artifacts
+
+  detox-tests-android:
+    name: "Android Build / Android Detox"
+    needs: [ build-android, determine-builds ]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      AVD_API: 35
+      AVD_ARCH: x86_64
+      AVD_PROFILE: pixel_7_pro
+      AVD_TARGET: google_apis
+      AVD_NAME: "Android_Emulator"
+      AVD_CORES: 4
+      AVD_RAM_SIZE: 4096M
+      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+    outputs:
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+      artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [ 1, 2 ]
+        shardTotal: [ 2 ]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v3.2.2
+        with:
+          packages: "tools platform-tools"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Download Native Build
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: |
+            ${{ env.ANDROID_APK_PATH }}
+            ${{ env.ANDROID_TESTBINARY_PATH }}
+          key: ${{ needs.determine-builds.outputs.android_native_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Download JS Bundle
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: ${{ env.ANDROID_JSBUNDLE_PATH }}
+          key: ${{ needs.determine-builds.outputs.android_js_key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Prepare APK
+        run: |
+          mkdir -p /tmp/apk/assets
+          mkdir /home/runner/.android/
+          mv ${{ env.ANDROID_JSBUNDLE_PATH }} /tmp/apk/assets/index.android.bundle
+          mv ${{ env.ANDROID_APK_PATH }} /tmp/apk/tmp.apk
+          (cd /tmp/apk/; zip -r tmp.apk assets/index.android.bundle)
+          /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
+          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-pnpm-cache: "false"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+        # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
+      - name: Enable Hardware Acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Fix emulator directory permissions
+        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
+
+      - name: Install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Detox Post Install
+        run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:dummy-apps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Download android emulator
+        timeout-minutes: 5
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        id: detox-avd
+        with:
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        id: create-avd
+        with:
+          api-level: ${{ env.AVD_API }}
+          arch: ${{ env.AVD_ARCH }}
+          profile: ${{ env.AVD_PROFILE }}
+          target: ${{ env.AVD_TARGET }}
+          avd-name: ${{ env.AVD_NAME }}
+          force-avd-creation: true
+          cores: ${{ env.AVD_CORES }}
+          ram-size: ${{ env.AVD_RAM_SIZE }}
+          disable-linux-hw-accel: false
+          emulator-options: ${{ env.AVD_OPTIONS }}
+          script: ./tools/scripts/wait_emulator_idle.sh
+
+      - name: Cache android emulator
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        with:
+          path: |
+            /home/runner/.android/
+            /usr/local/lib/android/sdk/emulator/
+            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
+          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
+
+      - name: Run Android Tests
+        id: detox
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        timeout-minutes: ${{ 45 }}
+        env:
+          DETOX_INSTALL_TIMEOUT: 120000
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          PRODUCTION: ${{ inputs.production_firebase }}
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        id: "test-artifacts"
+        with:
+          name: "android-test-artifacts-${{ matrix.shardIndex }}"
+          path: apps/ledger-live-mobile/artifacts/
+
+      - name: Set job output based on detox result
+        id: set-output
+        if: ${{ !cancelled() }}
+        run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
+
+  allure-report-ios:
+    name: "iOS Detox > Allure Report"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
+    needs: [detox-tests-ios]
+    outputs:
+      report-url: ${{ steps.upload.outputs.report-url }}
+      result: ${{ steps.summary.outputs.test_result }}
+      status: ${{ needs.detox-tests-ios.outputs.status }}
+    steps:
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          path: ios-test-artifacts
+          pattern: ios-test-artifacts*
+          merge-multiple: true
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
+        id: upload
+        with:
+          platform: ios-mocked
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ios-test-artifacts
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ios-test-artifacts
+          platform: iOS
+
+  allure-report-android:
+    name: "Android Detox > Allure Report"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
+    outputs:
+      report-url: ${{ steps.upload.outputs.report-url }}
+      result: ${{ steps.summary.outputs.test_result }}
+      finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
+    needs: [detox-tests-android]
+    steps:
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          path: android-test-artifacts
+          pattern: android-test-artifacts*
+          merge-multiple: true
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        id: upload
+        if: ${{ !cancelled() && env.SHOULD_UPLOAD == 'true' }}
+        with:
+          platform: android-mocked
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: android-test-artifacts
+      - name: Get summary
+        id: summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: android-test-artifacts
+          platform: android
+
+  report-bundle-sizes:
+    name: "Build Mobile > Report Bundle Sizes"
+    runs-on: ledger-live-medium
+    if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
+    needs: [ build-ios, build-android ]
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Create mobile metafile
+        run: |
+          echo "{
+              \"main.ios.jsbundle\" : { \"size\": ${{ needs.build-ios.outputs.js-bundle-size }}},
+              \"main.android.jsbundle\" : { \"size\": ${{ needs.build-android.outputs.js-bundle-size }}}
+          }" > mobile.metafile.json
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ github.event.number}}
+          mode: mobile
+      - name: Upload mobile metafile
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile.metafile.json
+          path: mobile.metafile.json
+          overwrite: true

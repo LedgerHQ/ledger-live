@@ -1,7 +1,7 @@
 import { Icons } from "@ledgerhq/react-ui";
 import React, { memo } from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Skeleton } from "../../Skeleton";
+import { Skeleton } from "../../../components";
 import { TitleContainer, Dots } from "./Common";
 import { Trans } from "react-i18next";
 import { centerEllipsis } from "~/renderer/styles/helpers";

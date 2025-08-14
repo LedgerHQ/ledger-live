@@ -1,5 +1,6 @@
 {
   "name": "ledgerlivemobile",
   "displayName": "Ledger Live",
-  "userInterfaceStyle": "automatic"
+  "userInterfaceStyle": "automatic",
+  "newArchEnabled": false
 }

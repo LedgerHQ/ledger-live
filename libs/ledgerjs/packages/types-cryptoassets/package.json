@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-cryptoassets",
-  "version": "7.22.0",
+  "version": "7.25.0",
   "description": "Ledger types for crypto assets and tokens",
   "keywords": [
     "Ledger"
@@ -29,6 +29,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "coverage": "jest --coverage",
     "unimported": "unimported"
   },
   "devDependencies": {

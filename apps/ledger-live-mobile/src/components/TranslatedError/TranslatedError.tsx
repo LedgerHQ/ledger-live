@@ -2,10 +2,10 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Platform, Text } from "react-native";
 import { useErrorLinks } from "./hooks/useErrorLinks";
-import { isDmkError } from "@ledgerhq/live-dmk-mobile";
+import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
-  error: Error | null | undefined;
+  error: Error | DmkError | null | undefined;
   field?: "title" | "description";
 };
 
@@ -28,11 +28,18 @@ export function TranslatedError({ error, field = "title" }: Props): JSX.Element 
   // Handling DMK errors
   // Not translated for now
   if (isDmkError(error)) {
-    if (field !== "title") {
-      return <Text>{(error?.originalError as Error)?.message ?? error.message ?? error._tag}</Text>;
-    }
+    const translatedKey = `errors.${error._tag}.${field}`;
+    const translated = t(translatedKey);
+    if (translated !== translatedKey) {
+      return <Text>{translated}</Text>;
+    } else {
+      const message =
+        field === "title"
+          ? error._tag
+          : (error?.originalError as Error)?.message ?? error.message ?? error._tag;
 
-    return <Text>{error._tag}</Text>;
+      return <Text>{t(`errors.generic.${field}`, { message })}</Text>;
+    }
   }
 
   const arg: Error & { returnObjects: boolean; productName?: string[] } = {

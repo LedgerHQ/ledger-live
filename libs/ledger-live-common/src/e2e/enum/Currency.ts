@@ -63,12 +63,7 @@ export class Currency {
   static readonly ATOM = new Currency("Cosmos", "ATOM", "cosmos", AppInfos.COSMOS);
   static readonly XTZ = new Currency("Tezos", "XTZ", "tezos", AppInfos.TEZOS);
   static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON);
-  static readonly BSC = new Currency(
-    "Binance Smart Chain",
-    "BNB",
-    "bsc",
-    AppInfos.BINANCE_SMART_CHAIN,
-  );
+  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN);
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON);
   static readonly ETH_USDT = new Currency(
     "Tether USD",
@@ -87,7 +82,7 @@ export class Currency {
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
-    "ethereum",
+    "ethereum/erc20/steth",
     AppInfos.ETHEREUM,
   );
   static readonly XLM_USCD = new Currency("USDC", "usdc", "stellar", AppInfos.STELLAR);
@@ -98,14 +93,9 @@ export class Currency {
     "Binance-Peg BUSD Token",
     "BUSD",
     "bsc",
-    AppInfos.BINANCE_SMART_CHAIN,
+    AppInfos.BNB_CHAIN,
   );
-  static readonly BSC_SHIBA = new Currency(
-    "Shiba Inu",
-    "SHIB",
-    "bsc",
-    AppInfos.BINANCE_SMART_CHAIN,
-  );
+  static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN);
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
     "DAI",

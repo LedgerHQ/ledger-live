@@ -8,15 +8,16 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "polkadot-lcov.info", projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
-  setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
+  setupFilesAfterEnv: [
+    "jest-expect-message",
+    "dotenv/config",
+    // "@ledgerhq/disable-network-setup"
+  ],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "polkadot-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };

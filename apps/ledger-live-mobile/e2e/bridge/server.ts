@@ -10,7 +10,6 @@ import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
 
 let clientResponse: (data: string) => void;
@@ -111,10 +110,6 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   }
 }
 
-export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
-  await postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
-}
-
 export async function loadBleState(bleState: BleState) {
   await postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
 }
@@ -186,36 +181,12 @@ export async function addDevicesUSB(
   return devicesArray;
 }
 
-export async function setInstalledApps(apps: string[] = []) {
-  await postMessage({
-    type: "setGlobals",
-    id: uniqueId(),
-    payload: { _listInstalledApps_mock_result: apps },
-  });
-}
-
 export async function open() {
   await postMessage({ type: "open", id: uniqueId() });
 }
 
-export async function swapSetup() {
-  await postMessage({ type: "swapSetup", id: uniqueId() });
-}
-
-export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
-}
-
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
-}
-
-export async function getFlags() {
-  return fetchData({ type: "getFlags", id: uniqueId() });
-}
-
-export async function getEnvs() {
-  return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
 function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
@@ -231,14 +202,6 @@ function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<st
       resolve(data);
     };
   });
-}
-
-export async function addKnownSpeculos(proxyAddress: string) {
-  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
-}
-
-export async function removeKnownSpeculos(id: string) {
-  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
 function onMessage(messageStr: string) {
@@ -257,15 +220,6 @@ function onMessage(messageStr: string) {
       clientResponse(msg.payload);
       break;
     }
-    case "appFlags":
-      clientResponse(msg.payload);
-      break;
-    case "appEnvs":
-      clientResponse(msg.payload);
-      break;
-    case "swapLiveAppReady":
-      clientResponse("Swap Live App is ready");
-      break;
     default:
       break;
   }

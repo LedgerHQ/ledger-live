@@ -1,19 +1,35 @@
-import type { AptosAccount, Transaction } from "../types";
+import type { AptosAccount, AptosOperation, Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import buildTransaction from "./buildTransaction";
 import BigNumber from "bignumber.js";
 import type { Account, AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
-import { AptosAPI } from "../api";
+import { AptosAPI } from "../network";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
 import { signTransaction } from "../network";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import buildTransaction from "../logic/buildTransaction";
 
 export const getAddress = (a: Account) => ({
   address: a.freshAddress,
   derivationPath: a.freshAddressPath,
 });
+
+const getOperationType = (transaction: Transaction): OperationType => {
+  switch (transaction.mode) {
+    case "stake":
+      return "STAKE";
+    case "restake":
+      return "STAKE";
+    case "unstake":
+      return "UNSTAKE";
+    case "withdraw":
+      return "WITHDRAW";
+    default:
+      return "OUT";
+  }
+};
 
 const buildSignOperation =
   (
@@ -34,25 +50,24 @@ const buildSignOperation =
 
         const accountId = account.id;
         const hash = "";
-        const type: OperationType = "OUT";
+        const type: OperationType = getOperationType(transaction);
         const fee = transaction.fees || new BigNumber(0);
         const extra = {};
         const senders: string[] = [];
         const recipients: string[] = [];
 
-        if (transaction.mode === "send") {
-          senders.push(account.freshAddress);
-          recipients.push(transaction.recipient);
-        }
+        senders.push(account.freshAddress);
+        recipients.push(transaction.recipient);
+
+        const subAccount =
+          !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);
 
         // build optimistic operation
-        const operation: Operation = {
+        const operation: AptosOperation = {
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,
-          value: transaction.useAllAmount
-            ? account.balance.minus(fee)
-            : transaction.amount.plus(fee),
+          value: subAccount ? fee : transaction.amount.plus(fee),
           fee,
           extra,
           blockHash: null,
@@ -62,6 +77,20 @@ const buildSignOperation =
           accountId,
           date: new Date(),
           transactionSequenceNumber: Number(rawTx.sequence_number),
+          subOperations: subAccount
+            ? [
+                {
+                  id: encodeOperationId(subAccount.id, "", "OUT"),
+                  type: "OUT",
+                  accountId: transaction.subAccountId,
+                  senders: [account.freshAddress],
+                  recipients: [transaction.recipient],
+                  value: transaction.amount,
+                  fee,
+                  date: new Date(),
+                } as Operation,
+              ]
+            : [],
         };
 
         o.next({

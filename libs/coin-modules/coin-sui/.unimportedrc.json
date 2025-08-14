@@ -14,6 +14,12 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [],
-  "ignoreUnimported": [],
-  "ignoreUnused": []
+  "ignoreUnimported": [
+    "src/api/index.ts",
+    "src/test/testUtils.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/live-env",
+    "@ledgerhq/types-cryptoassets"
+  ]
 }

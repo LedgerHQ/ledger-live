@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import {
   useTrackTransactionChecksFlow,
   UseTrackTransactionChecksFlow,
@@ -32,6 +32,7 @@ describe("useTrackTransactionChecksFlow", () => {
     isOSU: false,
     managerAllowed: false,
     pinValidated: false,
+    seFlags: Buffer.alloc(0),
   };
 
   const appAndVersionMock: AppAndVersion = {
@@ -46,6 +47,7 @@ describe("useTrackTransactionChecksFlow", () => {
     deviceInfo: deviceInfoMock,
     appAndVersion: appAndVersionMock,
     transactionChecksOptInTriggered: false,
+    transactionChecksOptIn: null,
     isTrackingEnabled: true,
   };
 
@@ -187,5 +189,47 @@ describe("useTrackTransactionChecksFlow", () => {
       }),
       true,
     );
+  });
+
+  it("should track 'Transaction Check Opt-in' when transactionChecksOptIn changes from null to true", () => {
+    const { rerender } = renderHook(
+      (props: UseTrackTransactionChecksFlow) => useTrackTransactionChecksFlow(props),
+      {
+        initialProps: {
+          ...defaultArgs,
+          transactionChecksOptIn: null,
+          transactionChecksOptInTriggered: true,
+        } as UseTrackTransactionChecksFlow,
+      },
+    );
+
+    rerender({
+      ...defaultArgs,
+      transactionChecksOptIn: true,
+      transactionChecksOptInTriggered: true,
+    });
+
+    expect(track).toHaveBeenCalledWith("Transaction Check Opt-in", expect.any(Object), true);
+  });
+
+  it("should track 'Transaction Check Opt-out' when transactionChecksOptIn changes from null to false", () => {
+    const { rerender } = renderHook(
+      (props: UseTrackTransactionChecksFlow) => useTrackTransactionChecksFlow(props),
+      {
+        initialProps: {
+          ...defaultArgs,
+          transactionChecksOptIn: null,
+          transactionChecksOptInTriggered: true,
+        } as UseTrackTransactionChecksFlow,
+      },
+    );
+
+    rerender({
+      ...defaultArgs,
+      transactionChecksOptIn: false,
+      transactionChecksOptInTriggered: true,
+    });
+
+    expect(track).toHaveBeenCalledWith("Transaction Check Opt-out", expect.any(Object), true);
   });
 });

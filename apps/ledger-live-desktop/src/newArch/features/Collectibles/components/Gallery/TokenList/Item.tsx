@@ -5,7 +5,7 @@ import RowItem from "./RowItem";
 import CardItem from "./CardItem";
 import Card from "~/renderer/components/Box/Card";
 import styled from "styled-components";
-import { Skeleton } from "../../Skeleton";
+import { Skeleton } from "../../../components";
 import { Media } from "../../Media";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";

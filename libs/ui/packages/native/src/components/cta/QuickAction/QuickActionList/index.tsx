@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, View } from "react-native";
 
 import QuickActionButton, { QuickActionButtonProps } from "../QuickActionButton";
 
@@ -19,15 +19,14 @@ const QuickActionList = ({
 }: QuickActionListProps): React.ReactElement => {
   const renderItem = useCallback(
     ({ item, index }: { item: QuickActionButtonProps; index: number }) => {
+      const hasRowBelow = data?.length && index + numColumns < data.length;
+
+      const mb = hasRowBelow ? 4 : 0;
+      const mh = 6;
       return (
-        <QuickActionButton
-          {...item}
-          isActive={isActive}
-          flex={1}
-          mr={(index + 1) % numColumns > 0 && data && index !== data.length - 1 ? 4 : 0}
-          mb={data?.length && index + numColumns < data.length ? 4 : 0}
-          testID={testID}
-        />
+        <View style={{ flex: 1, minHeight: 30, marginHorizontal: mh }}>
+          <QuickActionButton {...item} isActive={isActive} mb={mb} testID={testID} />
+        </View>
       );
     },
     [],

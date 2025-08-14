@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Button } from "react-native";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import Popin from "../../../../src/components/Layout/Modals/Popin";
 import Text from "../../../../src/components/Text";
@@ -11,7 +11,7 @@ export default {
   component: Popin,
 };
 
-export const Default: ComponentStory<typeof Popin> = (args: typeof DefaultStoryArgs) => {
+export const Default: StoryFn<typeof Popin> = (args: typeof DefaultStoryArgs) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = useCallback(() => {

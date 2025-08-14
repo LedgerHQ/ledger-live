@@ -36,14 +36,14 @@ export const getAccountShape: GetAccountShape<Account> = async (
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
   const latestOperationTimestamp = oldOperations[0]
-    ? Math.floor(oldOperations[0].date.getTime() / 1000)
-    : 0;
+    ? new BigNumber(Math.floor(oldOperations[0].date.getTime() / 1000))
+    : null;
 
   // merge new operations w/ previously synced ones
   const newOperations = await getOperationsForAccount(
     liveAccountId,
     address,
-    new BigNumber(latestOperationTimestamp).toString(),
+    latestOperationTimestamp ? latestOperationTimestamp.toString() : null,
   );
   const operations = mergeOps(oldOperations, newOperations);
 
@@ -53,6 +53,7 @@ export const getAccountShape: GetAccountShape<Account> = async (
     balance: accountBalance.balance,
     spendableBalance: accountBalance.balance,
     operations,
+    operationsCount: operations.length,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,

@@ -3,23 +3,21 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { messageWithIntent, toSerializedSignature } from "@mysten/sui/cryptography";
-import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
-import { verifyTransactionSignature } from "@mysten/sui/verify";
+import { LedgerSigner } from "@mysten/signers/ledger";
+import type { SuiClient } from "@mysten/sui/client";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import type { SuiSignedOperation, SuiAccount, SuiSigner, Transaction } from "../types";
-import { ensureAddressFormat } from "../utils";
+import type { SuiAccount, SuiSigner, Transaction } from "../types";
+import { withApi } from "../network/sdk";
 
 /**
  * Sign Transaction with Ledger hardware
  */
-export const buildSignOperation =
-  (
-    signerContext: SignerContext<SuiSigner>,
-  ): AccountBridge<Transaction, SuiAccount>["signOperation"] =>
-  ({ account, deviceId, transaction }) =>
+export const buildSignOperation = (
+  signerContext: SignerContext<SuiSigner>,
+): AccountBridge<Transaction, SuiAccount>["signOperation"] => {
+  return ({ account, deviceId, transaction }) =>
     new Observable(subscriber => {
       async function main() {
         subscriber.next({
@@ -39,31 +37,18 @@ export const buildSignOperation =
           }),
         };
 
-        const publicKeyResult = await signerContext(deviceId, signer =>
-          signer.getPublicKey(account.freshAddressPath),
-        );
-        const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
-
         const { unsigned } = await buildTransaction(account, transactionToSign);
-        const signData = messageWithIntent("TransactionData", unsigned);
-        const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, signData),
+
+        const signed = await signerContext(deviceId, async suiSigner =>
+          withApi(async (suiClient: SuiClient) => {
+            const ledgerSigner = await LedgerSigner.fromDerivationPath(
+              account.freshAddressPath,
+              suiSigner,
+              suiClient,
+            );
+            return ledgerSigner.signTransaction(unsigned);
+          }),
         );
-
-        const serializedSignature = toSerializedSignature({
-          signature,
-          signatureScheme: "ED25519",
-          publicKey,
-        });
-
-        if (!transaction.skipVerify) {
-          const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
-            address: ensureAddressFormat(account.freshAddress),
-          });
-          if (!verify) {
-            throw new Error("verifyTransactionSignature failed");
-          }
-        }
 
         subscriber.next({
           type: "device-signature-granted",
@@ -72,21 +57,18 @@ export const buildSignOperation =
         const operation = buildOptimisticOperation(
           account,
           transactionToSign,
-          transactionToSign.fees ?? new BigNumber(0),
+          transactionToSign.fees ?? BigNumber(0),
         );
-
-        const signedOperation: SuiSignedOperation = {
-          operation,
-          signature: Buffer.from(signature).toString("base64"),
-          rawData: {
-            serializedSignature,
-            unsigned: Buffer.from(unsigned).toString("base64"),
-          },
-        };
 
         subscriber.next({
           type: "signed",
-          signedOperation,
+          signedOperation: {
+            operation,
+            signature: signed.signature,
+            rawData: {
+              unsigned,
+            },
+          },
         });
       }
 
@@ -95,5 +77,5 @@ export const buildSignOperation =
         e => subscriber.error(e),
       );
     });
-
+};
 export default buildSignOperation;

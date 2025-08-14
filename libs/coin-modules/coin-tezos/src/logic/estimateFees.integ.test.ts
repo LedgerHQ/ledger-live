@@ -34,9 +34,9 @@ describe("estimateFees", () => {
     const result = await estimateFees({ account, transaction });
     // Then
     expect(result).toEqual({
-      estimatedFees: BigInt("666"),
-      fees: BigInt("292"),
-      gasLimit: BigInt("169"),
+      estimatedFees: BigInt("866"),
+      fees: BigInt("492"),
+      gasLimit: BigInt("2169"),
       storageLimit: BigInt("277"),
       amount: BigInt("1000000"),
     });
@@ -56,11 +56,11 @@ describe("estimateFees", () => {
 
     // Then
     expect(result).toEqual({
-      estimatedFees: BigInt("664"),
-      fees: BigInt("290"),
-      gasLimit: BigInt("169"),
+      estimatedFees: BigInt("864"),
+      fees: BigInt("490"),
+      gasLimit: BigInt("2169"),
       storageLimit: BigInt("277"),
-      amount: BigInt("1934789"),
+      amount: BigInt("1934589"),
     });
   });
 });

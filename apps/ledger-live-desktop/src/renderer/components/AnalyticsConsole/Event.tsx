@@ -38,16 +38,19 @@ const Event: React.FC<Props> = ({
   const [forceShowExtra, setForceShowExtra] = useState(false);
   const propertiesToDisplay =
     showExtraProps || forceShowExtra ? eventProperties : eventPropertiesWithoutExtra;
-  const propertiesText = useMemo(
-    () =>
-      propertiesToDisplay
-        ? JSON.stringify(propertiesToDisplay, Object.keys(propertiesToDisplay).sort(), 2)
-            .split("\n")
-            .slice(1, -1)
-            .join("\n")
-        : null,
-    [propertiesToDisplay],
-  );
+
+  const propertiesText = useMemo(() => {
+    if (!propertiesToDisplay) return null;
+
+    return Object.entries(propertiesToDisplay)
+      .map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return `${key}: [${value.join(", ")}]`;
+        }
+        return `${key}: ${JSON.stringify(value, null, 2)}`;
+      })
+      .join("\n");
+  }, [propertiesToDisplay]);
 
   const toggleForceShowExtra = useCallback(() => {
     setForceShowExtra(!forceShowExtra);

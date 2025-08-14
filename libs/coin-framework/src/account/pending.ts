@@ -1,6 +1,10 @@
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 
+/*
+We want to discard pendingOperations if their transaction sequence number
+has been out-numbered by the last operation...
+*/
 export function shouldRetainPendingOperation(account: Account, op: Operation): boolean {
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
@@ -18,6 +22,22 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
   return delay < getEnv("OPERATION_OPTIMISTIC_RETENTION");
 }
 
+/**
+ * Appends a pending operation to the list, ensuring no duplicates based on transactionSequenceNumber.
+ *
+ * If another operation in the list has the same `transactionSequenceNumber` as the new one,
+ * it is removed first — the new one replaces it at the beginning of the list.
+ *
+ * This ensures optimistic operations (e.g., from RBF or retry logic) don't stack up multiple times
+ * when they refer to the same transaction.
+ *
+ * Note: If `transactionSequenceNumber` is `undefined`, all existing ops with `undefined` are preserved,
+ * which may lead to duplicates — this is acceptable for receive-only txs or ops with incomplete metadata.
+ *
+ * @param ops - Existing list of pending operations
+ * @param op - The new pending operation to insert
+ * @returns A new array with `op` prepended and any conflicting op removed
+ */
 const appendPendingOp = (ops: Operation[], op: Operation) => {
   const filtered: Operation[] = ops.filter(
     o => o.transactionSequenceNumber !== op.transactionSequenceNumber,

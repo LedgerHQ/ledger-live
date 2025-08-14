@@ -106,7 +106,7 @@ const ActivationFlow = ({
 
       case Steps.PinInput:
         return nbDigits ? (
-          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} />
+          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} focusOnMount />
         ) : null;
 
       case Steps.SyncError:

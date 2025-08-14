@@ -3,6 +3,7 @@ import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live
 import type {
   Command,
   CommandDescriptor,
+  RawCommand,
   SolanaOperation,
   SolanaOperationExtra,
   StakeCreateAccountCommand,
@@ -51,8 +52,11 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
 function getResolution(
   transaction: Transaction,
   deviceModelId?: DeviceModelId,
+  certificateSignatureKind?: "prod" | "test",
 ): Resolution | undefined {
-  if (!transaction.subAccountId || !transaction.model.commandDescriptor) return;
+  if (!transaction.subAccountId || !transaction.model.commandDescriptor) {
+    return;
+  }
 
   const { command } = transaction.model.commandDescriptor;
   switch (command.kind) {
@@ -60,6 +64,8 @@ function getResolution(
       if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
         return {
           deviceModelId,
+          certificateSignatureKind,
+          tokenInternalId: command.tokenId,
           createATA: {
             address: command.recipientDescriptor.walletAddress,
             mintAddress: command.mintAddress,
@@ -68,6 +74,8 @@ function getResolution(
       }
       return {
         deviceModelId,
+        certificateSignatureKind,
+        tokenInternalId: command.tokenId,
         tokenAddress: command.recipientDescriptor.tokenAccAddress,
       };
     }
@@ -75,6 +83,7 @@ function getResolution(
     case "token.createATA": {
       return {
         deviceModelId,
+        certificateSignatureKind,
         createATA: {
           address: command.owner,
           mintAddress: command.mint,
@@ -89,7 +98,7 @@ export const buildSignOperation =
     signerContext: SignerContext<SolanaSigner>,
     api: () => Promise<ChainAPI>,
   ): AccountBridge<Transaction>["signOperation"] =>
-  ({ account, deviceId, deviceModelId, transaction }) =>
+  ({ account, deviceId, deviceModelId, transaction, certificateSignatureKind }) =>
     new Observable(subscriber => {
       const main = async () => {
         const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
@@ -106,7 +115,7 @@ export const buildSignOperation =
           signer.signTransaction(
             account.freshAddressPath,
             Buffer.from(tx.message.serialize()),
-            getResolution(transaction, deviceModelId),
+            getResolution(transaction, deviceModelId, certificateSignatureKind),
           ),
         );
 
@@ -160,10 +169,32 @@ function buildOptimisticOperationForCommand(
       return optimisticOpForStakeWithdraw(account, command, commandDescriptor);
     case "stake.split":
       return optimisticOpForStakeSplit(account, command, commandDescriptor);
+    case "raw":
+      return optimisticOpForRaw(account, transaction, command, commandDescriptor);
     default:
       return assertUnreachable(command);
   }
 }
+
+function optimisticOpForRaw(
+  account: Account,
+  transaction: Transaction,
+  command: RawCommand,
+  commandDescriptor: CommandDescriptor,
+): SolanaOperation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", "OUT"),
+    type: "OUT",
+    accountId: account.id,
+    senders: [account.freshAddress],
+    recipients: [transaction.recipient],
+    value: new BigNumber(commons.fee ?? 0),
+    extra: getOpExtras(command),
+  };
+}
+
 function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
@@ -299,6 +330,7 @@ function getOpExtras(command: Command): SolanaOperationExtra {
     case "stake.undelegate":
     case "stake.withdraw":
     case "stake.split":
+    case "raw":
       break;
     default:
       return assertUnreachable(command);

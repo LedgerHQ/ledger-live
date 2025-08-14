@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
-import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -79,7 +79,9 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
+import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
+import { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -210,6 +212,9 @@ export type BaseNavigatorStackParamList = {
     currencyId: string;
     resetSearchOnUmount?: boolean;
   };
+  [ScreenName.SwapCustomError]: {
+    error: SwapLiveError | Error;
+  };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
@@ -311,10 +316,15 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
+
   [ScreenName.MockedWalletScreen]: undefined;
 
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
+
+  // MODULAR DRAWER
+  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
+  [ScreenName.MockedModularDrawer]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;
@@ -324,6 +334,7 @@ export type BaseNavigatorStackParamList = {
     isBeforeOnboarding?: boolean;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
+  [NavigatorName.WalletTab]: NavigatorScreenParams<WalletTabNavigatorStackParamList>;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;

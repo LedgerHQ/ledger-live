@@ -20,6 +20,10 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
   },
+  ton: {
+    title: "swap.incompatibility.ton_tokens_title",
+    description: "swap.incompatibility.ton_tokens_description",
+  },
 };
 
 const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
@@ -64,8 +68,8 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     description: "swap.incompatibility.dydx_description",
   },
   sui: {
-    title: "swap.incompatibility.dydx_title",
-    description: "swap.incompatibility.dydx_description",
+    title: "swap.incompatibility.sui_title",
+    description: "swap.incompatibility.sui_description",
   },
 };
 

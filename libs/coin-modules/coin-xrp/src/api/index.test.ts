@@ -1,8 +1,8 @@
 import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { NetworkInfo, XrpAsset } from "../types";
-import { createApi, TransactionIntentExtra } from "./index";
+import { NetworkInfo, XrpMapMemo } from "../types";
+import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -255,7 +255,7 @@ describe("listOperations", () => {
             sequence: 1,
           },
         },
-      ] satisfies Operation<XrpAsset>[]);
+      ] satisfies Operation[]);
     },
   );
 });
@@ -277,57 +277,118 @@ describe("Testing craftTransaction function", () => {
     jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       });
     });
   });
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>, customFees);
+    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>, {
+      value: customFees,
+    });
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fee: customFees,
       }),
+      undefined,
     );
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>);
+    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
         fee: DEFAULT_ESTIMATED_FEES,
       }),
+      undefined,
+    );
+  });
+
+  it("should pass signing pub key when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+      senderPublicKey: "bar",
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Object),
+      "bar",
     );
   });
 
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
-      memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map([["memos", ["testdata"]]]),
+      },
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+        // NOTE: before
+        // memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+        memos: [{ data: "testdata", type: "memo" }],
       }),
+      undefined,
+    );
+  });
+
+  it("should not pass memos when user does not provide it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
+    );
+  });
+
+  it("should not pass memos when user provides an empty memo list it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map(),
+      },
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
     );
   });
 
   it("should pass destination tag when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
-      destinationTag: 1337,
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map([["destinationTag", "1337"]]),
+      },
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        destinationTag: 1337,
+        destinationTag: 1337, // logic should convert `value: string` -> `number`
       }),
+      undefined,
     );
   });
 });

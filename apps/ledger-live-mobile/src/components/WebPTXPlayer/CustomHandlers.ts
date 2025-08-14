@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  CompleteExchangeUiRequest,
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
@@ -7,17 +8,39 @@ import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking"
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
+import Config from "react-native-config";
+import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
+import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
-export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
+type CustomExchangeHandlersHookType = {
+  manifest: WebviewProps["manifest"];
+  accounts: AccountLike[];
+  sendAppReady: () => void;
+  onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
+  onCompleteError?: (error: Error) => void;
+};
+
+export function useCustomExchangeHandlers({
+  manifest,
+  accounts,
+  onCompleteResult,
+  sendAppReady,
+  onCompleteError,
+}: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const deviceRef = useRef<Device>();
+  const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
     () =>
@@ -34,6 +57,45 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
+    const ptxCustomHandlers = {
+      "custom.close": () => {
+        navigation.getParent()?.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
+      },
+      "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
+        const accountId = request.params?.accountId;
+
+        return new Promise<void>((resolve, reject) => {
+          try {
+            if (accountId) {
+              const id = getAccountIdFromWalletAccountId(accountId);
+              const account = accounts.find(acc => acc.id === id);
+
+              if (!account) {
+                reject(new Error("Account not found"));
+                return;
+              }
+
+              navigation.navigate(NavigatorName.NoFundsFlow, {
+                screen: ScreenName.NoFunds,
+                params: {
+                  account,
+                  parentAccount: isTokenAccount(account)
+                    ? getParentAccount(account, accounts)
+                    : undefined,
+                },
+              });
+
+              resolve();
+            }
+          } catch (error) {
+            reject(error);
+          }
+        });
+      },
+    };
+
     return {
       ...exchangeHandlers({
         accounts,
@@ -58,9 +120,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
+                    deviceRef.current = result.device; // Store in ref for immediate access
                     onSuccess(
                       result.startExchangeResult.nonce,
-                      result.startExchangeResult.device || device,
+                      result.startExchangeResult.device || result.device,
                     );
                   }
 
@@ -85,21 +148,22 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 },
                 device,
                 onResult: result => {
+                  navigation.pop();
                   if (result.error) {
                     onCancel(result.error);
-                    navigation.pop();
-                    navigation.navigate(NavigatorName.CustomError, {
-                      screen: ScreenName.CustomErrorScreen,
-                      params: {
-                        error: result.error,
-                      },
+
+                    navigation.navigate(ScreenName.SwapCustomError, {
+                      error: result.error,
                     });
                   }
+
                   if (result.operation) {
-                    onSuccess(result.operation.id);
+                    const operationHash = result.operation.hash;
+                    onCompleteResult?.(exchangeParams, operationHash);
+                    onSuccess(result.operation.hash);
                   }
                   setDevice(undefined);
-                  !result.error && navigation.pop();
+                  deviceRef.current = undefined;
                 },
               },
             });
@@ -109,11 +173,78 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               screen: ScreenName.CustomErrorScreen,
               params: {
                 error,
+                displayError: error instanceof AddressesSanctionedError,
+              },
+            });
+          },
+          "custom.isReady": async () => {
+            if (Config.DETOX) {
+              sendAppReady();
+            }
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            let cancelCalled = false;
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
+            const currentDevice = deviceRef.current || device; // Use ref value first
+
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device: currentDevice,
+                onResult: result => {
+                  if (result.error) {
+                    safeOnCancel(result.error);
+                    navigation.pop();
+                    onCompleteError?.(result.error);
+                  }
+                  if (result.operation && exchangeParams.swapId) {
+                    syncAccountById(exchangeParams.exchange.fromAccount.id);
+                    const operationHash = result.operation.hash;
+
+                    onCompleteResult?.(exchangeParams, operationHash);
+
+                    // return success to swap live app
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
+                  }
+                  setDevice(undefined);
+                  deviceRef.current = undefined;
+                },
               },
             });
           },
         },
       }),
+      ...ptxCustomHandlers,
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [
+    accounts,
+    device,
+    manifest,
+    navigation,
+    onCompleteError,
+    onCompleteResult,
+    sendAppReady,
+    syncAccountById,
+    tracking,
+  ]);
+}
+
+export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
+  return useCustomExchangeHandlers({ manifest, accounts, sendAppReady: sendEarnLiveAppReady });
 }

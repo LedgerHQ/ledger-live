@@ -31,6 +31,7 @@ interface UseAppStateHandlerProps {
 
 export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateHandlerProps) {
   const [appState, setAppState] = useState<string>(AppState.currentState || "");
+  const timeRef = useRef<number>(0);
 
   // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
   const isBackgrounded = (state: string) => {
@@ -42,9 +43,30 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
   // If the app reopened from the background, lock the app
   const handleAppStateChange = useCallback(
     (nextAppState: string) => {
-      // do not lock if triggered by a deep link flow
-      if (isBackgrounded(appState) && nextAppState === "active" && !isPasswordLockBlocked) {
-        lock();
+      const wasBackgrounded = isBackgrounded(appState);
+      const isNowActive = nextAppState === "active";
+
+      if (nextAppState === "background") {
+        timeRef.current = Date.now();
+      }
+
+      if (Platform.OS === "android") {
+        // Android: only lock non-transient state change (>500ms)
+        // Reduces false-positive app locks, but does not eliminate them
+        // Ticket to revisit state change management: https://ledgerhq.atlassian.net/browse/LIVE-20822
+        if (
+          wasBackgrounded &&
+          isNowActive &&
+          Date.now() - timeRef.current > 500 &&
+          !isPasswordLockBlocked
+        ) {
+          lock();
+        }
+      } else {
+        // iOS: use the original logic as it's more stable
+        if (wasBackgrounded && isNowActive && !isPasswordLockBlocked) {
+          lock();
+        }
       }
       setAppState(nextAppState);
     },

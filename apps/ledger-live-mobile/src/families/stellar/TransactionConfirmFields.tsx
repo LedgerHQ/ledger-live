@@ -41,7 +41,7 @@ const StellarNetworkField = () => (
 const StellarAssetCodeField = ({ transaction }: Props) => (
   <DataRow label={<Trans i18nKey="stellar.assetCode" />}>
     <LText semiBold style={styles.text}>
-      {(transaction as StellarTransaction).assetCode}
+      {(transaction as StellarTransaction).assetReference}
     </LText>
   </DataRow>
 );
@@ -49,7 +49,7 @@ const StellarAssetCodeField = ({ transaction }: Props) => (
 const StellarAssetIssuerField = ({ transaction }: Props) => (
   <DataRow label={<Trans i18nKey="stellar.assetIssuer" />}>
     <LText semiBold style={styles.text}>
-      {(transaction as StellarTransaction).assetIssuer}
+      {(transaction as StellarTransaction).assetOwner}
     </LText>
   </DataRow>
 );

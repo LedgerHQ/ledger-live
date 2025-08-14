@@ -2,11 +2,20 @@ import buildSignOperation from "./signOperation";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { SuiSigner } from "../types";
 import coinConfig from "../config";
-
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("signOperation", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      node: {
+        url: getEnv("API_SUI_NODE_PROXY"),
+      },
+    }));
+  });
+
   const fakeSignature = new Uint8Array(64).fill(0x42);
   const fakeSigner = {
     getPublicKey: jest.fn().mockResolvedValue({
@@ -23,12 +32,6 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
-
-  beforeAll(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {};
-    });
-  });
 
   it("returns events in the right order", done => {
     // GIVEN

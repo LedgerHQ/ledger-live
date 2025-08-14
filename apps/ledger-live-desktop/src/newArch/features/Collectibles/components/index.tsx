@@ -1,4 +1,4 @@
-export { Skeleton } from "./Skeleton";
+export { Skeleton } from "LLD/components/Skeleton";
 export { CollectionName } from "./CollectionName";
 export { Media } from "./Media";
 export { Video } from "./Media/Video";

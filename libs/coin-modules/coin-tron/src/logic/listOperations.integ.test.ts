@@ -1,7 +1,6 @@
-import { listOperations } from "./listOperations";
+import { defaultOptions, listOperations, Options } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TronAsset } from "../types";
 
 describe("listOperations", () => {
   beforeAll(() => {
@@ -15,6 +14,101 @@ describe("listOperations", () => {
     }));
   });
 
+  describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9 with minHeight", () => {
+    // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
+
+    let operations: Operation[];
+
+    const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+
+    // there are 2 operations with height >= 40832955
+    const options = { ...defaultOptions, minHeight: 40832955 };
+    const historySize = 2;
+    const txHashAtMinHeight = "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, options);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeGreaterThanOrEqual(historySize);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === txHashAtMinHeight)).toBeDefined();
+      });
+    });
+  });
+
+  describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight 0 / order asc / softLimit 2", () => {
+    // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
+
+    let operations: Operation[];
+
+    const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
+
+    const options: Options = { minHeight: 0, order: "asc", softLimit: 2 };
+    const oldestNativeTxHash = "ebd45e2bd6a83949971554ff84fd6253bc7c77f7ef38cc9ca98c070feeac30d0";
+    const oldestTrc20TxHash = "d9e56dbac3b7bcab20ae72beaaae9634155bbc0855d230fb8fdb9139b3696796";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, options);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
+        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        for (let i = 0; i < operations.length - 2; i++) {
+          // transactions are sorted by descencing order (newest first)
+          // even if we query oldest tx ("asc" order)
+          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
+            operations[i + 1].tx.block.height,
+          );
+        }
+      });
+    });
+  });
+
+  describe("Account TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L withe more than 15k+ txs, with minHeight / order asc / softLimit 2", () => {
+    // https://tronscan.org/#/address/TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L
+
+    let operations: Operation[];
+
+    const testingAccount = "TRRYfGVrzuUvJYRe9UaA8KqxjgVSwU9m6L";
+
+    const options: Options = { minHeight: 52848767, order: "asc", softLimit: 2 };
+
+    // at height 52848767 there is a trc20 tx with hash:
+    const oldestTrc20TxHash = "ab4dba763e4f320f4631268c413926e680c58a3d5228b504d79e9d974dcf9c4b";
+    // the counterpart native tx height is at 53204348 with tx hash:
+    const oldestNativeTxHash = "9d51fb7877a7193af05917dee3aaa5e1e22fcbce36ad0d4593eaca4b8d5d1002";
+
+    beforeAll(async () => {
+      [operations] = await listOperations(testingAccount, options);
+    });
+
+    describe("List", () => {
+      it("should fetch operations successfully", async () => {
+        expect(Array.isArray(operations)).toBeDefined();
+        expect(operations.length).toBeLessThanOrEqual(options.softLimit * 2);
+        expect(operations.filter(op => op.tx.block.height < options.minHeight).length).toEqual(0);
+        expect(operations.find(op => op.tx.hash === oldestNativeTxHash)).toBeDefined();
+        expect(operations.find(op => op.tx.hash === oldestTrc20TxHash)).toBeDefined();
+        for (let i = 0; i < operations.length - 2; i++) {
+          // transactions are sorted by descencing order (newest first)
+          // even if we query oldest tx ("asc" order)
+          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
+            operations[i + 1].tx.block.height,
+          );
+        }
+      });
+    });
+  });
+
   // We could create a loop on array of account addresses and use standard test cases, but this way it's more readable / flexible
   describe("Account TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", () => {
     // https://tronscan.org/#/address/TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
@@ -22,14 +116,14 @@ describe("listOperations", () => {
     // 255 as of 17/02/2025
     const historySize = 255;
 
-    let operations: Operation<TronAsset>[];
+    let operations: Operation[];
 
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
     const magnitudeMultiplier = 1000000;
 
     beforeAll(async () => {
-      [operations] = await listOperations(testingAccount);
+      [operations] = await listOperations(testingAccount, defaultOptions);
     });
 
     describe("List", () => {
@@ -98,7 +192,6 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
 
@@ -113,7 +206,6 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
             asset: { type: "native" },
-            operationIndex: 0,
           });
         });
       });
@@ -130,11 +222,9 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX"],
             asset: {
-              type: "token",
-              standard: "trc10",
-              tokenId: "1004031",
+              type: "trc10",
+              assetReference: "1004031",
             },
-            operationIndex: 0,
           });
         });
 
@@ -148,11 +238,9 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TVKG4gUar24bpAVrDv4GSzyDRtPkjPkogL"],
             asset: {
-              type: "token",
-              standard: "trc10",
-              tokenId: "1002000",
+              type: "trc10",
+              assetReference: "1002000",
             },
-            operationIndex: 0,
           });
         });
       });
@@ -169,11 +257,9 @@ describe("listOperations", () => {
             senders: ["TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N"],
             recipients: [testingAccount],
             asset: {
-              type: "token",
-              standard: "trc20",
-              contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+              type: "trc20",
+              assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
-            operationIndex: 0,
           });
         });
 
@@ -188,11 +274,9 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
             asset: {
-              type: "token",
-              standard: "trc20",
-              contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              type: "trc20",
+              assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },
-            operationIndex: 0,
           });
         });
       });

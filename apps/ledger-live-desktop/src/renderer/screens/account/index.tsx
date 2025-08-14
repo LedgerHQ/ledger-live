@@ -40,6 +40,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 import { useNftSupportFeature } from "~/renderer/hooks/nfts/useNftSupportFeature";
+import NftEntryPoint from "LLD/features/NftEntryPoint";
 
 type Params = {
   id: string;
@@ -196,6 +197,9 @@ const AccountPage = ({
               <Collections account={account} />
             )
           ) : null}
+
+          {account.type === "Account" && <NftEntryPoint account={account} />}
+
           {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList

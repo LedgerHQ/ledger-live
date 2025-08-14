@@ -1,37 +1,23 @@
 import { useTheme } from "@react-navigation/native";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
 import IconCheck from "~/icons/Check";
 import IconClock from "~/icons/Clock";
-import { flattenAccountsSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
-  const { swapId, provider, toAccountId, fromAccountId } = route.params.swapOperation;
-  const accounts = useSelector(flattenAccountsSelector);
-  const fromAccount = useMemo(
-    () => accounts.find(a => a.id === fromAccountId),
-    [accounts, fromAccountId],
-  );
-  const toAccount = useMemo(
-    () => accounts.find(a => a.id === toAccountId),
-    [accounts, toAccountId],
-  );
+  const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
 
-  const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
-  const targetCurrency = toAccount && getAccountCurrency(toAccount);
   const syncAccounts = useSyncAllAccounts();
 
   useEffect(() => {
@@ -59,8 +45,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         category="Swap Form"
         name="Confirmation Success"
         providerName={provider}
-        targetCurrency={targetCurrency}
-        sourceCurrency={sourceCurrency?.id}
+        targetCurrency={toCurrency}
+        sourceCurrency={fromCurrency?.id}
       />
       <View style={styles.wrapper}>
         <View style={styles.content}>
@@ -83,10 +69,10 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
             </LText>
           </View>
           <LText style={styles.description} color="grey">
-            {targetCurrency ? (
+            {toCurrency ? (
               <Trans
                 i18nKey={"transfer.swap.pendingOperation.description"}
-                values={{ targetCurrency: targetCurrency.name }}
+                values={{ targetCurrency: toCurrency.name }}
               />
             ) : null}
           </LText>

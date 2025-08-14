@@ -1,61 +1,70 @@
-import React from "react";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { NavigationContainer } from "@react-navigation/native";
+import { configureStore } from "@reduxjs/toolkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  render as rntlRender,
   RenderOptions,
-  userEvent,
+  render as rntlRender,
   renderHook as rntlRenderHook,
+  userEvent,
 } from "@testing-library/react-native";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
-import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
+import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import { getFeature } from "./featureFlags";
 import { i18n } from "~/context/Locale";
-import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
-import StyleProvider from "~/StyleProvider";
-import { State } from "~/reducers/types";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
-import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as APP_STATE_INITIAL_STATE } from "~/reducers/appstate";
 import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
-import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
-import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notifications";
-import { INITIAL_STATE as SWAP_INITIAL_STATE } from "~/reducers/swap";
-import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
+import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
-import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
-import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
-import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
+import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
+import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
+import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modularDrawer";
+import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
+import { INITIAL_STATE as NOTIFICATIONS_INITIAL_STATE } from "~/reducers/notifications";
+import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
+import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
+import { INITIAL_STATE as SWAP_INITIAL_STATE } from "~/reducers/swap";
+import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
+import { State } from "~/reducers/types";
+import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
-
-import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
-import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
+import { getFeature } from "./featureFlags";
 
-const initialState = {
+const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
-  settings: SETTINGS_INITIAL_STATE,
   appstate: APP_STATE_INITIAL_STATE,
   ble: BLE_INITIAL_STATE,
-  ratings: RATINGS_INITIAL_STATE,
+  countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
-  notifications: NOTIFICATIONS_INITIAL_STATE,
-  swap: SWAP_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
-  walletconnect: WALLET_CONNECT_INITIAL_STATE,
+  largeMover: LARGE_MOVER_INITIAL_STATE,
+  market: MARKET_INITIAL_STATE,
+  modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
+  nft: NFT_INITIAL_STATE,
+  notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
-  nft: NFT_INITIAL_STATE,
-  market: MARKET_INITIAL_STATE,
-  wallet: WALLET_INITIAL_STATE,
+  ratings: RATINGS_INITIAL_STATE,
+  settings: SETTINGS_INITIAL_STATE,
+  swap: SWAP_INITIAL_STATE,
+  toasts: TOASTS_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
+  wallet: WALLET_INITIAL_STATE,
+  walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
 };
 
@@ -74,9 +83,46 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-    preloadedState: overrideInitialState(initialState),
+    preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,
   });
+}
+
+export type ReduxStore = ReturnType<typeof createStore>;
+
+function CountervaluesProviders({
+  children,
+  store,
+}: {
+  children: React.ReactNode;
+  store: ReduxStore;
+}): JSX.Element {
+  // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
+  // (a) separate counter-values user settings from the Firebase feature flag, or
+  // (b) introduce a proper feature-flag provider that doesn’t break our tests.
+  const bridge = useMemo((): CountervaluesBridge => {
+    const state = store.getState();
+    return {
+      setPollingIsPolling: () => {},
+      setPollingTriggerLoad: () => {},
+      setState: () => {},
+      setStateError: () => {},
+      setStatePending: () => {},
+      usePollingIsPolling: () => false,
+      usePollingTriggerLoad: () => false,
+      useState: () => state.countervalues.countervalues.state,
+      useStateError: () => null,
+      useStatePending: () => false,
+      useUserSettings: () => state.countervalues.userSettings,
+      wipe: () => {},
+    };
+  }, [store]);
+
+  return (
+    <CountervaluesMarketcapBridgedProvider>
+      <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>
+    </CountervaluesMarketcapBridgedProvider>
+  );
 }
 
 /**
@@ -85,7 +131,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
  *
  * @param {Object} props - The properties for the Providers component.
  * @param {React.ReactNode} props.children - The child components to be wrapped by the providers.
- * @param {ReturnType<typeof createStore>} props.store - The Redux store instance.
+ * @param {ReturnType<ReduxStore>} props.store - The Redux store instance.
  * @param {boolean} [props.withReactQuery=false] - Whether to include React Query's QueryClientProvider.
  * @param {boolean} [props.withLiveApp=false] - Whether to include the CustomLiveAppProvider.
  * @param {RenderType} [props.renderType=RenderType.DEFAULT] - The type of rendering context; determines which providers are included.
@@ -99,7 +145,7 @@ function Providers({
   renderType = RenderType.DEFAULT,
 }: {
   children: React.ReactNode;
-  store: ReturnType<typeof createStore>;
+  store: ReduxStore;
   withReactQuery?: boolean;
   withLiveApp?: boolean;
   renderType?: RenderType;
@@ -122,9 +168,11 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <QueuedDrawersContextProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          <BottomSheetModalProvider>
+            <QueuedDrawersContextProvider>
+              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+            </QueuedDrawersContextProvider>
+          </BottomSheetModalProvider>
         </I18nextProvider>
       </StyleProvider>
     );
@@ -133,7 +181,7 @@ function Providers({
   let providers = (
     <Provider store={store}>
       <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-        {extraProviders}
+        <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
       </FirebaseFeatureFlagsProvider>
     </Provider>
   );
@@ -247,8 +295,8 @@ export * from "@testing-library/react-native";
 
 // override render method
 export {
+  customRenderHookWithLiveAppProvider,
   customRender as render,
   customRenderHook as renderHook,
   renderWithReactQuery,
-  customRenderHookWithLiveAppProvider,
 };

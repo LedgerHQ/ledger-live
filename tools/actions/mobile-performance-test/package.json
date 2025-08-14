@@ -1,0 +1,25 @@
+{
+  "name": "@actions/mobile-performance-test",
+  "version": "1.0.0",
+  "description": "Run a performance test on mobile",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint ./ --cache",
+    "lint:fix": "pnpm lint --fix"
+  },
+  "dependencies": {
+    "@datadog/datadog-ci": "3.11.0",
+    "@datadog/datadog-api-client": "2.0.0-beta.1",
+    "@datadog/datadog-api-client-synthetics": "0.0.1-beta.1",
+    "@actions/github": "6.0.1",
+    "adm-zip": "0.5.16"
+  },
+  "devDependencies": {
+    "@actions/core": "1.11.1",
+    "@types/adm-zip": "0.5.7",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3"
+  }
+}

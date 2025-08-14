@@ -1,14 +1,14 @@
-import { handlers } from "./server";
-import { AppBranch, AppPlatform, Visibility } from "../types";
-import { of } from "rxjs";
+import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import {
   ExchangeStartParams,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { RpcRequest } from "@ledgerhq/wallet-api-core";
-import { genAccount } from "../../mock/account";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
+import { of } from "rxjs";
+import { genAccount } from "../../mock/account";
+import { AppBranch, AppPlatform, Visibility } from "../types";
+import { handlers } from "./server";
 
 const mockTracking = {
   startExchangeRequested: jest.fn(),
@@ -46,12 +46,16 @@ const testAppManifest = {
 
 const mockUiStartExchange = jest.fn();
 const mockUiCompleteExchange = jest.fn();
+const mockUiSwap = jest.fn();
 const mockUiError = jest.fn();
+const mockIsReady = jest.fn();
 
 const mockUiHooks = {
   "custom.exchange.start": mockUiStartExchange,
   "custom.exchange.complete": mockUiCompleteExchange,
   "custom.exchange.error": mockUiError,
+  "custom.isReady": mockIsReady,
+  "custom.exchange.swap": mockUiSwap,
 };
 
 // Mock converter id to send back the id received in params.

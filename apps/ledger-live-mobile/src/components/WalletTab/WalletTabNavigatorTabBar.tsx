@@ -7,7 +7,6 @@ import { Animated } from "react-native";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { track } from "~/analytics";
-import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -62,12 +61,6 @@ function Tab({
     extrapolate: "clamp",
   });
 
-  const opacityInactive = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
-
   const onPress = useCallback(() => {
     const event = navigation.emit({
       type: "tabPress",
@@ -83,24 +76,26 @@ function Tab({
     }
   }, [isActive, navigation, route]);
 
+  const backgroundColor = opacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.opacityDefault.c10, colors.neutral.c100],
+  });
+
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
-        backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}
         style={{
-          opacity: opacityInactive,
-        }}
-      />
-      <StyledAnimatedView
-        backgroundColor={"primary.c70"}
-        borderRadius={2}
-        style={{
-          opacity,
+          backgroundColor,
+          opacity: 1,
         }}
       />
       <Box borderRadius={2} px={4}>
-        <Text fontWeight={"semiBold"} variant={"body"} color={"neutral.c100"}>
+        <Text
+          fontWeight={"semiBold"}
+          variant={"body"}
+          color={isActive ? "neutral.c00" : "neutral.c100"}
+        >
           {label}
         </Text>
       </Box>

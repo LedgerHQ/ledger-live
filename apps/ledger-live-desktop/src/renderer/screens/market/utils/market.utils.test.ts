@@ -77,7 +77,9 @@ describe("Market utils", () => {
 
       it("Should return true when internalCurrency.id is available and isCurrencyAvailable returns true", () => {
         const isAvailable = isAvailableOnBuy(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -88,7 +90,9 @@ describe("Market utils", () => {
 
       it("Should return false when internalCurrency.id is available but isCurrencyAvailable returns false", () => {
         const isAvailable = isAvailableOnBuy(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -99,6 +103,7 @@ describe("Market utils", () => {
 
       it("Should return true when one of the ledgerIds is available and isCurrencyAvailable returns true", () => {
         const isAvailable = isAvailableOnBuy(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -109,6 +114,7 @@ describe("Market utils", () => {
 
       it("Should return false when neither internalCurrency nor ledgerIds are available", () => {
         const isAvailable = isAvailableOnBuy(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
           } as CurrencyData,
@@ -127,7 +133,9 @@ describe("Market utils", () => {
 
       it("Should return true when internalCurrency.id is in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -138,7 +146,9 @@ describe("Market utils", () => {
 
       it("Should return false when internalCurrency.id is not in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             internalCurrency: { id: "btc" } as CryptoOrTokenCurrency,
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -149,6 +159,7 @@ describe("Market utils", () => {
 
       it("Should return true when one of the ledgerIds is in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["btc"],
           } as CurrencyData,
@@ -159,6 +170,7 @@ describe("Market utils", () => {
 
       it("Should return false when neither internalCurrency.id nor any ledgerIds are in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           {
             ledgerIds: ["ltc"],
           } as CurrencyData,

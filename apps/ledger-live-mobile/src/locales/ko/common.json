@@ -287,12 +287,120 @@
       "description" : "다시 시도해 주세요."
     },
     "DisconnectedDevice" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "장치 연결 해제됨",
-      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DisconnectError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "연결 방법 오류",
+      "description" : "연결 방법에 문제가 있습니다. 다른 연결 방법으로 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "장치 설정 필요",
+      "description" : "장치 사용 준비가 완료되지 않았습니다. 설정 안내에 따라 완료한 후 다시 시도해 주세요."
+    },
+    "DeviceLockedError" : {
+      "title" : "장치 잠김",
+      "description" : "장치가 잠겨 있습니다. 잠금을 해제한 후 다시 시도해 주세요."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "메모리 부족",
+      "description" : "장치에 사용 가능한 메모리가 부족합니다. 앱을 제거한 후 다시 시도해 주세요."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "지원되지 않는 운영체제",
+      "description" : "이 장치의 운영체제는 현재 지원되지 않습니다. Ledger Live를 통해 업데이트해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "배터리 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "배터리 오류",
+      "description" : "배터리 상태에 문제가 발생했습니다. Ledger 지원팀에 문의하세요"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDAError" : {
+      "title" : "장치 연결 오류",
+      "description" : "문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceError" : {
+      "title" : "장치 인식 실패",
+      "description" : "Ledger Live에서 장치를 인식하지 못했습니다 다시 시도해 주세요. 도움이 필요하시면 Ledger 지원팀에 문의하세요."
+    },
+    "ReceiverApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "FramerApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "통신 오류",
+      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "CasperInvalidTransferId" : {
       "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
@@ -509,8 +617,32 @@
       "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
     },
+    "NotEnoughToStake" : {
+      "title" : "스테이킹을 활성화하려면 {{minStake}} {{currency}} 이상이 필요합니다.",
+      "description" : "스테이킹을 활성화하려면 {{minStake}} {{currency}} 이상이 필요합니다."
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 언스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 언스테이킹됩니다."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다.",
+      "description" : "{{maxAmount}} 이상 리스테이킹하면, 전체 스테이킹 수량({{totalAmount}})이 리스테이킹됩니다."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 리스테이킹할 수 없습니다."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다",
+      "description" : "{{minAmount}} 미만은 언스테이킹할 수 없습니다."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "죄송하지만, 수수료를 충당할 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -764,9 +896,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔금을 충분히 남겨 두세요"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "잔액은 {{minimumBalance}} 미만일 수 없습니다 최대 금액을 전송하여 계정을 비우세요."
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "적어도 {{minimumBondAmount}} 이상 본딩해야 합니다."
@@ -1072,6 +1201,10 @@
     },
     "AmountTooSmall" : {
       "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "사용자 보호 조치 실행 중",
+      "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -1102,6 +1235,32 @@
     "openSettings" : "위치 설정 열기",
     "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
+  },
+  "earn" : {
+    "deposit" : {
+      "protocolInfoModal" : {
+        "title" : "프로토콜을 선택 시 다음 사항을 유의하세요.",
+        "items" : {
+          "protocol" : {
+            "highlighted" : "프로토콜은",
+            "description" : " 예치한 암호화폐를 대출, 유동성 공급 또는 스테이킹에 사용하여 보상을 받을 수 있는 플랫폼입니다."
+          },
+          "apy" : {
+            "highlighted" : "APY(연이율)",
+            "description" : " 1년간 벌 수 있는 이자 수익을 의미합니다. APY가 높을수록 수익률도 높아집니다."
+          },
+          "tvl" : {
+            "highlighted" : "TVL(총 잠금 가치)",
+            "description" : " 다른 사용자가 프로토콜에 예치한 총 자산 가치를 의미합니다. TVL이 높을수록 더 많은 사람들이 프로토콜을 신뢰한다는 것을 의미합니다."
+          },
+          "strategy" : {
+            "highlighted" : "전략",
+            "description0" : " 프로토콜의 보상 생성 방식을 의미합니다.",
+            "description1" : "예를 들어, 대출을 전략으로 사용하는 경우 예치된 스테이블코인을 다른 사용자에게 빌려주면 이자 수익이 발생합니다. 이자는 수요에 따라 달라집니다."
+          }
+        }
+      }
+    }
   },
   "permissions" : {
     "open" : "앱 사용 권한 열기",
@@ -2134,7 +2293,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "정품 확인 및\nOS 업데이트 확인",
+    "title" : "Ledger 정품 확인",
     "idle" : {
       "learnMore" : "정품 확인 자세히 알아보기",
       "checkCta" : "{{ productName }} 확인하기"
@@ -2170,11 +2329,11 @@
     "genuineCheckStep" : {
       "learnMore" : "정품 확인 자세히 알아보기",
       "inactive" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "active" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "completed" : {
@@ -2182,23 +2341,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "정품 확인이 거부되었습니다",
+        "title" : "Ledger 정품 확인 거부됨",
         "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
         "cta" : "확인 재개"
       },
       "error" : {
-        "title" : "정품 확인",
+        "title" : "Ledger 정품 확인",
         "description" : "정품 확인을 통해 귀하의 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "OS 업데이트 확인",
-        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
+        "title" : "Ledger OS 확인",
+        "description" : "{{productName}}의 운영 체제가 최신 상태인지 확인합니다. "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} OS는 최신 상태입니다"
+          "title" : "Ledger OS가 최신 상태입니다."
         }
       },
       "error" : {
@@ -2212,8 +2371,8 @@
         "skipCta" : "업데이트 건너뛰기"
       },
       "inactive" : {
-        "title" : "OS 업데이트 확인",
-        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
+        "title" : "Ledger OS 확인",
+        "description" : "{{productName}}의 운영 체제가 최신 상태인지 확인합니다. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2225,7 +2384,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "{{deviceName}} 설정",
+    "title" : "{{productName}}의 준비를 완료합니다",
     "estimatedTimeFormat" : "{{estimatedTime}}분",
     "deviceSelection" : {
       "title" : "아래와 같이 설정하려는 Ledger 장치를 선택합니다.",
@@ -2280,7 +2439,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}}는 정품입니다",
-      "subtitle" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+      "subtitle" : "{{productName}}을(를) 사용해도 안전합니다. 설정을 시작할 준비가 되었습니다.",
       "description" : "설정을 시작하려면 {{productName}}를 탭하세요."
     },
     "pinStep" : {
@@ -2290,30 +2449,58 @@
       "continueOnDevice" : "{{productName}}에 PIN을 설정하세요."
     },
     "seedStep" : {
-      "title" : "비밀 복구 문구",
+      "title" : "설정 및 백업",
       "doneTitle" : "비밀 복구 문구 확인됨",
       "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
       "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
       "recoverSeed" : "자리 표시자: 복구",
-      "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
       "selection" : "가장 적합한 설정 옵션을 선택하세요.",
       "selectionNewLedger" : {
         "title" : "새 Ledger로 설정",
-        "desc" : "새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다."
+        "desc" : "이를 통해 새로운 비밀 복구 문구가 생성됩니다."
       },
       "selectionRestore" : {
-        "title" : "복구",
-        "desc" : "비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다."
+        "title" : "자산 액세스 복구",
+        "desc" : "비밀 복구 문구나 Ledger Recover 등의 백업을 사용하여 복구할 수 있습니다.",
+        "descWithCharon" : "안내를 따라 백업(비밀 복구 문구, Ledger Recover 또는 Ledger Recovery Key)을 사용하여 복구할 수 있습니다."
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key",
+        "desc" : "PIN 보호 기능과 보안 칩이 탑재된 카드에 새로운 백업을 생성해 보세요.   탭 몇 번이면 자산에 다시 액세스할 수 있어요.",
+        "cta" : "자세히 알아보기 또는 구매",
+        "continueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요."
+      },
+      "selectionRestoreChoice" : {
+        "description" : "복구에 사용할 백업 수단을 선택하세요.",
+        "continueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
+        "secretRecoveryPhrase" : {
+          "title" : "비밀 복구 문구",
+          "description" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요."
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key",
+          "description" : "Recovery Key로 자산 액세스를 복구하세요"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover 구독",
+          "description" : "구독 후 신원 확인만으로 자산 액세스 복구."
+        }
+      },
+      "restoreSeed" : {
+        "title" : "비밀 복구 문구를 사용해 복원하세요",
+        "description" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "continueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요."
+      },
+      "restoreLedgerCharon" : {
+        "title" : "Recovery Key로 복구",
+        "description" : "복구하려면 Ledger 보안 화면에 표시되는 안내를 따라주세요.",
+        "continueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요"
       },
       "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
-      "newSeedDescription" : "비밀 복구 문구에 대해 더 자세히 알고 싶으신가요? 다음의 영상을 시청하세요:",
-      "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
-      "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-      "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
-      "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
-      "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요. ",
-      "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-      "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업 복구 프로세스를 시작하세요."
+      "newSeedTitle" : "비밀 복구 문구",
+      "newSeedDescription" : "준비된 영상으로 비밀 복구 문구에 대해 더 자세히 알아보세요.",
+      "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
+      "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
     "backup" : {
       "title" : "비밀 복구 문구 백업",
@@ -3046,8 +3233,8 @@
         "desc" : "중요한 Ledger Live 업데이트 받아 보기"
       },
       "largeMover" : {
-        "title" : "가격 변동폭이 큰 자산",
-        "desc" : "BTC, ETH, SOL, ADA, XRP를 보유하고 있다면 중요한 가격 변동에 대한 알림을 보내드립니다."
+        "title" : "가격 알림",
+        "desc" : "보유하신 인기 토큰에 큰 폭의 가격 변동이 있을 경우 알림을 발송합니다."
       },
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
@@ -3080,8 +3267,8 @@
       "repairDeviceDesc" : "장치 업데이트에 문제가 있어 업데이트를 재개할 수 없을 경우, 장치 복구를 위해 시도해 볼 수 있습니다."
     },
     "experimental" : {
-      "title" : "실험 특징",
-      "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
+      "title" : "실험적 기능",
+      "desc" : "다양한 실험적 기능을 시험해 보고 의견을 나누어 주세요.",
       "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
       "provider" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
       "providerDevMode" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})” 및 \"개발자 모드\"가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
@@ -3163,6 +3350,12 @@
         "placeholder" : "CAL 형식의 거래소 공급자 정보",
         "currentSetting" : "현재 설정",
         "error" : "유효하지 않은 CAL 값"
+      },
+      "customCALRef" : {
+        "title" : "사용자 지정 CAL 참조",
+        "description" : "모든 CAL 요청에 사용할 사용자 지정 브랜치, 커밋 또는 태그를 지정하세요",
+        "enable" : "사용자 지정 CAL 참조 활성화",
+        "disable" : "사용자 지정 CAL 참조 비활성화"
       }
     },
     "debug" : {
@@ -3328,7 +3521,13 @@
         "verify" : "{{accountType}}의 주소가 확인되지 않았습니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요."
       },
       "noResultsFound" : "암호화폐가 없습니다",
-      "noResultsDesc" : "철자를 확인하고 재시도하세요"
+      "noResultsDesc" : "철자를 확인하고 재시도하세요",
+      "sanctionedAddress" : {
+        "title" : "사용자 보호 조치 실행 중",
+        "description" : "이 트랜잭션에는 제재 대상 지갑 주소가 포함되어 있어 처리할 수 없습니다.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "닫기",
+        "learnMore" : "자세히 알아보기"
+      }
     },
     "buy" : {
       "title" : "구매",
@@ -3339,7 +3538,8 @@
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
-      "title" : "구매 / 판매"
+      "title" : "구매 / 판매",
+      "connectingTo" : "{{provider}}에 연결"
     },
     "stake" : {
       "title" : "스테이킹",
@@ -3456,7 +3656,8 @@
           "refunded" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
           "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
           "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
-          "finished" : "스왑이 성공적으로 완료되었습니다."
+          "finished" : "스왑이 성공적으로 완료되었습니다.",
+          "unknown" : "제공업체의 정보를 기다리는 중입니다."
         }
       },
       "missingApp" : {
@@ -3517,6 +3718,7 @@
             "provider" : "공급자",
             "rate" : "요율",
             "fees" : "네트워크 수수료",
+            "feesDescription" : "이 수수료는 블록체인 네트워크에서 스왑을 처리하는 데 부과되는 비용입니다. 예상 견적에는 수령 수수료가 포함되어 있으며, 전송 수수료만 별도로 청구됩니다.",
             "target" : "보내는 계정"
           },
           "noAccount" : "{{name}}을 수령할 계정을 생성하세요",
@@ -3534,11 +3736,22 @@
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
       },
+      "quotesList" : {
+        "title" : "견적 선택"
+      },
+      "twoStepApproval" : {
+        "title" : "단계 완료하기"
+      },
+      "history" : {
+        "title" : "스왑 내역"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
         "contact_support" : "고객 지원 문의",
         "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
         "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
+        "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
         "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
@@ -3819,6 +4032,9 @@
         }
       }
     },
+    "spl2022" : {
+      "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
+    },
     "amount" : {
       "available" : "총 이용 가능",
       "useMax" : "최대치 사용",
@@ -3827,6 +4043,10 @@
       "quantityAvailable" : "이용 가능한 수량"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "블라인드 서명 필요",
+        "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+      },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
       "validateTag" : "태그 검증",
@@ -4671,7 +4891,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "{{deviceName}}을 버전 {{version}}로 업데이트",
-    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
+    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.안전한 액세스 백업 수단인 Ledger Recover를 통해 필요할 때 언제든 지갑 액세스를 복구하세요.",
     "confirmRecoveryPhrase" : "복구 문구가 있습니다",
     "introDescription1" : "장치의 모든 앱이 제거될 것이니 주의하세요. 펌웨어 업데이트 후에 앱을 재설치할 수 있습니다.",
     "introDescription2" : "귀하의 암호화 자산에는 영향을 주지 않습니다.",
@@ -6056,6 +6276,7 @@
       "transferFees" : {
         "title" : "전송 수수료",
         "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "feesHint" : "토큰 이체 수수료: {{transferFee}}",
         "notice" : "전송 수수료 {{fee}}%",
         "tooltipHint" : "토큰 생성자의 전송 보류 비율"
       },
@@ -6205,6 +6426,141 @@
             "steps" : {
               "0" : "스테이킹된 자산은 귀하의 소유입니다.",
               "1" : "언스테이킹이 완료되려면 52 - 65시간을 기다려야 합니다.",
+              "2" : "Ledger 장치로 안전하게 스테이킹하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절하게 행동하는 경우 일부 스테이킹된 자산이 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 스테이킹했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          }
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos 이용 가능",
+        "description" : "가처분 금액입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 잔액",
+        "description" : "이 금액은 저장 및 트랜잭션용으로 예약된 금액이며 계정이 활성 상태를 유지하기 위해 필요한 최소 잔액입니다."
+      },
+      "staked" : {
+        "title" : "스테이킹 잔액",
+        "description" : "이 금액은 현재 검증인에게 스테이킹되어 있습니다."
+      },
+      "pending" : {
+        "title" : "승인 대기 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 가용성 여부가 보류 상태입니다."
+      },
+      "withdrawable" : {
+        "title" : "출금 가능 잔액",
+        "description" : "이 금액은 언스테이킹되어 현재 출금이 가능합니다."
+      },
+      "stakingUnavailable" : {
+        "title" : "스테이킹 불가",
+        "description" : "계정에 스테이킹, 언스테이킹 및 인출에 필요한 가용 잔액이 충분하지 않습니다."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "스테이킹 금액",
+        "unstakedAmount" : "언스테이킹된 금액",
+        "withdrawnAmount" : "출금된 금액"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "언스테이킹할 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 언스테이킹했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "리스테이킹 금액"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산 리스테이킹을 성공적으로 완료했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "스테이킹 포지션",
+      "info" : "스테이킹 작동 방식",
+      "add" : "추가",
+      "stakingEarn" : "자산을 스테이킹하여 Aptos 보상을 받을 수 있습니다.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "커미션",
+      "comm" : "수수료",
+      "timeToUnlock" : "잠금 해제까지 남은 시간:",
+      "iStake" : "스테이킹하기",
+      "actions" : {
+        "unstake" : "언스테이킹",
+        "withdraw" : "출금",
+        "restake" : "리스테이킹"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "스테이킹할 금액",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Aptos를 안전하게 스테이킹하고 보상을 받으면서, 자산에 대한 통제 권한까지 유지하세요.",
+            "steps" : {
+              "0" : "스테이킹된 자산은 귀하의 소유입니다.",
+              "1" : "언스테이킹 완료까지 약 2시간 남았습니다.",
               "2" : "Ledger 장치로 안전하게 스테이킹하세요."
             },
             "warning" : {
@@ -6443,7 +6799,9 @@
     },
     "stepVerification" : {
       "action" : "장치에서 거래를 확인하세요",
-      "accountName" : "계정 이름"
+      "accountName" : "계정 이름",
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
     }
   },
   "notificationCenter" : {
@@ -6627,8 +6985,8 @@
       "7d" : "7일",
       "30d" : "30일",
       "1y" : "1년",
-      "1D_label" : "1일",
       "1H_label" : "1시간",
+      "1D_label" : "1일",
       "1W_label" : "1주",
       "1M_label" : "1달",
       "1Y_label" : "1년"
@@ -7388,6 +7746,119 @@
       "minutes_plural" : "({{count}}분 전)",
       "seconds" : "({{count}}초 전)",
       "seconds_plural" : "({{count}}초 전)"
+    },
+    "performance" : "가격 추이",
+    "low" : "낮음",
+    "high" : "높음",
+    "title" : "시장 변동성",
+    "overlay" : {
+      "title" : "자산 간 이동",
+      "action" : "왼쪽이나 오른쪽으로 스와이프하세요",
+      "button" : "알겠습니다!"
+    }
+  },
+  "nftEntryPoint" : {
+    "title" : "고객의 NFT",
+    "entry" : {
+      "magiceden" : "Magic Eden",
+      "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "이용 불가능한 지역",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
+    "learnMore" : "자세히 알아보기"
+  },
+  "versionBlocking" : {
+    "title" : "Ledger Live 업데이트 필요",
+    "description" : "사용 중인 Ledger Live 버전이 장치의 최신 운영체제(OS)와 호환되지 않습니다. 원활한 사용을 위해 지금 바로 업데이트하세요.",
+    "openStore" : "업데이트"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "자산 선택",
+    "selectNetwork" : "네트워크 선택",
+    "selectAccount" : "계정 선택",
+    "searchPlaceholder" : "검색",
+    "emptyAssetList" : "자산을 찾을 수 없습니다",
+    "accountCount" : "{{count}}개의 계정 (감지됨)",
+    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "잘못된 명령 데이터",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "deserializationFailed" : {
+      "title" : "페이로드 역직렬화 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongTransactionId" : {
+      "title" : "잘못된 트랜잭션 ID",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidAddress" : {
+      "title" : "유효하지 않은 주소",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 수령 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "현재 연결된 장치의 전송 계정이 아닙니다. 올바른 계정으로 변경 후 다시 시도해 주세요."
+    },
+    "userRefused" : {
+      "title" : "장치에서 거부되었습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "internalError" : {
+      "title" : "내부 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP1" : {
+      "title" : "잘못된 P1",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2" : {
+      "title" : "잘못된 P2",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "wrongP2Extension" : {
+      "title" : "잘못된 P2 확장 값",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidP2Extension" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "유효하지 않은 P2 확장 값"
+    },
+    "unexpectedInstruction" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "예기치 않은 명령어"
+    },
+    "classNotSupported" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "지원되지 않는 클래스"
+    },
+    "invalidInstruction" : {
+      "title" : "유효하지 않은 명령어",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "malformedApdu" : {
+      "title" : "APDU 헤더 형식 오류",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "invalidDataLength" : {
+      "title" : "유효하지 않은 데이터 길이",
+      "description" : "이 명령은 해당 길이의 데이터를 허용하지 않습니다"
+    },
+    "signatureVerificationFail" : {
+      "title" : "서명 검증 실패",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "default" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
     }
   }
 }

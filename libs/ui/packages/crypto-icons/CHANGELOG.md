@@ -1,5 +1,57 @@
 # @ledgerhq/icons-ui
 
+## 1.16.0
+
+### Minor Changes
+
+- [#10774](https://github.com/LedgerHQ/ledger-live/pull/10774) [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix: remove icon for SKY
+
+## 1.16.0-next.0
+
+### Minor Changes
+
+- [#10774](https://github.com/LedgerHQ/ledger-live/pull/10774) [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix: remove icon for SKY
+
+## 1.15.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+## 1.15.0-next.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+## 1.14.0
+
+### Minor Changes
+
+- [#10115](https://github.com/LedgerHQ/ledger-live/pull/10115) [`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675) Thanks [@0xukhezo](https://github.com/0xukhezo)! - Add logo for SIDESHIFT XAI token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (ethereum):
+  SIDESHIFT XAI - 0x35e78b3982E87ecfD5b3f3265B601c046cDBe232
+
+## 1.14.0-next.0
+
+### Minor Changes
+
+- [#10115](https://github.com/LedgerHQ/ledger-live/pull/10115) [`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675) Thanks [@0xukhezo](https://github.com/0xukhezo)! - Add logo for SIDESHIFT XAI token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (ethereum):
+  SIDESHIFT XAI - 0x35e78b3982E87ecfD5b3f3265B601c046cDBe232
+
+## 1.13.0
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
+## 1.13.0-next.0
+
+### Minor Changes
+
+- [#9888](https://github.com/LedgerHQ/ledger-live/pull/9888) [`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431) Thanks [@palra](https://github.com/palra)! - add babylon currency
+
 ## 1.12.0
 
 ### Minor Changes

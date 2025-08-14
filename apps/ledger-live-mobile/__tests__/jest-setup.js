@@ -5,8 +5,7 @@ import "@mocks/console";
 import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
-import { MockedExpoCamera, MockedCameraType } from "../__mocks__/MockedExpoCamera";
-// Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
+// Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
 
@@ -53,16 +52,26 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("expo-camera/legacy", () => {
-  return {
-    Camera: MockedExpoCamera,
-    CameraType: MockedCameraType,
-  };
-});
+const mockPermissions = {
+  status: "granted",
+  expires: "never",
+  canAskAgain: true,
+  granted: true,
+};
+
+export const mockSimulateBarcodeScanned = jest.fn();
 
 jest.mock("expo-camera", () => {
   return {
-    CameraView: jest.fn(() => null),
+    CameraView: jest.fn(({ onBarcodeScanned }) => {
+      mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
+      return null;
+    }),
+    useCameraPermissions: jest.fn(() => [
+      mockPermissions,
+      jest.fn(() => Promise.resolve(mockPermissions)),
+      jest.fn(() => Promise.resolve(mockPermissions)),
+    ]),
   };
 });
 
@@ -97,6 +106,8 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
+jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
+
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",
   buildVersion: "1",
@@ -108,18 +119,9 @@ jest.mock("react-native-startup-time", () => ({
 
 jest.mock("@react-native-community/netinfo", () => ({ useNetInfo: () => ({ isConnected: true }) }));
 
-jest.mock("react-native-reanimated", () => {
-  const Reanimated = require("react-native-reanimated/mock");
-
-  // The mock for `call` immediately calls the callback which is incorrect
-  // So we override it with a no-op
-  Reanimated.default.call = () => {};
-
-  return Reanimated;
-});
+require("react-native-reanimated").setUpTests();
 
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
@@ -127,7 +129,7 @@ jest.mock("~/analytics", () => ({
 }));
 
 jest.mock("@react-native-firebase/messaging", () => ({
-  messaging: jest.fn(() => ({
+  getMessaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
     subscribeToTopic: jest.fn(),
     unsubscribeFromTopic: jest.fn(),

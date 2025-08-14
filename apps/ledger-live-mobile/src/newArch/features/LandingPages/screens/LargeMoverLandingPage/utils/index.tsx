@@ -1,6 +1,8 @@
 import { TFunction } from "react-i18next";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import i18next from "i18next";
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 
 function getTimeAgoCode(date: Date): string {
   const now = new Date();
@@ -43,4 +45,26 @@ const formatCounterValue = (
     .replace(/ /g, "")
     .replace(/n/g, "");
 
-export { formatCounterValue, getTimeAgoCode };
+const getColors = (priceChangePercentage: number) => {
+  if (priceChangePercentage === 0) return { textColor: "neutral.c100", bgColor: "neutral.c20" };
+
+  return priceChangePercentage > 0
+    ? { textColor: "success.c70", bgColor: "success.c10" }
+    : { textColor: "error.c50", bgColor: "error.c10" };
+};
+
+const rangeMap: Record<string, KeysPriceChange> = {
+  hour: KeysPriceChange.hour,
+  day: KeysPriceChange.day,
+  week: KeysPriceChange.week,
+  month: KeysPriceChange.month,
+  year: KeysPriceChange.year,
+};
+
+function getCurrencyIdsFromTickers(tickers: string[]): string[] {
+  return tickers.flatMap(ticker => {
+    const currency = findCryptoCurrencyByTicker(ticker);
+    return currency?.id ? [currency.id] : [];
+  });
+}
+export { formatCounterValue, getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };

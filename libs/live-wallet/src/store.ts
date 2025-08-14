@@ -31,6 +31,10 @@ export type WalletState = {
 export type ExportedWalletState = {
   walletSyncState: WSState;
   nonImportedAccountInfos: NonImportedAccountInfo[];
+  accountsData: {
+    accountNames: Array<[string, string]>;
+    starredAccountIds: string[];
+  };
 };
 
 export const initialState: WalletState = {
@@ -169,7 +173,15 @@ export const initAccounts = (accounts: Account[], accountsUserData: AccountUserD
  */
 export const importWalletState = (payload: Partial<ExportedWalletState>) => ({
   type: "IMPORT_WALLET_SYNC",
-  payload,
+  payload: {
+    ...payload,
+    ...(payload?.accountsData?.accountNames
+      ? { accountNames: new Map(payload.accountsData.accountNames) }
+      : {}),
+    ...(payload?.accountsData?.starredAccountIds
+      ? { starredAccountIds: new Set(payload.accountsData.starredAccountIds) }
+      : {}),
+  },
 });
 
 export const walletSyncUpdate = (data: DistantState | null, version: number) => ({
@@ -246,12 +258,18 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
 export const exportWalletState = (state: WalletState): ExportedWalletState => ({
   walletSyncState: state.walletSyncState,
   nonImportedAccountInfos: state.nonImportedAccountInfos,
+  accountsData: {
+    accountNames: Array.from(state.accountNames),
+    starredAccountIds: Array.from(state.starredAccountIds),
+  },
 });
 
 export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
   return (
     a.walletSyncState !== b.walletSyncState ||
-    a.nonImportedAccountInfos !== b.nonImportedAccountInfos
+    a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
+    a.accountNames !== b.accountNames ||
+    a.starredAccountIds !== b.starredAccountIds
   );
 };
 

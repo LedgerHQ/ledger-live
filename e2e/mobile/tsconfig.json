@@ -8,11 +8,11 @@
       "es2017",
       "DOM"
     ],
+    "skipLibCheck": true,
     "noEmit": true,
-    "incremental": true,
     "baseUrl": ".",
-    "rootDir": "../..",
     "typeRoots": [
+      "./types",
       "./node_modules/@types"
     ],
     "paths": {
@@ -21,13 +21,24 @@
       ],
       "~/*": [
         "../../apps/ledger-live-mobile/src/*"
+      ],
+      "@ledgerhq/live-common/hw/index": [
+        "../../libs/ledger-live-common/src/hw/index"
+      ],
+      "@ledgerhq/live-common/hw/deviceAccess": [
+        "../../libs/ledger-live-common/src/hw/deviceAccess"
       ]
     }
   },
   "include": [
-    "**/*.ts"
+    "types",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "babel.config.js",
+    "jest.config.js",
+    "**/*.js"
   ]
 }

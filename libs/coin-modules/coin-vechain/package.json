@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.7.3",
+  "version": "2.8.0",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -95,7 +95,7 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -108,15 +108,14 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "dotenv": "^16.4.5",
     "jest": "^29.7.0",
-    "jest-sonar": "0.2.16",
     "msw": "^2.2.13",
     "ts-jest": "^29.1.1"
   }

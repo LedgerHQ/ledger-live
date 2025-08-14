@@ -1,16 +1,22 @@
 type InformationsProps = {
   price: number;
   ticker: string;
-  marketCap: number;
+  marketCap: number | undefined;
   volume: number;
   marketCapPercent: number;
   fdv: number;
   circulatingSupply: number;
   totalSupply: number;
   allTimeHigh: number;
-  allTimeHighDate: string;
+  allTimeHighDate: Date;
   allTimeLow: number;
-  allTimeLowDate: string;
+  allTimeLowDate: Date;
 };
 
-export type { InformationsProps };
+type CardType = {
+  id: string;
+  data?: CurrencyData | undefined;
+  chartData?: MarketCoinDataChart | undefined;
+};
+
+export type { InformationsProps, CardType };

@@ -1,27 +1,34 @@
-import React from "react";
-import userEvent from "@testing-library/user-event";
-import { Provider } from "react-redux";
-import StyleProvider from "~/renderer/styles/StyleProvider";
-import { MemoryRouter } from "react-router-dom";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
+import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/lib-es/types";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
+  RenderHookResult,
   render as rtlRender,
   renderHook as rtlRenderHook,
-  RenderHookResult,
 } from "@testing-library/react";
-import { type State } from "~/renderer/reducers";
-import createStore from "~/renderer/createStore";
-import dbMiddleware from "~/renderer/middlewares/db";
+import userEvent from "@testing-library/user-event";
+import React from "react";
 import { I18nextProvider } from "react-i18next";
-import i18n from "~/renderer/i18n/init";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
 import { config } from "react-transition-group";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import DrawerProvider from "~/renderer/drawers/Provider";
-import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
+import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
+import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
+import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import type { ReduxStore } from "~/renderer/createStore";
+import createStore from "~/renderer/createStore";
+import DrawerProvider from "~/renderer/drawers/Provider";
+import i18n from "~/renderer/i18n/init";
+import dbMiddleware from "~/renderer/middlewares/db";
+import { type State } from "~/renderer/reducers";
+import StyleProvider from "~/renderer/styles/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
+import { getFeature } from "./featureFlags";
+import { initialCountervaluesMock } from "./mocks/countervalues.mock";
 
 config.disabled = true;
 
@@ -30,14 +37,16 @@ interface ExtraOptions {
     [key: string]: unknown;
   };
   [key: string]: unknown;
-  store?: ReturnType<typeof createStore>;
+  store?: ReduxStore;
   initialRoute?: string;
   userEventOptions?: Parameters<typeof userEvent.setup>[0];
 }
 
 interface RenderReturn {
-  store: ReturnType<typeof createStore>;
+  store: ReduxStore;
   user: ReturnType<typeof userEvent.setup>;
+  container: HTMLElement;
+  i18n: typeof i18n;
 }
 type DeepPartial<T> = T extends Function
   ? T
@@ -49,6 +58,25 @@ type DeepPartial<T> = T extends Function
 
 config.disabled = true;
 
+function CountervaluesProviders({
+  children,
+  savedState,
+}: {
+  children: React.ReactNode;
+  savedState?: CounterValuesStateRaw | undefined;
+}) {
+  const marketcapBridge = useCountervaluesMarketcapBridge();
+  const bridge = useCountervaluesBridge();
+
+  return (
+    <CountervaluesMarketcapProvider bridge={marketcapBridge}>
+      <CountervaluesProvider bridge={bridge} savedState={savedState}>
+        {children}
+      </CountervaluesProvider>
+    </CountervaluesMarketcapProvider>
+  );
+}
+
 /**
  * A component that wraps the application with necessary context providers.
  * It includes providers such as QueryClientProvider, Redux Provider, FirebaseFeatureFlagsProvider,
@@ -56,7 +84,7 @@ config.disabled = true;
  *
  * @param {ProvidersProps} props - The component's props.
  * @param {React.ReactNode} props.children - The child elements to be rendered within the context providers.
- * @param {ReturnType<typeof createStore>} props.store - The Redux store to be used with the Provider.
+ * @param {ReduxStore} props.store - The Redux store to be used with the Provider.
  * @param {boolean} [props.minimal=false] - If true, renders only the children without additional context providers.
  *
  * @returns {JSX.Element} The wrapped children with the specified context providers.
@@ -67,11 +95,13 @@ function Providers({
   store,
   minimal = false,
   withLiveApp = false,
+  initialCountervalues,
 }: {
   children: React.ReactNode;
-  store: ReturnType<typeof createStore>;
+  store: ReduxStore;
   minimal?: boolean;
   withLiveApp?: boolean;
+  initialCountervalues?: CounterValuesStateRaw;
 }): JSX.Element {
   const queryClient = new QueryClient();
 
@@ -82,7 +112,9 @@ function Providers({
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
           <MemoryRouter>
-            {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+            <CountervaluesProviders savedState={initialCountervalues}>
+              {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+            </CountervaluesProviders>
           </MemoryRouter>
         </FirebaseFeatureFlagsProvider>
       </Provider>
@@ -105,6 +137,43 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
 }
 
 /**
+ * Renders a UI component with the necessary context providers and sets up user events for testing and mocking counter values.
+ * This should be merged with the main render function to avoid duplication.
+ * But for now, it is kept separate to maintain the mocking of counter values and avoid breaking changes.
+ *
+ * @param {JSX.Element} ui - The React component to be rendered.
+ * @param {ExtraOptions} [options={}] - Additional options for rendering, such as initial state, store, etc.
+ *
+ * @returns {RenderReturn} The rendered component with the provided context providers and user events.
+ */
+function renderWithMockedCounterValuesProvider(
+  ui: JSX.Element,
+  options: ExtraOptions = {},
+): RenderReturn {
+  const {
+    initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    store = createStore({ state: initialState as State, dbMiddleware }),
+    userEventOptions = {},
+    ...renderOptions
+  } = options;
+
+  return {
+    store,
+    i18n,
+    user: userEvent.setup(userEventOptions),
+    ...rtlRender(ui, {
+      wrapper: ({ children }) => (
+        <Providers store={store} initialCountervalues={initialCountervaluesMock}>
+          {children}
+        </Providers>
+      ),
+      ...renderOptions,
+    }),
+  };
+}
+
+/**
  * Renders a UI component with the necessary context providers and sets up user events for testing.
  *
  * @param {JSX.Element} ui - The React component to be rendered.
@@ -115,6 +184,7 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
 function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
   const {
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
     ...renderOptions
@@ -122,6 +192,7 @@ function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
 
   return {
     store,
+    i18n,
     user: userEvent.setup(userEventOptions),
     ...rtlRender(ui, {
       wrapper: ({ children }) => <Providers store={store}>{children}</Providers>,
@@ -138,7 +209,7 @@ function render(ui: JSX.Element, options: ExtraOptions = {}): RenderReturn {
  * @param {Object} [options={}] - Options to configure the rendering, including initial state and props.
  * @param {Props} [options.initialProps] - The initial props to be passed to the hook.
  * @param {DeepPartial<State>} [options.initialState] - The initial state for the Redux store.
- * @param {ReturnType<typeof createStore>} [options.store] - The Redux store to be used.
+ * @param {ReduxStore} [options.store] - The Redux store to be used.
  *
  * @returns {RenderHookResult<Result, Props>} The rendered hook result with the context providers and store.
  */
@@ -148,12 +219,13 @@ function renderHook<Result, Props>(
   options: {
     initialProps?: Props;
     initialState?: DeepPartial<State>;
-    store?: ReturnType<typeof createStore>;
+    store?: ReduxStore;
   } = {},
-): RenderHookResult<Result, Props> & { store: ReturnType<typeof createStore> } {
+): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
     initialProps,
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
   } = options;
 
@@ -175,12 +247,13 @@ function renderHookWithLiveAppProvider<Result, Props>(
   options: {
     initialProps?: Props;
     initialState?: DeepPartial<State>;
-    store?: ReturnType<typeof createStore>;
+    store?: ReduxStore;
   } = {},
-): RenderHookResult<Result, Props> & { store: ReturnType<typeof createStore> } {
+): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
     initialProps,
     initialState = {},
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
   } = options;
 
@@ -198,4 +271,10 @@ function renderHookWithLiveAppProvider<Result, Props>(
 }
 
 export * from "@testing-library/react";
-export { userEvent, render, renderHook, renderHookWithLiveAppProvider };
+export {
+  render,
+  renderHook,
+  renderHookWithLiveAppProvider,
+  renderWithMockedCounterValuesProvider,
+  userEvent,
+};

@@ -18,9 +18,10 @@ export const StepValidatorGroupFooter = ({
   onClose,
   bridgePending,
   transaction,
+  status,
 }: StepProps) => {
   invariant(account, "account required");
-  const canNext = !bridgePending && transaction?.recipient;
+  const canNext = !bridgePending && transaction?.recipient && !status.errors.sender;
   const displayTC = isDefaultValidatorGroupAddress(transaction.recipient);
   return (
     <>
@@ -72,6 +73,7 @@ const StepValidatorGroup = ({
         currency="celo"
       />
       {error && <ErrorBanner error={error} />}
+      {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
       <ValidatorGroupsField
         account={account}
         chosenValidatorGroupAddress={chosenValidatorGroupAddress}

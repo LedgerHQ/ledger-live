@@ -53,6 +53,7 @@ function View({
           qrProcess={qrProcess}
           onQrCodeScanned={onQrCodeScanned}
           onCreateKey={onCreateKey}
+          onCloseAddAccountDrawer={onCloseAddAccountDrawer}
         />
       </Flex>
     </QueuedDrawer>

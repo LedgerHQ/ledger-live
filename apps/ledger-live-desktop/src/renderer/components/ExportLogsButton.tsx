@@ -2,7 +2,7 @@ import { ipcRenderer, webFrame } from "electron";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs } from "@ledgerhq/live-env";
+import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger from "~/renderer/logger";
@@ -73,16 +73,26 @@ const ExportLogsBtn = ({
       },
       accountsIds: accounts.map(a => a.id),
     });
-    const path = await ipcRenderer.invoke("show-save-dialog", {
-      title: "Export logs",
-      defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
-      filters: [
-        {
-          name: "All Files",
-          extensions: ["txt"],
-        },
-      ],
-    });
+
+    let path;
+    if (!getEnv("PLAYWRIGHT_RUN")) {
+      path = await ipcRenderer.invoke("show-save-dialog", {
+        title: "Export logs",
+        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+        filters: [
+          {
+            name: "All Files",
+            extensions: ["txt"],
+          },
+        ],
+      });
+    } else {
+      path = {
+        canceled: false,
+        filePath: "./ledgerlive-logs.txt",
+      };
+    }
+
     if (path) {
       await saveLogs(path);
     }
@@ -113,7 +123,14 @@ const ExportLogsBtn = ({
   return hookToShortcut ? (
     <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
   ) : (
-    <Button small={small} primary={primary} event="ExportLogs" onClick={handleExportLogs} {...rest}>
+    <Button
+      data-testid="export-logs-button"
+      small={small}
+      primary={primary}
+      event="ExportLogs"
+      onClick={handleExportLogs}
+      {...rest}
+    >
       {text}
     </Button>
   );

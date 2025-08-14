@@ -7,7 +7,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
-import * as LEDGER_API from "../../../../api/explorer/ledger";
+import * as LEDGER_API from "../../../../network/explorer/ledger";
 import {
   coinOperation1,
   coinOperation2,
@@ -41,7 +41,7 @@ jest.mock("../../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
-  describe("api/explorer/ledger.ts", () => {
+  describe("network/explorer/ledger.ts", () => {
     beforeEach(() => {
       mockGetConfig.mockImplementation((): any => {
         return {
@@ -50,6 +50,7 @@ describe("EVM Family", () => {
               type: "ledger",
               explorerId: "eth",
             },
+            showNfts: true,
           },
         };
       });
@@ -200,6 +201,7 @@ describe("EVM Family", () => {
             status: { type: "active" },
             node: { type: "ledger", explorerId: "matic" },
             explorer: { type: "ledger", explorerId: "matic", batchSize: configuredBatchSize },
+            showNfts: true,
           },
         }));
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
@@ -407,6 +409,36 @@ describe("EVM Family", () => {
               value: new BigNumber(coinOperation2.actions[0].value),
             },
           ],
+        });
+      });
+
+      describe("getLastOperations without nft", () => {
+        beforeEach(() => {
+          mockGetConfig.mockImplementation((): any => {
+            return {
+              info: {
+                explorer: {
+                  type: "ledger",
+                  explorerId: "eth",
+                },
+                showNfts: false,
+              },
+            };
+          });
+        });
+
+        it("should not return NFT opperation", async () => {
+          jest.spyOn(axios, "request").mockImplementation(async () => ({
+            data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
+          }));
+
+          const response = await LEDGER_API.getLastOperations(
+            fakeCurrency,
+            "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            accountId,
+            0,
+          );
+          expect(response.lastNftOperations).toEqual([]);
         });
       });
     });

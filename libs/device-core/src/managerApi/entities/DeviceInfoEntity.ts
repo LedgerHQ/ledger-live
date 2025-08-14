@@ -23,4 +23,5 @@ export type DeviceInfoEntity = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  seFlags: Buffer;
 };

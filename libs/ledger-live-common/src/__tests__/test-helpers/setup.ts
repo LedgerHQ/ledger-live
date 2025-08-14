@@ -1,3 +1,5 @@
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import "./environment";
 import BigNumber from "bignumber.js";
 
@@ -11,3 +13,9 @@ expect.extend({
     return { message, pass };
   },
 });
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStoreForCoinFramework({
+  findTokenById: (_: string) => undefined,
+  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+} as CryptoAssetsStore);

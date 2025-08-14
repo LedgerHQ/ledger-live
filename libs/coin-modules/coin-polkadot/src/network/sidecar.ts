@@ -296,7 +296,12 @@ export const getAccount = async (addr: string) => {
   const stakingInfo = await getStakingInfo(addr);
   const nominations = await getNominations(addr);
 
-  return { ...balances, ...stakingInfo, nominations };
+  const account = { ...balances, ...stakingInfo, nominations };
+  account.balance = account.balance
+    .plus(account.lockedBalance.minus(account.unlockingBalance))
+    .plus(account.unlockingBalance.minus(account.unlockedBalance));
+
+  return account;
 };
 
 /**
@@ -307,24 +312,13 @@ export const getAccount = async (addr: string) => {
  */
 export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
-  // Locked is the highest value among locks
-  const totalLocked = balanceInfo.locks.reduce((total, lock) => {
-    const amount = new BigNumber(lock.amount);
 
-    if (amount.gt(total)) {
-      return amount;
-    }
-
-    return total;
-  }, new BigNumber(0));
-  const balance = new BigNumber(balanceInfo.free);
-  const spendableBalance = totalLocked.gt(balance) ? new BigNumber(0) : balance.minus(totalLocked);
   return {
     blockHeight: Number(balanceInfo.at.height),
-    balance,
-    spendableBalance,
+    balance: new BigNumber(balanceInfo.free),
+    spendableBalance: new BigNumber(balanceInfo.transferable || "0"),
     nonce: Number(balanceInfo.nonce),
-    lockedBalance: new BigNumber(totalLocked),
+    lockedBalance: new BigNumber(balanceInfo.reserved || "0"),
   };
 };
 

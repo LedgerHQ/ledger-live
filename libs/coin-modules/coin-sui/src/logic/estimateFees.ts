@@ -1,14 +1,25 @@
 import suiAPI from "../network";
-import type { Transaction } from "../types";
+import { BigNumber } from "bignumber.js";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
-/**
- * Estimates the fees for a transaction
- *
- * @param {string} sender - The address of the sender for whom the fees are being estimated.
- * @param {Transaction} transaction - The transaction details for which the fees are to be estimated.
- * @returns {Promise<bigint>} A promise that resolves to the estimated fees in bigint format.
- */
-export async function estimateFees(sender: string, transaction: Transaction): Promise<bigint> {
-  const { gasBudget } = await suiAPI.paymentInfo(sender, transaction);
+export async function estimateFees({
+  recipient,
+  amount,
+  sender,
+  asset,
+}: TransactionIntent): Promise<bigint> {
+  let coinType = DEFAULT_COIN_TYPE;
+  if (asset.type === "token" && asset.assetReference) {
+    coinType = asset.assetReference;
+  }
+  const { gasBudget } = await suiAPI.paymentInfo(sender, {
+    mode: "send",
+    family: "sui",
+    recipient,
+    amount: BigNumber(amount.toString()),
+    errors: {},
+    coinType,
+  });
   return BigInt(gasBudget);
 }

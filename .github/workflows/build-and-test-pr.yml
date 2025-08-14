@@ -1,11 +1,8 @@
-name: "[PR] Build and Test"
+name: "[All Platforms] - Build and Test - PR"
 on:
   merge_group:
     types: [checks_requested]
-  pull_request:
-    branches-ignore:
-        - 'smartling-content-updated**'
-        - 'smartling-translation-completed**'
+  pull_request: ~
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -19,17 +16,27 @@ permissions:
 
 jobs:
   pre_job:
-    # continue-on-error: true # Uncomment once integration is finished
+    name: "Skip Check"
+    if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
     outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      should_skip: ${{ steps.skip_check.outputs.should_skip == 'true' || steps.smartling_check.outputs.should_skip == 'true' }}
+    env:
+      IS_SMARTLING: ${{ startsWith(github.event.pull_request.head.ref, 'smartling-content-updated') == true || startsWith(github.event.pull_request.head.ref, 'smartling-translation-completed') == true}}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          concurrent_skipping: 'never'
-          skip_after_successful_duplicate: 'true'
+          concurrent_skipping: "never"
+          skip_after_successful_duplicate: "true"
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+      - id: smartling_check
+        if: ${{ env.IS_SMARTLING == 'true' }}
+        run: |
+          echo "should_skip=true" >> $GITHUB_OUTPUT
+          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   determine-affected:
     name: "Turbo Affected"
@@ -44,7 +51,7 @@ jobs:
   build-desktop:
     name: "Build Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork }}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
 
@@ -55,14 +62,6 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
-  # LLM
-  build-mobile:
-    name: "Build Mobile"
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
-    secrets: inherit
-
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
@@ -70,14 +69,14 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
-  test-mobile-e2e:
-    name: "Test Mobile E2E"
+  build-test-mobile:
+    name: "Build & Test Mobile"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
-      use-performance-pool: true
+      macos-specificity-runner-label: "performance-pool"
 
   # Tests
   test-libraries:
@@ -88,7 +87,7 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
@@ -108,15 +107,27 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
+  scan-sonar:
+    name: "Sonar Cloud"
+    needs:
+      - test-desktop
+      - test-mobile
+      - test-libraries
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
+    secrets: inherit
+    with:
+      should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
+      should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
+      should_download_libs_coverage: ${{ needs.test-libs.outputs.coverage_generated }}
+
   # Final Check required
   ok:
     name: "OK"
     needs:
       - build-desktop
       - test-desktop
-      - build-mobile
       - test-mobile
-      - test-mobile-e2e
+      - build-test-mobile
       - test-libraries
       - test-design-system
       - build-web-tools

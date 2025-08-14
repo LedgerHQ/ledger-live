@@ -10,10 +10,11 @@ import Animated from "react-native-reanimated";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
 const StyledFlatList = baseStyled.FlatList<BaseStyledProps>``;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AnimatedFlatList: any = Animated.createAnimatedComponent(StyledFlatList);
 
 type ScrollListContainerProps = BaseStyledProps &
-  Omit<FlatListProps<any>, "onScroll" | "data" | "renderItem"> & {
+  Omit<FlatListProps<unknown>, "onScroll" | "data" | "renderItem"> & {
     children: React.ReactNode;
     onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
     horizontal?: boolean;

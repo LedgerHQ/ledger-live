@@ -48,7 +48,13 @@ const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX
 
   return (
     <Cell compact={compact}>
-      <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
+      <Box
+        ff="Inter|SemiBold"
+        fontSize={3}
+        color="palette.text.shade80"
+        style={ellipsis}
+        data-testid={`operation-status-${operation.id}`}
+      >
         {text ||
           t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
       </Box>

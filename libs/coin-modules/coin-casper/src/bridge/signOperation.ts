@@ -1,13 +1,13 @@
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { DeployUtil } from "casper-js-sdk";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { casperGetCLPublicKey, getAddress } from "../bridge/bridgeHelpers/addresses";
-import { createNewDeploy } from "../bridge/bridgeHelpers/txn";
+import { getAddress } from "../bridge/bridgeHelpers/addresses";
+import { createNewTransaction } from "../bridge/bridgeHelpers/txn";
 import { Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CasperSigner } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { KeyAlgorithm } from "casper-js-sdk";
 
 export const buildSignOperation =
   (
@@ -18,26 +18,20 @@ export const buildSignOperation =
       async function main() {
         // log("debug", "[signOperation] start fn");
 
-        const { recipient } = transaction;
+        const { recipient, amount, fees, transferId } = transaction;
         const { address, derivationPath } = getAddress(account);
-        const deploy = createNewDeploy(
-          address,
-          recipient,
-          transaction.amount,
-          transaction.fees,
-          transaction.transferId,
-        );
+        const casperTx = await createNewTransaction(address, recipient, amount, fees, transferId);
 
         // Serialize tx
-        const deployBytes = DeployUtil.deployToBytes(deploy);
-        log("debug", `[signOperation] serialized deploy: [${deployBytes.toString()}]`);
+        const txBytes = casperTx.toBytes();
+        log("debug", `[signOperation] serialized transaction: [${txBytes.toString()}]`);
         o.next({
           type: "device-signature-requested",
         });
 
         // Sign by device
         const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.sign(derivationPath, Buffer.from(deployBytes));
+          const r = await signer.sign(derivationPath, Buffer.from(txBytes));
           return { r };
         });
 
@@ -46,23 +40,20 @@ export const buildSignOperation =
         });
 
         // signature verification
-        const deployHash = deploy.hash.toString();
-        const signature = r.signatureRS;
+        const txHash = casperTx.hash.getHash()?.toHex() ?? "";
+        const signature = Buffer.concat([Buffer.from([KeyAlgorithm.SECP256K1]), r.signatureRS]);
 
-        // sign deploy object
-        const signedDeploy = DeployUtil.setSignature(
-          deploy,
-          signature,
-          casperGetCLPublicKey(address),
-        );
-
-        const operation = buildOptimisticOperation(account, transaction, deployHash);
+        const operation = buildOptimisticOperation(account, transaction, txHash);
+        const txJson = casperTx.toJSON();
 
         o.next({
           type: "signed",
           signedOperation: {
             operation,
-            signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
+            signature: Buffer.from(signature).toString("hex"),
+            rawData: {
+              tx: JSON.stringify(txJson),
+            },
           },
         });
       }

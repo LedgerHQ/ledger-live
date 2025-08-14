@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
@@ -48,8 +47,11 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import SanctionedAccountModal from "./SanctionedAccountModal";
+import { useToastsActions } from "~/actions/toast";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -81,7 +83,6 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
@@ -89,9 +90,21 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
+  const [isUserAddressSanctioned, setIsUserAddressSanctioned] = useState(false);
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
+  const { pushToast } = useToastsActions();
+
+  const onClose = useCallback(() => {
+    const mainAccount = account && getMainAccount(account, parentAccount);
+
+    if (mainAccount) {
+      navigation.navigate(ScreenName.ReceiveSelectAccount, {
+        currency: mainAccount.currency,
+      });
+    }
+  }, [account, navigation, parentAccount]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -239,19 +252,35 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const bannerHeight = useSharedValue(screenHeight * 0.23);
   const bannerOpacity = useSharedValue(1);
 
-  const animatedBannerStyle = useAnimatedStyle(() => ({
-    height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
-      if (onFinish && bannerHeight.value === 0) {
-        runOnJS(hideBanner)();
-      }
+  const animatedBannerStyle = useAnimatedStyle(
+    () => ({
+      height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
+        if (onFinish && bannerHeight.value === 0) {
+          runOnJS(hideBanner)();
+        }
+      }),
+      opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    opacity: withTiming(bannerOpacity.value, { duration: 200 }),
-  }));
+    [bannerHeight.value, bannerOpacity.value, hideBanner],
+  );
 
   const handleBannerClose = useCallback(() => {
     bannerHeight.value = 0;
     bannerOpacity.value = 0;
   }, [bannerHeight, bannerOpacity]);
+
+  useEffect(() => {
+    const checkUserAddressSanctioned = async () => {
+      const mainAccount = account && getMainAccount(account, parentAccount);
+      if (mainAccount) {
+        setIsUserAddressSanctioned(
+          await isAddressSanctioned(mainAccount.currency, mainAccount.freshAddress),
+        );
+      }
+    };
+
+    checkUserAddressSanctioned();
+  }, [account, parentAccount]);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -434,7 +463,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           </Button>
         </Flex>
       </Flex>
-      {verified ? null : isModalOpened ? (
+      {isUserAddressSanctioned ? (
+        <SanctionedAccountModal
+          userAddress={account.type === "Account" ? account.freshAddress : ""}
+          onClose={onClose}
+        />
+      ) : verified ? null : isModalOpened ? (
         <ReceiveSecurityModal onVerifyAddress={onRetry} triggerSuccessEvent={triggerSuccessEvent} />
       ) : null}
     </Flex>

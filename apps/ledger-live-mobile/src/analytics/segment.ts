@@ -23,6 +23,9 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
@@ -56,10 +59,9 @@ import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
-import { getEnv } from "@ledgerhq/live-env";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -80,10 +82,11 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
     const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
+    const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -95,6 +98,13 @@ const getFeatureFlagProperties = () => {
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
+    const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+
+    // Apply versioned redirects logic to the stakePrograms feature flag
+    const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
 
     const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -117,6 +127,7 @@ const getFeatureFlagProperties = () => {
       stakingCurrenciesEnabled,
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
+      ptxSwapLiveAppKycWarningEnabled,
     });
   })();
 };
@@ -157,15 +168,6 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
-const getNewAddAccountsAttribues = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
-
-  return {
-    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
-  };
-};
-
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -200,6 +202,9 @@ const extraProperties = async (store: AppStore) => {
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
   const deviceInfo = lastDevice
     ? {
@@ -267,7 +272,6 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
 
@@ -285,6 +289,7 @@ const extraProperties = async (store: AppStore) => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
+    platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     appLanguage: language, // In Braze it can't be called language
@@ -318,10 +323,10 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
-    ...addAccountsAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };

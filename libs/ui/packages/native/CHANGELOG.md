@@ -1,5 +1,209 @@
 # @ledgerhq/native-ui
 
+## 0.42.0
+
+### Minor Changes
+
+- [#11064](https://github.com/LedgerHQ/ledger-live/pull/11064) [`8ec356e`](https://github.com/LedgerHQ/ledger-live/commit/8ec356efa497953c99e3591df001a68200889718) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add new drawer library, add MAD animations and fix some UI issues
+
+- [#11055](https://github.com/LedgerHQ/ledger-live/pull/11055) [`6612a57`](https://github.com/LedgerHQ/ledger-live/commit/6612a57f47fa25e43fb933e5eec523069aa86a70) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD Analytics
+
+## 0.42.0-next.0
+
+### Minor Changes
+
+- [#11064](https://github.com/LedgerHQ/ledger-live/pull/11064) [`8ec356e`](https://github.com/LedgerHQ/ledger-live/commit/8ec356efa497953c99e3591df001a68200889718) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add new drawer library, add MAD animations and fix some UI issues
+
+- [#11055](https://github.com/LedgerHQ/ledger-live/pull/11055) [`6612a57`](https://github.com/LedgerHQ/ledger-live/commit/6612a57f47fa25e43fb933e5eec523069aa86a70) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD Analytics
+
+## 0.41.0
+
+### Minor Changes
+
+- [#11046](https://github.com/LedgerHQ/ledger-live/pull/11046) [`820b163`](https://github.com/LedgerHQ/ledger-live/commit/820b16316a9b0a87bb1157617c96ae7b1d6ca1d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix colors for dark & light mode using pre-ldls
+
+## 0.41.0-next.0
+
+### Minor Changes
+
+- [#11046](https://github.com/LedgerHQ/ledger-live/pull/11046) [`820b163`](https://github.com/LedgerHQ/ledger-live/commit/820b16316a9b0a87bb1157617c96ae7b1d6ca1d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix colors for dark & light mode using pre-ldls
+
+## 0.40.0
+
+### Minor Changes
+
+- [#10858](https://github.com/LedgerHQ/ledger-live/pull/10858) [`7883393`](https://github.com/LedgerHQ/ledger-live/commit/788339359ad9b7fafbf74c0788b1e2d8f7e3bc19) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD NetworkList Component
+
+- [#10835](https://github.com/LedgerHQ/ledger-live/pull/10835) [`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Add AssetList component in LLM ldls
+
+- [#10950](https://github.com/LedgerHQ/ledger-live/pull/10950) [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add search Input to LLM ui pre ldls
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0
+
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#10858](https://github.com/LedgerHQ/ledger-live/pull/10858) [`7883393`](https://github.com/LedgerHQ/ledger-live/commit/788339359ad9b7fafbf74c0788b1e2d8f7e3bc19) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD NetworkList Component
+
+- [#10835](https://github.com/LedgerHQ/ledger-live/pull/10835) [`782b9ae`](https://github.com/LedgerHQ/ledger-live/commit/782b9aef66d9f5a4450f5f2bb1f06b53373ae115) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Add AssetList component in LLM ldls
+
+- [#10950](https://github.com/LedgerHQ/ledger-live/pull/10950) [`084676a`](https://github.com/LedgerHQ/ledger-live/commit/084676a26857cbbcecb38a6543a1816c7601dde1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add search Input to LLM ui pre ldls
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0-next.0
+
+## 0.39.0
+
+### Minor Changes
+
+- [#10698](https://github.com/LedgerHQ/ledger-live/pull/10698) [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add cryptoIcon in storybook native pre-ldls
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0
+
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#10698](https://github.com/LedgerHQ/ledger-live/pull/10698) [`d1fb0d5`](https://github.com/LedgerHQ/ledger-live/commit/d1fb0d5c598ba0f6cad04624ff61f65364fa1784) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: add cryptoIcon in storybook native pre-ldls
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
+
+## 0.38.0
+
+### Minor Changes
+
+- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#10722](https://github.com/LedgerHQ/ledger-live/pull/10722) [`7291131`](https://github.com/LedgerHQ/ledger-live/commit/7291131523cc620aa81553260430d890b02bf3bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD - Navigation header
+
+## 0.37.0
+
+### Minor Changes
+
+- [#10590](https://github.com/LedgerHQ/ledger-live/pull/10590) [`752fc6b`](https://github.com/LedgerHQ/ledger-live/commit/752fc6b72fac537563bc6d21b45ce412875f6b7b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Storybook React native to v7
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0
+
+## 0.37.0-next.0
+
+### Minor Changes
+
+- [#10590](https://github.com/LedgerHQ/ledger-live/pull/10590) [`752fc6b`](https://github.com/LedgerHQ/ledger-live/commit/752fc6b72fac537563bc6d21b45ce412875f6b7b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade Storybook React native to v7
+
+- [#10591](https://github.com/LedgerHQ/ledger-live/pull/10591) [`95bcad3`](https://github.com/LedgerHQ/ledger-live/commit/95bcad3cc17aa7b4139a8ae3b08ecfb15a2fbcdc) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add ledger charon support
+
+### Patch Changes
+
+- Updated dependencies [[`efdcdc1`](https://github.com/LedgerHQ/ledger-live/commit/efdcdc14d395a31670d94bd32f301e10794a70d8)]:
+  - @ledgerhq/icons-ui@0.12.0-next.0
+
+## 0.36.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0
+  - @ledgerhq/icons-ui@0.11.0
+
+## 0.36.0-next.0
+
+### Minor Changes
+
+- [#10229](https://github.com/LedgerHQ/ledger-live/pull/10229) [`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Upgrade React Native from 0.75 to 0.77
+
+### Patch Changes
+
+- Updated dependencies [[`bf4b791`](https://github.com/LedgerHQ/ledger-live/commit/bf4b7919e5e66605ea3e77562626db5d26898246)]:
+  - @ledgerhq/crypto-icons-ui@1.15.0-next.0
+  - @ledgerhq/icons-ui@0.11.0-next.0
+
+## 0.35.0
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#10352](https://github.com/LedgerHQ/ledger-live/pull/10352) [`e604a8b`](https://github.com/LedgerHQ/ledger-live/commit/e604a8b0839d7a5dd4e137092605ea3c253fea49) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: P1 bugs on Large Mover
+
+- [#10328](https://github.com/LedgerHQ/ledger-live/pull/10328) [`ff0a516`](https://github.com/LedgerHQ/ledger-live/commit/ff0a516c54ac1bed9d0da70d2531b7f535afad2e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: card scollable and buttons clickable on android
+
+## 0.34.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675)]:
+  - @ledgerhq/crypto-icons-ui@1.14.0
+
+## 0.34.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c268fb`](https://github.com/LedgerHQ/ledger-live/commit/0c268fbc9d08f98b2b383fde36d77e92b5953675)]:
+  - @ledgerhq/crypto-icons-ui@1.14.0-next.0
+
+## 0.34.0
+
+### Minor Changes
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#10071](https://github.com/LedgerHQ/ledger-live/pull/10071) [`2ff4c03`](https://github.com/LedgerHQ/ledger-live/commit/2ff4c03ca7d8232563141b9531b1359087e57c59) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Generic Card for Large Mover
+
+## 0.33.1
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0
+  - @ledgerhq/icons-ui@0.10.0
+
+## 0.33.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`de92b67`](https://github.com/LedgerHQ/ledger-live/commit/de92b67ab9c8a553a817a245cecbfe292249d431), [`a4b6b29`](https://github.com/LedgerHQ/ledger-live/commit/a4b6b29df7ef74129345278cf07942619b36435b)]:
+  - @ledgerhq/crypto-icons-ui@1.13.0-next.0
+  - @ledgerhq/icons-ui@0.10.0-next.0
+
 ## 0.33.0
 
 ### Minor Changes

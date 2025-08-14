@@ -1,9 +1,10 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, ChipTabs, Flex, Icons, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import { EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
-import React, { useEffect, useMemo, useState } from "react";
+import Animated, { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, TouchableOpacity } from "react-native";
+import { DimensionValue, LayoutChangeEvent, Linking, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Track, track } from "~/analytics";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -82,10 +83,32 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
     [has32Eth, filteredProviders, selected],
   );
 
+  // UPGRADE-RN77:
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
+  const sharedHeight = useSharedValue<DimensionValue>(0);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: sharedHeight.value,
+      rowGap: 24,
+      display: "flex",
+    }),
+    [sharedHeight],
+  );
+  const onLayout = useCallback(
+    (_: LayoutChangeEvent) => {
+      if (!Number.isNaN(sharedHeight.value) && sharedHeight.value === 0) {
+        sharedHeight.value = "100%";
+      }
+    },
+    [sharedHeight],
+  );
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Track onMount event="ETH Stake Modal" />
-      <Flex height="100%" rowGap={24}>
+      <Animated.View style={animatedStyle} onLayout={onLayout}>
         <Flex rowGap={16} alignItems="center">
           <Text variant="h3Inter" textAlign="center" fontWeight="semiBold" fontSize={24}>
             {t("stake.ethereum.title")}
@@ -169,7 +192,7 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
             </Flex>
           </TouchableOpacity>
         </Box>
-      </Flex>
+      </Animated.View>
     </QueuedDrawer>
   );
 }

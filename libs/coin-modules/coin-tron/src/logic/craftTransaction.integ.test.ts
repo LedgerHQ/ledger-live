@@ -25,9 +25,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc10",
-        tokenId: "1002000",
+        type: "trc10",
+        assetReference: "1002000",
       },
       sender,
       recipient,
@@ -67,9 +66,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        type: "trc20",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -107,9 +105,8 @@ describe("Testing craftTransaction function", () => {
     const result = await craftTransaction({
       type: "send",
       asset: {
-        type: "token",
-        standard: "trc20",
-        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        type: "trc20",
+        assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       },
       sender,
       recipient,
@@ -136,15 +133,14 @@ describe("Testing craftTransaction function", () => {
       {
         type: "send",
         asset: {
-          type: "token",
-          standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,
         amount,
       },
-      customFees,
+      { value: customFees },
     );
 
     const decodeResult = await decodeTransaction(result);
@@ -206,7 +202,11 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
-      memo: "this is a test",
+      memo: {
+        type: "string",
+        kind: "memo",
+        value: "this is a test",
+      },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -229,14 +229,17 @@ describe("Testing craftTransaction function", () => {
       craftTransaction({
         type: "send",
         asset: {
-          type: "token",
-          standard: "trc20",
-          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         },
         sender,
         recipient,
         amount,
-        memo: "test",
+        memo: {
+          type: "string",
+          kind: "memo",
+          value: "test",
+        },
       }),
     ).rejects.toThrow("Memo cannot be used with smart contract transactions");
   });

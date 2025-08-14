@@ -61,6 +61,9 @@ export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorCla
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );
 export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
+export const LatestFirmwareVersionRequired = createCustomErrorClass(
+  "LatestFirmwareVersionRequired",
+);
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");
@@ -81,8 +84,17 @@ export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
+export const NotEnoughBalanceFees = createCustomErrorClass("NotEnoughBalanceFees");
 export const NotEnoughBalanceSwap = createCustomErrorClass("NotEnoughBalanceSwap");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
+export const UnstakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
+  "UnstakeNotEnoughStakedBalanceLeft",
+);
+export const RestakeNotEnoughStakedBalanceLeft = createCustomErrorClass(
+  "RestakeNotEnoughStakedBalanceLeft",
+);
+export const NotEnoughToRestake = createCustomErrorClass("NotEnoughToRestake");
+export const NotEnoughToUnstake = createCustomErrorClass("NotEnoughToUnstake");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
   "NotEnoughBalanceInParentAccount",
 );
@@ -90,6 +102,7 @@ export const NotEnoughSpendableBalance = createCustomErrorClass("NotEnoughSpenda
 export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
   "NotEnoughBalanceBecauseDestinationNotCreated",
 );
+export const NotEnoughToStake = createCustomErrorClass("NotEnoughToStake");
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 // Error message specifically for the PTX swap flow
@@ -146,6 +159,7 @@ export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnect
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
 export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const MissingSwapPayloadParamaters = createCustomErrorClass("MissingSwapPayloadParamaters");
 export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 

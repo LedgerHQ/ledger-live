@@ -20,8 +20,9 @@ export default function PlatformExchangeNavigator() {
         name={ScreenName.PlatformStartExchange}
         component={PlatformStartExchange}
         options={{
-          headerStyle: styles.headerNoShadow,
-          title: t("transfer.swap.landing.header"),
+          title: t("deviceConnect.title"),
+          headerShown: true,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen

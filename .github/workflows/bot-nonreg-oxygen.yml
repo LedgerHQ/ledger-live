@@ -1,4 +1,4 @@
-name: "[Bot] Weekly non-reg on develop with 'Oxygen'"
+name: "[Coin] - Weekly non-reg with 'Oxygen' - Scheduled"
 on:
   schedule:
     - cron: "9 5 * * 4" # Thursday – weekly non-reg

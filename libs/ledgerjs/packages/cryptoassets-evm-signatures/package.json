@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets-evm-signatures",
-  "version": "13.5.6",
+  "version": "13.5.11",
   "description": "Ledger crypto-assets list, evm only",
   "keywords": [
     "Ledger"
@@ -28,6 +28,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "coverage": "jest --coverage",
     "unimported": "unimported",
     "test:importer": "jest ./src/crypto-assets-importer/",
     "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"

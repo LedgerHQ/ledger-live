@@ -1,4 +1,4 @@
-name: "@Desktop • Generate Screenshots"
+name: "[Desktop] - Generate Screenshots  - Manual"
 run-name: "@Desktop • Generate Screenshots triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:

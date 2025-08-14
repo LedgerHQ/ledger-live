@@ -13,6 +13,7 @@ import {
 import { ValidatorsAppValidator } from "./network/validator-app";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -112,11 +113,17 @@ export type TokenTransferCommand = {
   amount: number;
   mintAddress: string;
   mintDecimals: number;
+  tokenId: string;
   memo?: string | undefined;
   tokenProgram: SolanaTokenProgram;
   extensions?: {
     transferFee?: TransferFeeCalculated | undefined;
   };
+};
+
+export type RawCommand = {
+  kind: "raw";
+  raw: string;
 };
 
 export type Command =
@@ -129,7 +136,8 @@ export type Command =
   | StakeDelegateCommand
   | StakeUndelegateCommand
   | StakeWithdrawCommand
-  | StakeSplitCommand;
+  | StakeSplitCommand
+  | RawCommand;
 
 export type CommandDescriptor = {
   command: Command;
@@ -212,6 +220,11 @@ export type StakeSplitTransaction = {
   };
 };
 
+export type RawTransaction = {
+  kind: "raw";
+  uiState: object;
+};
+
 export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | TransferTransaction
   | TokenTransferTransaction
@@ -223,11 +236,13 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | StakeUndelegateTransaction
   | StakeWithdrawTransaction
   | StakeSplitTransaction
+  | RawTransaction
 );
 
 export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
+  raw?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -291,6 +306,7 @@ export type SolanaPreloadDataV1 = {
   version: "1";
   validatorsWithMeta: SolanaValidatorWithMeta[];
   validators: ValidatorsAppValidator[];
+  splTokens: SPLToken[] | null;
 };
 
 // exists for discriminated union to work

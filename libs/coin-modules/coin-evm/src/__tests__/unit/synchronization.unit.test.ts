@@ -6,11 +6,11 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
-import * as etherscanAPI from "../../api/explorer/etherscan";
+import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
-import * as synchronization from "../../synchronization";
-import * as noneExplorer from "../../api/explorer/none";
-import * as nodeApi from "../../api/node/rpc.common";
+import * as synchronization from "../../bridge/synchronization";
+import * as noneExplorer from "../../network/explorer/none";
+import * as nodeApi from "../../network/node/rpc.common";
 import { createSwapHistoryMap } from "../../logic";
 import {
   account,
@@ -29,7 +29,7 @@ import {
 import { getCoinConfig } from "../../config";
 import * as logic from "../../logic";
 
-jest.mock("../../api/node/rpc.common");
+jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 
 jest.mock("../../config");
@@ -56,6 +56,7 @@ describe("EVM Family", () => {
             type: "etherscan",
             uri: "https://api.com",
           },
+          showNfts: true,
         },
       };
     });
@@ -114,6 +115,7 @@ describe("EVM Family", () => {
                 uri: "http://nope.com",
                 type: "unsupported" as any,
               },
+              showNfts: true,
             },
           };
         });
@@ -151,6 +153,7 @@ describe("EVM Family", () => {
               explorer: {
                 type: "none",
               },
+              showNfts: true,
             },
           };
         });
@@ -633,10 +636,10 @@ describe("EVM Family", () => {
                   type: "blockscout",
                   uri: "https://api.com",
                 },
+                showNfts: true,
               },
             };
           });
-          console.log(etherscanAPI?.default.getLastOperations);
           const spy = jest.spyOn(etherscanAPI, "getLastERC1155Operations");
 
           await synchronization.getAccountShape(

@@ -1,5 +1,5 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { StellarAsset } from "../types";
+import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
 import expect from "expect";
 
@@ -79,16 +79,6 @@ describe("operations", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
-  it("should return 0 operations if start is greater than the last operation", async () => {
-    mockGetOperations.mockResolvedValue([[mockOperation], ""]);
-
-    // When
-    const operations = await api.listOperations("addr", { minHeight: 100 });
-
-    // Then
-    expect(operations).toEqual([[], ""]);
-  });
-
   it("should call multiple times listOperations", async () => {
     mockGetOperations
       .mockResolvedValueOnce([[mockOperation], "10"])
@@ -110,7 +100,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>);
+    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -121,7 +111,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>, fees);
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>, { value: fees });
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),

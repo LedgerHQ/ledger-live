@@ -1,7 +1,11 @@
-name: "Test libraries"
+name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.test-libraries.outputs.coverage_generated }}
+
   workflow_dispatch:
     inputs:
       since_branch:
@@ -21,11 +25,13 @@ permissions:
 
 jobs:
   test-libraries:
-    name: "Test Libraries"
+    name: "Libraries Test"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
     runs-on: [ledger-live-4xlarge]
     steps:
@@ -46,7 +52,29 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: |
+          mkdir -p ${{ github.workspace }}/coverage
+          pnpm build:libs
+          touch ${{ github.workspace }}/coverage/lcov.info
+          touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+          for package_json in $(find ./libs -name "package.json"); do
+            lib=$(dirname "$package_json")
+            echo "Processing library at path: $lib"
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
+              echo "Running coverage script for $lib"
+              pnpm --prefix "$lib" run coverage
+              if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $lib"
+                cat "$lib/coverage/lcov.info" >> ${{ github.workspace }}/coverage/lcov.info
+                cat "$lib/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+              fi
+            elif [ -f "$package_json" ] && jq -e '.scripts.test' "$package_json"; then
+              echo "Coverage script not defined for $lib, running test script."
+              pnpm --prefix "$lib" run test
+            else
+              echo "No coverage or test script found for $lib, skipping."
+            fi
+          done
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
@@ -63,12 +91,18 @@ jobs:
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
+        id: generate_coverage
+        with:
+          name: coverage-libs
+          path: ${{ github.workspace }}/coverage
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
           name: outputs-test-libraries
           path: ${{ github.workspace }}/summary-tests.txt
 
   codecheck-libraries:
-    name: "Codecheck Libraries"
+    name: "Libraries Codecheck"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -118,7 +152,7 @@ jobs:
             ${{ github.workspace }}/summary-lint.txt
 
   test-docs:
-    name: "Test Docs"
+    name: "Libraries Documentation Check"
     runs-on: ubuntu-22.04
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
@@ -149,6 +183,7 @@ jobs:
 
   report:
     needs: [test-docs, test-libraries, codecheck-libraries]
+    name: "Libraries Test > Report"
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:

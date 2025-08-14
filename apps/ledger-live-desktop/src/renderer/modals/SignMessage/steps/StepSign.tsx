@@ -8,11 +8,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { closeModal } from "~/renderer/actions/modals";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
-
-const action = createAction(
-  getEnv("MOCK") ? mockedEventEmitter : connectApp,
-  getEnv("MOCK") ? mockedEventEmitter : signMessageExec,
-);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function StepSign({
   account,
@@ -24,6 +20,11 @@ export default function StepSign({
   isACRE,
 }: StepProps) {
   const dispatch = useDispatch();
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+    getEnv("MOCK") ? mockedEventEmitter : signMessageExec,
+  );
   const request = useMemo(() => {
     const appRequests = dependenciesToAppRequests(dependencies);
     return {

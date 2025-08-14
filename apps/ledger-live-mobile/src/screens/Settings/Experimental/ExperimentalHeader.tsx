@@ -60,14 +60,20 @@ function ExperimentalHeader() {
     },
   );
 
-  const opacityStyle = useAnimatedStyle(() => ({
-    opacity: openState.value,
-  }));
+  const opacityStyle = useAnimatedStyle(
+    () => ({
+      opacity: openState.value,
+    }),
+    [openState],
+  );
 
   // Animated style updating the height depending on the opening animation state
-  const heightStyle = useAnimatedStyle(() => ({
-    height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolation.CLAMP),
-  }));
+  const heightStyle = useAnimatedStyle(
+    () => ({
+      height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolation.CLAMP),
+    }),
+    [openState, top],
+  );
 
   const onPressMock = useCallback(() => {
     rejections.next();

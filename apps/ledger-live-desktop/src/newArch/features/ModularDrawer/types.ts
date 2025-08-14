@@ -1,0 +1,14 @@
+export const NAVIGATION_DIRECTION = {
+  FORWARD: "FORWARD",
+  BACKWARD: "BACKWARD",
+} as const;
+
+export type NavigationDirection = (typeof NAVIGATION_DIRECTION)[keyof typeof NAVIGATION_DIRECTION];
+
+export const MODULAR_DRAWER_STEP = {
+  ASSET_SELECTION: "ASSET_SELECTION",
+  NETWORK_SELECTION: "NETWORK_SELECTION",
+  ACCOUNT_SELECTION: "ACCOUNT_SELECTION",
+} as const;
+
+export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULAR_DRAWER_STEP];

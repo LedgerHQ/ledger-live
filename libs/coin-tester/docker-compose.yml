@@ -10,4 +10,7 @@ services:
       - "${SPECULOS_API_PORT}:${SPECULOS_API_PORT}"
     build:
       context: /speculos
-    command: --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT}
+    # -p: use the production public key the PKI
+    # TODO: remove `-p` when testing signatures from the CAL match Speculos public key
+    # --deterministic-rng: control randomness used by some apps for cryptographic purposes
+    command: -p --deterministic-rng 0 --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT} ${SPECULOS_EXTRA_ARGS:-}

@@ -2,12 +2,9 @@ import {
   TransportStatusError,
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
-} from "@ledgerhq/live-common/errors";
+} from "@ledgerhq/errors";
+import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,
@@ -68,6 +65,7 @@ import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
+import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -120,6 +118,7 @@ type Status = PartialNullable<{
   imageLoaded: boolean;
   imageCommitRequested: boolean;
   transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -222,6 +221,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     progress,
     listingApps,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   } = status;
 
   useTrackMyLedgerSectionEvents({
@@ -283,7 +283,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     deviceInfo,
     appAndVersion,
     transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   });
+
+  useTrackDmkErrorsEvents({ error });
 
   useEffect(() => {
     if (deviceInfo && device) {

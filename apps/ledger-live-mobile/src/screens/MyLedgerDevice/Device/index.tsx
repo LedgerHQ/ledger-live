@@ -40,6 +40,7 @@ const illustrations = {
   blue: NanoS,
   stax: Stax,
   europa: Europa,
+  apex: Europa,
 };
 
 type Props = PropsWithChildren<{

@@ -5,10 +5,7 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "~/const";
-import { BleState, DeviceLike } from "~/reducers/types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { MessageData, MockDeviceEvent, ServerData } from "./types";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
 
@@ -24,19 +21,19 @@ export async function findFreePort(): Promise<number> {
       if (address && typeof address !== "string") {
         const port: number = address.port;
         server.close(() => {
-          resolve(port); // Resolve with the free port
+          resolve(port);
         });
       } else {
-        console.warn("Unable to determine port. Selecting default");
-        resolve(8099); // Resolve with the free port
+        log("Unable to determine port. Selecting default");
+        resolve(8099);
       }
     });
 
     server.on("error", err => {
-      reject(err); // Reject with the error
+      reject(err);
     });
 
-    server.listen(0); // Let the system choose an available port
+    server.listen(0);
   });
 }
 
@@ -95,100 +92,43 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     await acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("e2e", "userdata", `${fileName}.json`), "utf8");
+  const f = fs.readFileSync(path.resolve("userdata", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
   const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
   const settings = merge(defaultSettings, data.settings || {});
-  await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
+  postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
-  navigate(NavigatorName.Base);
+  await navigate(NavigatorName.Base);
 
   if (data.accounts?.length) {
-    await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
+    postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
 }
 
 export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
-  await postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
-}
-
-export async function loadBleState(bleState: BleState) {
-  await postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
-}
-
-export async function loadAccountsRaw(
-  payload: {
-    data: AccountRaw;
-    version: number;
-  }[],
-) {
-  await postMessage({
-    type: "importAccounts",
-    id: uniqueId(),
-    payload,
-  });
-}
-
-export async function loadAccounts(accounts: Account[]) {
-  delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
-  const toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
-  await postMessage({
-    type: "importAccounts",
-    id: uniqueId(),
-    payload: accounts.map(account => ({
-      version: 1,
-      data: toAccountRaw(account),
-    })),
-  });
+  postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
 }
 
 async function navigate(name: string) {
-  await postMessage({
+  postMessage({
     type: "navigate",
     id: uniqueId(),
     payload: name,
   });
 }
 
-export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
-  await postMessage({
-    type: "mockDeviceEvent",
-    id: uniqueId(),
-    payload: args,
-  });
-}
-
-export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
-  const devicesList = Array.isArray(devices) ? devices : [devices];
-  devicesList.forEach(device => {
-    postMessage({
-      type: "add",
-      id: uniqueId(),
-      payload: {
-        id: device.id,
-        name: device.name,
-        serviceUUID: getDeviceModel(device.modelId).bluetoothSpec![0].serviceUuid,
-      },
-    });
-  });
-}
-
-export async function setInstalledApps(apps: string[] = []) {
-  await postMessage({
-    type: "setGlobals",
-    id: uniqueId(),
-    payload: { _listInstalledApps_mock_result: apps },
-  });
-}
-
-export async function open() {
-  await postMessage({ type: "open", id: uniqueId() });
-}
-
 export async function swapSetup() {
-  await postMessage({ type: "swapSetup", id: uniqueId() });
+  postMessage({ type: "swapSetup", id: uniqueId() });
+}
+
+export async function waitSwapReady() {
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
+}
+
+export async function waitEarnReady() {
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
 }
 
 export async function getLogs() {
@@ -203,13 +143,13 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
-function fetchData(message: MessageData): Promise<string> {
+async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
-    }, RESPONSE_TIMEOUT);
+    }, timeout);
 
     clientResponse = (data: string) => {
       clearTimeout(timeoutId);
@@ -219,11 +159,15 @@ function fetchData(message: MessageData): Promise<string> {
 }
 
 export async function addKnownSpeculos(proxyAddress: string) {
-  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+  postMessage({
+    type: "addKnownSpeculos",
+    id: uniqueId(),
+    payload: JSON.stringify({ address: proxyAddress, model: process.env.SPECULOS_DEVICE }),
+  });
 }
 
 export async function removeKnownSpeculos(id: string) {
-  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
 function onMessage(messageStr: string) {
@@ -238,15 +182,31 @@ function onMessage(messageStr: string) {
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);
       break;
-    case "appLogs": {
-      clientResponse(msg.payload);
-      break;
-    }
+    case "appLogs":
     case "appFlags":
-      clientResponse(msg.payload);
-      break;
     case "appEnvs":
       clientResponse(msg.payload);
+      break;
+    case "swapLiveAppReady":
+      clientResponse("Swap Live App is ready");
+      break;
+    case "earnLiveAppReady":
+      clientResponse("Earn Live App is ready");
+      break;
+    case "appFile":
+      try {
+        const { fileName, fileContent }: { fileName: string; fileContent: string } = JSON.parse(
+          msg.payload,
+        );
+        const artifactsDir = path.resolve(__dirname, "../artifacts");
+        if (!fs.existsSync(artifactsDir)) {
+          fs.mkdirSync(artifactsDir, { recursive: true });
+        }
+        const filePath = path.join(artifactsDir, fileName);
+        fs.writeFileSync(filePath, fileContent, "utf8");
+      } catch (err) {
+        log(`Failed to save file: ${err}`);
+      }
       break;
     default:
       break;
@@ -258,10 +218,10 @@ function log(message: string) {
 }
 
 async function acceptTerms() {
-  await postMessage({ type: "acceptTerms", id: uniqueId() });
+  postMessage({ type: "acceptTerms", id: uniqueId() });
 }
 
-async function postMessage(message: MessageData) {
+function postMessage(message: MessageData) {
   log(`Message sending ${message.type}: ${message.id}`);
   try {
     webSocket.messages[message.id] = message;
@@ -271,6 +231,8 @@ async function postMessage(message: MessageData) {
       log("WebSocket connection is not open. Message not sent.");
     }
   } catch (error: unknown) {
-    log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
+    detoxLog.error(
+      `Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`,
+    );
   }
 }

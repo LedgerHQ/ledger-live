@@ -12,15 +12,17 @@ export function SwiperComponent<T extends CardWithId>({
   renderCard,
   cardContainerStyle,
   containerStyle,
+  currentIndex,
+  onIndexChange,
 }: SwiperComponentProps<T>) {
-  const { cards, gesture, swipeX, swipeY } = useSwiper(initialCards);
+  const { cards, gesture, swipeX, swipeY } = useSwiper(initialCards, currentIndex, onIndexChange);
 
   return (
     <GestureDetector gesture={gesture}>
       <View style={[styles.container, containerStyle]}>
         <Animated.View style={[styles.cardContainer, cardContainerStyle]}>
           {cards.map((card, index) => (
-            <SwipeableCard key={card.id} index={index} swipeX={swipeX} swipeY={swipeY}>
+            <SwipeableCard key={card.idCard} index={index} swipeX={swipeX} swipeY={swipeY}>
               {renderCard(card)}
             </SwipeableCard>
           ))}

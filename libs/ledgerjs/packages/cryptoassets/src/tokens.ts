@@ -15,7 +15,11 @@ import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
+import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
+import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
+import suitokens, { SuiToken } from "./data/sui";
 import { ERC20Token } from "./types";
+import { getEnv } from "@ledgerhq/live-env";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -57,6 +61,18 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+
+if (getEnv("SUI_ENABLE_TOKENS")) {
+  // Sui tokens
+  addTokens(suitokens.map(convertSuiTokens));
+}
+
+if (getEnv("APTOS_ENABLE_TOKENS")) {
+  // Aptos Legacy Coin tokens
+  addTokens(aptCoinTokens.map(convertAptCoinTokens));
+  // Aptos fungible assets tokens
+  addTokens(aptFATokens.map(convertAptFaTokens));
+}
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -124,7 +140,7 @@ export function listTokensForCryptoCurrency(
  */
 export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): string[] {
   return listTokensForCryptoCurrency(currency).reduce<string[]>((acc, cur) => {
-    const tokenType = cur.tokenType;
+    const tokenType = cur.tokenType.replace("_", " ");
 
     if (acc.indexOf(tokenType) < 0) {
       return [...acc, tokenType];
@@ -407,7 +423,14 @@ function convertMultiversXESDTTokens([
   };
 }
 
-function convertSplTokens([id, network, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+export function convertSplTokens([
+  id,
+  network,
+  name,
+  symbol,
+  address,
+  decimals,
+]: SPLToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
@@ -421,6 +444,57 @@ function convertSplTokens([id, network, name, symbol, address, decimals]: SPLTok
       {
         name,
         code: symbol,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+function convertAptosTokens(
+  tokenType: "coin" | "fungible_asset",
+  [id, ticker, name, address, decimals, delisted]: AptosCoinToken | AptosFAToken,
+): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById("aptos"),
+    name,
+    tokenType,
+    ticker,
+    disableCountervalue: false,
+    delisted,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
+  return convertAptosTokens("coin", token);
+}
+
+function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
+  return convertAptosTokens("fungible_asset", token);
+}
+
+function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById("sui"),
+    name,
+    tokenType: "sui",
+    ticker,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
         magnitude: decimals,
       },
     ],

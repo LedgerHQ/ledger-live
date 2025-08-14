@@ -44,6 +44,11 @@ import { useWebviewState } from "./helpers";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import {
+  useModularDrawerVisibility,
+  ModularDrawerLocation,
+  openAssetAndAccountDrawer,
+} from "LLD/features/ModularDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -52,27 +57,56 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
+
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: manifest.id,
+  });
+
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
+
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+      "account.request": ({ accounts$, currencies, drawerConfiguration, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
-        setDrawer(
-          SelectAccountAndCurrencyDrawer,
-          {
-            currencies,
-            onAccountSelected: (account, parentAccount) => {
-              setDrawer();
-              onSuccess(account, parentAccount);
-            },
-            accounts$,
-          },
-          {
-            onRequestClose: () => {
-              setDrawer();
-              onCancel();
-            },
-          },
-        );
+
+        modularDrawerVisible
+          ? openAssetAndAccountDrawer({
+              accounts$,
+              drawerConfiguration,
+              currencies,
+              onSuccess,
+              onCancel,
+              flow,
+              source,
+            })
+          : setDrawer(
+              SelectAccountAndCurrencyDrawer,
+              {
+                currencies,
+                onAccountSelected: (account, parentAccount) => {
+                  setDrawer();
+                  onSuccess(account, parentAccount);
+                },
+                accounts$,
+                flow,
+                source,
+              },
+              {
+                onRequestClose: () => {
+                  setDrawer();
+                  onCancel();
+                },
+              },
+            );
       },
       "account.receive": ({
         account,
@@ -96,12 +130,14 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
-      "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+      "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
             message,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
             onConfirmationHandler: onSuccess,
             onFailHandler: onError,
             onClose: onCancel,
@@ -109,7 +145,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId) as string | undefined;
+        return getStoreValue(key, storeId);
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
@@ -158,7 +194,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
               accountId: account.id,
-              parentId: parentAccount?.id as string | undefined | null,
+              parentId: parentAccount?.id,
             });
           },
         });
@@ -214,7 +250,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [dispatch, manifest, pushToast, t, tracking],
+    [modularDrawerVisible, flow, source, dispatch, manifest, pushToast, t, tracking],
   );
 }
 
@@ -373,6 +409,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       hideLoader,
       webviewStyle: customWebviewStyle,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -459,14 +496,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!widgetLoaded && !hideLoader ? (
-          <Loader>
-            <BigSpinner size={50} />
-          </Loader>
-        ) : null}
+        {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
       </>
     );
   },
 );
+
+function DefaultLoader({ isLoading }: { isLoading: boolean }) {
+  if (!isLoading) return null;
+
+  return (
+    <Loader>
+      <BigSpinner size={50} />
+    </Loader>
+  );
+}
 
 WalletAPIWebview.displayName = "WalletAPIWebview";

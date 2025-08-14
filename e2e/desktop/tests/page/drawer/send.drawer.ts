@@ -3,11 +3,12 @@ import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
+import { getAccountAddress } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class SendDrawer extends Drawer {
-  private addressValue = (address: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
+  private sendDrawer = this.page.getByTestId("drawer-content");
+  private addressValue = (address: string) => this.sendDrawer.filter({ hasText: address });
+  private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type");
   private nftName = this.page.getByTestId("nft-name-operationDrawer");
 
@@ -18,7 +19,7 @@ export class SendDrawer extends Drawer {
 
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
-    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
+    await expect(this.addressValue(getAccountAddress(tx.accountToCredit))).toBeVisible();
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));

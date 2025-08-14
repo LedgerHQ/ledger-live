@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-nft-react",
-  "version": "0.9.3",
+  "version": "0.9.16",
   "description": "Ledger Live nft React module",
   "keywords": [
     "Ledger"
@@ -52,7 +52,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "pnpm knip --directory ../.. -W libs/live-nft-react",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {

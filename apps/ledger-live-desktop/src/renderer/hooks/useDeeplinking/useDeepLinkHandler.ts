@@ -16,6 +16,11 @@ import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -30,6 +35,11 @@ export function useDeepLinkHandler() {
     navigateToPostOnboardingHub,
   );
   const tryRedirectToPostOnboardingOrRecover = useRedirectToPostOnboardingCallback();
+
+  const { openAddAccountFlow, openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "deeplink",
+  );
 
   const navigate = useCallback(
     (
@@ -141,6 +151,7 @@ export function useDeepLinkHandler() {
           const { address, currency } = query;
 
           if (!currency || typeof currency !== "string") return;
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
@@ -172,20 +183,14 @@ export function useDeepLinkHandler() {
         case "add-account": {
           const { currency } = query;
 
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const foundCurrency = findCryptoCurrencyByKeyword(
             typeof currency === "string" ? currency?.toUpperCase() : "",
-          ) as Currency;
-
-          dispatch(
-            openModal(
-              "MODAL_ADD_ACCOUNTS",
-              !foundCurrency || foundCurrency.type === "FiatCurrency"
-                ? undefined
-                : {
-                    currency: foundCurrency,
-                  },
-            ),
           );
+
+          if (foundCurrency) {
+            openAddAccountFlow(foundCurrency, true);
+          }
 
           break;
         }
@@ -246,53 +251,54 @@ export function useDeepLinkHandler() {
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          const foundCurrency = findCryptoCurrencyByKeyword(
-            typeof currency === "string" ? currency.toUpperCase() : "",
-          ) as Currency;
+          let foundCurrency;
+          try {
+            foundCurrency = getTokenOrCryptoCurrencyById(
+              typeof currency === "string" ? currency : "",
+            );
+          } catch (error) {
+            foundCurrency = null;
+          }
 
-          if (!currency || !foundCurrency || foundCurrency.type === "FiatCurrency") {
+          const openModalWithAccount = (
+            account: Account | TokenAccount,
+            parentAccount?: Account,
+          ) => {
+            setDrawer();
             dispatch(
               openModal(modal, {
                 recipient,
+                account,
+                parentAccount,
+                amount:
+                  amount && typeof amount === "string" && foundCurrency
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
+                    : undefined,
               }),
             );
+          };
+
+          if (!currency || !foundCurrency) {
+            // we fallback to default add account flow with asset selection
+            openAssetFlow(true);
             return;
           }
           const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
           if (!found.length) {
-            dispatch(
-              openModal("MODAL_ADD_ACCOUNTS", {
-                currency: foundCurrency,
-              }),
-            );
+            openAddAccountFlow(foundCurrency, true, openModalWithAccount);
             return;
           }
+
           const [chosen] = found;
           dispatch(closeAllModal());
           if (chosen?.type === "Account") {
-            dispatch(
-              openModal(modal, {
-                account: chosen,
-                recipient,
-                amount:
-                  amount && typeof amount === "string"
-                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
-                    : undefined,
-              }),
-            );
+            openModalWithAccount(chosen);
           } else {
-            dispatch(
-              openModal(modal, {
-                account: chosen,
-                parentAccount: accounts.find(acc => acc.id === chosen?.parentId),
-                recipient,
-                amount:
-                  amount && typeof amount === "string"
-                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
-                    : undefined,
-              }),
-            );
+            const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
+            if (parentAccount && chosen) {
+              openModalWithAccount(chosen, parentAccount);
+            }
           }
           break;
         }
@@ -376,6 +382,8 @@ export function useDeepLinkHandler() {
       dispatch,
       location.pathname,
       navigate,
+      openAddAccountFlow,
+      openAssetFlow,
       postOnboardingDeeplinkHandler,
       setUrl,
       tryRedirectToPostOnboardingOrRecover,

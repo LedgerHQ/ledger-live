@@ -4,7 +4,7 @@ import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/i
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
-import { runCliCommand } from "./runCli";
+import { runCliCommandWithRetry } from "./runCli";
 import {
   registerTransportModule,
   unregisterAllTransportModules,
@@ -55,7 +55,7 @@ type LedgerSyncOpts = {
 };
 
 export const CLI = {
-  ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
+  ledgerKeyRingProtocol: async function (opts: LedgerKeyRingProtocolOpts) {
     const {
       apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
       applicationId = 16,
@@ -89,9 +89,12 @@ export const CLI = {
       if (!pubKey || !privateKey) {
         return Promise.reject("pubKey and privateKey are required");
       }
-      return sdk
-        .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
-        .then(result => result.trustchain);
+
+      const result_1 = await sdk.getOrCreateTrustchain(device || "", {
+        pubkey: pubKey,
+        privatekey: privateKey,
+      });
+      return result_1.trustchain;
     }
 
     if (destroyKeyRingTree) {
@@ -202,7 +205,7 @@ export const CLI = {
       cliOpts.push("--add");
     }
 
-    return runCliCommand(cliOpts.join("+"));
+    return runCliCommandWithRetry(cliOpts.join("+"), 3, 2_000);
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();

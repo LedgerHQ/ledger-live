@@ -1,4 +1,4 @@
-name: "[Release] Publish packages and apps"
+name: "[Release] - Publish Release - Manual"
 on:
   workflow_call:
     inputs:
@@ -167,7 +167,7 @@ jobs:
             });
 
   release-fail:
-    name: Release Failure Reporting
+    name: Release Final > Failure Reporting
     needs: release
     if: failure()
     runs-on: ubuntu-latest

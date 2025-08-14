@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.4.22",
+  "version": "0.5.5",
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
   "keywords": [
@@ -47,7 +47,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "typesVersions": {
     "*": {

@@ -15,6 +15,11 @@ export class LedgerSyncDrawer extends Drawer {
   private backupDeletionSuccessText = this.page.getByText(
     "Your Ledger Live apps are no longer synched",
   );
+  private removeMemberSuccessText = this.page.getByText(
+    "Your Ledger Live app on CLI is no longer connected to Ledger Sync",
+  );
+  private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
+  private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI").getByText("Remove");
 
   @step("Synchronize accounts")
   async syncAccounts() {
@@ -28,12 +33,14 @@ export class LedgerSyncDrawer extends Drawer {
     await this.closeLedgerSyncButton.click();
   }
 
+  async waitForDeleteSyncButton() {
+    await this.deleteSyncButton.waitFor({ state: "visible" });
+  }
+
   @step("Delete Sync")
   async deleteSync() {
+    await this.waitForDeleteSyncButton();
     await this.deleteSyncButton.click();
-    if (await this.deleteSyncButton.isVisible()) {
-      await this.deleteSyncButton.click();
-    }
   }
 
   @step("Confirm the deletion of the data")
@@ -68,5 +75,25 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Check if the backup deletion was successful")
   async expectBackupDeletion() {
     await expect(this.backupDeletionSuccessText).toBeVisible();
+  }
+
+  async waitForManageInstancesButton() {
+    await this.displayInstances.waitFor({ state: "visible" });
+  }
+
+  @step("Manage instances")
+  async manageInstances() {
+    await this.waitForManageInstancesButton();
+    await this.displayInstances.click();
+  }
+
+  @step("Remove ClI member")
+  async removeCLIMember() {
+    await this.removeCLI.click();
+  }
+
+  @step("Check if the member removal was successful")
+  async expectMemberRemoval() {
+    await expect(this.removeMemberSuccessText).toBeVisible();
   }
 }

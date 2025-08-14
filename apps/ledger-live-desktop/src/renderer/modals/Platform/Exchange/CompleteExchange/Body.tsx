@@ -1,4 +1,4 @@
-import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
+import { DisabledTransactionBroadcastError, MissingSwapPayloadParamaters } from "@ledgerhq/errors";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
@@ -38,6 +38,8 @@ export type Data = {
   swapId?: string;
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
+  refundAddress?: string;
+  payoutAddress?: string;
 };
 
 type ResultsState = {
@@ -67,7 +69,15 @@ const Root = styled.div`
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
-  const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
+  const {
+    onResult,
+    onCancel,
+    swapId,
+    magnitudeAwareRate,
+    refundAddress,
+    payoutAddress,
+    ...exchangeParams
+  } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   // toAccount exists only in swap mode
@@ -111,6 +121,25 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const [error, setError] = useState<Error>();
   const [result, setResult] = useState<ResultsState>();
 
+  useEffect(() => {
+    if (data.exchangeType === ExchangeType.SWAP) {
+      const missingParams = [];
+      if (!refundAddress) {
+        missingParams.push("refundAddress");
+      }
+      if (!payoutAddress) {
+        missingParams.push("payoutAddress");
+      }
+      if (missingParams.length > 0) {
+        // error message is only for DataDog not displayed to the user
+        const err = new MissingSwapPayloadParamaters(
+          `Partner payload issue - missing ${missingParams.join(" and ")}`,
+        );
+        setError(err);
+      }
+    }
+  }, [refundAddress, payoutAddress, data.exchangeType]);
+
   const signRequest = useMemo(
     () =>
       transaction
@@ -135,6 +164,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     }) => {
       const params = getUpdateAccountWithUpdaterParams({
         result: inputs.result,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         exchange: exchange as ExchangeSwap,
         transaction: transactionParams,
         magnitudeAwareRate: inputs.magnitudeAwareRate,
@@ -155,12 +185,15 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           swapId,
           mode: ExchangeModeEnum.Swap,
           provider,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
         }
       : {
           provider,
           mode: ExchangeModeEnum.Sell,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
         };
   };
@@ -174,11 +207,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSwapTransaction = (operation: Operation, result: ResultsState) => {
     const newResult = {
       operation,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       swapId: swapId as string,
     };
 
     updateAccount({
       result: newResult,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       magnitudeAwareRate: magnitudeAwareRate as BigNumber,
     });
 

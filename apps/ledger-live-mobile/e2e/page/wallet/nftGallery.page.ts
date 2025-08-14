@@ -8,9 +8,7 @@ export default class NftGalleryPage {
   emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
   nftListPrefix = "wallet-nft-gallery-list-";
   nftListRegexp = new RegExp(`^${this.nftListPrefix}.`);
-  nftListComponent = () => getElementById(this.nftListRegexp);
   nftAddNewListItem = () => getElementById("wallet-nft-gallery-add-new-list-item");
-  receiveNftButton = () => getElementById("wallet-nft-gallery-receive-nft-button");
   nftReceiveModalContinueButton = () =>
     getElementById("wallet-nft-gallery-receive-modal-continue-button");
   nftReceiveModal = () => getElementById("wallet-nft-gallery-receive-modal");
@@ -36,22 +34,6 @@ export default class NftGalleryPage {
     await tapByElement(this.nftListItem(index));
     await tapByElement(this.confirmHide());
     await expect(this.nftListItem(index)).not.toBeVisible();
-  }
-
-  @Step("Hide All Nft")
-  async hideAllNft() {
-    // Get total number of NFTs given by the list identifier
-    const nftNumber = Number.parseInt(
-      (await getIdByRegexp(this.nftListRegexp)).replace(this.nftListPrefix, ""),
-    );
-
-    // Select all NFTs and confirm hidding
-    await tapByElement(this.selectAndHide());
-    for (let nb = nftNumber; nb > 0; nb--) await this.clickOnNft(nb - 1);
-    await tapByElement(this.confirmHide());
-
-    // Expect no NFT displayed
-    await expect(this.nftListItem()).not.toBeVisible();
   }
 
   async continueFromReceiveNFTsModal() {
@@ -92,16 +74,6 @@ export default class NftGalleryPage {
   @Step("Expect Filter Drawer not to be visible")
   async expectFilterDrawerNotVisible() {
     await expect(this.nftFilterDrawer()).not.toBeVisible();
-  }
-
-  @Step("Click on reset filters")
-  async tapResetFilters() {
-    await tapByElement(this.emptyScreenResetButton());
-  }
-
-  @Step("Click on Add new NFT")
-  async tapAddNew() {
-    await tapByElement(this.nftAddNewListItem());
   }
 
   @Step("Expect NFT receive modal visible")

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.4.4",
+  "version": "8.4.8",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"
@@ -79,6 +79,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "coverage": "jest --coverage",
     "unimported": "unimported"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"

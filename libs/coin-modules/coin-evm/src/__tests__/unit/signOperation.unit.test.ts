@@ -6,12 +6,11 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { concat, of } from "rxjs";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
-import { buildSignOperation } from "../../signOperation";
-import { DEFAULT_NONCE } from "../../createTransaction";
-import * as nodeApi from "../../api/node/rpc.common";
+import { buildSignOperation } from "../../bridge/signOperation";
+import * as nodeApi from "../../network/node/rpc.common";
 import type { EvmSigner } from "../../types/signer";
-import { getEstimatedFees } from "../../logic";
 import { getCoinConfig } from "../../config";
+import { DEFAULT_NONCE, getEstimatedFees } from "../../utils";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -198,6 +197,70 @@ describe("EVM Family", () => {
           },
           complete: () => {
             done();
+          },
+        });
+      });
+
+      it("should emit transaction-checks-opt-out event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.transaction-checks-opt-out" }),
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        const subscription = signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-out") {
+              subscription.unsubscribe();
+              done();
+            }
+          },
+          error: err => {
+            throw err;
+          },
+          complete: () => {
+            throw new Error("no transaction-checks-opt-out event");
+          },
+        });
+      });
+
+      it("should emit transaction-checks-opt-in event", done => {
+        // GIVEN
+        const signOpObservable = buildSignOperation(mockSignerContext)({
+          account,
+          transaction: transactionEIP1559,
+          deviceId: "",
+        });
+        clearSignTransactionMock.mockImplementation(() =>
+          concat(
+            of({ type: "signer.evm.transaction-checks-opt-in" }),
+            of({ type: "signer.evm.signing" }),
+            of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+          ),
+        );
+
+        // WHEN
+        const subscription = signOpObservable.subscribe({
+          next: event => {
+            if (event.type === "transaction-checks-opt-in") {
+              subscription.unsubscribe();
+              done();
+            }
+          },
+          error: err => {
+            throw err;
+          },
+          complete: () => {
+            throw new Error("no transaction-checks-opt-in-failed event");
           },
         });
       });

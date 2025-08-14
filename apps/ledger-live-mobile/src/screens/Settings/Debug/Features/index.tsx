@@ -9,9 +9,16 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
 
 export default function Features() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigateToLargeMover = () => {
+    navigation.navigate(ScreenName.LargeMoverLandingPage, {
+      currencyIds: "BTC,ETH,SOL",
+      initialRange: InitialRange.Day,
+    });
+  };
   return (
     <SettingsNavigationScrollView>
       <SettingsRow
@@ -111,7 +118,7 @@ export default function Features() {
           title="Large Mover"
           desc="See the large mover landing page"
           iconLeft={<Icons.Dollar />}
-          onPress={() => navigation.navigate(ScreenName.LargeMoverLandingPage)}
+          onPress={navigateToLargeMover}
         />
       </FeatureToggle>
       <SettingsRow
@@ -120,6 +127,15 @@ export default function Features() {
         iconLeft={<Icons.CreditCard />}
         onPress={() => navigation.navigate(ScreenName.DebugSwipe)}
       />
+
+      <FeatureToggle featureId="llmModularDrawer">
+        <SettingsRow
+          title="MAD"
+          desc="Open & Debug Modular Asset Drawer"
+          iconLeft={<Icons.CoinsCrypto />}
+          onPress={() => navigation.navigate(ScreenName.DebugModularAssetDrawer)}
+        />
+      </FeatureToggle>
     </SettingsNavigationScrollView>
   );
 }

@@ -1,7 +1,7 @@
-import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi, Operation } from "@ledgerhq/coin-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
 import { createApi, envelopeFromAnyXDR } from ".";
-import { StellarAsset } from "../types";
+import { StellarMemo } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
@@ -9,7 +9,7 @@ import { StellarAsset } from "../types";
  * Tests are skipped for the moment due to TooManyRequest errors
  */
 describe.skip("Stellar Api", () => {
-  let module: Api<StellarAsset>;
+  let module: AlpacaApi<StellarMemo>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -32,6 +32,7 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: "address",
         amount: amount,
+        memo: { type: "NO_MEMO" },
       });
 
       // Then
@@ -40,7 +41,7 @@ describe.skip("Stellar Api", () => {
   });
 
   describe("listOperations", () => {
-    let txs: Operation<StellarAsset>[];
+    let txs: Operation[];
 
     beforeAll(async () => {
       [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
@@ -106,6 +107,7 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
+        memo: { type: "NO_MEMO" },
       });
 
       const envelope = envelopeFromAnyXDR(result, "base64");
@@ -120,6 +122,7 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
+        memo: { type: "NO_MEMO" },
       });
 
       const fees = readFees(transactionXdr);
@@ -135,8 +138,9 @@ describe.skip("Stellar Api", () => {
           sender: ADDRESS,
           recipient: RECIPIENT,
           amount: AMOUNT,
+          memo: { type: "NO_MEMO" },
         },
-        customFees,
+        { value: customFees },
       );
 
       const fees = readFees(transactionXdr);
@@ -150,6 +154,7 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
+        memo: { type: "NO_MEMO" },
       });
       expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoNone());
     });
@@ -161,8 +166,10 @@ describe.skip("Stellar Api", () => {
         sender: ADDRESS,
         recipient: RECIPIENT,
         amount: AMOUNT,
-        memoType: "MEMO_TEXT",
-        memoValue: "test",
+        memo: {
+          type: "MEMO_TEXT",
+          value: "test",
+        },
       });
       expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoText(Buffer.from("test", "ascii")));
     });

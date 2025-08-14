@@ -2,6 +2,7 @@ import { test } from "../fixtures/common";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
+import invariant from "invariant";
 
 const currencies = [
   {
@@ -21,6 +22,7 @@ const currencies = [
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
+  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
 ];
 
 for (const currency of currencies) {
@@ -34,6 +36,7 @@ for (const currency of currencies) {
     test(
       `[${currency.currency.name}] Add account`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: currency.xrayTicket,
@@ -56,8 +59,9 @@ for (const currency of currencies) {
         await app.account.expectAccountVisibility(firstAccountName);
         await app.account.expectAccountBalance();
         await app.account.expectLastOperationsVisibility();
-        await app.account.clickOnLastOperation();
-        await app.operationDrawer.expectDrawerInfos(firstAccountName);
+        const operationStatus = await app.account.clickOnLastOperationAndReturnStatus();
+        invariant(operationStatus, "Expected operationStatus to be defined");
+        await app.operationDrawer.expectDrawerInfos(firstAccountName, operationStatus);
         await app.operationDrawer.closeDrawer();
         await app.account.expectAddressIndex(0);
         await app.account.expectShowMoreButton();

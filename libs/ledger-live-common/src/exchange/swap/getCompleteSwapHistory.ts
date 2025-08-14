@@ -17,9 +17,11 @@ const getSwapOperationMap =
       tokenId,
     } = swapOperation;
     // Find operation by matching its hash which is embedded in the operationId
-    const operation = account.operations.find(o => operationId.includes(o.hash));
+    const operation = account.operations.find(
+      o => operationId.includes(o.hash) || o.id === operationId,
+    );
     const optimisticOperation = !operation
-      ? account.pendingOperations.find(o => o.id === operationId)
+      ? account.pendingOperations.find(o => operationId.includes(o.hash) || o.id === operationId)
       : null;
     const op = operation || optimisticOperation;
 
@@ -47,7 +49,7 @@ const getSwapOperationMap =
       if (account && toAccount && status) {
         let fromParentAccount;
 
-        if (account.type !== "Account") {
+        if (account.type === "TokenAccount") {
           fromParentAccount = accounts.find(a => a.id === account.parentId);
         }
 

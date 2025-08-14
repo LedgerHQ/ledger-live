@@ -21,6 +21,7 @@ type Props = {
   textProperties?: Partial<BaseTextProps>;
   isPercentSignDisplayed?: boolean;
   isArrowDisplayed?: boolean;
+  testID?: string;
 };
 
 function Delta({
@@ -34,6 +35,7 @@ function Delta({
   textProperties,
   isPercentSignDisplayed = false,
   isArrowDisplayed = true,
+  testID,
 }: Props) {
   const { t } = useTranslation();
 
@@ -45,7 +47,9 @@ function Delta({
   ) : null;
 
   const delta =
-    percent && valueChange.percentage ? valueChange.percentage * 100 : valueChange.value;
+    (percent || isPercentSignDisplayed) && valueChange.percentage
+      ? valueChange.percentage * 100
+      : valueChange.value;
 
   const roundedDelta = parseFloat(delta.toFixed(0));
 
@@ -86,6 +90,7 @@ function Delta({
           fontWeight={isPercentSignDisplayed ? undefined : "semiBold"}
           variant={"large"}
           color={color}
+          testID={testID}
           {...textProperties}
         >
           {unit && absDelta !== 0 ? (

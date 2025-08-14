@@ -56,6 +56,7 @@ class SideBarListItem extends PureComponent<Props> {
         <Container
           data-testid={`drawer-${id}-button`}
           isActive={!disabled && isActive}
+          data-active={isActive ? "true" : "false"}
           iconActiveColor={iconActiveColor}
           onClick={disabled ? undefined : onClick}
           disabled={disabled}

@@ -7,11 +7,13 @@ import { importESDTTokens } from "./importers/esdt";
 import { importEVMTokens } from "./importers/evm";
 import { importFilecoinERC20Tokens } from "./importers/filecoin";
 import { importSPLTokens } from "./importers/spl";
+import { importSuiTokens } from "./importers/sui";
 import { importStellarTokens } from "./importers/stellar";
 import { importTonJettonTokens } from "./importers/ton";
 import { importTRC10Tokens } from "./importers/trc10";
 import { importTRC20Tokens } from "./importers/trc20";
 import { importVip180Tokens } from "./importers/vip180";
+import { importAptosTokens } from "./importers/apt";
 
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importCoinsExchange } from "./exchange/coins";
@@ -30,12 +32,15 @@ const importTokens = async () => {
     importCardanoNativeTokens(outputFolder),
     importESDTTokens(outputFolder),
     importSPLTokens(outputFolder),
+    importSuiTokens(outputFolder),
     importStellarTokens(outputFolder),
     importTRC10Tokens(outputFolder),
     importTRC20Tokens(outputFolder),
     importFilecoinERC20Tokens(outputFolder),
     importTonJettonTokens(outputFolder),
     importVip180Tokens(outputFolder),
+    importAptosTokens(outputFolder, "coin"),
+    importAptosTokens(outputFolder, "fungible_asset"),
   ];
 
   await Promise.allSettled(promises);

@@ -5,7 +5,7 @@ import {
   createAssociatedTokenAccountInstruction,
   createRevokeInstruction,
   createTransferCheckedInstruction,
-  createTransferCheckedWithTransferHookInstruction,
+  createTransferCheckedWithFeeAndTransferHookInstruction,
   getAssociatedTokenAddress,
   TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
@@ -220,18 +220,18 @@ export const buildTokenTransferInstructions = async (
     );
   }
 
-  const amountWithFee = extensions?.transferFee?.transferAmountIncludingFee;
-
+  const transferFeeCalculated = extensions?.transferFee;
   const transferIx =
     tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022
-      ? await createTransferCheckedWithTransferHookInstruction(
+      ? await createTransferCheckedWithFeeAndTransferHookInstruction(
           api.connection,
           new PublicKey(ownerAssociatedTokenAccountAddress),
           mintPubkey,
           destinationPubkey,
           ownerPubkey,
-          BigInt(amountWithFee || amount),
+          BigInt(transferFeeCalculated?.transferAmountIncludingFee || amount),
           mintDecimals,
+          BigInt(transferFeeCalculated?.transferFee ?? 0),
           undefined,
           "confirmed",
           programId,

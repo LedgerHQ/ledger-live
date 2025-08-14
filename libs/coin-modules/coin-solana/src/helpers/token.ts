@@ -3,7 +3,12 @@ import type { PublicKey } from "@solana/web3.js";
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
-import { SolanaTokenAccount, SolanaTokenProgram, TransferFeeCalculated } from "../types";
+import {
+  SolanaTokenAccount,
+  SolanaTokenAccountExtensions,
+  SolanaTokenProgram,
+  TransferFeeCalculated,
+} from "../types";
 import { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 
@@ -17,6 +22,10 @@ export function isTokenAccountFrozen(account: AccountLike): boolean {
 
 export function getTokenExtensions(account: AccountLike) {
   return account.type === "TokenAccount" ? (account as SolanaTokenAccount)?.extensions : undefined;
+}
+
+export function hasProblematicExtension(extensions: SolanaTokenAccountExtensions) {
+  return ["transferFee", "transferHook"].some(extension => extension in extensions);
 }
 
 export function getTokenAccountProgramId(program: SolanaTokenProgram): PublicKey {

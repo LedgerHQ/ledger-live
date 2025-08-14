@@ -7,6 +7,8 @@ import {
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { v4, v5, parse } from "uuid";
+import { Transaction } from "../../types";
+import { TokenAccountExtensions } from "../../network/chain/account/tokenExtensions";
 
 const seed = v4();
 
@@ -98,6 +100,7 @@ export function parsedTokenInfo({
   isNative,
   amount,
   decimals,
+  extensions,
 }: {
   state?: "initialized" | "uninitialized" | "frozen";
   owner?: PublicKey;
@@ -105,6 +108,7 @@ export function parsedTokenInfo({
   isNative?: boolean;
   amount?: number;
   decimals?: number;
+  extensions?: TokenAccountExtensions;
 }) {
   const amountOrDefault = amount ?? 2000;
   const decimalsOrDefault = decimals ?? 3;
@@ -114,6 +118,7 @@ export function parsedTokenInfo({
     owner: owner ?? publicKeyOf("owner"),
     mint: mint ?? publicKeyOf("mint"),
     state: state ?? "initialized",
+    extensions: extensions ?? [],
     tokenAmount: {
       amount: amountOrDefault.toString(),
       decimals: decimalsOrDefault,
@@ -154,4 +159,33 @@ export function epochInfo({ epoch }: { epoch: number }) {
     slotsInEpoch: 8192,
     transactionCount: 22661093,
   };
+}
+
+export function transaction(options?: {
+  kind?: Transaction["model"]["kind"];
+  subAccountId?: string;
+  raw?: string;
+}): Transaction {
+  const kind = options?.kind ?? "transfer";
+  return {
+    family: "solana",
+    amount: new BigNumber(0),
+    recipient: "",
+    model: {
+      kind,
+      uiState: { subAccountId: options?.subAccountId },
+      commandDescriptor: {
+        command: {
+          kind,
+          sender: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+          recipient: "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4",
+          amount: 0,
+        },
+        fee: 0,
+        warnings: {},
+        errors: {},
+      },
+    },
+    raw: options?.raw ?? "",
+  } as unknown as Transaction;
 }

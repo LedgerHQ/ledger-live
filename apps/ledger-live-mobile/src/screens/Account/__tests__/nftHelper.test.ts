@@ -44,7 +44,7 @@ describe("nftHelper", () => {
       expect(result).toBe(false);
     });
 
-    it("returns false if account === solana and llmSolanaNftsEnabled === false", () => {
+    it("returns false if account === solana, llmNftSupportEnabled === false, and llmSolanaNftsEnabled === false", () => {
       (getEnv as jest.Mock).mockReturnValue(["solana"]);
       const account = {
         type: "Account",
@@ -57,12 +57,16 @@ describe("nftHelper", () => {
       (isNFTActive as jest.Mock).mockReturnValue(nftCurrencies.includes(account.currency.id));
 
       const isAccountEmpty = false;
+      const llmNftSupportEnabled = false;
       const llmSolanaNftsEnabled = false;
-      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, { llmSolanaNftsEnabled });
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, {
+        llmNftSupportEnabled,
+        llmSolanaNftsEnabled,
+      });
       expect(result).toBe(false);
     });
 
-    it("returns true if account === solana and llmSolanaNftsEnabled === true", () => {
+    it("returns true if account === solana, llmNftSupportEnabled === true, and llmSolanaNftsEnabled === true", () => {
       (getEnv as jest.Mock).mockReturnValue(["solana"]);
       const account = {
         type: "Account",
@@ -75,12 +79,38 @@ describe("nftHelper", () => {
       (isNFTActive as jest.Mock).mockReturnValue(nftCurrencies.includes(account.currency.id));
 
       const isAccountEmpty = false;
+      const llmNftSupportEnabled = true;
       const llmSolanaNftsEnabled = true;
-      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, { llmSolanaNftsEnabled });
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, {
+        llmNftSupportEnabled,
+        llmSolanaNftsEnabled,
+      });
       expect(result).toBe(true);
     });
 
-    it("returns true if account !== solana and llmSolanaNftsEnabled === false", () => {
+    it("returns false if account === solana, llmNftSupportEnabled === true, and llmSolanaNftsEnabled === false", () => {
+      (getEnv as jest.Mock).mockReturnValue(["solana"]);
+      const account = {
+        type: "Account",
+        currency: {
+          id: "solana",
+        },
+      } as Account;
+      const nftCurrencies = getEnv("NFT_CURRENCIES");
+
+      (isNFTActive as jest.Mock).mockReturnValue(nftCurrencies.includes(account.currency.id));
+
+      const isAccountEmpty = false;
+      const llmNftSupportEnabled = true;
+      const llmSolanaNftsEnabled = false;
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, {
+        llmNftSupportEnabled,
+        llmSolanaNftsEnabled,
+      });
+      expect(result).toBe(false);
+    });
+
+    it("returns true if account !== solana, llmNftSupportEnabled === true, and llmSolanaNftsEnabled === false", () => {
       const account = {
         type: "Account",
         currency: {
@@ -88,8 +118,38 @@ describe("nftHelper", () => {
         },
       } as Account;
       const isAccountEmpty = false;
+      const llmNftSupportEnabled = true;
       const llmSolanaNftsEnabled = false;
-      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, { llmSolanaNftsEnabled });
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, {
+        llmNftSupportEnabled,
+        llmSolanaNftsEnabled,
+      });
+      expect(result).toBe(true);
+    });
+
+    it("returns false if llmNftSupportEnabled === false", () => {
+      const account = {
+        type: "Account",
+        currency: {
+          id: "ethereum",
+        },
+      } as Account;
+      const isAccountEmpty = false;
+      const llmNftSupportEnabled = false;
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, { llmNftSupportEnabled });
+      expect(result).toBe(false);
+    });
+
+    it("returns true if llmNftSupportEnabled === true", () => {
+      const account = {
+        type: "Account",
+        currency: {
+          id: "ethereum",
+        },
+      } as Account;
+      const isAccountEmpty = false;
+      const llmNftSupportEnabled = true;
+      const result = isNFTCollectionsDisplayable(account, isAccountEmpty, { llmNftSupportEnabled });
       expect(result).toBe(true);
     });
   });

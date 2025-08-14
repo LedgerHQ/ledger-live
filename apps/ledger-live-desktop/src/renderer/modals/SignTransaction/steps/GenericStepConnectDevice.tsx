@@ -4,15 +4,12 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
+
 const Result = (
   result:
     | {
@@ -62,6 +59,7 @@ export default function StepConnectDevice({
   isACRE?: boolean;
   location?: HOOKS_TRACKING_LOCATIONS;
 }) {
+  const action = useTransactionAction();
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   const request = useMemo(
     () => ({

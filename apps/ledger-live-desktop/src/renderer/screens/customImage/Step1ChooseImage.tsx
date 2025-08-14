@@ -19,6 +19,7 @@ import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import { useTrack } from "~/renderer/analytics/segment";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
@@ -39,6 +40,7 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
     : null;
   const customImageUri =
     (mediaSizeForCustomImage &&
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       metadata?.medias?.[mediaSizeForCustomImage as keyof NFTMedias]?.uri) ||
     null;
   return customImageUri;
@@ -58,6 +60,7 @@ const StepChooseImage: React.FC<Props> = props => {
   const isMounted = useIsMounted();
   const { t } = useTranslation();
   const track = useTrack();
+  const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
 
   const [selectedNftId, setSelectedNftId] = useState<string>();
   const [selectedNftBase64Data, setSelectedNftBase64] = useState<ImageBase64Data | null>(null);
@@ -96,7 +99,7 @@ const StepChooseImage: React.FC<Props> = props => {
             setTimeout(
               () => {
                 if (!isMounted()) return;
-                setSelectedNftBase64({ imageBase64DataUri: res as string });
+                setSelectedNftBase64({ imageBase64DataUri: res });
               },
               Math.max(0, 400 - (Date.now() - t1)),
             );
@@ -150,14 +153,16 @@ const StepChooseImage: React.FC<Props> = props => {
               })
             }
           />
-          <ImportNFTButton
-            onClick={() => {
-              setIsShowingNftGallery(true);
-              track("button_clicked2", {
-                button: "Choose from NFT gallery",
-              });
-            }}
-          />
+          {llNftSupportEnabled ? (
+            <ImportNFTButton
+              onClick={() => {
+                setIsShowingNftGallery(true);
+                track("button_clicked2", {
+                  button: "Choose from NFT gallery",
+                });
+              }}
+            />
+          ) : null}
           {hasCustomLockScreen ? (
             <Link
               size="medium"

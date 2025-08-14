@@ -15,6 +15,9 @@ import { callMyDealer, polygon, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -121,19 +124,19 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 
 export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
-  setup: async () => {
+  setup: async strategy => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://polygon-bor-rpc.publicnode.com"),
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
       fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
-    await setBlock(lastBlockNumber + 1);
+    setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
@@ -152,13 +155,43 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
           type: "ledger",
           explorerId: "matic",
         },
+        showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_polygon: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          gasTracker: {
+            type: "ledger",
+            explorerId: "matic",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "ledger",
+            explorerId: "matic",
+          },
+          showNfts: true,
+        },
+      },
+    });
     initMswHandlers(getCoinConfig(polygon).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge = buildCurrencyBridge(signerContext);
-    const accountBridge = buildAccountBridge(signerContext);
+    const currencyBridge =
+      strategy === "legacy"
+        ? buildCurrencyBridge(signerContext)
+        : getAlpacaCurrencyBridge("ethereum", "local");
+    const accountBridge =
+      strategy === "legacy"
+        ? buildAccountBridge(signerContext)
+        : getAlpacaAccountBridge("ethereum", "local");
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
@@ -168,7 +201,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, polygon);
 
-    await setBlock(lastBlockNumber + 1);
+    setBlock(lastBlockNumber + 1);
 
     // Send 100 USDC to the scenario account
     await callMyDealer({

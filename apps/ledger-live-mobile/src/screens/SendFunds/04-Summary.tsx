@@ -38,6 +38,9 @@ import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigato
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { Alert as NativeUiAlert, Flex, Text } from "@ledgerhq/native-ui";
+import SupportLinkError from "~/components/SupportLinkError";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -140,8 +143,38 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-  // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
+  const mergeErrors = useCallback(() => {
+    const senderError = status?.errors.sender ?? undefined;
+    const recipientError = status?.errors.recipient ?? undefined;
+
+    if (
+      senderError?.name === recipientError?.name &&
+      senderError instanceof AddressesSanctionedError
+    ) {
+      return new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [
+          ...(senderError as unknown as { addresses: string[] }).addresses,
+          ...(recipientError as unknown as { addresses: string[] }).addresses,
+        ],
+      });
+    }
+
+    if (senderError) {
+      return senderError;
+    }
+
+    if (recipientError) {
+      return recipientError;
+    }
+
+    return undefined;
+  }, [status?.errors.sender, status?.errors.recipient]);
+
+  const displayedError = mergeErrors();
+
+  const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+
+  if (!account || !transaction || !currencyOrToken) {
     return null;
   }
 
@@ -179,7 +212,9 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
+        {transaction.recipient ? (
+          <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
+        ) : null}
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange" testID="send-summary-warning">
             <TranslatedError error={status.warnings.recipient} />
@@ -202,14 +237,28 @@ function SendSummary({ navigation, route }: Props) {
         <SectionSeparator lineColor={colors.lightFog} />
         {isNFTSend ? (
           <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
-        ) : (
+        ) : !isSolanaRawTransaction ? (
           <SummaryAmountSection
             account={account}
             parentAccount={parentAccount}
             amount={amount}
             overrideAmountLabel={overrideAmountLabel}
           />
-        )}
+        ) : null}
+        {displayedError ? (
+          <NativeUiAlert type="error">
+            <Flex width={"90%"}>
+              <Text testID="send-summary-error-title">
+                <TranslatedError error={displayedError} />
+              </Text>
+              <Text testID="send-summary-error-description">
+                <TranslatedError error={displayedError} field="description" />
+              </Text>
+              <SupportLinkError error={displayedError} type="alert" />
+            </Flex>
+          </NativeUiAlert>
+        ) : null}
+
         <SendRowsFee
           setTransaction={setTransaction}
           status={status}
@@ -220,7 +269,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {!amount.eq(totalSpent) && !hideTotal ? (
+        {!amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
             <SummaryTotalSection
@@ -229,6 +278,25 @@ function SendSummary({ navigation, route }: Props) {
               amount={totalSpent}
             />
           </>
+        ) : null}
+
+        {isSolanaRawTransaction ? (
+          <NativeUiAlert type="warning">
+            <Flex>
+              <Text
+                color="neutral.c100"
+                flexShrink={1}
+                variant="bodyLineHeight"
+                fontWeight="semiBold"
+              >
+                <Trans i18nKey="send.summary.solanaRawTransaction.title" />{" "}
+              </Text>
+
+              <Text paddingTop={2}>
+                <Trans i18nKey="send.summary.solanaRawTransaction.description" />
+              </Text>
+            </Flex>
+          </NativeUiAlert>
         ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
@@ -243,7 +311,10 @@ function SendSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={() => setContinuing(true)}
           disabled={
-            bridgePending || !!transactionError || (!!error && error instanceof NotEnoughGas)
+            bridgePending ||
+            !!transactionError ||
+            (!!error && error instanceof NotEnoughGas) ||
+            !!displayedError
           }
           pending={bridgePending}
         />

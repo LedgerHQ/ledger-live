@@ -5,10 +5,9 @@ import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import BigNumber from "bignumber.js";
 import { version as LLD_VERSION } from "../../../package.json";
+import { expectedCurrencyList, mockedAccountList } from "tests/fixtures/wallet-api";
 
 const methods = [
   "account.request",
@@ -35,145 +34,7 @@ const methods = [
   "wallet.userId",
 ];
 
-const account_list_mock = {
-  rawAccounts: [
-    {
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      balance: "10135465432293584185",
-      blockHeight: 122403,
-      currency: "arbitrum",
-      id: "1612c97a-e3bd-5c33-9618-215fc05f1853",
-      name: "Arbitrum 1",
-      spendableBalance: "10135465432293584185",
-    },
-    {
-      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-      name: "Bitcoin 1 (legacy)",
-      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-      currency: "bitcoin",
-      balance: "35688397",
-      spendableBalance: "35688397",
-      blockHeight: 194870,
-    },
-    {
-      id: "3463fc5b-deb9-5b19-a27e-4554624f2090",
-      name: "Bitcoin 2 (legacy)",
-      address: "19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77",
-      currency: "bitcoin",
-      balance: "128092473",
-      spendableBalance: "128092473",
-      blockHeight: 124828,
-    },
-    {
-      id: "b60265f4-e52d-5800-9203-1609b9461654",
-      name: "Bitcoin 3 (legacy)",
-      address: "13x7TUzymwejUWQmoWusnYcdmC8RNMGG17f",
-      currency: "bitcoin",
-      balance: "0",
-      spendableBalance: "0",
-      blockHeight: 136277,
-    },
-    {
-      id: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-      name: "Ethereum 1",
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      currency: "ethereum",
-      balance: "10135465432293584185",
-      spendableBalance: "10135465432293584185",
-      blockHeight: 122403,
-    },
-    {
-      id: "7c99915b-f186-5b44-82cc-fb21fa084292",
-      parentAccountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-      name: "Ethereum 1 (DAI)",
-      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "82865885",
-      spendableBalance: "82865885",
-      blockHeight: 122403,
-    },
-    {
-      id: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum",
-      balance: "11310048568372696785",
-      spendableBalance: "11310048568372696785",
-      blockHeight: 168357,
-    },
-    {
-      id: "f5a525d7-1ec6-57ca-a26a-d34fc5158e84",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (DAI)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "81381327",
-      spendableBalance: "81381327",
-      blockHeight: 168357,
-    },
-    {
-      id: "54b2563c-bd90-52c1-aca0-6099c701221f",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (USDT)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/usd_tether__erc20_",
-      balance: "84437760",
-      spendableBalance: "84437760",
-      blockHeight: 168357,
-    },
-    {
-      id: "80828eb7-49ca-54e8-8454-79c0e5557aec",
-      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
-      name: "Ethereum 2 (USDC)",
-      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
-      currency: "ethereum/erc20/usd__coin",
-      balance: "102966480",
-      spendableBalance: "102966480",
-      blockHeight: 168357,
-    },
-    {
-      id: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum",
-      balance: "0",
-      spendableBalance: "0",
-      blockHeight: 181116,
-    },
-    {
-      id: "e9ee57d1-f29c-55ed-ad85-de9b6426ce45",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (DAI)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/dai_stablecoin_v2_0",
-      balance: "45480062",
-      spendableBalance: "45480062",
-      blockHeight: 181116,
-    },
-    {
-      id: "753b0907-3616-5350-bccb-2484cefb2bec",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (USDT)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/usd_tether__erc20_",
-      balance: "71817412",
-      spendableBalance: "71817412",
-      blockHeight: 181116,
-    },
-    {
-      id: "d53ce93d-61d1-5ae1-8258-85a03e47f096",
-      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
-      name: "Ethereum 3 (USDC)",
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      currency: "ethereum/erc20/usd__coin",
-      balance: "106621194",
-      spendableBalance: "106621194",
-      blockHeight: 181116,
-    },
-  ],
-};
-
-test.use({ userdata: "1AccountBTC1AccountETH1AccountARB" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL" });
 
 let testServerIsRunning = false;
 
@@ -206,34 +67,40 @@ test.afterAll(async () => {
   }
 });
 
-test("Wallet API methods @smoke", async ({ page }) => {
+test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Wallet API E2E test");
     return;
   }
 
   const discoverPage = new DiscoverPage(page);
-  const liveAppWebview = new LiveAppWebview(page);
+  const liveAppWebview = new LiveAppWebview(page, electronApp);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
 
-  await test.step("account.request", async () => {
+  // Reset the webview after each test to ensure a clean state
+  // We have to call it manually because playwright doesn't support afterEach hook for steps
+  async function resetWebview() {
+    await liveAppWebview.clearStates();
+  }
+
+  await test.step("open live-app", async () => {
     await layout.goToDiscover();
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
+  });
 
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.request",
-      params: {
-        currencyIds: ["ethereum", "bitcoin", "ethereum/erc20/usd_tether__erc20_"],
-      },
-    });
+  await test.step("account.request", async () => {
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+    ]);
+
+    await liveAppWebview.accountRequest();
 
     await drawer.waitForDrawerToBeVisible();
 
@@ -249,220 +116,143 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await drawer.waitForDrawerToDisappear();
 
-    await expect(response).resolves.toMatchObject({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        rawAccount: {
-          id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-          address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-          balance: "35688397",
-          blockHeight: 194870,
-          currency: "bitcoin",
-          name: "Bitcoin 1 (legacy)",
-          spendableBalance: "35688397",
-        },
-      },
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      balance: "35688397",
+      blockHeight: 194870,
+      currency: "bitcoin",
+      name: "Bitcoin 1 (legacy)",
+      spendableBalance: "35688397",
     });
+
+    await resetWebview();
   });
 
   await test.step("account.receive", async () => {
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.receive",
-      params: {
-        accountId: "2d23ca2a-069e-579f-b13d-05bc706c7583",
-      },
-    });
+    await liveAppWebview.setAccountId("2d23ca2a-069e-579f-b13d-05bc706c7583");
+
+    await liveAppWebview.accountReceive();
 
     await deviceAction.openApp();
     await deviceAction.complete();
     await modal.waitForModalToDisappear();
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-      },
-    });
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
+
+    await resetWebview();
   });
 
   await test.step("account.list", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "account.list",
-    });
+    await liveAppWebview.accountList();
 
-    const responseFiltred = {
-      id,
-      rawAccounts: response.result.rawAccounts.map(
-        ({ lastSyncDate, ...rest }: { lastSyncDate: Date; rest: unknown }) => rest,
-      ),
-    };
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject(mockedAccountList);
 
-    expect(responseFiltred).toStrictEqual({
-      id,
-      ...account_list_mock,
-    });
+    await resetWebview();
   });
 
   await test.step("bitcoin.getXPub", async () => {
-    const id = randomUUID();
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "bitcoin.getXPub",
-      params: {
-        accountId: "3463fc5b-deb9-5b19-a27e-4554624f2090",
-      },
-    });
+    await liveAppWebview.setAccountId("3463fc5b-deb9-5b19-a27e-4554624f2090");
+    await liveAppWebview.bitcoinGetXPub();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        xPub: "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2");
+
+    await resetWebview();
   });
 
   await test.step("currency.list", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "currency.list",
-      params: {
-        currencyIds: [
-          "bitcoin",
-          "ethereum",
-          "ethereum/erc20/usd_tether__erc20_",
-          // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
-        ],
-      },
-    });
+    await liveAppWebview.setCurrencyIds([
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+    ]);
 
-    expect(response).toMatchObject({
-      id,
-      result: {
-        currencies: [
-          {
-            type: "CryptoCurrency",
-            id: "bitcoin",
-            ticker: "BTC",
-            name: "Bitcoin",
-            family: "bitcoin",
-            color: "#ffae35",
-            decimals: 8,
-          },
-          {
-            type: "CryptoCurrency",
-            id: "ethereum",
-            ticker: "ETH",
-            name: "Ethereum",
-            family: "ethereum",
-            color: "#0ebdcd",
-            decimals: 18,
-          },
-          {
-            type: "TokenCurrency",
-            standard: "ERC20",
-            id: "ethereum/erc20/usd_tether__erc20_",
-            ticker: "USDT",
-            contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            name: "Tether USD",
-            parent: "ethereum",
-            color: "#0ebdcd",
-            decimals: 6,
-          },
-          // {
-          //   type: "TokenCurrency",
-          //   standard: "ERC20",
-          //   id: "arbitrum/erc20/arbitrum",
-          //   ticker: "ARB",
-          //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-          //   name: "Arbitrum",
-          //   parent: "arbitrum",
-          //   color: "#28a0f0",
-          //   decimals: 18,
-          // },
-        ],
+    await liveAppWebview.currencyList();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject([
+      {
+        type: "CryptoCurrency",
+        id: "bitcoin",
+        ticker: "BTC",
+        name: "Bitcoin",
+        family: "bitcoin",
+        color: "#ffae35",
+        decimals: 8,
       },
-    });
+      {
+        type: "CryptoCurrency",
+        id: "ethereum",
+        ticker: "ETH",
+        name: "Ethereum",
+        family: "ethereum",
+        color: "#0ebdcd",
+        decimals: 18,
+      },
+      {
+        type: "TokenCurrency",
+        standard: "ERC20",
+        id: "ethereum/erc20/usd_tether__erc20_",
+        ticker: "USDT",
+        contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        name: "Tether USD",
+        parent: "ethereum",
+        color: "#0ebdcd",
+        decimals: 6,
+      },
+      // {
+      //   type: "TokenCurrency",
+      //   standard: "ERC20",
+      //   id: "arbitrum/erc20/arbitrum",
+      //   ticker: "ARB",
+      //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+      //   name: "Arbitrum",
+      //   parent: "arbitrum",
+      //   color: "#28a0f0",
+      //   decimals: 18,
+      // },
+    ]);
+
+    await resetWebview();
   });
 
   await test.step("currency.list should stay stable for CryptoCurrency", async () => {
-    const id = randomUUID();
-    const response = await liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "currency.list",
-    });
+    await liveAppWebview.currencyList();
 
+    const res = await liveAppWebview.getResOutput();
     // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
-    const currencies = response.result.currencies.filter(
+    const currencies = res.filter(
       (currency: { type: string }) => currency.type === "CryptoCurrency",
     );
+    expect(currencies).toMatchObject(expectedCurrencyList);
 
-    expect(JSON.stringify(currencies, null, 2)).toMatchSnapshot("wallet-api-currencies.json");
+    await resetWebview();
   });
 
   await test.step("storage", async () => {
-    const id = randomUUID();
-    const value = randomUUID();
+    await liveAppWebview.storage();
 
-    const responseSet = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "storage.set",
-      params: {
-        key: "testKey",
-        value,
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("test-value");
 
-    await expect(responseSet).resolves.toStrictEqual({ jsonrpc: "2.0", id });
-
-    const responseGet = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "storage.get",
-      params: {
-        key: "testKey",
-      },
-    });
-
-    await expect(responseGet).resolves.toStrictEqual({
-      jsonrpc: "2.0",
-      id,
-      result: { value },
-    });
+    await resetWebview();
   });
 
   await test.step("transaction.sign", async () => {
-    const id = randomUUID();
-
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "500000000000000"; // 0.0005 ETH in wei
+    const data = "TestDataForEthereumTransaction";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.sign",
-      params: {
-        //ETH Account
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: new BigNumber(100000000000000),
-          recipient,
-          data: Buffer.from("SomeDataInHex").toString("hex"),
-        },
-      },
-    });
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSign();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -475,33 +265,350 @@ test("Wallet API methods @smoke", async ({ page }) => {
     // Step Device
     await deviceAction.silentSign();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: { signedTransactionHex: "" },
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("empty response");
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign solana", async () => {
+    const recipient = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
+    const amount = "1000000"; // 0.001 SOL in lamports
+
+    await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.transactionSignSolana();
+
+    // Step Recipient
+    await expect(page.getByText(recipient)).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      message: {
+        accountKeys: [
+          "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo",
+          "ComputeBudget111111111111111111111111111111",
+          "11111111111111111111111111111111",
+        ],
+        header: {
+          numReadonlySignedAccounts: 0,
+          numReadonlyUnsignedAccounts: 2,
+          numRequiredSignatures: 1,
+        },
+        indexToProgramIds: {},
+        instructions: [
+          { accounts: [], data: "Fyn5d1", programIdIndex: 2 },
+          { accounts: [0, 1], data: "3Bxs4Bc3VYuGVB19", programIdIndex: 3 },
+        ],
+        recentBlockhash: "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3",
+      },
     });
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign raw solana simple", async () => {
+    const rawTx =
+      "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDNzWs4isgmR+LEHY8ZcgBBLMnC4ckD1iuhSa2/Y+69I91oyGFaAZ/9w4srgx9KoqiHtPM6Vur7h4D6XVoSgrEhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALt5JNk+MAN8BXYrlkxMEL1C/sM3+ZFYwZw4eofBOKp4BAgIAAQwCAAAAgJaYAAAAAAA=";
+
+    await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+    await liveAppWebview.setData(rawTx);
+    await liveAppWebview.transactionSignRawSolana();
+
+    // Step Recipient
+    await expect(page.getByText("Blind signing required")).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      message: {
+        header: {
+          numRequiredSignatures: 1,
+          numReadonlySignedAccounts: 0,
+          numReadonlyUnsignedAccounts: 1,
+        },
+        accountKeys: [
+          "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "8vCyX7oB6Pc3pbWMGYYZF5pbSnAdQ7Gyr32JqxqCy8ZR",
+          "11111111111111111111111111111111",
+        ],
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "49xM1QggKfcKj2ixPYyAgMfoD3oPne8Fj9WdCLjsLuMo",
+        instructions: [
+          {
+            programIdIndex: 2,
+            accounts: [0, 1],
+            data: "3Bxs4NN8M2Yn4TLb",
+          },
+        ],
+        indexToProgramIds: {},
+      },
+    });
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign raw solana simple versioned tx", async () => {
+    const rawTx =
+      "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQABAzc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPdaMhhWgGf/cOLK4MfSqKoh7TzOlbq+4eA+l1aEoKxIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABfLzKkOix18SH7aJB0ftIw4FuVJdpsGNCeSOTPzs9KKAQICAAEMAgAAAICWmAAAAAAAAA==";
+
+    await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+    await liveAppWebview.setData(rawTx);
+    await liveAppWebview.transactionSignRawSolana();
+
+    // Step Recipient
+    await expect(page.getByText("Blind signing required")).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      message: {
+        header: {
+          numRequiredSignatures: 1,
+          numReadonlySignedAccounts: 0,
+          numReadonlyUnsignedAccounts: 1,
+        },
+        staticAccountKeys: [
+          "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "8vCyX7oB6Pc3pbWMGYYZF5pbSnAdQ7Gyr32JqxqCy8ZR",
+          "11111111111111111111111111111111",
+        ],
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "2btcs2WqZ7xXxjLsmmBxgNQYUv22EoMzVmSz92KJob13",
+        compiledInstructions: [
+          {
+            programIdIndex: 2,
+            accountKeyIndexes: [0, 1],
+            data: {
+              "0": 2,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 128,
+              "5": 150,
+              "6": 152,
+              "7": 0,
+              "8": 0,
+              "9": 0,
+              "10": 0,
+              "11": 0,
+            },
+          },
+        ],
+        addressTableLookups: [],
+      },
+    });
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign raw solana jup", async () => {
+    const rawTx =
+      "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQADCjc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPJGEHQWQLekD/dvAcpnMP2/tG3aYY5eJPwCIdQraAPCxEmBJ9MMUfrE0XakyEUZnEtlYyXwSxgHdGjzuUfCe5YlRv0RZO0KA6xpP2ZTy3gPYYekA+GRdTZ9xkFdPoP6mN+PTko52VL0CIM2xtl0WkvNslD6Wawxr7yd9HYllN4Lz1QisC8APtk6AnjCKZmDRfJdI4LPZhcTyQg0m67HXuHf5nhgvgw+u73a6p2g72pShJs/a3e0XIG/SmJess9cE+AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAEedVb8jHAbu50xW7OaBUH/bGy3qP0jlECsc2iVrwTjwbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpFroxe4U6J5YhwTYIw4Hl0OWWmFfNquad1njJfzq2aU8FBwAFAvWoBAAHAAkDk/ECAAAAAAAIBQUAHQkYCZPxe2T0hK52/Qg/CRsAAwoLBRodCAgZCCEbCgsMDg0PICIfJwkmGxopCgQTEhARJCUjJwkeKhcqFRQECx0pFiobCQkoKgYCAQgcLMEgmzNB1pyBAAMAAAA5XQADTwcAAiZkAgOAhB4AAAAAADGJsAAAAAAAMgAACQMFAAABCQQpv5UHKk+/BN9xdZPnOLzMIScoFcJHGoDZ+fVVsNSEJQIpGAcTACgDAhcVWX05K6qoNBpFvohhQGiBxG4ZEV+GAgS6FrxyNTh9k9oEYAYFZQQDCQIBfcDHFwIcy2bnEz7RejJmfNDT1qvRg9d3bphgF42pbGoEePR08gXxb3l187d006g+ZmeaKFPjpBstjVj8egEUslf/CvI0AyqNtu4dBOPkyscDzsbL";
+
+    await liveAppWebview.setAccountId("2fa370fd-2210-5487-b9c9-bc36971ebc72");
+    await liveAppWebview.setData(rawTx);
+    await liveAppWebview.transactionSignRawSolana();
+
+    // Step Recipient
+    await expect(page.getByText("Blind signing required")).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      message: {
+        header: {
+          numRequiredSignatures: 1,
+          numReadonlySignedAccounts: 0,
+          numReadonlyUnsignedAccounts: 3,
+        },
+        staticAccountKeys: [
+          "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "3T1VPbkDEMTHBUEsPgGFeC5JDcGmPYLo8hMz2zuMQs1D",
+          "5cmDadKuL5FqJd8gAor15yyML93jWMZE2JFYSeJU4RoF",
+          "6gc8zvoV4yD5xQufHewkr4mP2ouMGoRVmWCBKAmrroCY",
+          "HkphEpUqnFBxBuCPEq5j1HA9L8EwmsmRT6UcFKziptM1",
+          "HWPQWMdTqoPVRZpUULkRMJTbjks21BRiCmvtSFBfrQon",
+          "J867VvEyqCiwYXJgRLL9VZcjuGr6oNBgWwbN97LjT6RB",
+          "ComputeBudget111111111111111111111111111111",
+          "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+          "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        ],
+        // NOTE: we currently re-set the recentBlockhash to the latest value from our solana node
+        // recentBlockhash: "2Xie6kgDVTCMsGYDJXA3h1EDaMRV4Yk3rWy3isWPVyRY",
+        compiledInstructions: [
+          {
+            programIdIndex: 7,
+            accountKeyIndexes: [],
+            data: {
+              "0": 2,
+              "1": 245,
+              "2": 168,
+              "3": 4,
+              "4": 0,
+            },
+          },
+          {
+            programIdIndex: 7,
+            accountKeyIndexes: [],
+            data: {
+              "0": 3,
+              "1": 147,
+              "2": 241,
+              "3": 2,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0,
+              "8": 0,
+            },
+          },
+          {
+            programIdIndex: 8,
+            accountKeyIndexes: [5, 0, 29, 9, 24],
+            data: {
+              "0": 147,
+              "1": 241,
+              "2": 123,
+              "3": 100,
+              "4": 244,
+              "5": 132,
+              "6": 174,
+              "7": 118,
+              "8": 253,
+            },
+          },
+          {
+            programIdIndex: 8,
+            accountKeyIndexes: [
+              9, 27, 0, 3, 10, 11, 5, 26, 29, 8, 8, 25, 8, 33, 27, 10, 11, 12, 14, 13, 15, 32, 34,
+              31, 39, 9, 38, 27, 26, 41, 10, 4, 19, 18, 16, 17, 36, 37, 35, 39, 9, 30, 42, 23, 42,
+              21, 20, 4, 11, 29, 41, 22, 42, 27, 9, 9, 40, 42, 6, 2, 1, 8, 28,
+            ],
+            data: {
+              "0": 193,
+              "1": 32,
+              "2": 155,
+              "3": 51,
+              "4": 65,
+              "5": 214,
+              "6": 156,
+              "7": 129,
+              "8": 0,
+              "9": 3,
+              "10": 0,
+              "11": 0,
+              "12": 0,
+              "13": 57,
+              "14": 93,
+              "15": 0,
+              "16": 3,
+              "17": 79,
+              "18": 7,
+              "19": 0,
+              "20": 2,
+              "21": 38,
+              "22": 100,
+              "23": 2,
+              "24": 3,
+              "25": 128,
+              "26": 132,
+              "27": 30,
+              "28": 0,
+              "29": 0,
+              "30": 0,
+              "31": 0,
+              "32": 0,
+              "33": 49,
+              "34": 137,
+              "35": 176,
+              "36": 0,
+              "37": 0,
+              "38": 0,
+              "39": 0,
+              "40": 0,
+              "41": 50,
+              "42": 0,
+              "43": 0,
+            },
+          },
+          {
+            programIdIndex: 9,
+            accountKeyIndexes: [5, 0, 0],
+            data: {
+              "0": 9,
+            },
+          },
+        ],
+        addressTableLookups: [
+          {
+            accountKey: "3oy9ojnsDzqmMNi87Gs7Hn5v3MPVqnWjG9k8BmzKR7yW",
+            writableIndexes: [41, 24],
+            readonlyIndexes: [19, 0, 40, 3, 2, 23, 21],
+          },
+          {
+            accountKey: "72L2vpvB2EntpASsx4rG5UhrvC1k4eJX1amRPuVpNX53",
+            writableIndexes: [96, 6, 5, 101],
+            readonlyIndexes: [3, 9, 2, 1],
+          },
+          {
+            accountKey: "9TtTSHEvN9HfXQC1VxyqjmuQFAr6JbNJn3nPEv5oVvx1",
+            writableIndexes: [120, 244, 116, 242],
+            readonlyIndexes: [241, 111, 121, 117, 243],
+          },
+          {
+            accountKey: "DM8vzXD2dwSoUQXFNcFnhH1QS2hz9AsKV2XpEbZYTDG8",
+            writableIndexes: [227, 228, 202, 199],
+            readonlyIndexes: [206, 198, 203],
+          },
+        ],
+      },
+    });
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.sign should block sanctioned address", async () => {
+    const recipient = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"; // Sanctioned address
+    const amount = "500000000000000"; // 0.0005 ETH in wei
+
+    await liveAppWebview.setAccountId("a758d3a7-e057-5fcc-8b6e-23169bc4d577");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.transactionSign();
+
+    await expect(page.getByText(/keeping you safe/i)).toBeVisible();
+    await modal.continueIsDisabled();
+    await modal.close();
+
+    await resetWebview();
   });
 
   await test.step("transaction.signAndBroadcast", async () => {
-    const id = randomUUID();
-
     const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+    const amount = "750000000000000"; // 0.00075 ETH in wei
+    const data = "SignAndBroadcastTestData";
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        //ETH Account
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: new BigNumber(100000000000000),
-          recipient,
-          data: Buffer.from("SomeDataInHex").toString("hex"),
-        },
-      },
-    });
+    await liveAppWebview.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await liveAppWebview.setRecipient(recipient);
+    await liveAppWebview.setAmount(amount);
+    await liveAppWebview.setData(data);
+    await liveAppWebview.transactionSignAndBroadcast();
 
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
@@ -529,66 +636,39 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await expect(drawer.getByText("View in explorer")).toBeVisible();
     await expect(drawer.getByText("Confirmed")).toBeVisible();
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
-      },
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25");
+
+    await resetWebview();
   });
 
   await test.step("wallet.capabilities", async () => {
-    const id = randomUUID();
+    await liveAppWebview.walletCapabilities();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.capabilities",
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toEqual(methods);
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-
-      result: {
-        methodIds: methods,
-      },
-    });
+    await resetWebview();
   });
 
   await test.step("wallet.userId", async () => {
-    const id = randomUUID();
+    await liveAppWebview.walletUserId();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.userId",
-    });
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("08cf3393-c5eb-4ea7-92de-0deea22e3971");
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: { userId: "08cf3393-c5eb-4ea7-92de-0deea22e3971" },
-    });
+    await resetWebview();
   });
 
   await test.step("wallet.info", async () => {
-    const id = randomUUID();
+    await liveAppWebview.walletInfo();
 
-    const response = liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "wallet.info",
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      tracking: true,
+      wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
     });
 
-    await expect(response).resolves.toStrictEqual({
-      id,
-      jsonrpc: "2.0",
-      result: {
-        tracking: true,
-        wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
-      },
-    });
+    await resetWebview();
   });
 });

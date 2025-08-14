@@ -9,14 +9,28 @@ export type SolanaSignature = {
 
 export type Resolution = {
   deviceModelId?: DeviceModelId | undefined;
+  certificateSignatureKind?: "prod" | "test" | undefined;
   tokenAddress?: string;
+  tokenInternalId?: string;
   createATA?: {
     address: string;
     mintAddress: string;
   };
 };
 
+export enum PubKeyDisplayMode {
+  LONG,
+  SHORT,
+}
+
+export type AppConfig = {
+  blindSigningEnabled: boolean;
+  pubKeyDisplayMode: PubKeyDisplayMode;
+  version: string;
+};
+
 export interface SolanaSigner {
+  getAppConfiguration(): Promise<AppConfig>;
   getAddress(path: string, display?: boolean): Promise<SolanaAddress>;
   signTransaction(
     path: string,

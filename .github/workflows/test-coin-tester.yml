@@ -1,4 +1,4 @@
-name: "[Test] Coin Tester"
+name: "[Coin] - Coin Tester - Scheduled"
 
 on:
   schedule:
@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana"
 
 jobs:
   is-affected:

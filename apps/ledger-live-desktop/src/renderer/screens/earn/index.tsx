@@ -1,5 +1,6 @@
 import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React, { useMemo } from "react";
@@ -15,23 +16,29 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
+import { useHistory } from "react-router";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
-const DEFAULT_EARN_APP_ID = "earn";
+const DEFAULT_MANIFEST_ID =
+  process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
 const Earn = () => {
+  const router = useHistory();
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
-  const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const earnFlag = useFeature("ptxEarnLiveApp");
+  const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const localManifest = useLocalLiveAppManifest(earnManifestId);
+  const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const stakePrograms = useFeature("stakePrograms");
-  const stakeProgramsParam = useMemo(
+  const stakePrograms = useVersionedStakePrograms();
+  const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
   );
@@ -57,7 +64,11 @@ const Earn = () => {
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
+            routerState: JSON.stringify(router.location.state ?? {}),
             stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+            stakeCurrenciesParam: stakeCurrenciesParam
+              ? JSON.stringify(stakeCurrenciesParam)
+              : undefined,
           }}
         />
       ) : null}

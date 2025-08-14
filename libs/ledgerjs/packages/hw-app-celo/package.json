@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "6.33.0",
+  "version": "6.33.12",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",
@@ -27,17 +27,17 @@
   "types": "lib/Celo.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
-    "bip32-path": "^0.4.2",
     "@celo/connect": "^6.0.2",
     "@celo/contractkit": "^8.3.1",
     "@celo/utils": "^7.0.0",
     "@celo/wallet-base": "^6.0.3",
     "@celo/wallet-ledger": "^6.0.3",
-    "semver": "^7.3.5",
-    "rlp": "^3.0.0"
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "bip32-path": "^0.4.2",
+    "rlp": "^3.0.0",
+    "semver": "^7.3.5"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import { ListRenderItemInfo, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -28,6 +28,7 @@ import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import PortfolioOperationsHistorySection from "./PortfolioOperationsHistorySection";
 import PortfolioGraphCard from "./PortfolioGraphCard";
 import {
+  flattenAccountsSelector,
   hasNonTokenAccountsSelector,
   hasTokenAccountsNotBlacklistedSelector,
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
@@ -46,6 +47,9 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import { DdRum } from "@datadog/mobile-react-native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -63,6 +67,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
+  const llmDatadog = useFeature("llmDatadog");
+  const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -94,6 +100,17 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
+
+  useEffect(() => {
+    if (!llmDatadog?.enabled) return;
+    const topChains = allAccounts.reduce<string[]>((acc, account) => {
+      const currencyName = getAccountCurrency(account).name.toLowerCase();
+      if (TOP_CHAINS.includes(currencyName)) acc.push(getAccountCurrency(account).name);
+      return acc;
+    }, []);
+    DdRum.startView(PORTFOLIO_VIEW_ID, ScreenName.Portfolio, { topChains }, Date.now());
+    DdRum.addViewLoadingTime(true);
+  }, [allAccounts, llmDatadog?.enabled]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);
   const hasNonTokenAccounts = useSelector(hasNonTokenAccountsSelector);
@@ -180,7 +197,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
               </Flex>
             </SectionContainer>,
             <SectionContainer px={6} key="PortfolioOperationsHistorySection">
-              <SectionTitle title={t("analytics.operations.title")} />
+              <SectionTitle
+                title={t("analytics.operations.title")}
+                testID="portfolio-transaction-history-section"
+              />
               <PortfolioOperationsHistorySection />
             </SectionContainer>,
           ]

@@ -12,7 +12,7 @@ import compact from "lodash/compact";
 import get from "lodash/get";
 import { computeBalanceBridge, lastBlock } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
-import { fetchTronAccountTxs } from "../network";
+import { defaultFetchParams, fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
 import {
   defaultTronResources,
@@ -73,6 +73,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     address,
     txs => txs.length < operationsPageSize,
     cacheTransactionInfoById,
+    defaultFetchParams,
   );
 
   const tronResources = await getTronResources(acc, txs, cacheTransactionInfoById);

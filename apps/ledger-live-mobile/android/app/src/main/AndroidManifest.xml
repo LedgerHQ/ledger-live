@@ -30,7 +30,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Required for the webview camera/audio media -->
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="33"
+        android:targetSdkVersion="35"
         tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
     <uses-feature
@@ -38,6 +38,7 @@
         android:required="true" />
 
     <application
+      android:extractNativeLibs="true"
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"

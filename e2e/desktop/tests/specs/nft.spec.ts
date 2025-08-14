@@ -8,7 +8,9 @@ import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
 import invariant from "invariant";
 
-test.describe("send NFT to ENS address", () => {
+// 🚨 Skipping all NFT tests due to deactivation in production
+
+test.describe.skip("send NFT to ENS address", () => {
   const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
 
   test.beforeAll(async () => {
@@ -33,6 +35,7 @@ test.describe("send NFT to ENS address", () => {
   test(
     "Send NFT to ENS address",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2203",
@@ -68,7 +71,7 @@ test.describe("send NFT to ENS address", () => {
   });
 });
 
-test.describe("The user can see his NFT floor price", () => {
+test.describe.skip("The user can see his NFT floor price", () => {
   const account = Account.ETH_1;
   test.use({
     userdata: "skip-onboarding",
@@ -88,6 +91,7 @@ test.describe("The user can see his NFT floor price", () => {
   test(
     "User can see his NFT floor price",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-659",
@@ -117,7 +121,7 @@ const accounts = [
 ];
 
 for (const account of accounts) {
-  test.describe("The user displays all the nfts from his account", () => {
+  test.describe.skip("The user displays all the nfts from his account", () => {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
@@ -136,6 +140,7 @@ for (const account of accounts) {
     test(
       `User displays all the nfts from his ${account.account.currency.name} account`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket1,
@@ -152,7 +157,7 @@ for (const account of accounts) {
 }
 
 for (const account of accounts) {
-  test.describe("The user displays his nft collection", () => {
+  test.describe.skip("The user displays his nft collection", () => {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
@@ -171,6 +176,7 @@ for (const account of accounts) {
     test(
       `User displays his ${account.account.currency.name} nft collection`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket2,

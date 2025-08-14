@@ -14,6 +14,7 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
+import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -62,8 +63,8 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
 
-  app: async ({ page }, use) => {
-    const app = new Application(page);
+  app: async ({ page, electronApp }, use) => {
+    const app = new Application(page, electronApp);
     await use(app);
   },
 
@@ -105,18 +106,18 @@ export const test = base.extend<TestFixtures>({
     const userData = merge({ data: { settings } }, fileUserData);
     await fsPromises.writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
 
-    let speculos: any | undefined;
+    let speculos: SpeculosDevice;
 
     try {
+      setEnv("PLAYWRIGHT_RUN", true);
       if (IS_NOT_MOCK && speculosApp) {
-        setEnv("PLAYWRIGHT_RUN", true);
         setEnv("MOCK", "");
         process.env.MOCK = "";
 
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.ports.apiPort.toString());
+            CLI.registerSpeculosTransport(speculos.port.toString());
             await executeCliCommand(cmd, userdataDestinationPath);
             await killSpeculos(speculos.id);
           }
@@ -125,7 +126,7 @@ export const test = base.extend<TestFixtures>({
         speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.ports.apiPort.toString());
+          CLI.registerSpeculosTransport(speculos.port.toString());
           for (const cmd of cliCommands) {
             await executeCliCommand(cmd, userdataDestinationPath);
           }
@@ -190,7 +191,7 @@ export const test = base.extend<TestFixtures>({
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
       const txt = msg.text();
-      if (msg.type() == "error") {
+      if (IS_DEBUG_MODE && msg.type() == "error") {
         console.error(txt);
       }
       if (IS_DEBUG_MODE) {

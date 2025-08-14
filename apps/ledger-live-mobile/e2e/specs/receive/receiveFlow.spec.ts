@@ -25,8 +25,8 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
-    await app.transfertMenu.open();
-    await app.transfertMenu.navigateToReceive();
+    await app.transferMenu.open();
+    await app.transferMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));
@@ -46,7 +46,7 @@ describe("Receive Flow", () => {
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 4);
     await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
 
@@ -76,7 +76,7 @@ describe("Receive Flow", () => {
     await app.addAccount.tapAddFunds();
     await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
+    await app.receive.expectReceivePageIsDisplayed("BNB", "BNB Chain 1");
   });
 
   $TmsLink("B2CQA-1859");

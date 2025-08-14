@@ -1,7 +1,7 @@
 import findLast from "lodash/findLast";
 import filter from "lodash/filter";
 import uniqBy from "lodash/uniqBy";
-import findIndex from "lodash/findIndex";
+import { log } from "@ledgerhq/logs";
 import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
@@ -33,6 +33,10 @@ class BitcoinLikeStorage implements IStorage {
 
   txsSize(): number {
     return this.txs.length;
+  }
+
+  getTxs(): TX[] {
+    return [...this.txs]; // return a shallow copy to avoid external mutation
   }
 
   hasPendingTx(txFilter: { account: number; index: number }): boolean {
@@ -99,10 +103,19 @@ class BitcoinLikeStorage implements IStorage {
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
 
-      // we reject already seen tx
+      // We reject previously seen transactions, unless they are confirmed
       if (this.txs[this.primaryIndex[index]]) {
+        const existing = this.txs[this.primaryIndex[index]];
+        if (!existing.block && tx.block) {
+          log("bitcoin[storage]", `appendTxs, replacing with ${index}, pending->confirmed`);
+          // Replace pending with confirmed version
+          this.txs[this.primaryIndex[index]] = tx;
+          return;
+        }
+        log("bitcoin[storage]", `Already stored ${index}, skipping`);
         return;
       }
+
       const idx = this.txs.push(tx) - 1;
       this.primaryIndex[index] = idx;
       this.accountIndex[`${tx.account}-${tx.index}`] =
@@ -113,31 +126,56 @@ class BitcoinLikeStorage implements IStorage {
 
       tx.outputs.forEach(output => {
         if (output.address === tx.address) {
+          log(
+            "bitcoin[storage]",
+            `Adding unspent output: ${output.output_hash}:${output.output_index} -> ${tx.address}`,
+          );
           this.unspentUtxos[indexAddress].push(output);
         }
       });
 
       tx.inputs.forEach(input => {
-        if (input.address === tx.address) {
-          this.spentUtxos[indexAddress].push(input);
-        }
+        const inputAddress = input.address;
+
+        // Initialize arrays if needed
+        this.spentUtxos[inputAddress] = this.spentUtxos[inputAddress] || [];
+        this.unspentUtxos[inputAddress] = this.unspentUtxos[inputAddress] || [];
+
+        // Mark as spent in the correct address bucket
+        this.spentUtxos[inputAddress].push(input);
       });
 
-      this.unspentUtxos[indexAddress] = this.unspentUtxos[indexAddress].filter(output => {
-        const matchIndex = findIndex(
-          this.spentUtxos[indexAddress],
-          (input: Input) =>
-            input.output_hash === output.output_hash && input.output_index === output.output_index,
-        );
-        if (matchIndex > -1) {
-          this.spentUtxos[indexAddress].splice(matchIndex, 1);
-          return false;
-        }
-        return true;
-      });
+      // NEW: Update all affected address buckets after processing transaction
+      this.updateAllUtxoStates();
     });
 
     return this.txs.length - lastLength;
+  }
+
+  private updateAllUtxoStates(): void {
+    // Process all address buckets to remove spent UTXOs
+    Object.keys(this.unspentUtxos).forEach(addressKey => {
+      if (!this.spentUtxos[addressKey]) return;
+
+      this.unspentUtxos[addressKey] = this.unspentUtxos[addressKey].filter(output => {
+        const isSpent = this.spentUtxos[addressKey].some(
+          input =>
+            input.output_hash === output.output_hash && input.output_index === output.output_index,
+        );
+        if (isSpent) {
+          // Remove the spent input from spentUtxos to avoid memory leak
+          const spentIndex = this.spentUtxos[addressKey].findIndex(
+            input =>
+              input.output_hash === output.output_hash &&
+              input.output_index === output.output_index,
+          );
+          if (spentIndex > -1) {
+            this.spentUtxos[addressKey].splice(spentIndex, 1);
+          }
+        }
+        return !isSpent;
+      });
+    });
   }
 
   getUniquesAddresses(addressesFilter: { account?: number; index?: number }): Address[] {

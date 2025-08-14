@@ -4,7 +4,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
-import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
+import * as ETHERSCAN_API from "../../../../network/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
@@ -53,12 +53,13 @@ describe("EVM Family", () => {
             type: "external",
             uri: "mock",
           },
+          showNfts: true,
         },
       };
     });
   });
 
-  describe("api/explorer/etherscan.ts", () => {
+  describe("network/explorer/etherscan.ts", () => {
     afterAll(() => {
       jest.restoreAllMocks();
     });
@@ -869,6 +870,36 @@ describe("EVM Family", () => {
             endBlock: 100,
           },
         });
+      });
+    });
+
+    describe("getLastNftOperations without nft", () => {
+      beforeEach(() => {
+        mockGetConfig.mockImplementation((): any => {
+          return {
+            info: {
+              explorer: {
+                type: "etherscan",
+                uri: "mock",
+              },
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+              showNfts: false,
+            },
+          };
+        });
+      });
+
+      it("should not return NFT opperation", async () => {
+        const response = await ETHERSCAN_API.getLastNftOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+        );
+        expect(response).toEqual([]);
       });
     });
   });

@@ -17,7 +17,6 @@ import logReport from "../../src/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
-import { DeviceModelId } from "@ledgerhq/devices";
 import Config from "react-native-config";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
@@ -143,8 +142,7 @@ function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "addKnownSpeculos": {
-        const address = msg.payload;
-        const model = DeviceModelId.nanoX;
+        const { address, model } = JSON.parse(msg.payload);
         store.dispatch(
           setLastConnectedDevice({
             deviceId: `httpdebug|ws://${address}`,
@@ -189,9 +187,22 @@ export function sendWalletAPIResponse(payload: Record<string, unknown>) {
   });
 }
 
+export function sendFile(payload: { fileName: string; fileContent: string }) {
+  postMessage({
+    type: "appFile",
+    payload: JSON.stringify(payload),
+  });
+}
+
 export function sendSwapLiveAppReady() {
   postMessage({
     type: "swapLiveAppReady",
+  });
+}
+
+export function sendEarnLiveAppReady() {
+  postMessage({
+    type: "earnLiveAppReady",
   });
 }
 

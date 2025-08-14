@@ -169,7 +169,7 @@ export function mapTxToOps(
     if (isSending) {
       ops.push({
         id: encodeOperationId(accountId, hash, "OUT"),
-        hash: tx.out_msgs[0].hash, // this hash matches with in_msg.hash of IN transaction
+        hash: tx.out_msgs[0].hash,
         type: "OUT",
         value: BigNumber(tx.out_msgs[0].value ?? 0),
         fee: BigNumber(tx.total_fees),
@@ -202,6 +202,7 @@ export function mapJettonTxToOps(
   accountId: string,
   addr: string,
   addressBook: TonAddressBook,
+  jettonTxMessageHashesMap?: Map<string, string>,
 ): (tx: TonJettonTransfer) => TonOperation[] {
   return (tx: TonJettonTransfer): TonOperation[] => {
     const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
@@ -258,8 +259,12 @@ export function mapJettonTxToOps(
     }
 
     if (isSending) {
+      const hash_message = jettonTxMessageHashesMap
+        ? jettonTxMessageHashesMap.get(hash) ?? hash
+        : hash;
+
       ops.push({
-        id: encodeOperationId(tokenAccountId, hash, "OUT"),
+        id: encodeOperationId(tokenAccountId, hash_message, "OUT"),
         hash,
         type: "OUT",
         value: BigNumber(tx.amount),

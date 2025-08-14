@@ -6,6 +6,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
   test.beforeAll(async () => {
@@ -68,7 +69,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 2"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 4"),
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -87,11 +88,11 @@ const liveApps = [
     xrayTicket: "B2CQA-3024",
   },
   {
-    delegate: new Delegate(Account.TRX_1, "1", "stakekit"),
+    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3025", //todo: Add split from when parent ticket is available
   },
   {
-    delegate: new Delegate(Account.DOT_1, "1", "stakekit"),
+    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3026", //todo: Add split from when parent ticket is available
   },
 ];
@@ -116,6 +117,7 @@ for (const account of e2eDelegationAccounts) {
     test(
       `[${account.delegate.account.currency.name}] Delegate`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -158,7 +160,7 @@ for (const account of e2eDelegationAccounts) {
 
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           await app.layout.syncAccounts();
-          await app.account.clickOnLastOperation();
+          await app.account.clickOnLastOperationAndReturnStatus();
           await app.delegateDrawer.expectDelegationInfos(account.delegate);
           await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.operationTypeIsCorrect(transactionType);
@@ -189,6 +191,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
     test(
       `[${account.delegate.account.currency.name}] Delegate without broadcasting`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -202,6 +205,9 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
         if (account.delegate.account.currency.name == Currency.ADA.name) {
           await app.delegate.openSearchProviderModal();
+          await app.delegate.inputProvider(account.delegate.provider);
+          await app.delegate.selectProviderByName(account.delegate.provider);
+        } else if (account.delegate.account.currency.name == Currency.APT.name) {
           await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
         } else {
@@ -225,12 +231,15 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         if (account.delegate.account.currency.name !== Currency.ADA.name) {
           await app.delegate.clickViewDetailsButton();
 
+          const transactionType =
+            account.delegate.account.currency.name === Currency.APT.name ? "Staked" : "Delegated";
+
           await app.drawer.waitForDrawerToBeVisible();
           await app.delegateDrawer.verifyTxTypeIsVisible();
-          await app.delegateDrawer.verifyTxTypeIs("Delegated");
+          await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.providerIsVisible(account.delegate);
           await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
-          await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+          await app.delegateDrawer.operationTypeIsCorrect(transactionType);
           await app.drawer.closeDrawer();
         }
       },
@@ -259,6 +268,7 @@ test.describe("e2e delegation - Tezos", () => {
   test(
     "Tezos Delegation",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3041",
@@ -305,6 +315,7 @@ test.describe("e2e delegation - Celo", () => {
   test(
     "Celo Delegation",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3042",
@@ -354,6 +365,7 @@ for (const validator of validators) {
     test(
       `[${validator.delegate.account.currency.name}] - Select validator`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: validator.xrayTicket },
       },
       async ({ app }) => {
@@ -382,7 +394,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger");
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
     userdata: "skip-onboarding",
     speculosApp: delegateAccount.account.currency.speculosApp,
@@ -401,6 +413,7 @@ test.describe("Staking flow from different entry point", () => {
   test(
     "Staking flow from portfolio entry point",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2769",
@@ -423,6 +436,7 @@ test.describe("Staking flow from different entry point", () => {
   test(
     "Staking flow from market entry point",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2771",
@@ -463,6 +477,7 @@ for (const currency of liveApps) {
     test(
       `[${currency.delegate.account.currency.name}] - Select validator`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
       async ({ app }) => {
@@ -473,7 +488,7 @@ for (const currency of liveApps) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.delegate.chooseStakeProvider(currency.delegate.provider);
+          await app.delegate.goToProviderLiveApp(currency.delegate.provider);
         }
         await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },

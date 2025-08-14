@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "2.0.0",
+  "version": "5.0.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -104,10 +104,11 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1",
-    "tronweb": "^5.3.2"
+    "tronweb": "5.3.2"
   },
   "devDependencies": {
     "@agrozyme/types-tronweb": "^5.3.2",
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "^2.1.0",
     "@types/invariant": "^2.2.2",
@@ -117,7 +118,6 @@
     "jest": "^29.7.0",
     "msw": "^2.2.13",
     "ts-jest": "^29.1.1",
-    "jest-sonar": "0.2.16",
     "typescript": "^5.4.5"
   },
   "scripts": {

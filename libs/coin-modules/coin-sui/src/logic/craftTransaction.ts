@@ -1,28 +1,34 @@
 import BigNumber from "bignumber.js";
-import type { CoreTransaction } from "../types";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { SuiTransactionMode, CoreTransaction } from "../types";
 import suiAPI from "../network";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
 export type CreateExtrinsicArg = {
-  mode: string;
   amount: BigNumber;
+  coinType: string;
+  mode: SuiTransactionMode;
   recipient: string;
   useAllAmount?: boolean | undefined;
 };
 
-/**
- * Crafts a transaction
- *
- * @param {string} address - The address of the sender.
- * @param {CreateExtrinsicArg} extractExtrinsicArg - The arguments for creating the transaction, including mode, amount, recipient, and optional useAllAmount.
- * @returns {Promise<CoreTransaction>} A promise that resolves to the crafted CoreTransaction containing the unsigned transaction.
- */
-export async function craftTransaction(
-  address: string,
-  extractExtrinsicArg: CreateExtrinsicArg,
-): Promise<CoreTransaction> {
-  const unsigned = await suiAPI.createTransaction(address, extractExtrinsicArg);
+export async function craftTransaction({
+  amount,
+  asset,
+  recipient,
+  sender,
+  type,
+}: TransactionIntent): Promise<CoreTransaction> {
+  let coinType = DEFAULT_COIN_TYPE;
+  if (asset.type === "token" && asset.assetReference) {
+    coinType = asset.assetReference;
+  }
+  const unsigned = await suiAPI.createTransaction(sender, {
+    amount: BigNumber(amount.toString()),
+    coinType,
+    mode: type as SuiTransactionMode,
+    recipient,
+  });
 
-  return {
-    unsigned,
-  };
+  return { unsigned };
 }

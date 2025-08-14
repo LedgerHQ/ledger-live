@@ -1,4 +1,4 @@
-name: "[Release](Hotfix) Prepare for releasing"
+name: "[Release] - Prepare & Publish Hotfix - Manual"
 
 on:
   workflow_dispatch:
@@ -89,18 +89,6 @@ jobs:
           git stash
           git pull
 
-      - name: fetch develop and main
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
-        run: |
-          git fetch origin develop main
-
-      - name: merge into main
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
-        run: |
-          git checkout main
-          git merge ${{ inputs.ref }} --no-ff
-          git push origin main
-
       - name: create PR to develop
         if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
@@ -112,26 +100,43 @@ jobs:
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
       - name: merge into release if present
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        continue-on-error: true
+        id: release-merge
         if: ${{ github.event.inputs.tag_version == 'latest' }}
+        with:
+          base-branch: "release"
+          head-branch: "${{ inputs.ref }}"
+          commit-message: "Merge ${{ inputs.ref }} into release"
+          github-token: ${{ steps.generate-token.outputs.token }}
+
+      - name: create conflicts PR to release
+        if: ${{ github.event.inputs.tag_version == 'latest' && steps.release-merge.outcome == 'failure' && steps.release-merge.outputs.status == '409' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          if git checkout release
-          then
-            if git merge ${{ github.event.inputs.ref }} --no-ff
-            then
-              git push origin release
-            else
-              git merge --abort
-              git checkout ${{ github.event.inputs.ref }}
-              git checkout -b support/hotfix-release-merge-conflicts
-              git push origin support/hotfix-release-merge-conflicts
-              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
-            fi
-          fi
+          git checkout ${{ github.event.inputs.ref }}
+          git checkout -b support/hotfix-release-merge-conflicts
+          git push origin support/hotfix-release-merge-conflicts
+          gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
+
+      - name: Merge into main
+        uses: LedgerHQ/ledger-live/tools/actions/composites/merge-branch@develop
+        if: ${{ github.event.inputs.tag_version == 'latest' }}
+        with:
+          base-branch: "main"
+          head-branch: "${{ inputs.ref }}"
+          commit-message: "Merge ${{ inputs.ref }} into main"
+          github-token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Capture unknown merge fails
+        if: ${{ github.event.inputs.tag_version == 'latest' && steps.release-merge.outcome == 'failure' && steps.release-merge.outputs.status != '409' && steps.release-merge.outputs.status != '404' }}
+        run: |
+          echo "Release merge failed with status: ${{ steps.release-merge.outputs.status }}, message: ${{ steps.release-merge.outputs.message }}"
+          exit 1;
 
   release-final:
-    name: "[Release] Publish packages and apps"
+    name: "Prepare Hotfix > Publish packages and apps"
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
@@ -143,7 +148,7 @@ jobs:
     secrets: inherit
 
   release-fail:
-    name: Hotfix Preparation Failure Reporting
+    name: "Prepare Hotfix > Failure Reporting"
     needs: release-final
     if: failure()
     runs-on: ubuntu-latest

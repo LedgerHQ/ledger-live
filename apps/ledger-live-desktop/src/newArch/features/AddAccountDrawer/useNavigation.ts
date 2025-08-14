@@ -1,0 +1,22 @@
+import { useGenericNavigation } from "../ModularDrawer/hooks/useModularDrawerNavigation";
+import { NAVIGATION_DIRECTION } from "../ModularDrawer/types";
+import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
+
+export const ADD_ACCOUNT_STEP_ORDER: ModularDrawerAddAccountStep[] = [
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SCAN_ACCOUNTS,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_ADDED,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.ACCOUNTS_WARNING,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.EDIT_ACCOUNT_NAME,
+  MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT,
+];
+
+export function useNavigation() {
+  return useGenericNavigation({
+    backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
+    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
+    initialStep: MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+    stepOrder: ADD_ACCOUNT_STEP_ORDER,
+  });
+}

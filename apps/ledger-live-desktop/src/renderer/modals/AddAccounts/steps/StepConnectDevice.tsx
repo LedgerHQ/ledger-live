@@ -3,13 +3,10 @@ import React, { useEffect, useMemo } from "react";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { StepProps } from "..";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
+
 const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
   invariant(currency, "No crypto asset given");
 
@@ -19,6 +16,8 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
       prepareCurrency(currency);
     }
   }, [currency]);
+  const action = useConnectAppAction();
+
   const currencyName = currency
     ? currency.type === "TokenCurrency"
       ? currency.parentCurrency.name

@@ -64,18 +64,24 @@ const canSwipeHorizontal = (value: number, velocity: number, threshold: number) 
   "worklet";
   return canSwipe(value, velocity, threshold);
 };
-const canSwipeVertical = (value: number, velocity: number, threshold: number) => {
+
+function isHorizontalAngle(angle: number): boolean {
   "worklet";
-  return canSwipe(value, velocity, threshold);
-};
+  return (angle > -40 && angle < 40) || angle > 140 || angle < -140;
+}
 
 function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComplete: () => void) {
   return Gesture.Pan()
     .onUpdate(event => {
-      swipeX.value = event.translationX;
-      swipeY.value = event.translationY;
+      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
+      if (isHorizontalAngle(angle)) {
+        swipeX.value = event.translationX;
+        swipeY.value = event.translationY;
+      }
     })
     .onEnd(event => {
+      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
+
       const params: GestureParams = {
         swipeX,
         swipeY,
@@ -83,13 +89,11 @@ function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComp
         velocityY: event.velocityY,
       };
 
-      if (canSwipeHorizontal(params.swipeX.value, params.velocityX, SWIPE_CONFIG.THRESHOLD_X)) {
-        handleGesture(SwipeDirection.Horizontal, params);
-        runOnJS(setTimeout)(handleSwipeComplete, SWIPE_CONFIG.TIMEOUT);
-      } else if (
-        canSwipeVertical(params.swipeY.value, params.velocityY, SWIPE_CONFIG.THRESHOLD_Y)
+      if (
+        isHorizontalAngle(angle) &&
+        canSwipeHorizontal(params.swipeX.value, params.velocityX, SWIPE_CONFIG.THRESHOLD_X)
       ) {
-        handleGesture(SwipeDirection.Vertical, params);
+        handleGesture(SwipeDirection.Horizontal, params);
         runOnJS(setTimeout)(handleSwipeComplete, SWIPE_CONFIG.TIMEOUT);
       } else {
         resetGesture(params);

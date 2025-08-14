@@ -2,6 +2,13 @@ import { sortCurrenciesByIds } from "./sortByMarketcap";
 import { findCurrencyByTicker, listCryptoCurrencies, listTokens } from ".";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStoreForCoinFramework({
+  findTokenByTicker: (_: string) => undefined,
+} as CryptoAssetsStore);
 
 test("sortCurrenciesByIds snapshot", () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];

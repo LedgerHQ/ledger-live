@@ -1,4 +1,4 @@
-name: "[Release] Create Branch"
+name: "[Release] - Start Release - Manual"
 
 on:
   workflow_dispatch:
@@ -26,29 +26,13 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
-          git push -u origin $RELEASE_BRANCH
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           install-proto: true
-      - name: install dependencies
-        run: pnpm i
-      - name: Build libs
-        run: pnpm build:libs
-      - name: import CAL tokens
-        run: pnpm import:cal-tokens
-      - name: Add changed files
-        run: |
-          git add .
-      - name: commit new tokens
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(prerelease) update cryptoassets [skip ci]"
-          repo: ${{ github.repository }}
-          branch: ${{ env.RELEASE_BRANCH }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: Push branch
+        run: git push -u origin $RELEASE_BRANCH
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -56,14 +40,12 @@ jobs:
         with:
           from_level: patch
           to_level: minor
+      - name: Install dependencies
+        run: pnpm install -D --ignore-scripts
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: Add changed files
         run: |
-          git stash
-          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
-          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
-          git stash pop
           git add .
       - name: commit
         uses: planetscale/ghcommit-action@v0.2.9
@@ -84,7 +66,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   create-release-fail:
-    name: Create Release Failure Reporting
+    name: Create Release > Failure Reporting
     needs: create-release
     if: failure()
     runs-on: ubuntu-latest

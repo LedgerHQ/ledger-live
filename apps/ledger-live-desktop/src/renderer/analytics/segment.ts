@@ -1,4 +1,7 @@
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -6,15 +9,18 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { useCallback, useContext } from "react";
+import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
+import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
-import { State } from "~/renderer/reducers";
+import type { State } from "~/renderer/reducers";
 import {
   developerModeSelector,
   devicesModelListSelector,
@@ -29,11 +35,11 @@ import {
   sidebarCollapsedSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+
+type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -51,8 +57,6 @@ const getContext = () => ({
     url: "",
   },
 });
-
-type ReduxStore = ReturnType<typeof createStore>;
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let analyticsFeatureFlagMethod:
@@ -96,11 +100,41 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("lldModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    live_apps_allowlist: madFeatureFlag?.params?.live_apps_allowlist,
+    live_apps_blocklist: madFeatureFlag?.params?.live_apps_blocklist,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
+const getAddAccountAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const addAccount = analyticsFeatureFlagMethod("lldNetworkBasedAddAccount");
+
+  const isEnabled = addAccount?.enabled ?? false;
+
+  return {
+    feature_add_account_desktop: isEnabled,
+  };
+};
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-  const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+  const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
   const isBatch1Enabled: boolean =
@@ -115,6 +149,12 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+
+  // Apply versioned redirects logic to the stakePrograms feature flag
+  const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+  const stakePrograms = rawStakePrograms
+    ? getVersionedRedirects(rawStakePrograms, appVersion)
+    : null;
 
   const stakingCurrenciesEnabled: string[] | string =
     stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -139,7 +179,7 @@ const getPtxAttributes = () => {
 };
 
 const getMandatoryProperties = (store: ReduxStore) => {
-  const state: State = store.getState();
+  const state = store.getState();
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
@@ -166,10 +206,15 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
     : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
   const marketWidgetAttributes = getMarketWidgetAnalytics(state);
+  const madAttributes = getMADAttributes();
+  const addAccountAttributes = getAddAccountAttributes();
 
   const deviceInfo = device
     ? {
@@ -202,6 +247,7 @@ const extraProperties = (store: ReduxStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   return {
     ...mandatoryProperties,
@@ -210,6 +256,7 @@ const extraProperties = (store: ReduxStore) => {
     appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
+    platform: "desktop",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -220,13 +267,17 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    tokenWithFunds,
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
     ...ledgerSyncAttributes,
     ...mevProtectionAttributes,
     ...marketWidgetAttributes,
+    ...addAccountAttributes,
+    madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
   };
 };
 

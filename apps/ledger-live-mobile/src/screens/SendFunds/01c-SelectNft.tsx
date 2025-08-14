@@ -48,7 +48,7 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
         // collectionName defaults to empty string since it is unknown at this stage
         // and set by `prepareNftTransaction` after being fetched from the
         // Collection Metadata service
-        // cf. libs/coin-evm/src/prepareTransaction.ts
+        // cf. libs/coin-modules/coin-evm/src/bridge/prepareTransaction.ts
         collectionName: "",
       },
       mode: `${nft?.standard?.toLowerCase()}` as "erc721" | "erc1155",

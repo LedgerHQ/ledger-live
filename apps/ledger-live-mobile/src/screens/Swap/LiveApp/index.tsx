@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -12,12 +12,17 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
-import { WebviewState } from "~/components/Web3AppWebview/types";
+import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
 import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useSwapNavigationHelper } from "./navigationHandlers/useSwapNavigationHelper";
+import { useNavigation } from "@react-navigation/native";
+import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
+import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavigation";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -38,9 +43,12 @@ export function SwapLiveApp({
   const { params } = route;
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
+  const { isConnected } = useNetInfo();
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const isWebviewError = webviewState?.url.includes("/unknown-error");
 
-  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
-  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
+  const webviewRef = useRef<WebviewAPI>(null);
+  const navigation = useNavigation();
 
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
@@ -53,29 +61,69 @@ export function SwapLiveApp({
   );
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const isWebviewError = webviewState?.url.includes("/unknown-error");
+  const manifest = useMemo<LiveAppManifest | undefined>(
+    () => (!localManifest ? remoteManifest : localManifest),
+    [localManifest, remoteManifest],
+  );
+  const defaultParams = useMemo(
+    () => (isDefaultAccountSwapParamsList(params) ? params : null),
+    [params],
+  );
 
-  const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
-  const defaultParams = isDefaultAccountSwapParamsList(params) ? params : null;
+  useSwapHeaderNavigation(webviewRef);
 
-  if (!manifest || isWebviewError) {
+  useSwapAndroidHardwareBackPress({
+    webviewRef,
+    canGoBack: webviewState.canGoBack,
+  });
+
+  const onWebRouteChange = useSwapNavigationHelper({
+    navigation,
+  });
+
+  const handleWebviewState = useCallback(
+    (webviewState: WebviewState) => {
+      onWebRouteChange({ url: webviewState.url, canGoBack: webviewState.canGoBack });
+
+      setWebviewState(webviewState);
+    },
+    [onWebRouteChange],
+  );
+
+  const error: Error | null = useMemo(() => {
+    const hasError = !manifest || isWebviewError || !isConnected;
+    if (!hasError) return null;
+
+    const APP_FAILED_TO_LOAD = new Error(t("errors.AppManifestNotFoundError.title"));
+    const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
+    const APP_MANIFEST_NETWORK_DOWN_ERROR = new Error(t("errors.WebPTXPlayerNetworkFail.title"));
+
+    // in QAA isConnected remains null and is crashing the tests
+    if (isConnected === false) return APP_MANIFEST_NETWORK_DOWN_ERROR;
+    if (isWebviewError) return APP_FAILED_TO_LOAD;
+    if (!manifest) return APP_MANIFEST_NOT_FOUND_ERROR;
+
+    return error as Error;
+  }, [manifest, isWebviewError, isConnected, t]);
+
+  if (error) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
-        {remoteLiveAppState.isLoading ? (
-          <InfiniteLoader />
-        ) : (
-          <GenericErrorView
-            error={isWebviewError ? APP_MANIFEST_UNKNOWN_ERROR : APP_MANIFEST_NOT_FOUND_ERROR}
-          />
-        )}
+        {remoteLiveAppState.isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
       </Flex>
     );
   }
 
   return (
     <Flex flex={1} testID="swap-form-tab">
-      <WebView manifest={manifest} setWebviewState={setWebviewState} params={defaultParams} />
+      {manifest && (
+        <WebView
+          ref={webviewRef}
+          manifest={manifest}
+          setWebviewState={handleWebviewState}
+          params={defaultParams}
+        />
+      )}
     </Flex>
   );
 }

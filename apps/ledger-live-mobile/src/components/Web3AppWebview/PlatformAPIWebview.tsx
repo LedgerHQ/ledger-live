@@ -50,6 +50,11 @@ import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import {
+  ModularDrawerLocation,
+  useModularDrawerController,
+  useModularDrawerVisibility,
+} from "LLM/features/ModularDrawer";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -96,6 +101,16 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listPlatformCurrencies = useListPlatformCurrencies();
 
+    const { isModularDrawerVisible } = useModularDrawerVisibility({
+      modularDrawerFeatureFlagKey: "llmModularDrawer",
+    });
+    const modularDrawerVisible = isModularDrawerVisible({
+      location: ModularDrawerLocation.LIVE_APP,
+      liveAppId: manifest.id,
+    });
+
+    const { openDrawer: openModularDrawer } = useModularDrawerController();
+
     const requestAccount = useCallback(
       ({
         currencies: currencyIds,
@@ -118,12 +133,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * JSONRPC requests. So we need to make sure the array is properly typed.
            */
           const safeCurrencyIds = currencyIds?.filter(c => typeof c === "string") ?? undefined;
-
           const allCurrencies = listAndFilterCurrencies({
             currencies: safeCurrencyIds,
             includeTokens,
           });
-          // handle no currencies selected case
           const cryptoCurrencyIds =
             safeCurrencyIds && safeCurrencyIds.length > 0
               ? safeCurrencyIds
@@ -141,8 +154,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             reject(new Error("No accounts found matching request"));
             return;
           }
-
-          // list of queried cryptoCurrencies with one or more accounts -> used in case of not allowAddAccount and multiple accounts selectable
           const currenciesDiff = allowAddAccount
             ? cryptoCurrencyIds
             : foundAccounts
@@ -157,46 +168,57 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               ),
             );
           };
-
           const onClose = () => {
             tracking.platformRequestAccountFail(manifest);
             reject(new Error("User cancelled"));
           };
 
-          // if single currency available redirect to select account directly
-          if (currenciesDiff.length === 1) {
-            const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
-
-            if (!currency) {
-              tracking.platformRequestAccountFail(manifest);
-              // @TODO replace with correct error
-              reject(new Error("Currency not found"));
-              return;
-            }
-
-            navigation.navigate(NavigatorName.RequestAccount, {
-              screen: ScreenName.RequestAccountsSelectAccount,
-              params: {
-                currencies: allCurrencies,
-                currency,
-                allowAddAccount,
-                onSuccess,
-              },
-              onClose,
+          if (modularDrawerVisible) {
+            openModularDrawer({
+              currencies: allCurrencies,
+              enableAccountSelection: true,
+              onAccountSelected: onSuccess,
             });
           } else {
-            navigation.navigate(NavigatorName.RequestAccount, {
-              screen: ScreenName.RequestAccountsSelectCrypto,
-              params: {
-                currencies: allCurrencies,
-                allowAddAccount,
-                onSuccess,
-              },
-              onClose,
-            });
+            if (currenciesDiff.length === 1) {
+              const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
+              if (!currency) {
+                tracking.platformRequestAccountFail(manifest);
+                reject(new Error("Currency not found"));
+                return;
+              }
+              navigation.navigate(NavigatorName.RequestAccount, {
+                screen: ScreenName.RequestAccountsSelectAccount,
+                params: {
+                  currencies: allCurrencies,
+                  currency,
+                  allowAddAccount,
+                  onSuccess,
+                },
+                onClose,
+              });
+            } else {
+              navigation.navigate(NavigatorName.RequestAccount, {
+                screen: ScreenName.RequestAccountsSelectCrypto,
+                params: {
+                  currencies: allCurrencies,
+                  allowAddAccount,
+                  onSuccess,
+                },
+                onClose,
+              });
+            }
           }
         }),
-      [manifest, accounts, walletState, navigation, tracking],
+      [
+        tracking,
+        manifest,
+        accounts,
+        modularDrawerVisible,
+        walletState,
+        openModularDrawer,
+        navigation,
+      ],
     );
 
     const receiveOnAccount = useCallback(
@@ -429,7 +451,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           ({ id: accountId }, message) =>
             new Promise((resolve, reject) => {
               navigation.navigate(NavigatorName.SignMessage, {
-                screen: ScreenName.SignSummary,
+                screen:
+                  message.standard === "EIP712"
+                    ? ScreenName.SignSelectDevice
+                    : ScreenName.SignSummary,
                 params: {
                   message,
                   accountId,

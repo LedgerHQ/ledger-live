@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.6.3",
+  "version": "1.9.2",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -78,7 +78,7 @@
     "@hashgraph/sdk": "2.14.2",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -91,12 +91,14 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
+    "eslint-plugin-jest": "^27.4.2",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
-    "jest-sonar": "0.2.16"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

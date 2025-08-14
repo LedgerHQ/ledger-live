@@ -3,7 +3,7 @@ import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
 import storage from "LLM/storage";
-import messaging from "@react-native-firebase/messaging";
+import { getMessaging, AuthorizationStatus } from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
@@ -108,13 +108,13 @@ const useNotifications = () => {
         Linking.openSettings();
       }
     } else {
-      const permission = await messaging().hasPermission();
+      const permission = await getMessaging().hasPermission();
 
-      if (permission === messaging.AuthorizationStatus.DENIED) {
+      if (permission === AuthorizationStatus.DENIED) {
         Linking.openSettings();
       } else if (
-        permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
-        permission === messaging.AuthorizationStatus.PROVISIONAL
+        permission === AuthorizationStatus.NOT_DETERMINED ||
+        permission === AuthorizationStatus.PROVISIONAL
       ) {
         Braze.requestPushPermission();
       }

@@ -59,7 +59,7 @@ function isTransferTx(tx: Transaction | undefined | null): boolean {
   return !!tx && (tx.model.kind === "token.transfer" || tx.model.kind === "transfer");
 }
 
-export async function extimateTokenMaxSpendable(
+export async function estimateTokenMaxSpendable(
   api: ChainAPI,
   account: SolanaTokenAccount,
   tx?: Transaction | undefined | null,
@@ -103,7 +103,7 @@ export const estimateMaxSpendableWithAPI = async (
     case "Account":
       return (await estimateFeeAndSpendable(api, mainAccount, transaction)).spendable;
     case "TokenAccount":
-      return extimateTokenMaxSpendable(api, account, transaction);
+      return estimateTokenMaxSpendable(api, account, transaction);
   }
 };
 

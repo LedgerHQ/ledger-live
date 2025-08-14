@@ -8,6 +8,7 @@ import { Account, NFT, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
+
 const Container = styled(Box)`
   &.disabled {
     pointer-events: none;
@@ -21,12 +22,14 @@ const Container = styled(Box)`
     background: ${p => rgba(p.theme.colors.wallet, 0.04)};
   }
 `;
+
 type Props = {
   nfts: (ProtoNFT | NFT)[];
   contract: string;
   account: Account;
   onClick: () => void;
 };
+
 const Row = ({ nfts, contract, account, onClick }: Props) => {
   const [nft] = nfts;
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
@@ -60,6 +63,7 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
       >
         <Skeleton width={32} minHeight={32} show={loading}>
           <Media
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             metadata={nftMetadata as NFTMetadata}
             tokenId={nft?.tokenId}
             mediaFormat="preview"

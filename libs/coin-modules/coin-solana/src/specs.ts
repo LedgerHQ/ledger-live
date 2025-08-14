@@ -86,13 +86,13 @@ const solana: AppSpec<Transaction> = {
       },
       test: input => {
         const { accountBeforeTransaction, account, operation } = input;
-        const extimatedMaxSpendable = BigNumber.max(
+        const estimatedMaxSpendable = BigNumber.max(
           accountBeforeTransaction.spendableBalance.minus(SYSTEM_ACCOUNT_RENT_EXEMPT),
           0,
         ).toNumber();
 
         botTest("operation value should be estimated max spendable", () =>
-          expect(operation.value.toNumber()).toBe(extimatedMaxSpendable),
+          expect(operation.value.toNumber()).toBe(estimatedMaxSpendable),
         );
         botTest("account spendableBalance should be zero", () =>
           expect(account.spendableBalance.toNumber()).toBe(0),
@@ -730,6 +730,7 @@ function expectCorrectMemo(input: TransactionTestInput<Transaction>) {
     case "stake.undelegate":
     case "stake.withdraw":
     case "stake.split":
+    case "raw":
       break;
     default:
       return assertUnreachable(transaction.model);

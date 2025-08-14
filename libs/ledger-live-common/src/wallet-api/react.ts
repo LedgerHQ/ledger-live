@@ -52,6 +52,7 @@ import {
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -129,6 +130,7 @@ export interface UiHook {
   "account.request": (params: {
     accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
+    drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
   }) => void;
@@ -143,6 +145,7 @@ export interface UiHook {
   "message.sign": (params: {
     account: AccountLike;
     message: AnyMessage;
+    options: Parameters<WalletHandlers["message.sign"]>[0]["options"];
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -353,39 +356,43 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountRequest) return;
 
-    server.setHandler("account.request", async ({ accounts$, currencies$ }) => {
-      tracking.requestAccountRequested(manifest);
-      const currencies = await firstValueFrom(currencies$);
+    server.setHandler(
+      "account.request",
+      async ({ accounts$, currencies$, drawerConfiguration }) => {
+        tracking.requestAccountRequested(manifest);
+        const currencies = await firstValueFrom(currencies$);
 
-      return new Promise((resolve, reject) => {
-        // handle no curencies selected case
-        const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
-          const currency = findCryptoCurrencyById(id) || findTokenById(id);
-          if (currency) {
-            prev.push(currency);
-          }
-          return prev;
-        }, []);
+        return new Promise((resolve, reject) => {
+          // handle no curencies selected case
+          const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
+            const currency = findCryptoCurrencyById(id) || findTokenById(id);
+            if (currency) {
+              prev.push(currency);
+            }
+            return prev;
+          }, []);
 
-        let done = false;
-        uiAccountRequest({
-          accounts$,
-          currencies: currencyList,
-          onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
-          },
-          onCancel: () => {
-            if (done) return;
-            done = true;
-            tracking.requestAccountFail(manifest);
-            reject(new Error("Canceled by user"));
-          },
+          let done = false;
+          uiAccountRequest({
+            accounts$,
+            currencies: currencyList,
+            drawerConfiguration,
+            onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountSuccess(manifest);
+              resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+            },
+            onCancel: () => {
+              if (done) return;
+              done = true;
+              tracking.requestAccountFail(manifest);
+              reject(new Error("Canceled by user"));
+            },
+          });
         });
-      });
-    });
+      },
+    );
   }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
@@ -431,7 +438,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiMessageSign) return;
 
-    server.setHandler("message.sign", ({ account, message }) =>
+    server.setHandler("message.sign", ({ account, message, options }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -442,11 +449,16 @@ export function useWalletAPIServer({
             return uiMessageSign({
               account,
               message,
+              options,
               onSuccess: signature => {
                 if (done) return;
                 done = true;
                 tracking.signMessageSuccess(manifest);
-                resolve(Buffer.from(signature.replace("0x", ""), "hex"));
+                resolve(
+                  signature.startsWith("0x")
+                    ? Buffer.from(signature.replace("0x", ""), "hex")
+                    : Buffer.from(signature),
+                );
               },
               onCancel: () => {
                 if (done) return;
@@ -513,7 +525,9 @@ export function useWalletAPIServer({
           tokenCurrency,
         );
 
-        return Buffer.from(signedOperation.signature);
+        return account.currency === "solana"
+          ? Buffer.from(signedOperation.signature, "hex")
+          : Buffer.from(signedOperation.signature);
       },
     );
   }, [accounts, manifest, server, tracking, uiTxSign]);

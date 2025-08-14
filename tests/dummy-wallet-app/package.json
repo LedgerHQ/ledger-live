@@ -1,14 +1,15 @@
 {
   "name": "@ledgerhq/dummy-wallet-app",
-  "version": "0.5.2",
+  "version": "0.6.15",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
-    "@ledgerhq/wallet-api-client": "^1.7.2",
-    "@ledgerhq/wallet-api-client-react": "^1.4.5",
-    "@ledgerhq/wallet-api-simulator": "^1.2.6",
+    "@ledgerhq/wallet-api-client": "^1.9.1",
+    "@ledgerhq/wallet-api-client-react": "^1.4.12",
+    "@ledgerhq/wallet-api-simulator": "^1.2.12",
+    "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
     "react": "^18.2.0",
@@ -44,6 +45,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3",
-    "vite": "^4.5.3"
+    "vite": "^4.5.3",
+    "vite-plugin-node-polyfills": "0.17.0"
   }
 }

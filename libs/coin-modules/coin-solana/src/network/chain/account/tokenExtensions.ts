@@ -131,6 +131,7 @@ export const TokenAccountExtensions = array(
     NonTransferableAccountExt,
     ConfidentialTransferFeeAmountExt,
     TransferHookAccountExt,
+    UnknownExt,
   ]),
 );
 

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Camera } from "expo-camera/legacy";
+import { useCameraPermissions as useExpoCameraPermissions } from "expo-camera";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import { AppState, Linking } from "react-native";
 
 export default function useCameraPermissions() {
-  const [permission, requestPermission, checkPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission, checkPermission] = useExpoCameraPermissions();
   const [firstAutomaticRequestCompleted, setFirstAutomaticRequestCompleted] =
     useState<boolean>(false);
   const isMounted = useIsMounted();

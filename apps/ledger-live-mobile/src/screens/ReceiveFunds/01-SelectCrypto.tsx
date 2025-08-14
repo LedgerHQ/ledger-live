@@ -23,8 +23,8 @@ import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { useAssets } from "LLM/features/ModularDrawer/hooks/useAssets";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -53,31 +53,22 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
 
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
-
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const goToDeviceSelection = useCallback(
-    (currency: CryptoCurrency, createTokenAccount?: boolean) => {
-      if (llmNetworkBasedAddAccountFlow?.enabled) {
-        navigation.replace(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency,
-            context: AddAccountContexts.ReceiveFunds,
-          },
-        });
-      } else {
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+    (currency: CryptoCurrency) => {
+      navigation.replace(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
           currency,
-          ...(createTokenAccount && { createTokenAccount }),
-        });
-      }
+          context: AddAccountContexts.ReceiveFunds,
+        },
+      });
     },
-    [llmNetworkBasedAddAccountFlow?.enabled, navigation],
+    [navigation],
   );
 
   const onPressItem = useCallback(
@@ -112,7 +103,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           currency,
         });
       } else {
-        goToDeviceSelection(currency, isToken);
+        goToDeviceSelection(currency);
       }
     },
     [currenciesByProvider, accounts, navigation, filterCurrencyIds, goToDeviceSelection],
@@ -147,22 +138,28 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [onPressItem],
   );
 
-  const list = useMemo(
-    () =>
-      filterCurrencyIdsSet
-        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIdsSet.has(crypto.id))
-        : sortedCryptoCurrencies,
-    [filterCurrencyIdsSet, sortedCryptoCurrencies],
+  // This fix an issue we had with provider of crypto.
+  // As we have it for the MAD I use the same hook
+  // In the future the MAD will replace this so it's fine to do it this way
+  const filteredCurrencies = useMemo(() => {
+    if (!filterCurrencyIdsSet) return sortedCryptoCurrencies;
+    return sortedCryptoCurrencies.filter(currency => filterCurrencyIdsSet.has(currency.id));
+  }, [sortedCryptoCurrencies, filterCurrencyIdsSet]);
+
+  const { availableAssets } = useAssets(
+    filteredCurrencies,
+    currenciesByProvider,
+    sortedCryptoCurrencies,
   );
 
   const renderListView = useCallback(() => {
     switch (providersLoadingStatus) {
       case LoadingStatus.Success:
-        return list.length > 0 ? (
+        return availableAssets.length > 0 ? (
           <Flex flex={1} ml={6} mr={6} mt={3}>
             <FilteredSearchBar
               keys={SEARCH_KEYS}
-              list={list}
+              list={availableAssets}
               renderList={renderList}
               renderEmptySearch={renderEmptyList}
               onSearchChange={debounceTrackOnSearchChange}
@@ -181,7 +178,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           </Flex>
         );
     }
-  }, [providersLoadingStatus, list, renderList, debounceTrackOnSearchChange]);
+  }, [providersLoadingStatus, availableAssets, renderList, debounceTrackOnSearchChange]);
 
   return (
     <SafeAreaView edges={["left", "right"]} isFlex>

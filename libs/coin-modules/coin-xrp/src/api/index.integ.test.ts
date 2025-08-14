@@ -19,6 +19,10 @@ describe("Xrp Api", () => {
         sender: SENDER,
         amount,
         recipient: "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB",
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
       // Then
@@ -92,7 +96,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 1000000n }]);
     });
   });
 
@@ -107,10 +111,13 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map([["memos", ["testdata"]]]),
+        },
       });
-
       // Then
-      expect(result.length).toEqual(162);
+      expect(result.length).toEqual(178);
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
@@ -120,10 +127,15 @@ describe("Xrp Api", () => {
         sender: SENDER,
         recipient: RECIPIENT,
         amount: BigInt(10),
+        memo: {
+          type: "map",
+          memos: new Map(),
+        },
       });
 
-      const decodedTransaction = decode(result) as { Fee: string };
-      expect(decodedTransaction.Fee).toEqual("10");
+      expect(decode(result)).toMatchObject({
+        Fee: "10",
+      });
     });
 
     it("should use custom user fees when user provides it for crafting a transaction", async () => {
@@ -135,12 +147,17 @@ describe("Xrp Api", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: BigInt(10),
+          memo: {
+            type: "map",
+            memos: new Map(),
+          },
         },
-        customFees,
+        { value: customFees },
       );
 
-      const decodedTransaction = decode(result) as { Fee: string };
-      expect(decodedTransaction.Fee).toEqual(customFees.toString());
+      expect(decode(result)).toMatchObject({
+        Fee: customFees.toString(),
+      });
     });
   });
 });
