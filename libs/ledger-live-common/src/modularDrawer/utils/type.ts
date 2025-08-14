@@ -1,4 +1,10 @@
-import type { AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
+export type AssetType = {
+  name: string;
+  ticker: string;
+  id: string;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
+};
 
 export type ProviderBalanceAsset = {
   id: string;

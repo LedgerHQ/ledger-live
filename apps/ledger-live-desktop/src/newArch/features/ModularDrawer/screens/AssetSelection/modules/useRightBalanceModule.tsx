@@ -8,8 +8,11 @@ import {
   counterValueCurrencySelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { getBalanceAndFiatValueByAssets } from "../../../utils/getBalanceAndFiatValueByAssets";
-import { groupAccountsByAsset, GroupedAccount } from "../../../utils/groupAccountsByAsset";
+import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
+import {
+  groupAccountsByAsset,
+  GroupedAccount,
+} from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui/index";

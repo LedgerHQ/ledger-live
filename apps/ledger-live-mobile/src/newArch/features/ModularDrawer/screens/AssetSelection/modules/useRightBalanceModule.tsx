@@ -17,9 +17,15 @@ import {
   localeSelector,
 } from "~/reducers/settings";
 import { Text } from "@ledgerhq/native-ui/index";
-import { groupAccountsByAsset, GroupedAccount } from "./groupAccountsByAsset";
-import { ProviderBalanceAsset, ProviderBalanceResultsMap } from "./type";
-import { getBalanceAndFiatValueByAssets } from "./getBalanceAndFiatValueByAssets";
+import {
+  groupAccountsByAsset,
+  GroupedAccount,
+} from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
+import {
+  ProviderBalanceAsset,
+  ProviderBalanceResultsMap,
+} from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
 
 const BalanceContainer = styled.View`
   display: flex;
