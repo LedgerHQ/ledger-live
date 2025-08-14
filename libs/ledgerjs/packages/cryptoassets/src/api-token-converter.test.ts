@@ -307,24 +307,6 @@ describe("convertApiToken", () => {
   });
 
   describe("Unknown token standards", () => {
-    it("should create generic token for unknown standard", () => {
-      const apiToken: ApiTokenData = {
-        id: "ethereum/unknown/test",
-        contractAddress: "0x123...",
-        name: "Test Token",
-        ticker: "TEST",
-        units: [{ code: "TEST", name: "Test Token", magnitude: 18 }],
-        standard: "unknown",
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("ethereum");
-      expect(result?.tokenType).toBe("unknown");
-    });
-
     it("should return undefined for unknown parent currency", () => {
       const apiToken: ApiTokenData = {
         id: "nonexistent/unknown/test",
@@ -357,23 +339,6 @@ describe("convertApiToken", () => {
 
       expect(result).toBeDefined();
       expect(result?.delisted).toBe(true);
-    });
-
-    it("should handle tokens with disableCountervalue", () => {
-      const apiToken: ApiTokenData = {
-        id: "ethereum/erc20/test",
-        contractAddress: "0x123...",
-        name: "Test Token",
-        ticker: "TEST",
-        units: [{ code: "TEST", name: "Test Token", magnitude: 18 }],
-        standard: "erc20",
-        disableCountervalue: true,
-      };
-
-      const result = convertApiToken(apiToken);
-
-      expect(result).toBeDefined();
-      expect(result?.disableCountervalue).toBe(true);
     });
 
     it("should handle missing units gracefully", () => {

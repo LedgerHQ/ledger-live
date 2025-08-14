@@ -232,7 +232,6 @@ describe("convertApiAssets", () => {
     const result = convertApiAssets({});
 
     expect(result).toEqual({});
-    expect(Object.keys(result)).toHaveLength(0);
   });
 
   it("should handle mixed valid and invalid assets", () => {
