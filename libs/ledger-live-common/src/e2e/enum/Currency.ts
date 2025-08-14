@@ -9,6 +9,7 @@ export class Currency {
     public readonly ticker: string,
     public readonly id: string,
     public readonly speculosApp: AppInfos,
+    public readonly networks: Network[],
     public readonly contractAddress?: string,
   ) {}
 
@@ -89,7 +90,9 @@ export class Currency {
   static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
     Network.POLYGON,
   ]);
-  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN,  [Network.BINANCE_SMART_CHAIN],);
+  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN, [
+    Network.BNB_CHAIN,
+  ]);
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON, [Network.TON]);
   static readonly ETH_USDT = new Currency(
     "Tether USD",
@@ -145,9 +148,12 @@ export class Currency {
     "BUSD",
     "bsc",
     AppInfos.BNB_CHAIN,
-    [Network.BINANCE_SMART_CHAIN, Network.POLYGON],
+    [Network.BNB_CHAIN, Network.POLYGON],
   );
-  static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [Network.BINANCE_SMART_CHAIN, Network.ETHEREUM]);
+  static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
+    Network.BNB_CHAIN,
+    Network.ETHEREUM,
+  ]);
   static readonly POL_DAI = new Currency(
     "(PoS) Dai Stablecoin",
     "DAI",
@@ -167,7 +173,7 @@ export class Currency {
   ]);
   static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC, [
     Network.LITECOIN,
-    ]);
+  ]);
   static readonly SOL_GIGA = new Currency(
     "GIGACHAD",
     "GIGA",
