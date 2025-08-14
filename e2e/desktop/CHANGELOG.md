@@ -1,5 +1,15 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/live-common@34.45.0-nightly.2
+  - @ledgerhq/types-live@6.81.0-nightly.0
+  - @ledgerhq/live-cli@24.21.1-nightly.2
+  - @ledgerhq/live-wallet@0.12.1-nightly.2
+
 ## 0.6.0-nightly.1
 
 ### Minor Changes

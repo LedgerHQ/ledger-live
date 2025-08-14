@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.27.0-nightly.2
+
+### Minor Changes
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.2
+  - @ledgerhq/coin-framework@6.1.0-nightly.2
+  - @ledgerhq/evm-tools@1.7.3-nightly.1
+  - @ledgerhq/domain-service@1.2.40-nightly.0
+
 ## 2.26.1-nightly.1
 
 ### Patch Changes

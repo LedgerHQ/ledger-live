@@ -1,5 +1,60 @@
 # @ledgerhq/live-common
 
+## 34.45.0-nightly.2
+
+### Minor Changes
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: remove fee and replace by fees in Transaction type
+
+- [#11260](https://github.com/LedgerHQ/ledger-live/pull/11260) [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a allowlist and blocklist FF parameter to enable or disable the mad for specific live apps
+
+### Patch Changes
+
+- [#11332](https://github.com/LedgerHQ/ledger-live/pull/11332) [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes infinite loop for untracked users with (partially) expired braze campaigns
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`70720f9`](https://github.com/LedgerHQ/ledger-live/commit/70720f9dc4b72f8637051788fe76b08b38b1f5aa)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.2
+  - @ledgerhq/coin-polkadot@6.7.0-nightly.2
+  - @ledgerhq/coin-stellar@6.1.0-nightly.2
+  - @ledgerhq/coin-canton@0.3.0-nightly.2
+  - @ledgerhq/coin-tezos@6.1.0-nightly.2
+  - @ledgerhq/coin-tron@5.1.0-nightly.2
+  - @ledgerhq/coin-evm@2.27.0-nightly.2
+  - @ledgerhq/coin-xrp@7.1.0-nightly.2
+  - @ledgerhq/coin-framework@6.1.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.2
+  - @ledgerhq/coin-sui@0.10.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.15-nightly.1
+  - @ledgerhq/coin-algorand@0.9.17-nightly.2
+  - @ledgerhq/coin-aptos@3.0.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.2
+  - @ledgerhq/coin-cardano@0.11.1-nightly.2
+  - @ledgerhq/coin-casper@2.0.8-nightly.2
+  - @ledgerhq/coin-celo@1.1.15-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.2
+  - @ledgerhq/coin-hedera@1.9.3-nightly.2
+  - @ledgerhq/coin-icon@0.11.4-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.17-nightly.2
+  - @ledgerhq/coin-mina@1.1.16-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.17-nightly.2
+  - @ledgerhq/coin-near@0.11.17-nightly.2
+  - @ledgerhq/coin-solana@0.31.0-nightly.2
+  - @ledgerhq/coin-stacks@0.8.17-nightly.2
+  - @ledgerhq/coin-ton@0.13.6-nightly.2
+  - @ledgerhq/coin-vechain@2.8.1-nightly.2
+  - @ledgerhq/hw-app-vet@0.5.13-nightly.2
+  - @ledgerhq/live-countervalues@0.6.1-nightly.2
+  - @ledgerhq/live-nft@0.8.17-nightly.2
+  - @ledgerhq/live-wallet@0.12.1-nightly.2
+  - @ledgerhq/live-signer-canton@0.2.1-nightly.2
+  - @ledgerhq/live-signer-evm@0.6.4-nightly.2
+  - @ledgerhq/device-core@0.5.6-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.2-nightly.2
+  - @ledgerhq/hw-app-celo@6.33.13-nightly.1
+
 ## 34.45.0-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.125.0-nightly.2
+
+### Minor Changes
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11292](https://github.com/LedgerHQ/ledger-live/pull/11292) [`627deec`](https://github.com/LedgerHQ/ledger-live/commit/627deec0491ebe658b069b5e4926739c673317bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add Lotties for Apex
+
+- [#11260](https://github.com/LedgerHQ/ledger-live/pull/11260) [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a allowlist and blocklist FF parameter to enable or disable the mad for specific live apps
+
+- [#11320](https://github.com/LedgerHQ/ledger-live/pull/11320) [`23f7482`](https://github.com/LedgerHQ/ledger-live/commit/23f74820dac35a77581ac05726e5f5a9cb364d49) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device icon in sync onboarding for Apex
+
+### Patch Changes
+
+- [#11332](https://github.com/LedgerHQ/ledger-live/pull/11332) [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes infinite loop for untracked users with (partially) expired braze campaigns
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856), [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.2
+  - @ledgerhq/coin-evm@2.27.0-nightly.2
+  - @ledgerhq/live-common@34.45.0-nightly.2
+  - @ledgerhq/coin-framework@6.1.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.2
+  - @ledgerhq/types-live@6.81.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.2
+  - @ledgerhq/live-countervalues@0.6.1-nightly.2
+  - @ledgerhq/live-nft@0.8.17-nightly.2
+  - @ledgerhq/live-nft-react@0.9.17-nightly.2
+  - @ledgerhq/live-wallet@0.12.1-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.9.0-nightly.2
+  - @ledgerhq/domain-service@1.2.40-nightly.0
+
 ## 2.125.0-nightly.1
 
 ### Minor Changes

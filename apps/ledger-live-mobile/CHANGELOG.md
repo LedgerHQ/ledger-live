@@ -1,5 +1,44 @@
 # live-mobile
 
+## 3.90.0-nightly.2
+
+### Minor Changes
+
+- [#11291](https://github.com/LedgerHQ/ledger-live/pull/11291) [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(ljs): rename BSC to BNB
+
+- [#11327](https://github.com/LedgerHQ/ledger-live/pull/11327) [`430c3a4`](https://github.com/LedgerHQ/ledger-live/commit/430c3a4b64e9748e46319ed3bb9a3fbfdd1bf533) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Fix custom close to work with live app routing
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11292](https://github.com/LedgerHQ/ledger-live/pull/11292) [`627deec`](https://github.com/LedgerHQ/ledger-live/commit/627deec0491ebe658b069b5e4926739c673317bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add Lotties for Apex
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: remove fee and replace by fees in Transaction type
+
+- [#11260](https://github.com/LedgerHQ/ledger-live/pull/11260) [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a allowlist and blocklist FF parameter to enable or disable the mad for specific live apps
+
+- [#11320](https://github.com/LedgerHQ/ledger-live/pull/11320) [`23f7482`](https://github.com/LedgerHQ/ledger-live/commit/23f74820dac35a77581ac05726e5f5a9cb364d49) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device icon in sync onboarding for Apex
+
+### Patch Changes
+
+- [#11336](https://github.com/LedgerHQ/ledger-live/pull/11336) [`ed00f0f`](https://github.com/LedgerHQ/ledger-live/commit/ed00f0f2868f374f48d98aaf1595738c7f36e1f5) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add blank custom fee as placeholder
+
+- [#11342](https://github.com/LedgerHQ/ledger-live/pull/11342) [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix clearing cache crashes on Android
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/coin-evm@2.27.0-nightly.2
+  - @ledgerhq/coin-framework@6.1.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.2
+  - @ledgerhq/types-live@6.81.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.2
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.17-nightly.2
+  - @ledgerhq/coin-stacks@0.8.17-nightly.2
+  - @ledgerhq/live-countervalues@0.6.1-nightly.2
+  - @ledgerhq/live-nft@0.8.17-nightly.2
+  - @ledgerhq/live-nft-react@0.9.17-nightly.2
+  - @ledgerhq/live-wallet@0.12.1-nightly.2
+  - @ledgerhq/domain-service@1.2.40-nightly.0
+
 ## 3.90.0-nightly.1
 
 ### Minor Changes
