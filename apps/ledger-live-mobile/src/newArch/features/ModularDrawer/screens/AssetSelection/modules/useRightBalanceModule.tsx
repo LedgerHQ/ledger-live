@@ -1,7 +1,6 @@
 import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -17,15 +16,14 @@ import {
   localeSelector,
 } from "~/reducers/settings";
 import { Text } from "@ledgerhq/native-ui/index";
-import {
-  groupAccountsByAsset,
-  GroupedAccount,
-} from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
+import { groupAccountsByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
 import {
   ProviderBalanceAsset,
   ProviderBalanceResultsMap,
 } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
+import { getProviderCurrency } from "@ledgerhq/live-common/modularDrawer/utils/getProviderCurrency";
+import { calculateProviderTotals } from "@ledgerhq/live-common/modularDrawer/utils/calculateProviderTotal";
 
 const BalanceContainer = styled.View`
   display: flex;
@@ -51,37 +49,6 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
   </BalanceContainer>
 );
 
-const getProviderCurrency = (
-  mainCurrency: CryptoOrTokenCurrency,
-  currencies: CryptoOrTokenCurrency[],
-) => {
-  try {
-    return getTokenOrCryptoCurrencyById(mainCurrency.id);
-  } catch {
-    return getTokenOrCryptoCurrencyById(currencies[0].id);
-  }
-};
-
-const calculateProviderTotals = (
-  currencies: CryptoOrTokenCurrency[],
-  groupedAccountsByAsset: Record<string, GroupedAccount>,
-) => {
-  let totalBalance = new BigNumber(0);
-  let totalFiatValue = new BigNumber(0);
-  let hasAccounts = false;
-
-  for (const currency of currencies) {
-    const assetGroup = groupedAccountsByAsset[currency.id];
-    if (assetGroup?.accounts.length > 0) {
-      totalBalance = totalBalance.plus(assetGroup.totalBalance);
-      totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
-      hasAccounts = true;
-    }
-  }
-
-  return { totalBalance, totalFiatValue, hasAccounts };
-};
-
 const formatProviderResult = (
   providerCurrency: CryptoOrTokenCurrency,
   totalBalance: BigNumber,
@@ -99,9 +66,11 @@ const formatProviderResult = (
     currency: counterValueCurrency.ticker,
     value: totalFiatValue.toNumber(),
     locale,
+    allowZeroValue: true,
   });
 
   const sortValue = discreet ? 0 : totalFiatValue.toNumber();
+
   return {
     id: providerCurrency.id,
     name: providerCurrency.name,

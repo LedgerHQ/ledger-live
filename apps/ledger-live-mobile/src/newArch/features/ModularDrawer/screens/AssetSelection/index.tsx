@@ -16,9 +16,7 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
-import { useRightBalanceModule } from "./modules/useRightBalanceModule";
+import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -51,9 +49,11 @@ const AssetSelection = ({
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
-  const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
 
-  const enrichedAssets = useRightBalanceModule(availableAssets, result.currenciesByProvider);
+  const transformAssets = createAssetConfigurationHook({
+    assetsConfiguration,
+  });
+  const formattedAssets = transformAssets(itemsToDisplay);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -93,11 +93,10 @@ const AssetSelection = ({
     }
 
     if (availableAssets.length > 0) {
-      setItemsToDisplay(
-        availableAssets.filter(asset =>
-          asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-        ),
+      const filteredAssets = availableAssets.filter(asset =>
+        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
       );
+      setItemsToDisplay(filteredAssets);
     }
   }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
 
@@ -145,7 +144,7 @@ const AssetSelection = ({
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled={true}
-        data={enrichedAssets}
+        data={formattedAssets}
         keyExtractor={item => item.id}
         getItemCount={itemsToDisplay => itemsToDisplay.length}
         getItem={(itemsToDisplay, index) => itemsToDisplay[index]}

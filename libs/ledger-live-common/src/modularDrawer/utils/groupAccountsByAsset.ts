@@ -1,4 +1,4 @@
-import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
+import { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";

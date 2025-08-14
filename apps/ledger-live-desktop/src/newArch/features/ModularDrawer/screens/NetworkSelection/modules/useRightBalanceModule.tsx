@@ -6,7 +6,7 @@ import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { useSelector } from "react-redux";
 import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { getBalanceAndFiatValueByAssets } from "../../../utils/getBalanceAndFiatValueByAssets";
+import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import {
   discreetModeSelector,
