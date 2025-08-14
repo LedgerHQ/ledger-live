@@ -2,9 +2,11 @@ import React from "react";
 import Svg, { ClipPath, Defs, G, Path, Rect } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 
-const ContinueOnEuropa = () => {
+/**
+ * This component renders an SVG Europa icon in each step in the Sync Onboarding process.
+ */
+export default React.memo(function ContinueOnEuropa() {
   const { theme } = useTheme();
-
   if (theme === "light") {
     return (
       <Svg width={48} height={48} viewBox="0 0 48 48" fill="none">
@@ -85,6 +87,4 @@ const ContinueOnEuropa = () => {
       </Defs>
     </Svg>
   );
-};
-
-export default ContinueOnEuropa;
+});

@@ -14,7 +14,7 @@ describe("craftTransaction", () => {
     const transaction = {
       recipient: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
       amount: BigInt(100_000_000),
-      fee: BigInt(100),
+      fees: BigInt(100),
     };
 
     // When
@@ -45,7 +45,7 @@ describe("craftTransaction", () => {
     const transaction = {
       recipient: "rJe1St1G6BWMFmdrrcT7NdD3XT1NxTMEWN",
       amount: BigInt(100_000_000),
-      fee: BigInt(100),
+      fees: BigInt(100),
       memos: [{ data: "01", format: "02", type: "03" }],
       destinationTag: 123,
     };

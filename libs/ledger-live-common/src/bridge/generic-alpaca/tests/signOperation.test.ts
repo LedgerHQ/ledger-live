@@ -13,9 +13,8 @@ jest.mock("../utils", () => ({
   buildOptimisticOperation: jest.fn(),
   transactionToIntent: jest.fn(),
 }));
-
 describe("genericSignOperation", () => {
-  const network = "xrp";
+  const networks = ["xrp", "stellar"];
   const kind = "local";
 
   const mockSignerContext = jest.fn();
@@ -55,6 +54,7 @@ describe("genericSignOperation", () => {
       craftTransaction: jest.fn().mockResolvedValue(unsignedTx),
       getAccountInfo: jest.fn().mockResolvedValue(pubKey),
       combine: jest.fn().mockResolvedValue(signedTx),
+      getSequence: jest.fn().mockResolvedValue(1),
     });
 
     (transactionToIntent as jest.Mock).mockReturnValue(txIntent);
@@ -65,33 +65,35 @@ describe("genericSignOperation", () => {
     mockSignerContext.mockImplementation(async (_deviceId, cb) => cb(mockSigner));
   });
 
-  it("emits full sign operation flow", async () => {
-    const signOperation = genericSignOperation(network, kind)(mockSignerContext);
-    const observable = signOperation({ account, transaction, deviceId });
+  networks.forEach(network => {
+    it(`emits full sign operation flow for ${network}`, async () => {
+      const signOperation = genericSignOperation(network, kind)(mockSignerContext);
+      const observable = signOperation({ account, transaction, deviceId });
 
-    const events = await lastValueFrom(observable.pipe(toArray()));
+      const events = await lastValueFrom(observable.pipe(toArray()));
 
-    expect(events[0]).toEqual({ type: "device-signature-requested" });
-    expect(events[1]).toEqual({ type: "device-signature-granted" });
-    expect(events[2]).toEqual({
-      type: "signed",
-      signedOperation: {
-        operation: { id: "mock-op" },
-        signature: signedTx,
-      },
+      expect(events[0]).toEqual({ type: "device-signature-requested" });
+      expect(events[1]).toEqual({ type: "device-signature-granted" });
+      expect(events[2]).toEqual({
+        type: "signed",
+        signedOperation: {
+          operation: { id: "mock-op" },
+          signature: signedTx,
+        },
+      });
+
+      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction);
+      expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
     });
 
-    expect(transactionToIntent).toHaveBeenCalledWith(account, transaction);
-    expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
-  });
+    it(`throws FeeNotLoaded if fees are missing for ${network}`, async () => {
+      const txWithoutFees = { ...transaction };
+      delete txWithoutFees.fees;
 
-  it("throws FeeNotLoaded if fees are missing", async () => {
-    const txWithoutFees = { ...transaction };
-    delete txWithoutFees.fees;
+      const signOperation = genericSignOperation(network, kind)(mockSignerContext);
+      const observable = signOperation({ account, transaction: txWithoutFees, deviceId });
 
-    const signOperation = genericSignOperation(network, kind)(mockSignerContext);
-    const observable = signOperation({ account, transaction: txWithoutFees, deviceId });
-
-    await expect(observable.toPromise()).rejects.toThrow(FeeNotLoaded);
+      await expect(observable.toPromise()).rejects.toThrow(FeeNotLoaded);
+    });
   });
 });

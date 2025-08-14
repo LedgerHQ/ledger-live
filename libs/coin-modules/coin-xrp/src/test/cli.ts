@@ -30,7 +30,7 @@ function inferTransactions(
     invariant(transaction.family === "xrp", "XRP family");
     return {
       ...transaction,
-      fee: inferAmount(account, opts.fee || "0.001xrp"),
+      fees: inferAmount(account, opts.fee || "0.001xrp"),
       tag: opts.tag,
     };
   });

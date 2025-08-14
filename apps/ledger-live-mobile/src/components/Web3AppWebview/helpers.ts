@@ -87,7 +87,10 @@ export function useWebView(
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
   });
-  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: manifest.id,
+  });
 
   const { openDrawer: openModularDrawer } = useModularDrawerController();
 

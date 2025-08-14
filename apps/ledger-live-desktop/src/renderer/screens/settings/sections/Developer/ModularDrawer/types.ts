@@ -27,8 +27,13 @@ export interface NetworksRightSelectOption extends SelectOption {
   value: (typeof networksRightElementOptions)[number];
 }
 
-export interface EntryPointOption {
+export interface LocationOption {
   value: ModularDrawerLocation;
+  label: string;
+}
+
+export interface LiveAppOption {
+  value: string;
   label: string;
 }
 

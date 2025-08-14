@@ -69,7 +69,7 @@ const ReceiveModal = () => {
   const hasAccounts = !!accounts.length;
 
   const { openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     "receive",
     "MODAL_RECEIVE",
   );

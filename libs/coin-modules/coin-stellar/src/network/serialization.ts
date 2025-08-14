@@ -129,6 +129,7 @@ async function formatOperation(
     accountId,
     fee: new BigNumber(transaction.fee_charged),
     value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,
+    // TODO: doc
     // Using type NONE to hide asset operations from the main account (show them
     // only on sub-account)
     type: rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type) ? "NONE" : type,
@@ -137,7 +138,7 @@ async function formatOperation(
     date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: Number(transaction.source_account_sequence),
+    transactionSequenceNumber: Number(transaction.source_account_sequence) || undefined,
     hasFailed: !rawOperation.transaction_successful,
     blockHash: blockHash,
     extra: {

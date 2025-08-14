@@ -42,6 +42,7 @@ import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen, useTrack } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import ContinueOnEuropa from "./assets/ContinueOnEuropa";
+import ContinueOnApex from "./assets/ContinueOnApex";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
@@ -60,6 +61,7 @@ import BackgroundRed from "./assets/BackgroundRed";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";
 import { ShadowedView } from "react-native-fast-shadow";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -143,21 +145,6 @@ enum CompanionStepKey {
   Ready,
   Exit,
 }
-
-const ContinueOnDeviceWithAnim: React.FC<{
-  deviceModelId: DeviceModelId;
-  text: string;
-  withTopDivider?: boolean;
-}> = ({ text, withTopDivider, deviceModelId }) => {
-  // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
-  return (
-    <ContinueOnDevice
-      Icon={deviceModelId === DeviceModelId.stax ? ContinueOnStax : ContinueOnEuropa}
-      text={text}
-      withTopDivider={withTopDivider}
-    />
-  );
-};
 
 /**
  * Component representing the synchronous companion step, which polls the current device state
@@ -587,6 +574,19 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     Linking.openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
 
+  const DeviceIcon: IconType = useMemo(() => {
+    switch (device.modelId) {
+      case DeviceModelId.stax:
+        return ContinueOnStax;
+      case DeviceModelId.europa:
+        return ContinueOnEuropa;
+      case DeviceModelId.apex:
+        return ContinueOnApex; // Use the same icon as Europa for now
+      default:
+        return ContinueOnEuropa; // Fallback to Europa icon
+    }
+  }, [device.modelId]);
+
   const companionSteps: Step[] = useMemo(
     () =>
       [
@@ -601,8 +601,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   productName,
                 })}
               </Text>
-              <ContinueOnDeviceWithAnim
-                deviceModelId={device.modelId}
+              <ContinueOnDevice
+                Icon={DeviceIcon}
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
                   productName,
                 })}
@@ -619,8 +619,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             <Flex>
               <TrackScreen category={"Set up device: Step 2 PIN"} />
               <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
-              <ContinueOnDeviceWithAnim
-                deviceModelId={device.modelId}
+              <ContinueOnDevice
+                Icon={DeviceIcon}
                 text={t("syncOnboarding.pinStep.continueOnDevice", {
                   productName,
                 })}
@@ -657,8 +657,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     </BodyText>
                   </Flex>
                   <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
                       productName,
                     })}
@@ -715,8 +715,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       </BodyText>
                     </Flex>
                   </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.selectionRestoreChoice.continueOnDevice", {
                       productName,
                     })}
@@ -726,8 +726,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <Flex>
                   <SubtitleText>{t("syncOnboarding.seedStep.restoreSeed.title")}</SubtitleText>
                   <BodyText>{t("syncOnboarding.seedStep.restoreSeed.description")}</BodyText>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.restoreSeed.continueOnDevice", {
                       productName,
                     })}
@@ -832,8 +832,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                       {t("syncOnboarding.seedStep.backupCharon.cta")}
                     </Link>
                   </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.backupCharon.continueOnDevice", {
                       productName,
                     })}
@@ -847,8 +847,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                   <BodyText>
                     {t("syncOnboarding.seedStep.restoreLedgerCharon.description")}
                   </BodyText>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.restoreLedgerCharon.continueOnDevice", {
                       productName,
                     })}
@@ -880,8 +880,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                         : t("syncOnboarding.seedStep.selectionRestore.desc")}
                     </Text>
                   </Flex>
-                  <ContinueOnDeviceWithAnim
-                    deviceModelId={device.modelId}
+                  <ContinueOnDevice
+                    Icon={DeviceIcon}
                     text={t("syncOnboarding.seedStep.selectionContinueOnDevice", {
                       productName,
                     })}
@@ -926,11 +926,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       productName,
       seedPathStatus,
       deviceInitialApps?.enabled,
-      device,
+      DeviceIcon,
       deviceOnboardingState?.charonSupported,
       deviceOnboardingState?.charonStatus,
       handleLearnMoreClick,
       shouldRestoreApps,
+      device,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,

@@ -59,7 +59,9 @@ export function useCustomExchangeHandlers({
   return useMemo<WalletAPICustomHandlers>(() => {
     const ptxCustomHandlers = {
       "custom.close": () => {
-        navigation.popToTop();
+        navigation.getParent()?.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
       },
       "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
         const accountId = request.params?.accountId;

@@ -16,7 +16,7 @@ const AccountsHeader = () => {
   const { t } = useTranslation();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const { openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
   );
 

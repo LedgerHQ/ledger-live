@@ -1,6 +1,6 @@
 import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("Sui Api", () => {
   let module: AlpacaApi;
@@ -10,7 +10,7 @@ describe("Sui Api", () => {
   beforeAll(() => {
     module = createApi({
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getEnv("API_SUI_NODE_PROXY"),
       },
     });
   });

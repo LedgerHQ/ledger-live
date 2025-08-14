@@ -58,7 +58,10 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
     [history],
   );
 
-  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, "market");
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "market",
+  );
 
   const openAddAccounts = useCallback(() => {
     if (internalCurrency) openAddAccountFlow(internalCurrency, true, onAccountSelected);

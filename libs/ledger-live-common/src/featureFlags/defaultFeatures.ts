@@ -616,8 +616,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -628,8 +629,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,

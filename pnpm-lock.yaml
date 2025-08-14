@@ -5342,6 +5342,9 @@ importers:
       '@ledgerhq/wallet-api-server':
         specifier: ^1.10.1
         version: 1.10.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+      '@stellar/stellar-sdk':
+        specifier: ^11.3.0
+        version: 11.3.0
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0

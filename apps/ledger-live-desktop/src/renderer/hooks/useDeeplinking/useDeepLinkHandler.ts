@@ -37,7 +37,7 @@ export function useDeepLinkHandler() {
   const tryRedirectToPostOnboardingOrRecover = useRedirectToPostOnboardingCallback();
 
   const { openAddAccountFlow, openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     "deeplink",
   );
 

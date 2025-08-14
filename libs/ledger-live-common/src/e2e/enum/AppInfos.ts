@@ -43,7 +43,7 @@ export class AppInfos {
 
   static readonly POLYGON = new AppInfos("Polygon");
 
-  static readonly BINANCE_SMART_CHAIN = new AppInfos("Binance Smart Chain");
+  static readonly BNB_CHAIN = new AppInfos("BNB Chain");
 
   static readonly TON = new AppInfos("Ton");
 

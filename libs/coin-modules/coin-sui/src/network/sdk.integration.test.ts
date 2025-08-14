@@ -12,7 +12,7 @@ import {
   getBlockInfo,
   getStakes,
 } from "./sdk";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
@@ -21,7 +21,7 @@ describe("SUI SDK Integration tests", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getEnv("API_SUI_NODE_PROXY"),
       },
     }));
   });

@@ -33,6 +33,11 @@ import FlexPinLight from "../animations/device/flex/light/pin.json";
 import FlexContinueDark from "../animations/device/flex/dark/continue.json";
 import FlexContinueLight from "../animations/device/flex/light/continue.json";
 
+import ApexPinDark from "../animations/device/apex/dark/pin.json";
+import ApexPinLight from "../animations/device/apex/light/pin.json";
+import ApexContinueDark from "../animations/device/apex/dark/continue.json";
+import ApexContinueLight from "../animations/device/apex/light/continue.json";
+
 import NanoSPlugAndPinCodeDark from "../animations/device/nanoS/1PlugAndPinCode/dark.json";
 import NanoSPlugAndPinCodeLight from "../animations/device/nanoS/1PlugAndPinCode/light.json";
 import NanoSEnterPinCodeDark from "../animations/device/nanoS/3EnterPinCode/dark.json";
@@ -332,44 +337,44 @@ const animations: AnimationsCollection = {
   },
   apex: {
     plugAndPinCode: {
-      light: FlexPinLight,
-      dark: FlexPinDark,
+      light: ApexPinLight,
+      dark: ApexPinDark,
     },
     enterPinCode: {
-      light: FlexPinLight,
-      dark: FlexPinDark,
+      light: ApexPinLight,
+      dark: ApexPinDark,
     },
     quitApp: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     allowManager: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     openApp: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     verify: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     sign: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     allowUpdate: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     blePairing: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
     blePaired: {
-      light: FlexContinueLight,
-      dark: FlexContinueDark,
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
   },
 };

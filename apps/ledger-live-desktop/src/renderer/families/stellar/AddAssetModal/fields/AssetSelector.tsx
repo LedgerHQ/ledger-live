@@ -112,7 +112,7 @@ export default function DelegationSelectorField({
     () =>
       options.find(({ id }) => {
         const { assetCode, assetIssuer } = getAssetObject(id);
-        return assetCode === transaction.assetCode && assetIssuer === transaction.assetIssuer;
+        return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
       }),
     [options, transaction],
   );

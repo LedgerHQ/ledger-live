@@ -21,20 +21,20 @@ const Root = (props: Props) => {
   const { fees, networkInfo } = transaction;
   const isCustomFee = !fees?.eq(networkInfo?.fees || 0);
   const [isCustomMode, setCustomMode] = useState(isCustomFee);
-  if (!networkInfo || !fees) return null; // these were loaded on the previous send step
+  if (!fees) return null; // these were loaded on the previous send step
   const bridge = getAccountBridge(props.account);
   const onFeeModeChange = (isCustom: boolean) => {
     track("button_clicked2", {
       ...trackProperties,
       button: "fee",
       isCustom,
-      fees: networkInfo.fees,
+      fees: networkInfo?.fees,
     });
     setCustomMode(isCustom);
     if (!isCustom) {
       props.updateTransaction(t =>
         bridge.updateTransaction(t, {
-          fees: networkInfo.fees,
+          fees: networkInfo?.fees,
         }),
       );
     }

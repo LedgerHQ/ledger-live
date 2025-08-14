@@ -146,7 +146,7 @@ describe("listOperations", () => {
     async ({ address, opSender, opDestination, expectedType }) => {
       // Given
       const deliveredAmount = 100;
-      const fee = 10;
+      const fees = 10;
       mockNetworkGetTransactions.mockResolvedValue(
         mockNetworkTxs([
           {
@@ -156,7 +156,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -172,7 +172,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -189,7 +189,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -217,7 +217,7 @@ describe("listOperations", () => {
       expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
       const expectedValue =
-        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
+        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fees);
       expect(results).toEqual([
         {
           id: "HASH_VALUE",
