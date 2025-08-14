@@ -1,25 +1,9 @@
+import { mockAssets } from "./dada/mockAssets";
+
 interface MockWorker {
   start: () => Promise<void>;
   stop: () => Promise<void>;
 }
-
-const mockCryptoAssets = [
-  {
-    id: "bitcoin",
-    symbol: "BTC",
-    name: "Bitcoin",
-  },
-  {
-    id: "ethereum",
-    symbol: "ETH",
-    name: "Ethereum",
-  },
-  {
-    id: "tether",
-    symbol: "USDT",
-    name: "Tether",
-  },
-];
 
 let originalFetch: typeof window.fetch;
 let isIntercepting = false;
@@ -30,8 +14,8 @@ const mockFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<
 
   console.log("Mock Fetch: Intercepting request to:", url);
 
-  if (url.includes("legdger-test-api.com/assets") && method === "GET") {
-    return new Response(JSON.stringify({ data: mockCryptoAssets }), {
+  if (url.includes("https://dada.api.ledger-test.com/v1/assets") && method === "GET") {
+    return new Response(JSON.stringify(mockAssets), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

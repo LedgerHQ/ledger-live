@@ -53,6 +53,11 @@ pnpm i
 pnpm dev:lld
 ```
 
+```bash
+# launch the app in dev mode with fetch mocking
+pnpm dev:lld:mock-fetch
+```
+
 ## Watch deps
 
 In another terminal and in parallel to `pnpm dev:lld`, you can watch different libs from the monorepo

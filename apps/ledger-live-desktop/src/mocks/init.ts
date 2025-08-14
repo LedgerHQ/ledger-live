@@ -1,5 +1,5 @@
 async function enableMocking() {
-  const mockFetchEnabled = process.env.ENABLE_MOCK_FETCH === "true"; // TODO use getEnv?
+  const mockFetchEnabled = process.env.ENABLE_MOCK_FETCH === "true";
 
   if (!mockFetchEnabled) {
     return;
