@@ -156,7 +156,7 @@ platform :ios do
     MY_APP_BUNDLE_ID = ENV["MY_APP_BUNDLE_ID"]
     MY_APP_ID = ENV["APP_IDENTIFIER"]
 
-    MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID} 1754305777" : "match AppStore #{MY_APP_BUNDLE_ID}")
+    MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
     MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
 
     if (!options[:local])
@@ -271,7 +271,9 @@ platform :ios do
           export_options: {
             method: export_options_method,
             signingStyle: "manual",
-            provisioningProfiles: ENV['MATCH_PROVISIONING_PROFILE_MAPPING']
+            provisioningProfiles: {
+                MY_APP_ID => MY_PROFILE
+            }
           },
         )
       end
