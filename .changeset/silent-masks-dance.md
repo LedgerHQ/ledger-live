@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Adds fetch mock for MAD/DADA development
+Adds MSW to LLD for MAD/DADA development

@@ -1,20 +1,26 @@
 async function enableMocking() {
-  const mockFetchEnabled = process.env.ENABLE_MOCK_FETCH === "true";
+  const mswEnabled = process.env.ENABLE_MSW === "true";
 
-  if (!mockFetchEnabled) {
+  if (mswEnabled) {
+    try {
+      const { startWorker } = await import("~/mocks/browser");
+
+      await startWorker();
+    } catch (error) {
+      console.error("MSW: Failed to start Mock Service Worker:", error);
+    }
     return;
   }
 
-  try {
-    console.log("Mock Fetch: Starting Mock Service Worker (fetch interceptor)...");
-    const { worker } = await import("~/mocks/browser");
-
-    await worker.start();
-
-    console.log("Mock Fetch: Mock Service Worker started successfully");
-  } catch (error) {
-    console.error("Mock Fetch: Failed to start Mock Service Worker:", error);
-  }
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  const mswRegistrations = registrations.filter(registration =>
+    registration.active?.scriptURL.includes("mockServiceWorker"),
+  );
+  await Promise.all(
+    mswRegistrations.map(async registration => {
+      await registration.unregister();
+    }),
+  );
 }
 
 enableMocking();

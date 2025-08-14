@@ -54,8 +54,8 @@ pnpm dev:lld
 ```
 
 ```bash
-# launch the app in dev mode with fetch mocking
-pnpm dev:lld:mock-fetch
+# launch the app in dev mode with MSW
+pnpm dev:lld:msw
 ```
 
 ## Watch deps

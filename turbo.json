@@ -101,7 +101,7 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
-    "start:mock-fetch": {
+    "start:msw": {
       "cache": false,
       "dependsOn": ["^build"],
       "persistent": true
