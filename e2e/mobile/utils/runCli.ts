@@ -42,12 +42,11 @@ export function runCliCommand(command: string): Promise<string> {
       } else {
         const currency = extractFlagValue(command, "currency");
         const index = extractFlagValue(command, "index");
-        const currencyText = currency && currency !== "undefined" ? currency : "N/A";
         const indexText = index && index !== "undefined" ? index : "N/A";
 
         const errorDetails = [
           `❌ Failed to setup account.`,
-          `💱 Currency: ${currencyText}`,
+          `💱 Currency: ${currency}`,
           `🔢 Index: ${indexText}`,
           errorOutput ? `🧾 CLI Error: ${errorOutput.trim()}` : "",
         ].join("\n");
@@ -70,11 +69,6 @@ export async function runCliCommandWithRetry(
   let lastError: Error | null = null;
 
   const currency = extractFlagValue(command, "currency");
-  if (!currency || currency === "undefined") {
-    throw new Error(
-      "🚫 CLI command missing required --currency flag for Speculos readiness check.",
-    );
-  }
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -91,7 +85,7 @@ export async function runCliCommandWithRetry(
       }
 
       console.warn(
-        `⚠️ CLI attempt ${attempt}/${currency} failed while trying to setup test account – retrying in ${delayMs}ms…`,
+        `⚠️ CLI attempt ${attempt} / ${currency} failed while trying to setup test account – retrying in ${delayMs}ms…`,
       );
       await sleep(delayMs);
     }
