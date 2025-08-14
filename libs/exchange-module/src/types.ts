@@ -14,6 +14,8 @@ export type ExchangeStartParams =
 
 export type ExchangeStartFundParams = {
   exchangeType: "FUND";
+  provider: string;
+  fromAccountId: string;
 };
 
 export type ExchangeStartSellParams = {
@@ -43,6 +45,11 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
 };
 
 export type ExchangeStartResult = {
+  transactionId: string;
+  device?: { deviceId?: string; modelId?: string };
+};
+
+export type ExchangeFundResult = {
   transactionId: string;
   device?: { deviceId?: string; modelId?: string };
 };

@@ -4,6 +4,7 @@ import {
   ExchangeCompleteResult,
   ExchangeStartFundParams,
   ExchangeStartResult,
+  ExchangeFundResult,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
   ExchangeSwapParams,
@@ -21,11 +22,13 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async startFund() {
-    const result = await this.request<ExchangeStartFundParams, ExchangeStartResult>(
+  async startFund({ provider, fromAccountId }: Omit<ExchangeStartFundParams, "exchangeType">) {
+    const result = await this.request<ExchangeStartFundParams, ExchangeFundResult>(
       "custom.exchange.start",
       {
         exchangeType: "FUND",
+        provider,
+        fromAccountId,
       },
     );
 
@@ -248,15 +251,13 @@ export class ExchangeModule extends CustomModule {
     binaryPayload,
     signature,
     feeStrategy,
-    tokenCurrency,
   }: {
     provider: string;
     fromAccountId: string;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: Buffer | string;
+    signature: Buffer | string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
-    tokenCurrency?: string;
   }): Promise<string> {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
@@ -265,10 +266,11 @@ export class ExchangeModule extends CustomModule {
         provider,
         fromAccountId,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        // TODO: for sell they accept Binary for coinify legacy, do we need to do the same thing here for fund?
+        hexBinaryPayload:
+          typeof binaryPayload === "string" ? binaryPayload : binaryPayload.toString("hex"),
+        hexSignature: typeof signature === "string" ? signature : signature.toString("hex"),
         feeStrategy,
-        tokenCurrency,
       },
     );
 
