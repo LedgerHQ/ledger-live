@@ -463,6 +463,8 @@
       "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
       "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+      "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+      "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
       "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
@@ -3684,6 +3686,7 @@
     "delegation" : {
       "totalStake" : "Toplam stake",
       "commission" : "Komisyon",
+      "netApy" : "Net APY",
       "delegate" : "Ekle",
       "listHeader" : "Yetki Devirleri",
       "availableBalance" : "Çekilebilir bakiye",
@@ -4473,6 +4476,40 @@
             "check" : "Spam Puanı"
           }
         },
+        "mockAccounts" : {
+          "title" : "Test Hesapları Oluşturun",
+          "description" : "Test etmek amacıyla test hesapları oluşturun. Bu araçlar, çeşitli para birimlerine ve yapılandırmalara sahip test hesapları oluşturmanıza olanak tanır.",
+          "customGenerate" : {
+            "title" : "Özel Oluşturma",
+            "desc" : "Belirli para birimlerini seçin ve token’lar ekleyin"
+          },
+          "quickGenerate" : {
+            "title" : "Hızlı Oluşturma",
+            "desc" : "Rastgele para birimlerinin yer aldığı rastgele 10 hesap oluşturun"
+          },
+          "currencySelector" : {
+            "placeholder" : "Para birimleri seçin...",
+            "searchPlaceholder" : "Para birimlerini arayın...",
+            "noCurrenciesFound" : "Hiçbir para birimi bulunamadı",
+            "noCurrenciesAvailable" : "Kullanılabilir hiçbir para birimi yok",
+            "selectedCount" : "{{count}} para birimi seçildi",
+            "selectedCount_other" : "{{count}} para birimi seçildi"
+          },
+          "tokenIds" : {
+            "label" : "Token Kimlikleri (isteğe bağlı)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}} Hesap Oluştur",
+            "generateAccounts_other" : "{{count}} Hesap Oluştur",
+            "generateAccountsQuick" : "{{count}} Hesap Oluştur"
+          },
+          "alerts" : {
+            "selectCurrency" : "Lütfen en az bir para birimi seçin",
+            "confirmErase" : "Bu, mevcut hesapları silecektir. Devam etmek istiyor musunuz?",
+            "generateError" : "Test hesapları oluşturulamadı. Lütfen tekrar deneyin."
+          }
+        },
         "debugSpamNft" : {
           "report" : "İhbar et",
           "contractAddress" : "Sözleşme Adresi",
@@ -4600,6 +4637,8 @@
       "customCALRefDesc" : "Tüm CAL talepleri için kullanılacak özel bir dal, commit işlemi (Github) veya etiket belirtin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "customLockScreenTester" : "Özel kilitli ekran testçisi",
+      "customLockScreenTesterDesc" : "Desteklenen cihazlar için özel kilitli ekranı test edin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
       "customLockScreenCTA" : "Başlat",
@@ -5912,10 +5951,6 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Cihaz bağlantısı kesildi",
-      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
-    },
     "EConnReset" : {
       "title" : "Ledger uygulama mağazasına ulaşılamıyor",
       "description" : "İnternet bağlantınız kapalı olabilir veya olağan dışı bir yapılandırma kullanıyor olabilir. İlk olarak proxy veya güvenlik duvarı gibi bağlantınızı engelleyen bir unsurun olup olmadığını kontrol edin. Sorun devam ederse çözümleri görmek için aşağıdaki düğmeye tıklayın veya müşteri destek ekibimizle iletişime geçin."
@@ -6812,6 +6847,118 @@
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DisconnectError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Bağlantı yöntemi hatası",
+      "description" : "Kullanılan cihaz bağlantı yöntemiyle ilgili bir sorun oluştu. Lütfen farklı bir bağlantı yöntemi deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Cihazın ilk kurulumu yapılmamış",
+      "description" : "Cihazınız kullanıma hazır değil. Lütfen kurulum talimatlarını izleyin ve kurulum yapıldıktan sonra tekrar deneyin."
+    },
+    "DeviceLockedError" : {
+      "title" : "Cihaz kilitli",
+      "description" : "Cihazınız kilitlenmiş. Lütfen kilidini açıp tekrar deneyin."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Bellek yetersiz",
+      "description" : "Cihazınızda yeterli bellek yok. Lütfen uygulamaları kaldırıp tekrar deneyin."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "İşletim sistemi desteklenmiyor",
+      "description" : "Cihazınızın işletim sistemi desteklenmiyor. Lütfen Ledger Live üzerinden güncelleyin veya zorluk yaşarsanız yardım almak için Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Pil hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Pil hatası",
+      "description" : "Pil durumu hatası. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDAError" : {
+      "title" : "Cihaz bağlantı hatası",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Cihaz tanınamadı",
+      "description" : "Ledger Live, cihazınızı tanıyamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "ReceiverApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "FramerApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "İletişim hatası",
+      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     }
   },
   "cryptoOrg" : {
