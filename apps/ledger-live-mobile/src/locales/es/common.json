@@ -306,6 +306,10 @@
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
@@ -3762,6 +3767,8 @@
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
         "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+        "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
         "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
@@ -6245,6 +6252,7 @@
       "iWithdraw" : "Retirar",
       "totalStake" : "Participación total",
       "commission" : "Comisión",
+      "netApy" : "APY neto",
       "stakeActivationState" : "Provincia",
       "stakeActivePercent" : "Activo",
       "stakeAvailableBalance" : "Saldo disponible",
@@ -7780,8 +7788,8 @@
     "selectAccount" : "Seleccionar cuenta",
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
-    "accountCount" : "{{count}} cuenta (detectada)",
-    "accountCount_plural" : "{{count}} cuentas (detectadas)"
+    "accountCount" : "{{count}} cuenta",
+    "accountCount_plural" : "{{count}} cuentas"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
