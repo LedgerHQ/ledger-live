@@ -28,8 +28,12 @@ export default function StepAsset({
     (token?: TokenCurrency | null) => {
       if (!token) return;
       const { id: assetId } = token;
+      const { assetCode, assetIssuer } = getAssetObject(assetId);
       onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, getAssetObject(assetId)),
+        bridge.updateTransaction(transaction, {
+          assetReference: assetCode,
+          assetOwner: assetIssuer,
+        }),
       );
     },
     [bridge, onUpdateTransaction],
