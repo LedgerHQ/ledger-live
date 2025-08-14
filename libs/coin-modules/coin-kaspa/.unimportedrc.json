@@ -60,11 +60,11 @@
     "src/network/index.ts",
     "src/network/submitTransaction.ts",
     "src/test/cli.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/index.ts"
   ],
-  "ignoreUnresolved": [
-    "follow-redirects"
-  ],
+  "ignoreUnresolved": ["follow-redirects"],
   "ignoreUnused": [
     "@bitcoinerlab/secp256k1",
     "@ledgerhq/coin-framework",
