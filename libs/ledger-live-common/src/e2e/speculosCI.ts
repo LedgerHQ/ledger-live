@@ -16,7 +16,7 @@ export const getSpeculosAddress = (runId: string) =>
   `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
-export function uniqueId(): string {
+function uniqueId(): string {
   const timestamp = Date.now().toString(36);
   const randomString = Math.random().toString(36).slice(2, 7);
   return timestamp + randomString;
