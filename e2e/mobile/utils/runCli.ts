@@ -1,6 +1,8 @@
 import { spawn } from "child_process";
 import path from "path";
 import type { LiveDataOpts } from "./cliUtils";
+import { isRemoteIos } from "../helpers/commonHelpers";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -20,10 +22,14 @@ function extractFlagValue<K extends keyof LiveDataOpts>(
   return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
 }
 
-export function runCliCommand(command: string): Promise<string> {
+export function runCliCommand(command: string, speculosAddress?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
-    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env: process.env });
+    const env = { ...process.env };
+    if (speculosAddress) {
+      env.SPECULOS_ADDRESS = speculosAddress;
+    }
+    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env });
 
     let output = "";
     let errorOutput = "";
@@ -63,16 +69,21 @@ export function runCliCommand(command: string): Promise<string> {
 
 export async function runCliCommandWithRetry(
   command: string,
+  speculosAddress?: string,
   retries = 5,
   delayMs = 2000,
 ): Promise<string> {
   let lastError: Error | null = null;
 
+  if (isRemoteIos() && speculosAddress) {
+    await waitForSpeculosReady(speculosAddress);
+  }
+
   const currency = extractFlagValue(command, "currency");
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await runCliCommand(command);
+      return await runCliCommand(command, speculosAddress);
     } catch (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       err: any
