@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.90.0-nightly.3
+
+### Patch Changes
+
+- [#11329](https://github.com/LedgerHQ/ledger-live/pull/11329) [`e4d9519`](https://github.com/LedgerHQ/ledger-live/commit/e4d9519ee03cf2c58fc4f5a9919c4eea9f7b215a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add NRR as a possible interest type
+
 ## 3.90.0-nightly.2
 
 ### Minor Changes
