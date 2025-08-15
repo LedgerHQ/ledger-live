@@ -294,56 +294,54 @@ export default class Root extends Component {
 
   render() {
     return (
-      <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-          {(ready, initialCountervalues) =>
-            ready ? (
-              <>
-                <SetEnvsFromSettings />
-                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-                <HookSentry />
-                <SegmentSetup />
-                <HookNotifications />
-                <HookDynamicContentCards />
-                <TermsAndConditionMigrateLegacyData />
-                <QueuedDrawersContextProvider>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <I18nextProvider i18n={i18n}>
-                        <LocaleProvider>
-                          <PlatformAppProviderWrapper>
-                            <SafeAreaProvider>
-                              <StorylyProvider>
-                                <StylesProvider>
-                                  <StyledStatusBar />
-                                  <NavBarColorHandler />
-                                  <AuthPass>
-                                    <GestureHandlerRootView style={styles.root}>
-                                      <AppProviders initialCountervalues={initialCountervalues}>
-                                        <AppGeoBlocker>
-                                          <AppVersionBlocker>
-                                            <App />
-                                          </AppVersionBlocker>
-                                        </AppGeoBlocker>
-                                      </AppProviders>
-                                    </GestureHandlerRootView>
-                                  </AuthPass>
-                                </StylesProvider>
-                              </StorylyProvider>
-                            </SafeAreaProvider>
-                          </PlatformAppProviderWrapper>
-                        </LocaleProvider>
-                      </I18nextProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </QueuedDrawersContextProvider>
-              </>
-            ) : (
-              <LoadingApp />
-            )
-          }
-        </LedgerStoreProvider>
-      </RebootProvider>
+      <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
+        {(ready, initialCountervalues) =>
+          ready ? (
+            <RebootProvider onRebootStart={this.onRebootStart}>
+              <SetEnvsFromSettings />
+              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
+              <HookSentry />
+              <SegmentSetup />
+              <HookNotifications />
+              <HookDynamicContentCards />
+              <TermsAndConditionMigrateLegacyData />
+              <QueuedDrawersContextProvider>
+                <FirebaseRemoteConfigProvider>
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <I18nextProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <StorylyProvider>
+                              <StylesProvider>
+                                <StyledStatusBar />
+                                <NavBarColorHandler />
+                                <AuthPass>
+                                  <GestureHandlerRootView style={styles.root}>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <AppGeoBlocker>
+                                        <AppVersionBlocker>
+                                          <App />
+                                        </AppVersionBlocker>
+                                      </AppGeoBlocker>
+                                    </AppProviders>
+                                  </GestureHandlerRootView>
+                                </AuthPass>
+                              </StylesProvider>
+                            </StorylyProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nextProvider>
+                  </FirebaseFeatureFlagsProvider>
+                </FirebaseRemoteConfigProvider>
+              </QueuedDrawersContextProvider>
+            </RebootProvider>
+          ) : (
+            <LoadingApp />
+          )
+        }
+      </LedgerStoreProvider>
     );
   }
 }

@@ -1,7 +1,10 @@
 import { useCountervaluesWipeIfAvailable } from "@ledgerhq/live-countervalues-react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import React, { Fragment, useCallback, useContext, useState } from "react";
+import React, { Fragment, useCallback, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { clearDb } from "../db";
+import { incrementRebootId } from "../actions/appstate";
+import { rebootIdSelector } from "../reducers/appstate";
 
 export type RebootFunc = (_?: boolean) => Promise<void>;
 export const RebootContext = React.createContext<RebootFunc>(async () => {
@@ -16,12 +19,13 @@ export default function RebootProvider({
   onRebootEnd?: () => void;
   children: React.ReactNode;
 }) {
-  const [rebootId, setRebootId] = useState(0);
+  const rebootId = useSelector(rebootIdSelector);
+  const dispatch = useDispatch();
   const wipe = useCountervaluesWipeIfAvailable();
   const reboot: RebootFunc = useCallback(
     async (resetData = false) => {
       if (onRebootStart) onRebootStart();
-      setRebootId(id => id + 1);
+      dispatch(incrementRebootId());
 
       if (resetData) {
         wipe();
@@ -30,7 +34,7 @@ export default function RebootProvider({
 
       if (onRebootEnd) onRebootEnd();
     },
-    [wipe, onRebootStart, onRebootEnd],
+    [wipe, onRebootStart, onRebootEnd, dispatch],
   );
   return (
     <RebootContext.Provider value={reboot}>

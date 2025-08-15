@@ -27,3 +27,5 @@ export const updateMainNavigatorVisibility =
 /** Set to true to prevent password lock being triggered by deep links.
  * Resets to false after a delay. Ideally remove after AuthPass refactor. */
 export const blockPasswordLock = createAction<boolean>(AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK);
+
+export const incrementRebootId = createAction(AppStateActionTypes.INCREMENT_REBOOT_ID);
