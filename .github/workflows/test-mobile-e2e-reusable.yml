@@ -264,8 +264,6 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-          restore-keys: |
-            ios-e2e-timing-
 
       - name: Generate timing-based shards
         id: timing-shards
@@ -508,8 +506,6 @@ jobs:
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-          restore-keys: |
-            android-e2e-timing-
 
       - name: Generate timing-based shards
         id: timing-shards
@@ -1043,8 +1039,8 @@ jobs:
   merge-ios-timings:
     name: Merge iOS Timing Files
     needs: [ determine-builds, detox-tests-ios ]
-    runs-on: ledger-live-medium
-    if: ${{ always() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -1070,8 +1066,8 @@ jobs:
   merge-android-timings:
     name: Merge Android Timing Files
     needs: [ determine-builds, detox-tests-android ]
-    runs-on: ledger-live-medium
-    if: ${{ always() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

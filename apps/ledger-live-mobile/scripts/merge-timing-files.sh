@@ -60,7 +60,7 @@ existing_file="$ARTIFACTS_DIR/e2e-test-results-$PLATFORM.json"
 output_file="./e2e-test-results-$PLATFORM.json"
 
 # Check if shard files exist
-if ! compgen -G "$pattern" > /dev/null; then
+if ! find . -maxdepth 1 -name "$pattern" -print -quit | grep -q .; then
   log "No timing files found for pattern $pattern, skipping merge."
   if [ -f "$existing_file" ]; then
     log "Keeping existing cached timing file"
@@ -117,7 +117,12 @@ done
 
 log "Valid files: ${#valid_files[@]}"
 if [ ${#invalid_files[@]} -gt 0 ]; then
-  log "Invalid files that will be skipped: ${invalid_files[*]}"
+  log "ERROR: Found ${#invalid_files[@]} invalid files that cannot be processed:"
+  for file in "${invalid_files[@]}"; do
+    log "  - $file"
+  done
+  log "Failing merge due to invalid files. Please investigate and fix these files."
+  exit 1
 fi
 
 # Perform merge based on whether existing file exists

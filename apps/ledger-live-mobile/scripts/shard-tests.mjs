@@ -20,6 +20,7 @@ function findTestFiles(dir) {
     }
   } catch (e) {
     console.error("[shard-tests] Error reading directory:", dir, e);
+    throw new Error(`Failed to read directory ${dir}: ${e.message}`);
   }
   return results;
 }
@@ -59,6 +60,7 @@ function loadTimingData(platform, testRootDir) {
     }
   } catch (e) {
     console.error(`[shard-tests] Error loading timing data:`, e);
+    throw new Error(`Failed to load timing data: ${e.message}`);
   }
   return {};
 }
