@@ -38,21 +38,17 @@ export default function RebootProvider({
     </RebootContext.Provider>
   );
 }
-// NOTE: the comma is not a mistake, it's for TS to understand we
-// are declaring a generic and not a JSX Element (due to .tsx file extension)
-export const withReboot = <T,>(Cmp: React.ComponentType<T>) => {
-  class WithReboot extends React.Component<Omit<T, "reboot">> {
-    render() {
-      return (
-        <RebootContext.Consumer>
-          {reboot => <Cmp reboot={reboot} {...(this.props as T)} />}
-        </RebootContext.Consumer>
-      );
-    }
-  }
+export const withReboot = <P extends object>(
+  Component: React.ComponentType<P & { reboot: RebootFunc }>,
+): React.ComponentType<P> => {
+  const WrappedComponent = (props: P) => {
+    const reboot = useReboot();
+    return <Component {...props} reboot={reboot} />;
+  };
 
-  hoistNonReactStatic(WithReboot, Cmp);
-  return WithReboot;
+  hoistNonReactStatic(WrappedComponent, Component);
+
+  return WrappedComponent;
 };
 
 export function useReboot() {

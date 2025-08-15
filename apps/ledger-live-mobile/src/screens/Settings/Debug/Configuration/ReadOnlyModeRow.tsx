@@ -8,11 +8,12 @@ import Track from "~/analytics/Track";
 import { withReboot } from "~/context/Reboot";
 import Switch from "~/components/Switch";
 import type { State } from "~/reducers/types";
+import type { RebootFunc } from "~/context/Reboot";
 
 type Props = {
   readOnlyModeEnabled: boolean;
   setReadOnlyMode: (_: boolean) => void;
-  reboot: (_?: boolean | null) => void;
+  reboot: RebootFunc;
 };
 const mapStateToProps = createStructuredSelector<State, { readOnlyModeEnabled: boolean }>({
   readOnlyModeEnabled: readOnlyModeEnabledSelector,
