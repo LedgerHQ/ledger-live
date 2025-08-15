@@ -8,7 +8,7 @@ import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking"
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -42,17 +42,6 @@ export function useCustomExchangeHandlers({
   const deviceRef = useRef<Device>();
   const syncAccountById = useSyncAccountById();
 
-  // Add refs to track active promises
-  const activePromises = useRef<
-    Map<
-      string,
-      {
-        resolve: (...args: unknown[]) => void;
-        reject: (error: Error) => void;
-      }
-    >
-  >(new Map());
-
   const tracking = useMemo(
     () =>
       trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
@@ -66,27 +55,6 @@ export function useCustomExchangeHandlers({
       ),
     [],
   );
-
-  // Add cleanup function for navigation events
-  useEffect(() => {
-    // Listen for focus events to detect when coming back to this screen
-    const unsubscribeFocus = navigation.addListener("focus", () => {
-      // When we come back to this screen, check if any promises are still pending
-      // This happens when user navigates back without completing the action
-      const pendingPromises = Array.from(activePromises.current.keys());
-
-      if (pendingPromises.length > 0) {
-        activePromises.current.forEach(({ reject }, key) => {
-          reject(new Error("Operation cancelled by navigation"));
-          activePromises.current.delete(key);
-        });
-      }
-    });
-
-    return () => {
-      unsubscribeFocus();
-    };
-  }, [navigation]);
 
   return useMemo<WalletAPICustomHandlers>(() => {
     const ptxCustomHandlers = {
@@ -135,8 +103,6 @@ export function useCustomExchangeHandlers({
         manifest,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `start-${Date.now()}`;
-
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformStartExchange,
               params: {
@@ -145,9 +111,6 @@ export function useCustomExchangeHandlers({
                   exchangeType: ExchangeType[exchangeParams.exchangeType],
                 },
                 onResult: result => {
-                  // Clean up promise tracking
-                  activePromises.current.delete(promiseId);
-
                   if (result.startExchangeError) {
                     onCancel(
                       result.startExchangeError.error,
@@ -157,7 +120,7 @@ export function useCustomExchangeHandlers({
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
-                    deviceRef.current = result.device;
+                    deviceRef.current = result.device; // Store in ref for immediate access
                     onSuccess(
                       result.startExchangeResult.nonce,
                       result.startExchangeResult.device || result.device,
@@ -168,16 +131,8 @@ export function useCustomExchangeHandlers({
                 },
               },
             });
-
-            // Track the promise
-            activePromises.current.set(promiseId, {
-              resolve: onSuccess,
-              reject: onCancel,
-            });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `complete-${Date.now()}`;
-
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -193,9 +148,6 @@ export function useCustomExchangeHandlers({
                 },
                 device,
                 onResult: result => {
-                  // Clean up promise tracking
-                  activePromises.current.delete(promiseId);
-
                   navigation.pop();
                   if (result.error) {
                     onCancel(result.error);
@@ -215,12 +167,6 @@ export function useCustomExchangeHandlers({
                 },
               },
             });
-
-            // Track the promise
-            activePromises.current.set(promiseId, {
-              resolve: onSuccess,
-              reject: onCancel,
-            });
           },
           "custom.exchange.error": ({ error }) => {
             navigation.navigate(NavigatorName.CustomError, {
@@ -237,25 +183,15 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `swap-${Date.now()}`;
             let cancelCalled = false;
-
             const safeOnCancel = (error: Error) => {
               if (!cancelCalled) {
                 cancelCalled = true;
-                activePromises.current.delete(promiseId);
                 onCancel(error);
               }
             };
 
-            const safeOnSuccess = (result: { operationHash: string; swapId: string }) => {
-              if (!cancelCalled) {
-                activePromises.current.delete(promiseId);
-                onSuccess(result);
-              }
-            };
-
-            const currentDevice = deviceRef.current || device;
+            const currentDevice = deviceRef.current || device; // Use ref value first
 
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
@@ -284,18 +220,12 @@ export function useCustomExchangeHandlers({
                     onCompleteResult?.(exchangeParams, operationHash);
 
                     // return success to swap live app
-                    safeOnSuccess({ operationHash, swapId: exchangeParams.swapId });
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
                   setDevice(undefined);
                   deviceRef.current = undefined;
                 },
               },
-            });
-
-            // Track the promise with safe callbacks
-            activePromises.current.set(promiseId, {
-              resolve: safeOnSuccess,
-              reject: safeOnCancel,
             });
           },
         },
