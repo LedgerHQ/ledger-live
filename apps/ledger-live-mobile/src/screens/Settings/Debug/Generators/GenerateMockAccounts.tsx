@@ -4,26 +4,27 @@ import { Alert } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
-import accountModel from "~/logic/accountModel";
-import { saveAccounts } from "../../../../db";
 import { useReboot } from "~/context/Reboot";
-import {
-  initialState as liveWalletInitialState,
-  accountUserDataExportSelector,
-} from "@ledgerhq/live-wallet/store";
+import { useDispatch, useSelector } from "react-redux";
+import { accountsSelector } from "~/reducers/accounts";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
-async function injectMockAccountsInDB(count: number) {
-  await saveAccounts({
-    active: Array(count)
-      .fill(null)
-      .map(() => {
-        const account = genAccount(String(Math.random()), {
-          currency: sample(listSupportedCurrencies()),
-        });
-        const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
-        return accountModel.encode([account, userData]);
-      }),
+function createMockAccounts(count: number, existingAccounts: Account[]) {
+  const mockAccounts = Array(count)
+    .fill(null)
+    .map(() => {
+      return genAccount(String(Math.random()), {
+        currency: sample(listSupportedCurrencies()),
+      });
+    });
+
+  return addAccountsAction({
+    existingAccounts,
+    scannedAccounts: mockAccounts,
+    selectedIds: mockAccounts.map(acc => acc.id),
+    renamings: {},
   });
 }
 
@@ -37,6 +38,9 @@ export default function GenerateMockAccountsButton({
   count: number;
 }) {
   const reboot = useReboot();
+  const dispatch = useDispatch();
+  const existingAccounts = useSelector(accountsSelector);
+
   return (
     <SettingsRow
       title={title}
@@ -54,8 +58,9 @@ export default function GenerateMockAccountsButton({
             },
             {
               text: "Ok",
-              onPress: async () => {
-                await injectMockAccountsInDB(count);
+              onPress: () => {
+                const action = createMockAccounts(count, existingAccounts);
+                dispatch(action);
                 reboot();
               },
             },
