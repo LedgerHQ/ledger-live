@@ -1,5 +1,7 @@
 import { spawn } from "child_process";
 import path from "path";
+import { isRemoteIos } from "../helpers/commonHelpers";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -10,15 +12,14 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * Executes a command in the CLI with given arguments.
- * @param {string} command - The command and its arguments as a single string.
- * @returns {Promise<string>} - Resolves with the output of the command or rejects on failure.
- */
-export function runCliCommand(command: string): Promise<string> {
+export function runCliCommand(command: string, speculosAddress?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
-    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env: process.env });
+    const env = { ...process.env };
+    if (speculosAddress) {
+      env.SPECULOS_ADDRESS = speculosAddress;
+    }
+    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env });
 
     let output = "";
     let errorOutput = "";
@@ -45,24 +46,25 @@ export function runCliCommand(command: string): Promise<string> {
   });
 }
 
-/**
- * Executes a CLI command with retries on failure.
- *
- * @param command The CLI command string (args joined by '+').
- * @param retries How many times to retry on failure (default 3).
- * @param delayMs How long to wait between retries in ms (default 1000).
- */
 export async function runCliCommandWithRetry(
   command: string,
+  speculosAddress?: string,
   retries = 5,
-  delayMs = 1000,
+  delayMs = 2000,
 ): Promise<string> {
   let lastError: Error | null = null;
 
+  if (isRemoteIos() && speculosAddress) {
+    await waitForSpeculosReady(speculosAddress);
+  }
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await runCliCommand(command);
-    } catch (err: any) {
+      return await runCliCommand(command, speculosAddress);
+    } catch (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      err: any
+    ) {
       lastError = err;
       const willRetry = attempt < retries && /status code 503/.test(err.message);
 
