@@ -1,5 +1,17 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.3.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/live-network@2.0.15
+
 ## 1.3.0-next.0
 
 ### Minor Changes

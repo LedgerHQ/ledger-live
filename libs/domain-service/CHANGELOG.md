@@ -1,5 +1,13 @@
 # @ledgerhq/domain-service
 
+## 1.2.40
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/types-live@6.81.0
+
 ## 1.2.40-next.0
 
 ### Patch Changes

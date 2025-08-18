@@ -1,5 +1,15 @@
 # @ledgerhq/live-nft-react
 
+## 0.9.17
+
+### Patch Changes
+
+- Updated dependencies [[`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/coin-framework@6.1.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/live-nft@0.8.17
+
 ## 0.9.17-next.0
 
 ### Patch Changes

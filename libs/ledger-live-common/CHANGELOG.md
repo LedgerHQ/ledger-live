@@ -1,5 +1,95 @@
 # @ledgerhq/live-common
 
+## 34.45.0
+
+### Minor Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+- [#11317](https://github.com/LedgerHQ/ledger-live/pull/11317) [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8) Thanks [@qperrot](https://github.com/qperrot)! - Use proxyetherscan on blast
+
+- [#10829](https://github.com/LedgerHQ/ledger-live/pull/10829) [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix genuine check error, expose dmk error in LL
+
+- [#11150](https://github.com/LedgerHQ/ledger-live/pull/11150) [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: swapIntent with or without provider to know retries + logging seedId on cancel
+
+- [#11299](https://github.com/LedgerHQ/ledger-live/pull/11299) [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix some UI regressions on stellar detailed operations display introduced in #11120
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+- [#11348](https://github.com/LedgerHQ/ledger-live/pull/11348) [`dd2110a`](https://github.com/LedgerHQ/ledger-live/commit/dd2110a4259614eb39c62991d3cf92cae745d710) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes infinite loop for untracked users with (partially) expired braze campaigns
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`5698516`](https://github.com/LedgerHQ/ledger-live/commit/5698516e45934e51f2c3e1019b8cade898d425bb), [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c), [`4acc4f4`](https://github.com/LedgerHQ/ledger-live/commit/4acc4f46018739e38eaec1d9943c797322bdb854), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`8ee9b34`](https://github.com/LedgerHQ/ledger-live/commit/8ee9b3462aee8fd40a4ff42cdd032be2da6a4969), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`8189aaf`](https://github.com/LedgerHQ/ledger-live/commit/8189aaf419d383158185ae3182a1b61fabd61e11), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d), [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5), [`1210876`](https://github.com/LedgerHQ/ledger-live/commit/121087684a4170a4a6092d5e1eb24087957a408a), [`42872ad`](https://github.com/LedgerHQ/ledger-live/commit/42872adc10928ea57062719bc5354ba0b27f43b6)]:
+  - @ledgerhq/live-countervalues-react@0.4.0
+  - @ledgerhq/coin-celo@1.2.0
+  - @ledgerhq/coin-solana@0.31.0
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/crypto-icons-ui@1.17.0
+  - @ledgerhq/coin-aptos@3.1.0
+  - @ledgerhq/coin-evm@2.27.0
+  - @ledgerhq/coin-sui@0.10.0
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/coin-polkadot@6.7.0
+  - @ledgerhq/coin-stellar@6.1.0
+  - @ledgerhq/coin-tezos@6.1.0
+  - @ledgerhq/coin-tron@5.1.0
+  - @ledgerhq/coin-xrp@7.1.0
+  - @ledgerhq/coin-framework@6.1.0
+  - @ledgerhq/coin-filecoin@1.10.0
+  - @ledgerhq/coin-hedera@1.10.0
+  - @ledgerhq/coin-near@0.12.0
+  - @ledgerhq/hw-app-multiversx@6.25.0
+  - @ledgerhq/hw-app-exchange@0.12.0
+  - @ledgerhq/hw-app-celo@6.34.0
+  - @ledgerhq/devices@8.5.0
+  - @ledgerhq/wallet-api-acre-module@0.6.0
+  - @ledgerhq/ledger-cal-service@1.3.0
+  - @ledgerhq/wallet-api-exchange-module@0.15.0
+  - @ledgerhq/live-dmk-shared@0.12.0
+  - @ledgerhq/live-signer-evm@0.7.0
+  - @ledgerhq/device-core@0.6.0
+  - @ledgerhq/live-signer-solana@0.5.2
+  - @ledgerhq/coin-algorand@0.9.17
+  - @ledgerhq/coin-bitcoin@0.20.1
+  - @ledgerhq/coin-canton@0.2.1
+  - @ledgerhq/coin-cardano@0.11.1
+  - @ledgerhq/coin-cosmos@0.16.6
+  - @ledgerhq/coin-icon@0.11.4
+  - @ledgerhq/coin-internet_computer@1.7.17
+  - @ledgerhq/coin-multiversx@0.4.17
+  - @ledgerhq/coin-stacks@0.8.17
+  - @ledgerhq/coin-ton@0.13.6
+  - @ledgerhq/coin-vechain@2.8.1
+  - @ledgerhq/live-countervalues@0.6.1
+  - @ledgerhq/live-network@2.0.15
+  - @ledgerhq/live-nft@0.8.17
+  - @ledgerhq/live-wallet@0.12.1
+  - @ledgerhq/speculos-transport@0.2.8
+  - @ledgerhq/coin-casper@2.0.8
+  - @ledgerhq/coin-mina@1.1.16
+  - @ledgerhq/hw-app-vet@0.5.13
+  - @ledgerhq/hw-app-algorand@6.31.5
+  - @ledgerhq/hw-app-aptos@6.34.5
+  - @ledgerhq/hw-app-cosmos@6.32.5
+  - @ledgerhq/hw-app-eth@6.45.15
+  - @ledgerhq/hw-app-hedera@1.2.5
+  - @ledgerhq/hw-app-icon@1.3.5
+  - @ledgerhq/hw-app-polkadot@6.34.5
+  - @ledgerhq/hw-app-str@7.2.5
+  - @ledgerhq/hw-transport@6.31.9
+  - @ledgerhq/live-signer-canton@0.2.1
+  - @ledgerhq/hw-app-btc@10.10.1
+  - @ledgerhq/hw-app-near@6.31.5
+  - @ledgerhq/hw-app-tezos@6.31.5
+  - @ledgerhq/hw-app-trx@6.31.5
+  - @ledgerhq/hw-app-xrp@6.32.3
+  - @ledgerhq/hw-transport-mocker@6.29.9
+  - @ledgerhq/hw-app-sui@1.2.0
+
 ## 34.45.0-next.2
 
 ### Patch Changes

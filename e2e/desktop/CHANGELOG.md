@@ -1,5 +1,24 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.0
+
+### Minor Changes
+
+- [#11228](https://github.com/LedgerHQ/ledger-live/pull/11228) [`33605d8`](https://github.com/LedgerHQ/ledger-live/commit/33605d8b5ad575af874d4339404dbffcd04a64a5) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - bugfix: remove send max error on Polkadot
+
+- [#11322](https://github.com/LedgerHQ/ledger-live/pull/11322) [`5098bbb`](https://github.com/LedgerHQ/ledger-live/commit/5098bbbb637c9290e662f7ad1794ee10bed0da8c) Thanks [@semeano](https://github.com/semeano)! - Remove E2E delegate tests for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8), [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d), [`dd2110a`](https://github.com/LedgerHQ/ledger-live/commit/dd2110a4259614eb39c62991d3cf92cae745d710)]:
+  - @ledgerhq/live-common@34.45.0
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/live-cli@24.21.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.2
+  - @ledgerhq/live-wallet@0.12.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9
+
 ## 0.6.0-next.2
 
 ### Patch Changes
