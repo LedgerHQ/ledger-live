@@ -150,6 +150,12 @@ export type DynamicContentState = {
   isLoading: boolean;
 };
 
+// === IN VIEW STATE ===
+
+export type InViewState = {
+  hasItems: boolean;
+};
+
 // === RATINGS STATE ===
 
 export type RatingsState = {
@@ -388,30 +394,32 @@ export type WalletSyncState = {
 export type LargeMoverState = {
   tutorial: boolean;
 };
+
 // === ROOT STATE ===
 
 export type State = {
   accounts: AccountsState;
-  auth: AuthState;
-  countervalues: CountervaluesState;
-  settings: SettingsState;
   appstate: AppState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  auth: AuthState;
   ble: BleState;
-  ratings: RatingsState;
+  countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
-  notifications: NotificationsState;
-  swap: SwapStateType;
   earn: EarnState;
-  walletconnect: WalletConnectState;
+  inView: InViewState;
+  largeMover: LargeMoverState;
+  market: MarketState;
+  modularDrawer: ModularDrawerState;
+  nft: NftState;
+  notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
-  nft: NftState;
-  market: MarketState;
-  wallet: WalletState;
-  trustchain: TrustchainStore;
-  walletSync: WalletSyncState;
-  modularDrawer: ModularDrawerState;
-  largeMover: LargeMoverState;
+  ratings: RatingsState;
+  settings: SettingsState;
+  swap: SwapStateType;
   toasts: ToastState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  trustchain: TrustchainStore;
+  wallet: WalletState;
+  walletconnect: WalletConnectState;
+  walletSync: WalletSyncState;
 };

@@ -33,6 +33,7 @@ import type {
   NftState,
   MarketState,
   LargeMoverState,
+  InViewState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -549,6 +550,14 @@ export type EarnPayload =
   | EarnSetInfoModalPayload
   | EarnSetMenuModalPayload
   | EarnSetProtocolInfoModalPayload;
+
+// === IN VIEW ACTIONS ===
+export enum InViewActionTypes {
+  IN_VIEW_SET_HAS_ITEMS = "IN_VIEW_SET_HAS_ITEMS",
+}
+
+export type InViewSetHasItemsPayload = InViewState["hasItems"];
+export type InViewPayload = InViewSetHasItemsPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
