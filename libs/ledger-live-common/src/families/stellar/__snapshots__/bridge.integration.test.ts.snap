@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064683",
+    "balance": "341064694",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 126,
+    "operationsCount": 137,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064583",
+    "spendableBalance": "311064594",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -584,6 +584,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "24a39d5eef0b79450229f598c7e4746123924012496f7153220ed0581921d779",
+      "blockHeight": 58454605,
+      "extra": {
+        "blockTime": 2025-08-13T21:53:40.000Z,
+        "index": "251060616776085505",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "251060616776085505",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "165ef48b999ba0b6d58ef69bb45b99df0781e2043a07aed1ac961a22e7bc4a7c",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-165ef48b999ba0b6d58ef69bb45b99df0781e2043a07aed1ac961a22e7bc4a7c-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164893120,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "ac1ffabbdb011c7e32938783c022b5b018096aea21c181904be5880a53c48687",
       "blockHeight": 27736926,
       "extra": {
@@ -1027,6 +1055,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "76663efd4711cc310600be7d0d7f07f533e5b5e34ba88045d9c7472ed7bbcc1c",
+      "blockHeight": 58471429,
+      "extra": {
+        "blockTime": 2025-08-15T00:58:07.000Z,
+        "index": "251132875306217473",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "RFL Supply Burn 50% Act Fast",
+        },
+        "pagingToken": "251132875306217473",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "35f4ea3a5b49893ca76703d50e467f8f0fe7b9edd9a673dd4acd251d7baf4b27",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-35f4ea3a5b49893ca76703d50e467f8f0fe7b9edd9a673dd4acd251d7baf4b27-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164897540,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "5692d8c456e8045cf207b1ecae7bc2c4c7c78d475b2d389b5841741666a6e792",
       "blockHeight": 57550819,
       "extra": {
@@ -1160,6 +1216,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
       ],
       "transactionSequenceNumber": 247017862844137700,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "c314b8dcb4a5e0c3d46114ba0e2308ddd42fe8d42474143b770d5736781e75c6",
+      "blockHeight": 58387403,
+      "extra": {
+        "blockTime": 2025-08-09T09:48:25.000Z,
+        "index": "250771986383880193",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL & Earn Native XLM",
+        },
+        "pagingToken": "250771986383880193",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "40eb1020cb51682db15adc358b15dc3b4711db4186dd485cf8efb4052329092f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-40eb1020cb51682db15adc358b15dc3b4711db4186dd485cf8efb4052329092f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
+      ],
+      "transactionSequenceNumber": 250653093098689100,
       "type": "IN",
       "value": "1",
     },
@@ -1576,6 +1660,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 116917835954913300,
       "type": "OUT",
       "value": "10000000",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "723a8d844d152b162d25add89553a55468e15dc5d8316e1db2296c8a05aefcf4",
+      "blockHeight": 58409809,
+      "extra": {
+        "blockTime": 2025-08-10T21:49:37.000Z,
+        "index": "250868219421110273",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "250868219421110273",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6528edd12be972b5f78f2de9d2eebc2005e31e1185d1ea84331b1e27e2afde52",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6528edd12be972b5f78f2de9d2eebc2005e31e1185d1ea84331b1e27e2afde52-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164884260,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
@@ -2133,6 +2245,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "ab9f851978be5a963af28defef8d62ef431ebdc2fcb1aa4c2bc0ad19f1810dca",
+      "blockHeight": 58395561,
+      "extra": {
+        "blockTime": 2025-08-09T22:57:00.000Z,
+        "index": "250807024726671361",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL & Earn Native XLM",
+        },
+        "pagingToken": "250807024726671361",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8f8f56780b3b06ef4796fc8898b418ad7212d9efddf18bd8896393136f75208e",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8f8f56780b3b06ef4796fc8898b418ad7212d9efddf18bd8896393136f75208e-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
+      ],
+      "transactionSequenceNumber": 250653093098691200,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "4a62714e5950c465b100f8e97d495f121e8110dd5ce213269506e45317244417",
       "blockHeight": 57786017,
       "extra": {
@@ -2605,6 +2745,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "00d7ec8aeca0979d51ddd9b1a011bf085a4596dd90299b1187354a2a07aa0ea8",
+      "blockHeight": 58402196,
+      "extra": {
+        "blockTime": 2025-08-10T09:35:17.000Z,
+        "index": "250835521834594305",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "250835521834594305",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "a5f2a0258ebc866168f46cf498d517d90f75bdf50ae3427ce5cbf8bdf08e7529",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a5f2a0258ebc866168f46cf498d517d90f75bdf50ae3427ce5cbf8bdf08e7529-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
+      ],
+      "transactionSequenceNumber": 250653093098693380,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "8279d9992095515d69a8bc6d598f2d23757ad9e28b3a1546e12d211a21a98b0f",
       "blockHeight": 57882240,
       "extra": {
@@ -2628,6 +2796,62 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
       ],
       "transactionSequenceNumber": 248584795762721280,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0a950b5ef3a07d8ca1b283435eed7fc9218f16cf4e35075795e73456ba27e5d7",
+      "blockHeight": 58447688,
+      "extra": {
+        "blockTime": 2025-08-13T10:45:57.000Z,
+        "index": "251030908487573505",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "251030908487573505",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "aabddde0ea59343a35f2434f4a5a2926805128d9cb793d2777b00a4e5c4bf36f",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-aabddde0ea59343a35f2434f4a5a2926805128d9cb793d2777b00a4e5c4bf36f-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164890940,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "7c462aab0ac64499064a6e562a1d3a518898d2a08e95eee312e4bdcee40e1ede",
+      "blockHeight": 58425581,
+      "extra": {
+        "blockTime": 2025-08-11T23:11:02.000Z,
+        "index": "250935959645102081",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "250935959645102081",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "ae7dddc0e92f2e538f57c260556b2cd7ae1ac8edc38462cbd569ed831b3cea1b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-ae7dddc0e92f2e538f57c260556b2cd7ae1ac8edc38462cbd569ed831b3cea1b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164886430,
       "type": "IN",
       "value": "1",
     },
@@ -2911,6 +3135,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "8f68f0addea549eda470a8c96546740579902270ab9e442ece6ced4ac490fdee",
+      "blockHeight": 58441157,
+      "extra": {
+        "blockTime": 2025-08-13T00:16:55.000Z,
+        "index": "251002858056028161",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "251002858056028161",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "c3253fc74a7010b58968f941324662faa175831264b8ced7c221f4e724f05756",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c3253fc74a7010b58968f941324662faa175831264b8ced7c221f4e724f05756-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164888740,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "7daa8d51b8bec153837dacd929ded3bf774f372ec2973242dcb6bbd3ec516bfb",
       "blockHeight": 58207158,
       "extra": {
@@ -3016,6 +3268,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDVDHOAN7AFU2ZVJHUHSC7MCF756FINXPHKMXVXLUO2BLRVCBCHPYVIA",
       ],
       "transactionSequenceNumber": 242646183137260900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "15d38fa256d8e336787062dd1bdc3edf0faeab7cede8c31b4b4930fa0cabd09e",
+      "blockHeight": 58378429,
+      "extra": {
+        "blockTime": 2025-08-08T19:24:50.000Z,
+        "index": "250733443347619841",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL & Earn Native XLM",
+        },
+        "pagingToken": "250733443347619841",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "d4660885f46aadc2208c326323da0984df09b8d602b471293cb2fb0056076256",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d4660885f46aadc2208c326323da0984df09b8d602b471293cb2fb0056076256-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GC5MXBUKMFBOASOJUKKZUI7TOVI7AM6T3DYU27VS3OSQP5ODGVDGEXLE",
+      ],
+      "transactionSequenceNumber": 250653093098688450,
       "type": "IN",
       "value": "1",
     },
@@ -3432,6 +3712,34 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAJSV2O545Z6ZK7FTPW2GOYNKMYJMP2REUJV4AW6DSYTYUHVI3N2DA6B",
       ],
       "transactionSequenceNumber": 224182342070048900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "723b4c2444d016b6a738884bdb3a9e1ba7eb77d4de5f0e8a83aedc497dbebee4",
+      "blockHeight": 58464879,
+      "extra": {
+        "blockTime": 2025-08-14T14:24:04.000Z,
+        "index": "251104743269670913",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy RFL Earn Native XLM!",
+        },
+        "pagingToken": "251104743269670913",
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "f83e9e4e8971b801e5d9e746e8409955aa2df75387ff68f99b6dd449e40295ea",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f83e9e4e8971b801e5d9e746e8409955aa2df75387ff68f99b6dd449e40295ea-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
+      ],
+      "transactionSequenceNumber": 250863061164895330,
       "type": "IN",
       "value": "1",
     },
