@@ -1,48 +1,50 @@
-import { handleActions } from "redux-actions";
-import { createSelector } from "reselect";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
-  listSupportedFiats,
   getFiatCurrencyByTicker,
+  listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
-import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  DeviceModelInfo,
-  FeatureId,
-  Feature,
-  PortfolioRange,
-  FirmwareUpdateContext,
-  AccountLike,
-} from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
+  AccountLike,
+  DeviceModelInfo,
+  Feature,
+  FeatureId,
+  FirmwareUpdateContext,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
+import { handleActions } from "redux-actions";
+import { createSelector } from "reselect";
+import {
+  DEFAULT_LANGUAGE,
+  Language,
   LanguageIds,
   LanguageIdsNotFeatureFlagged,
   Languages,
-  Language,
   Locale,
-  DEFAULT_LANGUAGE,
   OFAC_LOCALES,
 } from "~/config/languages";
-import { State } from ".";
-import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getAppLocale } from "~/helpers/systemLocale";
-import { Handlers } from "./types";
-import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
-import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
+import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
+import { State } from ".";
 import {
-  TOGGLE_MEMOTAG_INFO,
-  TOGGLE_MARKET_WIDGET,
-  TOGGLE_MEV,
-  UPDATE_NFT_COLLECTION_STATUS,
-  UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
+  PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
   RESET_HIDDEN_NFT_COLLECTIONS,
+  TOGGLE_MARKET_WIDGET,
+  TOGGLE_MEMOTAG_INFO,
+  TOGGLE_MEV,
+  UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
+  UPDATE_NFT_COLLECTION_STATUS,
 } from "../actions/constants";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
+import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
+import { Handlers } from "./types";
 
 /* Initial state */
 
@@ -300,7 +302,7 @@ type HandlersPayloads = {
   SET_DISMISSED_CONTENT_CARDS: {
     [key: string]: number;
   };
-  CLEAR_DISMISSED_CONTENT_CARDS: never;
+  CLEAR_DISMISSED_CONTENT_CARDS: { now: Date };
   SET_ANONYMOUS_BRAZE_ID: string;
   SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
 
@@ -314,12 +316,12 @@ type HandlersPayloads = {
   SET_HAS_REDIRECTED_TO_POST_ONBOARDING: boolean;
   SET_LAST_ONBOARDED_DEVICE: Device | null;
 
+  [PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS]: { now: Date };
   [TOGGLE_MEV]: boolean;
   [TOGGLE_MEMOTAG_INFO]: boolean;
   [TOGGLE_MARKET_WIDGET]: boolean;
   [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: {
     notifications: Record<string, number>;
-    purgeState?: boolean;
   };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -515,14 +517,15 @@ const handlers: SettingsHandlers = {
     },
   }),
 
-  CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }: { payload?: string[] }) => {
-    const newState = { ...state };
-    if (payload) {
-      payload.forEach(id => {
-        delete newState.dismissedContentCards[id];
-      });
-    }
-    return newState;
+  CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload: { now } }) => {
+    const cutoff = getBrazeCampaignCutoff(now);
+
+    const prev = state.dismissedContentCards;
+    const next = Object.fromEntries(Object.entries(prev).filter(([, ts]) => ts >= cutoff));
+
+    return Object.keys(next).length === Object.keys(prev).length
+      ? state
+      : { ...state, dismissedContentCards: next };
   },
   SET_ANONYMOUS_BRAZE_ID: (state: SettingsState, { payload }) => ({
     ...state,
@@ -561,6 +564,19 @@ const handlers: SettingsHandlers = {
     ...state,
     lastOnboardedDevice: payload,
   }),
+
+  [PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS]: (state, { payload: { now } }) => {
+    const { LNSUpsell, ...rest } = state.anonymousUserNotifications;
+    const cutoff = getBrazeCampaignCutoff(now);
+    const next: typeof rest = {
+      ...(LNSUpsell ? { LNSUpsell } : {}),
+      ...Object.fromEntries(Object.entries(rest).filter(([_, ts]) => ts >= cutoff)),
+    };
+
+    return Object.keys(next).length === Object.keys(state.anonymousUserNotifications).length
+      ? state
+      : { ...state, anonymousUserNotifications: next };
+  },
   [TOGGLE_MEV]: (state: SettingsState, { payload }) => ({
     ...state,
     mevProtection: payload,
@@ -573,15 +589,16 @@ const handlers: SettingsHandlers = {
     ...state,
     alwaysShowMemoTagInfo: payload,
   }),
-  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => {
-    const { anonymousUserNotifications: prev } = state;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const next = {
-      ...(payload.purgeState ? { LNSUpsell: prev.LNSUpsell } : prev),
-      ...payload.notifications,
-    } as SettingsState["anonymousUserNotifications"];
-    return { ...state, anonymousUserNotifications: next };
-  },
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (
+    state: SettingsState,
+    { payload: { notifications } },
+  ) => ({
+    ...state,
+    anonymousUserNotifications: {
+      ...state.anonymousUserNotifications,
+      ...notifications,
+    },
+  }),
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(

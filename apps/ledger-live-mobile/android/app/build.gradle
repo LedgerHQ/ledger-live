@@ -126,7 +126,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.61.0"
+        versionName "3.88.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -211,6 +211,9 @@ dependencies {
 
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
+
+    // Manual linking for react-native-linear-gradient
+    implementation project(':react-native-linear-gradient')
 
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
 

@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NetworkList } from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import {
+  AssetType,
+  NetworkItem,
+  Network as NetworkType,
+} from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -9,6 +13,9 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import orderBy from "lodash/orderBy";
+import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -17,6 +24,8 @@ export type NetworkSelectionStepProps = {
   source: string;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
+
+const SAFE_MARGIN_BOTTOM = 48;
 
 const NetworkSelection = ({
   availableNetworks,
@@ -27,29 +36,50 @@ const NetworkSelection = ({
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  const handleNetworkClick = (networkId: string) => {
-    const originalNetwork = availableNetworks.find(n => n.id === networkId);
-    if (originalNetwork) {
-      trackModularDrawerEvent(
-        EVENTS_NAME.NETWORK_CLICKED,
-        {
-          flow,
-          source,
-          network: originalNetwork.name,
-          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-        },
-        {
-          formatNetworkConfig: true,
-          networksConfig: networksConfiguration,
-        },
-      );
+  const handleNetworkClick = useCallback(
+    (networkId: string) => {
+      const originalNetwork = availableNetworks.find(n => n.id === networkId);
+      if (originalNetwork) {
+        trackModularDrawerEvent(
+          EVENTS_NAME.NETWORK_CLICKED,
+          {
+            flow,
+            source,
+            network: originalNetwork.name,
+            page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+          },
+          {
+            formatNetworkConfig: true,
+            networksConfig: networksConfiguration,
+          },
+        );
 
-      onNetworkSelected(originalNetwork);
-    }
-  };
+        onNetworkSelected(originalNetwork);
+      }
+    },
+    [
+      availableNetworks,
+      flow,
+      source,
+      networksConfiguration,
+      trackModularDrawerEvent,
+      onNetworkSelected,
+    ],
+  );
+
+  const transformNetworks = createNetworkConfigurationHook({
+    networksConfig: networksConfiguration,
+    accounts$: undefined,
+  });
+
+  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
+
+  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
   return (
-    <>
+    <Flex flexGrow={1}>
       <TrackDrawerScreen
         page={EVENTS_NAME.MODULAR_NETWORK_SELECTION}
         flow={flow}
@@ -57,10 +87,19 @@ const NetworkSelection = ({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
-      <Flex>
-        <NetworkList networks={availableNetworks} onClick={handleNetworkClick} />
-      </Flex>
-    </>
+      <BottomSheetFlatList
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+        data={formattedNetworks}
+        keyExtractor={keyExtractor}
+        renderItem={({ item }: { item: NetworkType }) => (
+          <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
+        )}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+        }}
+      />
+    </Flex>
   );
 };
 

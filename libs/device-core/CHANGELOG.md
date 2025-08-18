@@ -1,5 +1,42 @@
 # @ledgerhq/device-core
 
+## 0.5.5
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/live-network@2.0.14
+
+## 0.5.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0-next.0
+  - @ledgerhq/live-network@2.0.14-next.0
+
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0
+
+## 0.5.4-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+
+## 0.5.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0-next.0
+
 ## 0.5.3
 
 ### Patch Changes

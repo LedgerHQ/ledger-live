@@ -9,6 +9,7 @@ const forceUpdateConditions: Record<DeviceModelId, string> = {
   blue: noVersionCondition,
   europa: "<1.1.1",
   stax: "<=1.3.0",
+  apex: noVersionCondition,
 };
 
 /**

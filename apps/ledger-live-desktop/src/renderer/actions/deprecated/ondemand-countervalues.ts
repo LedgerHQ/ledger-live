@@ -1,9 +1,11 @@
-import { useMemo, useEffect, useState } from "react";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import {
+  useCountervaluesPolling,
+  useCountervaluesUserSettings,
+} from "@ledgerhq/live-countervalues-react";
 import { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { BehaviorSubject } from "rxjs";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCountervaluesUserSettingsContext } from "@ledgerhq/live-countervalues-react";
+import { useEffect, useMemo, useState } from "react";
+import { BehaviorSubject } from "rxjs";
 
 // extraSessionTrackingPairsChanges allows on demand tracking pair addition. used on specific parts of our app.
 // FIXME this is a temporary solution that would deserve a rework to simplify the requirements
@@ -12,7 +14,7 @@ export function useOnDemandCurrencyCountervalues(
   currency: Currency,
   counterValueCurrency: Currency,
 ) {
-  const { trackingPairs } = useCountervaluesUserSettingsContext();
+  const { trackingPairs } = useCountervaluesUserSettings();
   const cvPolling = useCountervaluesPolling();
   const hasTrackingPair = useMemo(
     () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
@@ -42,10 +44,10 @@ function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
 }
 
 export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([] as TrackingPair[]);
+  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
   useEffect(() => {
-    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
-    return () => sub && sub.unsubscribe();
+    const subscription = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
+    return () => subscription.unsubscribe();
   }, []);
   return extraSessionTrackingPair;
 }

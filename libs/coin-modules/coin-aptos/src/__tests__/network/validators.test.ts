@@ -83,23 +83,27 @@ describe("getValidators", () => {
     },
   ];
 
-  it("returns the correct information", async () => {
+  it("returns the correct information and caches the 2nd call", async () => {
     mockedAptos.mockImplementation(() => ({
       getAccountResource: async () => ({ locked_until_secs: "1750051574" }),
     }));
 
+    const mockedGetValidatorsQuery = jest.fn().mockImplementation(async () => ({
+      data: {
+        current_delegator_balances,
+      },
+    }));
     mockedApolloClient.mockImplementation(() => ({
-      query: async () => ({
-        data: {
-          current_delegator_balances,
-        },
-      }),
+      query: mockedGetValidatorsQuery,
     }));
 
     jest.useFakeTimers().setSystemTime(new Date("2025-05-15"));
 
-    const validators = await getValidators("aptos");
+    const validators1 = await getValidators("aptos");
+    const validators2 = await getValidators("aptos");
 
-    expect(validators).toMatchObject(expectedResponse);
+    expect(validators1).toMatchObject(expectedResponse);
+    expect(validators1).toMatchObject(validators2);
+    expect(mockedGetValidatorsQuery.mock.calls.length).toBe(1);
   });
 });

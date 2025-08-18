@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "El saldo no puede ser inferior a {{minimumBalance}} Envía el máximo a una cuenta vacía."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Tienes que vincular al menos {{minimumBondAmount}}."
     },
@@ -3659,7 +3656,8 @@
           "refunded" : "Contacta con el proveedor de permuta mediante tu ID de permuta para obtener más información.",
           "pending" : "Espera mientras el proveedor de permuta procesa la transacción.",
           "onhold" : "Contacta con el proveedor de permuta mediante tu ID de permuta para resolver la situación.",
-          "finished" : "Tu permuta se ha completado correctamente."
+          "finished" : "Tu permuta se ha completado correctamente.",
+          "unknown" : "Estamos a la espera de información del proveedor."
         }
       },
       "missingApp" : {
@@ -3720,6 +3718,7 @@
             "provider" : "Proveedor",
             "rate" : "Tasa",
             "fees" : "Tarifas de red",
+            "feesDescription" : "La red de cadena de bloques carga estas tarifas para procesar la permuta. Además de la cotización estimada, sólo se cobra la tarifa de envío. La tarifa de recepción ya está incluida.",
             "target" : "Cuenta de destino"
           },
           "noAccount" : "Crear una cuenta para recibir {{name}}",
@@ -4044,6 +4043,10 @@
       "quantityAvailable" : "Cantidad disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Firma a ciegas requerida",
+        "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+      },
       "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
       "tag" : "Etiqueta (opcional)",
       "validateTag" : "Validar etiqueta",
@@ -7763,7 +7766,7 @@
   },
   "geoBlocking" : {
     "title" : "Ubicación no disponible",
-    "description" : "Las billeteras Ledger no están disponibles en esta ubicación.",
+    "description" : "Ledger Live no está disponible en esta ubicación.",
     "learnMore" : "Más información"
   },
   "versionBlocking" : {
@@ -7775,6 +7778,87 @@
     "selectAsset" : "Seleccionar activo",
     "selectNetwork" : "Seleccionar red",
     "selectAccount" : "Seleccionar cuenta",
-    "searchPlaceholder" : "Buscar"
+    "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "No se encontraron activos",
+    "accountCount" : "{{count}} cuenta (detectada)",
+    "accountCount_plural" : "{{count}} cuentas (detectadas)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Datos de comando incorrectos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "deserializationFailed" : {
+      "title" : "La deserialización de la carga útil ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transacción incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidAddress" : {
+      "title" : "Dirección inválida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta emisora no coincide con el dispositivo conectado. Cámbiala e inténtalo de nuevo."
+    },
+    "userRefused" : {
+      "title" : "Operación denegada en el dispositivo",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "internalError" : {
+      "title" : "Error interno",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensión de P2 incorrecta",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Extensión de P2 no válida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Instrucción inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Clase no admitida"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrucción no válida",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "malformedApdu" : {
+      "title" : "La cabecera de APDU tiene un formato incorrecto",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "invalidDataLength" : {
+      "title" : "Longitud de los datos no válida",
+      "description" : "Este comando no acepta datos de esa longitud"
+    },
+    "signatureVerificationFail" : {
+      "title" : "La verificación de la firma ha fallado",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "default" : {
+      "title" : "Algo ha salido mal",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    }
   }
 }

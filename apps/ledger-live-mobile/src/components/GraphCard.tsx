@@ -95,14 +95,14 @@ function GraphCard({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const onItemHover = (item?: Item | null) => {
     setItemHover(item);
   };
 
   return (
-    <Flex>
+    <Flex background="transparent">
       <Flex
         flexDirection={"row"}
         justifyContent={"center"}
@@ -192,11 +192,11 @@ function GraphCard({
               data={balanceHistory}
               onItemHover={onItemHover}
               mapValue={mapGraphValue}
-              fill={colors.background.main}
+              fill="transparent"
               testID="graphCard-chart"
             />
           </Flex>
-          <Flex paddingTop={6} background={colors.background.main}>
+          <Flex paddingTop={6} background="transparent">
             <GraphTabs
               activeIndex={activeRangeIndex}
               onChange={updateTimeRange}

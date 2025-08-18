@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { Horizon } from "@stellar/stellar-sdk";
 import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT, fetchBaseFee } from "./horizon";
-import type { BalanceAsset, RawOperation, StellarOperation } from "../types";
+import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
 import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("stellar");
@@ -90,17 +90,46 @@ async function formatOperation(
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
   const recipients = getRecipients(rawOperation);
-  const memo = transaction.memo
-    ? transaction.memo_type === "hash" || transaction.memo_type === "return"
-      ? Buffer.from(transaction.memo, "base64").toString("hex")
-      : transaction.memo
-    : null;
+
+  let memo: StellarMemo | undefined = undefined;
+  switch (transaction.memo_type) {
+    case "none":
+      memo = { type: "NO_MEMO" };
+      break;
+    case "id":
+      if (transaction.memo) {
+        memo = { type: "MEMO_ID", value: transaction.memo };
+      }
+      break;
+    case "text":
+      if (transaction.memo) {
+        memo = { type: "MEMO_TEXT", value: transaction.memo };
+      }
+      break;
+    case "return":
+      if (transaction.memo) {
+        memo = {
+          type: "MEMO_RETURN",
+          value: Buffer.from(transaction.memo, "base64").toString("hex"),
+        };
+      }
+      break;
+    case "hash":
+      if (transaction.memo) {
+        memo = {
+          type: "MEMO_HASH",
+          value: Buffer.from(transaction.memo, "base64").toString("hex"),
+        };
+      }
+      break;
+  }
 
   const operation: StellarOperation = {
     id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
     accountId,
     fee: new BigNumber(transaction.fee_charged),
     value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,
+    // TODO: doc
     // Using type NONE to hide asset operations from the main account (show them
     // only on sub-account)
     type: rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type) ? "NONE" : type,
@@ -109,7 +138,7 @@ async function formatOperation(
     date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: Number(transaction.source_account_sequence),
+    transactionSequenceNumber: Number(transaction.source_account_sequence) || undefined,
     hasFailed: !rawOperation.transaction_successful,
     blockHash: blockHash,
     extra: {

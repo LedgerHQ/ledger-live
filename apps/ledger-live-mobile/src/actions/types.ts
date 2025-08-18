@@ -40,6 +40,7 @@ import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAc
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -124,6 +125,41 @@ export type BlePayload =
   | BleAddKnownDevicePayload
   | BleImportBlePayload
   | BleSaveDeviceNamePayload;
+
+// === COUNTERVALUES ACTIONS ===
+
+export enum CountervaluesActionTypes {
+  COUNTERVALUES_MARKETCAP_SET_IDS = "COUNTERVALUES_MARKETCAP_SET_IDS",
+  COUNTERVALUES_MARKETCAP_SET_LOADING = "COUNTERVALUES_MARKETCAP_SET_LOADING",
+  COUNTERVALUES_MARKETCAP_SET_ERROR = "COUNTERVALUES_MARKETCAP_SET_ERROR",
+  COUNTERVALUES_POLLING_SET_IS_POLLING = "COUNTERVALUES_POLLING_SET_IS_POLLING",
+  COUNTERVALUES_POLLING_SET_TRIGGER_LOAD = "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
+  COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
+  COUNTERVALUES_STATE_SET_PENDING = "COUNTERVALUES_STATE_PENDING_SET",
+  COUNTERVALUES_STATE_SET_ERROR = "COUNTERVALUES_STATE_ERROR_SET",
+  COUNTERVALUES_WIPE = "COUNTERVALUES_WIPE_STATE",
+}
+
+export type CountervaluesMarketcapFetchIdsPayload = void;
+export type CountervaluesMarketcapSetIdsPayload = string[];
+export type CountervaluesMarketcapSetLoadingPayload = boolean;
+export type CountervaluesMarketcapSetErrorPayload = string | null;
+export type CountervaluesPollingSetIsPollingPayload = boolean;
+export type CountervaluesPollingSetTriggerLoadPayload = boolean;
+export type CountervaluesStateSetPayload = CounterValuesState;
+export type CountervaluesStateSetPendingPayload = boolean;
+export type CountervaluesStateSetErrorPayload = Error;
+
+export type CountervaluesPayload =
+  | CountervaluesMarketcapFetchIdsPayload
+  | CountervaluesMarketcapSetIdsPayload
+  | CountervaluesMarketcapSetLoadingPayload
+  | CountervaluesMarketcapSetErrorPayload
+  | CountervaluesPollingSetIsPollingPayload
+  | CountervaluesPollingSetTriggerLoadPayload
+  | CountervaluesStateSetPayload
+  | CountervaluesStateSetPendingPayload
+  | CountervaluesStateSetErrorPayload;
 
 // === NOTIFICATIONS ACTIONS ===
 

@@ -4,6 +4,11 @@ import { render } from "@tests/test-renderer";
 import { TestButtonPage } from "./shared";
 import { State } from "~/reducers/types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
+import {
+  mockBtcCryptoCurrency,
+  mockEthCryptoCurrency,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { ModularDrawerLocation } from "../../ModularDrawer";
 
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
@@ -122,13 +127,25 @@ describe("AddAccount", () => {
 
   /**====== use ModularDrawer Test =======*/
   it("Should open ModularDrawer when selecting use Ledger device", async () => {
-    const { user } = render(<TestButtonPage shouldShowModularDrawer />, {
+    const { user } = render(<TestButtonPage />, {
       overrideInitialState: (state: State) => ({
         ...state,
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: false } },
+          overriddenFeatureFlags: {
+            llmWalletSync: { enabled: false },
+            llmModularDrawer: {
+              enabled: true,
+              params: {
+                [ModularDrawerLocation.ADD_ACCOUNT]: true,
+              },
+            },
+          },
+        },
+        modularDrawer: {
+          isOpen: false,
+          preselectedCurrencies: [mockEthCryptoCurrency, mockBtcCryptoCurrency],
         },
       }),
     });
@@ -145,6 +162,6 @@ describe("AddAccount", () => {
 
     // Press the "Use your Ledger device" button to trigger ModularDrawer
     await user.press(screen.getByText(/Use your Ledger device/i));
-    expect(await screen.findByText(/Bitcoin/i));
+    expect(screen.getByText(/Bitcoin/i)).toBeVisible();
   });
 });

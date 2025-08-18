@@ -95,6 +95,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySeiNetworkEvm: DEFAULT_FEATURE,
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
+  currencyCantonNetwork: DEFAULT_FEATURE,
 };
 
 /**
@@ -615,8 +616,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -627,8 +629,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -672,6 +675,11 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmSentry: { enabled: true },
+  onboardingIgnoredOsUpdates: {
+    ...DEFAULT_FEATURE,
+    params: {},
+  },
+  supportDeviceApex: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

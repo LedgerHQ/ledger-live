@@ -4,6 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
+import "../config/bridge-setup";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
@@ -29,6 +30,8 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
+import { analyticsMiddleware } from "~/renderer/middlewares/analytics";
+import type { ReduxStore } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -111,9 +114,10 @@ async function init() {
   }
   const store = createStore({
     dbMiddleware,
+    analyticsMiddleware,
   });
   if (getEnv("PLAYWRIGHT_RUN")) {
-    (window as Window & { __STORE__?: ReturnType<typeof createStore> }).__STORE__ = store;
+    (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
   sentry(() => sentryLogsSelector(store.getState()));
   let notifiedSentryLogs = false;

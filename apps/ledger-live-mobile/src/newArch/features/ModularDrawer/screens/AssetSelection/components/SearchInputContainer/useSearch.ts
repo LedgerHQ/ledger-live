@@ -20,6 +20,7 @@ export type SearchProps = {
   items: CryptoOrTokenCurrency[];
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   formatAssetConfig?: boolean;
+  onPressIn?: () => void;
 };
 
 export type SearchResult = {

@@ -1,3 +1,4 @@
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
@@ -137,6 +138,7 @@ export type CurrencyFeatures = {
   currencySeiNetworkEvm: DefaultFeature;
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
+  currencyCantonNetwork: DefaultFeature;
 };
 
 /**
@@ -262,6 +264,8 @@ export type Features = CurrencyFeatures & {
     }>;
   };
   llmSentry: DefaultFeature;
+  onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
+  supportDeviceApex: DefaultFeature;
 };
 
 /**
@@ -653,8 +657,9 @@ export type Feature_LlmMmkvMigration = Feature<{
 
 type Feature_ModularDrawer = Feature<{
   add_account: boolean;
-  earn_flow: boolean;
   live_app: boolean;
+  live_apps_allowlist: string[];
+  live_apps_blocklist: string[];
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;
@@ -697,6 +702,21 @@ export type Feature_LldNanoSUpsellBanners = Feature<{
 export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
+}>;
+
+export type Feature_SupportDeviceApex = DefaultFeature;
+
+/**
+ * Array of firmware versions that are ignored for the given device model
+ */
+export type IgnoredOSUpdates = Array<string>;
+
+export type Platform = "ios" | "android" | "macos" | "windows" | "linux";
+
+export type IgnoredOSUpdatesByPlatform = { [M in DeviceModelId]?: IgnoredOSUpdates };
+
+export type Feature_OnboardingIgnoredOSUpdates = Feature<{
+  [P in Platform]?: IgnoredOSUpdatesByPlatform;
 }>;
 
 /**

@@ -10,7 +10,7 @@ describe("getBalance", () => {
       "native balance only", // test description
       { lastTokenOperations: [] }, // operation
       {}, // token balances (empty)
-      [{ value: BigInt("1000000000000000000"), asset: { type: "native" } }], // expected
+      [{ value: BigInt("10000000000000000000000"), asset: { type: "native" } }], // expected
     ],
     [
       "native and token balances", // test description
@@ -19,26 +19,26 @@ describe("getBalance", () => {
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [
-        { value: BigInt("1000000000000000000"), asset: { type: "native" } },
+        { value: BigInt("10000000000000000000000"), asset: { type: "native" } }, // native balance
         {
           value: BigInt("1000000"),
-          asset: { type: "token", contractAddress: "0x123", standard: "erc" },
+          asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
         },
         {
           value: BigInt("2000000"),
-          asset: { type: "token", contractAddress: "0x456", standard: "erc" },
+          asset: { type: "erc20", assetReference: "0x456", assetOwner: "address" },
         },
       ], // expected
     ],
-  ])("should return %s", async (_, operations, tokenBalances, expected) => {
+  ])("returns %s", async (_, operations, tokenBalances, expected) => {
     const mockGetTokenBalance = jest
       .fn()
-      .mockImplementation((currency, address, contractAddress) => {
+      .mockImplementation((_currency, _address, contractAddress) => {
         return new BigNumber((tokenBalances as any)[contractAddress] || "0");
       });
 
     jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
-      getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("1000000000000000000")),
+      getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("10000000000000000000000")),
       getTokenBalance: mockGetTokenBalance,
     } as any);
 
@@ -46,6 +46,6 @@ describe("getBalance", () => {
       getLastOperations: jest.fn().mockResolvedValue(operations),
     } as any);
 
-    expect(await getBalance({} as CryptoCurrency, "")).toEqual(expected);
+    expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
   });
 });

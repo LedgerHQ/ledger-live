@@ -344,6 +344,7 @@
           "provider" : "プロバイダー",
           "rate" : "レート",
           "fees" : "ネットワーク手数料",
+          "feesDescription" : "この手数料は、スワップを処理するためにブロックチェーンネットワークによって請求されます。見積額に加えて、送付手数料のみ請求されます。受取手数料が含まれています",
           "target" : "ターゲットアカウント"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "保留中",
         "expired" : "期限切れ",
         "finished" : "完了",
+        "unknown" : "処理中",
         "refunded" : "返金済み"
       }
     },
@@ -570,7 +572,7 @@
         "pending" : "スワッププロバイダーがトランザクションを処理しています。しばらくお待ちください。",
         "onhold" : "問題を解決するには、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
         "finished" : "スワップが正常に完了しました。",
-        "unknown" : "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。"
+        "unknown" : "プロバイダーからの情報を待っています。"
       },
       "date" : "日付",
       "from" : "送付元",
@@ -2385,6 +2387,10 @@
         "title" : "デバイス"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "ブラインド署名が必要です",
+          "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
         "from" : "送付元",
@@ -4580,6 +4586,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "モジュラードロワー開発ツール",
+        "description" : "モジュラードロワーを簡単にテストできます"
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "mockAppUpdate" : "Mockアプリのアップデート",
@@ -6509,9 +6519,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "残高が{{minimumBalance}} を下回ることはできません。空のアカウントに最大額を送金してください。"
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "{{minimumBondAmount}}以上ボンドする必要があります。"
     },
@@ -6725,7 +6732,7 @@
       "description" : "デバイスのロックを解除して、再度お試しください。",
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledgerが設定されていません",
       "description" : "セットアップして使用を開始してください。セットアッププロセスをご案内します。",
       "goToOnboardingButton" : "Ledgerをセットアップ",
@@ -7280,6 +7287,15 @@
       "addAccountSelection" : "資金を追加するアカウントを選択",
       "addAccountSelectionPtxFlow" : "アカウントを選択"
     },
+    "editAccountName" : {
+      "title" : "アカウント名を編集",
+      "input" : {
+        "name" : "名前"
+      },
+      "cta" : {
+        "save" : "保存"
+      }
+    },
     "fundAccount" : {
       "receive" : "受け取る",
       "receiveDescription" : "暗号資産を別のウォレットから受け取る",
@@ -7338,7 +7354,7 @@
   },
   "geoBlocking" : {
     "title" : "利用不可のロケーション",
-    "description" : "このロケーションでは、Ledgerウォレットをご利用いただけません。",
+    "description" : "恐れ入りますが、現在の地域ではLedger Liveをご利用いただけません。",
     "learnMore" : "詳細はこちら"
   },
   "versionBlocking" : {

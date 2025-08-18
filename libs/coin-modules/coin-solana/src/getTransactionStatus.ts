@@ -54,6 +54,7 @@ function getAmount(command: Command) {
     case "stake.delegate":
     case "stake.undelegate":
     case "stake.split":
+    case "raw":
       return 0;
     default:
       return assertUnreachable(command);
@@ -80,6 +81,7 @@ function getTotalSpent({ command, fee }: CommandDescriptor) {
     case "stake.undelegate":
     case "stake.withdraw":
     case "stake.split":
+    case "raw":
       return fee;
     default:
       return assertUnreachable(command);

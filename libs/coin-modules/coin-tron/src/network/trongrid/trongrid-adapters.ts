@@ -1,11 +1,11 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, Operation } from "@ledgerhq/coin-framework/api/types";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import type { TronAsset, TrongridTxInfo } from "../../types";
+import type { TrongridTxInfo } from "../../types";
 
 export function fromTrongridTxInfoToOperation(
   trongridTxInfo: TrongridTxInfo,
   userAddress: string,
-): Operation<TronAsset> {
+): Operation {
   return {
     id: trongridTxInfo.txID,
     tx: {
@@ -35,21 +35,19 @@ function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string)
   }
 }
 
-function inferAssetInfo(trongridTxInfo: TrongridTxInfo): TronAsset {
+function inferAssetInfo(trongridTxInfo: TrongridTxInfo): AssetInfo {
   switch (true) {
     case trongridTxInfo.tokenType === "trc10":
       return {
-        type: "token",
-        standard: "trc10",
+        type: "trc10",
         // if tokenType is trc10, tokenId is always defined
-        tokenId: trongridTxInfo.tokenId as string,
+        assetReference: trongridTxInfo.tokenId as string,
       };
     case trongridTxInfo.tokenType === "trc20":
       return {
-        type: "token",
-        standard: "trc20",
+        type: "trc20",
         // if tokenType is trc20, contractAddress is always defined
-        contractAddress: trongridTxInfo.tokenAddress as string,
+        assetReference: trongridTxInfo.tokenAddress as string,
       };
     default:
       return { type: "native" };

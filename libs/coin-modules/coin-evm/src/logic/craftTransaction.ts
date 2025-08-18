@@ -1,34 +1,27 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { TransactionTypes } from "ethers/lib/utils";
-import { EvmAsset, isNative } from "../types";
+import { isNative } from "../types";
 import { getNodeApi } from "../network/node";
-import ERC20ABI from "../abis/erc20.abi.json";
-
-function getErc20Data(recipient: string, amount: bigint): Buffer {
-  const contract = new ethers.utils.Interface(ERC20ABI);
-  const data = contract.encodeFunctionData("transfer", [recipient, amount]);
-  return Buffer.from(data.slice(2), "hex");
-}
+import { getErc20Data, getTransactionType } from "./common";
 
 export async function craftTransaction(
   currency: CryptoCurrency,
   {
     transactionIntent,
+    customFees,
   }: {
-    transactionIntent: TransactionIntent<EvmAsset>;
+    transactionIntent: TransactionIntent;
+    customFees?: FeeEstimation | undefined;
   },
 ): Promise<string> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
 
-  if (!["send-legacy", "send-eip1559"].includes(type)) {
-    throw new Error(`Unsupported intent type '${type}'. Must be 'send-legacy' or 'send-eip1559'`);
-  }
-
+  const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
-  const to = isNative(asset) ? recipient : asset.contractAddress;
+  const to = isNative(asset) ? recipient : (asset?.assetReference as string);
   const nonce = await node.getTransactionCount(currency, sender);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   const value = isNative(asset) ? amount : 0n;
@@ -37,11 +30,9 @@ export async function craftTransaction(
     { currency, freshAddress: sender },
     { amount: BigNumber(value.toString()), recipient: to, data },
   );
-  const transactionType =
-    type === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
   const fee = await node.getFeeData(currency, { type: transactionType });
 
-  return ethers.utils.serializeTransaction({
+  const unsignedTransaction: ethers.utils.UnsignedTransaction = {
     type: transactionType,
     to,
     nonce,
@@ -56,5 +47,23 @@ export async function craftTransaction(
     ...(fee.maxPriorityFeePerGas
       ? { maxPriorityFeePerGas: ethers.BigNumber.from(fee.maxPriorityFeePerGas.toFixed(0)) }
       : {}),
-  });
+  };
+
+  if (
+    transactionType === TransactionTypes.legacy &&
+    typeof customFees?.parameters?.gasPrice === "bigint"
+  ) {
+    unsignedTransaction.gasPrice = customFees.parameters.gasPrice;
+  }
+
+  if (
+    transactionType === TransactionTypes.eip1559 &&
+    typeof customFees?.parameters?.maxFeePerGas === "bigint" &&
+    typeof customFees?.parameters?.maxPriorityFeePerGas === "bigint"
+  ) {
+    unsignedTransaction.maxFeePerGas = customFees.parameters.maxFeePerGas;
+    unsignedTransaction.maxPriorityFeePerGas = customFees.parameters.maxPriorityFeePerGas;
+  }
+
+  return ethers.utils.serializeTransaction(unsignedTransaction);
 }

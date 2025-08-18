@@ -1,4 +1,4 @@
-import { Device, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
+import { Device, DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +14,7 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useIncrementOnNavigationFocusState } from "~/helpers/useIncrementOnNavigationFocusState";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.BleDevicePairingFlow>
@@ -35,7 +36,10 @@ export const bleDevicePairingFlowHeaderOptions: ReactNavigationHeaderOptions = {
  * @returns a JSX component
  */
 export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
+  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
+
   const keyToReset = useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
+
   const onPairingSuccess = useCallback(
     (device: Device) => {
       // Navigates to the sync onboarding passing the newly paired device
@@ -70,7 +74,9 @@ export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
       <Flex px={6} flex={1}>
         <BleDevicePairingFlowComponent
           key={keyToReset}
-          filterByDeviceModelId={DevicesWithTouchScreen}
+          filterByDeviceModelId={DevicesWithTouchScreen.filter(
+            deviceModelId => isApexSupported || deviceModelId !== DeviceModelId.apex,
+          )}
           onPairingSuccess={onPairingSuccess}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />

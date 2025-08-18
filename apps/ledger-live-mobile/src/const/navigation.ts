@@ -562,6 +562,7 @@ export enum ScreenName {
   WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
   WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
+  ModularDrawerDeepLinkHandler = "ModularDrawerDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   MockedModularDrawer = "MockedModularDrawer",
@@ -710,6 +711,7 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  ModularDrawer = "ModularDrawer",
   AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",

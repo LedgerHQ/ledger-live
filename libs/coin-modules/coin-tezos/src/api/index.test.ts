@@ -2,7 +2,7 @@ import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
-import type { TezosAsset, TezosTransactionIntent } from "./types";
+import type { TezosTransactionIntent } from "./types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
 const DEFAULT_GAS_LIMIT = 30n;
@@ -62,7 +62,7 @@ describe("get operations", () => {
     expect(token).toEqual("");
   });
 
-  const op: Operation<TezosAsset> = {
+  const op: Operation = {
     id: "blockhash",
     asset: { type: "native" },
     tx: {
@@ -111,10 +111,9 @@ describe("Testing craftTransaction function", () => {
         gasLimit: DEFAULT_GAS_LIMIT,
         storageLimit: DEFAULT_STORAGE_LIMIT,
       });
-      await api.craftTransaction(
-        { type: "send", sender: {} } as TezosTransactionIntent,
-        customFees,
-      );
+      await api.craftTransaction({ type: "send", sender: {} } as TezosTransactionIntent, {
+        value: customFees,
+      });
       expect(logicEstimateFees).toHaveBeenCalledTimes(1);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),

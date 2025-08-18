@@ -1,5 +1,45 @@
 # @ledgerhq/live-signer-evm
 
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [[`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3), [`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`9c200a4`](https://github.com/LedgerHQ/ledger-live/commit/9c200a44f0d8d0cb3995b64a85adbaa750c2452d), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-evm@2.26.0
+  - @ledgerhq/hw-app-eth@6.45.14
+
+## 0.6.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3), [`cf29b89`](https://github.com/LedgerHQ/ledger-live/commit/cf29b897219b6ea7963decf8e8dc0916cfb087b2), [`9c200a4`](https://github.com/LedgerHQ/ledger-live/commit/9c200a44f0d8d0cb3995b64a85adbaa750c2452d), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/coin-evm@2.26.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.14-next.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8)]:
+  - @ledgerhq/coin-evm@2.25.0
+  - @ledgerhq/hw-app-eth@6.45.13
+
+## 0.6.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.25.0-next.1
+  - @ledgerhq/hw-app-eth@6.45.13-next.1
+
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`431725f`](https://github.com/LedgerHQ/ledger-live/commit/431725f3e23a1342a94c6b566d9be7728ff37fff), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8)]:
+  - @ledgerhq/coin-evm@2.25.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.13-next.0
+
 ## 0.6.1
 
 ### Patch Changes

@@ -93,7 +93,10 @@ const AppsList = ({
     [setQuery],
   );
 
-  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, "manager");
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "manager",
+  );
 
   /** clear search field on tab change */
   useEffect(() => {

@@ -85,6 +85,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     balance: new BigNumber(mirrorAccount.balance.balance),
     spendableBalance: new BigNumber(mirrorAccount.balance.balance),
     operations,
+    operationsCount: operations.length,
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,

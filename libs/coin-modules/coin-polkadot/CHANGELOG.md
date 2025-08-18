@@ -1,5 +1,85 @@
 # @ledgerhq/coin-polkadot
 
+## 6.6.0
+
+### Minor Changes
+
+- [#11155](https://github.com/LedgerHQ/ledger-live/pull/11155) [`76f88c3`](https://github.com/LedgerHQ/ledger-live/commit/76f88c39a7368b1c61b1018000e64e3fe2f906af) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/cryptoassets@13.24.0
+  - @ledgerhq/types-cryptoassets@7.25.0
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/coin-framework@6.0.0
+  - @ledgerhq/live-env@2.13.0
+  - @ledgerhq/live-network@2.0.14
+
+## 6.6.0-next.0
+
+### Minor Changes
+
+- [#11155](https://github.com/LedgerHQ/ledger-live/pull/11155) [`76f88c3`](https://github.com/LedgerHQ/ledger-live/commit/76f88c39a7368b1c61b1018000e64e3fe2f906af) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3), [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb), [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777), [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa), [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748)]:
+  - @ledgerhq/cryptoassets@13.24.0-next.0
+  - @ledgerhq/types-cryptoassets@7.25.0-next.0
+  - @ledgerhq/types-live@6.80.0-next.0
+  - @ledgerhq/coin-framework@6.0.0-next.0
+  - @ledgerhq/live-env@2.13.0-next.0
+  - @ledgerhq/live-network@2.0.14-next.0
+
+## 6.5.0
+
+### Minor Changes
+
+- [#11126](https://github.com/LedgerHQ/ledger-live/pull/11126) [`c8dc35e`](https://github.com/LedgerHQ/ledger-live/commit/c8dc35e440d3ad47429e064471d1234c932c6523) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/types-live@6.79.0
+  - @ledgerhq/cryptoassets@13.23.0
+  - @ledgerhq/types-cryptoassets@7.24.0
+  - @ledgerhq/coin-framework@5.8.0
+
+## 6.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+  - @ledgerhq/coin-framework@5.8.0-next.1
+
+## 6.5.0-next.1
+
+### Minor Changes
+
+- [#11126](https://github.com/LedgerHQ/ledger-live/pull/11126) [`c8dc35e`](https://github.com/LedgerHQ/ledger-live/commit/c8dc35e440d3ad47429e064471d1234c932c6523) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [bugfix] fix send small DOT amount when total balance < 2 DOTs
+
+## 6.5.0-next.0
+
+### Minor Changes
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa), [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8), [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e)]:
+  - @ledgerhq/types-live@6.79.0-next.0
+  - @ledgerhq/cryptoassets@13.23.0-next.0
+  - @ledgerhq/types-cryptoassets@7.24.0-next.0
+  - @ledgerhq/coin-framework@5.8.0-next.0
+
 ## 6.4.0
 
 ### Minor Changes

@@ -6,7 +6,10 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { AccountTuple, getAccountTuplesForCurrency } from "../utils/getAccountTuplesForCurrency";
+import {
+  AccountTuple,
+  getAccountTuplesForCurrency,
+} from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
@@ -43,7 +46,10 @@ export const useDetailedAccounts = (
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { openAddAccountFlow } = useOpenAssetFlow(ModularDrawerLocation.ADD_ACCOUNT, source);
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    source,
+  );
 
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);

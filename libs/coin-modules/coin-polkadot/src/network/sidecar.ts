@@ -4,7 +4,6 @@ import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
-import { EXISTENTIAL_DEPOSIT } from "../bridge/utils";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -297,7 +296,12 @@ export const getAccount = async (addr: string) => {
   const stakingInfo = await getStakingInfo(addr);
   const nominations = await getNominations(addr);
 
-  return { ...balances, ...stakingInfo, nominations };
+  const account = { ...balances, ...stakingInfo, nominations };
+  account.balance = account.balance
+    .plus(account.lockedBalance.minus(account.unlockingBalance))
+    .plus(account.unlockingBalance.minus(account.unlockedBalance));
+
+  return account;
 };
 
 /**
@@ -309,22 +313,12 @@ export const getAccount = async (addr: string) => {
 export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
 
-  const balance = new BigNumber(balanceInfo.free);
-  const reservedBalance = new BigNumber(balanceInfo.reserved || "0");
-  const frozenBalance = new BigNumber(balanceInfo.frozen || "0");
-
-  const frozenMinusReserved = frozenBalance.minus(reservedBalance);
-  const spendableBalance = BigNumber.max(
-    balance.minus(BigNumber.max(frozenMinusReserved, EXISTENTIAL_DEPOSIT)),
-    new BigNumber(0),
-  );
-
   return {
     blockHeight: Number(balanceInfo.at.height),
-    balance,
-    spendableBalance,
+    balance: new BigNumber(balanceInfo.free),
+    spendableBalance: new BigNumber(balanceInfo.transferable || "0"),
     nonce: Number(balanceInfo.nonce),
-    lockedBalance: reservedBalance,
+    lockedBalance: new BigNumber(balanceInfo.reserved || "0"),
   };
 };
 

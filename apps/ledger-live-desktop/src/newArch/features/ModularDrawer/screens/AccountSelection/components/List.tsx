@@ -1,10 +1,10 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
-import { AccountTuple } from "../../../utils/getAccountTuplesForCurrency";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
+import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;

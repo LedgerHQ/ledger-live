@@ -18,6 +18,9 @@ import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { defaultNanoApp } from "../scenarii.test";
+import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -133,13 +136,13 @@ const makeScenarioTransactions = ({
 
 export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
-  setup: async () => {
+  setup: async strategy => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
       fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
@@ -162,12 +165,41 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_ethereum: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          gasTracker: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+          showNfts: true,
+        },
+      },
+    });
 
     initMswHandlers(getCoinConfig(ethereum).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge = buildCurrencyBridge(signerContext);
-    const accountBridge = buildAccountBridge(signerContext);
+    const currencyBridge =
+      strategy === "legacy"
+        ? buildCurrencyBridge(signerContext)
+        : getAlpacaCurrencyBridge("ethereum", "local");
+    const accountBridge =
+      strategy === "legacy"
+        ? buildAccountBridge(signerContext)
+        : getAlpacaAccountBridge("ethereum", "local");
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
@@ -181,7 +213,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
-    await setBlock(lastBlockNumber + 1);
+    setBlock(lastBlockNumber + 1);
 
     // Get USDC
     await callMyDealer({

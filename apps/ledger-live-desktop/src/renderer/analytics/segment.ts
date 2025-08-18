@@ -1,4 +1,7 @@
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -6,16 +9,18 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-nft";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { useCallback, useContext } from "react";
+import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
+import { getVersionedRedirects } from "~/newArch/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
-import { State } from "~/renderer/reducers";
+import type { State } from "~/renderer/reducers";
 import {
   developerModeSelector,
   devicesModelListSelector,
@@ -30,13 +35,11 @@ import {
   sidebarCollapsedSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import createStore from "../createStore";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
-import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import { LiveConfig } from "@ledgerhq/live-config/lib-es/LiveConfig";
-import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
+
+type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -54,8 +57,6 @@ const getContext = () => ({
     url: "",
   },
 });
-
-type ReduxStore = ReturnType<typeof createStore>;
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let analyticsFeatureFlagMethod:
@@ -110,8 +111,9 @@ const getMADAttributes = () => {
     rollout_phase,
     isEnabled,
     add_account: madFeatureFlag?.params?.add_account ?? false,
-    earn_flow: madFeatureFlag?.params?.earn_flow ?? false,
     live_app: madFeatureFlag?.params?.live_app ?? false,
+    live_apps_allowlist: madFeatureFlag?.params?.live_apps_allowlist,
+    live_apps_blocklist: madFeatureFlag?.params?.live_apps_blocklist,
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
@@ -177,7 +179,7 @@ const getPtxAttributes = () => {
 };
 
 const getMandatoryProperties = (store: ReduxStore) => {
-  const state: State = store.getState();
+  const state = store.getState();
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);

@@ -2,7 +2,10 @@ import React from "react";
 import { useTheme } from "styled-components/native";
 import { Svg, G, Rect, Path, Defs, ClipPath } from "react-native-svg";
 
-const ContinueOnStax = () => {
+/**
+ * This component renders an SVG Stax icon in each step in the Sync Onboarding process.
+ */
+export default React.memo(function ContinueOnStax() {
   const { theme } = useTheme();
   if (theme === "light") {
     return (
@@ -70,6 +73,4 @@ const ContinueOnStax = () => {
       </Defs>
     </Svg>
   );
-};
-
-export default React.memo(ContinueOnStax);
+});

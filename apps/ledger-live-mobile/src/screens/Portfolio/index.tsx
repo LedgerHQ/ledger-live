@@ -49,16 +49,7 @@ import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { PORTFOLIO_VIEW_ID } from "~/utils/constants";
-import {
-  ModularDrawer,
-  ModularDrawerLocation,
-  useModularDrawer,
-  useModularDrawerVisibility,
-} from "~/newArch/features/ModularDrawer";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-
-const currencies = listAndFilterCurrencies({ includeTokens: true });
+import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -99,17 +90,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   usePortfolioAnalyticsOptInPrompt();
 
-  const { isDrawerOpen, openDrawer, closeDrawer } = useModularDrawer();
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-
-  const handleOpenModularDrawer = useCallback(() => {
-    setAddModalOpened(false);
-    return openDrawer();
-  }, [openDrawer]);
-
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -123,14 +103,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   useEffect(() => {
     if (!llmDatadog?.enabled) return;
-    DdRum.startView(
-      PORTFOLIO_VIEW_ID,
-      ScreenName.Portfolio,
-      {
-        topChains: allAccounts.map(account => getAccountCurrency(account).name),
-      },
-      Date.now(),
-    );
+    const topChains = allAccounts.reduce<string[]>((acc, account) => {
+      const currencyName = getAccountCurrency(account).name.toLowerCase();
+      if (TOP_CHAINS.includes(currencyName)) acc.push(getAccountCurrency(account).name);
+      return acc;
+    }, []);
+    DdRum.startView(PORTFOLIO_VIEW_ID, ScreenName.Portfolio, { topChains }, Date.now());
     DdRum.addViewLoadingTime(true);
   }, [allAccounts, llmDatadog?.enabled]);
 
@@ -266,18 +244,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
           doesNotHaveAccount={!showAssets}
-          onShowModularDrawer={
-            isModularDrawerVisible(ModularDrawerLocation.ADD_ACCOUNT)
-              ? handleOpenModularDrawer
-              : undefined
-          }
-        />
-        <ModularDrawer
-          isOpen={isDrawerOpen}
-          currencies={currencies}
-          onClose={closeDrawer}
-          flow="portfolio"
-          source="portfolio_screen"
         />
       </Animated.View>
     </ReactNavigationPerformanceView>

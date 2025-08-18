@@ -8,10 +8,17 @@ type Props = Readonly<
   TextInputProps & {
     onDebouncedChange?: (current: string, prev: string) => void;
     debounceTime?: number;
+    onPressIn?: () => void;
   }
 >;
 
-export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...props }: Props) {
+export function Search({
+  onDebouncedChange,
+  debounceTime = 500,
+  onChange,
+  onPressIn,
+  ...props
+}: Props) {
   const initialValue = props.value ?? props.defaultValue ?? "";
   const prevValue = useRef(String(initialValue));
 
@@ -35,5 +42,13 @@ export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...pro
     };
   }, [handleDebouncedChange, onChange]);
 
-  return <Input {...props} icon={Icons.Search} onChange={handleChange} />;
+  return (
+    <Input
+      {...props}
+      style={{ height: "100%" }}
+      icon={Icons.Search}
+      onChange={handleChange}
+      onPressIn={onPressIn}
+    />
+  );
 }

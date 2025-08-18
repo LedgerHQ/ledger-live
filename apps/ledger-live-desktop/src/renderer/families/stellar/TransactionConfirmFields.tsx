@@ -54,7 +54,7 @@ const StellarAssetCodeField = ({ transaction, field }: StellarFieldComponentProp
   return (
     <TransactionConfirmField label={field.label}>
       <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
-        {transaction.assetCode}
+        {transaction.assetReference}
       </Text>
     </TransactionConfirmField>
   );
@@ -64,7 +64,7 @@ const StellarAssetIssuerField = ({ transaction, field }: StellarFieldComponentPr
   return (
     <TransactionConfirmField label={field.label}>
       <WrappedAssetIssuer ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
-        {transaction.assetIssuer}
+        {transaction.assetOwner}
       </WrappedAssetIssuer>
     </TransactionConfirmField>
   );

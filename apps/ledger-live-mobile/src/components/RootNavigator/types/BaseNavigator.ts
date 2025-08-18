@@ -80,6 +80,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
+import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
@@ -319,11 +320,15 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
-  [ScreenName.MockedModularDrawer]: undefined;
+
   [ScreenName.MockedWalletScreen]: undefined;
 
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
+
+  // MODULAR DRAWER
+  [NavigatorName.ModularDrawer]: NavigatorScreenParams<ModularDrawerNavigatorStackParamList>;
+  [ScreenName.MockedModularDrawer]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

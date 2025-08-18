@@ -344,6 +344,7 @@
           "provider" : "공급자",
           "rate" : "요율",
           "fees" : "네트워크 수수료",
+          "feesDescription" : "이 수수료는 블록체인 네트워크에서 스왑을 처리하는 데 부과되는 비용입니다. 예상 견적에는 수령 수수료가 포함되어 있으며, 전송 수수료만 별도로 청구됩니다.",
           "target" : "보내는 계정"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "보류 중",
         "expired" : "만료됨",
         "finished" : "완료됨",
+        "unknown" : "처리 중",
         "refunded" : "환불 처리됨"
       }
     },
@@ -570,7 +572,7 @@
         "pending" : "스왑 공급자가 트랜잭션을 처리하는 동안 기다려주세요.",
         "onhold" : "상황을 해결하시려면 스왑 ID를 준비하여 스왑 제공자에게 연락하세요.",
         "finished" : "스왑이 성공적으로 완료되었습니다.",
-        "unknown" : "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 제공자에게 문의해주세요."
+        "unknown" : "제공업체의 정보를 기다리는 중입니다."
       },
       "date" : "날짜",
       "from" : "수신",
@@ -2385,6 +2387,10 @@
         "title" : "장치"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "블라인드 서명 필요",
+          "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+        },
         "utxoLag" : "계정에 코인 수가 많아 트랜잭션 확인 및 서명에 시간이 오래 소요될 수 있습니다.",
         "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
         "from" : "수신",
@@ -4354,7 +4360,7 @@
       "currencies" : "암호화폐",
       "help" : "도움말",
       "about" : "소개",
-      "experimental" : "실험적 특징",
+      "experimental" : "실험적 기능",
       "accounts" : "계정",
       "developer" : "개발자"
     },
@@ -4579,6 +4585,10 @@
             "cta" : "적용"
           }
         }
+      },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer Dev Tool",
+        "description" : "Modular Drawer를 간편하게 테스트할 수 있는 개발자 도구입니다."
       },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
@@ -6509,9 +6519,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔금을 충분히 남겨 두세요"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "잔액은 {{minimumBalance}} 미만일 수 없습니다 최대 금액을 전송하여 계정을 비우세요."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "적어도 {{minimumBondAmount}} 이상 본딩해야 합니다."
     },
@@ -6725,7 +6732,7 @@
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Ledger 설정이 완료되지 않았습니다",
       "description" : "장치를 사용하려면 먼저 설정이 필요합니다. 설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 Ledger 설정",
@@ -7280,6 +7287,15 @@
       "addAccountSelection" : "자산을 추가할 계정을 선택하세요",
       "addAccountSelectionPtxFlow" : "계정 선택"
     },
+    "editAccountName" : {
+      "title" : "계정 이름 변경",
+      "input" : {
+        "name" : "이름"
+      },
+      "cta" : {
+        "save" : "저장"
+      }
+    },
     "fundAccount" : {
       "receive" : "수령",
       "receiveDescription" : "다른 지갑에서 암호화폐를 받아보세요",
@@ -7338,7 +7354,7 @@
   },
   "geoBlocking" : {
     "title" : "이용 불가능한 지역",
-    "description" : "Ledger 지갑을 사용할 수 없는 지역입니다.",
+    "description" : "이 지역에서는 Ledger Live를 사용할 수 없습니다.",
     "learnMore" : "자세히 알아보기"
   },
   "versionBlocking" : {

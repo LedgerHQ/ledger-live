@@ -306,6 +306,10 @@
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
+    "ReconnectionFailedError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
     "DeviceDisconnectedBeforeSendingApdu": {
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
@@ -897,9 +901,6 @@
     "PolkadotAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
-    "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
-    },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least {{minimumBondAmount}}."
     },
@@ -1316,7 +1317,8 @@
     "estimatedTime": {
       "slow": "≈ 2-3 min",
       "medium": "≈ 30 sec",
-      "fast": "≈ 15 sec"
+      "fast": "≈ 15 sec",
+      "custom": ""
     }
   },
   "signout": {
@@ -3254,7 +3256,7 @@
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
       "price": {
         "title": "Price Alerts",
@@ -4059,6 +4061,10 @@
       "quantityAvailable": "Quantity available"
     },
     "summary": {
+      "solanaRawTransaction": {
+        "title": "Blind signing required",
+        "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
+      },
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
@@ -6259,6 +6265,7 @@
       "iWithdraw": "I withdraw",
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
       "stakeAvailableBalance": "Available balance",
@@ -7833,7 +7840,7 @@
   },
   "geoBlocking": {
     "title": "Location unavailable",
-    "description": "Ledger wallet is not available in this location.",
+    "description": "Ledger Live is not available in this location.",
     "learnMore": "Learn more"
   },
   "versionBlocking": {
@@ -7845,7 +7852,10 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
-    "searchPlaceholder": "Search"
+    "searchPlaceholder": "Search",
+    "emptyAssetList": "No assets found",
+    "accountCount": "{{count}} account",
+    "accountCount_plural": "{{count}} accounts"
   },
   "swapErrors": {
     "incorrectCommandData": {

@@ -61,7 +61,17 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });
 
-  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: manifest.id,
+  });
+
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
 
   return useMemo(
     () => ({
@@ -75,11 +85,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
               currencies,
               onSuccess,
               onCancel,
-              flow: manifest.name,
-              source:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current ?? "Unknown",
+              flow,
+              source,
             })
           : setDrawer(
               SelectAccountAndCurrencyDrawer,
@@ -90,6 +97,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
                   onSuccess(account, parentAccount);
                 },
                 accounts$,
+                flow,
+                source,
               },
               {
                 onRequestClose: () => {
@@ -136,7 +145,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId) as string | undefined;
+        return getStoreValue(key, storeId);
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
@@ -185,7 +194,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
               accountId: account.id,
-              parentId: parentAccount?.id as string | undefined | null,
+              parentId: parentAccount?.id,
             });
           },
         });
@@ -241,7 +250,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [dispatch, manifest, modularDrawerVisible, pushToast, t, tracking],
+    [modularDrawerVisible, flow, source, dispatch, manifest, pushToast, t, tracking],
   );
 }
 

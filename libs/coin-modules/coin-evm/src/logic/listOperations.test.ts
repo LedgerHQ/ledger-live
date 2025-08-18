@@ -9,7 +9,7 @@ describe("listOperations", () => {
   it.each([
     ["an etherscan explorer", "etherscan", etherscanExplorer],
     ["a ledger explorer", "ledger", ledgerExplorer],
-  ])("list latest operations using %s", async (_, type, explorer) => {
+  ])("lists latest operations using %s", async (_, type, explorer) => {
     setCoinConfig(() => ({ info: { explorer: { type } } }) as unknown as EvmCoinConfig);
     jest.spyOn(explorer, "getLastOperations").mockResolvedValue({
       lastCoinOperations: [
@@ -105,7 +105,7 @@ describe("listOperations", () => {
           senders: ["address"],
           recipients: ["address1"],
           value: 1n,
-          asset: { type: "token", standard: "erc", contractAddress: "contract-address" },
+          asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
           tx: {
             hash: "token-op-1-tx-hash",
             block: {

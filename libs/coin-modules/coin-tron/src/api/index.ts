@@ -2,9 +2,13 @@ import {
   AlpacaApi,
   Block,
   BlockInfo,
+  Cursor,
+  Page,
   FeeEstimation,
   Operation,
   Pagination,
+  Reward,
+  Stake,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
@@ -18,9 +22,9 @@ import {
   lastBlock,
   Options,
 } from "../logic";
-import type { TronAsset, TronMemo } from "../types";
+import type { TronMemo } from "../types";
 
-export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
+export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -31,18 +35,22 @@ export function createApi(config: TronConfig): AlpacaApi<TronAsset, TronMemo> {
     getBalance,
     lastBlock,
     listOperations,
-    getBlock(_height): Promise<Block<TronAsset>> {
+    getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
   };
 }
 
-async function estimate(
-  transactionIntent: TransactionIntent<TronAsset, TronMemo>,
-): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
 }
@@ -50,7 +58,7 @@ async function estimate(
 async function listOperations(
   address: string,
   pagination: Pagination,
-): Promise<[Operation<TronAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const { minHeight } = pagination;
   const options: Options = {
     softLimit: 200,

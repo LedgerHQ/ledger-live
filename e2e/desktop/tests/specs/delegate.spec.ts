@@ -53,14 +53,6 @@ const e2eDelegationAccountsWithoutBroadcast = [
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-3020",
   },
-  {
-    delegate: new Delegate(
-      Account.APTOS_1,
-      "11.00000000",
-      "0xa651c7c52d64a2014379902bbc92439d196499bcc36d94ff0395aa45837c66db",
-    ),
-    xrayTicket: "B2CQA-3564",
-  },
 ];
 
 const validators = [
@@ -77,7 +69,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 2"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 4"),
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -96,11 +88,11 @@ const liveApps = [
     xrayTicket: "B2CQA-3024",
   },
   {
-    delegate: new Delegate(Account.TRX_1, "1", "stakekit"),
+    delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3025", //todo: Add split from when parent ticket is available
   },
   {
-    delegate: new Delegate(Account.DOT_1, "1", "stakekit"),
+    delegate: new Delegate(Account.DOT_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3026", //todo: Add split from when parent ticket is available
   },
 ];

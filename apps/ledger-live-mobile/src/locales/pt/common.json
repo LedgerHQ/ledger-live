@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Certifique-se de ter saldo suficiente para futuras taxas de transação"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "O saldo não pode ser inferior a {{minimumBalance}}. Enviar máximo para conta vazia."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Você deve vincular pelo menos {{minimumBondAmount}}."
     },
@@ -3659,7 +3656,8 @@
           "refunded" : "Para mais informações, contate o provedor da troca com sua Swap ID.",
           "pending" : "Aguarde enquanto o provedor da troca processa a transação.",
           "onhold" : "Para resolver a situação, contate o provedor da troca com sua Swap ID.",
-          "finished" : "Sua troca foi concluída com sucesso."
+          "finished" : "Sua troca foi concluída com sucesso.",
+          "unknown" : "Estamos aguardando informações do provedor."
         }
       },
       "missingApp" : {
@@ -3720,6 +3718,7 @@
             "provider" : "Provedor",
             "rate" : "Taxa",
             "fees" : "Taxas de rede",
+            "feesDescription" : "Essa taxa é cobrada pela rede blockchain para processar a troca. Apenas a taxa de envio é cobrada em adição à cotação estimada. A taxa de recebimento está incluída",
             "target" : "Conta de destino"
           },
           "noAccount" : "Crie uma conta para receber {{name}}",
@@ -4044,6 +4043,10 @@
       "quantityAvailable" : "Quantidade Disponível"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Assinatura cega necessária",
+        "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+      },
       "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} a fim de enviar os tokens desta conta",
       "tag" : "Tag (Opcional)",
       "validateTag" : "Validar Tag",
@@ -4825,7 +4828,7 @@
         "restoreLanguage" : "Restaurando o idioma",
         "imageLoadRequested" : "Clique em “Carregar imagem” para restaurar a imagem da tela de bloqueio",
         "imageCommitRequested" : "Clique em “manter” para confirmar a sua imagem da tela de bloqueio",
-        "allowLanguageInstallation" : "Clique em “Permitir” para restaurar o idioma",
+        "allowLanguageInstallation" : "Clique em “Install” para restaurar o idioma",
         "allowAppsRestoration" : "Clique em “Permitir” para restaurar os aplicativos",
         "errors" : {
           "description" : "Se isso foi um erro, tente novamente agora.",
@@ -6949,7 +6952,7 @@
         "desc" : "Posição desc. (valor de mercado)"
       },
       "currency" : "Moeda",
-      "time" : "Alteração",
+      "time" : "Tempo",
       "apply" : "Aplicar"
     },
     "marketList" : {
@@ -7763,7 +7766,7 @@
   },
   "geoBlocking" : {
     "title" : "Local indisponível",
-    "description" : "A carteira Ledger não está disponível neste local.",
+    "description" : "O Ledger Live não está disponível nesta localização.",
     "learnMore" : "Saiba mais"
   },
   "versionBlocking" : {
@@ -7775,6 +7778,87 @@
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecionar rede",
     "selectAccount" : "Selecionar conta",
-    "searchPlaceholder" : "Buscar"
+    "searchPlaceholder" : "Buscar",
+    "emptyAssetList" : "Nenhum ativo encontrado",
+    "accountCount" : "{{count}} conta (detectada)",
+    "accountCount_plural" : "{{count}} contas (detectadas)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Dados de comando incorretos",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "deserializationFailed" : {
+      "title" : "Falha na desserialização do payload",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongTransactionId" : {
+      "title" : "ID de transação incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidAddress" : {
+      "title" : "Endereço inválido",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao dispositivo conectado. Mude e tente novamente."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao dispositivo conectado. Mude e tente novamente."
+    },
+    "userRefused" : {
+      "title" : "Operação negada no dispositivo",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "internalError" : {
+      "title" : "Erro interno",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP1" : {
+      "title" : "P1 incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP2" : {
+      "title" : "P2 incorreto",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "wrongP2Extension" : {
+      "title" : "Extensão P2 incorreta",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidP2Extension" : {
+      "title" : "Algo deu errado",
+      "description" : "Extensão P2 inválida"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Algo deu errado",
+      "description" : "Instrução inesperada"
+    },
+    "classNotSupported" : {
+      "title" : "Algo deu errado",
+      "description" : "Classe não suportada"
+    },
+    "invalidInstruction" : {
+      "title" : "Instrução inválida",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "malformedApdu" : {
+      "title" : "Cabeçalho APDU mal formulado",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "invalidDataLength" : {
+      "title" : "Comprimento de dados inválido",
+      "description" : "Este comando não aceita dados com esse comprimento"
+    },
+    "signatureVerificationFail" : {
+      "title" : "Falha na verificação da assinatura",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    },
+    "default" : {
+      "title" : "Algo deu errado",
+      "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
+    }
   }
 }

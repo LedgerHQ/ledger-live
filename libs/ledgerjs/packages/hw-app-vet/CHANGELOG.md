@@ -1,5 +1,33 @@
 # @ledgerhq/hw-app-vet
 
+## 0.5.12
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/cryptoassets@13.24.0
+
+## 0.5.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/cryptoassets@13.24.0-next.0
+
+## 0.5.11
+
+### Patch Changes
+
+- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/cryptoassets@13.23.0
+
+## 0.5.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/cryptoassets@13.23.0-next.0
+
 ## 0.5.10
 
 ### Patch Changes

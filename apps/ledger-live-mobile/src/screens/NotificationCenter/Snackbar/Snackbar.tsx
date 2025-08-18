@@ -8,7 +8,7 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from "react-native-reanimated";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
+import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,

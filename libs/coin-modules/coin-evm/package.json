@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.24.0",
+  "version": "2.26.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -55,6 +55,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   },

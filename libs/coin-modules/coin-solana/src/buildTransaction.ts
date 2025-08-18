@@ -39,6 +39,11 @@ export const buildTransactionWithAPI = async (
   let web3SolanaTransaction: VersionedTransaction;
   if (transaction.raw) {
     web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
+    // If we want to retry correctly we want to update the recent blockhash
+    // NOTE: we could also make use of the isBlockHashValid rpc method
+    if (web3SolanaTransaction.message) {
+      web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+    }
   } else {
     const instructions = await buildInstructions(api, transaction);
     const transactionMessage = new TransactionMessage({
@@ -106,6 +111,8 @@ async function buildInstructionsForCommand(
       return buildStakeWithdrawInstructions(api, command);
     case "stake.split":
       return buildStakeSplitInstructions(api, command);
+    case "raw":
+      throw new Error("Raw transactions should not be built with this function");
     default:
       return assertUnreachable(command);
   }

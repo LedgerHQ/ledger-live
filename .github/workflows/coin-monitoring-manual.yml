@@ -1,0 +1,21 @@
+name: "[Coin] - Monitoring - Manual"
+run-name: Monitor coins by @${{ github.actor }} ${{ inputs.currencies && format('currencies={0}',inputs.currencies) || '' }}
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+    inputs:
+      currencies:
+        description: Currencies to monitor, separated with commas (,)
+        required: false
+
+jobs:
+  run-monitoring:
+    runs-on: [ledger-live-medium]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+        id: monitoring
+        timeout-minutes: 120
+        with:
+          MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies }}

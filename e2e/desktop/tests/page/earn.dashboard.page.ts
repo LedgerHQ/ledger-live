@@ -98,13 +98,6 @@ export class EarnPage extends WebViewAppPage {
     await expect(row.getByRole("button", { name: "Earn" }).first()).toBeEnabled();
   }
 
-  @step("Verify eligible assets are visible")
-  async verifyEligibleAssets(account: Account) {
-    const webview = await this.getWebView();
-    await this.expectTextToBeVisible(this.availableAssetsText);
-    await expect(webview.getByTestId(this.learnMoreButton(account.currency.id))).toBeEnabled();
-  }
-
   @step("Verify earn by stacking button is visible")
   async verifyEarnByStackingButton() {
     const webview = await this.getWebView();

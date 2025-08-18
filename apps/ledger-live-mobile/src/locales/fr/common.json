@@ -897,9 +897,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Vous devez lier au moins {{minimumBondAmount}}."
     },
@@ -1640,7 +1637,7 @@
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
-        "subtitle" : "Un wallet physique est le seul moyen de sécuriser de vos actifs. "
+        "subtitle" : "Un wallet physique est le seul moyen de sécuriser vos actifs. "
       },
       "discoverLedger" : {
         "title" : "Découvrir Ledger Live",
@@ -3659,7 +3656,8 @@
           "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
           "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
           "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-          "finished" : "Votre échange a bien été réalisé."
+          "finished" : "Votre échange a bien été réalisé.",
+          "unknown" : "En attente des informations de la part du prestataire."
         }
       },
       "missingApp" : {
@@ -3720,6 +3718,7 @@
             "provider" : "Prestataire",
             "rate" : "Taux",
             "fees" : "Frais de réseau",
+            "feesDescription" : "Ces frais sont appliqués par le réseau de blockchain pour traiter l’échange. Seuls les frais d’envoi sont ajoutés à l’offre estimée. Les frais de réception sont inclus.",
             "target" : "Compte bénéficiaire"
           },
           "noAccount" : "Créez un compte pour recevoir des {{name}}.",
@@ -4044,6 +4043,10 @@
       "quantityAvailable" : "Quantité disponible"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Demande de signature aveugle",
+        "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+      },
       "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
       "tag" : "Tag (Facultatif)",
       "validateTag" : "Valider le tag",
@@ -4563,7 +4566,7 @@
       "showAllCTA" : "Afficher les {{count}} wallets Ledger",
       "showLessCTA" : "Afficher moins",
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
-      "connectExistingLedger" : "Connecter un Ledger existant",
+      "connectExistingLedger" : "Connecter un appareil configuré",
       "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
       "setUpNewLedger" : "Configurer un nouveau wallet",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
@@ -7763,7 +7766,7 @@
   },
   "geoBlocking" : {
     "title" : "Région indisponible",
-    "description" : "L’application n’est pas disponible dans ce pays/région.",
+    "description" : "Ledger Live n’est pas disponible dans ce pays/région.",
     "learnMore" : "En savoir plus"
   },
   "versionBlocking" : {
@@ -7775,6 +7778,87 @@
     "selectAsset" : "Sélectionner un actif",
     "selectNetwork" : "Sélectionner un réseau",
     "selectAccount" : "Sélectionner un compte",
-    "searchPlaceholder" : "Rechercher"
+    "searchPlaceholder" : "Rechercher",
+    "emptyAssetList" : "Aucun actif trouvé",
+    "accountCount" : "{{count}} compte (détecté)",
+    "accountCount_plural" : "{{count}} comptes (détectés)"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "Données de commande incorrectes",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "deserializationFailed" : {
+      "title" : "Échec de la désérialisation du payload",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "wrongTransactionId" : {
+      "title" : "Identifiant de la transaction incorrect",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "invalidAddress" : {
+      "title" : "Adresse invalide",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Ce compte bénéficiaire n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Ce compte émetteur n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
+    },
+    "userRefused" : {
+      "title" : "Opération refusée sur l’appareil",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "internalError" : {
+      "title" : "Erreur interne",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "wrongP1" : {
+      "title" : "P1 incorrect",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "wrongP2" : {
+      "title" : "P2 incorrect",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "wrongP2Extension" : {
+      "title" : "Extension P2 incorrecte",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "invalidP2Extension" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Extension P2 invalide"
+    },
+    "unexpectedInstruction" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Instruction inattendue"
+    },
+    "classNotSupported" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Classe non prise en charge"
+    },
+    "invalidInstruction" : {
+      "title" : "Instruction invalide",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "malformedApdu" : {
+      "title" : "Format de l’en-tête APDU incorrect",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "invalidDataLength" : {
+      "title" : "Longueur des données non valide",
+      "description" : "Cette commande n’accepte pas les données de cette longueur."
+    },
+    "signatureVerificationFail" : {
+      "title" : "Échec de la vérification de la signature",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "default" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    }
   }
 }

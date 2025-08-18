@@ -1,0 +1,73 @@
+{
+    "type": "TokenCurrency",
+    "id": "ethereum/erc20/0x_project",
+    "ledgerSignature": "304402200ae8634c22762a8ba41d2acb1e068dcce947337c6dd984f13b820d396176952302203306a49d8a6c35b11a61088e1570b3928ca3a0db6bd36f577b5ef87628561ff7",
+    "contractAddress": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+    "parentCurrency": {
+        "type": "CryptoCurrency",
+        "id": "ethereum",
+        "coinType": 60,
+        "name": "Ethereum",
+        "managerAppName": "Ethereum",
+        "ticker": "ETH",
+        "scheme": "ethereum",
+        "color": "#0ebdcd",
+        "symbol": "Ξ",
+        "family": "evm",
+        "blockAvgTime": 15,
+        "units": [
+            {
+                "name": "ether",
+                "code": "ETH",
+                "magnitude": 18
+            },
+            {
+                "name": "Gwei",
+                "code": "Gwei",
+                "magnitude": 9
+            },
+            {
+                "name": "Mwei",
+                "code": "Mwei",
+                "magnitude": 6
+            },
+            {
+                "name": "Kwei",
+                "code": "Kwei",
+                "magnitude": 3
+            },
+            {
+                "name": "wei",
+                "code": "wei",
+                "magnitude": 0
+            }
+        ],
+        "ethereumLikeInfo": {
+            "chainId": 1
+        },
+        "explorerViews": [
+            {
+                "tx": "https://etherscan.io/tx/$hash",
+                "address": "https://etherscan.io/address/$address",
+                "token": "https://etherscan.io/token/$contractAddress?a=$address"
+            }
+        ],
+        "keywords": [
+            "eth",
+            "ethereum"
+        ],
+        "explorerId": "eth"
+    },
+    "tokenType": "erc20",
+    "name": "0x Project",
+    "ticker": "ZRX",
+    "delisted": false,
+    "disableCountervalue": false,
+    "units": [
+        {
+            "name": "0x Project",
+            "code": "ZRX",
+            "magnitude": 18
+        }
+    ]
+}

@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
-import { DEFAULT_CONFIG, ENTRY_POINTS } from "./constants";
+import { DEFAULT_CONFIG, LIVE_APPS, LOCATIONS } from "./constants";
 import {
-  EntryPointOption,
+  LocationOption,
   AssetsLeftSelectOption,
   AssetsRightSelectOption,
   NetworksLeftSelectOption,
   NetworksRightSelectOption,
+  LiveAppOption,
 } from "./types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
@@ -53,14 +54,17 @@ export const useDrawerConfiguration = () => {
 export const useDevToolState = () => {
   const [includeTokens, setIncludeTokens] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const [entryPoint, setEntryPoint] = useState<EntryPointOption>(ENTRY_POINTS[0]);
+  const [location, setLocation] = useState<LocationOption>(LOCATIONS[0]);
+  const [liveApp, setLiveApp] = useState<LiveAppOption>(LIVE_APPS[0]);
 
   return {
     includeTokens,
     setIncludeTokens,
     openModal,
     setOpenModal,
-    entryPoint,
-    setEntryPoint,
+    location,
+    setLocation,
+    liveApp,
+    setLiveApp,
   };
 };

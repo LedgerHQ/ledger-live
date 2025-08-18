@@ -1,5 +1,5 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { StellarAsset, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
 import expect from "expect";
 
@@ -100,7 +100,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset, StellarMemo>);
+    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -111,10 +111,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction(
-        { asset: {} } as TransactionIntent<StellarAsset, StellarMemo>,
-        fees,
-      );
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>, { value: fees });
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
