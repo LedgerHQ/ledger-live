@@ -40,7 +40,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
-    const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
+    // Respect the initial account's blockHeight if explicitly set, otherwise calculate from operations
+    let blockHeight: number = 0;
+    if (initialAccount?.blockHeight !== undefined) {
+      blockHeight = initialAccount.blockHeight;
+    } else if (oldOps.length > 0) {
+      blockHeight = (oldOps[0].blockHeight ?? 0) + 1;
+    }
     const paginationParams: any = { minHeight: blockHeight, order: "asc" };
     if (lastPagingToken) {
       paginationParams.lastPagingToken = lastPagingToken;
