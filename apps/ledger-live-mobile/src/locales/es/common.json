@@ -306,6 +306,10 @@
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
@@ -896,9 +900,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "El saldo no puede ser inferior a {{minimumBalance}} Envía el máximo a una cuenta vacía."
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "Tienes que vincular al menos {{minimumBondAmount}}."
@@ -6248,6 +6249,7 @@
       "iWithdraw" : "Retirar",
       "totalStake" : "Participación total",
       "commission" : "Comisión",
+      "netApy" : "APY neto",
       "stakeActivationState" : "Provincia",
       "stakeActivePercent" : "Activo",
       "stakeAvailableBalance" : "Saldo disponible",
@@ -7783,8 +7785,8 @@
     "selectAccount" : "Seleccionar cuenta",
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
-    "accountCount" : "{{count}} cuenta (detectada)",
-    "accountCount_plural" : "{{count}} cuentas (detectadas)"
+    "accountCount" : "{{count}} cuenta",
+    "accountCount_plural" : "{{count}} cuentas"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

@@ -85,6 +85,7 @@ export const getAccountShape: GetAccountShape<TezosAccount> = async ({
     xpub: publicKey,
     freshAddress: address,
     operations,
+    operationsCount: operations.length,
     balance,
     subAccounts,
     spendableBalance: balance,

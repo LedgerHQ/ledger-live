@@ -96,7 +96,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
 
-        await app.swap.selectSpecificProvider(provider.uiName, electronApp);
+        await app.swap.selectSpecificProvider(provider, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
         await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
@@ -328,7 +328,11 @@ test.describe("Swap - Landing page", () => {
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       const providerList = await app.swap.getProviderList(electronApp);
-      await app.swap.checkQuotesContainerInfos(electronApp, providerList);
+      await app.swap.checkQuotesContainerInfos(
+        electronApp,
+        providerList,
+        toAccount.currency.ticker,
+      );
       await app.swap.checkBestOffer(electronApp);
     },
   );

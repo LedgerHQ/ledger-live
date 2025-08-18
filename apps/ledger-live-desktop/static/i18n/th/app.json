@@ -3684,6 +3684,7 @@
     "delegation" : {
       "totalStake" : "Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
+      "netApy" : "อัตราผลตอบแทนต่อปี (APY) สุทธิ",
       "delegate" : "เพิ่ม",
       "listHeader" : "การ Delegate",
       "availableBalance" : "สามารถถอนได้",
@@ -4473,6 +4474,40 @@
             "check" : "คะแนนสแปม"
           }
         },
+        "mockAccounts" : {
+          "title" : "สร้างบัญชีจำลอง",
+          "description" : "สร้างบัญชีจำลองเพื่อวัตถุประสงค์ในการทดสอบ เครื่องมือเหล่านี้ช่วยให้คุณสามารถสร้างบัญชีทดสอบด้วยสกุลเงินและการกำหนดค่าต่าง ๆ",
+          "customGenerate" : {
+            "title" : "สร้างแบบกำหนดเอง",
+            "desc" : "เลือกสกุลเงินเฉพาะและเพิ่มโทเคน"
+          },
+          "quickGenerate" : {
+            "title" : "สร้างแบบเร็ว ๆ",
+            "desc" : "สร้างบัญชีสุ่ม 10 บัญชีพร้อมสกุลเงินแบบสุ่ม"
+          },
+          "currencySelector" : {
+            "placeholder" : "เลือกสกุลเงิน...",
+            "searchPlaceholder" : "ค้นหาสกุลเงิน...",
+            "noCurrenciesFound" : "ไม่พบสกุลเงิน",
+            "noCurrenciesAvailable" : "ไม่มีสกุลเงินที่ใช้ได้",
+            "selectedCount" : "เลือกแล้ว {{count}} สกุลเงิน",
+            "selectedCount_other" : "เลือกแล้ว {{count}} สกุลเงิน"
+          },
+          "tokenIds" : {
+            "label" : "Token ID (ไม่บังคับ)",
+            "placeholder" : "โทเคน1, โทเคน2, โทเคน3"
+          },
+          "buttons" : {
+            "generateAccounts" : "สร้าง {{count}} บัญชี",
+            "generateAccounts_other" : "สร้าง {{count}} บัญชี",
+            "generateAccountsQuick" : "สร้าง {{count}} บัญชี"
+          },
+          "alerts" : {
+            "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
+            "confirmErase" : "การดำเนินการนี้จะเป็นการลบบัญชีที่มีอยู่ ดำเนินการต่อ?",
+            "generateError" : "ไม่สามารถสร้างบัญชีจำลองได้ โปรดลองอีกครั้ง"
+          }
+        },
         "debugSpamNft" : {
           "report" : "รายงาน",
           "contractAddress" : "Address ของสัญญา",
@@ -4600,6 +4635,8 @@
       "customCALRefDesc" : "ระบุสาขาที่กำหนดเอง มอบหมาย หรือแท็กเพื่อใช้งานสำหรับคำขอ CAL ทั้งหมด",
       "enablePlatformDevTools" : "เปิดใช้งานเครื่องมือสำหรับพัฒนาแพลตฟอร์ม",
       "enablePlatformDevToolsDesc" : "เปิดใช้งานการเปิดหน้าต่างเครื่องมือสำหรับนักพัฒนาแอปบนแพลตฟอร์ม",
+      "customLockScreenTester" : "ระบบทดสอบล็อกสกรีนแบบกำหนดเอง",
+      "customLockScreenTesterDesc" : "ทดสอบล็อกสกรีนแบบกำหนดเองสำหรับอุปกรณ์ที่รองรับ",
       "customLockScreen" : "สินทรัพย์บนหน้าจอล็อคแบบกำหนดเอง",
       "customLockScreenDesc" : "Debug สินทรัพย์กราฟิกบนหน้าจอล็อคที่กำหนดเอง",
       "customLockScreenCTA" : "เริ่มใช้งาน",
@@ -5912,10 +5949,6 @@
       "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
       "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
-      "description" : "Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง"
-    },
     "EConnReset" : {
       "title" : "เข้า Store ของแอปพลิเคชัน Ledger ไม่ได้",
       "description" : "การเชื่อมต่ออินเทอร์เน็ตของคุณอาจขัดข้องหรือมีการกำหนดค่าที่ผิดปกติ เริ่มต้นด้วยการตรวจสอบว่ามีอะไรปิดกั้นการเชื่อมต่อของคุณหรือไม่ (พร็อกซีหรือไฟร์วอลล์) หากปัญหายังคงอยู่ ให้คลิกด้านล่างเพื่อดูวิธีแก้ปัญหาหรือติดต่อฝ่ายสนับสนุนลูกค้าของเรา"
@@ -6519,9 +6552,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "ยอดคงเหลือในบัญชีต้องไม่ต่ำกว่า {{minimumBalance}} ส่งสูงสุดไปยังบัญชีที่ว่างเปล่า"
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "คุณต้องผูกมัดอย่างน้อย {{minimumBondAmount}}"
     },
@@ -6735,8 +6765,8 @@
       "description" : "ปลดล็อกอุปกรณ์แล้วลองอีกครั้ง",
       "descriptionWithProductName" : "ปลดล็อก {{ productName }} แล้วลองอีกครั้ง"
     },
-    "DeviceNotOnboardedError" : {
-      "title" : "ยังไม่ได้ติดตั้ง Ledger ของคุณ",
+    "DeviceNotOnboardedDAError" : {
+      "title" : "Ledger ของคุณยังไม่ได้รับการติดตั้ง",
       "description" : "ติดตั้งเพื่อเริ่มใช้ เราจะแนะนำคุณตลอดกระบวนการติดตั้ง",
       "goToOnboardingButton" : "ตั้งค่า Ledger ของฉัน",
       "goToOnboardingButtonWithProductName" : "ตั้งค่า {{ productName }} ของฉัน"
@@ -6815,6 +6845,118 @@
     "AddressesSanctionedError" : {
       "title" : "ปกป้องคุณให้ปลอดภัย",
       "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DisconnectError" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "TransportNotSupportedError" : {
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
+    },
+    "NoTransportProvidedError" : {
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
+    },
+    "ConnectionOpeningError" : {
+      "title" : "เกิดข้อผิดพลาดกับวิธีการเชื่อมต่อ",
+      "description" : "มีปัญหาเกี่ยวกับวิธีการที่ใช้เชื่อมต่อกับอุปกรณ์ โปรดลองอีกครั้งโดยใช้วิธีการเชื่อมต่ออื่น หรือติดต่อ Ledger Support หากยังพบปัญหาอยู่"
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "ไม่มีอุปกรณ์ที่จะออนบอร์ด",
+      "description" : "อุปกรณ์ของคุณยังไม่พร้อมใช้งาน โปรดทำตามคำแนะนำในการติดตั้งและลองออนบอร์ดอีกครั้ง"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "ไม่มีอุปกรณ์ที่จะออนบอร์ด",
+      "description" : "อุปกรณ์ของคุณยังไม่พร้อมใช้งาน โปรดทำตามคำแนะนำในการติดตั้งและลองออนบอร์ดอีกครั้ง"
+    },
+    "DeviceLockedError" : {
+      "title" : "อุปกรณ์ถูกล็อก",
+      "description" : "อุปกรณ์ของคุณถูกล็อก โปรดปลดล็อกและลองอีกครั้ง"
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "หน่วยความจำไม่เพียงพอ",
+      "description" : "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอ โปรดถอนการติดตั้งแอปและลองอีกครั้ง"
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "ไม่รองรับระบบปฏิบัติการ (OS) นี้",
+      "description" : "ระบบปฏิบัติการนี้ไม่สามารถใช้งานได้กับอุปกรณ์ของคุณ โปรดอัปเดตระบบปฏิบัติการนี้ผ่านแอป Ledger Live หรือติดต่อ Ledger Support เพื่อขอความช่วยเหลือหากคุณยังประสบปัญหา"
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "เกิดข้อผิดพลาดด้านแบตเตอรี่",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "เกิดข้อผิดพลาดด้านแบตเตอรี่",
+      "description" : "เกิดข้อผิดพลาดด้านสถานะแบตเตอรี่ โปรดติดต่อ Ledger Support"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "UnknownDAError" : {
+      "title" : "เกิดข้อผิดพลาดในการเชื่อมต่อกับอุปกรณ์",
+      "description" : "มีบางอย่างผิดปกติ โปรดลองใหม่หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "UnknownDeviceError" : {
+      "title" : "ไม่รู้จักอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่รู้จักอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "ReceiverApduError" : {
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "FramerApduError" : {
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "SendApduTimeoutError" : {
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "AlreadySendingApduError" : {
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
+      "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     }
   },
   "cryptoOrg" : {

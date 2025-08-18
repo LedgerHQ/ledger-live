@@ -33,6 +33,8 @@ const currencies = [
   mockBaseCryptoCurrency,
 ];
 
+export { ETH_ACCOUNT, ETH_ACCOUNT_2, BTC_ACCOUNT, ARB_ACCOUNT, BASE_ACCOUNT };
+
 export const mockedAccounts = [
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
@@ -116,10 +118,9 @@ const MockModularDrawerComponent = ({
 
 export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => (
   <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
-    <Stack.Screen
-      name={ScreenName.MockedModularDrawer}
-      component={() => <MockModularDrawerComponent {...props} />}
-    />
+    <Stack.Screen name={ScreenName.MockedModularDrawer}>
+      {() => <MockModularDrawerComponent {...props} />}
+    </Stack.Screen>
     <Stack.Screen
       name={NavigatorName.DeviceSelection}
       component={DeviceSelectionNavigator}

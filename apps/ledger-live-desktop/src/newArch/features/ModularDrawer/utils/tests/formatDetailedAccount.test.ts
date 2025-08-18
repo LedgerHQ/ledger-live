@@ -1,8 +1,8 @@
 import { Account } from "@ledgerhq/types-live";
 import { formatDetailedAccount } from "../formatDetailedAccount";
 import BigNumber from "bignumber.js";
-import { CounterValuesState } from "@ledgerhq/live-countervalues/lib-es/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockedCVSState = {
   data: {},

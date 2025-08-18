@@ -9,13 +9,14 @@ import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
 
 const toOperation = (
-  assetType: "native" | "token",
+  asset: { type: "native" } | { type: "token"; owner: string },
   op: LiveOperation,
 ): Operation<MemoNotSupported> => {
-  const assetInfo: AssetInfo = { type: assetType };
+  const assetInfo: AssetInfo = { type: asset.type };
 
-  if (assetType !== "native") {
+  if (asset.type === "token") {
     assetInfo.assetReference = op.contract ?? "";
+    assetInfo.assetOwner = asset.owner;
     if (op.standard) {
       if (op.standard === "ERC721") {
         assetInfo.type = "erc721";
@@ -61,10 +62,10 @@ export async function listOperations(
     pagination.minHeight,
   );
   const nativeOperations = lastCoinOperations.map<Operation<MemoNotSupported>>(op =>
-    toOperation("native", op),
+    toOperation({ type: "native" }, op),
   );
   const tokenOperations = lastTokenOperations.map<Operation<MemoNotSupported>>(op =>
-    toOperation("token", op),
+    toOperation({ type: "token", owner: address }, op),
   );
 
   return [

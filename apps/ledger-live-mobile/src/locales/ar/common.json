@@ -306,6 +306,10 @@
       "title" : "انقطع اتصال الجهاز",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
+    "ReconnectionFailedError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "انقطع اتصال الجهاز",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
@@ -896,9 +900,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "لا يمكن للرصيد أن يقل عن {{minimumBalance}} أرسل الحد الأقصى الى حساب خالي."
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
@@ -6248,6 +6249,7 @@
       "iWithdraw" : "أنا أسحب",
       "totalStake" : "إجمالي التكديس",
       "commission" : "العمولة",
+      "netApy" : "صافي المردود المئوي السنوي (APY)",
       "stakeActivationState" : "الولاية",
       "stakeActivePercent" : "نشِط",
       "stakeAvailableBalance" : "الرصيد المتاح",
@@ -7783,8 +7785,8 @@
     "selectAccount" : "اختر حساب",
     "searchPlaceholder" : "بحث",
     "emptyAssetList" : "لم يتم العثور على أصول",
-    "accountCount" : "{{count}} حساب (تم اكتشافه)",
-    "accountCount_plural" : "{{count}} حساب (تم اكتشافه)"
+    "accountCount" : "{{count}} حساب",
+    "accountCount_plural" : "{{count}} حساب"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

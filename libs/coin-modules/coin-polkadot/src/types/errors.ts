@@ -16,4 +16,3 @@ export const PolkadotBondMinimumAmountWarning = createCustomErrorClass(
 
 export const PolkadotMaxUnbonding = createCustomErrorClass("PolkadotMaxUnbonding");
 export const PolkadotValidatorsRequired = createCustomErrorClass("PolkadotValidatorsRequired");
-export const PolkadotDoMaxSendInstead = createCustomErrorClass("PolkadotDoMaxSendInstead");

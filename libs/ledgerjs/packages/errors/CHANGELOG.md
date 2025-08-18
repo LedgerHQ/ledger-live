@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.24.0
+
+### Minor Changes
+
+- [#11252](https://github.com/LedgerHQ/ledger-live/pull/11252) [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(errors): augment custom errors with metadata
+
+## 6.24.0-next.0
+
+### Minor Changes
+
+- [#11252](https://github.com/LedgerHQ/ledger-live/pull/11252) [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(errors): augment custom errors with metadata
+
 ## 6.23.0
 
 ### Minor Changes

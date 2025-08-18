@@ -100,7 +100,7 @@ describe("Sui Api", () => {
       expect(block.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(block.time).toEqual(new Date(1751696298663));
       expect(block.parent?.height).toEqual(164167622);
-      // expect(block.parent?.hash).toEqual("TODO");
+      expect(block.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
     });
   });
 
@@ -111,8 +111,30 @@ describe("Sui Api", () => {
       expect(block.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(block.info.time).toEqual(new Date(1751696298663));
       expect(block.info.parent?.height).toEqual(164167622);
-      // expect(block.info.parent?.hash).toEqual("TODO");
+      expect(block.info.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
       expect(block.transactions.length).toEqual(19);
+    });
+  });
+
+  describe("getStakes", () => {
+    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+      const stakes = await module.getStakes(
+        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+      );
+      expect(stakes.items.length).toBeGreaterThan(0);
+      stakes.items.forEach(stake => {
+        expect(stake.uid).toMatch(/0x[0-9a-z]+/);
+        expect(stake.address).toMatch(/0x[0-9a-z]+/);
+        expect(stake.delegate).toMatch(/0x[0-9a-z]+/);
+        expect(stake.state).toMatch(/(activating|active|inactive)/);
+        expect(stake.asset).toEqual({ type: "native" });
+        expect(stake.amount).toBeGreaterThan(0);
+        expect(stake.amountDeposited).toBeGreaterThan(0);
+        expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
+        // @ts-expect-error properties are defined
+        expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
+        expect(stake.details).toBeDefined();
+      });
     });
   });
 });

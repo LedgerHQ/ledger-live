@@ -3684,6 +3684,7 @@
     "delegation" : {
       "totalStake" : "Stake total",
       "commission" : "Commission",
+      "netApy" : "APY net",
       "delegate" : "Ajouter",
       "listHeader" : "Délégations",
       "availableBalance" : "Disponible au retrait",
@@ -4473,6 +4474,40 @@
             "check" : "Score de spam"
           }
         },
+        "mockAccounts" : {
+          "title" : "Générer des comptes de simulation",
+          "description" : "Générez des comptes de simulation à des fins de test. Ces outils vous permettent de créer des comptes test, avec diverses monnaies et configurations.",
+          "customGenerate" : {
+            "title" : "Génération personnalisée",
+            "desc" : "Sélectionnez des monnaies et ajoutez des tokens"
+          },
+          "quickGenerate" : {
+            "title" : "Génération rapide",
+            "desc" : "Générez 10 comptes aléatoires avec des monnaies aléatoires"
+          },
+          "currencySelector" : {
+            "placeholder" : "Choisir des monnaies...",
+            "searchPlaceholder" : "Rechercher",
+            "noCurrenciesFound" : "Aucune monnaie trouvée",
+            "noCurrenciesAvailable" : "Aucune monnaie disponible",
+            "selectedCount" : "{{count}} monnaie sélectionnée",
+            "selectedCount_other" : "{{count}} monnaies sélectionnées"
+          },
+          "tokenIds" : {
+            "label" : "ID token (facultatif)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "Générer {{count}} compte",
+            "generateAccounts_other" : "Générer {{count}} comptes",
+            "generateAccountsQuick" : "Générer {{count}} comptes"
+          },
+          "alerts" : {
+            "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
+            "confirmErase" : "Les comptes existants seront supprimés. Continuer ?",
+            "generateError" : "Impossible de générer les comptes de simulation. Veuillez réessayer."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Signaler",
           "contractAddress" : "Adresse du contrat",
@@ -4600,6 +4635,8 @@
       "customCALRefDesc" : "Définissez une branche, un commit ou un tag personnalisé à utiliser pour toutes les requêtes CAL.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
+      "customLockScreenTester" : "Outil de test de l’écran de verrouillage personnalisé",
+      "customLockScreenTesterDesc" : "Testez la fonctionnalité d’écran de verrouillage personnalisé pour les appareils compatibles.",
       "customLockScreen" : "Composants de l’écran de verrouillage personnalisé",
       "customLockScreenDesc" : "Débuggez les composants graphiques de l’écran de verrouillage personnalisé.",
       "customLockScreenCTA" : "Lancer",
@@ -5912,10 +5949,6 @@
       "title" : "Appareil déconnecté",
       "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Appareil déconnecté",
-      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
-    },
     "EConnReset" : {
       "title" : "Impossible d’accéder au Catalogue d’apps de Ledger",
       "description" : "Votre connexion Internet a peut-être été interrompue ou utilise une configuration particulière. Commencez par vérifier si votre connexion n’utilise pas un système de blocage (proxy ou pare-feu). Si le problème persiste, cliquez ci-dessous pour obtenir des solutions ou contactez l’Assistance Ledger."
@@ -6519,9 +6552,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Vous devez lier au moins {{minimumBondAmount}}."
     },
@@ -6735,10 +6765,10 @@
       "description" : "Déverrouillez votre appareil et réessayez.",
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
     },
-    "DeviceNotOnboardedError" : {
-      "title" : "Votre wallet Ledger n’est pas configuré",
+    "DeviceNotOnboardedDAError" : {
+      "title" : "Votre appareil Ledger n’est pas configuré",
       "description" : "Configurez-le pour commencer à l’utiliser. Nous vous guiderons à chaque étape.",
-      "goToOnboardingButton" : "Configurer mon wallet",
+      "goToOnboardingButton" : "Configurer",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
     },
     "EtherscanAPIError" : {
@@ -6815,6 +6845,118 @@
     "AddressesSanctionedError" : {
       "title" : "Restez en sécurité",
       "description" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Connexion avec l’appareil perdue",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Connexion avec l’appareil perdue",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DisconnectError" : {
+      "title" : "Connexion avec l’appareil perdue",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Connexion avec l’appareil perdue",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Connexion avec l’appareil perdue",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Erreur de méthode de connexion",
+      "description" : "Une erreur est survenue avec la méthode de connexion utilisée. Veuillez essayer avec une autre méthode de connexion. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Erreur de méthode de connexion",
+      "description" : "Une erreur est survenue avec la méthode de connexion utilisée. Veuillez essayer avec une autre méthode de connexion. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Erreur de méthode de connexion",
+      "description" : "Une erreur est survenue avec la méthode de connexion utilisée. Veuillez essayer avec une autre méthode de connexion. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Erreur de méthode de connexion",
+      "description" : "Une erreur est survenue avec la méthode de connexion utilisée. Veuillez essayer avec une autre méthode de connexion. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Erreur de méthode de connexion",
+      "description" : "Une erreur est survenue avec la méthode de connexion utilisée. Veuillez essayer avec une autre méthode de connexion. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Appareil non configuré",
+      "description" : "Votre appareil n’est pas prêt à être utilisé. Veuillez suivre les instructions pour le configurer, puis réessayer."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Appareil non configuré",
+      "description" : "Votre appareil n’est pas prêt à être utilisé. Veuillez suivre les instructions pour le configurer, puis réessayer."
+    },
+    "DeviceLockedError" : {
+      "title" : "Appareil verrouillé",
+      "description" : "Votre appareil est verrouillé. Veuillez le déverrouiller, puis réessayer."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Mémoire insuffisante",
+      "description" : "La mémoire de votre appareil est insuffisante. Veuillez désinstaller des apps, puis réessayer."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "Système d’exploitation non pris en charge",
+      "description" : "Le système d’exploitation de votre appareil n’est pas pris en charge. Veuillez le mettre à jour via Ledger Live ou contacter l’Assistance Ledger pour obtenir de l’aide si vous rencontrez des difficultés."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Erreur liée à la batterie",
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Erreur liée à la batterie",
+      "description" : "Une erreur concernant l’état de la batterie est survenue. Veuillez contacter l’Assistance Ledger."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Erreur de connexion avec l’appareil",
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Erreur de connexion avec l’appareil",
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "UnknownDAError" : {
+      "title" : "Erreur de connexion avec l’appareil",
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Appareil non reconnu",
+      "description" : "Ledger Live n’a pas pu reconnaître votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Appareil non reconnu",
+      "description" : "Ledger Live n’a pas pu reconnaître votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Appareil non reconnu",
+      "description" : "Ledger Live n’a pas pu reconnaître votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "ReceiverApduError" : {
+      "title" : "Erreur de communication",
+      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "FramerApduError" : {
+      "title" : "Erreur de communication",
+      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Erreur de communication",
+      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Erreur de communication",
+      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Erreur de communication",
+      "description" : "Une erreur est survenue lors du transfert d’informations avec votre appareil. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
     }
   },
   "cryptoOrg" : {
