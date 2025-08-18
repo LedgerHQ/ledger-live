@@ -10,14 +10,13 @@ import {
   setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { removeKnownDevices } from "~/actions/ble";
 import { useUnacceptGeneralTerms } from "~/logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();
-  const reboot = useReboot();
   const knownDevices = useSelector(bleDevicesSelector);
   const unacceptGeneralTerms = useUnacceptGeneralTerms();
   return (
@@ -36,7 +35,7 @@ export default function ResetOnboardingStateRow() {
         dispatch(setOnboardingHasDevice(null));
         unacceptGeneralTerms();
         requestAnimationFrame(() => {
-          reboot();
+          dispatch(reboot());
         });
       }}
     />

@@ -26,8 +26,8 @@ import {
   reportErrorsEnabledSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
+import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
-import RebootProvider from "~/context/Reboot";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { store } from "~/context/store";
@@ -234,6 +234,11 @@ function App() {
   );
 }
 
+function RebootProvider({ children }: { children: React.ReactNode }) {
+  const rebootId = useSelector(rebootIdSelector);
+  return <React.Fragment key={rebootId}>{children}</React.Fragment>;
+}
+
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   const { theme } = useSettings();
   const osTheme = useSelector(osThemeSelector);
@@ -269,8 +274,6 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default class Root extends Component {
-  // TODO understand need of initTimeout
-
   componentDidCatch(e: Error) {
     logger.critical(e);
     throw e;

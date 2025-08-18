@@ -2,12 +2,11 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
 import { useAcceptGeneralTerms } from "~/logic/terms";
 
 export default function SkipOnboardingRow() {
   const dispatch = useDispatch();
-  const reboot = useReboot();
   const acceptGeneralTerms = useAcceptGeneralTerms();
   return (
     <SettingsRow
@@ -19,7 +18,7 @@ export default function SkipOnboardingRow() {
         dispatch(completeOnboarding(true));
         acceptGeneralTerms();
         requestAnimationFrame(() => {
-          reboot();
+          dispatch(reboot());
         });
       }}
     />

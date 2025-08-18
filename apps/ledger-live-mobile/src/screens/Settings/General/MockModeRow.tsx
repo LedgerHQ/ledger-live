@@ -2,18 +2,19 @@ import React, { memo, useCallback } from "react";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import SettingsRow from "~/components/SettingsRow";
 import Track from "~/analytics/Track";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
 import Switch from "~/components/Switch";
 
 function MockModeRow() {
-  const reboot = useReboot();
+  const dispatch = useDispatch();
   const isMock = getEnv("MOCK");
   const setReadOnlyModeAndReset = useCallback(
     (enabled: boolean) => {
       setEnvUnsafe("MOCK", enabled ? "1" : "");
-      reboot();
+      dispatch(reboot());
     },
-    [reboot],
+    [dispatch],
   );
 
   return (

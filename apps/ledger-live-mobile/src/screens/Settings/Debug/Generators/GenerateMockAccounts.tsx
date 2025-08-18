@@ -6,13 +6,13 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/reducers/accounts";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
-function createMockAccounts(count: number, existingAccounts: Account[]) {
-  const mockAccounts = Array(count)
+const generateMockAccounts = (count: number) =>
+  Array(count)
     .fill(null)
     .map(() => {
       return genAccount(String(Math.random()), {
@@ -20,13 +20,13 @@ function createMockAccounts(count: number, existingAccounts: Account[]) {
       });
     });
 
-  return addAccountsAction({
+const createAccountAction = (mockAccounts: Account[], existingAccounts: Account[]) =>
+  addAccountsAction({
     existingAccounts,
     scannedAccounts: mockAccounts,
     selectedIds: mockAccounts.map(acc => acc.id),
     renamings: {},
   });
-}
 
 export default function GenerateMockAccountsButton({
   count,
@@ -37,7 +37,6 @@ export default function GenerateMockAccountsButton({
   desc: string;
   count: number;
 }) {
-  const reboot = useReboot();
   const dispatch = useDispatch();
   const existingAccounts = useSelector(accountsSelector);
 
@@ -53,15 +52,16 @@ export default function GenerateMockAccountsButton({
           [
             {
               text: "Cancel",
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onPress: () => {},
             },
             {
               text: "Ok",
               onPress: () => {
-                const action = createMockAccounts(count, existingAccounts);
+                const mockAccounts = generateMockAccounts(count);
+                const action = createAccountAction(mockAccounts, existingAccounts);
+
                 dispatch(action);
-                reboot();
+                dispatch(reboot());
               },
             },
           ],

@@ -9,7 +9,8 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "~/components/SettingsRow";
 import accountModel from "~/logic/accountModel";
 import { saveAccounts } from "../../../../db";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -69,7 +70,7 @@ async function injectMockAccountsInDB(
 const currencies = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));
 
 export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
-  const reboot = useReboot();
+  const dispatch = useDispatch();
   const [tokens, setTokens] = useState<string>("");
 
   const { withNft } = route.params ?? {};
@@ -102,7 +103,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
     const onPress = () => {
       injectMockAccountsInDB(selectedCurrencies, tokens, withNft).then(() => {
         if (withNft) disableSimpleHash();
-        reboot();
+        dispatch(reboot());
       });
     };
 
@@ -119,7 +120,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
       ],
       { cancelable: true },
     );
-  }, [checkedCurrencies, currenciesFiltered, disableSimpleHash, reboot, tokens, withNft]);
+  }, [checkedCurrencies, currenciesFiltered, dispatch, disableSimpleHash, tokens, withNft]);
 
   const insets = useSafeAreaInsets();
   return (
