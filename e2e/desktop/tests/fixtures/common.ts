@@ -15,7 +15,6 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
-import { getDefaultFeatureFlags } from "tests/utils/featureUtils";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -146,7 +145,7 @@ export const test = base.extend<TestFixtures>({
           PLAYWRIGHT_RUN: true,
           CRASH_ON_INTERNAL_CRASH: true,
           LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify({ ...getDefaultFeatureFlags(), ...featureFlags }),
+          FEATURE_FLAGS: JSON.stringify(featureFlags),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
         },
