@@ -6,7 +6,6 @@ import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import type { TFunction } from "react-i18next";
 import type { Privacy } from "~/reducers/types";
-import { withReboot } from "../Reboot";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { BaseButton } from "~/components/Button";
@@ -193,11 +192,7 @@ const AuthScreen: React.FC<Props> = ({ t, privacy, biometricsError, lock, unlock
   );
 };
 
-export default compose<React.ComponentType<OwnProps>>(
-  withTranslation(),
-  withReboot,
-  withTheme,
-)(AuthScreen);
+export default compose<React.ComponentType<OwnProps>>(withTranslation(), withTheme)(AuthScreen);
 
 const styles = StyleSheet.create({
   root: {

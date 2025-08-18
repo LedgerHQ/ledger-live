@@ -4,7 +4,6 @@ import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -270,11 +269,7 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default class Root extends Component {
-  initTimeout: ReturnType<typeof setTimeout> | undefined;
-
-  componentWillUnmount() {
-    clearTimeout(this.initTimeout);
-  }
+  // TODO understand need of initTimeout
 
   componentDidCatch(e: Error) {
     logger.critical(e);
@@ -287,17 +282,12 @@ export default class Root extends Component {
     }
   };
 
-  onRebootStart = () => {
-    clearTimeout(this.initTimeout);
-    if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
-  };
-
   render() {
     return (
       <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
         {(ready, initialCountervalues) =>
           ready ? (
-            <RebootProvider onRebootStart={this.onRebootStart}>
+            <RebootProvider>
               <SetEnvsFromSettings />
               {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
               <HookSentry />

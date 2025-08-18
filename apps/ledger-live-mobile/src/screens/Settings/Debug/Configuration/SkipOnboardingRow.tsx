@@ -1,13 +1,13 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
-import { RebootContext } from "~/context/Reboot";
+import { useReboot } from "~/context/Reboot";
 import { useAcceptGeneralTerms } from "~/logic/terms";
 
 export default function SkipOnboardingRow() {
   const dispatch = useDispatch();
-  const reboot = useContext(RebootContext);
+  const reboot = useReboot();
   const acceptGeneralTerms = useAcceptGeneralTerms();
   return (
     <SettingsRow

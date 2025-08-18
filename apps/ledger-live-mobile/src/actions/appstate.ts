@@ -28,4 +28,7 @@ export const updateMainNavigatorVisibility =
  * Resets to false after a delay. Ideally remove after AuthPass refactor. */
 export const blockPasswordLock = createAction<boolean>(AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK);
 
-export const incrementRebootId = createAction(AppStateActionTypes.INCREMENT_REBOOT_ID);
+export const reboot = createAction<{
+  resetData?: boolean;
+  showSplashScreen?: boolean;
+}>(AppStateActionTypes.INCREMENT_REBOOT_ID);

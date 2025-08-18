@@ -2,14 +2,11 @@ import React, { memo, useCallback } from "react";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import SettingsRow from "~/components/SettingsRow";
 import Track from "~/analytics/Track";
-import { withReboot } from "~/context/Reboot";
+import { useReboot } from "~/context/Reboot";
 import Switch from "~/components/Switch";
 
-type Props = {
-  reboot: () => void;
-};
-
-function MockModeRow({ reboot }: Props) {
+function MockModeRow() {
+  const reboot = useReboot();
   const isMock = getEnv("MOCK");
   const setReadOnlyModeAndReset = useCallback(
     (enabled: boolean) => {
@@ -31,6 +28,4 @@ function MockModeRow({ reboot }: Props) {
   );
 }
 
-const m = withReboot(MockModeRow);
-
-export default memo(m);
+export default memo(MockModeRow);
