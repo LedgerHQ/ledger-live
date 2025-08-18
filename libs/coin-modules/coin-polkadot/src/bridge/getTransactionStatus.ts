@@ -74,9 +74,10 @@ const getSendTransactionStatus: AccountBridge<
   }
 
   if (!(errors.amount instanceof AmountRequired)) {
-    if (!transaction.useAllAmount && account.spendableBalance.isZero()) {
-      errors.amount = new NotEnoughBalance();
-    } else if (totalSpent.gt(account.spendableBalance)) {
+    if (
+      (!transaction.useAllAmount && account.spendableBalance.isZero()) ||
+      totalSpent.gt(account.spendableBalance)
+    ) {
       errors.amount = new NotEnoughBalance();
     }
 
