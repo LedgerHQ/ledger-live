@@ -3,6 +3,7 @@ import { getRevealFee } from "@taquito/taquito";
 import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { getTezosToolkit } from "./tezosToolkit";
+import { createMockSigner } from "../utils";
 
 export type TransactionFee = {
   fees?: string;
@@ -36,6 +37,13 @@ export async function craftTransaction(
   };
 
   const tezosToolkit = getTezosToolkit();
+
+  // Configure signer for Taquito operations (same as in estimateFees)
+  if (publicKey) {
+    tezosToolkit.setProvider({
+      signer: createMockSigner(publicKey.publicKeyHash, publicKey.publicKey),
+    });
+  }
 
   const sourceData = await tezosToolkit.rpc.getContract(address);
   const counter = account.counter ?? Number(sourceData.counter);
