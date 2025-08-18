@@ -30,6 +30,17 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         assetOwner: "",
         networkInfo: null,
       };
+    case "tezos":
+      // note: default transaction for tezos, mode will be set by UI (send, stake, unstake)
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        fees: null,
+        recipient: "",
+        useAllAmount: false,
+        mode: "send",
+        networkInfo: null,
+      };
     case "evm": {
       return {
         mode: "send-eip1559",
