@@ -141,11 +141,16 @@ type PaginationState = {
   accumulator: Operation[];
 };
 
-async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
+async function fetchNextPage(
+  address: string,
+  state: PaginationState,
+  order: "asc" | "desc",
+): Promise<PaginationState> {
+  const sort = order === "asc" ? "Ascending" : "Descending";
   const [operations, newNextCursor] = await listOperations(address, {
     limit: state.pageSize,
     token: state.nextCursor,
-    sort: "Ascending",
+    sort,
     minHeight: state.minHeight,
   });
   const newCurrentIteration = state.currentIteration + 1;
@@ -167,6 +172,7 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
 async function operationsFromHeight(
   address: string,
   start: number,
+  order: "asc" | "desc" = "asc",
 ): Promise<[Operation[], string]> {
   const firstState: PaginationState = {
     pageSize: 200,
@@ -177,9 +183,9 @@ async function operationsFromHeight(
     accumulator: [],
   };
 
-  let state = await fetchNextPage(address, firstState);
+  let state = await fetchNextPage(address, firstState, order);
   while (state.continueIterations) {
-    state = await fetchNextPage(address, state);
+    state = await fetchNextPage(address, state, order);
   }
   return [state.accumulator, state.nextCursor || ""];
 }
@@ -188,5 +194,5 @@ async function operations(
   address: string,
   pagination: Pagination = { minHeight: 0, order: "asc" },
 ): Promise<[Operation[], string]> {
-  return operationsFromHeight(address, pagination.minHeight);
+  return operationsFromHeight(address, pagination.minHeight, order);
 }
