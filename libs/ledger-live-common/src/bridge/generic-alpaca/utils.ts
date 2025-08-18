@@ -113,6 +113,14 @@ export function transactionToIntent(
       case "send":
         transactionType = "send";
         break;
+      case "delegate":
+      case "stake":
+        transactionType = "stake";
+        break;
+      case "undelegate":
+      case "unstake":
+        transactionType = "unstake";
+        break;
       case "send-legacy":
         transactionType = "send-legacy";
         break;
@@ -123,13 +131,18 @@ export function transactionToIntent(
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
+
+  const isStaking = transactionType === "stake" || transactionType === "unstake";
+  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = isStaking || !!transaction.useAllAmount;
+
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
-    amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
+    amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
-    useAllAmount: !!transaction.useAllAmount,
+    useAllAmount,
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
