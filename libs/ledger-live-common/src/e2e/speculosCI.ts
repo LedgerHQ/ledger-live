@@ -22,6 +22,14 @@ function uniqueId(): string {
   return timestamp + randomString;
 }
 
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 /**
  * Helper function to make API requests with error handling
  */
@@ -152,7 +160,7 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
 ): Promise<SpeculosDevice | undefined> {
-  const runId = `${deviceParams.appName.toLowerCase()}-${uniqueId()}`;
+  const runId = `${slugify(deviceParams.appName)}-${uniqueId()}`;
   try {
     const data = createStartPayload(deviceParams, runId);
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
