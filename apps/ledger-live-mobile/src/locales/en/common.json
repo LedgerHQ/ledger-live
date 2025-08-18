@@ -2534,6 +2534,9 @@
     },
     "completion": {
       "title": "Now you are in control"
+    },
+    "successStep": {
+      "title": "Your {{productName}} is ready to secure your digital assets"
     }
   },
   "tabs": {

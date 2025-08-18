@@ -11,6 +11,7 @@ interface CollapsibleStepProps extends PropsWithChildren {
   isCollapsed: boolean;
   isFirst?: boolean;
   hideTitle?: boolean;
+  background?: React.JSX.Element | null;
 }
 
 interface CenterCircleProps {
@@ -53,6 +54,7 @@ const CollapsibleStep = ({
   children,
   isFirst,
   hideTitle,
+  background: Background,
 }: CollapsibleStepProps) => {
   if (isCollapsed) {
     return (
@@ -72,6 +74,8 @@ const CollapsibleStep = ({
 
   return (
     <CollapsibleCard marginTop={isFirst ? "16px" : "8px"}>
+      {!!Background && Background}
+
       {hideTitle ? (
         <StatusIcon status={status} isAbsolute={hideTitle} />
       ) : (

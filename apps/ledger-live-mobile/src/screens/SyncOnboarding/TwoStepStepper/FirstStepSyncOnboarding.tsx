@@ -25,6 +25,7 @@ import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
 import { ExitState } from "./TwoStepSyncOnboardingCompanion";
+import BackgroundGreen from "../assets/BackgroundGreen";
 
 /*
  * Constants
@@ -373,6 +374,9 @@ const FirstStepSyncOnboarding = ({
     };
   }, [setIsPollingOn]);
 
+  const showSuccess =
+    companionSteps.activeStep === FirstStepCompanionStepKey.Ready && hasFinishedAnimation;
+
   return (
     <CollapsibleStep
       isFirst
@@ -386,16 +390,17 @@ const FirstStepSyncOnboarding = ({
         companionSteps.activeStep >= FirstStepCompanionStepKey.Ready ? "complete" : "unfinished"
       }
       hideTitle={companionSteps.activeStep === FirstStepCompanionStepKey.Ready}
+      background={showSuccess ? <BackgroundGreen /> : null}
     >
-      {companionSteps.activeStep <= FirstStepCompanionStepKey.Ready && !hasFinishedAnimation && (
+      {!showSuccess && (
         <VerticalTimeline
           steps={companionSteps.steps}
           formatEstimatedTime={formatEstimatedTime}
           contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
         />
       )}
-      {companionSteps.activeStep === FirstStepCompanionStepKey.Ready && hasFinishedAnimation && (
-        <DeviceSeededSuccessPanel handleNextStep={handleNextStep} />
+      {showSuccess && (
+        <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
       )}
     </CollapsibleStep>
   );
