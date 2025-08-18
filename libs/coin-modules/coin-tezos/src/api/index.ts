@@ -194,5 +194,5 @@ async function operations(
   address: string,
   pagination: Pagination = { minHeight: 0, order: "asc" },
 ): Promise<[Operation[], string]> {
-  return operationsFromHeight(address, pagination.minHeight, order);
+  return operationsFromHeight(address, pagination.minHeight, pagination.order);
 }
