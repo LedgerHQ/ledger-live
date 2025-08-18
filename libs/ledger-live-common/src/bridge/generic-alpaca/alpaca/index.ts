@@ -2,6 +2,7 @@ import { createApi as createXrpApi } from "@ledgerhq/coin-xrp/api/index";
 import { createApi as createStellarApi } from "@ledgerhq/coin-stellar/api/index";
 import { createApi as createCantonApi } from "@ledgerhq/coin-canton/api/index";
 import { createApi as createTronApi } from "@ledgerhq/coin-tron/api/index";
+import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
 import { getCurrencyConfiguration } from "../../../config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getNetworkAlpacaApi } from "./network/network-alpaca";
@@ -10,6 +11,7 @@ import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
+import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 
 export function getAlpacaApi(network, kind): Api<any> {
   if (kind === "local") {
@@ -31,6 +33,10 @@ export function getAlpacaApi(network, kind): Api<any> {
       case "tron":
         return createTronApi(
           getCurrencyConfiguration<TronCoinConfig>(getCryptoCurrencyById("tron")),
+        ) as Api<any>;
+      case "tezos":
+        return createTezosApi(
+          getCurrencyConfiguration<TezosCoinConfig>(getCryptoCurrencyById("tezos")),
         ) as Api<any>;
     }
   }

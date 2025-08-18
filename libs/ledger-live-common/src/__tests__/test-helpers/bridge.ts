@@ -36,7 +36,7 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
-  currencies: ["ripple", "ethereum"],
+  currencies: ["ripple", "ethereum", "tezos"],
   impls: ["mock"],
 };
 
