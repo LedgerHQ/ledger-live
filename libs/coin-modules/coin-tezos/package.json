@@ -56,8 +56,8 @@
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "require": "./lib/transaction.js",
+      "default": "./lib-es/transaction.js"
     },
     "./*": {
       "require": "./lib/*.js",
@@ -73,15 +73,12 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
     "@taquito/rpc": "^23.0.0-RC.0",
     "@taquito/taquito": "^23.0.0-RC.0",
     "@taquito/utils": "^23.0.0-RC.0",
     "bignumber.js": "^9.1.2",
-    "@noble/hashes": "1.8.0",
-    "bs58check": "^3.0.1",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"
@@ -90,7 +87,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@faker-js/faker": "^8.4.1",
     "@taquito/local-forging": "^23.0.0-RC.0",
-    "@types/bs58check": "^2.1.2",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.4",
