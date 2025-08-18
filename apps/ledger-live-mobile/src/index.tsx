@@ -87,7 +87,6 @@ import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 
@@ -330,15 +329,13 @@ export default class Root extends Component {
                                     <NavBarColorHandler />
                                     <AuthPass>
                                       <GestureHandlerRootView style={styles.root}>
-                                        <BottomSheetModalProvider>
-                                          <AppProviders initialCountervalues={initialCountervalues}>
-                                            <AppGeoBlocker>
-                                              <AppVersionBlocker>
-                                                <App />
-                                              </AppVersionBlocker>
-                                            </AppGeoBlocker>
-                                          </AppProviders>
-                                        </BottomSheetModalProvider>
+                                        <AppProviders initialCountervalues={initialCountervalues}>
+                                          <AppGeoBlocker>
+                                            <AppVersionBlocker>
+                                              <App />
+                                            </AppVersionBlocker>
+                                          </AppGeoBlocker>
+                                        </AppProviders>
                                       </GestureHandlerRootView>
                                     </AuthPass>
                                   </StylesProvider>

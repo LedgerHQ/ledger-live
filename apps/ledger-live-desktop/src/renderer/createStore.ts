@@ -1,17 +1,21 @@
-import { createStore, applyMiddleware, compose, Middleware } from "redux";
+import { applyMiddleware, compose, createStore, Middleware } from "redux";
 import thunk from "redux-thunk";
 import logger from "~/renderer/middlewares/logger";
-import analytics from "~/renderer/middlewares/analytics";
 import reducers, { State } from "~/renderer/reducers";
+
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
+  analyticsMiddleware?: Middleware;
 };
-export default ({ state, dbMiddleware }: Props) => {
+
+const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) => {
   const middlewares: Middleware[] = [thunk, logger];
 
   // middlewares.push(require('./../middlewares/sentry').default)
-  middlewares.push(analytics);
+  if (analyticsMiddleware) {
+    middlewares.push(analyticsMiddleware);
+  }
   if (dbMiddleware) {
     middlewares.push(dbMiddleware);
   }
@@ -20,3 +24,7 @@ export default ({ state, dbMiddleware }: Props) => {
 
   return createStore(reducers, state, enhancers);
 };
+
+export type ReduxStore = ReturnType<typeof customCreateStore>;
+
+export default customCreateStore;

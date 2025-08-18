@@ -101,6 +101,7 @@
     "coin:xrp": "pnpm --filter coin-xrp",
     "coin-modules:test-integ": "pnpm --no-bail --filter=\"@ledgerhq/coin-*\" test-integ",
     "coin:sui": "pnpm --filter coin-sui",
+    "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",

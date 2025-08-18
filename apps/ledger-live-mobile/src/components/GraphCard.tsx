@@ -95,7 +95,7 @@ function GraphCard({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const onItemHover = (item?: Item | null) => {
     setItemHover(item);

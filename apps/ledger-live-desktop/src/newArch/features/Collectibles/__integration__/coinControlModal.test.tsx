@@ -72,7 +72,14 @@ const Settings = {
   },
 };
 
+let dispatch: jest.Mock;
+
 describe("BTCCoinControl", () => {
+  beforeEach(() => {
+    dispatch = jest.fn();
+    (useDispatch as jest.Mock).mockReturnValue(dispatch);
+  });
+
   it("should display Bitcoin coin control modal without footer", async () => {
     const { user } = render(<MockedCoinControlModal withErrors />, {
       initialState: {
@@ -149,9 +156,6 @@ describe("BTCCoinControl", () => {
   });
 
   it("should display Bitcoin coin control and user can protect or not assets", async () => {
-    const dispatch = jest.fn();
-    (useDispatch as jest.Mock).mockReturnValue(dispatch);
-
     const { user } = render(<MockedCoinControlModal />, {
       initialState: {
         settings: {

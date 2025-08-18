@@ -107,12 +107,12 @@ export type BlockTransaction = {
 /** An operation belonging to a {@link BlockTransaction}. */
 export type BlockOperation = TransferBlockOperation | OtherBlockOperation;
 
-/** A asset transfer that occurred in a {@link BlockTransaction}. */
+/** An asset transfer that occurred in a {@link BlockTransaction}. */
 export type TransferBlockOperation = {
   /** Operation type discriminator. */
   type: "transfer";
 
-  /** The impacted address (can be sender or recipient based on signum of <code>amount</code>}. */
+  /** The impacted address (can be sender or recipient based on signum of <code>amount</code>). */
   address: string;
 
   /** The peer participant in the transfer (optional as it may be not known). */
@@ -145,10 +145,102 @@ export type Account = {
   currencyUnit: Unit;
 };
 
+/**
+ * A component of an account/address balance, for a single asset.
+ *
+ * @see AlpacaApi#getBalance
+ */
 export type Balance = {
+  /** The balance value, in base unit of {@link asset} (always positive). */
   value: bigint;
-  locked?: bigint;
+
+  /** The balance asset. */
   asset: AssetInfo;
+
+  /** The non-spendable part of {@link value} (eg: minimum balance requirement, or reserved for rent). */
+  locked?: bigint;
+
+  /** The {@link Stake} this balance is part of, if any. */
+  stake?: Stake;
+};
+
+/** The state of a {@link Stake}. */
+export type StakeState =
+  | "inactive" // stake has been created/funded, but not collecting any rewards for any reason
+  | "activating" // stake has been created/funded, and will start collecting rewards on next "epoch" (protocol specific)
+  | "active" // stake is initialized and collecting rewards
+  | "deactivating"; // stake has been deactivated, will be withdrawable/spendable yet on next "epoch" (protocol specific)
+
+/**
+ * A staking position, for a single address/asset/state.
+ *
+ * Note that on blockchains that allow heterogeneous assets/states in a single account, a staking account is represented
+ * as several {@link Stake}.
+ *
+ * @see Reward
+ * @see AlpacaApi#getStakes
+ */
+export type Stake = {
+  /** An immutable, globally unique id of the stake. Depending on the blockchain, it could simply be the account address,
+   * or a synthetic identifier. */
+  uid: string;
+
+  /** The owning account address. Depending on the blockchain, it can be the staking account address or directly the
+   * main one. */
+  address: string;
+
+  /** The validator/staking pool/delegate address. */
+  delegate?: string;
+
+  /** The stake status, see {@link StakeState}. */
+  state: StakeState;
+
+  /** UTC date of last state change. */
+  stateUpdatedAt?: Date;
+
+  /** UTC date of initial stake creation. */
+  createdAt?: Date;
+
+  /** The staked asset. */
+  asset: AssetInfo;
+
+  /** The amount owned by the stake, in base unit of {@link asset} (deposits + rewards). */
+  amount: bigint;
+
+  /** The part of {@link amount} that was deposited (<code>amount = amount_deposited + amount_rewarded</code>). */
+  amountDeposited?: bigint;
+
+  /** The part of {@link amount} that was rewarded (<code>amount = amount_deposited + amount_rewarded</code>). */
+  amountRewarded?: bigint;
+
+  /** A free form map of network specific fields. */
+  details?: Record<string, unknown>;
+};
+
+/**
+ * A staking reward distribution event.
+ *
+ * @see Stake
+ * @see AlpacaApi#getRewards
+ */
+export type Reward = {
+  /** {@link Stake#uid} via which this reward was obtained. */
+  stake: string;
+
+  /** The reward asset. */
+  asset: AssetInfo;
+
+  /** The reward amount. */
+  amount: bigint;
+
+  /** UTC date at which reward was effectively credited to the account (not emitted). */
+  receivedAt: Date;
+
+  /** If applicable, the transaction hash that distributed the reward. */
+  transactionHash?: string;
+
+  /** A free form map of network specific fields. */
+  details?: Record<string, unknown>;
 };
 
 export interface Memo {
@@ -216,6 +308,15 @@ export type FeeEstimation = {
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 
+/** A pagination cursor. */
+export type Cursor = string;
+
+/** A paginated response. */
+export type Page<T> = {
+  items: T[];
+  next?: Cursor | undefined;
+};
+
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
@@ -236,6 +337,48 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   getBlockInfo: (height: number) => Promise<BlockInfo>;
   getBlock: (height: number) => Promise<Block>;
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
+
+  /**
+   * Get staking positions owned by an address/account.
+   *
+   * Results are returned in no particular order, in pages that can be of variable size. Page size is controlled by
+   * implementation and should minimize number of RPC calls (typically by aligning with SDK/RPC API pages).
+   *
+   * Results could include closed/deleted staking positions, this is implementation dependent.
+   *
+   * Since this API can make no sense/be complex to implement/require too many RPC calls on some blockchains, it is
+   * optional: implementation should raise a "not supported" error in such case.
+   *
+   * @param address the owner account address
+   * @see getBalance
+   * @see getRewards
+   */
+  getStakes: (address: string, cursor?: Cursor) => Promise<Page<Stake>>;
+
+  /**
+   * Get staking reward distribution events since address/account inception.
+   *
+   * Results are returned in ascending chronological order, in pages that can be of variable size. Page size is
+   * controlled by implementation and should minimize number of RPC calls (typically by aligning with SDK/RPC API pages).
+   *
+   * Note that since staking implementations vary from one blockchain to another, some points are implementation dependent:
+   *   - depending on the blockchain account model, the exact meaning of <code>address</code> can be:
+   *      - a parent account => history will include all staking subaccounts
+   *      - a single staking position/subaccount address
+   *   - depending on the reward distribution mechanisms, reward events can be transactions, or blocks/epochs, or
+   *     generated synthetically (eg: daily)
+   *
+   * Since this API can make no sense/be complex to implement/require too many RPC calls on some blockchains, it is
+   * optional: implementation should raise a "not supported" error in such case.
+   *
+   * @param address the account address (see doc, exact scope of the request is implementation dependent)
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *               i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *               a date or transaction hash)
+   * @see getBalance
+   * @see getStakes
+   */
+  getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
 };
 
 export type BridgeApi = {

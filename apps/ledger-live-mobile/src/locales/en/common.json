@@ -306,6 +306,10 @@
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
+    "ReconnectionFailedError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
     "DeviceDisconnectedBeforeSendingApdu": {
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
@@ -896,9 +900,6 @@
     },
     "PolkadotAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
-    },
-    "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
     },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least {{minimumBondAmount}}."
@@ -6250,6 +6251,7 @@
       "iWithdraw": "I withdraw",
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
       "stakeAvailableBalance": "Available balance",
@@ -7789,8 +7791,8 @@
     "selectAccount": "Select account",
     "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
-    "accountCount": "{{count}} account (detected)",
-    "accountCount_plural": "{{count}} accounts (detected)"
+    "accountCount": "{{count}} account",
+    "accountCount_plural": "{{count}} accounts"
   },
   "swapErrors": {
     "incorrectCommandData": {

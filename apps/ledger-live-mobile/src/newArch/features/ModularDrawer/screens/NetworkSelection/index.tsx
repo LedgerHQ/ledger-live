@@ -36,26 +36,36 @@ const NetworkSelection = ({
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  const handleNetworkClick = (networkId: string) => {
-    const originalNetwork = availableNetworks.find(n => n.id === networkId);
-    if (originalNetwork) {
-      trackModularDrawerEvent(
-        EVENTS_NAME.NETWORK_CLICKED,
-        {
-          flow,
-          source,
-          network: originalNetwork.name,
-          page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-        },
-        {
-          formatNetworkConfig: true,
-          networksConfig: networksConfiguration,
-        },
-      );
+  const handleNetworkClick = useCallback(
+    (networkId: string) => {
+      const originalNetwork = availableNetworks.find(n => n.id === networkId);
+      if (originalNetwork) {
+        trackModularDrawerEvent(
+          EVENTS_NAME.NETWORK_CLICKED,
+          {
+            flow,
+            source,
+            network: originalNetwork.name,
+            page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+          },
+          {
+            formatNetworkConfig: true,
+            networksConfig: networksConfiguration,
+          },
+        );
 
-      onNetworkSelected(originalNetwork);
-    }
-  };
+        onNetworkSelected(originalNetwork);
+      }
+    },
+    [
+      availableNetworks,
+      flow,
+      source,
+      networksConfiguration,
+      trackModularDrawerEvent,
+      onNetworkSelected,
+    ],
+  );
 
   const transformNetworks = createNetworkConfigurationHook({
     networksConfig: networksConfiguration,

@@ -3684,6 +3684,7 @@
     "delegation" : {
       "totalStake" : "إجمالي التكديس",
       "commission" : "العمولة",
+      "netApy" : "صافي المردود المئوي السنوي (APY)",
       "delegate" : "أضف",
       "listHeader" : "التفويضات",
       "availableBalance" : "قابل للسحب",
@@ -4473,6 +4474,40 @@
             "check" : "مؤشر العشوائية"
           }
         },
+        "mockAccounts" : {
+          "title" : "إنشاء حسابات تجريبية",
+          "description" : "إنشاء حسابات تجريبية لأغراض الاختبار. هذه الأدوات تسمح لك بإنشاء حسابات اختبار بعملات وتكوينات مختلفة.",
+          "customGenerate" : {
+            "title" : "إنشاء مخصص",
+            "desc" : "قم باختيار عملات محددة وإضافة رموز توكن"
+          },
+          "quickGenerate" : {
+            "title" : "إنشاء سريع",
+            "desc" : "قم بإنشاء 10 حسابات عشوائية بعملات عشوائية"
+          },
+          "currencySelector" : {
+            "placeholder" : "اختيار العملات...",
+            "searchPlaceholder" : "البحث عن العملات...",
+            "noCurrenciesFound" : "لم يتم العثور على عملات",
+            "noCurrenciesAvailable" : "لا توجد عملات متاحة",
+            "selectedCount" : "{{count}} عملة تم اختيارها",
+            "selectedCount_other" : "{{count}} عملة تم اختيارها"
+          },
+          "tokenIds" : {
+            "label" : "مُعرّفات رمز التوكن (اختياري)",
+            "placeholder" : "رمز التوكن1، رمز التوكن2، رمز التوكن3"
+          },
+          "buttons" : {
+            "generateAccounts" : "إنشاء {{count}} حساب",
+            "generateAccounts_other" : "إنشاء {{count}} حساب",
+            "generateAccountsQuick" : "إنشاء {{count}} حساب"
+          },
+          "alerts" : {
+            "selectCurrency" : "يُرجى اختيار عملة واحدة على الأقل",
+            "confirmErase" : "سيحذف ذلك حسابات قائمة. متابعة؟",
+            "generateError" : "فشل إنشاء الحسابات التجريبية. يُرجى إعادة المحاولة."
+          }
+        },
         "debugSpamNft" : {
           "report" : "إبلاغ",
           "contractAddress" : "عنوان العَقد",
@@ -4600,6 +4635,8 @@
       "customCALRefDesc" : "حدّد فرع مخصص أو تضمين أو علامة للاستخدام gكل طلبات CAL",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "customLockScreenTester" : "مُختبِر شاشة القَفل المُخصّصة",
+      "customLockScreenTesterDesc" : "اختبر شاشة القَفل المخصصة للأجهزة المدعومة",
       "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
       "customLockScreenDesc" : "تصحيح أخطاء الأصول الرسومية لشاشة القَفل المُخصّصة",
       "customLockScreenCTA" : "تشغيل",
@@ -5912,10 +5949,6 @@
       "title" : "الجهاز غير متصل",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يرجى إعادة المحاولة."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "الجهاز غير متصل",
-      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يرجى إعادة المحاولة."
-    },
     "EConnReset" : {
       "title" : "لا يمكن الوصول إلى متجر تطبيقات Ledger",
       "description" : "اتصالك بالإنترنت قد يكون مقطوعاً أو يستخدم تكويناً غير معتاد. ابدأ بالتحقق مما إذا كان هناك شيء يحجب اتصالك (وكيل أو جدار حماية). إذا استمرت المشكلة انقر أدناه لإيجاد حلول أو توَاصل مع دعم العملاء لدينا."
@@ -6519,9 +6552,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "لا يمكن للرصيد أن يقل عن {{minimumBalance}} أرسل الحد الأقصى الى حساب خالي."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
     },
@@ -6735,11 +6765,11 @@
       "description" : "قم بإلغاء قفل جهازك وحاول مرة أخرى.",
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "لم يتم إعداد جهازك Ledger",
       "description" : "قم بإعداده لتبدأ استخدامه. سنرشدك خلال عملية الإعداد.",
       "goToOnboardingButton" : "إعداد جهازي Ledger",
-      "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
+      "goToOnboardingButtonWithProductName" : "إعداد {{ productName }} الخاص بي"
     },
     "EtherscanAPIError" : {
       "title" : "فشل إحضار المعاملات",
@@ -6815,6 +6845,118 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DisconnectError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "لم تتم تهيئة الجهاز",
+      "description" : "جهازك غير مُستعد للاستخدام. يُرجى اتباع تعليمات الإعداد والمحاولة مرةً أخرى بمجرد التهيئة."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "لم تتم تهيئة الجهاز",
+      "description" : "جهازك غير مُستعد للاستخدام. يُرجى اتباع تعليمات الإعداد والمحاولة مرةً أخرى بمجرد التهيئة."
+    },
+    "DeviceLockedError" : {
+      "title" : "الجهاز مقفل",
+      "description" : "جهازك مقفل. يُرجى إلغاء قفله والمحاولة مرةً أخرى."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "لا توجد ذاكرة كافية",
+      "description" : "ليس لدى جهازك ذاكرة كافية. يُرجى إلغاء تثبيت بعض التطبيقات والمحاولة مرةً أخرى."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "نظام التشغيل غير مدعوم",
+      "description" : "نظام تشغيل جهازك غير مدعوم. يُرجى تحديثه من خلال Ledger Live، أو التواصل مع دعم Ledger للمساعدة إذا واجهتك صعوبات."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "خطأ في البطارية",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "خطأ في البطارية",
+      "description" : "خطأ في حالة البطارية. يُرجى التواصل مع دعم Ledger."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDAError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDeviceError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReceiverApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "FramerApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     }
   },
   "cryptoOrg" : {

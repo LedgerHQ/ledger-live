@@ -4,7 +4,12 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.nanoX];
+const NEW_UX_SUPPORTED_DEVICES = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.nanoX,
+  DeviceModelId.apex,
+];
 const versionAffected = [
   DeviceModelId.nanoX,
   DeviceModelId.nanoS,

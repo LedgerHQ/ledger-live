@@ -48,7 +48,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const AfterScrollAnimation = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -61,7 +61,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   const BackgroundOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -74,7 +74,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [graphCardEndPosition]);
+  }, [currentPositionY.value, graphCardEndPosition]);
 
   return (
     <Header

@@ -34,26 +34,4 @@ describe("useHideSpamCollection", () => {
       updateNftStatus(SupportedBlockchain.Ethereum, "collectionC", NftStatus.spam),
     );
   });
-
-  it("should not dispatch hideNftCollection action if collection is already marked with a status", () => {
-    const { result } = renderHook(() => useHideSpamCollection(), {
-      initialState: {
-        settings: {
-          nftCollectionsStatusByNetwork: {
-            [SupportedBlockchain.Ethereum]: {
-              collectionA: NftStatus.spam,
-            },
-            [SupportedBlockchain.Avalanche]: {
-              collectionB: NftStatus.spam,
-            },
-          },
-        },
-      },
-    });
-
-    result.current.hideSpamCollection("collectionA", SupportedBlockchain.Ethereum);
-    result.current.hideSpamCollection("collectionB", SupportedBlockchain.Avalanche);
-
-    expect(mockDispatch).not.toHaveBeenCalled();
-  });
 });
