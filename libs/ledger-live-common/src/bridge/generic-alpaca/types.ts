@@ -16,7 +16,15 @@ export type GenericTransaction = TransactionCommon & {
   feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
-  mode?: "send" | "changeTrust" | "send-legacy" | "send-eip1559";
+  mode?:
+    | "send"
+    | "changeTrust"
+    | "send-legacy"
+    | "send-eip1559"
+    | "delegate"
+    | "stake"
+    | "undelegate"
+    | "unstake";
   assetReference?: string;
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;
