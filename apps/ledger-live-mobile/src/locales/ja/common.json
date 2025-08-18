@@ -306,6 +306,10 @@
       "title" : "デバイスの接続が失われました",
       "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
+    "ReconnectionFailedError" : {
+      "title" : "デバイスの接続が失われました",
+      "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートまでご連絡ください。"
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "デバイスの接続が失われました",
       "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3分",
       "medium" : "≈ 30秒",
-      "fast" : "≈ 15秒"
+      "fast" : "≈ 15秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
-        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+        "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
@@ -6245,6 +6250,7 @@
       "iWithdraw" : "引き出す",
       "totalStake" : "合計ステーキング量",
       "commission" : "コミッション",
+      "netApy" : "実質年利",
       "stakeActivationState" : "状態",
       "stakeActivePercent" : "アクティブ",
       "stakeAvailableBalance" : "利用可能残高",
@@ -7780,8 +7786,8 @@
     "selectAccount" : "アカウントを選択",
     "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
-    "accountCount" : "{{count}}個のアカウント（検出済み）",
-    "accountCount_plural" : "{{count}}個のアカウント（検出済み）"
+    "accountCount" : "{{count}}アカウント",
+    "accountCount_plural" : "{{count}}アカウント"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
