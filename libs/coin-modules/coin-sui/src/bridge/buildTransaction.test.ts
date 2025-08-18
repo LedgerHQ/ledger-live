@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { buildTransaction, extractExtrinsicArg } from "./buildTransaction";
+import { buildTransaction } from "./buildTransaction";
 import type { SuiAccount, Transaction } from "../types";
+import { createFixtureAccount } from "../types/bridge.fixture";
 
 // Mock the craftTransaction function
 jest.mock("../logic", () => ({
@@ -64,7 +65,7 @@ describe("buildTransaction", () => {
   });
 
   describe("buildTransaction", () => {
-    it("should call craftTransaction with correct parameters", async () => {
+    it("should call craftTransaction with correct parameters for native asset", async () => {
       // WHEN
       await buildTransaction(mockAccount, mockTransaction);
 
@@ -75,6 +76,40 @@ describe("buildTransaction", () => {
         type: mockTransaction.mode,
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "native" },
+      });
+    });
+
+    it("should call craftTransaction with correct parameters for token asset", async () => {
+      const account = createFixtureAccount({
+        id: "parentAccountId",
+        balance: BigNumber(0),
+        spendableBalance: BigNumber(0),
+        subAccounts: [
+          createFixtureAccount({
+            id: "subAccountId",
+            parentId: "parentAccountId",
+            type: "TokenAccount",
+            token: {
+              contractAddress: "0x3::usdt::USDT",
+            },
+          }),
+        ],
+      });
+
+      // WHEN
+      await buildTransaction(account, {
+        ...mockTransaction,
+        subAccountId: "subAccountId",
+        coinType: "0x3::usdt::USDT",
+      });
+
+      // THEN
+      expect(craftTransaction).toHaveBeenCalledWith({
+        sender: account.freshAddress,
+        recipient: mockTransaction.recipient,
+        type: mockTransaction.mode,
+        amount: BigInt(mockTransaction.amount!.toString()),
+        asset: { type: "token", assetReference: "0x3::usdt::USDT" },
       });
     });
 
@@ -204,164 +239,6 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(result).toBeUndefined();
-    });
-  });
-
-  describe("extractExtrinsicArg", () => {
-    it("should extract correct fields from transaction", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        useAllAmount: true,
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result).toEqual({
-        mode: "send",
-        coinType: "0x2::sui::SUI",
-        amount: new BigNumber("100000000"),
-        recipient: "0xabcdef1234567890",
-        useAllAmount: true,
-      });
-    });
-
-    it("should handle transaction without useAllAmount", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        useAllAmount: false,
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result).toEqual({
-        mode: "send",
-        coinType: "0x2::sui::SUI",
-        amount: new BigNumber("100000000"),
-        recipient: "0xabcdef1234567890",
-        useAllAmount: false,
-      });
-    });
-
-    it("should handle transaction with undefined useAllAmount", () => {
-      const transaction = {
-        ...mockTransaction,
-        useAllAmount: undefined,
-      } as any;
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result).toEqual({
-        mode: "send",
-        coinType: "0x2::sui::SUI",
-        amount: new BigNumber("100000000"),
-        recipient: "0xabcdef1234567890",
-        useAllAmount: undefined,
-      });
-    });
-
-    it("should handle different transaction modes", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        mode: "send",
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result.mode).toBe("send");
-    });
-
-    it("should handle different amounts", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        amount: new BigNumber("500000000"),
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result.amount).toEqual(new BigNumber("500000000"));
-    });
-
-    it("should handle different recipients", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        recipient: "0x9876543210fedcba",
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result.recipient).toBe("0x9876543210fedcba");
-    });
-
-    it("should not include other transaction fields", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        fees: new BigNumber("1000000"),
-        errors: { someError: new Error("test") },
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result).not.toHaveProperty("fees");
-      expect(result).not.toHaveProperty("errors");
-      expect(result).not.toHaveProperty("family");
-      expect(result).not.toHaveProperty("id");
-    });
-
-    it("should handle zero amount", () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        amount: new BigNumber("0"),
-      };
-
-      // WHEN
-      const result = extractExtrinsicArg(transaction);
-
-      // THEN
-      expect(result.amount).toEqual(new BigNumber("0"));
-    });
-  });
-
-  describe("Integration between extractExtrinsicArg and buildTransaction", () => {
-    it("should work together correctly", async () => {
-      const transaction: Transaction = {
-        ...mockTransaction,
-        useAllAmount: true,
-      };
-
-      // Extract extrinsic arg
-      const extrinsicArg = extractExtrinsicArg(transaction);
-
-      // Build transaction
-      await buildTransaction(mockAccount, transaction);
-
-      // Verify that the extracted arg contains the expected fields
-      expect(extrinsicArg).toHaveProperty("mode", "send");
-      expect(extrinsicArg).toHaveProperty("amount");
-      expect(extrinsicArg).toHaveProperty("recipient");
-      expect(extrinsicArg).toHaveProperty("useAllAmount", true);
-
-      // Verify that buildTransaction was called with correct parameters
-      expect(craftTransaction).toHaveBeenCalledWith({
-        sender: mockAccount.freshAddress,
-        recipient: transaction.recipient,
-        type: transaction.mode,
-        amount: BigInt(transaction.amount!.toString()),
-        asset: { type: "native" },
-      });
     });
   });
 

@@ -40,7 +40,10 @@ const useStakeFlow = () => {
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });
 
-  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: "earn",
+  });
 
   const handleAccountSelected = useCallback(
     (

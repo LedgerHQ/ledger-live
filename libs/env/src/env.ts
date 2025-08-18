@@ -222,6 +222,11 @@ const envDefinitions = {
     def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
   },
+  SOLANA_VALIDATORS_SUMMARY_BASE_URL: {
+    parser: stringParser,
+    def: "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
+    desc: "base url for validators.app validator summary",
+  },
   SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://validators-solana.coin.ledger.com/api/v1/validators",

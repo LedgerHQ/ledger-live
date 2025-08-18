@@ -184,6 +184,9 @@ async function operationsFromHeight(
   return [state.accumulator, state.nextCursor || ""];
 }
 
-async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  return operationsFromHeight(address, pagination.minHeight || 0);
+async function operations(
+  address: string,
+  pagination: Pagination = { minHeight: 0, order: "asc" },
+): Promise<[Operation[], string]> {
+  return operationsFromHeight(address, pagination.minHeight);
 }

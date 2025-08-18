@@ -59,7 +59,9 @@ export function useCustomExchangeHandlers({
   return useMemo<WalletAPICustomHandlers>(() => {
     const ptxCustomHandlers = {
       "custom.close": () => {
-        navigation.popToTop();
+        navigation.getParent()?.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
       },
       "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
         const accountId = request.params?.accountId;
@@ -181,6 +183,14 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            let cancelCalled = false;
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
             const currentDevice = deviceRef.current || device; // Use ref value first
 
             navigation.navigate(NavigatorName.PlatformExchange, {
@@ -199,7 +209,7 @@ export function useCustomExchangeHandlers({
                 device: currentDevice,
                 onResult: result => {
                   if (result.error) {
-                    onCancel(result.error);
+                    safeOnCancel(result.error);
                     navigation.pop();
                     onCompleteError?.(result.error);
                   }

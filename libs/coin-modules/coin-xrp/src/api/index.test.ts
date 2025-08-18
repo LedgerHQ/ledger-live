@@ -277,7 +277,7 @@ describe("Testing craftTransaction function", () => {
     jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       });
     });
   });

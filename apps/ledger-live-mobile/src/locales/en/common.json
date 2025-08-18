@@ -306,6 +306,10 @@
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
+    "ReconnectionFailedError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
     "DeviceDisconnectedBeforeSendingApdu": {
       "title": "Device connection lost",
       "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
@@ -1301,7 +1305,8 @@
     "estimatedTime": {
       "slow": "≈ 2-3 min",
       "medium": "≈ 30 sec",
-      "fast": "≈ 15 sec"
+      "fast": "≈ 15 sec",
+      "custom": ""
     }
   },
   "signout": {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
       "price": {
         "title": "Price Alerts",
@@ -6247,6 +6252,7 @@
       "iWithdraw": "I withdraw",
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
       "stakeAvailableBalance": "Available balance",
