@@ -1,4 +1,5 @@
 import {
+  type Api,
   Balance,
   Block,
   BlockInfo,
@@ -11,7 +12,7 @@ import {
   Page,
   Stake,
   Reward,
-  type AlpacaApi,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
@@ -25,9 +26,10 @@ import {
   lastBlock,
   listOperations,
   getBalance,
+  getSequence,
 } from "../logic/index";
 
-export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): AlpacaApi {
+export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -41,7 +43,8 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+      customFees?: FeeEstimation,
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFees),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
@@ -60,6 +63,10 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Alpa
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getSequence: (address: string): Promise<number> => getSequence(currency, address),
+    validateIntent(_intent: TransactionIntent): Promise<TransactionValidation> {
+      throw new Error("validateIntent is not supported");
     },
   };
 }
