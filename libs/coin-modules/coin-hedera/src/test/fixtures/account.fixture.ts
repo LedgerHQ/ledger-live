@@ -6,7 +6,7 @@ import type {
   HederaResourcesRaw,
 } from "../../types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { getMockedCurrency, getMockedTokenCurrency } from "./currency";
+import { getMockedCurrency, getMockedTokenCurrency } from "./currency.fixture";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const defaultMockedCurrency = getMockedCurrency();

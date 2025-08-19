@@ -3,7 +3,7 @@ import {
   getMockedAccountRaw,
   mockHederaResources,
   mockHederaResourcesRaw,
-} from "../test/fixtures/account";
+} from "../test/fixtures/account.fixture";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,

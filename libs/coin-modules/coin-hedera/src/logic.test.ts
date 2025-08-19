@@ -7,9 +7,9 @@ import {
   isValidExtra,
   sendRecipientCanNext,
 } from "./logic";
-import { getMockedAccount, getMockedTokenAccount } from "./test/fixtures/account";
-import { getMockedOperation } from "./test/fixtures/operation";
-import { getMockedTokenCurrency } from "./test/fixtures/currency";
+import { getMockedAccount, getMockedTokenAccount } from "./test/fixtures/account.fixture";
+import { getMockedOperation } from "./test/fixtures/operation.fixture";
+import { getMockedTokenCurrency } from "./test/fixtures/currency.fixture";
 import { HEDERA_TRANSACTION_KINDS } from "./constants";
 
 describe("logic", () => {

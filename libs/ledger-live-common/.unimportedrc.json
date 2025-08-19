@@ -364,6 +364,7 @@
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
     "src/families/filecoin/utils.ts",
+    "src/families/hedera/constants.ts",
     "src/families/hedera/logic.ts",
     "src/families/internet_computer/consts.ts",
     "src/families/internet_computer/utils.ts",

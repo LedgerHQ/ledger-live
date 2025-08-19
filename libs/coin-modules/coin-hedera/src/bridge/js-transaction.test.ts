@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { createBridges } from ".";
-import { getMockedAccount } from "../test/fixtures/account";
-import { getMockedTransaction } from "../test/fixtures/transaction";
+import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { Transaction } from "../types";
 
 describe("js-transaction", () => {

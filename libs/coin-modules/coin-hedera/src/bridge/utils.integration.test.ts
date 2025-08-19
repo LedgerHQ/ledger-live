@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account";
-import { getMockedTransaction } from "../test/fixtures/transaction";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import {
   applyPendingExtras,
   calculateAmount,
@@ -19,12 +19,12 @@ import {
   getMockedCurrency,
   getMockedTokenCurrency,
   getTokenCurrencyFromCAL,
-} from "../test/fixtures/currency";
-import { getMockedOperation } from "../test/fixtures/operation";
+} from "../test/fixtures/currency.fixture";
+import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaOperationExtra } from "../types";
 import { getAccount } from "../api/mirror";
 import { isValidExtra } from "../logic";
-import { getMockedMirrorToken } from "../test/fixtures/mirror";
+import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
 
 jest.mock("../api/mirror");

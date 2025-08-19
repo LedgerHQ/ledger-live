@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { createBridges } from ".";
 import { getEstimatedFees } from "./utils";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account";
-import { getMockedTokenCurrency } from "../test/fixtures/currency";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 
 describe("js-estimateMaxSpendable", () => {
