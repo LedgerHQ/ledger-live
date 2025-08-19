@@ -1,7 +1,7 @@
 import "tsconfig-paths/register";
 import { globalSetup } from "detox/runners/jest";
 import { Subject, Subscription } from "rxjs";
-import { $TmsLink, Step, $Tag } from "jest-allure2-reporter/api";
+import { $TmsLink, Step, $Tag, allure } from "jest-allure2-reporter/api";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
@@ -16,6 +16,7 @@ import fs from "fs";
 import path from "path";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import { log } from "detox";
+import { Subscriber } from "rxjs";
 
 global.Step = Step;
 global.$TmsLink = $TmsLink;
@@ -49,6 +50,32 @@ process.once("exit", async () => {
   log.info("⚠️ Process exit. Running cleanup...");
   await cleanupSpeculos();
 });
+
+process.on("unhandledRejection", reason => {
+  const err = reason instanceof Error ? reason : new Error(String(reason));
+  logSilentError(err);
+});
+
+process.on("uncaughtException", err => {
+  logSilentError(err);
+});
+
+Subscriber.prototype.error = function (err: Error) {
+  logSilentError(err);
+};
+
+function logSilentError(err: Error) {
+  const errorMessage = `❌ Exception occurred during test → ${err.message}`;
+  log.error(errorMessage);
+  try {
+    allure.description(errorMessage);
+    allure.step(err.message, () => {
+      allure.status("failed", { message: err.message, trace: err.stack });
+    });
+  } catch (_) {
+    /* empty */
+  }
+}
 
 export default async function setup(): Promise<void> {
   // Validate .env.mock file
