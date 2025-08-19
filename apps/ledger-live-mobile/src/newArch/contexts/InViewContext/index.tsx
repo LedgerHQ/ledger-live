@@ -33,35 +33,20 @@ export function useInViewContext(
   }, [target, onInViewUpdateCb, addWatchedItem, removeWatchedItem]);
 }
 
-export function InViewProvider({
-  inViewThreshold = 0.5,
-  outOfViewThreshold = 0,
-  interval: intervalDuration = 200,
-  children,
-}: InViewOptions & { children: ReactNode }) {
-  const dispatch = useDispatch();
-
-  const items = useRef<WatchedItem[]>([]);
-  const hasItems = useSelector(inViewHasItemsSelector);
-
-  const addWatchedItem = useCallback(
-    (item: WatchedItem) => {
-      if (items.current.length === 0) dispatch(inViewSetHasItems(true));
-      items.current.push(item);
-    },
-    [dispatch],
-  );
-  const removeWatchedItem = useCallback(
-    (item: WatchedItem) => {
-      const index = items.current.indexOf(item);
-      if (index === -1) return;
-      items.current.splice(index, 1);
-      if (items.current.length === 0) dispatch(inViewSetHasItems(false));
-    },
-    [dispatch],
-  );
-
+function Effect({
+  intervalDuration,
+  inViewThreshold,
+  itemsRef,
+  outOfViewThreshold,
+}: {
+  intervalDuration: number;
+  inViewThreshold: number;
+  itemsRef: React.MutableRefObject<WatchedItem[]>;
+  outOfViewThreshold: number;
+}) {
   const watchedItem = useRef(new WeakMap<WatchedItem, boolean>());
+
+  const hasItems = useSelector(inViewHasItemsSelector);
 
   useEffect(() => {
     if (!hasItems) return;
@@ -72,7 +57,7 @@ export function InViewProvider({
         concatMap(() =>
           from(
             Promise.all(
-              items.current.map(async item => {
+              itemsRef.current.map(async item => {
                 const threshold = watchedItem.current.get(item)
                   ? outOfViewThreshold
                   : inViewThreshold;
@@ -92,10 +77,50 @@ export function InViewProvider({
         });
       });
     return () => subscription.unsubscribe();
-  }, [hasItems, inViewThreshold, outOfViewThreshold, intervalDuration]);
+  }, [hasItems, inViewThreshold, outOfViewThreshold, intervalDuration, itemsRef]);
+
+  return null;
+}
+
+export function InViewProvider({
+  inViewThreshold = 0.5,
+  outOfViewThreshold = 0,
+  intervalDuration = 200,
+  children,
+}: InViewOptions & { children: ReactNode }) {
+  const dispatch = useDispatch();
+
+  const itemsRef = useRef<WatchedItem[]>([]);
+
+  const addWatchedItem = useCallback(
+    (item: WatchedItem) => {
+      if (itemsRef.current.length === 0) {
+        dispatch(inViewSetHasItems(true));
+      }
+      itemsRef.current.push(item);
+    },
+    [dispatch],
+  );
+  const removeWatchedItem = useCallback(
+    (item: WatchedItem) => {
+      const index = itemsRef.current.indexOf(item);
+      if (index === -1) return;
+      itemsRef.current.splice(index, 1);
+      if (itemsRef.current.length === 0) {
+        dispatch(inViewSetHasItems(false));
+      }
+    },
+    [dispatch],
+  );
 
   return (
     <InViewContext.Provider value={{ addWatchedItem, removeWatchedItem }}>
+      <Effect
+        intervalDuration={intervalDuration}
+        inViewThreshold={inViewThreshold}
+        itemsRef={itemsRef}
+        outOfViewThreshold={outOfViewThreshold}
+      />
       {children}
     </InViewContext.Provider>
   );
