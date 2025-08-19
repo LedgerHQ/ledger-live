@@ -1,4 +1,4 @@
-import { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
+import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { ethers, BigNumber } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
@@ -25,10 +25,22 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: AlpacaApi;
+  let module: Api;
 
   beforeAll(() => {
     module = createApi(config as EvmConfig, "ethereum");
+  });
+
+  describe("getSequence", () => {
+    it("returns 0 as next sequence for a pristine account", async () => {
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+    });
+
+    it("returns next sequence for an address", async () => {
+      expect(
+        await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
+      ).toBeGreaterThanOrEqual(17);
+    });
   });
 
   describe("lastBlock", () => {
