@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/dummy-wallet-app",
-  "version": "0.6.15",
+  "version": "0.6.16-hotfix.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",

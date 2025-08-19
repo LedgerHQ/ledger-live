@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.124.1-hotfix.0
+
+### Patch Changes
+
+- [#11371](https://github.com/LedgerHQ/ledger-live/pull/11371) [`b88c3f7`](https://github.com/LedgerHQ/ledger-live/commit/b88c3f77f919b6ecc80481a8f812f4a989520e13) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fixes infinite loop for untracked users with (partially) expired braze campaigns
+
+- Updated dependencies [[`b88c3f7`](https://github.com/LedgerHQ/ledger-live/commit/b88c3f77f919b6ecc80481a8f812f4a989520e13)]:
+  - @ledgerhq/live-common@34.44.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.8.4-hotfix.0
+
 ## 2.124.0
 
 ### Minor Changes
