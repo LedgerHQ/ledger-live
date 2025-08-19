@@ -2135,27 +2135,6 @@
         "learnHowToUpdate": "Learn how to update"
       }
     },
-    "stepImportAccounts": {
-      "title": "Sync crypto from desktop",
-      "desc": "If you already have your crypto set up in the Ledger desktop app, you can sync them to manage them from your phone.",
-      "cta": "I’m ready to scan",
-      "bullets": {
-        "0": {
-          "label": "On the Desktop app, select\n<1>Settings > Accounts > Account export</1>."
-        },
-        "1": {
-          "label": "Scan the LiveQR code with your phone."
-        },
-        "2": {
-          "label": "Select the crypto accounts to import."
-        }
-      },
-      "warning": {
-        "title": "Your desktop and mobile apps must be synced manually.",
-        "desc": "Ledger Live respects your privacy and stores your data locally. If you change accounts and settings on your phone, you will need to do the same on your computer, and vice versa. Your transactions stay synchronized with the blockchain.",
-        "cta": "Got it!"
-      }
-    },
     "stepSetupPin": {
       "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
       "step1-nanoS": "Connect your {{fullDeviceName}} to your phone using an OTG cable.",

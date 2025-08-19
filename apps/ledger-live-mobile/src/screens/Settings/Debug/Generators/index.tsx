@@ -1,11 +1,9 @@
 import React, { useCallback } from "react";
-import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
-import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
@@ -103,10 +101,7 @@ export default function Generators() {
       </FeatureToggle>
 
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
-      <ImportBridgeStreamData
-        title="Import .env BRIDGESTREAM_DATA"
-        dataStr={config.BRIDGESTREAM_DATA as string}
-      />
+
       <Flex p={6}>
         <Alert
           type="error"

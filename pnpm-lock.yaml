@@ -283,9 +283,6 @@ importers:
       qrcode-terminal:
         specifier: 0.12.0
         version: 0.12.0
-      qrloop:
-        specifier: 1.4.1
-        version: 1.4.1
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -552,9 +549,6 @@ importers:
       qrcode:
         specifier: 1.5.3
         version: 1.5.3
-      qrloop:
-        specifier: 1.4.1
-        version: 1.4.1
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1210,9 +1204,6 @@ importers:
       prop-types:
         specifier: 15.8.1
         version: 15.8.1
-      qrloop:
-        specifier: 1.4.1
-        version: 1.4.1
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -8386,15 +8377,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:*
         version: link:../coin-framework
-      '@ledgerhq/compressjs':
-        specifier: github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
-        version: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/devices
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:*
         version: link:../ledger-key-ring-protocol
@@ -14369,11 +14354,6 @@ packages:
 
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
-
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
-    version: 1.3.1
-    hasBin: true
 
   '@ledgerhq/context-module@0.0.0-apex-support-20250721132630':
     resolution: {integrity: sha512-YvykzbfpUImbcTMWchtuuJ/jA0NnBT79rxocy4ZSL/JeK44cUGC55HJ5+Y59GI8qrOQb1v/qyhjJEXyKf4qgjA==}
@@ -30359,9 +30339,6 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  qrloop@1.4.1:
-    resolution: {integrity: sha512-LXkwCl1Qd8imTHb+KqjMn+cHmuncyFT81AXoooWJvbG3+g9q61l9udSRPgY4cgl+5goQHuAK4teEdUF6UErYXw==}
-
   qs@6.11.0:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
     engines: {node: '>=0.6'}
@@ -43513,10 +43490,6 @@ snapshots:
       - supports-color
 
   '@kwsites/promise-deferred@1.1.1': {}
-
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
-    dependencies:
-      commander: 2.20.3
 
   '@ledgerhq/context-module@0.0.0-apex-support-20250721132630(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.1))':
     dependencies:
@@ -67699,11 +67672,6 @@ snapshots:
       encode-utf8: 1.0.3
       pngjs: 5.0.0
       yargs: 15.4.1
-
-  qrloop@1.4.1:
-    dependencies:
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      md5: 2.3.0
 
   qs@6.11.0:
     dependencies:
