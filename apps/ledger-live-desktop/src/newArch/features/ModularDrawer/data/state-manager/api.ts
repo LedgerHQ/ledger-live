@@ -47,6 +47,7 @@ export const assetsDataApi = createApi({
         url: "assets",
         ...(cursor && { params: { cursor } }),
         ...(search && { params: { search } }),
+        pageSize: 100,
       }),
       providesTags: [AssetsDataTags.Assets],
       transformResponse: transformAssetsResponse,
