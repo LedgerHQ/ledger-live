@@ -1,9 +1,12 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
 
 describe("createApi", () => {
+  // NOTE: as our aptos nodes and indexer whitelist calls, we need to explicitely set the LEDGER_CLIENT_VERSION
+  // in turn it will be used in the headers of those api calls.
+  setEnvUnsafe("LEDGER_CLIENT_VERSION", "lld/2.124.0-dev");
   const api = createApi({
     aptosSettings: {
       network: Network.MAINNET,
