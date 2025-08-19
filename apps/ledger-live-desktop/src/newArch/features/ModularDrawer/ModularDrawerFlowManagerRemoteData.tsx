@@ -38,7 +38,10 @@ const ModularDrawerFlowManagerRemoteData = ({
   const [searchedValue, setSearchedValue] = useState<string>();
   const { assetsConfiguration, networkConfiguration } =
     useModularDrawerConfiguration(drawerConfiguration);
-  const { data, isLoading, isSuccess, error } = useAssetsData({ search: searchedValue });
+  const { data, isLoading, isSuccess, error } = useAssetsData({
+    search: searchedValue,
+    currencyIds: currencies.map(currency => currency.id),
+  });
   const assetsSorted = data?.currenciesOrder.metaCurrencyIds
     .filter(currencyId => data?.cryptoAssets[currencyId])
     .map(currencyId => ({

@@ -10,6 +10,7 @@ export enum AssetsDataTags {
 export interface GetAssetsDataParams {
   cursor?: string;
   search?: string;
+  currencyIds?: string[];
 }
 
 export interface AssetsDataWithPagination extends AssetsData {
@@ -43,11 +44,14 @@ export const assetsDataApi = createApi({
   tagTypes: [AssetsDataTags.Assets],
   endpoints: build => ({
     getAssetsData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
-      query: ({ cursor, search }) => ({
+      query: ({ cursor, search, currencyIds }) => ({
         url: "assets",
-        ...(cursor && { params: { cursor } }),
-        ...(search && { params: { search } }),
-        pageSize: 100,
+        params: {
+          ...(cursor && { cursor }),
+          ...(search && { search }),
+          ...(currencyIds && currencyIds.length > 0 && { currencyIds }),
+          pageSize: 100,
+        },
       }),
       providesTags: [AssetsDataTags.Assets],
       transformResponse: transformAssetsResponse,
