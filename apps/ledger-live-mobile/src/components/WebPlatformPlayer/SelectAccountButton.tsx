@@ -33,7 +33,10 @@ export default function SelectAccountButton({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
   });
 
-  const canOpenModularDrawer = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+  const canOpenModularDrawer = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: manifest.id,
+  });
 
   const { openDrawer } = useModularDrawerController();
 

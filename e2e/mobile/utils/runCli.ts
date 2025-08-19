@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import path from "path";
+import type { LiveDataOpts } from "./cliUtils";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -10,11 +11,15 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * Executes a command in the CLI with given arguments.
- * @param {string} command - The command and its arguments as a single string.
- * @returns {Promise<string>} - Resolves with the output of the command or rejects on failure.
- */
+function extractFlagValue<K extends keyof LiveDataOpts>(
+  command: string,
+  flag: K,
+): string | undefined {
+  const parts = command.split("+");
+  const idx = parts.findIndex(p => p === `--${flag}`);
+  return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
+}
+
 export function runCliCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
@@ -35,7 +40,18 @@ export function runCliCommand(command: string): Promise<string> {
       if (code === 0) {
         resolve(output);
       } else {
-        reject(new Error(`CLI command failed with exit code ${code}: ${errorOutput}`));
+        const currency = extractFlagValue(command, "currency");
+        const index = extractFlagValue(command, "index");
+        const indexText = index && index !== "undefined" ? index : "N/A";
+
+        const errorDetails = [
+          `❌ Failed to setup account.`,
+          `💱 Currency: ${currency}`,
+          `🔢 Index: ${indexText}`,
+          errorOutput ? `🧾 CLI Error: ${errorOutput.trim()}` : "",
+        ].join("\n");
+
+        reject(new Error(errorDetails));
       }
     });
 
@@ -45,32 +61,32 @@ export function runCliCommand(command: string): Promise<string> {
   });
 }
 
-/**
- * Executes a CLI command with retries on failure.
- *
- * @param command The CLI command string (args joined by '+').
- * @param retries How many times to retry on failure (default 3).
- * @param delayMs How long to wait between retries in ms (default 1000).
- */
 export async function runCliCommandWithRetry(
   command: string,
   retries = 5,
-  delayMs = 1000,
+  delayMs = 2000,
 ): Promise<string> {
   let lastError: Error | null = null;
+
+  const currency = extractFlagValue(command, "currency");
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       return await runCliCommand(command);
-    } catch (err: any) {
+    } catch (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      err: any
+    ) {
       lastError = err;
-      const willRetry = attempt < retries && /status code 503/.test(err.message);
+      const willRetry = attempt < retries;
 
       if (!willRetry) {
         throw err;
       }
 
-      console.warn(`CLI attempt ${attempt} failed with 503 – retrying in ${delayMs}ms…`);
+      console.warn(
+        `⚠️ CLI attempt ${attempt} / ${currency} failed while trying to setup test account – retrying in ${delayMs}ms…`,
+      );
       await sleep(delayMs);
     }
   }

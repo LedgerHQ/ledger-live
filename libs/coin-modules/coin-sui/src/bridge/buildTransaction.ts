@@ -1,6 +1,7 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction } from "../logic";
-import { toSuiAsset } from "../network/sdk";
+import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
 
 /**
  * @param {Account} account
@@ -8,13 +9,17 @@ import { toSuiAsset } from "../network/sdk";
  */
 export const buildTransaction = async (
   account: SuiAccount,
-  { recipient, mode, amount, coinType }: Transaction,
+  { amount, mode, recipient, subAccountId }: Transaction,
 ) => {
+  const { freshAddress } = account;
+  const subAccount = findSubAccountById(account, subAccountId ?? "");
+  const asset = toSuiAsset(subAccount?.token.contractAddress ?? DEFAULT_COIN_TYPE);
+
   return craftTransaction({
-    sender: account.freshAddress,
-    recipient,
-    type: mode,
     amount: BigInt(amount.toString()),
-    asset: toSuiAsset(coinType),
+    asset,
+    recipient,
+    sender: freshAddress,
+    type: mode,
   });
 };

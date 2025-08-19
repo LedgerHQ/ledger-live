@@ -3,116 +3,77 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Theme } from "@ledgerhq/react-ui";
 
-// NANO S
-// @ts-ignore
 import NANO_S_LIGHT_plugAndPinCode from "~/renderer/animations/nanoS/1PlugAndPinCode/light.json";
-// @ts-ignore
 import NANO_S_DARK_plugAndPinCode from "~/renderer/animations/nanoS/1PlugAndPinCode/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_enterPinCode from "~/renderer/animations/nanoS/3EnterPinCode/light.json";
-// @ts-ignore
 import NANO_S_DARK_enterPinCode from "~/renderer/animations/nanoS/3EnterPinCode/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_quitApp from "~/renderer/animations/nanoS/4QuitApp/light.json";
-// @ts-ignore
 import NANO_S_DARK_quitApp from "~/renderer/animations/nanoS/4QuitApp/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_openApp from "~/renderer/animations/nanoS/6OpenApp/light.json";
-// @ts-ignore
 import NANO_S_DARK_openApp from "~/renderer/animations/nanoS/6OpenApp/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_validate from "~/renderer/animations/nanoS/7Validate/light.json";
-// @ts-ignore
 import NANO_S_DARK_validate from "~/renderer/animations/nanoS/7Validate/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_firmwareUpdating from "~/renderer/animations/nanoS/2FirmwareUpdating/light.json";
-// @ts-ignore
 import NANO_S_DARK_firmwareUpdating from "~/renderer/animations/nanoS/2FirmwareUpdating/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_installLoading from "~/renderer/animations/nanoS/8InstallLoading/light.json";
-// @ts-ignore
 import NANO_S_DARK_installLoading from "~/renderer/animations/nanoS/8InstallLoading/dark.json";
-// @ts-ignore
+
 import NANO_X_LIGHT_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/light.json";
-// @ts-ignore
 import NANO_X_DARK_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/dark.json";
-// @ts-ignore
+
 import BLUE_LIGHT_plugAndPinCode from "~/renderer/animations/blue/1PlugAndPinCode/data.json";
-// @ts-ignore
 import BLUE_LIGHT_enterPinCode from "~/renderer/animations/blue/3EnterPinCode/data.json";
-// @ts-ignore
 import BLUE_LIGHT_quitApp from "~/renderer/animations/blue/4QuitApp/data.json";
-// @ts-ignore
 import BLUE_LIGHT_allowManager from "~/renderer/animations/blue/5AllowManager/data.json";
-// @ts-ignore
 import BLUE_LIGHT_openApp from "~/renderer/animations/blue/6OpenApp/data.json";
-// @ts-ignore
 import BLUE_LIGHT_validate from "~/renderer/animations/blue/7Validate/data.json";
-// @ts-ignore
+
 import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess.json";
-// @ts-ignore
 import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
 
-/**
- * ⬆️ The imports above are old assets used somewhere and no new assets to replace them ⬆️
- */
+/* ⬆️ The imports above are old assets used somewhere and no new assets to replace them ⬆️ */
 
-// @ts-ignore
-import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
-// @ts-ignore
-import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
-// @ts-ignore
-import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
-// @ts-ignore
-import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
-
-// @ts-ignore
-import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
-// @ts-ignore
-import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
-// @ts-ignore
-import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
-// @ts-ignore
-import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
-
-// @ts-ignore
 import NANOX_DARK_PIN from "~/renderer/animations/nanoX/dark/pin.json";
-// // @ts-ignore
-// import NANOX_DARK_PAIRING from "~/renderer/animations/nanoX/dark/pairing.json";
-// @ts-ignore
 import NANOX_DARK_PAIRED from "~/renderer/animations/nanoX/dark/paired.json";
-// @ts-ignore
 import NANOX_DARK_CONTINUE from "~/renderer/animations/nanoX/dark/continue.json";
-// @ts-ignore
 import NANOX_LIGHT_PIN from "~/renderer/animations/nanoX/light/pin.json";
-// // @ts-ignore
-// import NANOX_LIGHT_PAIRING from "~/renderer/animations/nanoX/light/pairing.json";
-// @ts-ignore
 import NANOX_LIGHT_PAIRED from "~/renderer/animations/nanoX/light/paired.json";
-// @ts-ignore
 import NANOX_LIGHT_CONTINUE from "~/renderer/animations/nanoX/light/continue.json";
 
-// @ts-ignore
 import NANOSP_DARK_PIN from "~/renderer/animations/nanoSP/dark/pin.json";
-// @ts-ignore
 import NANOSP_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.json";
-// @ts-ignore
 import NANOSP_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
-// @ts-ignore
 import NANOSP_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
 
-// Flex onboarding success animation
-import FLEX_LIGHT_ONBOARDING_SUCCESS from "~/renderer/animations/flex/light/onboardingSuccess.json";
-import FLEX_DARK_ONBOARDING_SUCCESS from "~/renderer/animations/flex/dark/onboardingSuccess.json";
+import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
+import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
+import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
+import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
 
-import FLEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/light/confirmLockscreen.json";
-import FLEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/dark/confirmLockscreen.json";
+import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
+import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
+import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
+import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
 
+import APEX_DARK_PIN from "~/renderer/animations/apex/dark/pin.json";
+import APEX_DARK_CONTINUE from "~/renderer/animations/apex/dark/continue.json";
+import APEX_LIGHT_PIN from "~/renderer/animations/apex/light/pin.json";
+import APEX_LIGHT_CONTINUE from "~/renderer/animations/apex/light/continue.json";
+
+// Onboarding Success, all of these should be removed in the future
 import STAX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/light/frame.json";
 import STAX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/dark/frame.json";
 
-/* eslint-enable camelcase */
+import FLEX_LIGHT_ONBOARDING_SUCCESS from "~/renderer/animations/flex/light/onboardingSuccess.json";
+import FLEX_DARK_ONBOARDING_SUCCESS from "~/renderer/animations/flex/dark/onboardingSuccess.json";
+import FLEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/light/confirmLockscreen.json";
+import FLEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/dark/confirmLockscreen.json";
+
+import APEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/apex/light/confirmLockscreen.json";
+import APEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/apex/dark/confirmLockscreen.json";
+
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
+
 export type AnimationKey =
   | "plugAndPinCode"
   | "enterPinCode"
@@ -380,60 +341,54 @@ const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
   },
 };
 
-const apex: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
+const apex: DeviceAnimations = {
   plugAndPinCode: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
   },
   enterPinCode: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
   },
   quitApp: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   allowManager: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   openApp: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   verify: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   sign: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   firmwareUpdating: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
   },
   installLoading: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
-  // Keep
   confirmLockscreen: {
-    light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
-    dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
+    light: APEX_LIGHT_CONFIRM_LOCKSCREEN,
+    dark: APEX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  // Keep
-  onboardingSuccess: {
-    light: FLEX_LIGHT_ONBOARDING_SUCCESS,
-    dark: FLEX_DARK_ONBOARDING_SUCCESS,
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
   },
 };
 

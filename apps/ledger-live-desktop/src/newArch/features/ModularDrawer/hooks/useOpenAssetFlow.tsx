@@ -2,7 +2,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -48,7 +48,7 @@ function selectCurrency(
 }
 
 export function useOpenAssetFlow(
-  modularDrawerLocation: ModularDrawerLocation,
+  modularDrawerVisibleParams: ModularDrawerVisibleParams,
   source: string,
   modalNameToReopen?: keyof GlobalModalData,
 ) {
@@ -63,10 +63,10 @@ export function useOpenAssetFlow(
     setDrawer();
     trackModularDrawerEvent("button_clicked", {
       button: "Close",
-      flow: modularDrawerLocation,
+      flow: modularDrawerVisibleParams.location,
       page: currentRouteNameRef.current ?? "Unknown",
     });
-  }, [modularDrawerLocation, trackModularDrawerEvent]);
+  }, [modularDrawerVisibleParams.location, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
     (
@@ -124,11 +124,11 @@ export function useOpenAssetFlow(
 
   const openAssetFlow = useCallback(
     (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
-      if (isModularDrawerVisible(modularDrawerLocation)) {
+      if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         selectCurrency(
           openAddAccountFlow,
           source,
-          modularDrawerLocation,
+          modularDrawerVisibleParams.location,
           undefined,
           includeTokens,
           undefined,
@@ -148,7 +148,7 @@ export function useOpenAssetFlow(
       handleClose,
       isModularDrawerVisible,
       modalNameToReopen,
-      modularDrawerLocation,
+      modularDrawerVisibleParams,
       openAddAccountFlow,
       source,
     ],

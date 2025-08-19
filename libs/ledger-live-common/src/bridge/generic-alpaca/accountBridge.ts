@@ -15,10 +15,7 @@ import { createTransaction } from "./createTransaction";
 import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 
-export function getAlpacaAccountBridge(
-  network: string,
-  kind: "local" | "remote",
-): AccountBridge<any> {
+export function getAlpacaAccountBridge(network: string, kind: string): AccountBridge<any> {
   const signer = getSigner(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind) }),

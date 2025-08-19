@@ -44,7 +44,7 @@ export async function craftTransaction(
   transaction: {
     recipient: string;
     amount: bigint;
-    fee: bigint;
+    fees: bigint;
     destinationTag?: number | null | undefined;
     memos?: MemoInput[] | undefined;
   },
@@ -58,7 +58,7 @@ export async function craftTransaction(
     Account: account.address,
     Amount: transaction.amount.toString(),
     Destination: transaction.recipient,
-    Fee: transaction.fee.toString(),
+    Fee: transaction.fees.toString(),
     Flags: 2147483648,
     Sequence: account.nextSequenceNumber,
     LastLedgerSequence: (await getLedgerIndex()) + LEDGER_OFFSET,

@@ -565,7 +565,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "bsc",
     coinType: CoinType.ETH,
-    name: "Binance Smart Chain",
+    name: "BNB Chain",
     managerAppName: "Ethereum",
     ticker: "BNB",
     scheme: "bsc",

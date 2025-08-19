@@ -21,9 +21,22 @@ describe("buildTransaction", () => {
   it("returns unsigned tx bytes for given tx with USDT coin type and can decode coinType from unsigned", async () => {
     // GIVEN
     const account = createFixtureAccount({
+      id: "parentAccountId",
       freshAddress: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
+      subAccounts: [
+        createFixtureAccount({
+          id: "subAccountId",
+          parentId: "parentAccountId",
+          type: "TokenAccount",
+          token: {
+            contractAddress:
+              "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT",
+          },
+        }),
+      ],
     });
     const transaction = createFixtureTransaction({
+      subAccountId: "subAccountId",
       coinType: "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT",
       amount: BigNumber(1),
     });

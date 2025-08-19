@@ -93,7 +93,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { isModularDrawerVisible } = useModularDrawerVisibility({
       modularDrawerFeatureFlagKey: "lldModularDrawer",
     });
-    const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+    const modularDrawerVisible = isModularDrawerVisible({
+      location: ModularDrawerLocation.LIVE_APP,
+      liveAppId: manifest.id,
+    });
 
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
