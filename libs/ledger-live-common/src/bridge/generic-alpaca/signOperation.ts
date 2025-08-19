@@ -13,6 +13,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 
 /**
@@ -144,7 +145,9 @@ export const genericSignOperation =
           signedInfo.publicKey,
         );
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
-
+        if (!operation.id) {
+          log("Generic alpaca", "buildOptimisticOperation", operation);
+        }
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({

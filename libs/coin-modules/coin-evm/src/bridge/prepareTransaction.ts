@@ -8,6 +8,7 @@ import { getAdditionalLayer2Fees, isNftTransaction } from "../logic";
 import { getTransactionData, getTypedTransaction } from "../transaction";
 import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "../types";
 import { DEFAULT_NONCE, getEstimatedFees } from "../utils";
+import { getSequence } from "../logic/index";
 import { validateRecipient } from "./getTransactionStatus";
 
 /**
@@ -259,13 +260,11 @@ export const prepareForSignOperation = async ({
   transaction: EvmTransaction;
   isValidNonce?: boolean;
 }): Promise<EvmTransaction> => {
-  const nodeApi = getNodeApi(account.currency);
-
   const isValidNonce = transaction.nonce !== DEFAULT_NONCE;
 
   const nonce = isValidNonce
     ? transaction.nonce
-    : await nodeApi.getTransactionCount(account.currency, account.freshAddress);
+    : await getSequence(account.currency, account.freshAddress);
 
   if (isNftTransaction(transaction)) {
     return {

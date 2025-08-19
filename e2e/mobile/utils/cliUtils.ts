@@ -14,8 +14,8 @@ import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
 
-type LiveDataOpts = {
-  currency?: string;
+export type LiveDataOpts = {
+  currency: string;
   index?: number;
   scheme?: string;
   appjson?: string;
