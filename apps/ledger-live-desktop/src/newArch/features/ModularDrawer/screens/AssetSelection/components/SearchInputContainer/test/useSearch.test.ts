@@ -10,11 +10,15 @@ describe("useSearch", () => {
     { name: "Ethereum", ticker: "ETH", id: "ethereum", type: "CryptoCurrency" },
     { name: "Solana", ticker: "SOL", id: "solana", type: "CryptoCurrency" },
     { name: "Tether", ticker: "USDT", id: "tether", type: "TokenCurrency" },
+    { name: "Cosmos", ticker: "ATOM", id: "cosmos", type: "CryptoCurrency" },
+    { name: "Binance-Peg Cosmos Token", ticker: "ATOM", id: "bsc/bep20/binance-peg_cosmos_token", type: "TokenCurrency" },
   ] as CryptoOrTokenCurrency[];
 
   const mockAssetsToDisplay = [
     { name: "Bitcoin", ticker: "BTC", id: "bitcoin", type: "CryptoCurrency" },
     { name: "Ethereum", ticker: "ETH", id: "ethereum", type: "CryptoCurrency" },
+    { name: "Cosmos", ticker: "ATOM", id: "cosmos", type: "CryptoCurrency" },
+    { name: "Binance-Peg Cosmos Token", ticker: "ATOM", id: "bsc/bep20/binance-peg_cosmos_token", type: "TokenCurrency" },
   ] as CryptoOrTokenCurrency[];
 
   const mockSetItemsToDisplay = jest.fn();
@@ -150,5 +154,27 @@ describe("useSearch", () => {
         market_trend: false,
       },
     });
+  });
+
+  it("should match tokens with names containing the search term in the middle", () => {
+    const { result } = renderHook(() => useSearch(defaultProps));
+
+    act(() => {
+      result.current.handleSearch("Cosmos");
+    });
+
+    act(() => {
+      result.current.handleDebouncedChange("Cosmos", "");
+    });
+
+    expect(result.current.displayedValue).toBe("Cosmos");
+    // Verify that both "Cosmos" and "Binance-Peg Cosmos Token" are matched
+    expect(mockSetItemsToDisplay).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Cosmos", ticker: "ATOM" }),
+        expect.objectContaining({ name: "Binance-Peg Cosmos Token", ticker: "ATOM" }),
+      ])
+    );
+    expect(mockSetSearchedValue).toHaveBeenCalledWith("Cosmos");
   });
 });

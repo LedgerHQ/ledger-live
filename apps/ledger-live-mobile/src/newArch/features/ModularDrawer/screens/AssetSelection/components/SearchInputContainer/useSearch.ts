@@ -31,7 +31,7 @@ export type SearchResult = {
 
 const FUSE_OPTIONS = {
   includeScore: false,
-  threshold: 0.1,
+  threshold: 0.3,
   keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
   shouldSort: false,
 };

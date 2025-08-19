@@ -19,7 +19,7 @@ const TRACK_PAGE_NAME = "Asset/Network selection";
 
 const options = {
   includeScore: false,
-  threshold: 0.1,
+  threshold: 0.3,
   // Search in `ticker`, `name`, `keywords` values
   keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
   shouldSort: false,
