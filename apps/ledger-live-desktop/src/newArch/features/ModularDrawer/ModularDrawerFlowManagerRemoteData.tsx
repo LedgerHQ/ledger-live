@@ -65,10 +65,13 @@ const ModularDrawerFlowManagerRemoteData = ({
       providerId: assetData.asset.id,
     }));
   }, [assetsSorted, data]);
-  const sortedCryptoCurrencies = useMemo(
-    () => (assetsSorted || []).map(assetData => data?.cryptoOrTokenCurrencies[assetData.asset.id]),
-    [assetsSorted, data?.cryptoOrTokenCurrencies],
-  );
+  const sortedCryptoCurrencies = useMemo(() => {
+    if (!assetsSorted || !data) return [];
+
+    return assetsSorted
+      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
+      .filter(currency => currency !== undefined);
+  }, [assetsSorted, data]);
 
   const {
     assetsToDisplay,
