@@ -12,8 +12,7 @@ const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
 const START_WORKFLOW_ID = "workflows/161487603/dispatches";
 const STOP_WORKFLOW_ID = "workflows/161487604/dispatches";
 const GITHUB_REF = "main";
-export const getSpeculosAddress = (runId: string) =>
-  `https://${runId}.speculos.aws.stg.ldg-tech.com`;
+const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg.ldg-tech.com`;
 const speculosPort = 443;
 
 function uniqueId(): string {
@@ -67,10 +66,14 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-export function waitForSpeculosReady(url: string, { interval = 2_000, timeout = 150_000 } = {}) {
+export function waitForSpeculosReady(
+  deviceId: string,
+  { interval = 2_000, timeout = 150_000 } = {},
+) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     let currentRequest: ReturnType<typeof https.get> | null = null;
+    const url = getSpeculosAddress(deviceId);
 
     function cleanup() {
       if (currentRequest) {

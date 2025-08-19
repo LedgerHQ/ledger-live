@@ -1,8 +1,6 @@
 import { spawn } from "child_process";
 import path from "path";
 import type { LiveDataOpts } from "./cliUtils";
-import { isRemoteIos } from "../helpers/commonHelpers";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
 const scriptPath = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
@@ -69,21 +67,16 @@ export function runCliCommand(command: string, speculosAddress?: string): Promis
 
 export async function runCliCommandWithRetry(
   command: string,
-  speculosAddress?: string,
   retries = 5,
   delayMs = 2000,
 ): Promise<string> {
   let lastError: Error | null = null;
 
-  if (isRemoteIos() && speculosAddress) {
-    await waitForSpeculosReady(speculosAddress);
-  }
-
   const currency = extractFlagValue(command, "currency");
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await runCliCommand(command, speculosAddress);
+      return await runCliCommand(command);
     } catch (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       err: any
