@@ -248,14 +248,6 @@ const linkingOptions = () => ({
               [ScreenName.Newsfeed]: "newsfeed",
             },
           },
-          [NavigatorName.ImportAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://ScanAccounts"
-               */
-              [ScreenName.ScanAccounts]: "scan-accounts",
-            },
-          },
           [NavigatorName.LandingPages]: {
             screens: {
               /**
