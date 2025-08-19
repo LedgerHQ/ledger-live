@@ -262,7 +262,8 @@
       "@shopify/react-native-performance": "patches/@shopify__react-native-performance.patch",
       "react-native-webview": "patches/react-native-webview.patch",
       "detox@20.39.0": "patches/detox@20.39.0.patch",
-      "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch"
+      "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
+      "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
