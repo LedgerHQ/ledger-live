@@ -4,12 +4,10 @@ import { Alert } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
-import { useDispatch, useSelector } from "react-redux";
-import { accountsSelector } from "~/reducers/accounts";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { useDispatch } from "react-redux";
+import { replaceAccounts } from "~/actions/accounts";
 
 const generateMockAccounts = (count: number) =>
   Array(count)
@@ -19,14 +17,6 @@ const generateMockAccounts = (count: number) =>
         currency: sample(listSupportedCurrencies()),
       });
     });
-
-const createAccountAction = (mockAccounts: Account[], existingAccounts: Account[]) =>
-  addAccountsAction({
-    existingAccounts,
-    scannedAccounts: mockAccounts,
-    selectedIds: mockAccounts.map(acc => acc.id),
-    renamings: {},
-  });
 
 export default function GenerateMockAccountsButton({
   count,
@@ -38,7 +28,6 @@ export default function GenerateMockAccountsButton({
   count: number;
 }) {
   const dispatch = useDispatch();
-  const existingAccounts = useSelector(accountsSelector);
 
   return (
     <SettingsRow
@@ -58,9 +47,8 @@ export default function GenerateMockAccountsButton({
               text: "Ok",
               onPress: () => {
                 const mockAccounts = generateMockAccounts(count);
-                const action = createAccountAction(mockAccounts, existingAccounts);
 
-                dispatch(action);
+                dispatch(replaceAccounts(mockAccounts));
                 dispatch(reboot());
               },
             },
