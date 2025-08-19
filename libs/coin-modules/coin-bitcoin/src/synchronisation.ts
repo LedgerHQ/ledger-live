@@ -189,19 +189,19 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const walletNetwork = toWalletNetwork(currency.id);
     const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-    const walletAccount =
-      initialAccount?.bitcoinResources?.walletAccount ||
-      (await wallet.generateAccount(
-        {
-          xpub,
-          path: rootPath,
-          index,
-          currency: <Currency>currency.id,
-          network: walletNetwork,
-          derivationMode: walletDerivationMode,
-        },
-        currency,
-      ));
+    const walletAccount = initialAccount?.bitcoinResources?.walletAccount
+      ? await wallet.importFromSerializedAccount(initialAccount.bitcoinResources.walletAccount)
+      : await wallet.generateAccount(
+          {
+            xpub,
+            path: rootPath,
+            index,
+            currency: currency.id as unknown as Currency,
+            network: walletNetwork,
+            derivationMode: walletDerivationMode,
+          },
+          currency,
+        );
 
     const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
@@ -234,6 +234,9 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
 
+    // Serialize the live account before returning
+    const serializedWalletAccount = await wallet.exportToSerializedAccount(walletAccount);
+
     return {
       id: accountId,
       xpub,
@@ -246,7 +249,8 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       blockHeight,
       bitcoinResources: {
         utxos,
-        walletAccount,
+        walletAccount: serializedWalletAccount,
+        // walletAccount: { ...walletAccount },
       },
     };
   };

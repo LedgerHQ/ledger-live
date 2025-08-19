@@ -67,14 +67,18 @@ export function fromBitcoinOutputRaw([
 export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw {
   return {
     utxos: r.utxos.map(toBitcoinOutputRaw),
-    walletAccount: r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
+    // walletAccount: r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
+    // Already serialized – pass through
+    walletAccount: r.walletAccount,
   };
 }
 
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
-    walletAccount: r.walletAccount && wallet.importFromSerializedAccountSync(r.walletAccount),
+    // walletAccount: r.walletAccount && wallet.importFromSerializedAccountSync(r.walletAccount),
+    // Keep serialized in Redux; import only when needed by callers
+    walletAccount: r.walletAccount,
   };
 }
 

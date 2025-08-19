@@ -35,11 +35,12 @@ export {
 let wallet: BitcoinLikeWallet | null = null;
 
 export const getWalletAccount = (account: LiveAccount): WalletAccount => {
-  const walletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;
-  if (account.id.startsWith("libcore") || !walletAccount) {
+  const rawWalletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;
+  if (account.id.startsWith("libcore") || !rawWalletAccount) {
     throw new AccountNeedResync();
   }
-  return walletAccount;
+  return getWallet().importFromSerializedAccountSync(rawWalletAccount);
+  // return walletAccount;
 };
 
 const getWallet = () => {
