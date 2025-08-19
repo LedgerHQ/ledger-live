@@ -1,5 +1,17 @@
 # @ledgerhq/coin-polkadot
 
+## 6.7.0-nightly.3
+
+### Minor Changes
+
+- [#11351](https://github.com/LedgerHQ/ledger-live/pull/11351) [`fabdc2d`](https://github.com/LedgerHQ/ledger-live/commit/fabdc2d34fc43302fc31514073fcc74e83d0ee93) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Fix Polkadot integration tests
+
+### Patch Changes
+
+- Updated dependencies [[`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.3
+  - @ledgerhq/coin-framework@6.1.0-nightly.3
+
 ## 6.7.0-nightly.2
 
 ### Minor Changes

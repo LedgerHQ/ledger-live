@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.12.0-nightly.2
+
+### Minor Changes
+
+- [#11346](https://github.com/LedgerHQ/ledger-live/pull/11346) [`fa8605b`](https://github.com/LedgerHQ/ledger-live/commit/fa8605befcc07e8446f8babfbe1bb99e5641c827) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Added new payinExtraId to payload
+
 ## 0.11.1-nightly.1
 
 ### Patch Changes

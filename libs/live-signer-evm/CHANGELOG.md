@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-evm
 
+## 0.6.4-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1)]:
+  - @ledgerhq/coin-evm@2.27.0-nightly.3
+
 ## 0.6.4-nightly.2
 
 ### Patch Changes

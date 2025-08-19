@@ -1,5 +1,17 @@
 # @ledgerhq/coin-evm
 
+## 2.27.0-nightly.3
+
+### Minor Changes
+
+- [#11366](https://github.com/LedgerHQ/ledger-live/pull/11366) [`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): implement `getSequence`
+
+### Patch Changes
+
+- Updated dependencies [[`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.25.0-nightly.3
+  - @ledgerhq/coin-framework@6.1.0-nightly.3
+
 ## 2.27.0-nightly.2
 
 ### Minor Changes

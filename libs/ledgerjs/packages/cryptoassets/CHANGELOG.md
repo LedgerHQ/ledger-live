@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.25.0-nightly.3
+
+### Minor Changes
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
 ## 13.25.0-nightly.2
 
 ### Minor Changes

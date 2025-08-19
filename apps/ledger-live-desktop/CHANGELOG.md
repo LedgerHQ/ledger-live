@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.125.0-nightly.4
+
+### Minor Changes
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1), [`fabdc2d`](https://github.com/LedgerHQ/ledger-live/commit/fabdc2d34fc43302fc31514073fcc74e83d0ee93), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/coin-evm@2.27.0-nightly.3
+  - @ledgerhq/live-common@34.45.0-nightly.3
+  - @ledgerhq/cryptoassets@13.25.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.0-nightly.3
+  - @ledgerhq/coin-framework@6.1.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.20.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.6-nightly.3
+  - @ledgerhq/coin-filecoin@1.9.17-nightly.3
+  - @ledgerhq/live-countervalues@0.6.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.3.1-nightly.3
+  - @ledgerhq/live-nft@0.8.17-nightly.3
+  - @ledgerhq/live-nft-react@0.9.17-nightly.3
+  - @ledgerhq/live-wallet@0.12.1-nightly.3
+
 ## 2.125.0-nightly.3
 
 ### Patch Changes
