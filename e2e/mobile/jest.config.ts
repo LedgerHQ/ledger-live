@@ -26,15 +26,13 @@ const jestAllure2ReporterOptions: ReporterOptions = {
 
 // Include problematic ESM packages and their submodules
 const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
-// PNPM nests packages under .pnpm/.../node_modules, so allow transforming those too
-const TRANSFORM_IGNORE_PATTERN = `/node_modules/(?!((?:\\.pnpm/.+?/node_modules/)?(${ESM_PACKAGES}))/)`;
 
 const config: Config = {
   rootDir: ".",
   maxWorkers: process.env.CI ? 2 : 1,
   preset: "ts-jest",
   transform: {
-    "^.+\\.(js|jsx|mjs)$": require.resolve("babel-jest"),
+    "^.+\\.(js|jsx)$": require.resolve("babel-jest"),
     "^.+\\.(ts|tsx)?$": [
       "ts-jest",
       {
@@ -47,7 +45,7 @@ const config: Config = {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
-  transformIgnorePatterns: [TRANSFORM_IGNORE_PATTERN],
+  transformIgnorePatterns: [`/node_modules/(?!(${ESM_PACKAGES})/)`],
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
