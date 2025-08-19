@@ -10,7 +10,6 @@ import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
 import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
-import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
 import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
@@ -50,7 +49,6 @@ const globalModals: GlobalModals = {
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
   MODAL_NO_FUNDS_STAKE,
-  MODAL_EXPORT_ACCOUNTS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
   MODAL_TROUBLESHOOT_NETWORK,
