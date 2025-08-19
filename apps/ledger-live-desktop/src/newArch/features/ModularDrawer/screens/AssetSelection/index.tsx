@@ -6,6 +6,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import SkeletonList from "../../components/SkeletonList";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
