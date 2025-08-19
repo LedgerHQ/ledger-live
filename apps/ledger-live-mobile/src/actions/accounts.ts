@@ -3,7 +3,6 @@ import { createAction } from "redux-actions";
 import accountModel from "../logic/accountModel";
 import type {
   AccountsDeleteAccountPayload,
-  AccountsImportAccountsPayload,
   AccountsReorderPayload,
   AccountsReplacePayload,
   AccountsUpdateAccountWithUpdaterPayload,
@@ -36,10 +35,6 @@ export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,
 );
 export const addOneAccount = createAction<Account>(AccountsActionTypes.ADD_ACCOUNT);
-
-export const importAccountsLiveQR = createAction<AccountsImportAccountsPayload>(
-  AccountsActionTypes.ACCOUNTS_USER_IMPORT,
-);
 
 export const updateAccountWithUpdater = createAction<AccountsUpdateAccountWithUpdaterPayload>(
   AccountsActionTypes.UPDATE_ACCOUNT,

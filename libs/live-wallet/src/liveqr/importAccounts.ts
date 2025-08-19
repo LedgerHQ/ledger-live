@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import type { Result } from "./cross";
+import type { Result, AccountData } from "./cross";
 import { accountDataToAccount } from "./cross";
 import { checkAccountSupported } from "@ledgerhq/coin-framework/account/index";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
@@ -35,7 +35,7 @@ export const importAccountsMakeItems = ({
 } => {
   const accountNames = new Map<string, string>();
   const resultItems = result.accounts
-    .map(accInput => {
+    .map((accInput: AccountData) => {
       const prevItem = (items || []).find(item => item.account.id === accInput.id);
       if (prevItem) return prevItem;
 
@@ -69,11 +69,8 @@ export const importAccountsMakeItems = ({
         return null;
       }
     })
-    .filter(Boolean)
-    .sort(
-      (a, b) =>
-        itemModeDisplaySort[(a as ImportItem).mode] - itemModeDisplaySort[(b as ImportItem).mode],
-    ) as ImportItem[];
+    .filter((item): item is ImportItem => Boolean(item))
+    .sort((a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode]);
 
   return { items: resultItems, accountNames };
 };
@@ -171,9 +168,11 @@ export const importAccountsReduce = (
 
       case "update": {
         const item = accounts.find(a => a.id === initialAccountId || a.id === id);
-        const i = accounts.indexOf(item as Account);
-        if (i !== -1) {
-          accounts[i] = account;
+        if (item) {
+          const i = accounts.indexOf(item);
+          if (i !== -1) {
+            accounts[i] = account;
+          }
         }
         break;
       }

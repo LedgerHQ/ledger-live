@@ -2143,7 +2143,6 @@
           "label" : "Wählen Sie in der Desktop-App <1>Einstellungen > Konten > Kontoexport</1>."
         },
         "1" : {
-          "label" : "Scannen Sie den LiveQR-Code mit Ihrem Telefon."
         },
         "2" : {
           "label" : "Wählen Sie die zu importierenden Krypto-Konten aus."

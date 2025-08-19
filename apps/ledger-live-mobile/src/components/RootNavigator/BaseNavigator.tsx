@@ -33,7 +33,6 @@ import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
@@ -377,11 +376,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.AccountSettings}
           component={AccountSettingsNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ImportAccounts}
-          component={ImportAccountsNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen
