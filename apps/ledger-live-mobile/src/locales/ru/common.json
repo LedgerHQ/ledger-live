@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 мин.",
       "medium" : "≈ 30 сек.",
-      "fast" : "≈ 15 сек."
+      "fast" : "≈ 15 сек.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3242,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Уведомления о транзакциях (бета)",
-        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, Binance Smart Chain, Avalanche и Ethereum Classic."
+        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, BNB Chain, Avalanche и Ethereum Classic."
       },
       "price" : {
         "title" : "Уведомления о курсах",
@@ -3766,6 +3767,8 @@
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
         "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+        "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
         "osmo_description" : "Используйте другие совместимые устройства Ledger для обмена Osmosis. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
