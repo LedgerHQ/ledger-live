@@ -59,8 +59,8 @@ const test_ios = async () => {
       --forceExit \
       --headless \
       --retries 2 \
-      --runInBand \
       --cleanup \
+      --maxWorkers 2 \
       --shard ${shard} \
       ${filteredArgs}`;
 };
@@ -78,8 +78,8 @@ const test_android = async () => {
       --forceExit \\
       --headless \\
       --retries 2 \\
-      --runInBand \\
       --cleanup \\
+      --maxWorkers 2 \\
       --shard ${shard} \\
       ${filteredArgs}`;
 };
