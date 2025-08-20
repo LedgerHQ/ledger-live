@@ -1,6 +1,6 @@
 import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 describe("Sui Api", () => {
   let module: AlpacaApi;
@@ -8,6 +8,10 @@ describe("Sui Api", () => {
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
   beforeAll(() => {
+    // NOTE: as our sui proxy whitelists calls, we need to explicitely set the LEDGER_CLIENT_VERSION
+    // in turn it will be used in the headers of those api calls.
+    setEnvUnsafe("LEDGER_CLIENT_VERSION", "lld/2.124.0-dev");
+
     module = createApi({
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),

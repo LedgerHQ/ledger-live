@@ -1,19 +1,11 @@
 import buildSignOperation from "./signOperation";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { SuiSigner } from "../types";
-import coinConfig from "../config";
-import { getEnv } from "@ledgerhq/live-env";
+import { setupSdkTestEnv } from "../test/testUtils";
 
 describe("signOperation", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-      },
-    }));
+    setupSdkTestEnv();
   });
 
   const fakeSignature = new Uint8Array(64).fill(0x42);

@@ -1,21 +1,12 @@
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import { extractCoinTypeFromUnsignedTx, setupSdkTestEnv } from "../test/testUtils";
 
 import { BigNumber } from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
-import coinConfig from "../config";
-import { getFullnodeUrl } from "@mysten/sui/client";
-import { extractCoinTypeFromUnsignedTx } from "../test/testUtils";
 
 describe("buildTransaction", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        url: getFullnodeUrl("mainnet"),
-      },
-    }));
+    setupSdkTestEnv();
   });
 
   it("returns unsigned tx bytes for given tx with USDT coin type and can decode coinType from unsigned", async () => {

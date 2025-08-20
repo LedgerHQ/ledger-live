@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import coinConfig from "../config";
 import {
   createTransaction,
   DEFAULT_COIN_TYPE,
@@ -12,18 +11,11 @@ import {
   getBlockInfo,
   getStakes,
 } from "./sdk";
-import { getEnv } from "@ledgerhq/live-env";
+import { setupSdkTestEnv } from "../test/testUtils";
 
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-      },
-    }));
+    setupSdkTestEnv();
   });
 
   describe("getOperations", () => {
