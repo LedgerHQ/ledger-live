@@ -1597,6 +1597,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
+    "continue" : "Weiter"
+  },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
     "for" : "Adresse für <1><0>{{name}}</0></1>",
@@ -3684,6 +3703,7 @@
     "delegation" : {
       "totalStake" : "Stake-Gesamtsumme",
       "commission" : "Provision",
+      "netApy" : "Netto-APY",
       "delegate" : "Hinzufügen",
       "listHeader" : "Delegierungen",
       "availableBalance" : "Auszahlbar",
@@ -4473,6 +4493,40 @@
             "check" : "Spam-Bewertung"
           }
         },
+        "mockAccounts" : {
+          "title" : "Pseudokonten generieren",
+          "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
+          "customGenerate" : {
+            "title" : "Benutzerdefiniert generieren",
+            "desc" : "Bestimmte Währungen auswählen und Token hinzufügen"
+          },
+          "quickGenerate" : {
+            "title" : "Schnell generieren",
+            "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
+          },
+          "currencySelector" : {
+            "placeholder" : "Währungen auswählen…",
+            "searchPlaceholder" : "Währungen durchsuchen…",
+            "noCurrenciesFound" : "Keine Währungen gefunden",
+            "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+            "selectedCount" : "{{count}} Währung ausgewählt",
+            "selectedCount_other" : "{{count}} Währungen ausgewählt"
+          },
+          "tokenIds" : {
+            "label" : "Token-IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}} Konto generieren",
+            "generateAccounts_other" : "{{count}} Konten generieren",
+            "generateAccountsQuick" : "{{count}} Konten generieren"
+          },
+          "alerts" : {
+            "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+            "confirmErase" : "Dadurch werden bestehende Konten gelöscht. Vorgang fortsetzen?",
+            "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Melden",
           "contractAddress" : "Vertragsadresse",
@@ -4600,6 +4654,8 @@
       "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "customLockScreenTester" : "Tester für den individuellen Sperrbildschirm",
+      "customLockScreenTesterDesc" : "Individuellen Sperrbildschirm auf unterstützten Geräten testen",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
       "customLockScreenDesc" : "Debuggen von individuellen Grafikelementen für den Sperrbildschirm",
       "customLockScreenCTA" : "Starten",
@@ -5912,10 +5968,6 @@
       "title" : "Gerät nicht verbunden",
       "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Gerät nicht verbunden",
-      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
-    },
     "EConnReset" : {
       "title" : "Der Ledger Application Store kann nicht erreicht werden",
       "description" : "Ihre Internetverbindung ist möglicherweise ausgefallen oder Sie verwenden eine ungewöhnliche Konfiguration. Überprüfen Sie zunächst, ob Ihre Verbindung blockiert wird (Proxy oder Firewall). Wenn das Problem weiterhin besteht, klicken Sie unten, um Lösungen zu erhalten, oder wenden Sie sich an unseren Kundensupport."
@@ -6734,7 +6786,7 @@
     },
     "DeviceNotOnboardedDAError" : {
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
-      "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
+      "description" : "Richte es für die Nutzung ein. Wir begleiten dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
@@ -6812,6 +6864,118 @@
     "AddressesSanctionedError" : {
       "title" : "Wir sorgen für deine Sicherheit",
       "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DisconnectError" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Onboarding des Geräts ausstehend",
+      "description" : "Dein Gerät kann nicht verwendet werden. Bitte befolge die Einrichtungsanweisungen und wiederhole den Vorgang nach erfolgreichem Onboarding."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Onboarding des Geräts ausstehend",
+      "description" : "Dein Gerät kann nicht verwendet werden. Bitte befolge die Einrichtungsanweisungen und wiederhole den Vorgang nach erfolgreichem Onboarding."
+    },
+    "DeviceLockedError" : {
+      "title" : "Gerät gesperrt",
+      "description" : "Dein Gerät ist gesperrt. Bitte entsperre es und versuche es dann noch einmal."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Zu wenig Speicherplatz",
+      "description" : "Dein Gerät hat nicht genügend Speicherplatz. Bitte deinstalliere Apps und versuche es dann noch einmal."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OS nicht unterstützt",
+      "description" : "Das Betriebssystem deines Geräts wird nicht unterstützt. Bitte führe ein Update über Ledger Live durch oder wende dich an den Ledger-Kundenservice, falls du Probleme hast."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Batteriefehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Batteriefehler",
+      "description" : "Batteriestatusfehler. Bitte kontaktiere den Ledger-Kundenservice."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDAError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ReceiverApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "FramerApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
     }
   },
   "cryptoOrg" : {
