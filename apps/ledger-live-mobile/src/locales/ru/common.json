@@ -306,6 +306,10 @@
       "title" : "Сбой подключения устройства",
       "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема сохраняется."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Сбой подключения устройства",
       "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 мин.",
       "medium" : "≈ 30 сек.",
-      "fast" : "≈ 15 сек."
+      "fast" : "≈ 15 сек.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1518,6 +1523,25 @@
     "cta" : "Настроить мой Ledger",
     "bannerTitle" : "Получили новый Ledger?",
     "bannerCta" : "Настройте его",
+    "continue" : "Продолжить"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ не поддерживает прозрачную подпись для этой транзакции",
+      "subtitle" : "Используйте любое другое устройство Ledger, чтобы подтвердить данные транзакции перед её подписанием. Отсутствие прозрачной подписи может привести к потере всех криптоактивов.",
+      "continue" : "Я принимаю риск"
+    },
+    "info" : {
+      "title" : "{{date}} поддержка {{coinName}} на {{device}}™ через Ledger Live™ будет прекращена",
+      "subtitle" : "Перейдите на более свежее устройство Ledger сегодня, чтобы гарантировать доступ ко всем операторам услуг внутри Ledger Live и оптимальную поддержку",
+      "reminder" : "Больше не напоминать"
+    },
+    "error" : {
+      "title" : "{{device}}™ не поддерживает эту функцию",
+      "subtitle" : "Перейдите на более свежее устройство Ledger сегодня, чтобы гарантировать доступ ко всем актуальным функциям внутри Ledger Live."
+    },
+    "update" : "Изучить варианты обновления",
+    "learnMore" : "Подробнее...",
     "continue" : "Продолжить"
   },
   "purchaseDevice" : {
@@ -3238,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Уведомления о транзакциях (бета)",
-        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, Binance Smart Chain, Avalanche и Ethereum Classic."
+        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, BNB Chain, Avalanche и Ethereum Classic."
       },
       "price" : {
         "title" : "Уведомления о курсах",
@@ -4271,7 +4295,7 @@
   "addAccounts" : {
     "addNew" : "Добавить новый",
     "seeAllAccounts" : "Показать все",
-    "addNewOrExisting" : "Добавить ещё один счёт",
+    "addNewOrExisting" : "Добавить счёт",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -6245,6 +6269,7 @@
       "iWithdraw" : "Я вывожу",
       "totalStake" : "Общий пул",
       "commission" : "Комиссия",
+      "netApy" : "Чистая прибыль в год",
       "stakeActivationState" : "Состояние",
       "stakeActivePercent" : "Активно",
       "stakeAvailableBalance" : "Доступно",
@@ -7780,8 +7805,8 @@
     "selectAccount" : "Выберите счёт",
     "searchPlaceholder" : "Поиск...",
     "emptyAssetList" : "Ничего не нашли :(",
-    "accountCount" : "Найден {{count}} счёт",
-    "accountCount_plural" : "Счетов найдено: {{count}}"
+    "accountCount" : "Счёт: {{count}}",
+    "accountCount_plural" : "Счета: {{count}}"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
