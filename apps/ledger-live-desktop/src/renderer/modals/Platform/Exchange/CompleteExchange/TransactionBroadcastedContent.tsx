@@ -9,6 +9,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
 import { ExchangeMode, ExchangeModeEnum } from "./Body";
+import FundCompleted from "~/renderer/screens/exchange/Fund/FundCompleted";
 
 type TransactionBroadcastedContentProps = {
   swapId?: string;
@@ -62,6 +63,13 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         <>
           <Box justifyContent="center" flex={1}>
             <SellCompleted />
+          </Box>
+        </>
+      )}
+      {mode === ExchangeModeEnum.Fund && sourceCurrency && (
+        <>
+          <Box justifyContent="center" flex={1}>
+            <FundCompleted />
           </Box>
         </>
       )}

@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund": {
+    "title": "Fund",
+    "titleCrypto": "Fund {{currency}}",
+    "exchangeDrawer": {
+      "completed": {
+        "title": "Transaction broadcast successfully",
+        "description": "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+      }
+    }
+  },
   "receive": {
     "title": "Receive",
     "successTitle": "Address shared securely",
