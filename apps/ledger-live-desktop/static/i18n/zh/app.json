@@ -463,6 +463,8 @@
       "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
       "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+      "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
       "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
