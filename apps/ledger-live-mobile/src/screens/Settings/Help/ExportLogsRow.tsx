@@ -13,6 +13,7 @@ export default function ExportLogsRow() {
       desc={<Trans i18nKey="settings.help.exportLogsDesc" />}
       arrowRight
       onPress={exportLogs}
+      testID="export-logs-row"
     />
   );
 }

@@ -97,6 +97,7 @@ export default function Settings({
         Icon={IconsLegacy.LifeRingMedium}
         onClick={() => navigation.navigate(ScreenName.HelpSettings)}
         arrowRight
+        settingsCardTestId="help-settings-card"
       />
       <SettingsCard
         title={t("settings.experimental.title")}

@@ -18,6 +18,7 @@ import PortfolioPage from "./wallet/portfolio.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
+import SettingsHelpPage from "./settings/settingsHelp.page";
 import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
@@ -112,6 +113,7 @@ export class Application {
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
+  private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
 
   public async init({
     speculosApp,
@@ -252,5 +254,9 @@ export class Application {
 
   public get transferMenuDrawer() {
     return this.TransferMenuDrawerInstance();
+  }
+
+  public get settingsHelp() {
+    return this.settingsHelpPageInstance();
   }
 }
