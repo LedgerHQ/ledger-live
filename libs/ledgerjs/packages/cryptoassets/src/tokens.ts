@@ -313,7 +313,7 @@ export function convertERC20([
   };
 }
 
-function convertAlgorandASATokens([
+export function convertAlgorandASATokens([
   id,
   abbr,
   name,
@@ -341,7 +341,7 @@ function convertAlgorandASATokens([
   };
 }
 
-function convertVechainToken([
+export function convertVechainToken([
   tokenIdenfitier,
   ticker,
   name,
@@ -367,7 +367,7 @@ function convertVechainToken([
   };
 }
 
-function convertTRONTokens(type: "trc10" | "trc20") {
+export function convertTRONTokens(type: "trc10" | "trc20") {
   return ([id, abbr, name, contractAddress, precision, delisted, ledgerSignature]:
     | TRC10Token
     | TRC20Token): TokenCurrency => {
@@ -395,7 +395,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
   };
 }
 
-function convertMultiversXESDTTokens([
+export function convertMultiversXESDTTokens([
   ticker,
   identifier,
   decimals,
@@ -476,15 +476,15 @@ function convertAptosTokens(
   };
 }
 
-function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
+export function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
   return convertAptosTokens("coin", token);
 }
 
-function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
+export function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
   return convertAptosTokens("fungible_asset", token);
 }
 
-function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
@@ -533,7 +533,8 @@ function convertHederaTokens([
   };
 }
 
-function convertCardanoNativeTokens([
+export function convertCardanoNativeTokens([
+
   parentCurrencyId,
   policyId,
   assetName,
@@ -572,7 +573,7 @@ function convertCardanoNativeTokens([
   };
 }
 
-function convertStellarTokens([
+export function convertStellarTokens([
   assetCode,
   assetIssuer,
   assetType,

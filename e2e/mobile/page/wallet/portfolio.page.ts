@@ -23,14 +23,17 @@ export default class PortfolioPage {
   showAllAccountsButton = "show-all-accounts-button";
   seeAllTransactionsButton = "portfolio-seeAll-transaction";
   operationRowDate = "operationRowDate";
+  operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
   selectAssetsPageTitle = "select-crypto-header-step1-title";
   baseBigCurrency = "big-currency";
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
+  graphCardBalanceDiffId = "graphCard-balance-delta";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
+  assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
 
   @Step("Navigate to Settings")
@@ -50,6 +53,49 @@ export default class PortfolioPage {
     jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
+  }
+
+  @Step("Expect asset row to be visible")
+  async expectAssetRowToBeVisible(asset: string) {
+    await detoxExpect(getElementById(this.assetItemBalanceId(asset))).toBeVisible();
+  }
+
+  @Step("Expect asset row to have the correct counter value")
+  async expectAssetRowCounterValue(asset: string, counterValue: string) {
+    await this.expectAssetRowToBeVisible(asset);
+    const text = await getTextOfElement(this.assetItemBalanceId(asset));
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect total balance value")
+  async expectTotalBalanceCounterValue(counterValue: string) {
+    const text = await getTextOfElement(this.graphCardBalanceId);
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect balance diff to be visible")
+  async expectBalanceDiffToBeVisible() {
+    await detoxExpect(getElementById(this.graphCardBalanceDiffId)).toBeVisible();
+  }
+
+  @Step("Expect balance diff to have the correct counter value")
+  async expectBalanceDiffCounterValue(counterValue: string) {
+    await this.expectBalanceDiffToBeVisible();
+    const text = await getTextOfElement(this.graphCardBalanceDiffId);
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect operation row to be visible")
+  async expectOperationRowToBeVisible() {
+    await scrollToId(this.operationRowCounterValue);
+    await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
+  }
+
+  @Step("Expect operation to contain counter value")
+  async expectOperationCounterValue(counterValue: string) {
+    await this.expectOperationRowToBeVisible();
+    const text = await getTextOfElement(this.operationRowCounterValue);
+    jestExpect(text).toContain(counterValue);
   }
 
   @Step("Open Portfolio via deeplink")
@@ -118,7 +164,17 @@ export default class PortfolioPage {
     await this.checkSelectAssetPage();
   }
 
-  @Step("Navigate $0 asset Page")
+  @Step("Count Accounts")
+  async countAccounts() {
+    return await countElementsById(app.common.accountItemNameRegExp);
+  }
+
+  @Step("Compare Accounts Count")
+  async compareAccountsCount(count1: number, count2: number) {
+    jestExpect(count1).toBe(count2);
+  }
+
+  @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
     await scrollToId(this.showAllAssetsButton);
     await tapById(this.showAllAssetsButton);
@@ -142,7 +198,7 @@ export default class PortfolioPage {
     await tapById(this.operationRowDate);
   }
 
-  @Step("Tap on $0 tab selector")
+  @Step("Tap on tab selector")
   async tapTabSelector(id: "Accounts" | "Assets") {
     await tapByElement(this.tabSelector(id));
   }
