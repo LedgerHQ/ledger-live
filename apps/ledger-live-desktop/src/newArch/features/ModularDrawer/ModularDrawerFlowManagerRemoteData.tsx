@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import React from "react";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
@@ -7,22 +6,9 @@ import AssetSelection from "./screens/AssetSelection";
 import { NetworkSelection } from "./screens/NetworkSelection";
 import { Title } from "./components/Title";
 import { AccountSelection } from "./screens/AccountSelection";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
-import { useAssetSelection } from "./hooks/useAssetSelection";
-import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
-import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { BackButtonArrow } from "./components/BackButton";
-import {
-  buildProviderCoverageMap,
-  filterProvidersByIds,
-  extractProviderCurrencies,
-} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
-import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useAssetsData } from "./hooks/useAssetsData";
-import { useModularDrawerConfiguration } from "./hooks/useModularDrawerConfiguration";
-import { getLoadingStatus } from "./utils/getLoadingStatus";
+import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 
 const ModularDrawerFlowManagerRemoteData = ({
   currencies,
@@ -33,149 +19,36 @@ const ModularDrawerFlowManagerRemoteData = ({
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
-  const devMode = useEnv("MANAGER_DEV_MODE");
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
-  const [searchedValue, setSearchedValue] = useState<string>();
-  const { assetsConfiguration, networkConfiguration } =
-    useModularDrawerConfiguration(drawerConfiguration);
-
-  const currencyIds = useMemo(() => currencies.map(currency => currency.id), [currencies]);
-
-  const { data, isLoading, isSuccess, error } = useAssetsData({
-    search: searchedValue,
-    currencyIds,
-  });
-
-  const assetsSorted = useMemo(() => {
-    if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
-
-    return data.currenciesOrder.metaCurrencyIds
-      .filter(currencyId => data.cryptoAssets[currencyId])
-      .map(currencyId => ({
-        asset: data.cryptoAssets[currencyId],
-        networks: Object.keys(data.cryptoAssets[currencyId].assetsIds).map(
-          assetId => data.networks[assetId],
-        ),
-        interestRates: data.interestRates[currencyId],
-        market: data.markets[currencyId],
-      }));
-  }, [data]);
-
-  const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
-
-  const currenciesByProvider: CurrenciesByProviderId[] = useMemo(() => {
-    if (!assetsSorted || !data) return [];
-
-    return assetsSorted.map(assetData => ({
-      currenciesByNetwork: assetData.networks
-        .map(network => data.cryptoOrTokenCurrencies[network.id])
-        .filter(currency => currency !== undefined),
-      providerId: assetData.asset.id,
-    }));
-  }, [assetsSorted, data]);
-
-  const sortedCryptoCurrencies = useMemo(() => {
-    if (!assetsSorted || !data) return [];
-
-    return assetsSorted
-      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter(currency => currency !== undefined);
-  }, [assetsSorted, data]);
 
   const {
+    error,
+    loadingStatus,
+    assetsConfiguration,
+    networkConfiguration,
+    currenciesByProvider,
     assetsToDisplay,
     filteredSortedCryptoCurrencies,
-    currenciesIdsArray,
-    currencyIdsSet,
+    originalAssetsToDisplay,
     setAssetsToDisplay,
-  } = useAssetSelection(currencies, sortedCryptoCurrencies);
-
-  const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
-  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
-    [],
-  );
-
-  const isSelectAccountFlow = !!onAccountSelected;
-  const hasOneNetwork = networksToDisplay?.length === 1;
-  const hasOneCurrency = useMemo(() => {
-    if (!isSuccess) return false;
-    return haveOneCommonProvider(currenciesIdsArray, currenciesByProvider);
-  }, [currenciesIdsArray, currenciesByProvider, isSuccess]);
-
-  const {
+    searchedValue,
+    setSearchedValue,
+    networksToDisplay,
     selectedAsset,
     selectedNetwork,
-    handleNetworkSelected,
+    hasOneCurrency,
     handleAssetSelected,
+    handleNetworkSelected,
     handleAccountSelected,
-    goBackToAssetSelection,
-    goBackToNetworkSelection,
-  } = useModularDrawerFlowState({
-    currenciesByProvider,
-    sortedCryptoCurrencies,
-    currenciesIdsArray,
-    isSelectAccountFlow,
-    setNetworksToDisplay,
+    handleBack,
+  } = useModularDrawerRemoteData({
+    currencies,
+    drawerConfiguration,
     goToStep,
     onAssetSelected,
     onAccountSelected,
     flow,
-    hasOneCurrency,
   });
-
-  const handleBack = useMemo(() => {
-    const canGoBackToAsset = !hasOneCurrency;
-    const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
-
-    switch (currentStep) {
-      case "NETWORK_SELECTION": {
-        return canGoBackToAsset ? goBackToAssetSelection : undefined;
-      }
-      case "ACCOUNT_SELECTION": {
-        if (
-          (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) &&
-          !hasOneCurrency
-        ) {
-          return goBackToAssetSelection;
-        } else if (canGoBackToNetwork) {
-          return goBackToNetworkSelection;
-        }
-        return undefined;
-      }
-      default: {
-        return undefined;
-      }
-    }
-  }, [
-    currentStep,
-    goBackToAssetSelection,
-    goBackToNetworkSelection,
-    hasOneCurrency,
-    hasOneNetwork,
-    networksToDisplay,
-  ]);
-
-  const filteredCurrenciesByProvider = useMemo(() => {
-    if (currencyIdsSet.size === 0) {
-      return currenciesByProvider;
-    }
-
-    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
-    const filtered = filterProvidersByIds(
-      currenciesByProvider,
-      currencyIdsSet,
-      providerCoverageMap,
-    );
-    const allProviderCurrencies = extractProviderCurrencies(filtered);
-    const currenciesEnhanced = devMode
-      ? addTestnetCurrencies(allProviderCurrencies)
-      : allProviderCurrencies;
-
-    setAssetsToDisplay(currenciesEnhanced);
-    setOriginalAssetsToDisplay(currenciesEnhanced);
-
-    return filtered;
-  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
@@ -193,7 +66,7 @@ const ModularDrawerFlowManagerRemoteData = ({
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetsConfiguration}
-              currenciesByProvider={filteredCurrenciesByProvider}
+              currenciesByProvider={currenciesByProvider}
               setAssetsToDisplay={setAssetsToDisplay}
               setSearchedValue={setSearchedValue}
               onAssetSelected={handleAssetSelected}
@@ -208,7 +81,7 @@ const ModularDrawerFlowManagerRemoteData = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
-            currenciesByProvider={filteredCurrenciesByProvider}
+            currenciesByProvider={currenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}
