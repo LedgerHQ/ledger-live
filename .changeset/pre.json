@@ -153,5 +153,33 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "bright-tables-wink",
+    "clean-chicken-complain",
+    "clean-mails-watch",
+    "dirty-worms-deny",
+    "fluffy-books-cough",
+    "khaki-bugs-nail",
+    "late-spoons-do",
+    "nasty-terms-burn",
+    "neat-kangaroos-nail",
+    "nine-dots-rush",
+    "odd-icons-call",
+    "popular-poems-drop",
+    "quick-pigs-shout",
+    "quiet-pumpkins-prove",
+    "real-emus-carry",
+    "rude-years-repeat",
+    "shy-cats-rush",
+    "silver-dingos-jam",
+    "six-trainers-train",
+    "slimy-hairs-type",
+    "slimy-readers-refuse",
+    "strange-hats-beam",
+    "sweet-squids-join",
+    "twelve-mangos-wink",
+    "wet-onions-retire",
+    "wise-spoons-run",
+    "yellow-pugs-sparkle"
+  ]
 }

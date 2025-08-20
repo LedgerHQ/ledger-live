@@ -1,5 +1,15 @@
 # @ledgerhq/cryptoassets
 
+## 13.26.0-next.0
+
+### Minor Changes
+
+- [#11291](https://github.com/LedgerHQ/ledger-live/pull/11291) [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(ljs): rename BSC to BNB
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
 ## 13.25.0
 
 ### Minor Changes

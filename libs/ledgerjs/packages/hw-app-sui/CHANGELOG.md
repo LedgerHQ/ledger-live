@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-sui
 
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
 ## 1.2.0
 
 ### Minor Changes

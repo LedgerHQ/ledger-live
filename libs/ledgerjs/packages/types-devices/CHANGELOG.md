@@ -1,5 +1,11 @@
 # @ledgerhq/types-devices
 
+## 6.27.0-next.0
+
+### Minor Changes
+
+- [#11281](https://github.com/LedgerHQ/ledger-live/pull/11281) [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device selection for Apex
+
 ## 6.26.0
 
 ### Minor Changes

@@ -1,5 +1,55 @@
 # live-mobile
 
+## 3.91.0-next.0
+
+### Minor Changes
+
+- [#11291](https://github.com/LedgerHQ/ledger-live/pull/11291) [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(ljs): rename BSC to BNB
+
+- [#11327](https://github.com/LedgerHQ/ledger-live/pull/11327) [`430c3a4`](https://github.com/LedgerHQ/ledger-live/commit/430c3a4b64e9748e46319ed3bb9a3fbfdd1bf533) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Fix custom close to work with live app routing
+
+- [#11329](https://github.com/LedgerHQ/ledger-live/pull/11329) [`e4d9519`](https://github.com/LedgerHQ/ledger-live/commit/e4d9519ee03cf2c58fc4f5a9919c4eea9f7b215a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add NRR as a possible interest type
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11336](https://github.com/LedgerHQ/ledger-live/pull/11336) [`ed00f0f`](https://github.com/LedgerHQ/ledger-live/commit/ed00f0f2868f374f48d98aaf1595738c7f36e1f5) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add blank custom fee as placeholder
+
+- [#11281](https://github.com/LedgerHQ/ledger-live/pull/11281) [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device selection for Apex
+
+- [#11310](https://github.com/LedgerHQ/ledger-live/pull/11310) [`d134e90`](https://github.com/LedgerHQ/ledger-live/commit/d134e9044f0b004778a5b85c265d9b91847502be) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLM - MAD - rework useModularDrawerState
+
+- [#11318](https://github.com/LedgerHQ/ledger-live/pull/11318) [`39336ed`](https://github.com/LedgerHQ/ledger-live/commit/39336ed96c326046243b42a425b2749e5f573f59) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Prevent Android app locks on transient state changes
+
+- [#11292](https://github.com/LedgerHQ/ledger-live/pull/11292) [`627deec`](https://github.com/LedgerHQ/ledger-live/commit/627deec0491ebe658b069b5e4926739c673317bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add Lotties for Apex
+
+- [#11342](https://github.com/LedgerHQ/ledger-live/pull/11342) [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix clearing cache crashes on Android
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: remove fee and replace by fees in Transaction type
+
+- [#11260](https://github.com/LedgerHQ/ledger-live/pull/11260) [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a allowlist and blocklist FF parameter to enable or disable the mad for specific live apps
+
+- [#11320](https://github.com/LedgerHQ/ledger-live/pull/11320) [`23f7482`](https://github.com/LedgerHQ/ledger-live/commit/23f74820dac35a77581ac05726e5f5a9cb364d49) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device icon in sync onboarding for Apex
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59), [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d), [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/coin-evm@2.28.0-next.0
+  - @ledgerhq/coin-framework@6.2.0-next.0
+  - @ledgerhq/types-devices@6.27.0-next.0
+  - @ledgerhq/live-countervalues-react@0.5.0-next.0
+  - @ledgerhq/types-live@6.82.0-next.0
+  - @ledgerhq/coin-cosmos@0.16.7-next.0
+  - @ledgerhq/coin-filecoin@1.10.1-next.0
+  - @ledgerhq/coin-multiversx@0.4.18-next.0
+  - @ledgerhq/coin-stacks@0.8.18-next.0
+  - @ledgerhq/live-countervalues@0.6.2-next.0
+  - @ledgerhq/live-nft@0.8.18-next.0
+  - @ledgerhq/live-nft-react@0.9.18-next.0
+  - @ledgerhq/live-wallet@0.12.2-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.3-next.0
+  - @ledgerhq/live-dmk-mobile@0.11.1-next.0
+  - @ledgerhq/domain-service@1.2.41-next.0
+
 ## 3.90.0
 
 ### Minor Changes
