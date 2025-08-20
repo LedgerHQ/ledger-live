@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 دقائق",
       "medium" : "≈ 30 ثانية",
-      "fast" : "≈ 15 ثانية"
+      "fast" : "≈ 15 ثانية",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3242,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
-        "desc" : "تلقى إشعارات بخصوص معاملاتك من إيثريوم و Polygon وسلسلة بينانس الذكية و Avalanche و Ethereum Classic"
+        "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
@@ -3766,6 +3767,8 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
