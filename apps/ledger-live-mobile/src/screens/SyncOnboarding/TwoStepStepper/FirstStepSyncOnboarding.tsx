@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { VerticalTimeline } from "@ledgerhq/native-ui";
+import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import CollapsibleStep from "./CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useCompanionSteps, { FirstStepCompanionStepKey } from "./useCompanionSteps";
@@ -199,7 +199,7 @@ const FirstStepSyncOnboarding = ({
 
   const handleNextStep = useCallback(() => {
     companionSteps.setStep(FirstStepCompanionStepKey.Exit);
-    handleFinishStep("new_seed");
+    handleFinishStep(analyticsSeedConfiguration.current === "new_seed" ? "new_seed" : "restore");
   }, [handleFinishStep, companionSteps]);
 
   /*
@@ -393,11 +393,13 @@ const FirstStepSyncOnboarding = ({
       background={showSuccess ? <BackgroundGreen /> : null}
     >
       {!showSuccess && (
-        <VerticalTimeline
-          steps={companionSteps.steps}
-          formatEstimatedTime={formatEstimatedTime}
-          contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
-        />
+        <Flex mt={3}>
+          <VerticalTimeline
+            steps={companionSteps.steps}
+            formatEstimatedTime={formatEstimatedTime}
+            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
+          />
+        </Flex>
       )}
       {showSuccess && (
         <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
