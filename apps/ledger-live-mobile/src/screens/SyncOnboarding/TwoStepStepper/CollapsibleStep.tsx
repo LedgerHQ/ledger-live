@@ -34,6 +34,7 @@ const CollapsibleCard = styled(Flex)`
   background: ${p => p.theme.colors.neutral.c20};
   padding: 16px;
   border-radius: 12px;
+  overflow: hidden;
 `;
 
 const StatusIcon = (props: CenterCircleProps) => {
