@@ -43,9 +43,15 @@ const config: Config = {
       },
     ],
   },
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/",
-  }),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths, {
+      prefix: "<rootDir>/",
+    }),
+    // Ensure baseUrl (".") non-relative imports from project root resolve in Jest workers
+    "^helpers/(.*)$": "<rootDir>/helpers/$1",
+    "^page$": "<rootDir>/page/index.ts",
+    "^page/(.*)$": "<rootDir>/page/$1",
+  },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
 
   setupFiles: ["<rootDir>/jest.setup.ts"],
