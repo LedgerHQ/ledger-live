@@ -463,6 +463,8 @@
       "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
       "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+      "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
       "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
