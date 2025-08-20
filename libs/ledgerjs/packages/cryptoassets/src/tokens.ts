@@ -534,7 +534,6 @@ function convertHederaTokens([
 }
 
 export function convertCardanoNativeTokens([
-
   parentCurrencyId,
   policyId,
   assetName,
