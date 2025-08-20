@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "约 2-3 分钟",
       "medium" : "约 30 秒",
-      "fast" : "约 15 秒"
+      "fast" : "约 15 秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3242,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
@@ -3766,6 +3767,8 @@
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
         "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+        "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
         "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
