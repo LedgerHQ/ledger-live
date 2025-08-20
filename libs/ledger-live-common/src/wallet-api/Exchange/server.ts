@@ -84,6 +84,8 @@ export type CompleteExchangeUiRequest = {
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
+  provider: string;
+  exchange: Partial<Exchange> | undefined;
 };
 
 type SellStartParamsUiRequest = {

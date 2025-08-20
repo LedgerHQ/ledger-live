@@ -3,6 +3,7 @@ import {
   ExchangeStartParams,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeStartFundParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { of } from "rxjs";
@@ -153,8 +154,10 @@ describe("handlers", () => {
         uiHooks: mockUiHooks,
       });
 
-      const params: ExchangeStartParams = {
+      const params: ExchangeStartFundParams = {
         exchangeType: "FUND",
+        provider: "TestSellProvider",
+        fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 
