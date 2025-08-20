@@ -19,8 +19,10 @@ import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import NewSeedConfirmation from "./NewSeedConfirmation";
 
 type Props = {
+  isNewSeed?: boolean;
   restore?: boolean;
   dependencies?: string[];
   device: Device;
@@ -37,6 +39,7 @@ type Props = {
  * this is rendered.
  */
 const InstallSetOfApps = ({
+  isNewSeed = false,
   restore = false,
   dependencies = [],
   device: selectedDevice,
@@ -183,6 +186,20 @@ const InstallSetOfApps = ({
         deviceName={productName}
         onConfirm={() => {
           track("button_clicked", { button: "Restore applications" });
+          setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "I'll do this later" });
+          onResult(false);
+        }}
+      />
+    </>
+  ) : isNewSeed ? (
+    <>
+      <TrackScreen category="Secure Funds Start" />
+      <NewSeedConfirmation
+        onConfirm={() => {
+          track("button_clicked", { button: "Secure My Crypto" });
           setUserConfirmed(true);
         }}
         onReject={() => {
