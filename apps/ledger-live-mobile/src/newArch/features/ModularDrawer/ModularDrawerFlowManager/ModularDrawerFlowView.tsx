@@ -34,14 +34,13 @@ export function ModularDrawerFlowView({
     }
   };
 
-  const renderAnimatedStep = (step: ModularDrawerStep, index: number) => {
+  const renderAnimatedStep = (step: ModularDrawerStep) => {
     const stepAnimations = getStepAnimations(step);
-
     if (!stepAnimations) return null;
 
     return (
       <Animated.View
-        key={`${step}-${index}`}
+        key={`${step}`}
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >

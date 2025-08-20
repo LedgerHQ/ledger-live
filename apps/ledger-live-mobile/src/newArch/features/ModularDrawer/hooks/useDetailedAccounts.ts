@@ -108,13 +108,12 @@ export const useDetailedAccounts = (
     (account: AccountUI) => {
       const specificAccount = accounts.find(tuple => tuple.account.id === account.id)?.account;
 
-      trackModularDrawerEvent("button_clicked", {
-        button: "select_account",
+      trackModularDrawerEvent("account_clicked", {
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
         flow,
         source,
+        currency: asset.ticker,
       });
-
       if (onAccountSelected && specificAccount) {
         onAccountSelected?.(specificAccount);
       } else {
@@ -127,7 +126,16 @@ export const useDetailedAccounts = (
         });
       }
     },
-    [accounts, trackModularDrawerEvent, flow, source, onAccountSelected, navigation, asset.id],
+    [
+      accounts,
+      trackModularDrawerEvent,
+      flow,
+      source,
+      asset.ticker,
+      asset.id,
+      onAccountSelected,
+      navigation,
+    ],
   );
 
   return { detailedAccounts, accounts, handleAccountSelected };
