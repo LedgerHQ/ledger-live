@@ -306,6 +306,10 @@
       "title" : "장치 연결 실패",
       "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
+    "ReconnectionFailedError" : {
+      "title" : "장치 연결 실패",
+      "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "장치 연결 실패",
       "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2~3분",
       "medium" : "≈ 30초",
-      "fast" : "≈ 15초"
+      "fast" : "≈ 15초",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1518,6 +1523,25 @@
     "cta" : "내 Ledger 설정",
     "bannerTitle" : "Ledger를 받으셨나요?",
     "bannerCta" : "설정을 시작하세요",
+    "continue" : "계속"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
     "continue" : "계속"
   },
   "purchaseDevice" : {
@@ -3238,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
-        "desc" : "이더리움, 폴리곤, 바이낸스 스마트 체인, 아발란체 및 이더리움 클래식에 대해 트랜잭션 알림을 보내드립니다"
+        "desc" : "이더리움, 이더리움 클래식, 폴리곤, BNB 체인, 아발란체 트랜잭션 알림을 받아보세요."
       },
       "price" : {
         "title" : "가격 알림",
@@ -6245,6 +6269,7 @@
       "iWithdraw" : "출금",
       "totalStake" : "총 스테이킹",
       "commission" : "커미션",
+      "netApy" : "순 연간 수익률",
       "stakeActivationState" : "상태",
       "stakeActivePercent" : "활성",
       "stakeAvailableBalance" : "이용 가능 잔액",
@@ -7780,8 +7805,8 @@
     "selectAccount" : "계정 선택",
     "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
-    "accountCount" : "{{count}}개의 계정 (감지됨)",
-    "accountCount_plural" : "{{count}}개의 계정 (감지됨)"
+    "accountCount" : "{{count}}개 계정",
+    "accountCount_plural" : "{{count}}개 계정"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
