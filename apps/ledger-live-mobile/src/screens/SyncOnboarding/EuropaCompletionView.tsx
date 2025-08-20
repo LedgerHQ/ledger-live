@@ -7,18 +7,21 @@ import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
 
 type Props = {
   device: Device;
-  onAnimationFinish: () => void;
+  onAnimationFinish?: () => void;
+  loop: boolean;
 };
 
 const redirectDelay = 2500;
 
-const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
+const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish, loop }) => {
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
 
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    if (onAnimationFinish) {
+      delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    }
 
     return () => {
       if (delayRef.current) {
@@ -32,7 +35,7 @@ const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
     <Flex height="100%" width="100%">
       <Animation
         source={OnboardingSuccessAnimation}
-        loop={false}
+        loop={loop}
         style={{
           position: "absolute",
           zIndex: 0,

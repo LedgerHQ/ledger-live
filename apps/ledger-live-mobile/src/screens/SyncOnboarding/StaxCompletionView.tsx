@@ -18,7 +18,7 @@ const absoluteStyle = {
 
 type Props = {
   device?: Device;
-  onAnimationFinish: () => void;
+  onAnimationFinish?: () => void;
 };
 
 const redirectDelay = 5000;
@@ -30,7 +30,9 @@ const StaxCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    if (onAnimationFinish) {
+      delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    }
 
     return () => {
       if (delayRef.current) {
