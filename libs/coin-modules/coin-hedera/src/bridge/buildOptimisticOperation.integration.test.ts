@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account";
-import { getMockedTokenCurrency } from "../test/fixtures/currency";
-import { getMockedTransaction } from "../test/fixtures/transaction";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getEstimatedFees } from "./utils";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";

@@ -8,9 +8,9 @@ import {
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
 } from "@ledgerhq/errors";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account";
-import { getMockedTokenCurrency } from "../test/fixtures/currency";
-import { getMockedTransaction } from "../test/fixtures/transaction";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import { getTransactionStatus } from "./getTransactionStatus";
 import * as utils from "./utils";
 import { HEDERA_TRANSACTION_KINDS } from "../constants";
