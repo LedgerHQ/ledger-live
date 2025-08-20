@@ -175,12 +175,8 @@ export const handlers = ({
           exchangeParams = extractSwapStartParam(params, accounts);
         } else if (params.exchangeType == "SELL") {
           exchangeParams = extractSellStartParam(params, accounts);
-        } else if (params.exchangeType == "FUND") {
-          exchangeParams = extractFundStartParam(params, accounts);
         } else {
-          exchangeParams = {
-            exchangeType: params.exchangeType,
-          };
+          exchangeParams = extractFundStartParam(params, accounts);
         }
 
         return new Promise((resolve, reject) =>
