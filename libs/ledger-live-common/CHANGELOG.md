@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.45.1-nightly.0
+
+### Patch Changes
+
+- [#11377](https://github.com/LedgerHQ/ledger-live/pull/11377) [`2fb3986`](https://github.com/LedgerHQ/ledger-live/commit/2fb3986b56c80c331fef5ddf3e1b5988a3245b07) Thanks [@qperrot](https://github.com/qperrot)! - Update Metis explorer uri
+
+- Updated dependencies [[`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5)]:
+  - @ledgerhq/coin-evm@2.28.0-nightly.0
+  - @ledgerhq/coin-celo@1.2.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.1-nightly.0
+
 ## 34.45.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.28.0-nightly.0
+
+### Minor Changes
+
+- [#11374](https://github.com/LedgerHQ/ledger-live/pull/11374) [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): adapt `estimateFees` parameters
+
 ## 2.27.0
 
 ### Minor Changes

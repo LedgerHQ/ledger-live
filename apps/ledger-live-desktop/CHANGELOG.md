@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.126.0-nightly.0
+
+### Minor Changes
+
+- [#11368](https://github.com/LedgerHQ/ledger-live/pull/11368) [`4f48efd`](https://github.com/LedgerHQ/ledger-live/commit/4f48efd9a6aef2ce5bbfb050cf14c5be6f77da1a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement a useAssetsData hook to call DADA and handle pagination
+
+### Patch Changes
+
+- [#11378](https://github.com/LedgerHQ/ledger-live/pull/11378) [`4c57e2c`](https://github.com/LedgerHQ/ledger-live/commit/4c57e2c8f046c1169d14ca09bee63990e1657fcb) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix scann accounts loop
+
+- Updated dependencies [[`2fb3986`](https://github.com/LedgerHQ/ledger-live/commit/2fb3986b56c80c331fef5ddf3e1b5988a3245b07), [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5)]:
+  - @ledgerhq/live-common@34.45.1-nightly.0
+  - @ledgerhq/coin-evm@2.28.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.1-nightly.0
+
 ## 2.125.0
 
 ### Minor Changes

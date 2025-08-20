@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.91.0-nightly.0
+
+### Minor Changes
+
+- [#11310](https://github.com/LedgerHQ/ledger-live/pull/11310) [`d134e90`](https://github.com/LedgerHQ/ledger-live/commit/d134e9044f0b004778a5b85c265d9b91847502be) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLM - MAD - rework useModularDrawerState
+
+### Patch Changes
+
+- Updated dependencies [[`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5)]:
+  - @ledgerhq/coin-evm@2.28.0-nightly.0
+
 ## 3.90.0
 
 ### Minor Changes
