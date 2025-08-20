@@ -20,6 +20,7 @@ import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
+import { TrackScreen } from "~/analytics";
 
 /*
  * Constants
@@ -30,7 +31,7 @@ const READY_REDIRECT_DELAY_MS = 2500;
 /*
  * Types
  */
-export type ExitState = "new_seed" | "restore_no_LL" | "restore_with_LL" | "exit";
+export type ExitState = "new_seed" | "restore" | "exit";
 export type CompanionStep = "setup" | ExitState;
 
 export type TwoStepSyncOnboardingCompanionProps = {
@@ -186,10 +187,15 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
               isPollingOn={isPollingOn}
               setIsPollingOn={setIsPollingOn}
             />
-            <SecondStepSyncOnboarding isCollapsed={companionStep === "setup"} />
-            {/* {companionStepKey === CompanionStepKey.Exit ? (
-            <TrackScreen category="Set up device: Final Step Your device is ready" />
-          ) : null} */}
+            <SecondStepSyncOnboarding
+              companionStep={companionStep}
+              isCollapsed={companionStep === "setup" || companionStep === "exit"}
+              device={device}
+              handleDone={() => setCompanionStep("exit")}
+            />
+            {companionStep === "exit" ? (
+              <TrackScreen category="Set up device: Final Step Your device is ready" />
+            ) : null}
           </Flex>
         </ScrollView>
       </Flex>
