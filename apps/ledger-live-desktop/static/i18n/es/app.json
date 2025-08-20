@@ -463,6 +463,8 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
