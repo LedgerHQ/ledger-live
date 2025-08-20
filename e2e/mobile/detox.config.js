@@ -89,7 +89,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        name: "iOS Simulator-Detox",
+        name: "iOS Simulator",
       },
       reuse: true,
       headless: !!process.env.CI,
