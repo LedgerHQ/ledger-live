@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type { Account as WalletAccount, SerializedAccount as WalletAccountRaw } from "./wallet-btc";
+import type { SerializedAccount as WalletAccountRaw } from "./wallet-btc";
 import {
   Account,
   AccountRaw,

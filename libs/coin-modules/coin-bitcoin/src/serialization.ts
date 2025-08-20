@@ -9,7 +9,6 @@ import type {
   BitcoinAccountRaw,
   BitcoinAccount,
 } from "./types";
-import wallet from "./wallet-btc";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toBitcoinInputRaw({
