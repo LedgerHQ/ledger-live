@@ -306,6 +306,10 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 dk.",
       "medium" : "≈ 30 s.",
-      "fast" : "≈ 15 s."
+      "fast" : "≈ 15 s.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1518,6 +1523,25 @@
     "cta" : "Ledger'ımı kur",
     "bannerTitle" : "Ledger cihazınız elinize ulaştı mı?",
     "bannerCta" : "Kurulumu başlatın",
+    "continue" : "Devam"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
     "continue" : "Devam"
   },
   "purchaseDevice" : {
@@ -3238,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, Binance Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
@@ -6245,6 +6269,7 @@
       "iWithdraw" : "Çekilecek:",
       "totalStake" : "Toplam stake",
       "commission" : "Komisyon",
+      "netApy" : "Net APY",
       "stakeActivationState" : "Durum",
       "stakeActivePercent" : "Aktif",
       "stakeAvailableBalance" : "Mevcut bakiye",
@@ -7780,8 +7805,8 @@
     "selectAccount" : "Hesap seçin",
     "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
-    "accountCount" : "{{count}} hesap (algılanan)",
-    "accountCount_plural" : "{{count}} hesap (algılanan)"
+    "accountCount" : "{{count}} hesap",
+    "accountCount_plural" : "{{count}} hesap"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
