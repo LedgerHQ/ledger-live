@@ -1,7 +1,7 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
 describe("createApi", () => {
   // NOTE: as our aptos nodes and indexer whitelist calls, we need to explicitely set the LEDGER_CLIENT_VERSION
@@ -222,7 +222,7 @@ describe("createApi", () => {
       const balances = await api.getBalance(tokenAccount.freshAddress);
       const tokenBalances = balances.filter(
         b =>
-          b.asset.type === assetTypeToken &&
+          b.asset.type === TOKEN_TYPE.FUNGIBLE_ASSET &&
           b.asset.assetReference ===
             "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
       );
