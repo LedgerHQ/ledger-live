@@ -76,13 +76,10 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
     }),
   );
 
-  return entries.reduce(
-    (acc, entry) => {
-      acc[entry.name] = entry;
-      return acc;
-    },
-    {} as Record<string, Entry>,
-  );
+  return entries.reduce<Record<string, Entry>>((acc, entry) => {
+    acc[entry.name] = entry;
+    return acc;
+  }, {});
 }
 
 // Execute commands for each app with retry mechanism
@@ -199,35 +196,88 @@ async function setupMainSpeculosApp(
 }
 
 // Execute global commands after all app-specific setup is complete
-async function executeCliCommands(cliCommands: CliCommand[], userdataPath: string): Promise<void> {
-  for (const cmd of cliCommands) {
-    const maxRetries = 3;
-    let attempt = 0;
-    let lastError: unknown;
+// On any failure (after per-command retries), delete and re-setup the main Speculos app
+// and restart the full set of commands from the beginning.
+async function executeCliCommands(
+  cliCommands: CliCommand[],
+  userdataPath: string,
+  speculosApp?: SpeculosAppType,
+  entryMap?: Record<string, Entry>,
+): Promise<void> {
+  const globalMaxRetries = 3;
+  let globalAttempt = 0;
+  let lastGlobalError: unknown;
 
-    while (attempt < maxRetries) {
-      attempt++;
+  while (globalAttempt < globalMaxRetries) {
+    globalAttempt++;
+    try {
+      for (const cmd of cliCommands) {
+        const maxRetries = 3;
+        let attempt = 0;
+        let lastError: unknown;
 
-      try {
-        log.info(`\n🔄 [Global CLI] Attempt ${attempt}/${maxRetries}`);
-        await executeCliCommand(() => cmd(userdataPath));
-        lastError = undefined;
-        log.info(`✅ [Global CLI] Command executed successfully on attempt ${attempt}`);
-        break;
-      } catch (err) {
-        lastError = err;
+        while (attempt < maxRetries) {
+          attempt++;
 
-        if (attempt < maxRetries) {
-          log.info(`[Global CLI] Retrying command on attempt ${attempt + 1}`);
+          try {
+            log.info(`\n🔄 [Global CLI] Attempt ${attempt}/${maxRetries}`);
+            await executeCliCommand(() => cmd(userdataPath));
+            lastError = undefined;
+            log.info(`✅ [Global CLI] Command executed successfully on attempt ${attempt}`);
+            break;
+          } catch (err) {
+            lastError = err;
+
+            if (attempt < maxRetries) {
+              log.info(`[Global CLI] Retrying command on attempt ${attempt + 1}`);
+            }
+          }
+        }
+
+        if (lastError) {
+          throw new Error(
+            `❌ [Global CLI] Failed to execute command after ${maxRetries} attempts: ${lastError}`,
+          );
         }
       }
-    }
 
-    if (lastError) {
-      throw new Error(
-        `❌ [Global CLI] Failed to execute command after ${maxRetries} attempts: ${lastError}`,
-      );
+      lastGlobalError = undefined;
+      log.info(`✅ [Global CLI] Full run succeeded on attempt ${globalAttempt}`);
+      break;
+    } catch (err) {
+      lastGlobalError = err;
+
+      if (speculosApp && entryMap) {
+        const main = entryMap[speculosApp.name];
+        if (main) {
+          // Delete previous main Speculos instance and deregister known proxy
+          await removeSpeculosAndDeregisterKnownSpeculos(main.deviceId);
+          // Launch a fresh instance and update the entry map, preserving proxy port
+          const device = await launchSpeculos(speculosApp.name);
+          entryMap[speculosApp.name] = {
+            name: speculosApp.name,
+            speculosPort: device.port,
+            proxyPort: main.proxyPort,
+            deviceId: device.id,
+          };
+        }
+
+        // Re-register the new main Speculos instance (with retries inside)
+        await setupMainSpeculosApp(speculosApp, entryMap);
+      }
+
+      if (globalAttempt < globalMaxRetries) {
+        log.info(
+          `[Global CLI] Retrying full command run (attempt ${globalAttempt + 1}/${globalMaxRetries})`,
+        );
+      }
     }
+  }
+
+  if (lastGlobalError) {
+    throw new Error(
+      `❌ [Global CLI] Full run failed after ${globalMaxRetries} attempts (with Speculos re-setup): ${lastGlobalError}`,
+    );
   }
 }
 
@@ -260,8 +310,10 @@ export class InitializationManager {
       );
     }
 
-    // Execute global commands and finalize setup
-    await executeCliCommands(cliCommands, userdataPath);
+    // Execute global commands with internal full-run retry and Speculos re-initialization
+    await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
+
+    // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
     if (featureFlags) await setFeatureFlags(featureFlags);
   }

@@ -1,4 +1,4 @@
-import { device } from "detox";
+import { device, log } from "detox";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../bridge/server";
 import { describeIfNotNanoS } from "../../helpers/commonHelpers";
@@ -21,6 +21,7 @@ const ledgerSyncPushDataArgs = {
 };
 
 async function initializeLedgerKeyRingProtocol() {
+  log.error("[LedgerSync] Initializing Ledger Key Ring Protocol");
   const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
   ledgerKeyRingProtocolArgs.apiBaseUrl =
     environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
@@ -35,11 +36,13 @@ async function initializeLedgerKeyRingProtocol() {
       ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
       ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
     }
+    log.error("[LedgerSync] Ledger Key Ring Protocol initialized");
     return output;
   });
 }
 
 function initializeThenDeleteTrustChain() {
+  log.error("[LedgerSync] Initializing then deleting TrustChain data");
   return [
     async () => initializeLedgerKeyRingProtocol(),
     async () => initializeLedgerSync(),
@@ -62,6 +65,7 @@ async function deleteLedgerSyncData() {
 }
 
 async function initializeLedgerSync() {
+  log.error("[LedgerSync] Initializing Ledger Sync");
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
@@ -73,7 +77,9 @@ async function initializeLedgerSync() {
     }
     return out;
   });
+  log.error("[LedgerSync] Ledger Sync initialized");
   await app.ledgerSync.activateLedgerSyncOnSpeculos();
+  log.error("[LedgerSync] Ledger Sync activated on Speculos");
   return output;
 }
 
@@ -84,12 +90,15 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
       cliCommands: [
         ...initializeThenDeleteTrustChain(),
         async () => {
+          log.error("[LedgerSync] Initializing Ledger Key Ring Protocol");
           return initializeLedgerKeyRingProtocol();
         },
         async () => {
+          log.error("[LedgerSync] Initializing Ledger Sync");
           return initializeLedgerSync();
         },
         async () => {
+          log.error("[LedgerSync] Pushing data to Ledger Sync");
           return CLI.ledgerSync({
             ...ledgerKeyRingProtocolArgs,
             ...ledgerSyncPushDataArgs,
@@ -97,6 +106,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
         },
       ],
     });
+    log.error("[LedgerSync] waiting for portfolio page to load");
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
