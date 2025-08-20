@@ -38,20 +38,28 @@ const ModularDrawerFlowManagerRemoteData = ({
   const [searchedValue, setSearchedValue] = useState<string>();
   const { assetsConfiguration, networkConfiguration } =
     useModularDrawerConfiguration(drawerConfiguration);
+
+  const currencyIds = useMemo(() => currencies.map(currency => currency.id), [currencies]);
+
   const { data, isLoading, isSuccess, error } = useAssetsData({
     search: searchedValue,
-    currencyIds: currencies.map(currency => currency.id),
+    currencyIds,
   });
-  const assetsSorted = data?.currenciesOrder.metaCurrencyIds
-    .filter(currencyId => data?.cryptoAssets[currencyId])
-    .map(currencyId => ({
-      asset: data.cryptoAssets[currencyId],
-      networks: Object.keys(data.cryptoAssets[currencyId].assetsIds).map(
-        assetId => data.networks[assetId],
-      ),
-      interestRates: data.interestRates[currencyId],
-      market: data.markets[currencyId],
-    }));
+
+  const assetsSorted = useMemo(() => {
+    if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
+
+    return data.currenciesOrder.metaCurrencyIds
+      .filter(currencyId => data.cryptoAssets[currencyId])
+      .map(currencyId => ({
+        asset: data.cryptoAssets[currencyId],
+        networks: Object.keys(data.cryptoAssets[currencyId].assetsIds).map(
+          assetId => data.networks[assetId],
+        ),
+        interestRates: data.interestRates[currencyId],
+        market: data.markets[currencyId],
+      }));
+  }, [data]);
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
@@ -65,6 +73,7 @@ const ModularDrawerFlowManagerRemoteData = ({
       providerId: assetData.asset.id,
     }));
   }, [assetsSorted, data]);
+
   const sortedCryptoCurrencies = useMemo(() => {
     if (!assetsSorted || !data) return [];
 

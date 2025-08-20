@@ -27,7 +27,7 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerFlowManagerProps } from "./types";
 
 const createMockState = () => ({
-  accounts: structuredClone([ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT]),
+  accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
   wallet: {
     accountNames: new Map([
       ["bitcoin1", "bitcoin-account-1"],
@@ -66,6 +66,7 @@ const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
+      immutableCheck: false,
     }).concat(assetsDataApi.middleware),
 });
 

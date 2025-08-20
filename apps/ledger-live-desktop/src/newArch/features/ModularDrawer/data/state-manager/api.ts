@@ -44,12 +44,12 @@ export const assetsDataApi = createApi({
   tagTypes: [AssetsDataTags.Assets],
   endpoints: build => ({
     getAssetsData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
-      query: ({ cursor, search, currencyIds }) => ({
+      query: ({ cursor, search, currencyIds: _currencyIds }) => ({
         url: "assets",
         params: {
           ...(cursor && { cursor }),
           ...(search && { search }),
-          ...(currencyIds && currencyIds.length > 0 && { currencyIds }),
+          // ...(currencyIds && currencyIds.length > 0 && { currencyIds }),
           pageSize: 100,
         },
       }),
