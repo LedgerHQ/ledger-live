@@ -118,17 +118,42 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   /*
    * Callbacks
    */
-
+  const handleOnboardingDoneState = useCallback(() => {
+    dispatchRedux(setReadOnlyMode(false));
+    dispatchRedux(setHasOrderedNano(false));
+    dispatchRedux(completeOnboarding());
+  }, [dispatchRedux]);
   /**
    * Triggers the end of the onboarding
    */
   const handleOnboardingDone = useCallback(() => {
-    dispatchRedux(setReadOnlyMode(false));
-    dispatchRedux(setHasOrderedNano(false));
-    dispatchRedux(completeOnboarding());
+    handleOnboardingDoneState();
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
-  }, [device, dispatchRedux, navigation]);
+  }, [device, navigation, handleOnboardingDoneState]);
 
+  const handleSecondStepFinish = useCallback(
+    (done: boolean) => {
+      if (companionStep === "new_seed") {
+        if (done) {
+          handleOnboardingDoneState();
+          // TODO: navigate to receive flow
+          navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
+        } else {
+          handleOnboardingDone();
+        }
+      } else {
+        setCompanionStep("exit");
+      }
+    },
+    [
+      companionStep,
+      setCompanionStep,
+      navigation,
+      device,
+      handleOnboardingDone,
+      handleOnboardingDoneState,
+    ],
+  );
   /*
    * useEffects
    */
@@ -191,7 +216,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
               companionStep={companionStep}
               isCollapsed={companionStep === "setup" || companionStep === "exit"}
               device={device}
-              handleDone={() => setCompanionStep("exit")}
+              handleDone={handleSecondStepFinish}
             />
             {companionStep === "exit" ? (
               <TrackScreen category="Set up device: Final Step Your device is ready" />

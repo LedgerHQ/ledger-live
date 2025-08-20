@@ -12,6 +12,7 @@ interface CollapsibleStepProps extends PropsWithChildren {
   isFirst?: boolean;
   hideTitle?: boolean;
   background?: React.JSX.Element | null;
+  doneSubTitle?: string;
 }
 
 interface CenterCircleProps {
@@ -56,19 +57,22 @@ const CollapsibleStep = ({
   isFirst,
   hideTitle,
   background: Background,
+  doneSubTitle,
 }: CollapsibleStepProps) => {
   if (isCollapsed) {
     return (
-      <CollapsibleCard
-        justifyContent="space-between"
-        flexDirection="row"
-        marginTop={isFirst ? "16px" : "8px"}
-        alignItems="center"
-      >
-        <Text fontSize="16px" fontWeight="bold">
-          {title}
-        </Text>
-        <StatusIcon status={status} />
+      <CollapsibleCard marginTop={isFirst ? "16px" : "8px"}>
+        <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+          <Text fontSize="16px" fontWeight="bold">
+            {title}
+          </Text>
+          <StatusIcon status={status} />
+        </Flex>
+        {status === "complete" && doneSubTitle && (
+          <Text variant="paragraph" color="neutral.c70" mt={3}>
+            {doneSubTitle}
+          </Text>
+        )}
       </CollapsibleCard>
     );
   }

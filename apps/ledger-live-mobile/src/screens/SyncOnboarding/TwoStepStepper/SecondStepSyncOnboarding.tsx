@@ -14,7 +14,7 @@ interface SecondStepSyncOnboardingProps {
   device: Device;
   companionStep: CompanionStep;
   isCollapsed: boolean;
-  handleDone: () => void;
+  handleDone: (done: boolean) => void;
 }
 
 const SecondStepSyncOnboarding = ({
@@ -31,7 +31,8 @@ const SecondStepSyncOnboarding = ({
     <CollapsibleStep
       isCollapsed={isCollapsed}
       title={t("syncOnboarding.secureCryptoStep.title")}
-      status="unfinished"
+      doneSubTitle={t("syncOnboarding.secureCryptoStep.doneSubTitle")}
+      status={companionStep === "exit" ? "complete" : "unfinished"}
       background={<BackgroundBlue />}
     >
       <Box mt={3}>

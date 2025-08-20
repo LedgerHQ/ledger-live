@@ -59,11 +59,15 @@ const InstallSetOfApps = ({
 
   const dependenciesToInstall = useMemo(() => {
     if (shouldRestoreApps && lastSeenDevice) {
+      if (lastSeenDevice.apps.length === 0) {
+        return dependencies;
+      }
       return lastSeenDevice.apps.map(app => app.name);
     }
     if (shouldRestoreApps && !lastSeenDevice) {
       return [];
     }
+
     return dependencies;
   }, [shouldRestoreApps, dependencies, lastSeenDevice]);
 
