@@ -20,13 +20,10 @@ function extractFlagValue<K extends keyof LiveDataOpts>(
   return idx !== -1 && idx + 1 < parts.length ? parts[idx + 1] : undefined;
 }
 
-export function runCliCommand(command: string, speculosAddress?: string): Promise<string> {
+export function runCliCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
     const env = { ...process.env };
-    if (speculosAddress) {
-      env.SPECULOS_ADDRESS = speculosAddress;
-    }
     const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env });
 
     let output = "";

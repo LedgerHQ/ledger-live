@@ -115,18 +115,15 @@ export async function deleteSpeculos(deviceId?: string) {
 }
 
 export async function takeSpeculosScreenshot() {
-  for (const [, apiPort] of speculosDevices.entries()) {
+  for (const [deviceId, apiPort] of speculosDevices.entries()) {
     if (isRemoteIos()) {
       try {
-        await waitForSpeculosReady(process.env.SPECULOS_ADDRESS!, {
+        await waitForSpeculosReady(deviceId, {
           interval: 5_000,
           timeout: 10_000,
         });
       } catch {
-        log.warn(
-          "E2E",
-          `Skipping screenshot: Speculos ${process.env.SPECULOS_ADDRESS} unreachable.`,
-        );
+        log.warn("E2E", `Skipping screenshot: Speculos with ${deviceId} unreachable.`);
         continue;
       }
     }

@@ -14,6 +14,7 @@ import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
 import { isRemoteIos } from "../helpers/commonHelpers";
+import { log } from "detox";
 
 export type LiveDataOpts = {
   currency: string;
@@ -57,8 +58,8 @@ type LedgerSyncOpts = {
 
 export const CLI = {
   ledgerKeyRingProtocol: async function (opts: LedgerKeyRingProtocolOpts) {
-    console.error("[CLI] 🔄 Starting ledgerKeyRingProtocol function");
-    console.error("[CLI] 📋 Options received:", JSON.stringify(opts, null, 2));
+    log.error("[CLI] 🔄 Starting ledgerKeyRingProtocol function");
+    log.error("[CLI] 📋 Options received:", JSON.stringify(opts, null, 2));
     const {
       apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
       applicationId = 16,
@@ -80,21 +81,21 @@ export const CLI = {
       apiBaseUrl,
     };
 
-    console.error(`[CLI] 🏗️ Context created:`, context);
+    log.error(`[CLI] 🏗️ Context created:`, context);
 
-    console.error("[CLI] 🔄 Getting SDK with device access");
+    log.error("[CLI] 🔄 Getting SDK with device access");
     const sdk = getSdk(false, context, withDevice);
-    console.error("[CLI] ✅ SDK created successfully");
+    log.error("[CLI] ✅ SDK created successfully");
 
     //@todo: Split into it's own function
     if (initMemberCredentials) {
-      console.error("[CLI] 🔄 Executing initMemberCredentials operation");
+      log.error("[CLI] 🔄 Executing initMemberCredentials operation");
       return sdk.initMemberCredentials();
     }
 
     //@todo: Split into it's own function
     if (getKeyRingTree) {
-      console.error("[CLI] 🔄 Executing getKeyRingTree operation");
+      log.error("[CLI] 🔄 Executing getKeyRingTree operation");
       if (!pubKey || !privateKey) {
         return Promise.reject("pubKey and privateKey are required");
       }
@@ -103,20 +104,20 @@ export const CLI = {
         pubkey: pubKey,
         privatekey: privateKey,
       });
-      console.error("[CLI] ✅ getKeyRingTree completed successfully");
-      console.error(`[CLI] 📊 Trustchain result:`, result_1);
+      log.error("[CLI] ✅ getKeyRingTree completed successfully");
+      log.error(`[CLI] 📊 Trustchain result:`, result_1);
       return result_1.trustchain;
     }
 
     if (destroyKeyRingTree) {
-      console.error("[CLI] 🔄 Executing destroyKeyRingTree operation");
+      log.error("[CLI] 🔄 Executing destroyKeyRingTree operation");
 
       if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
       if (!rootId) return Promise.reject("rootId is required");
       if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
       if (!applicationPath) return Promise.reject("applicationPath is required");
 
-      console.error("[CLI] ✅ destroyKeyRingTree completed successfully");
+      log.error("[CLI] ✅ destroyKeyRingTree completed successfully");
       return sdk["destroyTrustchain"](
         { rootId, walletSyncEncryptionKey, applicationPath },
         { pubkey: pubKey, privatekey: privateKey },
@@ -148,16 +149,16 @@ export const CLI = {
       apiBaseUrl,
     };
 
-    console.error(`[CLI] 🏗️ Context created:`, context);
+    log.error(`[CLI] 🏗️ Context created:`, context);
     if (!cloudSyncApiBaseUrl) {
       return;
     }
 
-    console.error("[CLI] 🔄 Getting SDK with device access");
+    log.error("[CLI] 🔄 Getting SDK with device access");
     let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
     const ledgerKeyRingProtocolSDK = getSdk(false, context, withDevice);
 
-    console.error("[CLI] 🔄 Creating CloudSyncSDK");
+    log.error("[CLI] 🔄 Creating CloudSyncSDK");
     const cloudSyncSDK = new CloudSyncSDK({
       apiBaseUrl: cloudSyncApiBaseUrl,
       slug: liveSlug,
@@ -171,13 +172,13 @@ export const CLI = {
 
     //@todo: Split into it's own function
     if (push) {
-      console.error("[CLI] 🔄 Executing PUSH operation");
-      console.error(`[CLI] 📤 Push data:`, {
+      log.error("[CLI] 🔄 Executing PUSH operation");
+      log.error(`[CLI] 📤 Push data:`, {
         rootId,
         walletSyncEncryptionKey,
         applicationPath,
       });
-      console.error(`[CLI] 🔑 Credentials:`, {
+      log.error(`[CLI] 🔑 Credentials:`, {
         pubkey: pubKey ? `${pubKey.substring(0, 10)}...` : "undefined",
         privatekey: privateKey ? `${privateKey.substring(0, 10)}...` : "undefined",
       });
@@ -192,13 +193,13 @@ export const CLI = {
 
     //@todo: Split into it's own function
     if (pull) {
-      console.error("[CLI] 🔄 Executing PULL operation");
-      console.error(`[CLI] 📥 Pull params:`, {
+      log.error("[CLI] 🔄 Executing PULL operation");
+      log.error(`[CLI] 📥 Pull params:`, {
         rootId,
         walletSyncEncryptionKey,
         applicationPath,
       });
-      console.error(`[CLI] 🔑 Credentials:`, {
+      log.error(`[CLI] 🔑 Credentials:`, {
         pubkey: pubKey ? `${pubKey.substring(0, 10)}...` : "undefined",
         privatekey: privateKey ? `${privateKey.substring(0, 10)}...` : "undefined",
       });
@@ -213,8 +214,7 @@ export const CLI = {
     }
 
     if (deleteData) {
-      console.error("[CLI] 🔄 Executing DELETE operation");
-      console.error(`[CLI] 🗑️ Delete params:`, {
+      log.error(`[CLI] 🗑️ Delete params:`, {
         rootId,
         walletSyncEncryptionKey,
         applicationPath,
