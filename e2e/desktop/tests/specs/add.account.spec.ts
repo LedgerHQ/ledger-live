@@ -7,22 +7,25 @@ import invariant from "invariant";
 const currencies = [
   {
     currency: Currency.BTC,
-    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073",
+    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073, B2CQA-3272",
   },
-  { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
-  { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
-  { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675" },
-  { currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676" },
-  { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2677" },
-  { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678" },
-  { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679" },
-  { currency: Currency.BCH, xrayTicket: "B2CQA-2498, B2CQA-2652, B2CQA-2680" },
-  { currency: Currency.ALGO, xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681" },
-  { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
-  { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
-  { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
-  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
+  {
+    currency: Currency.ETH,
+    xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673, B2CQA-3272",
+  },
+  { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674, B2CQA-3272" },
+  { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675, B2CQA-3272" },
+  { currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676, B2CQA-3272" },
+  { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2677, B2CQA-3272" },
+  { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678, B2CQA-3272" },
+  { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679, B2CQA-3272" },
+  { currency: Currency.BCH, xrayTicket: "B2CQA-2498, B2CQA-2652, B2CQA-2680, B2CQA-3272" },
+  { currency: Currency.ALGO, xrayTicket: "B2CQA-2497, B2CQA-2653, B2CQA-2681, B2CQA-3272" },
+  { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682, B2CQA-3272" },
+  { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683, B2CQA-3272" },
+  { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684, B2CQA-3272" },
+  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685, B2CQA-3272" },
+  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646, B2CQA-3272" },
 ];
 
 for (const currency of currencies) {
@@ -46,16 +49,10 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
-          await app.modularDrawer.selectNetwork(currency.currency);
-          await app.addAccount.expectAccountModalToBeVisible();
-        } else {
-          await app.addAccount.expectModalVisibility();
-          await app.addAccount.selectCurrency(currency.currency);
-        }
+        await app.modularDrawer.expectAssetsDrawerVisibility();
+        await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
+        await app.modularDrawer.selectNetwork(currency.currency);
+        await app.addAccount.expectAccountModalToBeVisible();
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();

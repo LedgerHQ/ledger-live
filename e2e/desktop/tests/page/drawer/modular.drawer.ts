@@ -18,11 +18,7 @@ export class ModularDrawer extends Drawer {
     this.accountDrawer = new ModularAccountDrawer(page);
   }
 
-  async isModularAssetsDrawerVisible(): Promise<boolean> {
-    return await this.assetDrawer.isModularDrawerVisible();
-  }
-
-  async validateAssetsDrawerItems() {
+  async expectAssetsDrawerVisibility() {
     return await this.assetDrawer.validateDrawerItems();
   }
 
@@ -32,10 +28,6 @@ export class ModularDrawer extends Drawer {
 
   async selectNetwork(currency?: Currency, networkIndex: number = 0) {
     return await this.networkDrawer.selectNetwork(currency, networkIndex);
-  }
-
-  async isModularAccountDrawerVisible(): Promise<boolean> {
-    return await this.accountDrawer.isModularAccountDrawerVisible();
   }
 
   async selectAccountByName(account: AccountType) {

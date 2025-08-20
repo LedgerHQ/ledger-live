@@ -101,11 +101,6 @@ export class PortfolioPage extends AppPage {
     await this.stakeEntryButton.click();
   }
 
-  @step("Expect choose asset to be visible")
-  async expectChooseAssetToBeVisible() {
-    await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
-  }
-
   @step("Navigate to asset $0")
   async navigateToAsset(asset: string) {
     const assetRowLocator = this.assetRow(asset);

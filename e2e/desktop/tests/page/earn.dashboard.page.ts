@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { step } from "../misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
-import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { ModularDrawer } from "./drawer/modular.drawer";
 
 export class EarnPage extends WebViewAppPage {
@@ -21,7 +20,6 @@ export class EarnPage extends WebViewAppPage {
   private tabAssetsButton = "tab-assets";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
-  private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);
 
   @step("Go and wait for Earn app to be ready")
@@ -107,11 +105,7 @@ export class EarnPage extends WebViewAppPage {
     await expect(earnButton).toBeVisible();
     await expect(earnButton).toBeEnabled();
     await earnButton.click();
-    if (await this.modularDrawer.isModularAssetsDrawerVisible()) {
-      await this.modularDrawer.validateAssetsDrawerItems();
-      return;
-    }
-    await this.chooseAssetDrawer.verifyChooseAssetDrawer();
+    await this.modularDrawer.expectAssetsDrawerVisibility();
   }
 
   @step("Verify provider URL")
