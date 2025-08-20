@@ -21,6 +21,9 @@ import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountB
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+const drawerClosedError = new DrawerClosedError("User closed the drawer");
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -76,9 +79,7 @@ export function useCustomExchangeHandlers({
 
       if (pendingPromises.length > 0) {
         activePromises.current.forEach(({ reject }, key) => {
-          const error = new Error(key);
-          error.name = "OperationCancelledByNavigation";
-          reject(error);
+          reject(drawerClosedError);
           activePromises.current.delete(key);
         });
       }
@@ -167,6 +168,7 @@ export function useCustomExchangeHandlers({
 
                   navigation.pop();
                 },
+                onClose: () => onCancel(drawerClosedError),
               },
             });
 
@@ -176,8 +178,6 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `complete-${Date.now()}`;
-
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -193,10 +193,8 @@ export function useCustomExchangeHandlers({
                 },
                 device,
                 onResult: result => {
-                  // Clean up promise tracking
-                  activePromises.current.delete(promiseId);
-
                   navigation.pop();
+
                   if (result.error) {
                     onCancel(result.error);
 
@@ -213,12 +211,8 @@ export function useCustomExchangeHandlers({
                   setDevice(undefined);
                   deviceRef.current = undefined;
                 },
+                onClose: () => onCancel(drawerClosedError),
               },
-            });
-
-            // Track the promise
-            activePromises.current.set(promiseId, {
-              reject: onCancel,
             });
           },
           "custom.exchange.error": ({ error }) => {
@@ -236,21 +230,12 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            const promiseId = `swap-${Date.now()}`;
             let cancelCalled = false;
 
             const safeOnCancel = (error: Error) => {
               if (!cancelCalled) {
                 cancelCalled = true;
-                activePromises.current.delete(promiseId);
                 onCancel(error);
-              }
-            };
-
-            const safeOnSuccess = (result: { operationHash: string; swapId: string }) => {
-              if (!cancelCalled) {
-                activePromises.current.delete(promiseId);
-                onSuccess(result);
               }
             };
 
@@ -283,17 +268,13 @@ export function useCustomExchangeHandlers({
                     onCompleteResult?.(exchangeParams, operationHash);
 
                     // return success to swap live app
-                    safeOnSuccess({ operationHash, swapId: exchangeParams.swapId });
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
                   setDevice(undefined);
                   deviceRef.current = undefined;
                 },
+                onClose: () => safeOnCancel(drawerClosedError),
               },
-            });
-
-            // Track the promise with safe callbacks
-            activePromises.current.set(promiseId, {
-              reject: safeOnCancel,
             });
           },
         },
