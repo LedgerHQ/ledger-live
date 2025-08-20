@@ -16,6 +16,7 @@ import {
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import orderBy from "lodash/orderBy";
 import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -23,6 +24,8 @@ export type NetworkSelectionStepProps = {
   flow: string;
   source: string;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  asset?: CryptoOrTokenCurrency;
+  currenciesByProvider: CurrenciesByProviderId[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -33,6 +36,8 @@ const NetworkSelection = ({
   flow,
   source,
   networksConfiguration,
+  asset,
+  currenciesByProvider,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -65,6 +70,8 @@ const NetworkSelection = ({
   const transformNetworks = createNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
+    selectedAssetId: asset ? asset.id : "",
+    currenciesByProvider: currenciesByProvider,
   });
 
   const orderedNetworks = orderBy(networks, ["name"]);

@@ -5,10 +5,14 @@ import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 import { useLeftAccountsModule, useLeftAccountsApyModule } from "./useLeftAccountsModule";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { useRightBalanceModule } from "./useRightBalanceModule";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
   accounts$?: Observable<WalletAPIAccount[]>;
+  currenciesByProvider: CurrenciesByProviderId[];
+  selectedAssetId: string;
 };
 
 type NetworksConfiguration = EnhancedModularDrawerConfiguration["networks"];
@@ -30,6 +34,7 @@ const getLeftElement = (leftElement: LeftElement) => {
 const getRightElement = (rightElement: RightElement) => {
   switch (rightElement) {
     case "balance":
+      return useRightBalanceModule;
     case "undefined":
     default:
       return undefined;
@@ -39,6 +44,8 @@ const getRightElement = (rightElement: RightElement) => {
 const createNetworkConfigurationHook = ({
   networksConfig,
   accounts$,
+  currenciesByProvider,
+  selectedAssetId,
 }: Props): ((assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & Network)[]) => {
   const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
 
@@ -51,7 +58,10 @@ const createNetworkConfigurationHook = ({
 
   return (assets: CryptoOrTokenCurrency[]) => {
     const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
-      ...hooks.map(hook => (assets: CryptoOrTokenCurrency[]) => hook({ assets, accounts$ })),
+      ...hooks.map(
+        hook => (assets: CryptoOrTokenCurrency[]) =>
+          hook({ assets, accounts$, currenciesByProvider, selectedAssetId }),
+      ),
     );
     return composedHook(assets);
   };

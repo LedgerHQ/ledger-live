@@ -128,6 +128,8 @@ export function ModularDrawer({
           flow,
           source,
           networksConfiguration,
+          asset,
+          currenciesByProvider,
         }}
         accountsViewModel={{
           accounts$,
