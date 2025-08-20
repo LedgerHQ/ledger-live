@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 LLM / LLD - Add NRR as a possible interest type

@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/coin-sui": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 add sui swap tokens support
