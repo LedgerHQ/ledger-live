@@ -15,7 +15,6 @@ describe("createApi", () => {
     },
   });
   const assetTypeNative = "native";
-  const assetTypeToken = "token";
 
   const sender = {
     xpub: "0x934887885b27a0407bf8a5e0bbc6b6371254bea94de5510e948bcc92dc0a519b",
