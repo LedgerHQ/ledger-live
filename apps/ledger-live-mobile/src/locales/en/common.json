@@ -1599,6 +1599,11 @@
       "installCTA": "Install apps",
       "skipCTA": "I'll do this later"
     },
+    "newSeed":{
+      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
+      "installCTA": "Secure my crypto",
+      "skipCTA": "Maybe later"
+    },
     "ongoing": {
       "resolving": "Resolving dependencies",
       "progress": "Stay in Ledger Live while apps are installing.",
@@ -2255,6 +2260,9 @@
         "continueCTA": "Continue",
         "contactSupportCTA": "Contact support"
       }
+    },
+    "completionScreen": {
+      "title": "You’re now in control"
     }
   },
   "blePairingFlow": {
