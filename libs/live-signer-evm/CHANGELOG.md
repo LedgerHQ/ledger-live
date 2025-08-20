@@ -1,34 +1,30 @@
 # @ledgerhq/live-signer-evm
 
-## 0.6.4-nightly.3
+## 0.7.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
 
 ### Patch Changes
 
-- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1)]:
-  - @ledgerhq/coin-evm@2.27.0-nightly.3
+- Updated dependencies [[`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2)]:
+  - @ledgerhq/coin-evm@2.27.0
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/hw-app-eth@6.45.15
 
-## 0.6.4-nightly.2
+## 0.7.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
-  - @ledgerhq/coin-evm@2.27.0-nightly.2
-  - @ledgerhq/hw-app-eth@6.45.15-nightly.1
-
-## 0.6.4-nightly.1
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.26.1-nightly.1
-
-## 0.6.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.26.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.45.15-nightly.0
+- Updated dependencies [[`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2)]:
+  - @ledgerhq/coin-evm@2.27.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.15-next.0
 
 ## 0.6.3
 

@@ -306,6 +306,10 @@
       "title" : "Сбой подключения устройства",
       "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Сбой подключения устройства",
+      "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема сохраняется."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Сбой подключения устройства",
       "description" : "Ledger Live не может подключиться к устройству. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
@@ -4271,7 +4275,7 @@
   "addAccounts" : {
     "addNew" : "Добавить новый",
     "seeAllAccounts" : "Показать все",
-    "addNewOrExisting" : "Добавить ещё один счёт",
+    "addNewOrExisting" : "Добавить счёт",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -6245,6 +6249,7 @@
       "iWithdraw" : "Я вывожу",
       "totalStake" : "Общий пул",
       "commission" : "Комиссия",
+      "netApy" : "Чистая прибыль в год",
       "stakeActivationState" : "Состояние",
       "stakeActivePercent" : "Активно",
       "stakeAvailableBalance" : "Доступно",
@@ -7780,8 +7785,8 @@
     "selectAccount" : "Выберите счёт",
     "searchPlaceholder" : "Поиск...",
     "emptyAssetList" : "Ничего не нашли :(",
-    "accountCount" : "Найден {{count}} счёт",
-    "accountCount_plural" : "Счетов найдено: {{count}}"
+    "accountCount" : "Счёт: {{count}}",
+    "accountCount_plural" : "Счета: {{count}}"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

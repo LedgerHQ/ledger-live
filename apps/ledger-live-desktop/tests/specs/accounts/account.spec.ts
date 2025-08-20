@@ -7,7 +7,22 @@ import { Layout } from "../../component/layout.component";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({
+  userdata: "skip-onboarding",
+  featureFlags: {
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        earn_flow: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
+  },
+});
 
 const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP", "Tron", "ADA", "DOT"];
 
