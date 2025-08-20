@@ -12,6 +12,7 @@ const jestAllure2ReporterOptions: ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
+      worker: process.env.JEST_WORKER_ID,
     },
     status: ({ value }) => (value === "broken" ? "failed" : value),
   },
@@ -27,6 +28,17 @@ const jestAllure2ReporterOptions: ReporterOptions = {
 
 // Include problematic ESM packages and their submodules
 const transformIncludePatterns = ["ky", "@polkadot"];
+
+// Resolve workers: env wins; CI defaults to 2; otherwise undefined
+function resolveMaxWorkers(): number | string | undefined {
+  const fromEnv = process.env.JEST_MAX_WORKERS;
+  if (fromEnv && /^\d+%?$/.test(fromEnv)) {
+    return fromEnv; // e.g. "2" or "50%"
+  }
+  if (process.env.CI) return 2;
+  return undefined;
+}
+const resolvedMaxWorkers = resolveMaxWorkers();
 
 const config: Config = {
   rootDir: ".",
@@ -57,7 +69,11 @@ const config: Config = {
   setupFiles: ["<rootDir>/jest.setup.ts"],
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
+  maxWorkers: process.env.CI ? 3 : "50%",
+  workerIdleMemoryLimit: process.env.CI ? "1500MB" : undefined,
   testTimeout: 300_000,
+  clearMocks: true,
+  restoreMocks: true,
   reporters: [
     "detox/runners/jest/reporter",
     ["jest-allure2-reporter", jestAllure2ReporterOptions as Record<string, unknown>],

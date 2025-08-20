@@ -60,7 +60,6 @@ const test_ios = async () => {
       --headless \
       --retries 2 \
       --cleanup \
-      --maxWorkers 2 \
       --shard ${shard} \
       ${filteredArgs}`;
 };
@@ -79,7 +78,6 @@ const test_android = async () => {
       --headless \\
       --retries 2 \\
       --cleanup \\
-      --maxWorkers 2 \\
       --shard ${shard} \\
       ${filteredArgs}`;
 };

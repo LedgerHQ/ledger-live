@@ -45,6 +45,16 @@ module.exports = {
       shutdownDevice: false,
     },
   },
+  artifacts: {
+    rootDir: "artifacts",
+    plugins: {
+      log: { enabled: true, keepOnlyFailedTestsArtifacts: true },
+      screenshot: { takeWhen: "failing" },
+      video: { enabled: false },
+      instruments: { enabled: false },
+      timeline: { enabled: false },
+    },
+  },
   apps: {
     "ios.debug": {
       type: "ios.app",
@@ -89,7 +99,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        name: "iOS Simulator",
+        type: "iPhone 15",
       },
       reuse: true,
       headless: !!process.env.CI,

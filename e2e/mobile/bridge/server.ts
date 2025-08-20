@@ -3,11 +3,29 @@ import path from "path";
 import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
+import { Subject } from "rxjs";
 
-import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
+import { NavigatorName } from "~/const";
 import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
+
+// Ensure a global webSocket holder exists even when running outside test env (e.g., globalTeardown)
+const g: any = global as any;
+if (!g.webSocket) {
+  g.webSocket = {
+    wss: undefined,
+    ws: undefined,
+    messages: {},
+    e2eBridgeServer: new Subject<ServerData>(),
+  };
+}
+const webSocket = g.webSocket as {
+  wss: Server | undefined;
+  ws: any | undefined;
+  messages: { [id: string]: MessageData };
+  e2eBridgeServer: Subject<ServerData>;
+};
 
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
