@@ -64,7 +64,6 @@ jobs:
         shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-      
       - name: Run unit tests
         run: pnpm mobile test:jest:coverage
       - uses: actions/upload-artifact@v4
