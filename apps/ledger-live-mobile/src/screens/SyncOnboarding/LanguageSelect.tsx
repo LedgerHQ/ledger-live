@@ -118,8 +118,11 @@ const LanguageSelect = () => {
           pr={3}
           bg="opacityDefault.c10"
           borderRadius="50"
+          testID="language-select-button"
         >
-          <Text mr="2px">{currentLocale.toLocaleUpperCase()}</Text>
+          <Text mr="2px" testID="current-selected-language">
+            {currentLocale.toLocaleUpperCase()}
+          </Text>
           <DropdownMedium />
         </Flex>
       </TouchableOpacity>
@@ -132,7 +135,12 @@ const LanguageSelect = () => {
       >
         <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="space-between">
           <Flex flex={1} />
-          <Text variant="h5" fontWeight="semiBold" justifyContent="center">
+          <Text
+            variant="h5"
+            fontWeight="semiBold"
+            justifyContent="center"
+            testID="language-select-drawer-title"
+          >
             {t("syncOnboarding.languageSelect.title")}
           </Text>
           <Flex flex={1} alignItems="flex-end">
@@ -143,7 +151,11 @@ const LanguageSelect = () => {
           <Flex>
             <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
               {supportedLocales.map((locale, index: number) => (
-                <SelectableList.Element key={index + locale} value={locale}>
+                <SelectableList.Element
+                  key={index + locale}
+                  value={locale}
+                  testID={`language-select-${locale}`}
+                >
                   {languages[locale]}
                 </SelectableList.Element>
               ))}

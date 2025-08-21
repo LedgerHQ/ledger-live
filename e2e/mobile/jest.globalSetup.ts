@@ -125,4 +125,7 @@ export default async function setup(): Promise<void> {
   global.typeTextByWebTestId = WebElementHelpers.typeTextByWebTestId;
   global.getValueByWebTestId = WebElementHelpers.getValueByWebTestId;
   global.tapWebElementByElement = WebElementHelpers.tapWebElementByElement;
+  global.scrollToWebElement = WebElementHelpers.scrollToWebElement;
+  global.getCurrentWebviewUrl = WebElementHelpers.getCurrentWebviewUrl;
+  global.waitForWebElementToBeEnabled = WebElementHelpers.waitForWebElementToBeEnabled;
 }

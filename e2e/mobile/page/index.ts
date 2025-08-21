@@ -18,6 +18,7 @@ import PortfolioPage from "./wallet/portfolio.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
+import SettingsHelpPage from "./settings/settingsHelp.page";
 import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
@@ -26,6 +27,7 @@ import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
+import BuySellPage from "./trade/buySell.page";
 
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
@@ -112,6 +114,8 @@ export class Application {
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
+  private buySellPageInstance = lazyInit(BuySellPage);
+  private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
 
   public async init({
     speculosApp,
@@ -252,5 +256,13 @@ export class Application {
 
   public get transferMenuDrawer() {
     return this.TransferMenuDrawerInstance();
+  }
+
+  public get buySell() {
+    return this.buySellPageInstance();
+  }
+
+  public get settingsHelp() {
+    return this.settingsHelpPageInstance();
   }
 }

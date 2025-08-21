@@ -29,7 +29,7 @@ describe("Onboarding - Read Only", () => {
     await app.portfolio.expectPortfolioReadOnly();
     await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("BTC");
-    await app.market.openAssetPage("Bitcoin (BTC)");
+    await app.market.openAssetPage("BTC");
     await app.market.buyAsset();
     /*  Todo: Fix webview check tests
         await app.buyDevice.buyNano();

@@ -16,6 +16,8 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
+        // NOTE: not checking immutability for now as it crashes when some coins are syncing.
+        immutableCheck: false,
       }).concat(
         logger,
         assetsDataApi.middleware,

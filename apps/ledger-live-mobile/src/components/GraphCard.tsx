@@ -167,7 +167,11 @@ function GraphCard({
                             // range={portfolio.range}
                           />
                           <Text> </Text>
-                          <Delta unit={unit} valueChange={countervalueChange} />
+                          <Delta
+                            unit={unit}
+                            valueChange={countervalueChange}
+                            testID="graphCard-balance-delta"
+                          />
                         </>
                       )}
                     </Flex>

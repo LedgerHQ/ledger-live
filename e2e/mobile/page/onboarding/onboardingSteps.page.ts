@@ -1,15 +1,105 @@
+import { isIos } from "helpers/commonHelpers";
+
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
   acceptAnalyticsButtonId = "accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
-  setupLedger = "onboarding-setupLedger";
   recoveryPhrase = "onboarding-useCase-recoveryPhrase";
+  setupLedger = "onboarding-setupLedger";
+  accessWallet = "onboarding-accessWallet";
+  currentSelectedLanguageId = "current-selected-language";
+  languageSelectButtonId = "language-select-button";
+  languageSelectDrawerTitleId = "language-select-drawer-title";
+  deviceCardBaseId = "onboarding-device-selection";
+
+  languageSelectElementId = (language: string) => `language-select-${language}`;
+  deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
+  deviceCardTitleId = (title: string) => `${this.deviceCardId(title)}-title`;
 
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  setupLedgerButton = () => getElementById(this.setupLedger);
+  accessWalletButton = () => getElementById(this.accessWallet);
+  deviceCardHeader = (title: string) => getElementById(`${this.deviceCardId(title)}-header`);
+  deviceCardText = (title: string) => getElementById(`${this.deviceCardId(title)}-text`);
+  deviceCardImage = (title: string) => getElementById(`${this.deviceCardId(title)}-image`);
+
+  @Step("Wait for onboarding to load")
+  async waitForOnboardingToLoad(): Promise<void> {
+    await waitForElementById(this.getStartedButtonId);
+    await waitForElementById(this.languageSelectButtonId);
+  }
+
+  @Step("Tap on Get Started button")
+  async tapOnGetStartedButton(): Promise<void> {
+    await tapById(this.getStartedButtonId);
+  }
+
+  @Step("Expect 'Get Started' button to be visible")
+  async expectGetStartedButtonToBeVisible(): Promise<void> {
+    await detoxExpect(this.onboardingGetStartedButton()).toBeVisible();
+  }
+
+  @Step("Expect current selected language")
+  async expectCurrentSelectedLanguageToBe(language: string): Promise<void> {
+    const text = await getTextOfElement(this.currentSelectedLanguageId);
+    jestExpect(text).toContain(language);
+  }
+
+  @Step("Select language")
+  async selectLanguage(language: string): Promise<void> {
+    await tapById(this.languageSelectButtonId);
+    await waitForElementById(this.languageSelectDrawerTitleId);
+    await tapById(this.languageSelectElementId(language.toLowerCase()));
+  }
+
+  @Step("Select starting option")
+  async selectStartingOption(
+    option: "setupLedger" | "accessWallet" | "noLedgerYet",
+  ): Promise<void> {
+    switch (option) {
+      case "setupLedger":
+        await tapByElement(this.setupLedgerButton());
+        break;
+      case "accessWallet":
+        await tapByElement(this.accessWalletButton());
+        break;
+      case "noLedgerYet":
+        await tapByElement(this.noLedgerYetButton());
+        break;
+    }
+  }
+
+  @Step("Check device cards")
+  async checkDeviceCards(): Promise<void> {
+    const devices = [
+      { id: "stax", name: "Stax" },
+      { id: "europa", name: "Flex" },
+      { id: "nanoX", name: "Nano X" },
+      { id: "nanoSP", name: "Nano S Plus" },
+      { id: "nanoS", name: "Nano S" },
+    ];
+    for (const device of devices) {
+      if (device.id === "nanoS") {
+        await scrollToId(this.deviceCardId(device.id), undefined, 100, "down");
+      }
+      await detoxExpect(getElementById(this.deviceCardId(device.id))).toBeVisible();
+      await detoxExpect(this.deviceCardHeader(device.id)).toHaveText("Ledger");
+      const titleId = await getTextOfElement(this.deviceCardTitleId(device.id));
+      const normalizedTitle = titleId
+        .replace(/\s+/g, " ")
+        .replace(/\u200B/g, "")
+        .trim();
+      jestExpect(normalizedTitle).toBe(device.name);
+      await detoxExpect(this.deviceCardImage(device.id)).toBeVisible();
+      if (isIos() && (device.name === "Nano S" || device.name === "Nano S Plus")) {
+        await detoxExpect(this.deviceCardText(device.id)).toHaveText("No iPhone compatibility");
+      }
+    }
+  }
 
   @Step("Start onboarding")
   async startOnboarding(): Promise<void> {

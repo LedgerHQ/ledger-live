@@ -42,6 +42,7 @@ const AssetSelection = ({
   flow,
   source,
   assetsConfiguration,
+  isOpen,
 }: Readonly<AssetSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
@@ -113,13 +114,15 @@ const AssetSelection = ({
 
   return (
     <>
-      <TrackDrawerScreen
-        page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
-        flow={flow}
-        source={source}
-        assetsConfig={assetsConfiguration}
-        formatAssetConfig
-      />
+      {isOpen && (
+        <TrackDrawerScreen
+          page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
+          flow={flow}
+          source={source}
+          assetsConfig={assetsConfiguration}
+          formatAssetConfig
+        />
+      )}
       <SearchInputContainer
         source="modular-drawer"
         flow="asset-selection"
