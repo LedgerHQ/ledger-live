@@ -130,7 +130,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-boilerplate.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
