@@ -306,7 +306,7 @@ jobs:
 
       - name: Upload caches
         if: steps.setup-caches.outputs.cache-hit != 'true'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-osx-pnpm-cache
         with:
           path: ${{ env.STORE_PATH }}
           key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -527,7 +527,7 @@ jobs:
 
       - name: Upload caches
         if: steps.setup-caches.outputs.cache-hit != 'true'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/r2-osx-pnpm-cache
         with:
           path: ${{ env.STORE_PATH }}
           key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}

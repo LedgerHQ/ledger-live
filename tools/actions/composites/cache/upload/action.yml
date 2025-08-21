@@ -55,13 +55,13 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program zstdmt
+        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program lz4
 
     - name: Compressing files (macOS)
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
+        gtar --posix --delay-directory-restore --use-compress-program lz4 -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
 
     - name: Uploading to S3
       shell: bash
