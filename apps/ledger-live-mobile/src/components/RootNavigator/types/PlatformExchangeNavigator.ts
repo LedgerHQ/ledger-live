@@ -19,7 +19,7 @@ export type PlatformExchangeNavigatorParamList = {
   [ScreenName.PlatformStartExchange]: {
     request: { exchangeType: number; provider?: string };
     onResult: (_: ResultStart) => void;
-    onClose: () => void;
+    onClose?: () => void;
   };
   [ScreenName.PlatformCompleteExchange]: {
     request: {
@@ -35,6 +35,6 @@ export type PlatformExchangeNavigatorParamList = {
     };
     device?: Device;
     onResult: (_: ResultComplete) => void;
-    onClose: () => void;
+    onClose?: () => void;
   };
 };
