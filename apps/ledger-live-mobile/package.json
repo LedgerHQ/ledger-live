@@ -65,7 +65,7 @@
     "test:jest:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
     "sync-locales": "./scripts/sync-locales.sh",
-    "test-deep-links": "ws --spa ./deep-links-test-page.html",
+    "test-deep-links": "ws --spa ./ledger-live-mobile-deeplinks.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
