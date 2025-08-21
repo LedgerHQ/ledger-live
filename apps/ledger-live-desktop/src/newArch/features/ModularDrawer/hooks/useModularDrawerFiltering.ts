@@ -6,7 +6,6 @@ import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils
 import {
   buildProviderCoverageMap,
   filterProvidersByIds,
-  extractProviderCurrencies,
 } from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
 import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -57,7 +56,9 @@ export function useModularDrawerFiltering({
       currencyIdsSet,
       providerCoverageMap,
     );
-    const allProviderCurrencies = extractProviderCurrencies(filtered);
+    const allProviderCurrencies = filtered
+      .map(provider => provider.currenciesByNetwork[0])
+      .filter(currency => currency !== null);
     const currenciesEnhanced = devMode
       ? addTestnetCurrencies(allProviderCurrencies)
       : allProviderCurrencies;

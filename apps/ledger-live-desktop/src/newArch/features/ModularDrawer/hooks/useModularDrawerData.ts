@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useAssetsData } from "./useAssetsData";
 import { getLoadingStatus } from "../utils/getLoadingStatus";
 import { ModularDrawerFlowManagerProps } from "../types";
+import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 
 interface UseModularDrawerDataProps {
   currencies: ModularDrawerFlowManagerProps["currencies"];
@@ -23,14 +23,20 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
 
     return data.currenciesOrder.metaCurrencyIds
       .filter(currencyId => data.cryptoAssets[currencyId])
-      .map(currencyId => ({
-        asset: data.cryptoAssets[currencyId],
-        networks: Object.keys(data.cryptoAssets[currencyId].assetsIds).map(
-          assetId => data.networks[assetId],
-        ),
-        interestRates: data.interestRates[currencyId],
-        market: data.markets[currencyId],
-      }));
+      .map(currencyId => {
+        const firstNetworkId = Object.values(data.cryptoAssets[currencyId].assetsIds)[0];
+        return {
+          asset: {
+            ...data.cryptoAssets[currencyId],
+            id: firstNetworkId,
+          },
+          networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
+            .map(assetId => data.cryptoOrTokenCurrencies[assetId])
+            .filter(network => network !== undefined),
+          interestRates: data.interestRates[firstNetworkId],
+          market: data.markets[firstNetworkId],
+        };
+      });
   }, [data]);
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
@@ -40,8 +46,8 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
 
     return assetsSorted.map(assetData => ({
       currenciesByNetwork: assetData.networks
-        .map(network => data.cryptoOrTokenCurrencies[network.id])
-        .filter((currency): currency is CryptoOrTokenCurrency => currency !== undefined),
+        .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
+        .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
       providerId: assetData.asset.id,
     }));
   }, [assetsSorted, data]);
@@ -51,7 +57,7 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
 
     return assetsSorted
       .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter((currency): currency is CryptoOrTokenCurrency => currency !== undefined);
+      .filter(currency => currency !== undefined);
   }, [assetsSorted, data]);
 
   return {

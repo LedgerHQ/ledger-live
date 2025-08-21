@@ -7,6 +7,7 @@ import { useModularDrawerBackButton } from "./useModularDrawerBackButton";
 import { useModularDrawerConfiguration } from "./useModularDrawerConfiguration";
 
 interface UseModularDrawerRemoteDataProps {
+  currentStep: ModularDrawerStep;
   currencies: ModularDrawerFlowManagerProps["currencies"];
   drawerConfiguration: ModularDrawerFlowManagerProps["drawerConfiguration"];
   goToStep: (step: ModularDrawerStep) => void;
@@ -16,6 +17,7 @@ interface UseModularDrawerRemoteDataProps {
 }
 
 export function useModularDrawerRemoteData({
+  currentStep,
   currencies,
   drawerConfiguration,
   goToStep,
@@ -72,6 +74,7 @@ export function useModularDrawerRemoteData({
   });
 
   const { handleBack } = useModularDrawerBackButton({
+    currentStep,
     goBackToAssetSelection,
     goBackToNetworkSelection,
     hasOneCurrency,

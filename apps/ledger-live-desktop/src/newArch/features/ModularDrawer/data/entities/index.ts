@@ -20,8 +20,6 @@ export interface NetworkInfo {
   id: string;
   /** Network display name */
   name: string;
-  /** Default ticker for the network */
-  ticker: string;
 }
 
 // Types for interest rate data
@@ -30,8 +28,8 @@ export interface InterestRate {
   currencyId: string;
   /** Interest rate value */
   rate: number;
-  /** Type of rate (APR, APY, etc.) */
-  type: "APR" | "APY";
+  /** Type of rate (NRR, APR, APY, etc.) */
+  type: string;
   /** Timestamp when the rate was fetched */
   fetchAt: string;
 }

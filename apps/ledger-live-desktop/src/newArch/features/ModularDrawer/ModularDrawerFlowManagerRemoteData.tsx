@@ -30,7 +30,6 @@ const ModularDrawerFlowManagerRemoteData = ({
     assetsToDisplay,
     filteredSortedCryptoCurrencies,
     originalAssetsToDisplay,
-    setAssetsToDisplay,
     searchedValue,
     setSearchedValue,
     networksToDisplay,
@@ -42,6 +41,7 @@ const ModularDrawerFlowManagerRemoteData = ({
     handleAccountSelected,
     handleBack,
   } = useModularDrawerRemoteData({
+    currentStep,
     currencies,
     drawerConfiguration,
     goToStep,
@@ -67,7 +67,7 @@ const ModularDrawerFlowManagerRemoteData = ({
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetsConfiguration}
               currenciesByProvider={currenciesByProvider}
-              setAssetsToDisplay={setAssetsToDisplay}
+              setAssetsToDisplay={() => {}} // Not needed anymore with the search filtering done by the backend
               setSearchedValue={setSearchedValue}
               onAssetSelected={handleAssetSelected}
               flow={flow}

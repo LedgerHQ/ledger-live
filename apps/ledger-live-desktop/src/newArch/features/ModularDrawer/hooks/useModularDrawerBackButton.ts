@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { ModularDrawerStep } from "../types";
 
 interface UseModularDrawerBackButtonProps {
+  currentStep: ModularDrawerStep;
   goBackToAssetSelection: (() => void) | undefined;
   goBackToNetworkSelection: (() => void) | undefined;
   hasOneCurrency: boolean;
@@ -10,6 +12,7 @@ interface UseModularDrawerBackButtonProps {
 }
 
 export function useModularDrawerBackButton({
+  currentStep,
   goBackToAssetSelection,
   goBackToNetworkSelection,
   hasOneCurrency,
@@ -20,15 +23,27 @@ export function useModularDrawerBackButton({
     const canGoBackToAsset = !hasOneCurrency;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
 
-    switch (true) {
-      case canGoBackToAsset:
-        return goBackToAssetSelection;
-      case canGoBackToNetwork:
-        return goBackToNetworkSelection;
-      default:
+    switch (currentStep) {
+      case "NETWORK_SELECTION": {
+        return canGoBackToAsset ? goBackToAssetSelection : undefined;
+      }
+      case "ACCOUNT_SELECTION": {
+        if (
+          (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) &&
+          !hasOneCurrency
+        ) {
+          return goBackToAssetSelection;
+        } else if (canGoBackToNetwork) {
+          return goBackToNetworkSelection;
+        }
         return undefined;
+      }
+      default: {
+        return undefined;
+      }
     }
   }, [
+    currentStep,
     goBackToAssetSelection,
     goBackToNetworkSelection,
     hasOneCurrency,
