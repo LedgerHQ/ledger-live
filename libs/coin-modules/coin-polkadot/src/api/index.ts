@@ -72,6 +72,6 @@ async function operations(
   address: string,
   { minHeight }: Pagination,
 ): Promise<[Operation[], string]> {
-  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight || 0 });
+  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight});
   return [ops, JSON.stringify(nextHeight)];
 }

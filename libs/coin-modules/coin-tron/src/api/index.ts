@@ -61,7 +61,7 @@ async function listOperations(
 ): Promise<[Operation[], string]> {
   const options: Options = {
     softLimit: 200,
-    minHeight: pagination.minHeight || 0,
+    minHeight: pagination.minHeight,
     order: pagination.order,
   } as const;
   return logicListOperations(address, options);

@@ -140,7 +140,7 @@ const buildListOperations = networkFamily =>
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,
       data: {
-        from: pagination.minHeight || 0,
+        from: pagination.minHeight,
       },
     });
     return [data.operations.map(op => adaptOp(op)), ""];

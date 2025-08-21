@@ -1297,7 +1297,7 @@ describe("Aptos API", () => {
 
       api.getAccountInfo = jest.fn().mockResolvedValue({ transactions });
 
-      const ops = await api.listOperations(address, pagination.minHeight || 0);
+      const ops = await api.listOperations(address, pagination.minHeight);
 
       expect(ops[0]).toHaveLength(2);
       expect(ops[1]).toBe("");

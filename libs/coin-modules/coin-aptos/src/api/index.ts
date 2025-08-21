@@ -29,7 +29,7 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     getBalance: (address): Promise<Balance[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),
     listOperations: (address: string, pagination: Pagination) =>
-      client.listOperations(address, pagination.minHeight || 0),
+      client.listOperations(address, pagination.minHeight),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
