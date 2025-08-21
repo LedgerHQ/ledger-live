@@ -30,7 +30,7 @@ async function initializeLedgerKeyRingProtocol() {
   return CLI.ledgerKeyRingProtocol({
     initMemberCredentials: true,
     apiBaseUrl: ledgerKeyRingProtocolArgs.apiBaseUrl,
-  }).then((output: { pubkey: string; privatekey: string }) => {
+  }).then(output => {
     if (output && "pubkey" in output) {
       ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
       ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
@@ -65,11 +65,12 @@ async function initializeLedgerSync() {
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
-  }).then((out: { rootId: string; walletSyncEncryptionKey: string; applicationPath: string }) => {
-    if (out && "rootId" in out) {
-      ledgerSyncPushDataArgs.rootId = out.rootId;
-      ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
-      ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
+  }).then(out => {
+    if (out && typeof out === "object" && out && "rootId" in (out as any)) {
+      const tree = out as any;
+      ledgerSyncPushDataArgs.rootId = tree.rootId;
+      ledgerSyncPushDataArgs.walletSyncEncryptionKey = tree.walletSyncEncryptionKey;
+      ledgerSyncPushDataArgs.applicationPath = tree.applicationPath;
     }
     return out;
   });
