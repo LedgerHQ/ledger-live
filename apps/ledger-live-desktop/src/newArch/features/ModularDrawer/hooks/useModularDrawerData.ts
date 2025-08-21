@@ -2,16 +2,16 @@ import { useMemo } from "react";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useAssetsData } from "./useAssetsData";
 import { getLoadingStatus } from "../utils/getLoadingStatus";
-import { ModularDrawerFlowManagerProps } from "../types";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface UseModularDrawerDataProps {
-  currencies: ModularDrawerFlowManagerProps["currencies"];
+  currencies?: CryptoOrTokenCurrency[];
   searchedValue?: string;
 }
 
 export function useModularDrawerData({ currencies, searchedValue }: UseModularDrawerDataProps) {
-  const currencyIds = useMemo(() => currencies.map(currency => currency.id), [currencies]);
+  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
 
   const { data, isLoading, isSuccess, error } = useAssetsData({
     search: searchedValue,

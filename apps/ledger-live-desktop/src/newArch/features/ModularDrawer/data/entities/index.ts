@@ -1,6 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { ApiAsset } from "@ledgerhq/cryptoassets";
-import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
+import { PartialMarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 
 // Types for crypto asset metadata
 export interface CryptoAssetMeta {
@@ -57,7 +57,7 @@ export interface RawApiResponse {
   /** Interest rates for various currencies */
   interestRates: Record<string, InterestRate>;
   /** Market data for currencies */
-  markets: Record<string, MarketItemResponse>;
+  markets: Record<string, PartialMarketItemResponse>;
   /** Currency ordering information */
   currenciesOrder: CurrenciesOrder;
 }
@@ -73,7 +73,7 @@ export interface AssetsData {
   /** Interest rates for various currencies */
   interestRates: Record<string, InterestRate>;
   /** Market data for currencies */
-  markets: Record<string, MarketItemResponse>;
+  markets: Record<string, PartialMarketItemResponse>;
   /** Currency ordering information */
   currenciesOrder: CurrenciesOrder;
 }

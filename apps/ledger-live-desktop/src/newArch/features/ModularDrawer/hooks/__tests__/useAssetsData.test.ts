@@ -33,7 +33,7 @@ describe("useAssetsData", () => {
       currentData: undefined,
     });
 
-    const { result } = renderHook(() => useAssetsData());
+    const { result } = renderHook(() => useAssetsData({}));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBe(undefined);
@@ -56,7 +56,7 @@ describe("useAssetsData", () => {
       currentData: mockData,
     });
 
-    const { result } = renderHook(() => useAssetsData());
+    const { result } = renderHook(() => useAssetsData({}));
 
     expect(result.current.data).toBe(mockData);
     expect(result.current.isLoading).toBe(false);
@@ -76,7 +76,7 @@ describe("useAssetsData", () => {
       currentData: undefined,
     });
 
-    const { result } = renderHook(() => useAssetsData());
+    const { result } = renderHook(() => useAssetsData({}));
 
     expect(result.current.error).toBe(mockError);
     expect(result.current.isLoading).toBe(false);
@@ -101,7 +101,7 @@ describe("useAssetsData", () => {
       },
     });
 
-    const { result } = renderHook(() => useAssetsData());
+    const { result } = renderHook(() => useAssetsData({}));
 
     result.current.loadNext();
 
@@ -126,7 +126,7 @@ describe("useAssetsData", () => {
       },
     });
 
-    const { result } = renderHook(() => useAssetsData());
+    const { result } = renderHook(() => useAssetsData({}));
 
     result.current.loadNext();
 

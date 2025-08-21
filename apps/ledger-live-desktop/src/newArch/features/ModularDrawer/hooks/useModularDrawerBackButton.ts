@@ -4,11 +4,11 @@ import { ModularDrawerStep } from "../types";
 
 interface UseModularDrawerBackButtonProps {
   currentStep: ModularDrawerStep;
-  goBackToAssetSelection: (() => void) | undefined;
-  goBackToNetworkSelection: (() => void) | undefined;
+  goBackToAssetSelection?: () => void;
+  goBackToNetworkSelection?: () => void;
   hasOneCurrency: boolean;
   hasOneNetwork: boolean;
-  networksToDisplay: CryptoOrTokenCurrency[] | undefined;
+  networksToDisplay?: CryptoOrTokenCurrency[];
 }
 
 export function useModularDrawerBackButton({
