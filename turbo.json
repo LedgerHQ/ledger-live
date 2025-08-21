@@ -142,7 +142,8 @@
       "persistent": true
     },
     "coverage": {
-      "cache": false
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/lcov.info", "coverage/sonar-executionTests-report.xml"]
     },
     "clean": {
       "cache": false
