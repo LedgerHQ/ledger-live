@@ -1,16 +1,34 @@
 import {
-  getAccount,
+  getAccountBalances,
+  getAllBalancesCached,
   getOperations,
+  getBlock,
+  getBlockInfo,
+  getStakes,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
 } from "./sdk";
 
-export { getAccount, getOperations, paymentInfo, createTransaction, executeTransactionBlock };
+export {
+  getAccountBalances,
+  getAllBalancesCached,
+  getOperations,
+  getBlock,
+  getBlockInfo,
+  getStakes,
+  paymentInfo,
+  createTransaction,
+  executeTransactionBlock,
+};
 
 export default {
-  getAccount,
+  getAccountBalances,
+  getAllBalancesCached,
   getOperations,
+  getBlock,
+  getBlockInfo,
+  getStakes,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,

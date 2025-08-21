@@ -131,7 +131,7 @@ describe("useAddMember", () => {
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
 
     expect(result.current.error).toBeInstanceOf(Error);
-    expect((result.current.error as Error).message).toBe("Random error");
+    expect(result.current.error?.message).toBe("Random error");
     expect(Mocks.setTrustchain).not.toHaveBeenCalled();
     expect(Mocks.setFlow).not.toHaveBeenCalled();
     expect(Mocks.track).not.toHaveBeenCalled();

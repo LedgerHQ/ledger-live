@@ -39,10 +39,15 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+  position: relative;
   flex: 1;
   border-radius: ${p => p.theme.radii[2]}px;
   background: ${p => getContainerBackground(p.theme, p.status)};
   border: 1px solid ${p => getContainerBorder(p.theme, p.status, p.isLastItem)};
+`;
+
+const TextContainer = styled(Flex)`
+  flex: 1;
   padding: 20px 16px;
 `;
 
@@ -62,37 +67,41 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
         isLastItem={isLastItem}
         mr={4}
       />
-      <Container status={item.status} isLastItem={isLastItem} mb={4} flexDirection="column">
-        <TimelineIndicatorContentHeader height="20px">
-          <Text
-            variant="body"
-            fontWeight={item.status === "active" ? "semiBold" : "medium"}
-            color={
-              item.status !== "inactive" && isLastItem
-                ? "success.c70"
-                : item.status === "active"
-                  ? "primary.c80"
-                  : "neutral.c70"
-            }
-          >
-            {item.title}
-          </Text>
-          {(item?.estimatedTime && item.status === "active" && (
-            <Tag
-              size="small"
-              type="opacity"
-              active
-              disabled
-              textProps={{ color: colors.neutral.c100 }}
-            >{`${item.estimatedTime / 60} min`}</Tag>
-          )) ||
-            (item?.hasLoader && item.status === "active" && <InfiniteLoader size={30} />)}
-        </TimelineIndicatorContentHeader>
-        {item.renderBody && item.status === "active" && (
-          <Box position="relative" pt={6}>
-            {item.renderBody(item.status === "active")}
-          </Box>
-        )}
+      <Container status={item.status} isLastItem={isLastItem} overflow="hidden">
+        {item.status === "active" ? item.background : null}
+
+        <TextContainer mb={4} flexDirection="column" zIndex={1}>
+          <TimelineIndicatorContentHeader height="20px">
+            <Text
+              variant="body"
+              fontWeight={item.status === "active" ? "semiBold" : "medium"}
+              color={
+                item.status !== "inactive" && isLastItem
+                  ? "success.c70"
+                  : item.status === "active"
+                    ? "primary.c80"
+                    : "neutral.c70"
+              }
+            >
+              {item.title}
+            </Text>
+            {(item?.estimatedTime && item.status === "active" && (
+              <Tag
+                size="small"
+                type="opacity"
+                active
+                disabled
+                textProps={{ color: colors.neutral.c100 }}
+              >{`${item.estimatedTime / 60} min`}</Tag>
+            )) ||
+              (item?.hasLoader && item.status === "active" && <InfiniteLoader size={30} />)}
+          </TimelineIndicatorContentHeader>
+          {item.renderBody && item.status === "active" && (
+            <Box position="relative" pt={6}>
+              {item.renderBody(item.status === "active")}
+            </Box>
+          )}
+        </TextContainer>
       </Container>
     </Flex>
   );

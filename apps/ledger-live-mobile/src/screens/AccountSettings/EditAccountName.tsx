@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,8 @@ import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
 import { useTheme } from "styled-components/native";
 import { getFontStyle } from "~/components/LText";
+import { Keyboard } from "react-native";
+import KeyboardView from "~/components/KeyboardView";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
@@ -63,34 +65,46 @@ const EditAccountName = ({ navigation, route }: NavigationProps) => {
     navigation.goBack();
   }, [accountName, route.params, navigation, dispatch, account]);
 
+  useEffect(() => {
+    if (Platform.OS !== "ios") return;
+
+    const unsubscribe = navigation.addListener("gestureEnd", () => {
+      Keyboard.dismiss();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const isApplyDisabled = !accountName.trim();
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background.main }]}>
-      <Box px={6} flex={1}>
-        <TextInput
-          autoFocus
-          value={accountName}
-          defaultValue={accountName}
-          returnKeyType="done"
-          maxLength={MAX_ACCOUNT_NAME_LENGHT}
-          onChangeText={onChangeText}
-          onSubmitEditing={onNameEndEditing}
-          clearButtonMode="while-editing"
-          placeholder={i18next.t("account.settings.accountName.placeholder")}
-          testID="account-rename-text-input"
-        />
-      </Box>
-      <Button
-        event="EditAccountNameApply"
-        type="main"
-        onPress={onNameEndEditing}
-        disabled={isApplyDisabled}
-        m={6}
-        testID="account-rename-apply"
-      >
-        {t("common.apply")}
-      </Button>
+      <KeyboardView behavior="height">
+        <Box px={6} flex={1}>
+          <TextInput
+            autoFocus
+            value={accountName}
+            defaultValue={accountName}
+            returnKeyType="done"
+            maxLength={MAX_ACCOUNT_NAME_LENGHT}
+            onChangeText={onChangeText}
+            onSubmitEditing={onNameEndEditing}
+            clearButtonMode="while-editing"
+            placeholder={i18next.t("account.settings.accountName.placeholder")}
+            testID="account-rename-text-input"
+          />
+        </Box>
+        <Button
+          event="EditAccountNameApply"
+          type="main"
+          onPress={onNameEndEditing}
+          disabled={isApplyDisabled}
+          m={6}
+          testID="account-rename-apply"
+        >
+          {t("common.apply")}
+        </Button>
+      </KeyboardView>
     </SafeAreaView>
   );
 };

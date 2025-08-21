@@ -57,9 +57,21 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility();
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
 
-  const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: manifest.id,
+  });
+
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
 
   return useMemo(
     () => ({
@@ -73,11 +85,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
               currencies,
               onSuccess,
               onCancel,
-              flow: manifest.name,
-              source:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current ?? "Unknown",
+              flow,
+              source,
             })
           : setDrawer(
               SelectAccountAndCurrencyDrawer,
@@ -88,6 +97,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
                   onSuccess(account, parentAccount);
                 },
                 accounts$,
+                flow,
+                source,
               },
               {
                 onRequestClose: () => {
@@ -134,7 +145,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
       "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId) as string | undefined;
+        return getStoreValue(key, storeId);
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
@@ -183,7 +194,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
               accountId: account.id,
-              parentId: parentAccount?.id as string | undefined | null,
+              parentId: parentAccount?.id,
             });
           },
         });
@@ -239,7 +250,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [dispatch, manifest, modularDrawerVisible, pushToast, t, tracking],
+    [modularDrawerVisible, flow, source, dispatch, manifest, pushToast, t, tracking],
   );
 }
 
@@ -398,6 +409,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       hideLoader,
       webviewStyle: customWebviewStyle,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -484,14 +496,20 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewPartition}
         />
-        {!widgetLoaded && !hideLoader ? (
-          <Loader>
-            <BigSpinner size={50} />
-          </Loader>
-        ) : null}
+        {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}
       </>
     );
   },
 );
+
+function DefaultLoader({ isLoading }: { isLoading: boolean }) {
+  if (!isLoading) return null;
+
+  return (
+    <Loader>
+      <BigSpinner size={50} />
+    </Loader>
+  );
+}
 
 WalletAPIWebview.displayName = "WalletAPIWebview";

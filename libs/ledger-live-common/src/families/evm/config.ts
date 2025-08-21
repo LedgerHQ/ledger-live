@@ -359,8 +359,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpcapi.fantom.network",
       },
       explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/250",
+        type: "blockscout",
+        uri: "https://ftmscout.com/api",
       },
       showNfts: false,
     },
@@ -522,7 +522,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://api.routescan.io/v2/network/mainnet/evm/1088/etherscan/api",
+        uri: "https://andromeda-explorer.metis.io/api",
       },
       showNfts: false,
     },
@@ -608,6 +608,57 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: {
         type: "teloscan",
         uri: "https://api.teloscan.io/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_sei_network_evm: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://sei-evm-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_berachain: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.berachain.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/80094",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_hyperevm: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.hypurrscan.io",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/999",
       },
       showNfts: false,
     },
@@ -784,7 +835,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://rpc.blast.io" },
-      explorer: { type: "blockscout", uri: "https://blast.blockscout.com/api" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
+      },
       showNfts: false,
     },
   },
@@ -793,7 +847,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://sepolia.blast.io" },
-      explorer: { type: "blockscout", uri: "https://blast-testnet.blockscout.com/api" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
+      },
       showNfts: false,
     },
   },

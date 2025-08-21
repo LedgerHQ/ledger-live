@@ -15,7 +15,8 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/api/index.ts"
+    "src/api/index.ts",
+    "src/test/testUtils.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/live-env",

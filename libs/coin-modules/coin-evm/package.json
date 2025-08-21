@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.22.2",
+  "version": "2.27.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -55,6 +55,8 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -91,8 +93,6 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "bluebird": "^3.7.2",
-    "chalk": "^4.1.2",
-    "docker-compose": "^1.1.0",
     "dotenv": "^16.4.5",
     "eslint-plugin-import": "^2.28.1",
     "fast-check": "^3.12.0",

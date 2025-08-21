@@ -4,7 +4,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
 
-import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
@@ -41,6 +41,7 @@ import {
   counterValueCurrencySelector,
   developerModeSelector,
   enablePlatformDevToolsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   languageSelector,
   lastSeenDeviceSelector,
   shareAnalyticsSelector,
@@ -54,6 +55,8 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -126,7 +129,10 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+
   const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector).toString();
+
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
@@ -142,6 +148,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
+  // Remove after KYC AB Testing
+  const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customHandlers = useMemo(
@@ -361,6 +369,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         params: { swap: SwapProps; transaction_id: string };
       }) => {
         const { swap, transaction_id } = params;
+
         if (
           !swap ||
           !transaction_id ||
@@ -462,7 +471,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
-    console.error("onSwapWebviewError", error);
     logger.critical(error);
     setDrawer(WebviewErrorDrawer, error);
   };
@@ -492,6 +500,10 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     [manifest, hashString],
   );
 
+  const initialSource = useMemo(() => {
+    return currentRouteNameRef.current || "";
+  }, []);
+
   return (
     <>
       {enablePlatformDevTools && (
@@ -506,6 +518,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{
+            source: initialSource,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
@@ -516,9 +529,12 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             currentVersion,
             platform: "LLD",
             shareAnalytics,
+            hasSeenAnalyticsOptInPrompt,
+            ptxSwapLiveAppKycWarning,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           customHandlers={customHandlers as never}
         />
       </SwapWebAppWrapper>

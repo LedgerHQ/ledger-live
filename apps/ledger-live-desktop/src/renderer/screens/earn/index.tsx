@@ -16,11 +16,14 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
+import { useHistory } from "react-router";
+import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
 const Earn = () => {
+  const router = useHistory();
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -34,8 +37,8 @@ const Earn = () => {
   const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
-  const stakePrograms = useFeature("stakePrograms");
-  const stakeProgramsParam = useMemo(
+  const stakePrograms = useVersionedStakePrograms();
+  const { stakeProgramsParam, stakeCurrenciesParam } = useMemo(
     () => stakeProgramsToEarnParam(stakePrograms),
     [stakePrograms],
   );
@@ -61,7 +64,11 @@ const Earn = () => {
             currencyTicker: fiatCurrency.ticker,
             discreetMode: discreetMode ? "true" : "false",
             OS: "web",
+            routerState: JSON.stringify(router.location.state ?? {}),
             stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+            stakeCurrenciesParam: stakeCurrenciesParam
+              ? JSON.stringify(stakeCurrenciesParam)
+              : undefined,
           }}
         />
       ) : null}

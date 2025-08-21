@@ -7,7 +7,7 @@ import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types
 import { NavigatorName, ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
-import { Platform, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { getCurrencyIdsFromTickers, rangeMap } from "./utils";
 import { SwiperComponent } from "~/newArch/components/Swiper/components/Swiper";
@@ -49,8 +49,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const navigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
 
   const { colors } = useTheme();
-  const constHeight = Platform.OS === "ios" ? 0.75 : 0.8;
-  const height = getWindowDimensions().height * constHeight;
+  const height = getWindowDimensions().height * 0.78;
   const [currentIndex, setCurrentIndex] = useState(0);
   const showOverlay = useSelector(tutorialSelector);
   const handleSwipe = (newIndex: number) => {
@@ -109,10 +108,10 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   return (
     <>
       {showOverlay && !loading && <OverlayTutorial />}
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 10 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 40 }}>
         <TrackScreen name={PAGE_NAME} initialRange={initialRange} currencyIds={currencyIds} />
         <StickyHeader />
-        <Flex paddingTop={40}>
+        <Flex paddingTop={25}>
           {loading && loadingChart ? (
             <LoadingIndicator height={height} />
           ) : (

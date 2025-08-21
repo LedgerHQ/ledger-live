@@ -34,7 +34,9 @@ export const Address = ({
       >
         {address}
       </Text>
-      {showIcon && <CryptoIcon ledgerId={cryptoId} ticker={ticker} network={parentId} />}
+      {showIcon && (
+        <CryptoIcon ledgerId={cryptoId} network={parentId} ticker={ticker} size="20px" />
+      )}
     </Wrapper>
   );
 };

@@ -42,11 +42,11 @@ describe("Receive Flow", () => {
     await app.common.performSearch("Polygon");
     await app.receive.selectCurrency("Polygon");
     await app.receive.selectNetwork("bsc");
-    await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
+    await app.addAccount.addAccountAtIndex(`${Currency.BSC.name} 1`, Currency.BSC.id, 0);
     await app.addAccount.tapAddFunds();
     await app.addAccount.tapReceiveActionDrawer();
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
+    await app.receive.expectReceivePageIsDisplayed("BNB", "BNB Chain 1");
   });
 
   $TmsLink("B2CQA-1859");

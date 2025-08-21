@@ -7,8 +7,8 @@ import Image from "~/renderer/components/Image";
 import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.svg";
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/types";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,
@@ -22,7 +22,7 @@ const Wrapper = styled(Box).attrs(() => ({
 const Placeholder = () => {
   const { t } = useTranslation();
   const { openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
   );
   return (

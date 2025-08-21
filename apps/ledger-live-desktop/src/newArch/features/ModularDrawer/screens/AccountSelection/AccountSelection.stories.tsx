@@ -1,39 +1,12 @@
-import React from "react";
-import { AccountSelection } from ".";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ethereumCurrency, bitcoinCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
-import { getAccountTuplesForCurrency } from "../../__mocks__/accounts.mock";
-import BigNumber from "bignumber.js";
-import { legacy_createStore as createStore } from "redux";
-import { Provider } from "react-redux";
 import { expect, fn, userEvent, within } from "@storybook/test";
+import BigNumber from "bignumber.js";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
 import { track } from "~/renderer/analytics/__mocks__/segment";
-
-const store = createStore(() => ({
-  accounts: [],
-  wallet: {
-    accountNames: new Map([
-      ["bitcoin1", "Bitcoin 1"],
-      ["bitcoin2", "Bitcoin 2"],
-      ["bitcoin3", "Bitcoin 3"],
-    ]),
-  },
-  currency: {
-    type: "FiatCurrency",
-    ticker: "USD",
-    name: "US Dollar",
-    symbol: "$",
-    units: [
-      {
-        code: "$",
-        name: "US Dollar",
-        magnitude: 2,
-        showAllDigits: true,
-        prefixCode: true,
-      },
-    ],
-  },
-}));
+import { AccountSelection } from ".";
+import { bitcoinCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 
 const detailedAccount = {
   balance: new BigNumber(31918),
@@ -65,13 +38,41 @@ const detailedAccount3 = {
   type: "Account",
 };
 
+const defaultStore = {
+  accounts: [detailedAccount, detailedAccount2, detailedAccount3],
+  wallet: {
+    accountNames: new Map([
+      ["bitcoin1", "bitcoin-account-1"],
+      ["bitcoin2", "bitcoin-account-2"],
+      ["bitcoin3", "bitcoin-account-3"],
+    ]),
+  },
+  currency: {
+    type: "FiatCurrency",
+    ticker: "USD",
+    name: "US Dollar",
+    symbol: "$",
+    units: [
+      {
+        code: "$",
+        name: "US Dollar",
+        magnitude: 2,
+        showAllDigits: true,
+        prefixCode: true,
+      },
+    ],
+  },
+};
+
+const store = createStore(() => defaultStore);
+
 const onAccountSelected = fn();
 
 const meta: Meta<typeof AccountSelection> = {
   title: "ModularDrawer/AccountSelection",
   component: AccountSelection,
   args: {
-    asset: ethereumCurrency,
+    asset: bitcoinCurrency,
     source: "Accounts",
     flow: "Modular Account Flow",
     onAccountSelected: onAccountSelected(),
@@ -93,48 +94,33 @@ type Story = StoryObj<typeof AccountSelection>;
 
 export const Default: Story = {
   args: {
-    asset: ethereumCurrency,
-    source: "Accounts",
-    flow: "Modular Account Flow",
-    onAccountSelected,
-  },
-  render: args => {
-    getAccountTuplesForCurrency.mockImplementation(() => [
-      { account: detailedAccount },
-      { account: detailedAccount2 },
-      { account: detailedAccount3 },
-    ]);
-    return <AccountSelection {...args} />;
-  },
-};
-
-export const NoAccounts: Story = {
-  args: {
-    asset: ethereumCurrency,
-    source: "Accounts",
-    flow: "Modular Account Flow",
-    onAccountSelected,
-  },
-  render: args => {
-    getAccountTuplesForCurrency.mockImplementation(() => []);
-    return <AccountSelection {...args} />;
-  },
-};
-
-export const SelectAccountFor1CurrencyStory: Story = {
-  args: {
     asset: bitcoinCurrency,
     source: "Accounts",
     flow: "Modular Account Flow",
     onAccountSelected,
   },
-  render: args => {
-    getAccountTuplesForCurrency.mockImplementation(() => [
-      { account: detailedAccount },
-      { account: detailedAccount2 },
-      { account: detailedAccount3 },
-    ]);
-    return <AccountSelection {...args} />;
+};
+
+export const NoAccounts: Story = {
+  args: {
+    asset: bitcoinCurrency,
+    onAccountSelected,
+  },
+  decorators: [
+    Story => (
+      <div style={{ width: "100%", height: "100%" }}>
+        <Provider store={createStore(() => ({ ...defaultStore, accounts: [] }))}>
+          <Story />
+        </Provider>
+      </div>
+    ),
+  ],
+};
+
+export const SelectAccountFor1CurrencyStory: Story = {
+  args: {
+    asset: bitcoinCurrency,
+    onAccountSelected,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -142,9 +128,10 @@ export const SelectAccountFor1CurrencyStory: Story = {
     await userEvent.click(bitcoinAccount);
     expect(onAccountSelected).toHaveBeenCalledWith(detailedAccount);
     expect(track).toHaveBeenLastCalledWith("account_clicked", {
-      currency: "BTC",
+      currency: "Bitcoin",
       flow: "Modular Account Flow",
-      page: "Modular Account Selection",
+      page: "Account Selection",
+      source: "Accounts",
     });
   },
 };

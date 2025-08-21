@@ -18,7 +18,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Linking, StyleSheet, View } from "react-native";
+import { Linking, Platform, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
@@ -47,6 +47,8 @@ import {
   hasProblematicExtension,
 } from "@ledgerhq/live-common/families/solana/token";
 import { urls } from "~/utils/urls";
+import LText from "~/components/LText";
+import SupportLinkError from "~/components/SupportLinkError";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -173,6 +175,7 @@ export default function SendSelectRecipient({ route }: Props) {
   const [memoTagDrawerState, setMemoTagDrawerState] = useState<MemoTagDrawerState>(
     MemoTagDrawerState.INITIAL,
   );
+  const [focusMemoInput, setFocusMemoInput] = useState(false);
 
   const handleMemoTagDrawerClose = useCallback(
     () => setMemoTagDrawerState(MemoTagDrawerState.SHOWN),
@@ -242,7 +245,8 @@ export default function SendSelectRecipient({ route }: Props) {
     debouncedBridgePending ||
     !!status.errors.recipient ||
     memoTag?.isDebouncePending ||
-    !!memoTag?.error;
+    !!memoTag?.error ||
+    !!status.errors.sender;
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
   const extensions = getTokenExtensions(account);
@@ -289,6 +293,24 @@ export default function SendSelectRecipient({ route }: Props) {
             ]}
             keyboardShouldPersistTaps="handled"
           >
+            {status.errors.sender ? (
+              <View style={[styles.senderErrorBox]}>
+                <LText testID="send-sender-error-title" color="alert">
+                  <TranslatedError error={status.errors.sender} field="title" />
+                </LText>
+                <LText
+                  testID="send-sender-error-description"
+                  style={[styles.warningBox]}
+                  color="alert"
+                >
+                  <TranslatedError error={status.errors.sender} field="description" />
+                </LText>
+                <View style={[styles.senderLinkErrorBox]}>
+                  <SupportLinkError error={status.errors.sender} type="alert" />
+                </View>
+              </View>
+            ) : null}
+
             <Button
               event="SendRecipientQR"
               type="tertiary"
@@ -343,10 +365,7 @@ export default function SendSelectRecipient({ route }: Props) {
                 <memoTag.Input
                   testID="memo-tag-input"
                   placeholder={t("send.summary.memo.title")}
-                  autoFocus={[MemoTagDrawerState.SHOWING, MemoTagDrawerState.SHOWN].includes(
-                    // Ensure the input is focused when the drawer is shown
-                    memoTagDrawerState,
-                  )}
+                  autoFocus={focusMemoInput}
                   onChange={memoTag.handleChange}
                 />
                 <Text mt={4} pl={2} color="alert">
@@ -394,6 +413,9 @@ export default function SendSelectRecipient({ route }: Props) {
       <MemoTagDrawer
         open={memoTagDrawerState === MemoTagDrawerState.SHOWING}
         onClose={handleMemoTagDrawerClose}
+        onModalHide={
+          () => requestAnimationFrame(() => setFocusMemoInput(true)) // Focus memo input after drawer finishes animating
+        }
         onNext={onPressContinue}
       />
 
@@ -415,6 +437,28 @@ export default function SendSelectRecipient({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
+  senderErrorBox: {
+    marginTop: 8,
+    marginBottom: 8,
+    ...Platform.select({
+      android: {
+        marginLeft: 6,
+        marginBottom: 6,
+      },
+    }),
+  },
+  warningBox: {
+    marginTop: 8,
+    ...Platform.select({
+      android: {
+        marginLeft: 6,
+      },
+    }),
+  },
+  senderLinkErrorBox: {
+    display: "flex",
+    alignItems: "flex-start",
+  },
   root: {
     flex: 1,
   },

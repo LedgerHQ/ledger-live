@@ -22,7 +22,6 @@ import {
   PolkadotBondMinimumAmountWarning,
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
-  PolkadotDoMaxSendInstead,
 } from "../types";
 import {
   EXISTENTIAL_DEPOSIT,
@@ -34,8 +33,6 @@ import {
   hasMaxUnlockings,
   calculateAmount,
   getMinimumAmountToBond,
-  getMinimumBalance,
-  EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
 } from "./utils";
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
@@ -76,31 +73,21 @@ const getSendTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  const minimumBalanceExistential = getMinimumBalance(account);
-  const leftover = account.spendableBalance.minus(totalSpent);
+  if (!(errors.amount instanceof AmountRequired)) {
+    if (
+      (!transaction.useAllAmount && account.spendableBalance.isZero()) ||
+      totalSpent.gt(account.spendableBalance)
+    ) {
+      errors.amount = new NotEnoughBalance();
+    }
 
-  if (minimumBalanceExistential.gt(0) && leftover.lt(minimumBalanceExistential) && leftover.gt(0)) {
-    errors.amount = new PolkadotDoMaxSendInstead("", {
-      minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-        showCode: true,
-      }),
-    });
-  } else if (
-    !errors.amount &&
-    !transaction.useAllAmount &&
-    account.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
-  ) {
-    errors.amount = new NotEnoughBalance();
-  } else if (totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
-  }
-
-  if (
-    !errors.amount &&
-    account.polkadotResources?.lockedBalance.gt(0) &&
-    (transaction.useAllAmount || account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
-  ) {
-    warnings.amount = new PolkadotAllFundsWarning();
+    if (
+      account.polkadotResources?.lockedBalance.gt(0) &&
+      (transaction.useAllAmount ||
+        account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+    ) {
+      warnings.amount = new PolkadotAllFundsWarning();
+    }
   }
 
   if (
@@ -315,7 +302,7 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new NotEnoughBalance();
   }
 
-  if (totalSpent.gt(account.spendableBalance)) {
+  if (!(errors.amount instanceof AmountRequired) && totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 

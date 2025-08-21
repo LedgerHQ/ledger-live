@@ -4,6 +4,7 @@ import { dark, light, ModeColors, spacing, SpacingScale } from "./design-tokens"
 
 // Add temporarily missing and override incorrect tokens here
 const overrideOther = {
+  "radius-m": "12px", // missing from tokens
   "radius-s": "8px", // missing from tokens
   "radius-xs": "4px", // missing from tokens
   "border-width-default": "1px", // missing from tokens
@@ -25,9 +26,11 @@ const overrideColor = {
     "border-subdued-default-hover": "#D5D5D5", // override from colours
 
     "border-subdued-default-pressed": "#C1C1C1", // missing from colours
+    "background-active": "#D4A0FF",
   },
   dark: {
     "opacity-default-10": "#FFFFFF1A", // missing from colours
+    "background-active": "#D4A0FF",
   },
 } as const;
 

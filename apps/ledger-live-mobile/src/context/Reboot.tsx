@@ -1,6 +1,6 @@
-import React, { Fragment, useContext, useCallback, useState } from "react";
+import { useCountervaluesWipeIfAvailable } from "@ledgerhq/live-countervalues-react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import React, { Fragment, useCallback, useContext, useState } from "react";
 import { clearDb } from "../db";
 
 export type RebootFunc = (_?: boolean) => Promise<void>;
@@ -17,7 +17,7 @@ export default function RebootProvider({
   children: React.ReactNode;
 }) {
   const [rebootId, setRebootId] = useState(0);
-  const { wipe } = useCountervaluesPolling();
+  const wipe = useCountervaluesWipeIfAvailable();
   const reboot: RebootFunc = useCallback(
     async (resetData = false) => {
       if (onRebootStart) onRebootStart();

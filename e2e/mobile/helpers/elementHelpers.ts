@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web } from "detox";
 import { delay, isAndroid } from "./commonHelpers";
@@ -183,7 +184,9 @@ export const WebElementHelpers = {
   },
 
   async getWebElementText(id: string, index = 0) {
-    return await getWebElementByTestId(id, index).getText();
+    const elem = WebElementHelpers.getWebElementByTestId(id, index);
+    await detoxExpect(elem).toExist();
+    return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
   },
 
   getWebElementById(id: string, index = 0): WebElement {
@@ -196,10 +199,34 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  async getWebElementsByCssSelector(selector: string): Promise<string[]> {
+    const texts: string[] = [];
+    let i = 0;
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const element = web
+          .element(by.web.cssSelector(selector))
+          .atIndex(i) as unknown as IndexedWebElement;
+        const text: string = await element.runScript((node: HTMLElement) =>
+          (node.innerText || node.textContent || "").trim(),
+        );
+        texts.push(text);
+        i++;
+      } catch {
+        break;
+      }
+    }
+
+    return texts.filter(Boolean);
+  },
+
   getWebElementsByIdAndText(id: string, text: string, index = 0): WebElement {
-    const base = web.element(
-      by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`),
-    ) as IndexedWebElement;
+    const xpath = id
+      ? `//span[@data-testid="${id}" and text()="${text}"]`
+      : `//span[text()="${text}"]`;
+    const base = web.element(by.web.xpath(xpath)) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -211,7 +238,7 @@ export const WebElementHelpers = {
     while (true) {
       try {
         const element = WebElementHelpers.getWebElementByTestId(id, i);
-        const text = await element.getText();
+        const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
         texts.push(text);
         i++;
       } catch {
@@ -228,7 +255,7 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.getText(), 1000, 200);
+        await retryUntilTimeout(() => elem.runScript(el => el.innerText), timeout);
         return elem;
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
@@ -240,6 +267,10 @@ export const WebElementHelpers = {
 
   async tapWebElementByTestId(id: string, index = 0): Promise<void> {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
+  },
+
+  async tapWebElementByElement(element: WebElement): Promise<void> {
+    await retryUntilTimeout(async () => element.tap());
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {
@@ -256,6 +287,61 @@ export const WebElementHelpers = {
         },
         [text],
       ),
+    );
+  },
+
+  async getValueByWebTestId(id: string): Promise<string> {
+    const raw = await retryUntilTimeout(() =>
+      WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
+    );
+
+    if (raw != null && typeof raw === "object" && "result" in raw) {
+      return String(raw["result"]);
+    }
+    return String(raw);
+  },
+
+  async scrollToWebElement(element: WebElement) {
+    await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+  },
+
+  async getCurrentWebviewUrl(): Promise<string> {
+    let url = "";
+    try {
+      url = await getWebElementByTag("body").runScript(() => window.location.href);
+    } catch {
+      url = await getWebElementByTag("html").runScript(() => window.location.href);
+    }
+    return String(url);
+  },
+
+  async waitForWebElementToBeEnabled(
+    id: string,
+    timeout = DEFAULT_TIMEOUT,
+    index = 0,
+  ): Promise<void> {
+    const start = Date.now();
+    let lastErr: Error | undefined;
+
+    while (Date.now() - start < timeout) {
+      try {
+        const element = WebElementHelpers.getWebElementByTestId(id, index);
+        const isEnabled = await element.runScript((el: HTMLButtonElement | HTMLInputElement) => {
+          return (
+            el.getAttribute("aria-disabled") !== "true"
+          );
+        });
+
+        if (isEnabled) {
+          return;
+        }
+      } catch (e) {
+        lastErr = e instanceof Error ? e : new Error(String(e));
+      }
+    }
+
+    throw new Error(
+      `Web element '${id}' did not become enabled within ${timeout}ms: ${lastErr?.message}`,
     );
   },
 };

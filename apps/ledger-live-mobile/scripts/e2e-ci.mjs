@@ -7,6 +7,7 @@ let cache = true;
 let shard = "";
 let target = "release";
 let filter = "";
+let outputFile = "";
 
 $.verbose = true; // everything works like in v7
 
@@ -30,7 +31,11 @@ const build_ios = async () => {
 };
 
 const bundle_ios = async () => {
-  await $`pnpm mobile bundle:ios --dev false --minify false`;
+  await $`pnpm mobile bundle:ios --dev false --minify true`;
+};
+
+const bundle_android = async () => {
+  await $`pnpm mobile bundle:android --dev false --minify true`;
 };
 
 const bundle_ios_with_cache = async () => {
@@ -40,25 +45,24 @@ const bundle_ios_with_cache = async () => {
   await $`pnpm mobile exec detox build-framework-cache`;
   within(async () => {
     cd("apps/ledger-live-mobile");
-    await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle`;
-    await $`mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
+    await $`mkdir -p ios/build/Build/Products/Release-iphonesimulator`;
+    await $`cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle`;
   });
 };
 
 const test_ios = async () => {
   await $`pnpm mobile ${testType}:test\
-    -c ios.sim.${target} \
-    --loglevel error \
-    --record-logs failing \
-    --record-videos failing \
-    --take-screenshots failing \
-    --forceExit \
-    --headless \
-    --retries 2 \
-    --runInBand \
-    --cleanup \
-    --shard ${shard} \
-    ${filter.split(" ")}`;
+      -c ios.sim.${target} \
+      --loglevel error \
+      --record-logs failing \
+      --take-screenshots failing \
+      --forceExit \
+      --headless \
+      --retries 2 \
+      --runInBand \
+      --cleanup \
+      --shard ${shard} \
+      ${filteredArgs}`;
 };
 
 const build_android = async () => {
@@ -67,17 +71,17 @@ const build_android = async () => {
 
 const test_android = async () => {
   await $`pnpm mobile ${testType}:test \\
-    -c android.emu.${target} \\
-    --loglevel error \\
-    --record-logs failing \\
-    --take-screenshots failing \\
-    --forceExit \\
-    --headless \\
-    --retries 1 \\
-    --runInBand \\
-    --cleanup \\
-    --shard ${shard} \\
-    ${filter.split(" ")}`;
+      -c android.emu.${target} \\
+      --loglevel error \\
+      --record-logs failing \\
+      --take-screenshots failing \\
+      --forceExit \\
+      --headless \\
+      --retries 2 \\
+      --runInBand \\
+      --cleanup \\
+      --shard ${shard} \\
+      ${filteredArgs}`;
 };
 
 const getTasksFrom = {
@@ -88,7 +92,7 @@ const getTasksFrom = {
   },
   android: {
     build: build_android,
-    bundle: () => undefined,
+    bundle: async () => await bundle_android(),
     test: test_android,
   },
 };
@@ -135,10 +139,34 @@ for (const argName in argv) {
     case "filter":
       filter = argv[argName];
       break;
+    case "outputFile":
+    case "o":
+      outputFile = argv[argName];
+      break;
     default:
       usage(42);
       break;
   }
+}
+
+const extraArgs = process.argv.slice(2).filter(arg => !arg.startsWith("-"));
+const filteredArgs = extraArgs.filter(arg => {
+  return (
+    arg !== "./scripts/e2e-ci.mjs" &&
+    arg !== "ios" &&
+    arg !== "android" &&
+    !arg.match(/^\d+\/\d+$/) &&
+    arg !== filter
+  );
+});
+
+if (filter) {
+  filteredArgs.push(...filter.split(" "));
+}
+
+if (outputFile) {
+  filteredArgs.push("--json");
+  filteredArgs.push(`--outputFile=${outputFile}`);
 }
 
 within(async () => {

@@ -5,7 +5,6 @@ import { APTOS_ASSET_ID, TOKEN_TYPE } from "../constants";
 import type { AptosAPI } from "../network";
 import { normalizeTransactionOptions } from "./normalizeTransactionOptions";
 import type { Transaction } from "../types";
-import type BigNumber from "bignumber.js";
 
 const buildTransaction = async (
   account: Account,
@@ -20,10 +19,9 @@ const buildTransaction = async (
   const payloadTokenType = (subAccount?.token?.tokenType as TOKEN_TYPE) ?? tokenType;
 
   const txPayload = getPayload({
-    amount: transaction.amount,
-    recipient: transaction.recipient,
-    contractAddress: payloadContracAddress,
+    transaction,
     tokenType: payloadTokenType,
+    contractAddress: payloadContracAddress,
   });
 
   const txOptions = normalizeTransactionOptions(transaction.options);
@@ -33,36 +31,64 @@ const buildTransaction = async (
   return tx;
 };
 
-const getPayload = (args: {
-  amount: BigNumber;
-  recipient: string;
-  contractAddress?: string | undefined;
-  tokenType?: string;
+const getPayload = ({
+  transaction,
+  tokenType,
+  contractAddress,
+}: {
+  transaction: Transaction;
+  tokenType: TOKEN_TYPE;
+  contractAddress: string | undefined;
 }): InputEntryFunctionData => {
-  if (args.tokenType !== undefined && !isTokenType(args.tokenType)) {
-    throw new Error(`Token type ${args.tokenType} not supported`);
-  }
+  const { amount, recipient, mode } = transaction;
 
-  if (args.tokenType === TOKEN_TYPE.FUNGIBLE_ASSET) {
-    return {
-      function: "0x1::primary_fungible_store::transfer",
-      typeArguments: ["0x1::fungible_asset::Metadata"],
-      functionArguments: [args.contractAddress, args.recipient, args.amount.toString()],
-    };
-  }
+  switch (mode) {
+    case "stake":
+      return {
+        function: "0x1::delegation_pool::add_stake",
+        typeArguments: [],
+        functionArguments: [recipient, amount.toString()],
+      };
+    case "unstake":
+      return {
+        function: "0x1::delegation_pool::unlock",
+        typeArguments: [],
+        functionArguments: [recipient, amount.toString()],
+      };
+    case "restake":
+      return {
+        function: "0x1::delegation_pool::reactivate_stake",
+        typeArguments: [],
+        functionArguments: [recipient, amount.toString()],
+      };
+    case "withdraw":
+      return {
+        function: "0x1::delegation_pool::withdraw",
+        typeArguments: [],
+        functionArguments: [recipient, amount.toString()],
+      };
+    case "send":
+      if (tokenType !== undefined && !isTokenType(tokenType)) {
+        throw new Error(`Token type ${tokenType} not supported`);
+      }
 
-  let address = args.contractAddress ?? "";
-  if (address === "") {
-    address = APTOS_ASSET_ID;
+      if (tokenType === TOKEN_TYPE.FUNGIBLE_ASSET) {
+        return {
+          function: "0x1::primary_fungible_store::transfer",
+          typeArguments: ["0x1::fungible_asset::Metadata"],
+          functionArguments: [contractAddress, recipient, amount.toString()],
+        };
+      }
   }
 
   return {
     function: "0x1::aptos_account::transfer_coins",
-    typeArguments: [address],
-    functionArguments: [args.recipient, args.amount.toString()],
+    typeArguments: [contractAddress ?? APTOS_ASSET_ID],
+    functionArguments: [recipient, amount.toString()],
   };
 };
 
+// FIXME: terminology overlop, using tokentype here when AssetInfo refers to `standard`
 export const isTokenType = (value: string): boolean => {
   return Object.values(TOKEN_TYPE).includes(value as TOKEN_TYPE);
 };

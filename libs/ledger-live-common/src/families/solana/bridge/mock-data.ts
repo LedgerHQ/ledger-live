@@ -1,7 +1,39 @@
 /* eslint-disable */
 import { PublicKey } from "@solana/web3.js";
-import { LATEST_BLOCKHASH_MOCK, ChainAPI } from "@ledgerhq/coin-solana/network/index";
+import {
+  LATEST_BLOCKHASH_MOCK,
+  ChainAPI,
+  LAST_VALID_BLOCK_HEIGHT_MOCK,
+} from "@ledgerhq/coin-solana/network/index";
 import { Functions } from "@ledgerhq/coin-solana/utils";
+
+// Helper function to generate mock prioritization fees
+const generatePrioritizationFees = (
+  startSlot: number,
+  count: number = 150,
+  prioritizationFee: number = 0,
+) => {
+  return Array.from({ length: count }, (_, index) => ({
+    prioritizationFee,
+    slot: startSlot + index,
+  }));
+};
+
+// Helper function to generate nested prioritization fees format
+const generateNestedPrioritizationFees = (slot: number, prioritizationFee: number = 0) => {
+  return [
+    [
+      {
+        slot,
+        prioritizationFee,
+      },
+      {
+        slot,
+        prioritizationFee,
+      },
+    ],
+  ];
+};
 
 export const getMockedMethods = (): {
   method: Functions<ChainAPI>;
@@ -874,22 +906,18 @@ export const getMockedMethods = (): {
     answer: 5000,
   },
   // manual
-  { method: "getLatestBlockhash", params: [], answer: LATEST_BLOCKHASH_MOCK },
+  {
+    method: "getLatestBlockhash",
+    params: [],
+    answer: {
+      blockhash: LATEST_BLOCKHASH_MOCK,
+      lastValidBlockHeight: LAST_VALID_BLOCK_HEIGHT_MOCK,
+    },
+  },
   {
     method: "getRecentPrioritizationFees",
     params: [["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"]],
-    answer: [
-      [
-        {
-          slot: 122422797,
-          prioritizationFee: 0,
-        },
-        {
-          slot: 122422797,
-          prioritizationFee: 0,
-        },
-      ],
-    ],
+    answer: generateNestedPrioritizationFees(122422797),
   },
   {
     method: "getAccountInfo",
@@ -914,5 +942,115 @@ export const getMockedMethods = (): {
       owner: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
       rentEpoch: 304,
     },
+  },
+  {
+    method: "getBalance",
+    params: ["63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo"],
+    answer: 19449267,
+  },
+  {
+    method: "getAccountInfo",
+    params: ["63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo"],
+    answer: {
+      data: { type: "Buffer", data: [] },
+      executable: false,
+      lamports: 19449267,
+      owner: new PublicKey(Buffer.from("00", "hex")),
+      rentEpoch: 18446744073709552000,
+      space: 0,
+    },
+  },
+  {
+    method: "getRecentPrioritizationFees",
+    params: [["4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx"]],
+    answer: generatePrioritizationFees(349496453),
+  },
+  {
+    method: "getSimulationComputeUnits",
+    params: [
+      [
+        {
+          keys: [
+            {
+              pubkey: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+              isSigner: true,
+              isWritable: true,
+            },
+            {
+              pubkey: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+              isSigner: false,
+              isWritable: true,
+            },
+          ],
+          programId: "11111111111111111111111111111111",
+          data: Buffer.from([2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        },
+      ],
+      "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+    ],
+    answer: 300,
+  },
+  {
+    method: "getFeeForMessage",
+    params: [
+      "AQACAzc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMSjkK4MloYlzRPcf1wdkx+b53CpRgBUwgdyk+nPz78QAgEABQJKAQAAAgIAAAwCAAAAAAAAAAAAAAA=",
+    ],
+    answer: 5000,
+  },
+  {
+    method: "getRecentPrioritizationFees",
+    params: [
+      [
+        "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+        "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo",
+      ],
+    ],
+    answer: generatePrioritizationFees(349496454),
+  },
+  {
+    method: "getSimulationComputeUnits",
+    params: [
+      [
+        {
+          keys: [
+            {
+              pubkey: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+              isSigner: true,
+              isWritable: true,
+            },
+            {
+              pubkey: "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo",
+              isSigner: false,
+              isWritable: true,
+            },
+          ],
+          programId: "11111111111111111111111111111111",
+          data: Buffer.from([2, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0]),
+        },
+      ],
+      "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+    ],
+    answer: 300,
+  },
+  {
+    method: "getFeeForMessage",
+    params: [
+      "gAEAAwo3NaziKyCZH4sQdjxlyAEEsycLhyQPWK6FJrb9j7r0jyRhB0FkC3pA/3bwHKZzD9v7Rt2mGOXiT8AiHUK2gDwsRJgSfTDFH6xNF2pMhFGZxLZWMl8EsYB3Ro87lHwnuWJUb9EWTtCgOsaT9mU8t4D2GHpAPhkXU2fcZBXT6D+pjfj05KOdlS9AiDNsbZdFpLzbJQ+lmsMa+8nfR2JZTeC89UIrAvAD7ZOgJ4wimZg0XyXSOCz2YXE8kINJuux17h3+Z4YL4MPru92uqdoO9qUoSbP2t3tFyBv0piXrLPXBPgMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAABHnVW/IxwG7udMVuzmgVB/2xst6j9I5RArHNola8E48G3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqRa6MXuFOieWIcE2CMOB5dDllphXzarmndZ4yX86tmlPBQcABQL1qAQABwAJA5PxAgAAAAAACAUFAB0JGAmT8Xtk9ISudv0IPwkbAAMKCwUaHQgIGQghGwoLDA4NDyAiHycJJhsaKQoEExIQESQlIycJHioXKhUUBAsdKRYqGwkJKCoGAgEIHCzBIJszQdacgQADAAAAOV0AA08HAAImZAIDgIQeAAAAAAAxibAAAAAAADIAAAkDBQAAAQkEKb+VBypPvwTfcXWT5zi8zCEnKBXCRxqA2fn1VbDUhCUCKRgHEwAoAwIXFVl9OSuqqDQaRb6IYUBogcRuGRFfhgIEuha8cjU4fZPaBGAGBWUEAwkCAX3AxxcCHMtm5xM+0XoyZnzQ09ar0YPXd26YYBeNqWxqBHj0dPIF8W95dfO3dNOoPmZnmihT46QbLY1Y/HoBFLJX/wryNAMqjbbuHQTj5MrHA87Gyw==",
+    ],
+    answer: 5126,
+  },
+  {
+    method: "getFeeForMessage",
+    params: [
+      "AQABAzc1rOIrIJkfixB2PGXIAQSzJwuHJA9YroUmtv2PuvSPdaMhhWgGf/cOLK4MfSqKoh7TzOlbq+4eA+l1aEoKxIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC7eSTZPjADfAV2K5ZMTBC9Qv7DN/mRWMGcOHqHwTiqeAQICAAEMAgAAAICWmAAAAAAA",
+    ],
+    answer: 5000,
+  },
+  {
+    method: "getFeeForMessage",
+    params: [
+      "gAEAAQM3NaziKyCZH4sQdjxlyAEEsycLhyQPWK6FJrb9j7r0j3WjIYVoBn/3DiyuDH0qiqIe08zpW6vuHgPpdWhKCsSEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXy8ypDosdfEh+2iQdH7SMOBblSXabBjQnkjkz87PSigECAgABDAIAAACAlpgAAAAAAAA=",
+    ],
+    answer: 5000,
   },
 ];

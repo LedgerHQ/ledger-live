@@ -1,8 +1,6 @@
+import { Icons } from "@ledgerhq/react-ui/index";
 import React from "react";
 import styled from "styled-components";
-import { Icons } from "@ledgerhq/react-ui/index";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
 
 type Props = {
   onRequestClose: (mouseEvent: React.MouseEvent<Element, MouseEvent>) => void;
@@ -10,18 +8,9 @@ type Props = {
 
 export const CloseButton = ({ onRequestClose }: Props) => {
   return (
-    <AnimatePresence mode="sync">
-      <motion.div
-        key="mad-back-button"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.3, ease: "easeIn" } }}
-        exit={{ opacity: 0, transition: { duration: 0.3, ease: "easeIn" } }}
-      >
-        <CloseIconWrapper onClick={onRequestClose} data-testid="mad-close-button">
-          <Icons.Close size="XS" />
-        </CloseIconWrapper>
-      </motion.div>
-    </AnimatePresence>
+    <CloseIconWrapper onClick={onRequestClose} data-testid="mad-close-button">
+      <Icons.Close size="XS" />
+    </CloseIconWrapper>
   );
 };
 

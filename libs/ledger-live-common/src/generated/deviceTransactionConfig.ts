@@ -3,6 +3,7 @@ import aptos from "@ledgerhq/coin-aptos/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import casper from "@ledgerhq/coin-casper/deviceTransactionConfig";
+import canton from "@ledgerhq/coin-canton/deviceTransactionConfig";
 import celo from "@ledgerhq/coin-celo/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
@@ -29,6 +30,7 @@ export default {
   bitcoin,
   cardano,
   casper,
+  canton,
   celo,
   cosmos,
   evm,
@@ -49,7 +51,6 @@ export default {
   mina,
   kadena,
 };
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "@ledgerhq/coin-aptos/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
@@ -57,7 +58,6 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } f
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "@ledgerhq/coin-tron/bridge/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
-  | ExtraDeviceTransactionField_aptos
   | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks

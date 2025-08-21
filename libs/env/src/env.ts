@@ -87,6 +87,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable tokens on Aptos",
   },
+  APTOS_ENABLE_STAKING: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable staking for Aptos",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -197,15 +202,30 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
+  API_SUI_NODE_PROXY_TEST: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger-test.com",
+    desc: "reverse proxy url for sui node",
+  },
   API_SUI_NODE_PROXY: {
     parser: stringParser,
     def: "https://sui.coin.ledger.com",
     desc: "reverse proxy url for sui node",
   },
+  SUI_ENABLE_TOKENS: {
+    parser: boolParser,
+    def: true,
+    desc: "Enable tokens on Sui",
+  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
+  },
+  SOLANA_VALIDATORS_SUMMARY_BASE_URL: {
+    parser: stringParser,
+    def: "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
+    desc: "base url for validators.app validator summary",
   },
   SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
@@ -291,6 +311,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
+  },
+  CAL_REF: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) allows to target a different reference of the CAL for testing purposes",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
@@ -636,6 +661,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "API port for speculos",
   },
+  SPECULOS_DEVICE: {
+    def: "",
+    parser: stringParser,
+    desc: "Device model id for speculos",
+  },
   SPECULOS_PID_OFFSET: {
     def: 0,
     parser: intParser,
@@ -902,6 +932,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Enable logs for drawers",
+  },
+  SANCTIONED_ADDRESSES_URL: {
+    def: "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json",
+    parser: stringParser,
+    desc: "List of sanctioned addresses",
   },
 };
 

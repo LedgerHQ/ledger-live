@@ -3,7 +3,7 @@ import { SolanaAddress } from "./signer";
 import { buildSignOperation } from "./signOperation";
 import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { ChainAPI } from "./network";
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { Transaction } from "./types";
 import { BlockhashWithExpiryBlockHeight, VersionedTransaction } from "@solana/web3.js";
 
@@ -60,7 +60,7 @@ describe("Testing signOperation", () => {
         expect(data.type).toEqual(expectedEventTypeOrder[index]);
 
         const validateFunction = validationByEventType.get(data.type);
-        expect(validateFunction).toBeDefined();
+        expect(validateFunction).toBeInstanceOf(Function);
         expect(validateFunction!(data, kind)).toEqual(true);
 
         index++;

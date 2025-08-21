@@ -1,11 +1,10 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
-import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
-import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
+import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
@@ -55,21 +54,11 @@ export const SelectAccountList = ({
     }
   };
 
-  const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
-
-  const detailedAccountsWithName = detailedAccounts.map((account, index) => {
-    const accountName = overridedAccountName[index];
-    return {
-      ...account,
-      name: accountName ?? account.name,
-    };
-  });
-
   return (
     <ListWrapper customHeight={LIST_HEIGHT}>
       <AccountList
         bottomComponent={bottomComponent}
-        accounts={detailedAccountsWithName}
+        accounts={detailedAccounts}
         onClick={onAccountClick}
       />
     </ListWrapper>

@@ -1,3 +1,46 @@
+# 2.124.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.120.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.120.0
+
+### 🌷 Improvements
+
+This update brings connectivity improvements.
+
+# 2.118.1
+
+### 🐛 Fix
+
+Fixed a bug that prevented a new Aptos account from being added to Ledger Live.
+
+# 2.118.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.117.0
+
+### 🌷 Improvements
+
+Solana accounts created with Phantom are now visible in Ledger Live.
+With this update, we now support Casper Network v2.
+
+### 🐛 Fixes
+
+Fixed a bug that prevented SUI funded wallets from being added to Ledger Live.
+
 # 2.115.0
 
 ### 🐛 Fixes
@@ -14,6 +57,7 @@ This release includes small security improvements, UI tweaks, and minor bug fixe
 
 We have resolved an issue that was affecting several Ledger Live services for Ledger Nano S users.
 The following functionalities are now fully restored
+
 - Swapping EVM tokens
 - Topping up the CL Card with EVM
 - Selling EVM tokens

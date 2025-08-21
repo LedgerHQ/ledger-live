@@ -18,6 +18,7 @@ import PortfolioPage from "./wallet/portfolio.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
+import SettingsHelpPage from "./settings/settingsHelp.page";
 import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
@@ -25,6 +26,8 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
+import TransferMenuDrawer from "./wallet/transferMenu.drawer";
+import BuySellPage from "./trade/buySell.page";
 
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
@@ -39,7 +42,7 @@ setupEnvironment();
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
-type ApplicationOptions = {
+export type ApplicationOptions = {
   speculosApp?: AppInfosType;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
@@ -110,6 +113,9 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
+  private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
+  private buySellPageInstance = lazyInit(BuySellPage);
+  private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
 
   public async init({
     speculosApp,
@@ -246,5 +252,17 @@ export class Application {
 
   public get celoManageAssets() {
     return this.celoManageAssetsPageInstance();
+  }
+
+  public get transferMenuDrawer() {
+    return this.TransferMenuDrawerInstance();
+  }
+
+  public get buySell() {
+    return this.buySellPageInstance();
+  }
+
+  public get settingsHelp() {
+    return this.settingsHelpPageInstance();
   }
 }

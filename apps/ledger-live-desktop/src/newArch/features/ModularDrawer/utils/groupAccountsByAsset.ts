@@ -1,8 +1,8 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { parseToBigNumber } from "LLD/utils/parseToBigNumber";
 
 export type GroupedAccount = {
@@ -39,7 +39,7 @@ export const groupAccountsByAsset = (
     );
     const balance = account.balance;
 
-    const parsedFiatValue = parseToBigNumber(fiatValue);
+    const parsedFiatValue = parseToBigNumber(fiatValue ?? "0");
 
     groupedAccounts[assetId].totalBalance = groupedAccounts[assetId].totalBalance.plus(balance);
     groupedAccounts[assetId].totalFiatValue =

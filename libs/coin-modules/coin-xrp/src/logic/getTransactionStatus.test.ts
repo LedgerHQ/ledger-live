@@ -1,14 +1,19 @@
 import { getTransactionStatus } from "./getTransactionStatus";
-import * as logic from "./index";
+import * as utils from "./utils";
+
+const mockGetBalance = jest.fn();
 
 const mockGetServerInfos = jest.fn();
-const mockCachedRecipientIsNew = jest.fn();
+
+jest.mock("./getBalance", () => ({
+  getBalance: () => mockGetBalance(),
+}));
 
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
 }));
 
-jest.spyOn(logic, "cachedRecipientIsNew").mockImplementation(addr => {
+jest.spyOn(utils, "cachedRecipientIsNew").mockImplementation(addr => {
   if (addr === RECIPIENT_NEW) {
     return Promise.resolve(true);
   }
@@ -21,22 +26,9 @@ const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
-const account = {
-  address: SENDER,
-  balance: 50_000_000n,
-  currencyUnit: {
-    code: "XRP",
-    magnitude: 6,
-    name: "XRP",
-    symbol: "XRP",
-  },
-  currencyName: "XRP",
-};
-
 describe("getTransactionStatus", () => {
   afterEach(() => {
-    mockGetServerInfos.mockReset();
-    mockCachedRecipientIsNew.mockReset();
+    jest.clearAllMocks();
   });
 
   it("returns no errors on valid transaction", async () => {
@@ -47,15 +39,22 @@ describe("getTransactionStatus", () => {
         },
       },
     });
-
-    mockCachedRecipientIsNew.mockResolvedValue(false);
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 20_000_000n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: RECIPIENT,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -72,13 +71,22 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 1_000_000n,
-        fee: 200_000n, // 20%
+        fees: 200_000n, // 20%
         recipient: RECIPIENT,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -94,12 +102,21 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 30_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 10_000_000n,
         recipient: RECIPIENT,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -114,13 +131,22 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 10_000_000n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: SENDER,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -135,15 +161,22 @@ describe("getTransactionStatus", () => {
         },
       },
     });
-
-    mockCachedRecipientIsNew.mockResolvedValue(true);
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 5_000_000n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: RECIPIENT_NEW,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -158,13 +191,22 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
         amount: 0n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: RECIPIENT,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
     );
 
@@ -179,12 +221,21 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: "not-an-address",
       } as any,
     );
@@ -200,12 +251,21 @@ describe("getTransactionStatus", () => {
         },
       },
     });
+    mockGetBalance.mockResolvedValue([
+      {
+        value: 50_000_000n,
+        asset: { type: "native" },
+        locked: 0n,
+      },
+    ]);
 
     const result = await getTransactionStatus(
-      account as any,
+      // account as any,
       {
+        sender: SENDER,
+        asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
-        fee: 10_000n,
+        fees: 10_000n,
         recipient: "",
       } as any,
     );

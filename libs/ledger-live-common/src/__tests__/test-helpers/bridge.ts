@@ -253,7 +253,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                   account,
                 });
                 expect(estimation.gte(0)).toBe(true);
-                expect(estimation.lte(account.spendableBalance)).toBe(true);
+                if (!(account.spendableBalance.lt(0) && estimation.eq(0))) {
+                  expect(estimation.lte(account.spendableBalance)).toBe(true);
+                }
 
                 for (const sub of account.subAccounts || []) {
                   const estimation = await accountBridge.estimateMaxSpendable({
@@ -382,7 +384,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
             }
           }
-
           makeTest("account have no NaN values", async () => {
             const account = await getSynced();
             [account, ...(account.subAccounts || [])].forEach(a => {

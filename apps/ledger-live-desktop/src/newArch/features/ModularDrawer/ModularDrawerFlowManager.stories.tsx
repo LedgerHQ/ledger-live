@@ -1,20 +1,33 @@
-import React from "react";
+import {
+  FeatureFlagsContextValue,
+  FeatureFlagsProvider,
+} from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
+import {
+  assetsLeftElementOptions,
+  assetsRightElementOptions,
+  filterOptions,
+  networksLeftElementOptions,
+  networksRightElementOptions,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import type { Meta, StoryObj } from "@storybook/react";
-import { legacy_createStore as createStore } from "redux";
+import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
+import React from "react";
 import { Provider } from "react-redux";
-import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
+import { legacy_createStore as createStore } from "redux";
+import { track } from "~/renderer/analytics/__mocks__/segment";
+import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   arbitrumToken,
   bitcoinCurrency,
   ethereumCurrency,
-} from "./__mocks__/useSelectAssetFlow.mock";
-import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
-import { track } from "~/renderer/analytics/__mocks__/segment";
-import { MOCKED_ARB_ACCOUNT } from "./__mocks__/accounts.mock";
+} from "../__mocks__/useSelectAssetFlow.mock";
+import ModularDrawerFlowManager, {
+  ModularDrawerFlowManagerProps,
+} from "./ModularDrawerFlowManager";
 
 const store = createStore(() => ({
-  accounts: [],
+  accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
   wallet: {
     accountNames: new Map([
       ["bitcoin1", "bitcoin-account-1"],
@@ -40,39 +53,193 @@ const store = createStore(() => ({
   application: { debug: {} },
 }));
 
-const onAssetSelected = fn();
-const onAccountSelected = fn();
+function makeMockedContextValue(
+  mockedFeatures: Partial<Record<FeatureId, Feature>>,
+): FeatureFlagsContextValue {
+  return {
+    isFeature: () => true,
+    getFeature: (featureId: FeatureId) => mockedFeatures[featureId] || null,
+    overrideFeature: () => {},
+    resetFeature: () => {},
+    resetFeatures: () => {},
+  };
+}
 
-const meta: Meta<typeof ModularDrawerFlowManager> = {
+type ExtraStoryArgs = {
+  // "default" is used as the primitive undefined option in the dropdown
+  assetsLeftElement?: (typeof assetsLeftElementOptions)[number] | "default";
+  assetsRightElement?: (typeof assetsRightElementOptions)[number] | "default";
+  networksLeftElement?: (typeof networksLeftElementOptions)[number] | "default";
+  networksRightElement?: (typeof networksRightElementOptions)[number] | "default";
+  assetsFilter?: (typeof filterOptions)[number] | "default";
+};
+
+type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
+
+const meta: Meta<StoryArgs> = {
   title: "ModularDrawer/ModularDrawerFlowManager",
   component: ModularDrawerFlowManager,
   args: {
     currencies: [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency],
-    drawerConfiguration: {},
-    onAssetSelected,
-    onAccountSelected,
+    onAssetSelected: () => null,
+    onAccountSelected: () => null,
     source: "sourceTest",
     flow: "Modular Asset Flow",
   },
+  argTypes: {
+    assetsFilter: {
+      options: [...filterOptions, "default"],
+      control: { type: "select" },
+    },
+    assetsLeftElement: {
+      options: [...assetsLeftElementOptions, "default"],
+      control: { type: "select" },
+    },
+    assetsRightElement: {
+      options: [...assetsRightElementOptions, "default"],
+      control: { type: "select" },
+    },
+    networksLeftElement: {
+      options: [...networksLeftElementOptions, "default"],
+      control: { type: "select" },
+    },
+    networksRightElement: {
+      options: [...networksRightElementOptions, "default"],
+      control: { type: "select" },
+    },
+  },
   decorators: [
-    Story => (
-      <Provider store={store}>
-        <Story />
-      </Provider>
-    ),
+    Story => {
+      return (
+        <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
+          <FeatureFlagsProvider
+            value={makeMockedContextValue({
+              lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+            })}
+          >
+            <Provider store={store}>
+              <Story />
+            </Provider>
+          </FeatureFlagsProvider>
+        </div>
+      );
+    },
   ],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ModularDrawerFlowManager>;
+export const CustomDrawerConfig: StoryObj<StoryArgs> = {
+  parameters: {
+    controls: {
+      exclude: [
+        "currencies",
+        "source",
+        "flow",
+        "drawerConfiguration",
+        "onAssetSelected",
+        "onAccountSelected",
+      ],
+    },
+  },
+  render: args => {
+    const {
+      assetsLeftElement,
+      assetsRightElement,
+      assetsFilter,
+      networksLeftElement,
+      networksRightElement,
+    } = args;
 
-export const Default: Story = {
-  args: {},
+    const drawerConfiguration = {
+      assets: {
+        leftElement: assetsLeftElement === "default" ? undefined : assetsLeftElement,
+        rightElement: assetsRightElement === "default" ? undefined : assetsRightElement,
+        filter: assetsFilter === "default" ? undefined : assetsFilter,
+      },
+      networks: {
+        leftElement: networksLeftElement === "default" ? undefined : networksLeftElement,
+        rightElement: networksRightElement === "default" ? undefined : networksRightElement,
+      },
+    };
+
+    return (
+      <div>
+        <div style={{ color: "#333", backgroundColor: "#f9f9f9", padding: "5px" }}>
+          <p style={{ fontSize: "16px", marginBottom: "8px" }}>
+            Use the storybook controls below to alter the{" "}
+            <span style={{ fontWeight: 600 }}>drawerConfiguration</span> parameters:
+          </p>
+          <p style={{ fontSize: "14px", marginBottom: "16px", color: "#555" }}>
+            &quot;undefined&quot; represents no element shown, &quot;default&quot; represents the
+            default element if the parameter is not provided in the drawerConfiguration object.
+          </p>
+          <ul style={{ paddingLeft: "20px", fontSize: "14px", marginBottom: "16px" }}>
+            <li>
+              <span style={{ fontWeight: 600 }}>assetsFilter:</span> Element to display at the top
+              of the drawer to filter assets.
+            </li>
+            <li>
+              <span style={{ fontWeight: 600 }}>assetsLeftElement:</span> Element to display on the
+              left side of the assets drawer. Defaults to undefined.
+            </li>
+            <li>
+              <span style={{ fontWeight: 600 }}>assetsRightElement:</span> Element to display on the
+              right side of the assets drawer. Defaults to balance.
+            </li>
+            <li>
+              <span style={{ fontWeight: 600 }}>networksLeftElement:</span> Element to display on
+              the left side of the networks drawer. Defaults to undefined.
+            </li>
+            <li>
+              <span style={{ fontWeight: 600 }}>networksRightElement:</span> Element to display on
+              the right side of the networks drawer. Defaults to undefined.
+            </li>
+          </ul>
+          <pre
+            style={{
+              fontFamily: "monospace",
+              padding: "12px",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              fontSize: "13px",
+            }}
+          >
+            {JSON.stringify({ drawerConfiguration }, null, 2)}
+          </pre>
+        </div>
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            marginTop: "50px",
+            paddingTop: "50px",
+            borderTop: "1px solid #ccc",
+          }}
+        >
+          <ModularDrawerFlowManager
+            currencies={[ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency]}
+            onAssetSelected={() => null}
+            onAccountSelected={() => null}
+            source="sourceTest"
+            flow="Modular Asset Flow"
+            drawerConfiguration={drawerConfiguration}
+            // Changing drawerConfiguration may alter which hooks are called.
+            // The dynamic key ensures the component is remounted to avoid hook order violations
+            key={JSON.stringify(args)}
+          />
+        </div>
+      </div>
+    );
+  },
 };
 
-export const TestSelectAccountFlow: Story = {
-  args: {},
+const onAssetSelected = fn();
+const onAccountSelected = fn();
+
+export const TestSelectAccountFlow: StoryObj<StoryArgs> = {
+  args: { onAccountSelected, onAssetSelected },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const waitForAnimationExit = (text: RegExp) =>
@@ -107,6 +274,6 @@ export const TestSelectAccountFlow: Story = {
 
     await userEvent.click(arbitrumAccount);
 
-    expect(onAccountSelected).toHaveBeenCalledWith(MOCKED_ARB_ACCOUNT, undefined);
+    expect(onAccountSelected).toHaveBeenCalledWith(ARB_ACCOUNT, undefined);
   },
 };

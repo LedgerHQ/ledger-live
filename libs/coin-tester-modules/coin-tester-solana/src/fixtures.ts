@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -13,6 +13,16 @@ export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");
 export const SOLANA_USDC = getTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v");
 export const SOLANA_CWIF = getTokenById("solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1");
+export const SOLANA_VIRTUAL: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y",
+  name: "Virtual Protocol",
+  ticker: "VIRTUAL",
+  units: [{ name: "VIRTUAL", code: "VIRTUAL", magnitude: 9 }],
+  contractAddress: "3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+};
 export const WITHDRAWABLE_AMOUNT = 2e9;
 
 export const makeAccount = (
@@ -78,20 +88,42 @@ export function initMSW() {
   const mockServer = setupServer(
     http.get("https://crypto-assets-service.api.ledger.com/v1/certificates", ({ request }) => {
       const url = new URL(request.url);
-      return HttpResponse.json(
-        url.searchParams.get("target_device") === "nanox"
-          ? [
-              {
-                descriptor: {
-                  data: "01010102010235010236010110040208000013020002140101200c747275737465645f6e616d65300200073101043201213401013321036a94e7a42cd0c33fdf440c8e2ab2542cefbe5db7aa0b93a9fc814b9acfa75eb4",
-                  signatures: {
-                    test: "304402205caeb7806b4d07f9de76cc43fbdea235a87845f5a0bb5273511237492b05712802204c885133c97d7497654dd808433543ac15efa4bd1de7bace536e8d13068fc3b1",
-                  },
-                },
+
+      if (url.searchParams.get("target_device") !== "nanox") {
+        return HttpResponse.json([]);
+      }
+
+      if (
+        url.searchParams.get("public_key_usage") === "trusted_name" &&
+        url.searchParams.get("public_key_id") === "domain_metadata_key"
+      ) {
+        return HttpResponse.json([
+          {
+            descriptor: {
+              data: "01010102010235010236010110040208000013020002140101200c747275737465645f6e616d65300200073101043201213401013321036a94e7a42cd0c33fdf440c8e2ab2542cefbe5db7aa0b93a9fc814b9acfa75eb4",
+              signatures: {
+                prod: "3044022065c969de8e3f0cc0a0f462777f68235e97ea2b3355fa63836541fa682dfc5a4b02206c8b61fe688deabde2660259afa40c38a6254b03240fa7157df84fa490c934f6",
               },
-            ]
-          : [],
-      );
+            },
+          },
+        ]);
+      }
+
+      if (
+        url.searchParams.get("public_key_usage") === "coin_meta" &&
+        url.searchParams.get("public_key_id") === "token_metadata_key"
+      ) {
+        return HttpResponse.json([
+          {
+            descriptor: {
+              data: "01010102010235010236010110040208000013020002140101200e746f6b656e5f6d657461646174613002000e310108320121340101332103f530b026fc8acecbe4594e8b185d31157814f5e73d474180c801a4ca857ea37b",
+              signatures: {
+                prod: "3044022028ffb8efb8f54e5d7f6c25091074ca21ba0284fd88db00e1ed27c664dccfc4fd02200cb264a0b301d7bb4709c5b59cc8225359551c77cca43d99945ff646db5d6507",
+              },
+            },
+          },
+        ]);
+      }
     }),
     http.get(
       "https://nft.api.live.ledger.com/v2/solana/owner/H6echhXDiRfCjSgwz5VNiF7g2vJYT4wG9zg7tQgKYasD",
@@ -111,8 +143,21 @@ export function initMSW() {
       ({ request }) => {
         const url = new URL(request.url);
         const signedDescriptor =
-          url.searchParams.get("challenge") === "0xcf678b10"
-            ? "010103020102700106710106202c4348524b57323557785367326e467178754c575332366e6552634e6e79667752426d4a6e4e6d38596e776556230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3761746746384b516f34774a7244354154475837743156327a5676796b504a6246664e6556663169634676311204cf678b1013010714010115483046022100958c0f79e16cad4b00ce30c8f47e468cac2ae1a41ae61efe3bbc4f358375df4002210089a1b83d9a61719d47f32e5727762dd3bfadd67e8236c7f46e6265c825f7a9a7"
+          url.searchParams.get("challenge") === "0x523ddeb5"
+            ? "010103020102700106710106202c4348524b57323557785367326e467178754c575332366e6552634e6e79667752426d4a6e4e6d38596e776556230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3761746746384b516f34774a7244354154475837743156327a5676796b504a6246664e6556663169634676311204523ddeb513010714010115473045022034c0808c1563d6f28f84a473e03cb7cd5b5d5183a495e4501789fa361c5cce54022100a8274fce5103af61309b87b1a953a26b5991d5ae4a541d97ad7b51d7922c695f"
+            : "invalid challenge";
+        return HttpResponse.json({
+          signedDescriptor,
+        });
+      },
+    ),
+    http.get(
+      "https://nft.api.live.ledger.com/v2/solana/owner/2mmXJMyMm6XpL2hjZ3gQcDKyq4zBXoTETYTmVi8yzkgx",
+      ({ request }) => {
+        const url = new URL(request.url);
+        const signedDescriptor =
+          url.searchParams.get("challenge") === "0x3c905a79"
+            ? "010103020102700106710106202c326d6d584a4d794d6d3658704c32686a5a33675163444b7971347a42586f54455459546d566938797a6b6778230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3369514c38424653327645376d7777346568417151484173626d524e43725078697a574154325a667972397912043c905a7913010714010115473045022100ec10ec22cd278cb26cce165b4988976202fad331ba006c5d57bfb9d4b5cd262e02200f8a612a351e6d371f7e81eb489a04467ad64205d49ff32b6273ddfa0090a037"
             : "invalid challenge";
         return HttpResponse.json({
           signedDescriptor,
@@ -137,8 +182,21 @@ export function initMSW() {
       ({ request }) => {
         const url = new URL(request.url);
         const signedDescriptor =
-          url.searchParams.get("challenge") === "0xba6816cd"
-            ? "010103020102700106710106202c4348524b57323557785367326e467178754c575332366e6552634e6e79667752426d4a6e4e6d38596e776556230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3761746746384b516f34774a7244354154475837743156327a5676796b504a6246664e6556663169634676311204ba6816cd13010714010115463044022076b8fbc7123167955ec273283a75e0db73e1b7f95d901afb240dde2bdd4fc0c7022061537bfc370235f59e1effebdd5d0d373c761caaca85fc3b20b64b194d34e7d4"
+          url.searchParams.get("challenge") === "0x00f04d01"
+            ? "010103020102700106710106202c4348524b57323557785367326e467178754c575332366e6552634e6e79667752426d4a6e4e6d38596e776556230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3761746746384b516f34774a7244354154475837743156327a5676796b504a6246664e655666316963467631120400f04d011301071401011546304402203a79abe8991286a1d9181414f88281ddcc088832c375e914f6bd4b7563b2d57102206d30bcabf267bc75fa16d5029fa60aa6dbf27bec69a9ed8d82772add344fe772"
+            : "invalid challenge";
+        return HttpResponse.json({
+          signedDescriptor,
+        });
+      },
+    ),
+    http.get(
+      "https://nft.api.live.ledger.com/v2/solana/computed-token-account/Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp/3iQL8BFS2vE7mww4ehAqQHAsbmRNCrPxizWAT2Zfyr9y",
+      ({ request }) => {
+        const url = new URL(request.url);
+        const signedDescriptor =
+          url.searchParams.get("challenge") === "0x5c9dd1f4"
+            ? "010103020102700106710106202c326d6d584a4d794d6d3658704c32686a5a33675163444b7971347a42586f54455459546d566938797a6b6778230165222c486a363977527a6b72467566314e627934797a5045464864736d51644d6f56596a76444b5a534c6a5a464570732c3369514c38424653327645376d7777346568417151484173626d524e43725078697a574154325a667972397912045c9dd1f41301071401011547304502201e477590350a97db3924f7ce88c49a6e1bb33cfe3dc22905b3ef39d0f9445961022100fa7b0ed5b34adbdc61422168268d9dc73fad8083ce0ee00e1195f6a6fedf3e2a"
             : "invalid challenge";
         return HttpResponse.json({
           signedDescriptor,
@@ -148,7 +206,48 @@ export function initMSW() {
     http.get("https://earn.api.live.ledger.com/v0/network/solana/validator-details", () =>
       HttpResponse.json([]),
     ),
-    http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", () => HttpResponse.json([])),
+    http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
+      const url = new URL(request.url);
+      switch (url.searchParams.get("id")) {
+        case "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v": // USDC
+          return HttpResponse.json([
+            {
+              descriptor: {
+                data: "0101900201010304800001f50406536f6c616e610504555344430601060733100100112c45506a465764643541756671535371654d32714e31787a7962617043384734774547476b5a777954447431761200",
+                signatures: {
+                  prod: "3044022072409f98d63ffc8c2f15c1fcceb79bd7733490b4745c40557cb67a4bcf681cf7022014da5ab63b6f627eac9a89388fa9aa4d0195ad0d4fa5786a4fb0e516400eb423",
+                },
+              },
+              descriptor_exchange_app: { signatures: {} },
+            },
+          ]);
+        case "solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1": // CWIF
+          return HttpResponse.json([
+            {
+              descriptor: {
+                data: "0101900201010304800001f50406536f6c616e610504435749460601020734100101112c3761746746384b516f34774a7244354154475837743156327a5676796b504a6246664e655666316963467631120101",
+                signatures: {
+                  prod: "3045022100929e824eab136768313d2358ef3be21144b60a4353c1582e226516ce73e8dd8c02203d70ef7c952d7bf25c009041b089bfacfffcdabe0ad9f2352372f666a1c70e79",
+                },
+              },
+              descriptor_exchange_app: { signatures: {} },
+            },
+          ]);
+        case "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y": // VIRTUAL
+          return HttpResponse.json([
+            {
+              descriptor: {
+                data: "0101900201010304800001f50406536f6c616e6105075649525455414c0601090733100100112c3369514c38424653327645376d7777346568417151484173626d524e43725078697a574154325a66797239791200",
+                signatures: {
+                  prod: "304402205e5ab58e4ad414c7641effdab231e30d4e6aab5a7d99f7d87ef4932612f0bf56022014c71b9049022ed020107b86d6d0efe06e157e30d8487dd71970fa7e42d6a1bf",
+                },
+              },
+              descriptor_exchange_app: { signatures: {} },
+            },
+          ]);
+      }
+      return HttpResponse.json([]);
+    }),
   );
   mockServer.listen({
     onUnhandledRequest: request => {

@@ -15,15 +15,8 @@ export type Scalars = {
   timestamptz: any;
 };
 
-export type GetAccountTransactionsDataQueryVariables = Exact<{
-  address?: InputMaybe<Scalars["String"]>;
-  limit?: InputMaybe<Scalars["Int"]>;
-}>;
-
 export type GetAccountTransactionsDataQuery = {
-  __typename?: "query_root";
   account_transactions: Array<{
-    __typename?: "account_transactions";
     transaction_version: number;
   }>;
 };
@@ -35,45 +28,9 @@ export type GetAccountTransactionsDataGtQueryVariables = Exact<{
 }>;
 
 export type GetAccountTransactionsDataGtQuery = {
-  __typename?: "query_root";
   account_transactions: Array<{
-    __typename?: "account_transactions";
     transaction_version: number;
   }>;
-};
-
-export type GetAccountTransactionsDataLtQueryVariables = Exact<{
-  address?: InputMaybe<Scalars["String"]>;
-  limit?: InputMaybe<Scalars["Int"]>;
-  lt?: InputMaybe<Scalars["bigint"]>;
-}>;
-
-export type GetAccountTransactionsDataLtQuery = {
-  __typename?: "query_root";
-  account_transactions: Array<{
-    __typename?: "account_transactions";
-    transaction_version: number;
-  }>;
-};
-
-export type DelegatedStakingActivity = {
-  amount: number;
-  delegator_address: string;
-  event_index: number;
-  event_type: string;
-  pool_address: string;
-  transaction_version: bigint;
-};
-
-export type GetDelegatedStakingActivitiesQuery = {
-  delegated_staking_activities: Array<DelegatedStakingActivity>;
-};
-
-export type PartitionedDelegatedStakingActivities = Record<string, DelegatedStakingActivity[]>;
-
-export type StakePrincipals = {
-  activePrincipals: number;
-  pendingInactivePrincipals: number;
 };
 
 export type StakeDetails = {
@@ -83,3 +40,45 @@ export type StakeDetails = {
   canWithdrawPendingInactive: boolean;
   poolAddress: string;
 };
+
+export type GetCurrentDelegatorBalancesQuery = {
+  current_delegator_balances: Array<{
+    current_pool_balance: {
+      total_coins: string;
+      operator_commission_percentage: string;
+      staking_pool_address: string;
+      total_shares: string;
+    };
+    shares: string;
+    delegator_address: string;
+    staking_pool_metadata: {
+      operator_aptos_name: {
+        domain_with_suffix: string;
+        is_active: boolean;
+      };
+    };
+  }>;
+};
+
+interface CurrentPoolBalance {
+  total_coins: string;
+  operator_commission_percentage: string;
+  staking_pool_address: string;
+  total_shares: string;
+}
+
+interface StakingPoolMetadata {
+  operator_aptos_name: OperatorAptosName;
+}
+
+interface OperatorAptosName {
+  domain_with_suffix: string;
+  is_active: boolean;
+}
+
+export interface CurrentDelegatorBalance {
+  shares: string;
+  delegator_address: string;
+  current_pool_balance: CurrentPoolBalance;
+  staking_pool_metadata: StakingPoolMetadata;
+}

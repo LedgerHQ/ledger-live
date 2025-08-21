@@ -47,7 +47,7 @@ describe("genericPrepareTransaction", () => {
     expect((result as any).fees.toString()).toBe(newFee.toString());
     expect(transactionToIntent).toHaveBeenCalledWith(
       account,
-      expect.objectContaining(baseTransaction),
+      expect.objectContaining({ ...baseTransaction, fees: 500n }),
     );
   });
 
@@ -59,8 +59,34 @@ describe("genericPrepareTransaction", () => {
     });
 
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(account, { ...baseTransaction });
+    const result = await prepareTransaction(account, baseTransaction);
 
-    expect(result).toStrictEqual(baseTransaction);
+    expect(result).toBe(baseTransaction);
+  });
+
+  it("sets fee if original fees are undefined", async () => {
+    const newFee = new BigNumber(1234);
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
+    });
+
+    const txWithoutFees = { ...baseTransaction, fees: undefined as any };
+    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const result = await prepareTransaction(account, txWithoutFees);
+
+    expect((result as any).fees.toString()).toBe(newFee.toString());
+    expect(result).not.toBe(txWithoutFees);
+  });
+
+  it("returns original if fees are BigNumber-equal but different instance", async () => {
+    const sameValue = new BigNumber(baseTransaction.fees.toString()); // different instance
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: sameValue }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const result = await prepareTransaction(account, baseTransaction);
+
+    expect(result).toBe(baseTransaction); // still same reference
   });
 });

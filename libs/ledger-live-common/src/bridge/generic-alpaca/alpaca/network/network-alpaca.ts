@@ -1,19 +1,22 @@
 import type {
-  // Api,
-  Account,
   Balance,
+  Block,
   BlockInfo,
   Operation,
   FeeEstimation,
   Pagination,
   TransactionIntent,
-  Transaction,
   TransactionValidation,
   Api,
+  AssetInfo,
+  Cursor,
+  Page,
+  Stake,
+  Reward,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp(backendOp: any): Operation<any> {
+function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 
@@ -24,7 +27,7 @@ function adaptOp(backendOp: any): Operation<any> {
   };
 }
 
-const ALPACA_URL = "https://localhost:3000";
+const ALPACA_URL = "http://0.0.0.0:3000";
 
 const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
@@ -82,10 +85,7 @@ const buildEstimateFees = networkFamily =>
   };
 
 const buildValidateIntent = networkFamily =>
-  async function validateIntent(
-    account: Account,
-    transaction: Transaction,
-  ): Promise<TransactionValidation> {
+  async function validateIntent(transaction: TransactionIntent): Promise<TransactionValidation> {
     const { data } = await network<
       {
         errors: Record<string, Error>;
@@ -100,20 +100,14 @@ const buildValidateIntent = networkFamily =>
       url: `${ALPACA_URL}/${networkFamily}/transaction/validate`,
       data: {
         transaction,
-        account,
       },
     });
     return data;
   };
 
-// FIXME: shouldn't hardcode
-type AssetInfo = {
-  type: "native"; // or "token" if applicable
-};
-
 const buildGetBalance = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<Balance<AssetInfo>[]> {
-    const { data } = await network<Balance<AssetInfo>, unknown>({
+  async function getBalance(address: string): Promise<Balance[]> {
+    const { data } = await network<Balance, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/balance`,
     });
@@ -122,14 +116,25 @@ const buildGetBalance = (networkFamily: string) =>
       {
         value: BigInt(data.value),
         asset: data.asset,
+        locked: BigInt(data?.locked ?? "0"),
       },
     ];
+  };
+
+const buildGetSequence = (networkFamily: string) =>
+  async function getSequence(address: string): Promise<number> {
+    const { data } = await network<number, unknown>({
+      method: "GET",
+      url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
+    });
+
+    return data;
   };
 
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination,
+    pagination: Pagination = { minHeight: 0 },
   ): Promise<[Operation<any>[], string]> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
@@ -176,7 +181,20 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
+    getSequence: buildGetSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
+    getBlock(_height): Promise<Block> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
   }) satisfies Api<any>;

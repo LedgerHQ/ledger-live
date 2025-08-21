@@ -64,7 +64,6 @@ import ModalLock from "../ModalLock";
 import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
-import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -286,7 +285,7 @@ export function renderConfirmSwap({
 
         <Flex justifyContent={"space-between"} width="100%">
           <FieldItem title={t("DeviceAction.swap2.amountSent")}>
-            <Text>
+            <Text testID="amountSent">
               <CurrencyUnitValue
                 value={transaction.amount}
                 unit={unitFrom}
@@ -297,7 +296,7 @@ export function renderConfirmSwap({
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
-            <Text>
+            <Text testID="amountReceived">
               <CurrencyUnitValue
                 unit={unitTo}
                 value={amountExpectedTo ? new BigNumber(amountExpectedTo) : null}
@@ -313,12 +312,12 @@ export function renderConfirmSwap({
                 <ProviderIcon size="XXS" name={provider} />
               </Flex>
 
-              <Text>{providerName}</Text>
+              <Text testID="provider">{providerName}</Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.fees")}>
-            <Text>
+            <Text testID="fees">
               <CurrencyUnitValue
                 unit={getFeesUnit(
                   getFeesCurrency(getMainAccount(exchange.fromAccount, exchange.fromParentAccount)),
@@ -333,14 +332,18 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
-              <Text marginLeft={2}>{fromAccountName}</Text>
+              <Text marginLeft={2} testID="sourceAccount">
+                {fromAccountName}
+              </Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
-              <Text marginLeft={2}>{toAccountName}</Text>
+              <Text marginLeft={2} testID="targetAccount">
+                {toAccountName}
+              </Text>
             </Flex>
           </FieldItem>
         </Flex>
@@ -662,10 +665,7 @@ export function renderError({
   // TODO Once we have the aligned Error renderings, the CTA list should be determined
   // by the error class, not patched like here.
   let showRetryIfAvailable = true;
-  if (
-    (error as unknown) instanceof PeerRemovedPairing ||
-    (isDmkError(error) && isiOSPeerRemovedPairingError(error))
-  ) {
+  if (error instanceof PeerRemovedPairing) {
     showRetryIfAvailable = false;
   }
 

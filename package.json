@@ -102,6 +102,7 @@
     "coin:xrp": "pnpm --filter coin-xrp",
     "coin-modules:test-integ": "pnpm --no-bail --filter=\"@ledgerhq/coin-*\" test-integ",
     "coin:sui": "pnpm --filter coin-sui",
+    "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
@@ -204,6 +205,7 @@
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "17.8.1",
     "@commitlint/prompt-cli": "17.8.1",
+    "@datadog/datadog-ci": "3.11.0",
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/pnpm-utils": "workspace:*",
     "@react-native-community/cli": "15.1.0",
@@ -260,7 +262,8 @@
       "storyly-react-native": "patches/storyly-react-native.patch",
       "@shopify/react-native-performance": "patches/@shopify__react-native-performance.patch",
       "react-native-webview": "patches/react-native-webview.patch",
-      "detox@20.39.0": "patches/detox@20.39.0.patch"
+      "detox@20.39.0": "patches/detox@20.39.0.patch",
+      "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

@@ -10,7 +10,8 @@
     "@ledgerhq/devices",
     "@ledgerhq/types-cryptoassets",
     "expect",
-    "invariant"
+    "invariant",
+    "got"
   ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",
@@ -23,6 +24,8 @@
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
-    "src/types/assets.ts"
+    "src/types/assets.ts",
+    "src/utils/IconGenerator.ts",
+    "src/utils/index.ts"
   ]
 }

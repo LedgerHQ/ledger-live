@@ -23,6 +23,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       allowsBackForwardNavigationGestures = true,
       onScroll,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -34,6 +35,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isModularDrawerVisible,
+      openModularDrawer,
     } = useWebView(
       {
         manifest,
@@ -57,7 +60,13 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
     if (!!manifest.dapp && noAccounts) {
-      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+      return (
+        <NoAccountScreen
+          manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
+          openModularDrawer={isModularDrawerVisible ? openModularDrawer : undefined}
+        />
+      );
     }
 
     return (
@@ -69,7 +78,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
-        renderLoading={renderLoading}
+        renderLoading={Loader}
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         onMessage={onMessage}
@@ -100,7 +109,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
 WalletAPIWebview.displayName = "WalletAPIWebview";
 
-function renderLoading() {
+function DefaultLoader() {
   return (
     <View style={styles.center}>
       <ActivityIndicator size="small" />

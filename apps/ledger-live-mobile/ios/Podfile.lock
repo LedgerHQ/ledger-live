@@ -29,7 +29,32 @@ PODS:
     - BrazeKit (= 11.2.0)
   - BrazeUI (11.2.0):
     - BrazeKit (= 11.2.0)
+  - BVLinearGradient (2.8.3):
+    - React-Core
   - CocoaAsyncSocket (7.6.5)
+  - DatadogCore (2.27.0):
+    - DatadogInternal (= 2.27.0)
+  - DatadogCrashReporting (2.27.0):
+    - DatadogInternal (= 2.27.0)
+    - PLCrashReporter (~> 1.12.0)
+  - DatadogInternal (2.27.0)
+  - DatadogLogs (2.27.0):
+    - DatadogInternal (= 2.27.0)
+  - DatadogRUM (2.27.0):
+    - DatadogInternal (= 2.27.0)
+  - DatadogSDKReactNative (2.8.2):
+    - DatadogCore (~> 2.27.0)
+    - DatadogCrashReporting (~> 2.27.0)
+    - DatadogLogs (~> 2.27.0)
+    - DatadogRUM (~> 2.27.0)
+    - DatadogTrace (~> 2.27.0)
+    - DatadogWebViewTracking (~> 2.27.0)
+    - React-Core
+  - DatadogTrace (2.27.0):
+    - DatadogInternal (= 2.27.0)
+    - OpenTelemetrySwiftApi (= 1.13.1)
+  - DatadogWebViewTracking (2.27.0):
+    - DatadogInternal (= 2.27.0)
   - DoubleConversion (1.1.6)
   - EXConstants (17.0.8):
     - ExpoModulesCore
@@ -40,7 +65,7 @@ PODS:
     - ExpoModulesCore
   - ExpoAsset (11.0.5):
     - ExpoModulesCore
-  - ExpoCamera (16.0.17):
+  - ExpoCamera (16.0.15):
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
@@ -200,6 +225,8 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - OpenTelemetrySwiftApi (1.13.1)
+  - PLCrashReporter (1.12.0)
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -2164,7 +2191,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - segment-analytics-react-native (2.20.4):
+  - segment-analytics-react-native (2.20.5):
     - React-Core
     - sovran-react-native
   - Sentry/HybridSDK (8.49.2)
@@ -2186,17 +2213,19 @@ PODS:
 DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
+  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
+  - "DatadogSDKReactNative (from `../node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
-  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+p_3ow4th5bnjx4xewc52aveivcdm/node_modules/expo-constants/ios`)"
-  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@5.0.0_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_gayys6lmbuhty22hyyrml7orm4/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@52.0.46_cco7moedcz4q7tdej7fmgu5jaq/node_modules/expo`)"
-  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+prese_hspgqocpnxgmnotpq3uuujmerq/node_modules/expo-asset/ios`)"
-  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@16.0.17_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_metztnwyacjsbj3asjotv4spm4/node_modules/expo-camera/ios`)"
-  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pres_tnyygicu6p3s7id7pmo4uu47aa/node_modules/expo-crypto/ios`)"
-  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@18.0.1_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_qqmmjwkjkte236ts4p77w6c2qi/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@13.0.4_expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.2_@babel+cor_mkocetvj65477y7owmopeohmu4/node_modules/expo-font/ios`)"
-  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@13.0.6_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1__spcbav6pkioy55db5o2jr7466y/node_modules/expo-image-manipulator/ios`)"
-  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@14.0.3_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+_i7pd4yaa3ugjoz4mkguvnkkzu4/node_modules/expo-keep-awake/ios`)"
+  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@17.0.8_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-constants/ios`)"
+  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@5.0.0_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-image-loader/ios`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@52.0.46_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__expo-modules-cor_tx4f6h2vf6p2kd2ej4pz3gpjlm/node_modules/expo`)"
+  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@11.0.5_jgjlskt2bkdrjl3sfy42ei327y/node_modules/expo-asset/ios`)"
+  - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@16.0.15_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-camera/ios`)"
+  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-crypto/ios`)"
+  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@18.0.1_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-file-system/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@13.0.4_jgjlskt2bkdrjl3sfy42ei327y/node_modules/expo-font/ios`)"
+  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@13.0.6_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@14.0.3_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babe_xvaerdp3f5v6fkbox7rncls4oe/node_modules/expo-modules-core`)"
   - "fast_float (from `../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/third-party-podspecs/fast_float.podspec`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -2322,6 +2351,13 @@ SPEC REPOS:
     - BrazeLocation
     - BrazeUI
     - CocoaAsyncSocket
+    - DatadogCore
+    - DatadogCrashReporting
+    - DatadogInternal
+    - DatadogLogs
+    - DatadogRUM
+    - DatadogTrace
+    - DatadogWebViewTracking
     - Firebase
     - FirebaseABTesting
     - FirebaseCore
@@ -2340,6 +2376,8 @@ SPEC REPOS:
     - MMKVCore
     - MultiplatformBleAdapter
     - nanopb
+    - OpenTelemetrySwiftApi
+    - PLCrashReporter
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
@@ -2354,28 +2392,32 @@ EXTERNAL SOURCES:
     :podspec: "../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/third-party-podspecs/boost.podspec"
   braze-react-native-sdk:
     :path: "../node_modules/@braze/react-native-sdk"
+  BVLinearGradient:
+    :path: "../node_modules/react-native-linear-gradient"
+  DatadogSDKReactNative:
+    :path: "../node_modules/@datadog/mobile-react-native"
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_uicigm66bpgrueykx2e6vkrucq/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
-    :path: "../../../node_modules/.pnpm/expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+p_3ow4th5bnjx4xewc52aveivcdm/node_modules/expo-constants/ios"
+    :path: "../../../node_modules/.pnpm/expo-constants@17.0.8_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-constants/ios"
   EXImageLoader:
-    :path: "../../../node_modules/.pnpm/expo-image-loader@5.0.0_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_gayys6lmbuhty22hyyrml7orm4/node_modules/expo-image-loader/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-loader@5.0.0_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@52.0.46_cco7moedcz4q7tdej7fmgu5jaq/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@52.0.46_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__expo-modules-cor_tx4f6h2vf6p2kd2ej4pz3gpjlm/node_modules/expo"
   ExpoAsset:
-    :path: "../../../node_modules/.pnpm/expo-asset@11.0.5_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+prese_hspgqocpnxgmnotpq3uuujmerq/node_modules/expo-asset/ios"
+    :path: "../../../node_modules/.pnpm/expo-asset@11.0.5_jgjlskt2bkdrjl3sfy42ei327y/node_modules/expo-asset/ios"
   ExpoCamera:
-    :path: "../../../node_modules/.pnpm/expo-camera@16.0.17_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pre_metztnwyacjsbj3asjotv4spm4/node_modules/expo-camera/ios"
+    :path: "../../../node_modules/.pnpm/expo-camera@16.0.15_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-camera/ios"
   ExpoCrypto:
-    :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+pres_tnyygicu6p3s7id7pmo4uu47aa/node_modules/expo-crypto/ios"
+    :path: "../../../node_modules/.pnpm/expo-crypto@13.0.2_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-crypto/ios"
   ExpoFileSystem:
-    :path: "../../../node_modules/.pnpm/expo-file-system@18.0.1_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel_qqmmjwkjkte236ts4p77w6c2qi/node_modules/expo-file-system/ios"
+    :path: "../../../node_modules/.pnpm/expo-file-system@18.0.1_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@13.0.4_expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.2_@babel+cor_mkocetvj65477y7owmopeohmu4/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@13.0.4_jgjlskt2bkdrjl3sfy42ei327y/node_modules/expo-font/ios"
   ExpoImageManipulator:
-    :path: "../../../node_modules/.pnpm/expo-image-manipulator@13.0.6_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1__spcbav6pkioy55db5o2jr7466y/node_modules/expo-image-manipulator/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-manipulator@13.0.6_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
-    :path: "../../../node_modules/.pnpm/expo-keep-awake@14.0.3_expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+_i7pd4yaa3ugjoz4mkguvnkkzu4/node_modules/expo-keep-awake/ios"
+    :path: "../../../node_modules/.pnpm/expo-keep-awake@14.0.3_45zmbkvj3eq3h554ow2nqqjt5y/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@2.2.3_react-native@0.77.2_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babe_xvaerdp3f5v6fkbox7rncls4oe/node_modules/expo-modules-core"
   fast_float:
@@ -2616,13 +2658,22 @@ SPEC CHECKSUMS:
   BrazeKit: d430e506a325f0f5a1b60cea61ef95035c1d396b
   BrazeLocation: f574503d26e00658c7a6ddfa1efec68ddaa12e4d
   BrazeUI: 1500cfce86252db6ce280815c94e0eed03e42691
+  BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
+  DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
+  DatadogInternal: 3c5cae6772295fd175a9de11e4747a9322aaa4e7
+  DatadogLogs: 09d6358dc7682f9d3eaea85dd418f82d2db3560c
+  DatadogRUM: 0f267df8c9c8579a291870c2bce4549587391a07
+  DatadogSDKReactNative: 736147eb9dcc6f9f44087ff9a2da707fb271ea6e
+  DatadogTrace: f46c8220c73463d09741013f385a6e27cd39185b
+  DatadogWebViewTracking: dc8376420c8686efd09d00752bc1034b639d180b
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   EXConstants: fcfc75800824ac2d5c592b5bc74130bad17b146b
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
   Expo: a6ff273c618506b12129a0d06f2a08201bfbcf43
   ExpoAsset: 48386d40d53a8c1738929b3ed509bcad595b5516
-  ExpoCamera: 166a23592a0133c162ea7334feb9e75e0231134b
+  ExpoCamera: 969427803b03c9084a3f48e942daf3f0a6da267f
   ExpoCrypto: c5c052d5f9f668c21975cb4caf072cec23c823fa
   ExpoFileSystem: 7d75cef9b407374b05a4d727fb482d89854a7940
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
@@ -2653,6 +2704,8 @@ SPEC CHECKSUMS:
   MMKVCore: a255341a3746955f50da2ad9121b18cb2b346e61
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
+  PLCrashReporter: db59ef96fa3d25f3650040d02ec2798cffee75f2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
@@ -2761,7 +2814,7 @@ SPEC CHECKSUMS:
   RNVectorIcons: 68661e35101c98d574fa61a326d2043aec3e049a
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  segment-analytics-react-native: fcee0500ba154bcd44c14fc94ebe545b5a43c92a
+  segment-analytics-react-native: be835fc068af1177254e7b421858d7a4bc3de7d0
   Sentry: 47021097466aa130802420d485a34da445963d99
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594

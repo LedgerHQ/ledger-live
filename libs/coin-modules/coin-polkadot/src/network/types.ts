@@ -7,6 +7,7 @@ interface IAt {
 interface IBalanceLock {
   id: string;
   amount: string;
+  reasons: string;
 }
 interface IPallet {
   at: IAt;
@@ -64,12 +65,14 @@ interface IChainProperties {
 }
 export interface SidecarAccountBalanceInfo {
   at: IAt;
-  tokenSymbol: string;
   nonce: string;
+  tokenSymbol: string;
   free: string;
   reserved: string;
   miscFrozen: string;
   feeFrozen: string;
+  transferable: string;
+  frozen: string;
   locks: IBalanceLock[];
 }
 export interface SidecarPallet {

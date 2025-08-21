@@ -1,16 +1,17 @@
-import React from "react";
-import AssetSelection from "../AssetSelection";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
+import React from "react";
+import { Provider } from "react-redux";
+import { legacy_createStore as createStore } from "redux";
+import { ARB_ACCOUNT } from "../../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
   ethereumCurrency,
   mockAssetsConfiguration,
-} from "../../__mocks__/useSelectAssetFlow.mock";
-import { fn } from "@storybook/test";
-import { Provider } from "react-redux";
-import { legacy_createStore as createStore } from "redux";
-import { MOCKED_ARB_ACCOUNT } from "../../__mocks__/accounts.mock";
+} from "../../../__mocks__/useSelectAssetFlow.mock";
+import AssetSelection from "../AssetSelection";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
 const sortedCryptoCurrencies = [bitcoinCurrency, ethereumCurrency, arbitrumCurrency];
@@ -19,7 +20,7 @@ const setAssetsToDisplay = fn();
 const setSearchedValue = fn();
 
 const defaultStore = {
-  accounts: [MOCKED_ARB_ACCOUNT],
+  accounts: [ARB_ACCOUNT],
   wallet: {
     accountNames: new Map([
       ["bitcoin1", "bitcoin-account-1"],
@@ -54,11 +55,16 @@ const meta: Meta<typeof AssetSelection> = {
   component: AssetSelection,
   args: {
     assetsToDisplay,
+    originalAssetsToDisplay: assetsToDisplay,
     sortedCryptoCurrencies,
     assetsConfiguration: {},
+    currenciesByProvider: [],
     setAssetsToDisplay: setAssetsToDisplay,
     onAssetSelected: onAssetSelected,
     setSearchedValue: setSearchedValue,
+    flow: "test",
+    source: "storybook",
+    providersLoadingStatus: LoadingStatus.Success,
   },
   decorators: [
     Story => (
@@ -83,7 +89,7 @@ export const WithDefaultSearchValue: Story = {
   },
 };
 
-export const WithBalance: Story = {
+export const WithBalanceAndApy: Story = {
   args: {
     assetsConfiguration: {
       ...mockAssetsConfiguration,
@@ -118,6 +124,7 @@ export const WithDiscreetModeEnabled: Story = {
 export const EmptyAssets: Story = {
   args: {
     assetsToDisplay: [],
+    originalAssetsToDisplay: [],
     sortedCryptoCurrencies: [],
   },
 };

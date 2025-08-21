@@ -45,19 +45,15 @@
       ],
       "ignore": [
         "src/newArch/features/Collectibles/**",
-        ".storybook/stub.ts"
+        ".storybook/stub.ts",
+        "src/newArch/features/ModularDrawer/analytics/**"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],
-      "ignore": [
-        "src/**/*.android.*",
-        "src/**/*.ios.*",
-        "src/logic/keyboardVisible.ts",
-        "src/newArch/features/LandingPages/screens/LargeMoverLandingPage/**"
-      ],
+      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "src/logic/keyboardVisible.ts"],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
         "@react-native/gradle-plugin",
@@ -131,6 +127,8 @@
         "src/icons/Info.tsx",
         "storybook/stories/index.ts",
         "App.tsx",
+        "src/pre-ldls/index.ts",
+        "src/pre-ldls/components/index.ts",
         "index.js"
       ],
       "ignore": [".storybook*/*", "storybook/constants/*"]

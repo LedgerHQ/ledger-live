@@ -19,7 +19,7 @@ describe("getAccountTransactions", () => {
     jest.clearAllMocks();
   });
 
-  it("should include 'account.id', 'limit=100' and 'order=desc' query params", async () => {
+  test("should include 'account.id', 'limit=100' and 'order=desc' query params", async () => {
     mockedNetwork.mockResolvedValueOnce(
       makeMockResponse({ transactions: [], links: { next: null } }),
     );
@@ -32,21 +32,7 @@ describe("getAccountTransactions", () => {
     expect(calledUrl).toContain("order=desc");
   });
 
-  it("should break early if no transactions are returned", async () => {
-    mockedNetwork.mockResolvedValueOnce(
-      makeMockResponse({
-        transactions: [],
-        links: { next: "/next-1" },
-      }),
-    );
-
-    const result = await getAccountTransactions("0.0.1234", null);
-
-    expect(mockedNetwork).toHaveBeenCalledTimes(1);
-    expect(result).toEqual([]);
-  });
-
-  it("should keep fetching if links.next is present and new transactions are returned", async () => {
+  test("should keep fetching if links.next is present", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         makeMockResponse({
@@ -56,21 +42,33 @@ describe("getAccountTransactions", () => {
       )
       .mockResolvedValueOnce(
         makeMockResponse({
-          transactions: [{ consensus_timestamp: "2" }],
+          transactions: [],
           links: { next: "/next-2" },
         }),
       )
       .mockResolvedValueOnce(
         makeMockResponse({
-          transactions: [],
+          transactions: [{ consensus_timestamp: "3" }],
           links: { next: "/next-3" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse({
+          transactions: [],
+          links: { next: "/next-4" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse({
+          transactions: [],
+          links: { next: null },
         }),
       );
 
     const result = await getAccountTransactions("0.0.1234", null);
 
     expect(result).toHaveLength(2);
-    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1", "2"]);
-    expect(mockedNetwork).toHaveBeenCalledTimes(3);
+    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
+    expect(mockedNetwork).toHaveBeenCalledTimes(5);
   });
 });

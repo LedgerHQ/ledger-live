@@ -378,4 +378,285 @@ describe("Unit tests for bitcoin storage", () => {
     expect(found[0].block).not.toBeNull(); // It's now the confirmed version
     expect(found[0].block?.height).toBe(150);
   });
+
+  it("[utxos] should not reuse spent UTXOs after broadcasting confirmed transaction", () => {
+    // Initial state: One confirmed UTXO available
+    storage.appendTxs([
+      {
+        id: "tx-initial",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "100000",
+            address: "test-address",
+            output_hash: "tx-initial",
+            block_height: 100,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-initial", height: 100, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "test-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // Simulate spending the UTXO
+    storage.appendTxs([
+      {
+        id: "tx-spend",
+        inputs: [
+          {
+            output_hash: "tx-initial",
+            output_index: 0,
+            value: "100000",
+            address: "test-address",
+            sequence: 4294967294,
+          },
+        ],
+        outputs: [
+          {
+            output_index: 0,
+            value: "50000",
+            address: "recipient-address",
+            output_hash: "tx-spend",
+            block_height: 101,
+            rbf: false,
+          },
+          {
+            output_index: 1,
+            value: "49000",
+            address: "change-address",
+            output_hash: "tx-spend",
+            block_height: 101,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-spend", height: 101, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "test-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // Verify the UTXO from "tx-initial" is now spent
+    const unspentUtxos = storage.getAddressUnspentUtxos({
+      address: "test-address",
+      account: 0,
+      index: 0,
+    });
+    expect(unspentUtxos).toHaveLength(0);
+  });
+
+  it("[utxos] should not allow selecting spent UTXOs for new transactions", () => {
+    // Setup: append a spent UTXO
+    storage.appendTxs([
+      {
+        id: "tx-spent",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "100000",
+            address: "test-address",
+            output_hash: "tx-spent",
+            block_height: 110,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-spent", height: 110, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "test-address",
+        received_at: new Date().toISOString(),
+      },
+      {
+        id: "tx-spending",
+        inputs: [
+          {
+            output_hash: "tx-spent",
+            output_index: 0,
+            value: "100000",
+            address: "test-address",
+            sequence: 4294967294,
+          },
+        ],
+        outputs: [],
+        block: { hash: "block-spending", height: 111, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "test-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // Verify spent UTXO is not available
+    const availableUtxos = storage.getAddressUnspentUtxos({
+      address: "test-address",
+      account: 0,
+      index: 0,
+    });
+    expect(availableUtxos).toHaveLength(0);
+  });
+
+  it("[utxos] should prevent race condition issues on UTXO updates", () => {
+    storage.appendTxs([
+      {
+        id: "tx-race",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "100000",
+            address: "race-address",
+            output_hash: "tx-race",
+            block_height: 200,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-race", height: 200, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "race-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // Simulate rapid conflicting updates
+    storage.removeTxs({ account: 0, index: 0 });
+
+    storage.appendTxs([
+      {
+        id: "tx-race",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "100000",
+            address: "race-address",
+            output_hash: "tx-race",
+            block_height: 200,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-race", height: 200, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "race-address",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    const utxos = storage.getAddressUnspentUtxos({ address: "race-address", account: 0, index: 0 });
+    expect(utxos).toHaveLength(1);
+    expect(utxos[0].output_hash).toEqual("tx-race");
+  });
+
+  it("[utxos] should mark UTXOs as spent when spending from multiple addresses", () => {
+    // Setup: Create UTXOs on two different addresses
+    storage.appendTxs([
+      {
+        id: "tx-create-utxo-addr1",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "100000",
+            address: "address-1",
+            output_hash: "tx-create-utxo-addr1",
+            block_height: 100,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-100", height: 100, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "address-1",
+        received_at: new Date().toISOString(),
+      },
+      {
+        id: "tx-create-utxo-addr2",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: "200000",
+            address: "address-2",
+            output_hash: "tx-create-utxo-addr2",
+            block_height: 100,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-100", height: 100, time: new Date().toISOString() },
+        account: 0,
+        index: 1,
+        address: "address-2",
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // Verify both UTXOs exist
+    expect(
+      storage.getAddressUnspentUtxos({ address: "address-1", account: 0, index: 0 }),
+    ).toHaveLength(1);
+    expect(
+      storage.getAddressUnspentUtxos({ address: "address-2", account: 0, index: 1 }),
+    ).toHaveLength(1);
+
+    // Critical test: Transaction that spends from both addresses but only synced on address-1
+    storage.appendTxs([
+      {
+        id: "tx-spend-both",
+        inputs: [
+          {
+            output_hash: "tx-create-utxo-addr1",
+            output_index: 0,
+            value: "100000",
+            address: "address-1",
+            sequence: 4294967294,
+          },
+          {
+            output_hash: "tx-create-utxo-addr2",
+            output_index: 0,
+            value: "200000",
+            address: "address-2",
+            sequence: 4294967294,
+          },
+        ],
+        outputs: [
+          {
+            output_index: 0,
+            value: "290000",
+            address: "recipient-address",
+            output_hash: "tx-spend-both",
+            block_height: 101,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-101", height: 101, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: "address-1", // Only synced on address-1
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // NOTE: this is a critical error that was the source of many btc-missing-inputs errors
+    const utxosAddr1 = storage.getAddressUnspentUtxos({
+      address: "address-1",
+      account: 0,
+      index: 0,
+    });
+    const utxosAddr2 = storage.getAddressUnspentUtxos({
+      address: "address-2",
+      account: 0,
+      index: 1,
+    });
+
+    expect(utxosAddr1).toHaveLength(0); // Should be spent
+    expect(utxosAddr2).toHaveLength(0); // Should be spent but currently won't be!
+  });
 });

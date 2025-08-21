@@ -96,9 +96,7 @@ describe("Xrp Api", () => {
       const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
-      expect(result).toEqual([
-        { locked: BigInt(1000000n), value: BigInt(0), asset: { type: "native" } },
-      ]);
+      expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" }, locked: 1000000n }]);
     });
   });
 
@@ -135,8 +133,9 @@ describe("Xrp Api", () => {
         },
       });
 
-      const decodedTransaction = decode(result) as { Fee: string };
-      expect(decodedTransaction.Fee).toEqual("10");
+      expect(decode(result)).toMatchObject({
+        Fee: "10",
+      });
     });
 
     it("should use custom user fees when user provides it for crafting a transaction", async () => {
@@ -153,11 +152,12 @@ describe("Xrp Api", () => {
             memos: new Map(),
           },
         },
-        customFees,
+        { value: customFees },
       );
 
-      const decodedTransaction = decode(result) as { Fee: string };
-      expect(decodedTransaction.Fee).toEqual(customFees.toString());
+      expect(decode(result)).toMatchObject({
+        Fee: customFees.toString(),
+      });
     });
   });
 });

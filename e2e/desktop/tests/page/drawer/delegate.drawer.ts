@@ -6,9 +6,9 @@ import { expect } from "@playwright/test";
 
 export class DelegateDrawer extends Drawer {
   private provider = (provider: string) =>
-    this.page.getByTestId("drawer-content").locator(`text=${provider}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
-  private transactionType = this.page.getByTestId("transaction-type");
+    this.page.getByTestId("drawer-content").locator(`text=${provider}`).first();
+  private amountValue = this.page.getByTestId("amountReceived-drawer").first();
+  private transactionType = this.page.getByTestId("transaction-type").first();
   private operationType = this.page.getByTestId("operation-type");
   private addressValue = (address: string) =>
     this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);

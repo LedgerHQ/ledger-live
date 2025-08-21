@@ -1,4 +1,4 @@
-import coinConfig, { type SuiCoinConfig } from "../config";
+import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,
   combine,
@@ -6,16 +6,21 @@ import {
   getBalance,
   listOperations,
   lastBlock,
+  getBlock,
+  getBlockInfo,
   craftTransaction,
+  getStakes,
+  getRewards,
 } from "../logic";
-import type { SuiAsset } from "./types";
 import type {
   AlpacaApi,
   FeeEstimation,
+  Operation,
+  Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
-export function createApi(config: SuiCoinConfig): AlpacaApi<SuiAsset> {
+export function createApi(config: SuiConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -25,17 +30,25 @@ export function createApi(config: SuiCoinConfig): AlpacaApi<SuiAsset> {
     estimateFees: estimate,
     getBalance,
     lastBlock,
-    listOperations,
+    getBlock,
+    getBlockInfo,
+    listOperations: list,
+    getStakes,
+    getRewards,
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<SuiAsset>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<string> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
   return Buffer.from(unsigned).toString("hex");
 }
 
-async function estimate(transactionIntent: TransactionIntent<SuiAsset>): Promise<FeeEstimation> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
+}
+
+async function list(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  return listOperations(address, pagination);
 }

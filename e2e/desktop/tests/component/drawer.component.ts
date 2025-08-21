@@ -4,7 +4,8 @@ import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Ac
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
-  private drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
+  readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
+  readonly drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
   private closeButton = this.page.getByTestId("drawer-close-button").first();
   private addAccountButton = this.page.getByTestId("add-account-button");
 

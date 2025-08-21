@@ -287,12 +287,124 @@
       "description" : "请再次尝试。"
     },
     "DisconnectedDevice" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "设备已断开",
-      "description" : "Ledger Live 无法连接到您的设备。请重试。"
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DisconnectError" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "ReconnectionFailedError" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "TransportNotSupportedError" : {
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "NoTransportProvidedError" : {
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "ConnectionOpeningError" : {
+      "title" : "连接方式错误",
+      "description" : "所使用的设备连接方式存在问题。请尝试使用其他连接方式，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "设备未完成设置",
+      "description" : "您的设备尚未准备好使用。请按照设置说明操作，并在完成设置后重试。"
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "设备未完成设置",
+      "description" : "您的设备尚未准备好使用。请按照设置说明操作，并在完成设置后重试。"
+    },
+    "DeviceLockedError" : {
+      "title" : "设备已锁定",
+      "description" : "您的设备已锁定。请解锁设备并重试。"
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "内存不足",
+      "description" : "您的设备内存不足。请卸载应用程序并重试。"
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "操作系统不受支持",
+      "description" : "您的设备操作系统不受支持。请通过 Ledger Live 进行更新，如果遇到问题，请联系 Ledger 客服寻求帮助。"
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "电池错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "电池错误",
+      "description" : "电池状态错误。请联系 Ledger 客服。"
+    },
+    "InvalidStatusWordError" : {
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "UnknownDAError" : {
+      "title" : "设备连接错误",
+      "description" : "出错了。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "UnknownDeviceError" : {
+      "title" : "无法识别设备",
+      "description" : "Ledger Live 无法识别您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "ReceiverApduError" : {
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "FramerApduError" : {
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "SendApduTimeoutError" : {
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "AlreadySendingApduError" : {
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "通信错误",
+      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "CasperInvalidTransferId" : {
       "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
@@ -509,9 +621,29 @@
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
+    "NotEnoughToStake" : {
+      "title" : "您至少需要 {{minStake}} {{currency}} 才能激活质押",
+      "description" : "您至少需要 {{minStake}} {{currency}} 才能激活质押"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
+      "description" : "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押",
+      "description" : "如果您再质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部再质押"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "您再质押的数额不能少于 {{minAmount}}",
+      "description" : "您再质押的数额不能少于 {{minAmount}}。"
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "您解除质押的数额不能少于 {{minAmount}}",
+      "description" : "您解除质押的数额不能少于 {{minAmount}}。"
     },
     "NotEnoughBalanceFees" : {
       "title" : "抱歉，资金不够支付费用",
@@ -768,9 +900,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "余额不能少于 {{minimumBalance}}发送最大值以清空账户。"
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "您必须至少绑定 {{minimumBondAmount}}。"
@@ -1076,6 +1205,10 @@
     },
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "保障您的安全",
+      "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
     }
   },
   "crash" : {
@@ -2164,7 +2297,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "正品检查和操作系统更新检查",
+    "title" : "Ledger 正品检查",
     "idle" : {
       "learnMore" : "详细了解正品检查",
       "checkCta" : "检查 {{ productName }}"
@@ -2200,11 +2333,11 @@
     "genuineCheckStep" : {
       "learnMore" : "详细了解正品检查",
       "inactive" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "这可确保您的 {{productName}} 是官方 Ledger 设备。"
       },
       "active" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "这可确保您的 {{productName}} 是官方 Ledger 设备。"
       },
       "completed" : {
@@ -2212,23 +2345,23 @@
         "description" : ""
       },
       "refused" : {
-        "title" : "正品检查被拒绝",
+        "title" : "Ledger 正品检查未通过",
         "description" : "要继续使用 Ledger Live 应用程序设置 {{productName}}，必须完成正品检查。",
         "cta" : "继续检查"
       },
       "error" : {
-        "title" : "检验真伪",
+        "title" : "Ledger 正品检查",
         "description" : "正品检查可确保您的 {{productName}} 是官方 Ledger 设备。"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "操作系统更新检查",
-        "description" : "这将检查您的 {{productName}} 操作系统系统是否为最新。 "
+        "title" : "Ledger OS 操作系统检查",
+        "description" : "此操作可检查您的 {{productName}} 操作系统是否为最新版本。 "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} 操作系统是最新的"
+          "title" : "Ledger OS 操作系统已是最新版本"
         }
       },
       "error" : {
@@ -2242,8 +2375,8 @@
         "skipCta" : "跳过更新"
       },
       "inactive" : {
-        "title" : "操作系统更新检查",
-        "description" : "这将检查您的 {{productName}} 操作系统是否为最新版本。 "
+        "title" : "Ledger OS 操作系统检查",
+        "description" : "此操作可检查您的 {{productName}} 操作系统是否为最新版本。 "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2255,7 +2388,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "设置 {{deviceName}}",
+    "title" : "准备好您的 {{productName}}",
     "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
     "deviceSelection" : {
       "title" : "选择您要设置的 Ledger 设备：",
@@ -2310,7 +2443,7 @@
     },
     "earlySecurityCheckCompletedStep" : {
       "title" : "{{productName}} 为正品",
-      "subtitle" : "这台 {{productName}} 可以安全使用。您可以继续进行设置。",
+      "subtitle" : "您的 {{productName}} 可以安全使用。您现在可以开始设置。",
       "description" : "点按 {{productName}} 开始设置。"
     },
     "pinStep" : {
@@ -2320,30 +2453,58 @@
       "continueOnDevice" : "在您的 {{productName}} 上设置识别码。"
     },
     "seedStep" : {
-      "title" : "秘密恢复短语",
+      "title" : "设置与备份",
       "doneTitle" : "秘密恢复短语已确认",
       "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本",
       "choiceRestoreDirectOrRecover" : "占位符 - 选择直接恢复或使用 Recover",
       "recoverSeed" : "占位符：Recover",
-      "restoreSeed" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
       "selection" : "选择最适合您的设置选项：",
       "selectionNewLedger" : {
         "title" : "设置为新 Ledger 设备",
-        "desc" : "可让您创建新钱包。这会生成新的秘密恢复短语。"
+        "desc" : "这会为您生成新的秘密恢复短语。"
       },
       "selectionRestore" : {
-        "title" : "重置",
-        "desc" : "可让您使用秘密恢复短语或通过 Ledger Recover 恢复对现有资产的访问权限。"
+        "title" : "恢复对您资产的访问权限",
+        "desc" : "您可以使用备份进行恢复：秘密恢复短语或 Ledger Recover。",
+        "descWithCharon" : "您可以使用备份进行恢复：秘密恢复短语、Ledger Recover 或 Ledger Recovery Key 恢复钥匙。"
+      },
+      "backupCharon" : {
+        "title" : "Ledger Recovery Key 恢复钥匙",
+        "desc" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
+        "cta" : "了解详情或购买",
+        "continueOnDevice" : "按照 {{productName}} 上的说明进行操作"
+      },
+      "selectionRestoreChoice" : {
+        "description" : "选择您要通过以下方式恢复的备份：",
+        "continueOnDevice" : "在 {{productName}} 上选择相应选项。",
+        "secretRecoveryPhrase" : {
+          "title" : "秘密恢复短语",
+          "description" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。"
+        },
+        "ledgerCharon" : {
+          "title" : "Ledger Recovery Key 恢复钥匙",
+          "description" : "使用您的 Recovery Key 恢复钥匙恢复对资产的访问权限。"
+        },
+        "ledgerRecover" : {
+          "title" : "Ledger Recover 订阅",
+          "description" : "使用您的订阅服务，通过身份验证恢复对资产的访问权限。"
+        }
+      },
+      "restoreSeed" : {
+        "title" : "使用秘密恢复短语重置",
+        "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "continueOnDevice" : "在 {{productName}} 上选择相应选项。"
+      },
+      "restoreLedgerCharon" : {
+        "title" : "使用 Recovery Key 进行恢复",
+        "description" : "按照 Ledger 安全屏幕上的说明进行恢复操作。",
+        "continueOnDevice" : "按照 {{productName}} 上的说明进行操作。"
       },
       "selectionContinueOnDevice" : "在 {{productName}} 上选择相应选项。",
-      "newSeedDescription" : "想进一步了解秘密恢复短语？请观看这些视频：",
-      "newSeedContinueOnDevice" : "在您的 {{productName}} 上执行此操作",
-      "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
-      "restoreChoiceContinueOnDevice" : "在 {{productName}} 上选择相应选项。",
-      "restoreChoiceSRPTitle" : "使用秘密恢复短语恢复",
-      "restoreChoiceSRPDescription" : "使用 Ledger 设备生成的秘密恢复短语，最大限度地提高安全性。 ",
-      "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
-      "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，启动秘密恢复短语备份的恢复流程。"
+      "newSeedTitle" : "秘密恢复短语",
+      "newSeedDescription" : "观看这些视频，详细了解秘密恢复短语：",
+      "newSeedContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
+      "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
     },
     "backup" : {
       "title" : "秘密恢复短语备份",
@@ -3076,8 +3237,8 @@
         "desc" : "接收重要 Ledger Live 更新"
       },
       "largeMover" : {
-        "title" : "大幅波动工具",
-        "desc" : "如果您拥有比特币、以太币、SOL、ADA 或瑞波币，您会在价格出现重要波动时收到通知"
+        "title" : "价格提醒",
+        "desc" : "当您持有的热门代币价格出现重要波动时，您会收到通知"
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
@@ -3193,6 +3354,12 @@
         "placeholder" : "CAL 格式的兑换提供商信息",
         "currentSetting" : "当前设置",
         "error" : "CAL 值无效"
+      },
+      "customCALRef" : {
+        "title" : "自定义 CAL 引用",
+        "description" : "指定用于所有 CAL 请求的自定义分支、提交或标签",
+        "enable" : "启用自定义 CAL 引用",
+        "disable" : "禁用自定义 CAL 引用"
       }
     },
     "debug" : {
@@ -3358,7 +3525,13 @@
         "verify" : "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
       "noResultsFound" : "未找到加密资产",
-      "noResultsDesc" : "请检查拼写后重试。"
+      "noResultsDesc" : "请检查拼写后重试。",
+      "sanctionedAddress" : {
+        "title" : "保障您的安全",
+        "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "关闭",
+        "learnMore" : "了解更多"
+      }
     },
     "buy" : {
       "title" : "买入",
@@ -3369,7 +3542,8 @@
       "description" : "安全出售加密货币以换取现金。"
     },
     "exchange" : {
-      "title" : "买入 / 卖出"
+      "title" : "买入 / 卖出",
+      "connectingTo" : "正在连接到 {{provider}}"
     },
     "stake" : {
       "title" : "权益质押",
@@ -3486,7 +3660,8 @@
           "refunded" : "请使用您的互换 ID 联系互换服务提供方以了解更多详情。",
           "pending" : "请稍候片刻，互换提供方正在处理该交易。",
           "onhold" : "请使用您的互换 ID 联系互换服务提供方以解决这一情况。",
-          "finished" : "您的互换已成功完成"
+          "finished" : "您的互换已成功完成",
+          "unknown" : "我们正在等待提供商的信息。"
         }
       },
       "missingApp" : {
@@ -3547,6 +3722,7 @@
             "provider" : "提供方",
             "rate" : "汇率",
             "fees" : "网络费用",
+            "feesDescription" : "此费用由区块链网络收取，用于处理互换交易。除预估报价外，仅收取发送费用。已包含接收费用",
             "target" : "目标账户"
           },
           "noAccount" : "创建一个账户以接收 {{name}}",
@@ -3563,6 +3739,15 @@
         "providers" : {
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
+      },
+      "quotesList" : {
+        "title" : "选择报价"
+      },
+      "twoStepApproval" : {
+        "title" : "完成步骤"
+      },
+      "history" : {
+        "title" : "互换历史记录"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
@@ -3862,6 +4047,10 @@
       "quantityAvailable" : "可用数量"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "需要盲签名",
+        "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+      },
       "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
       "tag" : "标签 (可选)",
       "validateTag" : "验证标签",
@@ -6060,6 +6249,7 @@
       "iWithdraw" : "我提取",
       "totalStake" : "质押总额",
       "commission" : "佣金",
+      "netApy" : "净年收益率",
       "stakeActivationState" : "状态",
       "stakeActivePercent" : "活跃",
       "stakeAvailableBalance" : "可用余额",
@@ -6258,6 +6448,141 @@
           "verification" : {
             "success" : {
               "title" : "您已成功权益质押资产",
+              "text" : "交易一经网络确认，您的账户余额就会更新。"
+            }
+          }
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "可用 Aptos",
+        "description" : "该数额可自由支配。"
+      },
+      "storageUsage" : {
+        "title" : "最低余额",
+        "description" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。"
+      },
+      "staked" : {
+        "title" : "已质押余额",
+        "description" : "此数额目前已质押给验证者。"
+      },
+      "pending" : {
+        "title" : "待处理余额",
+        "description" : "此数额已解除质押，目前正在等待成为可用余额。"
+      },
+      "withdrawable" : {
+        "title" : "可提取余额",
+        "description" : "此数额已解除权益质押，现已可以提取。"
+      },
+      "stakingUnavailable" : {
+        "title" : "权益质押不可用",
+        "description" : "您账户中的可用余额不足，无法权益质押、解除权益质押和提取。"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "已质押数额",
+        "unstakedAmount" : "已解除质押的数额",
+        "withdrawnAmount" : "已提取数额"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要取消权益质押的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功取消权益质押资产"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要提取的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功提取资产"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "再质押的数额"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "您已成功再质押资产"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "权益质押持仓",
+      "info" : "权益质押的运作方式",
+      "add" : "添加",
+      "stakingEarn" : "您可以通过质押资产来赚取 Aptos 奖励。",
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "comm" : "佣金",
+      "timeToUnlock" : "解锁剩余时间",
+      "iStake" : "我权益质押",
+      "actions" : {
+        "unstake" : "解除质押",
+        "withdraw" : "提取",
+        "restake" : "再次质押"
+      },
+      "drawer" : {
+        "status" : "状态",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "pending" : "待处理",
+        "available" : "可提取"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "要权益质押的数额",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "通过质押 Aptos 安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "权益质押的资产仍然属于您。",
+              "1" : "您需要等待大约 2 小时才能完成解除质押。",
+              "2" : "使用您的 Ledger 设备安全权益质押。"
+            },
+            "warning" : {
+              "description" : "明智地选择验证者：如果验证者的行为不当，您可能失去部分权益质押资产并且无法挽回。"
+            },
+            "cta" : "继续"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功质押资产",
               "text" : "交易一经网络确认，您的账户余额就会更新。"
             }
           }
@@ -6665,8 +6990,8 @@
       "7d" : "7 天",
       "30d" : "30 天",
       "1y" : "1 年",
-      "1D_label" : "1 天",
       "1H_label" : "1 小时",
+      "1D_label" : "1 天",
       "1W_label" : "1 周",
       "1M_label" : "1 月",
       "1Y_label" : "1 年"
@@ -7430,13 +7755,115 @@
     "performance" : "表现",
     "low" : "低",
     "high" : "高",
-    "title" : "市场走势"
+    "title" : "市场走势",
+    "overlay" : {
+      "title" : "在资产之间切换",
+      "action" : "向左或向右滑动",
+      "button" : "知道了！"
+    }
   },
   "nftEntryPoint" : {
     "title" : "您的 NFT",
     "entry" : {
       "magiceden" : "Magic Eden",
       "opensea" : "OpenSea"
+    }
+  },
+  "geoBlocking" : {
+    "title" : "所在地区不可用",
+    "description" : "此地区无法使用 Ledger Live。",
+    "learnMore" : "了解更多"
+  },
+  "versionBlocking" : {
+    "title" : "需要更新 Ledger Live",
+    "description" : "此版本的 Ledger Live 与最新的设备操作系统不兼容。要使用改进的连接功能，请立即更新。",
+    "openStore" : "更新"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "选择资产",
+    "selectNetwork" : "选择网络",
+    "selectAccount" : "选择账户",
+    "searchPlaceholder" : "搜索",
+    "emptyAssetList" : "未找到资产",
+    "accountCount" : "{{count}} 个账户",
+    "accountCount_plural" : "{{count}} 个账户"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "命令数据不正确",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "deserializationFailed" : {
+      "title" : "有效负载反序列化失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongTransactionId" : {
+      "title" : "交易 ID 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidAddress" : {
+      "title" : "地址无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "出错了",
+      "description" : "此接收账户不属于已连接的设备。请更改并重试。"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "出错了",
+      "description" : "此发送账户不属于已连接的设备。请更改并重试。"
+    },
+    "userRefused" : {
+      "title" : "操作在设备上被拒绝",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "internalError" : {
+      "title" : "内部错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP1" : {
+      "title" : "P1 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2" : {
+      "title" : "P2 错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "wrongP2Extension" : {
+      "title" : "P2 扩展名错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidP2Extension" : {
+      "title" : "出错了",
+      "description" : "P2 扩展名无效"
+    },
+    "unexpectedInstruction" : {
+      "title" : "出错了",
+      "description" : "指令异常"
+    },
+    "classNotSupported" : {
+      "title" : "出错了",
+      "description" : "不支持的类"
+    },
+    "invalidInstruction" : {
+      "title" : "指令无效",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "malformedApdu" : {
+      "title" : "APDU 标头格式错误",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "invalidDataLength" : {
+      "title" : "数据长度无效",
+      "description" : "此命令不接受该长度的数据"
+    },
+    "signatureVerificationFail" : {
+      "title" : "签名验证失败",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "default" : {
+      "title" : "出错了",
+      "description" : "请重试，如有疑问，请联系 Ledger 客服。"
     }
   }
 }

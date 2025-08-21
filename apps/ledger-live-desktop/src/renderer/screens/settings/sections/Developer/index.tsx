@@ -28,6 +28,10 @@ import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import NftsTools from "./NftsTools";
+import CustomCALRefInput from "./CustomCALRefInput";
+import ModularDrawerDevTool from "./ModularDrawer";
+import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
+import CustomLockScreenTester from "./CustomLockScreenTester";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -66,6 +70,13 @@ const Default = () => {
       </Row>
 
       <Row
+        title={t("settings.developer.customCALRef")}
+        desc={t("settings.developer.customCALRefDesc")}
+      >
+        <CustomCALRefInput />
+      </Row>
+
+      <Row
         title={t("settings.developer.enablePlatformDevTools")}
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
       >
@@ -78,6 +89,7 @@ const Default = () => {
         <EnableAnalyticsConsole />
       </Row>
       <RunLocalAppButton />
+      <CustomLockScreenTester />
       <CustomLockScreenToggle />
       <FeatureFlagsSettings />
       <Row
@@ -122,6 +134,8 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <ModularDrawerDevTool />
+      <MockAccountGeneratorSection />
     </Body>
   );
 };

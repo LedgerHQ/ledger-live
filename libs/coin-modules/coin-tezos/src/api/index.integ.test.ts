@@ -162,7 +162,7 @@ describe("Tezos Api", () => {
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },
-          customFees,
+          { value: customFees },
         );
 
         const decodedTransaction = await decode(encodedTransaction);

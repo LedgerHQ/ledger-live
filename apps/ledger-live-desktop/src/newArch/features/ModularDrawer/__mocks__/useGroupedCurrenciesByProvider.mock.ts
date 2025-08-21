@@ -1,10 +1,16 @@
+// For LLD Storybook
+
 import { fn, Mock } from "@storybook/test";
 import {
   arbitrumCurrency,
   arbitrumToken,
+  baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
-} from "./useSelectAssetFlow.mock";
+  injectiveCurrency,
+  scrollCurrency,
+  usdcToken,
+} from "../../__mocks__/useSelectAssetFlow.mock";
 
 export const res = {
   result: {
@@ -15,11 +21,20 @@ export const res = {
       },
       {
         providerId: "ethereum",
-        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency],
+        currenciesByNetwork: [ethereumCurrency, arbitrumCurrency, baseCurrency, scrollCurrency],
       },
       { providerId: "arbitrum", currenciesByNetwork: [arbitrumToken] },
+      { providerId: "usd-coin", currenciesByNetwork: [usdcToken] },
+      { providerId: "injective-protocol", currenciesByNetwork: [injectiveCurrency] },
     ],
-    sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency, arbitrumToken],
+    sortedCryptoCurrencies: [
+      bitcoinCurrency,
+      ethereumCurrency,
+      arbitrumToken,
+      baseCurrency,
+      scrollCurrency,
+      injectiveCurrency,
+    ],
   },
 };
 

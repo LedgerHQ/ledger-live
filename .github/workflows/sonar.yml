@@ -3,6 +3,7 @@ name: "[All Platforms] - SonarQube Scan - Scheduled"
 on:
   schedule:
     - cron: "0 2 * * 1-5" # every working day at 2am we will do a daily scan on develop
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -46,15 +47,11 @@ jobs:
           pnpm desktop test:jest:coverage
           pnpm mobile test:jest:coverage
 
-      - name: Merge lcov files
+      - name: Merge coverage files
         run: |
           cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
-      - name: Copy test execution files
-        run: |
-          cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
-          cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
+          cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-github-action@master
+      - uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

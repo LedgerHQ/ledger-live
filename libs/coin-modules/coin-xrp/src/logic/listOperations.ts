@@ -1,7 +1,7 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { ListOperationsOptions, XrpAsset, XrpMemo } from "../types";
+import { ListOperationsOptions, XrpMemo } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
 /**
@@ -20,7 +20,7 @@ import { RIPPLE_EPOCH } from "./utils";
 export async function listOperations(
   address: string,
   { limit, minHeight, token, order }: ListOperationsOptions,
-): Promise<[Operation<XrpAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -99,7 +99,7 @@ export async function listOperations(
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: XrplOperation): Operation<XrpAsset> => {
+  (operation: XrplOperation): Operation => {
     const {
       ledger_hash,
       hash,
@@ -125,10 +125,10 @@ const convertToCoreOperation =
         ? BigInt(delivered_amount)
         : BigInt(0);
 
-    const fee = BigInt(Fee);
+    const fees = BigInt(Fee);
     if (type === "OUT") {
-      if (!Number.isNaN(fee)) {
-        value = value + fee;
+      if (!Number.isNaN(fees)) {
+        value = value + fees;
       }
     }
 
@@ -165,12 +165,12 @@ const convertToCoreOperation =
       signingPubKey: SigningPubKey,
     };
 
-    let op: Operation<XrpAsset> = {
+    let op: Operation = {
       id: hash,
       asset: { type: "native" },
       tx: {
         hash: hash,
-        fees: fee,
+        fees: fees,
         date: new Date(toEpochDate),
         block: {
           time: new Date(close_time_iso),

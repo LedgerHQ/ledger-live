@@ -22,6 +22,7 @@ const currencies = [
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
   { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
+  { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
 ];
 
 for (const currency of currencies) {
@@ -45,8 +46,16 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        await app.addAccount.expectModalVisiblity();
-        await app.addAccount.selectCurrency(currency.currency);
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularDrawer.validateAssetsDrawerItems();
+          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
+          await app.modularDrawer.selectNetwork(currency.currency);
+          await app.addAccount.expectAccountModalToBeVisible();
+        } else {
+          await app.addAccount.expectModalVisibility();
+          await app.addAccount.selectCurrency(currency.currency);
+        }
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();

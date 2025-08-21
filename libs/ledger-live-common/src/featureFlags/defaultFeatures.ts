@@ -93,6 +93,10 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
   currencyKadena: DEFAULT_FEATURE,
+  currencySeiNetworkEvm: DEFAULT_FEATURE,
+  currencyBerachain: DEFAULT_FEATURE,
+  currencyHyperevm: DEFAULT_FEATURE,
+  currencyCantonNetwork: DEFAULT_FEATURE,
 };
 
 /**
@@ -154,6 +158,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,
@@ -397,6 +402,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellLoader: {
+    enabled: false,
+    params: {
+      durationMs: 0,
+    },
+  },
+
   buySellShortcut: {
     enabled: false,
   },
@@ -524,7 +536,6 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: { link: null },
   },
-  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -606,8 +617,22 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
+      receive_flow: true,
+      send_flow: true,
+      enableModularization: false,
+    },
+  },
+  lldModularDrawerBackendData: DEFAULT_FEATURE,
+  llmModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -626,6 +651,36 @@ export const DEFAULT_FEATURES: Features = {
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmOfacGeoBlocking: DEFAULT_FEATURE,
   lldOfacGeoBlocking: DEFAULT_FEATURE,
+  llmDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      batchProcessingLevel: "MEDIUM",
+      batchSize: "MEDIUM",
+      bundleLogsWithRum: true,
+      bundleLogsWithTraces: true,
+      longTaskThresholdMs: 0,
+      nativeInteractionTracking: false,
+      nativeLongTaskThresholdMs: 0,
+      nativeViewTracking: false,
+      resourceTracingSamplingRate: 0,
+      serviceName: "Ledger Live Mobile (default)",
+      sessionSamplingRate: 0,
+      trackBackgroundEvents: false,
+      trackFrustrations: true,
+      trackErrors: false,
+      trackResources: false,
+      trackInteractions: false,
+      trackWatchdogTerminations: false,
+      uploadFrequency: "AVERAGE",
+      vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
+  llmSentry: { enabled: true },
+  onboardingIgnoredOsUpdates: {
+    ...DEFAULT_FEATURE,
+    params: {},
+  },
+  supportDeviceApex: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

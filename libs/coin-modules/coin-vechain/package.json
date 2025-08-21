@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.7.8",
+  "version": "2.8.1",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -108,7 +108,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",

@@ -17,11 +17,18 @@ import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
-import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { BackButtonArrow } from "./components/BackButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  buildProviderCoverageMap,
+  filterProvidersByIds,
+  extractProviderCurrencies,
+} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
+import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
-type Props = {
+export type ModularDrawerFlowManagerProps = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -50,7 +57,8 @@ const ModularDrawerFlowManager = ({
   source,
   onAssetSelected,
   onAccountSelected,
-}: Props) => {
+}: ModularDrawerFlowManagerProps) => {
+  const devMode = useEnv("MANAGER_DEV_MODE");
   const featureModularDrawer = useFeature("lldModularDrawer");
   const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
   const assetConfiguration = modularizationEnabled
@@ -63,7 +71,13 @@ const ModularDrawerFlowManager = ({
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
-  const { currenciesByProvider, sortedCryptoCurrencies } = result;
+
+  const { currenciesByProvider, sortedCryptoCurrencies } = useMemo(() => {
+    return {
+      currenciesByProvider: result.currenciesByProvider ?? [],
+      sortedCryptoCurrencies: result.sortedCryptoCurrencies ?? [],
+    };
+  }, [result]);
 
   const isReadyToBeDisplayed = [LoadingStatus.Success].includes(providersLoadingStatus);
 
@@ -71,10 +85,14 @@ const ModularDrawerFlowManager = ({
     assetsToDisplay,
     filteredSortedCryptoCurrencies,
     currenciesIdsArray,
+    currencyIdsSet,
     setAssetsToDisplay,
   } = useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
+  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
+    [],
+  );
 
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
   const isSelectAccountFlow = !!onAccountSelected;
@@ -96,7 +114,7 @@ const ModularDrawerFlowManager = ({
     goBackToNetworkSelection,
   } = useModularDrawerFlowState({
     currenciesByProvider,
-    assetsToDisplay,
+    sortedCryptoCurrencies,
     currenciesIdsArray,
     isSelectAccountFlow,
     setNetworksToDisplay,
@@ -139,6 +157,28 @@ const ModularDrawerFlowManager = ({
     networksToDisplay,
   ]);
 
+  const filteredCurrenciesByProvider = useMemo(() => {
+    if (currencyIdsSet.size === 0) {
+      return currenciesByProvider;
+    }
+
+    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
+    const filtered = filterProvidersByIds(
+      currenciesByProvider,
+      currencyIdsSet,
+      providerCoverageMap,
+    );
+    const allProviderCurrencies = extractProviderCurrencies(filtered);
+    const currenciesEnhanced = devMode
+      ? addTestnetCurrencies(allProviderCurrencies)
+      : allProviderCurrencies;
+
+    setAssetsToDisplay(currenciesEnhanced);
+    setOriginalAssetsToDisplay(currenciesEnhanced);
+
+    return filtered;
+  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
+
   const renderStepContent = (step: ModularDrawerStep) => {
     // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
     // but in some cases we don't want to trigger analytics events as it may have been dismissed automatically depending on the flow.
@@ -150,14 +190,17 @@ const ModularDrawerFlowManager = ({
           return (
             <AssetSelection
               assetsToDisplay={assetsToDisplay}
+              providersLoadingStatus={providersLoadingStatus}
+              originalAssetsToDisplay={originalAssetsToDisplay}
               sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
               defaultSearchValue={searchedValue}
               assetsConfiguration={assetConfiguration}
-              flow={flow}
-              source={source}
+              currenciesByProvider={filteredCurrenciesByProvider}
               setAssetsToDisplay={setAssetsToDisplay}
               setSearchedValue={setSearchedValue}
               onAssetSelected={handleAssetSelected}
+              flow={flow}
+              source={source}
             />
           );
         }
@@ -167,9 +210,12 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
+            currenciesByProvider={filteredCurrenciesByProvider}
             flow={flow}
             source={source}
             onNetworkSelected={handleNetworkSelected}
+            selectedAssetId={selectedAsset?.id}
+            accounts$={accounts$}
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
@@ -190,6 +236,16 @@ const ModularDrawerFlowManager = ({
     }
   };
 
+  const testIdMap: Record<ModularDrawerStep, string> = {
+    [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modular-asset-selection-container",
+    [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modular-network-selection-container",
+    [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modular-account-selection-container",
+  };
+
+  const getTestId = (step: ModularDrawerStep): string => {
+    return testIdMap[step];
+  };
+
   return (
     <>
       {handleBack && <BackButtonArrow onBackClick={handleBack} />}
@@ -198,6 +254,7 @@ const ModularDrawerFlowManager = ({
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
+          data-testid={getTestId(currentStep)}
         >
           {isReadyToBeDisplayed ? (
             <>

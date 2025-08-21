@@ -1,32 +1,92 @@
-import network from "@ledgerhq/live-network/network";
+import crypto from "crypto";
+import network from "@ledgerhq/live-network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
+function createSwapIntentHashes({
+  provider,
+  fromAccountId,
+  toAccountId,
+  amount,
+}: {
+  provider: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  amount?: string;
+}) {
+  // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
+  const currentday = new Date().toISOString().split("T")[0];
+
+  const swapIntentWithProvider = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
+        provider,
+        fromAccountId,
+        toAccountId,
+        amount,
+        currentday,
+      }),
+    )
+    .digest("hex");
+
+  const swapIntentWithoutProvider = crypto
+    .createHash("sha256")
+    .update(
+      JSON.stringify({
+        fromAccountId,
+        toAccountId,
+        amount,
+        currentday,
+      }),
+    )
+    .digest("hex");
+
+  return { swapIntentWithProvider, swapIntentWithoutProvider };
+}
+
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
   swapId = "",
   transactionId,
+  swapAppVersion,
+  fromAccountId,
+  toAccountId,
+  amount,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
     return mockPostSwapAccepted({ provider, swapId, transactionId, ...rest });
 
   /**
-   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * Since swapId is required by the endpoint, don't call it if we don't have
    * this info
    */
   if (!swapId) {
     return null;
   }
+
+  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+    provider,
+    fromAccountId,
+    toAccountId,
+    amount,
+  });
+
   try {
-    const headers = getSwapUserIP();
+    const ipHeader = getSwapUserIP();
+    const headers = {
+      ...(ipHeader || {}),
+      ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+    };
+
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
-      data: { provider, swapId, transactionId, ...rest },
-      ...(headers !== undefined ? { headers } : {}),
+      data: { provider, swapId, swapIntentWithProvider, swapIntentWithoutProvider, ...rest },
+      ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
     console.error(error);
@@ -35,22 +95,75 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   return null;
 };
 
-export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = "", ...rest }) => {
+export const postSwapCancelled: PostSwapCancelled = async ({
+  provider,
+  swapId = "",
+  swapAppVersion,
+  fromAccountId,
+  toAccountId,
+  amount,
+  seedIdFrom,
+  seedIdTo,
+  refundAddress,
+  payoutAddress,
+  ...rest
+}) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
 
   /**
-   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * Since swapId is required by the endpoint, don't call it if we don't have
    * this info
    */
   if (!swapId) {
     return null;
   }
 
+  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+    provider,
+    fromAccountId,
+    toAccountId,
+    amount,
+  });
+
+  // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
+  const payloadAddressMatchAccountAddress =
+    fromAccountId &&
+    toAccountId &&
+    refundAddress &&
+    payoutAddress &&
+    fromAccountId.includes(refundAddress) &&
+    toAccountId.includes(payoutAddress);
+
   try {
+    const ipHeader = getSwapUserIP();
+    const headers = {
+      ...(ipHeader || {}),
+      ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+    };
+
+    const shouldIncludeAddresses =
+      rest.statusCode === "WrongDeviceForAccountPayout" ||
+      rest.statusCode === "WrongDeviceForAccountRefund";
+
+    const requestData = {
+      provider,
+      swapId,
+      swapIntentWithProvider,
+      swapIntentWithoutProvider,
+      payloadAddressMatchAccountAddress,
+      fromAccountId: shouldIncludeAddresses ? fromAccountId : undefined,
+      toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
+      payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
+      payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
+      maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
+      ...rest,
+    };
+
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/cancelled`,
-      data: { provider, swapId, ...rest },
+      data: requestData,
+      ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
     console.error(error);

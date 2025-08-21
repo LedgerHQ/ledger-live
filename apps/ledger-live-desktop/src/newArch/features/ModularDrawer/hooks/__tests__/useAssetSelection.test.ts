@@ -35,10 +35,10 @@ describe("useAssetSelection", () => {
     expect(result.current.assetsToDisplay).toEqual([{ id: "ada", name: "Cardano" }]);
   });
 
-  it("returns empty assetsToDisplay if no matching currencies", () => {
+  it("returns all the assets in assetsToDisplay if no matching currencies", () => {
     const { result } = renderHook(() => useAssetSelection([], mockSorted));
-    expect(result.current.assetsToDisplay).toEqual([]);
-    expect(result.current.filteredSortedCryptoCurrencies).toEqual([]);
+    expect(result.current.assetsToDisplay).toEqual(mockSorted);
+    expect(result.current.filteredSortedCryptoCurrencies).toEqual(mockSorted);
     expect(result.current.currenciesIdsArray).toEqual([]);
   });
 });

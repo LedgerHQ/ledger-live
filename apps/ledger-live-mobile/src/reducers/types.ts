@@ -34,6 +34,9 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
+import { CountervaluesState } from "./countervalues";
+import { ToastState } from "./toast";
+import { ModularDrawerState } from "./modularDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -380,6 +383,7 @@ export type LargeMoverState = {
 
 export type State = {
   accounts: AccountsState;
+  countervalues: CountervaluesState;
   settings: SettingsState;
   appstate: AppState;
   ble: BleState;
@@ -396,5 +400,7 @@ export type State = {
   wallet: WalletState;
   trustchain: TrustchainStore;
   walletSync: WalletSyncState;
+  modularDrawer: ModularDrawerState;
   largeMover: LargeMoverState;
+  toasts: ToastState;
 };

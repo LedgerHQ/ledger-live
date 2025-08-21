@@ -8,12 +8,12 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, ContinueOnDevice, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelInfo, SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
@@ -27,7 +27,6 @@ import { analyticsFlowName, StepText } from "./shared";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
-import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
@@ -38,6 +37,11 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import BackupBackground from "./assets/BackupBackground";
+import SetupBackground from "./assets/SetupBackground";
+import ContinueOnStax from "./assets/ContinueOnStax";
+import ContinueOnEuropa from "./assets/ContinueOnEuropa";
+import ContinueOnApex from "./assets/ContinueOnApex";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -74,6 +78,7 @@ type Step = {
   hasLoader?: boolean;
   estimatedTime?: number;
   renderBody?: () => ReactNode;
+  background?: ReactNode;
 };
 
 function nextStepKey(step: StepKey): StepKey {
@@ -138,6 +143,38 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     setTimeout(() => setStepKey(nextStepKey(StepKey.Apps)), READY_REDIRECT_DELAY_MS);
   }, []);
 
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
+
+  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
+  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
+
+  const {
+    onboardingState: deviceOnboardingState,
+    allowedError,
+    fatalError,
+    lockedDevice,
+  } = useOnboardingStatePolling({
+    getOnboardingStatePolling,
+    device: device || null,
+    pollingPeriodMs: POLLING_PERIOD_MS,
+    stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
+  });
+
+  const DeviceIcon = useMemo(() => {
+    switch (device.modelId) {
+      case DeviceModelId.stax:
+        return ContinueOnStax;
+      case DeviceModelId.europa:
+        return ContinueOnEuropa;
+      case DeviceModelId.apex:
+        return ContinueOnApex; // Use the same icon as Europa for now
+      default:
+        return ContinueOnEuropa; // Fallback to Europa icon
+    }
+  }, [device.modelId]);
+
   const defaultSteps: Step[] = useMemo(
     () => [
       {
@@ -158,8 +195,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
                 productName,
               })}
             </StepText>
-            <ContinueOnDeviceWithAnim
-              deviceModelId={device.modelId}
+            <ContinueOnDevice
+              Icon={DeviceIcon}
               text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -177,8 +214,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>
-            <ContinueOnDeviceWithAnim
-              deviceModelId={device.modelId}
+            <ContinueOnDevice
+              Icon={DeviceIcon}
               text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -189,13 +226,27 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
         titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
+        background:
+          seedPathStatus === "new_seed" ? (
+            // Secret Phrase screen
+            <SetupBackground />
+          ) : seedPathStatus === "backup_charon" ? (
+            // Recovery Key screen
+            <BackupBackground />
+          ) : null,
         renderBody: () => (
           <>
             <TrackPage
               category={`Set up ${productName}: Step 3 Seed Intro`}
               flow={analyticsFlowName}
             />
-            <SeedStep seedPathStatus={seedPathStatus} deviceModelId={device.modelId} />
+            <SeedStep
+              seedPathStatus={seedPathStatus}
+              deviceName={productName}
+              deviceIcon={DeviceIcon}
+              charonSupported={Boolean(deviceOnboardingState?.charonSupported)}
+              charonStatus={deviceOnboardingState?.charonStatus ?? null}
+            />
           </>
         ),
       },
@@ -228,10 +279,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     [
       t,
       deviceName,
+      seedPathStatus,
       hasAppLoader,
       productName,
+      DeviceIcon,
+      deviceOnboardingState?.charonSupported,
+      deviceOnboardingState?.charonStatus,
       device,
-      seedPathStatus,
       shouldRestoreApps,
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,
@@ -239,24 +293,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
-  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-
-  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
-  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
-  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
-
-  const {
-    onboardingState: deviceOnboardingState,
-    allowedError,
-    fatalError,
-    lockedDevice,
-  } = useOnboardingStatePolling({
-    getOnboardingStatePolling,
-    device: device || null,
-    pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
-    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
-  });
 
   const handleDeviceReady = useCallback(() => {
     history.push("/onboarding/sync/completion");
@@ -294,7 +330,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -307,9 +343,20 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= StepKey.Seed &&
-      stepKey > StepKey.Seed &&
-      !analyticsSeedingTracked.current
+      stepKey === StepKey.Seed &&
+      !analyticsSeedingTracked.current &&
+      (seedPathStatus === "backup_charon" ||
+        (seedPathStatus === "restore_charon" && deviceOnboardingState?.isOnboarded))
     ) {
+      /**
+       * Now we have four ways to seed a device:
+       * - new seed => Backup Recovery Key
+       * - restore using Secret Recovery Phrase => Backup Recovery Key
+       * - restore using Recovery Key => Next step
+       * - restore using Recover subscription => Backup Recovery Key
+       * Three of them will trigger the Backup Recovery Key step, but the last one
+       * will trigger directly the install apps step, so its tracking is treated separately.
+       */
       trackPage(
         `Set up ${productName}: Step 3 Seed Success`,
         undefined,
@@ -326,7 +373,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [productName, stepKey]);
+  }, [deviceOnboardingState?.isOnboarded, productName, seedPathStatus, stepKey]);
 
   useEffect(() => {
     if (lockedDevice) {
@@ -403,6 +450,15 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         setStepKey(StepKey.Seed);
         setSeedPathStatus("recover_seed");
         analyticsSeedConfiguration.current = "recover_seed";
+        break;
+      case DeviceOnboardingStep.BackupCharon:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("backup_charon");
+        break;
+      case DeviceOnboardingStep.RestoreCharon:
+        setStepKey(StepKey.Seed);
+        setSeedPathStatus("restore_charon");
+        analyticsSeedConfiguration.current = "restore_charon";
         break;
       case DeviceOnboardingStep.Pin:
         setStepKey(StepKey.Pin);

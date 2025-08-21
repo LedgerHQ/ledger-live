@@ -11,6 +11,7 @@ import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types"
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
+import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useACRECustomHandlers } from "./CustomHandlers";
 
@@ -37,6 +38,14 @@ type Props = {
   customHandlers?: WalletAPICustomHandlers;
 } & WebviewProps;
 
+export const WebViewWrapper = styled.div<WebViewWrapperProps>`
+  flex: 1;
+  height: 100%;
+  display: flex;
+  ${({ mobileView }) =>
+    mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
+`;
+
 export default function WebPlatformPlayer({ manifest, inputs, onClose, config, ...props }: Props) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -44,6 +53,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
   const accounts = useSelector(flattenAccountsSelector);
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const { mobileView, setMobileView } = useMobileView();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -71,15 +81,19 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
           webviewState={webviewState}
           config={config?.topBarConfig}
           currentAccountHistDb={currentAccountHistDb}
+          mobileView={mobileView}
+          setMobileView={setMobileView}
         />
-        <Web3AppWebview
-          manifest={manifest}
-          inputs={inputs}
-          onStateChange={onStateChange}
-          ref={webviewAPIRef}
-          customHandlers={customHandlers}
-          currentAccountHistDb={currentAccountHistDb}
-        />
+        <WebViewWrapper mobileView={mobileView}>
+          <Web3AppWebview
+            manifest={manifest}
+            inputs={inputs}
+            onStateChange={onStateChange}
+            ref={webviewAPIRef}
+            customHandlers={customHandlers}
+            currentAccountHistDb={currentAccountHistDb}
+          />
+        </WebViewWrapper>
       </Wrapper>
     </Container>
   );

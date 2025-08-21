@@ -3,7 +3,8 @@ import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
 export abstract class WebViewAppPage extends AppPage {
-  private _webviewPage?: Page;
+  public _webviewPage?: Page;
+  public webviewUrlHistory: string[] = [];
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
@@ -29,14 +30,40 @@ export abstract class WebViewAppPage extends AppPage {
       timeout: this.defaultWebViewTimeout,
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
+
+    if (!(webview as any)._ledgerUrlListenerAttached) {
+      webview.on("framenavigated", frame => {
+        if (frame === webview.mainFrame()) {
+          this.webviewUrlHistory.push(frame.url());
+        }
+      });
+      (webview as any)._ledgerUrlListenerAttached = true;
+    }
+
     this._webviewPage = webview;
     return webview;
+  }
+
+  @step("Wait for newWebView to be available")
+  protected async waitForNewWindow() {
+    if (!this.electronApp) {
+      throw new Error("No electronApp instance");
+    }
+    const newWindow = await this.electronApp.waitForEvent("window");
+    await newWindow.waitForLoadState();
+    return newWindow;
   }
 
   @step("Verify element is visible in WebView")
   protected async verifyElementIsVisible(testId: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(testId)).toBeVisible();
+  }
+
+  @step("Verify locator is visible in WebView")
+  protected async verifyLocatorIsVisible(selector: string) {
+    const webview = await this.getWebView();
+    await expect(webview.locator(selector)).toBeVisible();
   }
 
   @step("Verify element is not visible in WebView")
@@ -77,10 +104,22 @@ export abstract class WebViewAppPage extends AppPage {
     await expect(webview.getByTestId(testId)).toBeEnabled();
   }
 
+  @step("Verify locator is enabled in WebView")
+  protected async verifyLocatorIsEnabled(selector: string) {
+    const webview = await this.getWebView();
+    await expect(webview.locator(selector)).toBeEnabled();
+  }
+
   @step("Click element in WebView")
   protected async clickElement(testId: string) {
     const webview = await this.getWebView();
     await webview.getByTestId(testId).click();
+  }
+
+  @step("Click locator in WebView")
+  protected async clickLocator(selector: string) {
+    const webview = await this.getWebView();
+    await webview.locator(selector).click();
   }
 
   @step("Get WebView URL")
@@ -93,5 +132,29 @@ export abstract class WebViewAppPage extends AppPage {
   protected async getWebViewElementByTestId(testId: string) {
     const webview = await this.getWebView();
     return webview.getByTestId(testId);
+  }
+
+  @step("Expect text to be visible in WebView")
+  protected async expectTextToBeVisible(text: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByText(text, { exact: true })).toBeVisible();
+  }
+
+  @step("Click text in WebView")
+  protected async clickElementByText(text: string) {
+    const webview = await this.getWebView();
+    await webview.getByText(text, { exact: true }).click();
+  }
+
+  @step("Check if text is visible in WebView")
+  protected async isTextVisible(text: string): Promise<boolean> {
+    const webview = await this.getWebView();
+    const element = webview.getByText(text, { exact: true });
+    try {
+      await expect(element).toBeVisible({ timeout: 1000 });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

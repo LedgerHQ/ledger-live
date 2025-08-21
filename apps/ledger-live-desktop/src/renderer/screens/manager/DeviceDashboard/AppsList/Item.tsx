@@ -75,7 +75,7 @@ type Props = {
   dispatch: (a: Action) => void;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
-  addAccount?: (a: CryptoCurrency | undefined) => void;
+  addAccount?: (a: CryptoCurrency) => void;
 };
 
 const Item = ({
@@ -100,7 +100,7 @@ const Item = ({
     [app.currencyId],
   );
   const onAddAccount = useCallback(() => {
-    if (addAccount) addAccount(currency);
+    if (addAccount && currency) addAccount(currency);
   }, [addAccount, currency]);
   const version = (installed && installed.version) || app.version;
   const newVersion = installed && installed.availableVersion;

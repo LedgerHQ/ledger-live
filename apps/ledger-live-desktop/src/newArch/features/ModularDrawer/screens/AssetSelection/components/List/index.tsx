@@ -6,6 +6,8 @@ import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
 import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
 import createAssetConfigurationHook from "../../modules/createAssetConfigurationHook";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import GenericEmptyList from "LLD/components/GenericEmptyList";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -13,11 +15,18 @@ export type SelectAssetProps = {
   flow: string;
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
+  currenciesByProvider: CurrenciesByProviderId[];
+  providersLoadingStatus: LoadingStatus;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
+
+const TITLE_HEIGHT = 52;
+const SEARCH_HEIGHT = 64;
+const MARGIN_BOTTOM = TITLE_HEIGHT + SEARCH_HEIGHT;
+const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
 
 export const SelectAssetList = ({
   assetsToDisplay,
@@ -25,16 +34,20 @@ export const SelectAssetList = ({
   flow,
   scrollToTop,
   assetsConfiguration,
+  currenciesByProvider,
+  providersLoadingStatus,
   onAssetSelected,
   onScrolledToTop,
 }: SelectAssetProps) => {
   const transformAssets = createAssetConfigurationHook({
     assetsConfiguration,
+    currenciesByProvider,
   });
 
   const formattedAssets = transformAssets(assetsToDisplay);
 
-  const shouldDisplayLoading = !formattedAssets || formattedAssets.length === 0;
+  const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
+  const shouldDisplayEmptyState = (!formattedAssets || formattedAssets.length === 0) && !isLoading;
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onClick = useCallback(
@@ -52,12 +65,13 @@ export const SelectAssetList = ({
         },
         {
           formatAssetConfig: true,
+          assetsConfig: assetsConfiguration,
         },
       );
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, flow, source, trackModularDrawerEvent, onAssetSelected],
+    [assetsToDisplay, trackModularDrawerEvent, flow, source, assetsConfiguration, onAssetSelected],
   );
 
   const onVisibleItemsScrollEnd = () => {
@@ -70,12 +84,16 @@ export const SelectAssetList = ({
     }
   }, [scrollToTop, onScrolledToTop]);
 
-  if (shouldDisplayLoading) {
+  if (isLoading) {
     return <SkeletonList />;
   }
 
+  if (shouldDisplayEmptyState) {
+    return <GenericEmptyList />;
+  }
+
   return (
-    <ListWrapper>
+    <ListWrapper data-testid="asset-selector-list-container" customHeight={LIST_HEIGHT}>
       <AssetList
         scrollToTop={scrollToTop}
         assets={formattedAssets}

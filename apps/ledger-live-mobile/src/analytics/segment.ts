@@ -60,6 +60,8 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -80,7 +82,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
     const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
@@ -97,6 +99,12 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+
+    // Apply versioned redirects logic to the stakePrograms feature flag
+    const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
 
     const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
@@ -160,15 +168,6 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
-const getNewAddAccountsAttribues = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
-
-  return {
-    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
-  };
-};
-
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -187,8 +186,27 @@ const getMandatoryProperties = async (store: AppStore) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("llmModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
+  const madAttributes = getMADAttributes();
   const mandatoryProperties = await getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
@@ -273,7 +291,6 @@ const extraProperties = async (store: AppStore) => {
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
 
@@ -325,13 +342,13 @@ const extraProperties = async (store: AppStore) => {
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
-    ...addAccountsAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
+    madAttributes,
   };
 };
 

@@ -14,7 +14,6 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../network";
-import { AptosAsset } from "../../types/assets";
 import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosBalance, AptosTransaction } from "../../types";
@@ -293,6 +292,62 @@ describe("Aptos API", () => {
       expect(accountInfo.blockHeight).toEqual(999);
     });
 
+    it("returns transaction with amount equals to zero when no account found", async () => {
+      mockedAptos.mockImplementation(() => ({
+        view: jest.fn().mockReturnValue(["123"]),
+        getTransactionByVersion: jest.fn().mockReturnValue({
+          type: "user_transaction",
+          version: "v1",
+        }),
+        getBlockByVersion: jest.fn().mockReturnValue({
+          block_height: "1",
+          block_hash: "83ca6d",
+        }),
+        getCurrentFungibleAssetBalances: jest.fn().mockResolvedValue([]),
+      }));
+
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
+            },
+            block_height: "999",
+          },
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
+
+      mockedApolloClient.mockImplementation(() => ({
+        query: async () => ({
+          data: {
+            account_transactions: [{ transaction_version: 1 }],
+          },
+          loading: false,
+          networkStatus: 7,
+        }),
+      }));
+
+      const api = new AptosAPI("aptos");
+      const accountInfo = await api.getAccountInfo("", "1");
+
+      expect(accountInfo.balance).toEqual(new BigNumber(0));
+      expect(accountInfo.transactions).toEqual([]);
+      expect(accountInfo.blockHeight).toEqual(999);
+    });
+
     it("returns a null transaction if it fails to getTransactionByVersion", async () => {
       mockedAptos.mockImplementation(() => ({
         view: jest.fn().mockReturnValue(["123"]),
@@ -566,7 +621,7 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
           type: "native",
         },
@@ -593,7 +648,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("40");
+      expect(fees.value.toString()).toEqual("44");
     });
 
     it("estimates the fees for token coin", async () => {
@@ -631,11 +686,10 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "coin",
-          contractAddress: "0x111",
+          type: "coin",
+          assetReference: "0x111",
         },
         type: "send",
         sender: sender.freshAddress,
@@ -660,7 +714,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("20");
+      expect(fees.value.toString()).toEqual("22");
     });
 
     it("estimates the fees for token FA", async () => {
@@ -697,11 +751,10 @@ describe("Aptos API", () => {
       const recipient = "address2";
 
       const api = new AptosAPI("aptos");
-      const transactionIntent: TransactionIntent<AptosAsset> = {
+      const transactionIntent: TransactionIntent = {
         asset: {
-          type: "token",
-          standard: "fungible_asset",
-          contractAddress: "0x111",
+          type: "fungible_asset",
+          assetReference: "0x111",
         },
         type: "send",
         sender: sender.freshAddress,
@@ -726,7 +779,7 @@ describe("Aptos API", () => {
         },
       });
 
-      expect(fees.value.toString()).toEqual("30");
+      expect(fees.value.toString()).toEqual("33");
     });
   });
 
@@ -812,6 +865,7 @@ describe("Aptos API", () => {
       const txs: AptosTransaction[] = [
         {
           version: "2532591427",
+          replay_protection_nonce: "replay_protection_nonce",
           hash: "0x3f35",
           state_change_hash: "0xb480",
           event_root_hash: "0x3fa1",
@@ -1025,6 +1079,7 @@ describe("Aptos API", () => {
         },
         {
           version: "2532549325",
+          replay_protection_nonce: "replay_protection_nonce",
           hash: "0x9a6b",
           state_change_hash: "0xa424",
           event_root_hash: "0x0321",

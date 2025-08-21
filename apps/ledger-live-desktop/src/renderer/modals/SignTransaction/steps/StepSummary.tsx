@@ -1,7 +1,7 @@
 // FIXME: this is a duplicate of apps/ledger-live-desktop/src/renderer/modals/Send/steps/StepSummary.tsx
 
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
   getAccountCurrency,
@@ -56,6 +56,7 @@ const Separator = styled.div`
 const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
+  const { t } = useTranslation();
   const { account, parentAccount, transaction, status } = props;
   const accountName = useMaybeAccountName(account);
 
@@ -83,9 +84,16 @@ const StepSummary = (props: StepProps) => {
 
   const memo = "memo" in transaction ? transaction.memo : undefined;
 
+  const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+
   return (
     <Box flow={4} mx={40}>
       <TrackPage category="Sign Flow" name="Step Summary" />
+      {isSolanaRawTransaction ? (
+        <Alert type="warning" title={t("send.steps.details.solanaRawTransaction.title")}>
+          <Trans i18nKey="send.steps.details.solanaRawTransaction.description" />
+        </Alert>
+      ) : null}
       {utxoLag ? (
         <Alert type="warning">
           <Trans i18nKey="send.steps.details.utxoLag" />
@@ -104,8 +112,16 @@ const StepSummary = (props: StepProps) => {
       {/* Since a sign transaction (live-app related) can start at the summary step
       (if fees provided by live-app), we need to display transaction status errors here */}
       {errors && Object.keys(errors).length ? (
-        <Alert type="error">
-          <TranslatedError error={Object.values<Error>(errors)[0]} />
+        <Alert
+          type="error"
+          title={
+            status.errors.sender ? t("errors." + status.errors.sender.name + ".title") : undefined
+          }
+        >
+          <TranslatedError
+            error={status.errors.sender ?? Object.values<Error>(errors)[0]}
+            field={status.errors.sender ? "description" : undefined}
+          />
         </Alert>
       ) : null}
       <FromToWrapper>
@@ -140,33 +156,39 @@ const StepSummary = (props: StepProps) => {
               </Box>
             </Box>
           </Box>
-          <VerticalSeparator />
-          <Box horizontal alignItems="center">
-            <Circle>
-              <IconQrCode size={14} />
-            </Circle>
-            <Box flex={1}>
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                <Trans i18nKey="send.steps.details.to" />
-              </Text>
-              {transaction.recipientDomain && (
-                <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
-                  {transaction.recipientDomain.domain}
-                </Text>
-              )}
-              <Ellipsis>
-                <Text
-                  ff="Inter"
-                  color={
-                    transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
-                  }
-                  fontSize={4}
-                >
-                  {transaction.recipient}
-                </Text>
-              </Ellipsis>
-            </Box>
-          </Box>
+          {transaction.recipient ? (
+            <>
+              <VerticalSeparator />
+              <Box horizontal alignItems="center">
+                <Circle>
+                  <IconQrCode size={14} />
+                </Circle>
+                <Box flex={1}>
+                  <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                    <Trans i18nKey="send.steps.details.to" />
+                  </Text>
+                  {transaction.recipientDomain && (
+                    <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                      {transaction.recipientDomain.domain}
+                    </Text>
+                  )}
+                  <Ellipsis>
+                    <Text
+                      ff="Inter"
+                      color={
+                        transaction.recipientDomain
+                          ? "palette.text.shade70"
+                          : "palette.text.shade100"
+                      }
+                      fontSize={4}
+                    >
+                      {transaction.recipient}
+                    </Text>
+                  </Ellipsis>
+                </Box>
+              </Box>
+            </>
+          ) : null}
         </Box>
         <Separator />
         {memo && (
@@ -181,31 +203,33 @@ const StepSummary = (props: StepProps) => {
             </Ellipsis>
           </Box>
         )}
-        <Box horizontal justifyContent="space-between" mb={2}>
-          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-            <Trans i18nKey="send.steps.details.amount" />
-          </Text>
-          <Box>
-            <FormattedVal
-              color={"palette.text.shade80"}
-              disableRounding
-              unit={unit}
-              val={amount}
-              fontSize={4}
-              inline
-              showCode
-            />
-            <Box textAlign="right">
-              <CounterValue
-                color="palette.text.shade60"
-                fontSize={3}
-                currency={currency}
-                value={amount}
-                alwaysShowSign={false}
+        {!isSolanaRawTransaction ? (
+          <Box horizontal justifyContent="space-between" mb={2}>
+            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Trans i18nKey="send.steps.details.amount" />
+            </Text>
+            <Box>
+              <FormattedVal
+                color={"palette.text.shade80"}
+                disableRounding
+                unit={unit}
+                val={amount}
+                fontSize={4}
+                inline
+                showCode
               />
+              <Box textAlign="right">
+                <CounterValue
+                  color="palette.text.shade60"
+                  fontSize={3}
+                  currency={currency}
+                  value={amount}
+                  alwaysShowSign={false}
+                />
+              </Box>
             </Box>
           </Box>
-        </Box>
+        ) : null}
         {SpecificSummaryNetworkFeesRow ? (
           <SpecificSummaryNetworkFeesRow
             feeTooHigh={feeTooHigh}
@@ -259,7 +283,7 @@ const StepSummary = (props: StepProps) => {
           </>
         )}
 
-        {!totalSpent.eq(amount) ? (
+        {!totalSpent.eq(amount) && !isSolanaRawTransaction ? (
           <>
             <Separator />
             <Box horizontal justifyContent="space-between">

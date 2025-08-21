@@ -40,7 +40,7 @@ export const dataset: DatasetTest<Transaction> = {
             recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
             amount: "15000000",
             tag: null,
-            fee: "1",
+            fees: "1",
             feeCustomUnit: null,
             networkInfo: null,
           }),
@@ -75,7 +75,7 @@ export const dataset: DatasetTest<Transaction> = {
             recipient: newAddress1,
             amount: "10000000",
             tag: null,
-            fee: "1",
+            fees: "1",
             feeCustomUnit: null,
             networkInfo: null
           }),
@@ -97,19 +97,18 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
                 amount: "10000000",
                 tag: null,
-                fee: "10", // NOTE: fee is not customizable, this field is ignored
+                fees: "10", // NOTE: fee is not customizable, this field is ignored
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
-
+                estimatedFees: new BigNumber("10"),
                 errors: {
                   recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
-                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
+                totalSpent: new BigNumber("10000010"),
               },
             },
             {
@@ -119,16 +118,16 @@ export const dataset: DatasetTest<Transaction> = {
                 recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
                 amount: "10000000",
                 tag: 12345,
-                fee: "10", // NOTE: fee is not customizable, this field is ignored
+                fees: "10", // NOTE: fee is not customizable, this field is ignored
                 feeCustomUnit: null,
                 networkInfo: null,
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
-                estimatedFees: new BigNumber("10"), // NOTE: hardcoded fee
+                estimatedFees: new BigNumber("10"),
                 errors: {},
                 warnings: {},
-                totalSpent: new BigNumber("10000010"), // NOTE: amount + hardcoded fee
+                totalSpent: new BigNumber("10000010"),
               },
             },
           ],

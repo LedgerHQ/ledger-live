@@ -11,6 +11,7 @@ import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { Account } from "@ledgerhq/types-live";
 import { OperationDetailsExtraProps } from "../types";
 import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
+import { formatMemo } from "@ledgerhq/live-common/families/stellar/ui";
 
 const OperationDetailsExtra = ({
   operation: { extra },
@@ -18,24 +19,37 @@ const OperationDetailsExtra = ({
   return (
     <>
       {Object.keys(extra).map(key => {
-        if (["assetCode", "assetIssuer", "memo"].includes(key)) {
+        let details: React.JSX.Element | undefined = undefined;
+        switch (key) {
+          case "assetCode": {
+            details = <Ellipsis>{extra[key]}</Ellipsis>;
+            break;
+          }
+          case "assetIssuer": {
+            details = (
+              <HashContainer>
+                <SplitAddress value={extra[key] ?? ""} />
+              </HashContainer>
+            );
+            break;
+          }
+          case "memo": {
+            const label = formatMemo(extra);
+            if (label) details = <Ellipsis>{label}</Ellipsis>;
+            break;
+          }
+        }
+
+        if (details)
           return (
             <OpDetailsSection key={key}>
               <OpDetailsTitle>
                 <Trans i18nKey={`families.stellar.${key}`} defaults={key} />
               </OpDetailsTitle>
-              <OpDetailsData>
-                {key === "assetIssuer" ? (
-                  <HashContainer>
-                    <SplitAddress value={extra[key] ?? ""} />
-                  </HashContainer>
-                ) : null}
-                {key === "assetCode" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
-                {key === "memo" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
-              </OpDetailsData>
+              <OpDetailsData>{details}</OpDetailsData>
             </OpDetailsSection>
           );
-        }
+
         return null;
       })}
     </>

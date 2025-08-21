@@ -1,29 +1,37 @@
-import { isAddressSanctioned } from "../sanction";
+import {
+  isAddressSanctioned,
+  isCheckSanctionedAddressEnabled,
+} from "@ledgerhq/coin-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
+import { checkAccountSupported } from "../account/index";
+import jsBridges from "../generated/bridge/js";
+import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AccountBridge,
   AccountLike,
   CurrencyBridge,
+  TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { decodeAccountId, getMainAccount } from "../account";
-import { checkAccountSupported } from "../account/index";
-import jsBridges from "../generated/bridge/js";
-import mockBridges from "../generated/bridge/mock";
-import { RecipientAddressSanctionedError, UserAddressSanctionedError } from "../sanction/errors";
-import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
-import { TransactionCommon } from "@ledgerhq/types-live";
+import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
 
 const alpacaized = {
   xrp: true,
+  stellar: true,
 };
 
-let accountBridgeInstance: AccountBridge<any> | null = null;
-let currencyBridgeInstance: CurrencyBridge | null = null;
+// let accountBridgeInstance: AccountBridge<any> | null = null;
+const bridgeCache: Record<string, AccountBridge<any>> = {};
+const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
@@ -35,10 +43,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    if (!currencyBridgeInstance) {
-      currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
+    if (!currencyBridgeCache[currency.family]) {
+      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
     }
-    return currencyBridgeInstance;
+    return currencyBridgeCache[currency.family];
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -78,22 +86,27 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
     if (type === "mock") {
       const mockBridge = mockBridges[family];
-      if (mockBridge) return mockBridge.accountBridge;
+      if (mockBridge) return wrapAccountBridge(mockBridge.accountBridge);
     }
   }
 
   if (alpacaized[family]) {
-    if (!accountBridgeInstance) {
-      accountBridgeInstance = getAlpacaAccountBridge(family, "local");
+    if (!bridgeCache[family]) {
+      bridgeCache[family] = getAlpacaAccountBridge(family, "local");
     }
-    return accountBridgeInstance;
+    return bridgeCache[family];
   }
 
   const jsBridge = jsBridges[family];
   if (!jsBridge) {
-    throw new CurrencyNotSupported("account currency bridge not found " + family);
+    throw new CurrencyNotSupported("account bridge not found " + family);
   }
   return wrapAccountBridge(jsBridge.accountBridge);
+}
+
+export function setup(store: CryptoAssetsStore) {
+  setCryptoAssetsStore(store);
+  setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(
@@ -102,21 +115,26 @@ function wrapAccountBridge<T extends TransactionCommon>(
   return {
     ...bridge,
     getTransactionStatus: async (...args) => {
-      const blockchainSpecific = await bridge.getTransactionStatus(...args);
-      const common = await commonGetTransactionStatus(...args);
-      const merged = mergeResults(blockchainSpecific, common);
-      return merged;
+      const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
+
+      const account = args[0];
+      if (!isCheckSanctionedAddressEnabled(account.currency)) {
+        return blockchainTransactionStatus;
+      }
+
+      const commonTransactionStatus = await commonGetTransactionStatus(...args);
+      return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
   };
 }
 
 function mergeResults(
-  blockchainSpecific: TransactionStatusCommon,
-  common: Partial<TransactionStatusCommon>,
+  blockchainTransactionStatus: TransactionStatusCommon,
+  commonTransactionStatus: Partial<TransactionStatusCommon>,
 ): TransactionStatusCommon {
-  const errors = { ...blockchainSpecific.errors, ...common.errors };
-  const warnings = { ...blockchainSpecific.warnings, ...common.warnings };
-  return { ...blockchainSpecific, errors, warnings };
+  const errors = { ...blockchainTransactionStatus.errors, ...commonTransactionStatus.errors };
+  const warnings = { ...blockchainTransactionStatus.warnings, ...commonTransactionStatus.warnings };
+  return { ...blockchainTransactionStatus, errors, warnings };
 }
 
 async function commonGetTransactionStatus(
@@ -126,21 +144,21 @@ async function commonGetTransactionStatus(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  let recipientIsBlacklisted = false;
+  let isRecipientSanctioned = false;
   if (transaction.recipient && transaction.recipient !== "") {
-    recipientIsBlacklisted = await isAddressSanctioned(account.currency, transaction.recipient);
-    if (recipientIsBlacklisted) {
-      errors.recipient = new RecipientAddressSanctionedError();
+    isRecipientSanctioned = await isAddressSanctioned(account.currency, transaction.recipient);
+    if (isRecipientSanctioned) {
+      errors.recipient = new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: [transaction.recipient],
+      });
     }
   }
 
-  const userIsBlacklisted = await isAddressSanctioned(account.currency, account.freshAddress);
-  if (userIsBlacklisted) {
-    errors.amount = new UserAddressSanctionedError();
-  }
-
-  if (userIsBlacklisted || recipientIsBlacklisted) {
-    // Send log
+  const isSenderSanctioned = await isAddressSanctioned(account.currency, account.freshAddress);
+  if (isSenderSanctioned) {
+    errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+      addresses: [account.freshAddress],
+    });
   }
 
   return { errors, warnings };

@@ -19,16 +19,13 @@ const QuickActionList = ({
 }: QuickActionListProps): React.ReactElement => {
   const renderItem = useCallback(
     ({ item, index }: { item: QuickActionButtonProps; index: number }) => {
-      const isNotLastColumn = (index + 1) % numColumns > 0;
-      const isNotLastItem = data && index !== data.length - 1;
-      const hasButtonToItsRight = isNotLastColumn && isNotLastItem;
       const hasRowBelow = data?.length && index + numColumns < data.length;
 
-      const mr = hasButtonToItsRight ? 4 : 0;
       const mb = hasRowBelow ? 4 : 0;
+      const mh = 6;
       return (
-        <View style={{ flex: 1, minHeight: 30 }}>
-          <QuickActionButton {...item} isActive={isActive} mr={mr} mb={mb} testID={testID} />
+        <View style={{ flex: 1, minHeight: 30, marginHorizontal: mh }}>
+          <QuickActionButton {...item} isActive={isActive} mb={mb} testID={testID} />
         </View>
       );
     },

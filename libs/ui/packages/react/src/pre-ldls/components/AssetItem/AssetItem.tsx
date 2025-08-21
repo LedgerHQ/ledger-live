@@ -50,6 +50,7 @@ const InfoWrapper = styled.div`
   margin-left: var(--margin-s);
   overflow: hidden;
   flex: 1;
+  gap: 4px;
 `;
 
 const LeftElementWrapper = styled.div`
@@ -71,6 +72,7 @@ export const AssetItem = ({
       <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
+          data-testid={`asset-item-name-${name}`}
           fontSize="14px"
           variant="largeLineHeight"
           fontWeight="semiBold"
@@ -86,6 +88,7 @@ export const AssetItem = ({
         </Text>
         <LeftElementWrapper>
           <Text
+            data-testid={`asset-item-ticker-${ticker}`}
             fontSize="12px"
             lineHeight="16px"
             variant="bodyLineHeight"

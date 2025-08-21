@@ -2,21 +2,59 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
+import { NetworkInfo } from "./createTransaction";
+
+function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
+  return !a && !b ? true : !a || !b ? false : a.eq(b);
+}
 
 export function genericPrepareTransaction(
-  network,
+  network: string,
   kind,
 ): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
-  return async (_account, transaction: TransactionCommon & { fees: BigNumber }) => {
+  return async (
+    account,
+    transaction: TransactionCommon & {
+      fees: BigNumber | null | undefined;
+      assetReference?: string;
+      assetOwner?: string;
+      subAccountId?: string;
+      networkInfo?: NetworkInfo | null;
+    },
+  ) => {
+    const [assetReference, assetOwner] = getAssetInfos(transaction);
     const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(_account, transaction),
+      transactionToIntent(account, {
+        ...transaction,
+        fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
+      }),
     );
-    const bnFee = BigNumber(fees.value.toString());
-
-    if (transaction.fees !== bnFee) {
-      return { ...transaction, fees: bnFee };
+    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
+    // for reference, stellar checked this:
+    // transaction.networkInfo !== networkInfo ||
+    // transaction.baseReserve !== baseReserve
+    if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
+      return {
+        ...transaction,
+        fees: new BigNumber(fees.value.toString()),
+        assetReference,
+        assetOwner,
+        networkInfo: {
+          fees: new BigNumber(fees.value.toString()),
+        },
+      };
     }
 
     return transaction;
   };
+}
+
+export function getAssetInfos(
+  tr: TransactionCommon & { assetReference?: string; assetOwner?: string },
+): string[] {
+  if (tr.subAccountId) {
+    const assetString = tr.subAccountId.split("+")[1];
+    return assetString.split(":");
+  }
+  return [tr.assetReference || "", tr.assetOwner || ""];
 }

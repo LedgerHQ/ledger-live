@@ -25,6 +25,7 @@ module.exports = {
         argsIgnorePattern: "^_",
         destructuredArrayIgnorePattern: "^_",
         vars: "all",
+        varsIgnorePattern: "^_",
         args: "after-used",
         ignoreRestSiblings: true,
       },
@@ -79,7 +80,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": [
       "error", // Checks effect dependencies
       {
-        additionalHooks: "useInViewContext",
+        additionalHooks: "(useInViewContext|useAnimatedStyle|useDerivedValue|useAnimatedProps)",
       },
     ],
     "jsx-a11y/no-autofocus": "off",

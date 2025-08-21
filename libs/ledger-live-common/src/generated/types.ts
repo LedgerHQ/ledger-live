@@ -17,6 +17,12 @@ import type {
   TransactionStatusRaw as bitcoinTransactionStatusRaw,
 } from "@ledgerhq/coin-bitcoin/types";
 import type {
+  Transaction as cantonTransaction,
+  TransactionRaw as cantonTransactionRaw,
+  TransactionStatus as cantonTransactionStatus,
+  TransactionStatusRaw as cantonTransactionStatusRaw,
+} from "@ledgerhq/coin-canton/types/index";
+import type {
   Transaction as cardanoTransaction,
   TransactionRaw as cardanoTransactionRaw,
   TransactionStatus as cardanoTransactionStatus,
@@ -159,6 +165,7 @@ export type Transaction =
   | algorandTransaction
   | aptosTransaction
   | bitcoinTransaction
+  | cantonTransaction
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
@@ -187,6 +194,7 @@ export type TransactionRaw =
   | algorandTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
+  | cantonTransactionRaw
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
@@ -215,6 +223,7 @@ export type TransactionStatus =
   | algorandTransactionStatus
   | aptosTransactionStatus
   | bitcoinTransactionStatus
+  | cantonTransactionStatus
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
@@ -243,6 +252,7 @@ export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
+  | cantonTransactionStatusRaw
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw

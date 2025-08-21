@@ -1,10 +1,10 @@
-import { renderHook } from "tests/testSetup";
-import { useDetailedAccounts } from "../useDetailedAccounts";
-import { Mocked_ETH_Account } from "../../__mocks__/accounts.mock";
-import { ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import * as reactRedux from "react-redux";
-import { mockDispatch } from "../../__tests__/shared";
+import { renderHook } from "tests/testSetup";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
+import { ethereumCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
+import { mockDispatch } from "../../../__tests__/shared";
+import { useDetailedAccounts } from "../useDetailedAccounts";
 
 jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 
@@ -14,22 +14,22 @@ describe("useDetailedAccounts", () => {
     const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
-        accounts: Mocked_ETH_Account,
+        accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
       },
     });
 
     expect(result.current.detailedAccounts).toEqual([
       {
-        id: "js:2:ethereum:0x823ePB4bDa11da33a7F1C907D1171e5995Fe33c7:",
-        name: "Ethereum",
-        balance: "1 ETH",
-        fiatValue: "$0.00",
-        ticker: "ETH",
-        protocol: "legacy",
+        id: ETH_ACCOUNT.id,
+        name: "Ethereum 2",
+        address: "0x42D...339ED",
+        balance: "12.7161 ETH",
         cryptoId: "ethereum",
-        address: "freshAddress",
+        fiatValue: undefined,
         parentId: undefined,
+        protocol: "",
+        ticker: "ETH",
       },
     ]);
   });
@@ -39,7 +39,7 @@ describe("useDetailedAccounts", () => {
     const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
-        accounts: Mocked_ETH_Account,
+        accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
       },
     });
@@ -63,37 +63,14 @@ describe("useDetailedAccounts", () => {
     const { result } = renderHook(() => useDetailedAccounts(asset, "flow", "source"), {
       ...INITIAL_STATE,
       initialState: {
-        accounts: Mocked_ETH_Account,
+        accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
       },
     });
 
     expect(result.current.accounts).toEqual([
       {
-        account: {
-          type: "Account",
-          id: "js:2:ethereum:0x823ePB4bDa11da33a7F1C907D1171e5995Fe33c7:",
-          used: true,
-          seedIdentifier: "",
-          derivationMode: "ethM",
-          index: 2,
-          freshAddress: "freshAddress",
-          freshAddressPath: "",
-          blockHeight: 20372078,
-          creationDate: Mocked_ETH_Account[0].creationDate,
-          balance: Mocked_ETH_Account[0].balance,
-          spendableBalance: Mocked_ETH_Account[0].spendableBalance,
-          operations: [],
-          operationsCount: 0,
-          pendingOperations: [],
-          currency: Mocked_ETH_Account[0].currency,
-          lastSyncDate: Mocked_ETH_Account[0].lastSyncDate,
-          swapHistory: [],
-          syncHash: "",
-          balanceHistoryCache: Mocked_ETH_Account[0].balanceHistoryCache,
-          subAccounts: [],
-          nfts: [],
-        },
+        account: ETH_ACCOUNT,
         subAccount: null,
       },
     ]);

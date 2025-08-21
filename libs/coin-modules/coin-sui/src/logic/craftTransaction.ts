@@ -1,26 +1,33 @@
 import BigNumber from "bignumber.js";
-import type { CoreTransaction } from "../types";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { SuiTransactionMode, CoreTransaction } from "../types";
 import suiAPI from "../network";
-import { SuiAsset } from "../api/types";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
 export type CreateExtrinsicArg = {
-  mode: string;
   amount: BigNumber;
+  coinType: string;
+  mode: SuiTransactionMode;
   recipient: string;
   useAllAmount?: boolean | undefined;
 };
 
 export async function craftTransaction({
-  sender,
   amount,
+  asset,
   recipient,
+  sender,
   type,
-}: TransactionIntent<SuiAsset>): Promise<CoreTransaction> {
+}: TransactionIntent): Promise<CoreTransaction> {
+  let coinType = DEFAULT_COIN_TYPE;
+  if (asset.type === "token" && asset.assetReference) {
+    coinType = asset.assetReference;
+  }
   const unsigned = await suiAPI.createTransaction(sender, {
     amount: BigNumber(amount.toString()),
+    coinType,
+    mode: type as SuiTransactionMode,
     recipient,
-    mode: type,
   });
 
   return { unsigned };

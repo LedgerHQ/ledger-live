@@ -14,11 +14,29 @@ import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
 
-const TRUSTED_NAME_MIN_VERSION = "1.7.1";
+/**
+ * Required minimum version of App Solana for non NanoS devices.
+ * For NanoS devices (being deprecated), all versions of App Solana
+ * are outdated compared to what we want to enfore in the other cases.
+ * As a result, Firebase `minVersion` can not be used here.
+ * NOTE: The ability to specify a `minVersion` per device model from Firebase
+ * is work in progress {@link https://ledgerhq.atlassian.net/browse/LIVE-17027}
+ */
+const MIN_VERSION = "1.9.2";
 const MANAGER_APP_NAME = "Solana";
 
 function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
   return err instanceof TransportStatusError && err.message.includes("0x6a81");
+}
+
+async function tryLoadPKI(...args: Parameters<typeof loadPKI>) {
+  try {
+    await loadPKI(...args);
+  } catch (err) {
+    if (isPKIUnsupportedError(err)) {
+      throw new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired");
+    }
+  }
 }
 
 export class LegacySignerSolana implements SolanaSigner {
@@ -34,13 +52,19 @@ export class LegacySignerSolana implements SolanaSigner {
     return this.signer.getAppConfiguration();
   }
 
-  private async checkAppVersion() {
+  private async checkAppVersion(
+    minVersion: string,
+    { throwOnOutdated }: { throwOnOutdated: boolean },
+  ) {
     const { version } = await this.getAppConfiguration();
-    if (semver.lt(version, TRUSTED_NAME_MIN_VERSION)) {
+    const outdated = semver.lt(version, minVersion);
+
+    if (outdated && throwOnOutdated) {
       throw new UpdateYourApp(undefined, {
         managerAppName: MANAGER_APP_NAME,
       });
     }
+    return !outdated;
   }
 
   getAddress(path: string, display?: boolean | undefined): Promise<SolanaAddress> {
@@ -58,8 +82,11 @@ export class LegacySignerSolana implements SolanaSigner {
       }
 
       if (resolution.deviceModelId !== DeviceModelId.nanoS) {
+        await this.checkAppVersion(MIN_VERSION, { throwOnOutdated: true });
+
         const { descriptor, signature } = await calService.getCertificate(
           resolution.deviceModelId,
+          "trusted_name",
           "latest",
           { signatureKind: resolution.certificateSignatureKind },
         );
@@ -73,8 +100,6 @@ export class LegacySignerSolana implements SolanaSigner {
         }
 
         if (resolution.tokenAddress) {
-          await this.checkAppVersion();
-
           const challenge = await this.signer.getChallenge();
           const { signedDescriptor } = await trustService.getOwnerAddress(
             resolution.tokenAddress,
@@ -86,8 +111,6 @@ export class LegacySignerSolana implements SolanaSigner {
           }
         }
         if (resolution.createATA) {
-          await this.checkAppVersion();
-
           const challenge = await this.signer.getChallenge();
           const { signedDescriptor } = await trustService.computedTokenAddress(
             resolution.createATA.address,
@@ -98,6 +121,25 @@ export class LegacySignerSolana implements SolanaSigner {
           if (signedDescriptor) {
             await this.signer.provideTrustedName(signedDescriptor);
           }
+        }
+
+        if (resolution.tokenInternalId) {
+          const { descriptor: coinMetaDescriptor, signature: coinMetaSignature } =
+            await calService.getCertificate(resolution.deviceModelId, "coin_meta", "latest", {
+              signatureKind: resolution.certificateSignatureKind,
+            });
+
+          await tryLoadPKI(this.transport, "COIN_META", coinMetaDescriptor, coinMetaSignature);
+
+          const token = await calService.findToken(
+            { id: resolution.tokenInternalId },
+            { signatureKind: resolution.certificateSignatureKind },
+          );
+
+          await this.signer.provideTrustedDynamicDescriptor({
+            data: Buffer.from(token.descriptor.data, "hex"),
+            signature: Buffer.from(token.descriptor.signature, "hex"),
+          });
         }
       }
     }

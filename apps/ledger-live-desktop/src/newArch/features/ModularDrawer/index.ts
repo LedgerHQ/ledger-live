@@ -1,9 +1,14 @@
-import { useModularDrawerVisibility } from "LLD/features/ModularDrawer/hooks/useModularDrawerVisibility";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer/enums";
 import {
   openAssetAndAccountDrawer,
   openAssetAndAccountDrawerPromise,
 } from "LLD/features/ModularDrawer/Web3AppWebview/AssetAndAccountDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import {
+  useModularDrawerVisibility,
+  ModularDrawerVisibleParams,
+} from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
+
+export type { ModularDrawerVisibleParams };
 
 export {
   useModularDrawerVisibility,

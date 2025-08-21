@@ -58,6 +58,7 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyTokenRevokeTx(address);
     case "stake.split":
     case "token.createATA":
+    case "raw":
       throw new Error(`not implemented for <${kind}>`);
     default:
       return assertUnreachable(kind);
@@ -176,6 +177,7 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
           amount: 0,
           mintAddress: randomAddresses[0],
           mintDecimals: 0,
+          tokenId: "",
           ownerAddress: address,
           ownerAssociatedTokenAccountAddress: randomAddresses[1],
           recipientDescriptor: {

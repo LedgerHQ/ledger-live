@@ -51,7 +51,7 @@ export const Address = ({ value }: { value: string }) => (
 );
 const Left = styled.div`
   overflow: hidden;
-  max-width: calc(100% - 50px);
+  max-width: calc(100% - 20px);
   white-space: nowrap;
   font-kerning: none;
   letter-spacing: 0px;
@@ -98,6 +98,7 @@ class AddressCell extends PureComponent<Props> {
   render() {
     const { operation } = this.props;
     const lense =
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       perOperationType[operation.type as keyof typeof perOperationType] || perOperationType._;
     const value = lense(operation);
     return value ? (

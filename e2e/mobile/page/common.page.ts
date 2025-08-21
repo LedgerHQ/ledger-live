@@ -2,6 +2,8 @@ import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUt
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { isIos } from "../helpers/commonHelpers";
+import { device } from "detox";
 
 const proxyAddress = "localhost";
 
@@ -16,6 +18,7 @@ export default class CommonPage {
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
+  backButton = () => getElementById("navigation-header-back-button");
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
@@ -27,6 +30,11 @@ export default class CommonPage {
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text);
+  }
+
+  @Step("Expect Search Bar to be visible")
+  async expectSearchBarVisible() {
+    await detoxExpect(this.searchBar()).toBeVisible();
   }
 
   @Step("Select currency to debit")
@@ -46,6 +54,11 @@ export default class CommonPage {
     await tapByElement(this.closeButton());
   }
 
+  @Step("Go to previous page")
+  async goToPreviousPage() {
+    await tapByElement(this.backButton());
+  }
+
   @Step("Tap on view details")
   async successViewDetails() {
     await waitForElementById(this.successViewDetailsButtonId);
@@ -61,6 +74,11 @@ export default class CommonPage {
   async goToAccount(accountId: string) {
     await scrollToId(this.accountItemNameRegExp);
     await tapByElement(this.accountItem(accountId));
+  }
+
+  @Step("Check number of account rows: $0")
+  async checkAccountRowNumber(nbr: number) {
+    jestExpect(await countElementsById(this.accountItemNameRegExp)).toBeLessThanOrEqual(nbr);
   }
 
   @Step("Get the account name at index")
@@ -100,6 +118,15 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    await tapById(this.deviceRowRegex, index);
+    if (isIos()) await device.disableSynchronization();
+    const proxyUrl = process.env.DEVICE_PROXY_URL;
+    const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
+    await waitForElementById(elementId);
+    await tapById(elementId, proxyUrl ? undefined : index);
+  }
+
+  @Step("Tap proceed button")
+  async tapProceedButton() {
+    await tapById(this.proceedButtonId);
   }
 }

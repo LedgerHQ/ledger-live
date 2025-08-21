@@ -6,11 +6,18 @@ import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/types";
+import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
+import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import uniqWith from "lodash/uniqWith";
+
+import {
+  getEffectiveCurrency,
+  isCorrespondingCurrency,
+} from "@ledgerhq/live-common/modularDrawer/utils/index";
 
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
-  assetsToDisplay: CryptoOrTokenCurrency[];
+  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
   currenciesIdsArray: string[];
   goToStep: (nextStep: ModularDrawerStep) => void;
@@ -23,7 +30,7 @@ type Props = {
 
 export function useModularDrawerFlowState({
   currenciesByProvider,
-  assetsToDisplay,
+  sortedCryptoCurrencies,
   setNetworksToDisplay,
   currenciesIdsArray,
   goToStep,
@@ -58,8 +65,9 @@ export function useModularDrawerFlowState({
   }, [goToStep]);
 
   const goToNetworkSelection = useCallback(
-    (filteredCryptoCurrencies: CryptoOrTokenCurrency[]) => {
-      setNetworksToDisplay(filteredCryptoCurrencies);
+    (asset: CryptoOrTokenCurrency, filteredCryptoCurrencies: CryptoOrTokenCurrency[]) => {
+      setSelectedAsset(asset);
+      setNetworksToDisplay(uniqWith(filteredCryptoCurrencies, (a, b) => a.id === b.id));
       goToStep("NETWORK_SELECTION");
     },
     [goToStep, setNetworksToDisplay],
@@ -90,44 +98,80 @@ export function useModularDrawerFlowState({
     [goToAccountSelection, isSelectAccountFlow, onAssetSelected, providers],
   );
 
+  const getNetworksFromProvider = useCallback(
+    (provider: CurrenciesByProviderId) => {
+      return provider.currenciesByNetwork
+        .filter(currencyByNetwork => currenciesIdsArray.includes(currencyByNetwork.id))
+        .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
+    },
+    [currenciesIdsArray],
+  );
+
+  const handleNoProvider = useCallback(
+    (currency: CryptoOrTokenCurrency) => {
+      if (isSelectAccountFlow) {
+        goToAccountSelection(currency, currency);
+      } else {
+        onAssetSelected?.(currency);
+      }
+    },
+    [isSelectAccountFlow, goToAccountSelection, onAssetSelected],
+  );
+
+  const handleMultipleNetworks = useCallback(
+    (
+      currency: CryptoOrTokenCurrency,
+      provider: CurrenciesByProviderId,
+      networks: (string | undefined)[],
+    ) => {
+      const effectiveCurrency = getEffectiveCurrency(currency, provider, currenciesIdsArray);
+      const filteredCryptoCurrencies = networks
+        .filter((net): net is string => Boolean(net))
+        .map(net => findCryptoCurrencyById(net))
+        .filter((cur): cur is CryptoCurrency => Boolean(cur));
+
+      goToNetworkSelection(effectiveCurrency, filteredCryptoCurrencies);
+    },
+    [currenciesIdsArray, goToNetworkSelection],
+  );
+
+  const handleSingleNetwork = useCallback(
+    (currency: CryptoOrTokenCurrency, provider: CurrenciesByProviderId) => {
+      if (isSelectAccountFlow) {
+        const effectiveCurrency = getEffectiveCurrency(currency, provider, currenciesIdsArray);
+        goToAccountSelection(effectiveCurrency, effectiveCurrency);
+      } else {
+        onAssetSelected?.(currency);
+      }
+    },
+    [isSelectAccountFlow, currenciesIdsArray, goToAccountSelection, onAssetSelected],
+  );
+
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const currentProvider = getProvider(currency, currenciesByProvider);
       setProviders(currentProvider);
 
       if (!currentProvider) {
-        if (isSelectAccountFlow) {
-          goToAccountSelection(currency, currency);
-        } else {
-          onAssetSelected?.(currency);
-        }
+        handleNoProvider(currency);
         return;
       }
 
-      const networks = currentProvider.currenciesByNetwork
-        .filter(currencyByNetwork => currenciesIdsArray.includes(currencyByNetwork.id))
-        .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
-
+      const networks = getNetworksFromProvider(currentProvider);
       const hasMultipleNetworks = networks && networks.length > 1;
 
       if (hasMultipleNetworks) {
-        const filteredCryptoCurrencies = networks
-          .map(net => findCryptoCurrencyById(net))
-          .filter((cur): cur is CryptoCurrency => Boolean(cur));
-        goToNetworkSelection(filteredCryptoCurrencies);
-      } else if (isSelectAccountFlow) {
-        goToAccountSelection(currency, currency);
+        handleMultipleNetworks(currency, currentProvider, networks);
       } else {
-        onAssetSelected?.(currency);
+        handleSingleNetwork(currency, currentProvider);
       }
     },
     [
       currenciesByProvider,
-      currenciesIdsArray,
-      goToAccountSelection,
-      goToNetworkSelection,
-      isSelectAccountFlow,
-      onAssetSelected,
+      handleNoProvider,
+      getNetworksFromProvider,
+      handleMultipleNetworks,
+      handleSingleNetwork,
     ],
   );
 
@@ -137,15 +181,21 @@ export function useModularDrawerFlowState({
 
   useEffect(() => {
     if (hasOneCurrency && !selectedAsset) {
-      handleAssetSelected(assetsToDisplay[0]);
+      const currencyIdToFind = currenciesIdsArray[0];
+      const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
+
+      if (currency) {
+        handleAssetSelected(currency);
+      }
     }
   }, [
-    assetsToDisplay,
+    sortedCryptoCurrencies,
     currenciesIdsArray.length,
     goToStep,
     handleAssetSelected,
     hasOneCurrency,
     selectedAsset,
+    currenciesIdsArray,
   ]);
 
   return {
@@ -165,16 +215,4 @@ export function useModularDrawerFlowState({
     handleAssetSelected,
     handleAccountSelected,
   };
-}
-
-function isCorrespondingCurrency(
-  elem: CryptoOrTokenCurrency,
-  network: CryptoOrTokenCurrency,
-): boolean {
-  if (elem.type === "TokenCurrency") {
-    return elem.parentCurrency?.id === network.id || elem.id === network.id;
-  } else if (elem.type === "CryptoCurrency") {
-    return elem.id === network.id;
-  }
-  return false;
 }

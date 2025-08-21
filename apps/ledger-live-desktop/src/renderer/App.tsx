@@ -18,8 +18,8 @@ import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
-import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
+import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
@@ -35,7 +35,6 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
-import { AppGeoBlocker } from "LLD/features/AppGeoblocker";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -82,8 +81,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             <UpdaterProvider>
               <AppDataStorageProvider>
                 <DeviceManagementKitProvider>
-                  <CountervaluesMarketcap>
-                    <CountervaluesProvider initialState={initialCountervalues}>
+                  <CountervaluesMarketcapBridgedProvider>
+                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
                       <ToastProvider>
                         <AnnouncementProviderWrapper>
                           <Router>
@@ -93,10 +92,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                                   <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                                     <StorylyProvider>
                                       <QueryClientProvider client={queryClient}>
-                                        <AppGeoBlocker>
-                                          <Default />
-                                          <ReactQueryDevtoolsProvider />
-                                        </AppGeoBlocker>
+                                        <Default />
+                                        <ReactQueryDevtoolsProvider />
                                       </QueryClientProvider>
                                     </StorylyProvider>
                                   </NftMetadataProvider>
@@ -106,8 +103,8 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           </Router>
                         </AnnouncementProviderWrapper>
                       </ToastProvider>
-                    </CountervaluesProvider>
-                  </CountervaluesMarketcap>
+                    </CountervaluesBridgedProvider>
+                  </CountervaluesMarketcapBridgedProvider>
                 </DeviceManagementKitProvider>
               </AppDataStorageProvider>
             </UpdaterProvider>

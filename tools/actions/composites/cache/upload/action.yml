@@ -1,0 +1,83 @@
+name: "Cache upload"
+description: "Compress and upload cache files to S3"
+inputs:
+  endpoint:
+    description: the S3 endpoint URL, e.g., 's3.amazonaws.com'
+    type: string
+    required: false
+    default: 's3.amazonaws.com'
+  key:
+    type: string
+    required: true
+  path:
+    type: string
+    required: true
+  accessKey:
+    type: string
+    required: true
+  secretKey:
+    type: string
+    required: true
+  sessionToken:
+    type: string
+    required: false
+  bucket:
+    type: string
+    required: true
+  region:
+    type: string
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Create tempfile
+      shell: bash
+      id: create_tempfile
+      run: |
+        export FILE_LIST=$(mktemp /tmp/file-list.XXXXXX)
+        echo "Temporary file created at $FILE_LIST"
+        echo "file-list=$FILE_LIST" >> $GITHUB_OUTPUT
+        
+    - name: Compile file list
+      shell: bash
+      run: |
+        touch /tmp/cache-path.txt
+
+        echo "${{ inputs.path }}" | while IFS= read -r filePath; do
+          if [ -d "$filePath" ] || [ -f "$filePath" ]; then
+              find $filePath -type f >> ${{ steps.create_tempfile.outputs.file-list }}
+          else
+            echo "Warning: Path $filePath not found, skipping."
+          fi
+        done
+
+    - name: Compressing files (Linux)
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        /usr/bin/tar --posix -cf /tmp/cache.tzst --exclude cache.tzst -P -C ${{ github.workspace }} --files-from ${{ steps.create_tempfile.outputs.file-list }} --use-compress-program zstdmt
+
+    - name: Compressing files (macOS)
+      shell: bash
+      if: runner.os == 'macOS'
+      run: |
+        gtar --posix --delay-directory-restore --use-compress-program zstdmt -P -C ${{ github.workspace }} -cf /tmp/cache.tzst -T ${{ steps.create_tempfile.outputs.file-list }}
+
+    - name: Uploading to S3
+      shell: bash
+      run: |
+        echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
+        aws configure set default.s3.max_concurrent_requests 240
+        aws configure set default.s3.multipart_chunksize 2MB
+        aws s3 cp /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst --endpoint-url https://${{ inputs.endpoint }} --region ${{ inputs.region }}  --no-progress
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
+        AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+
+    - name: Cleanup
+      shell: bash
+      run: |
+          echo "Cleaning up temporary files"
+          rm -f /tmp/cache.tzst
+          rm -f ${{ steps.create_tempfile.outputs.file-list }}

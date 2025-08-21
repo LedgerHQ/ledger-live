@@ -17,6 +17,7 @@ import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
 import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
+import suitokens, { SuiToken } from "./data/sui";
 import { ERC20Token } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -60,6 +61,11 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+
+if (getEnv("SUI_ENABLE_TOKENS")) {
+  // Sui tokens
+  addTokens(suitokens.map(convertSuiTokens));
+}
 
 if (getEnv("APTOS_ENABLE_TOKENS")) {
   // Aptos Legacy Coin tokens
@@ -304,7 +310,7 @@ export function convertERC20([
   };
 }
 
-function convertAlgorandASATokens([
+export function convertAlgorandASATokens([
   id,
   abbr,
   name,
@@ -332,7 +338,7 @@ function convertAlgorandASATokens([
   };
 }
 
-function convertVechainToken([
+export function convertVechainToken([
   tokenIdenfitier,
   ticker,
   name,
@@ -358,7 +364,7 @@ function convertVechainToken([
   };
 }
 
-function convertTRONTokens(type: "trc10" | "trc20") {
+export function convertTRONTokens(type: "trc10" | "trc20") {
   return ([id, abbr, name, contractAddress, precision, delisted, ledgerSignature]:
     | TRC10Token
     | TRC20Token): TokenCurrency => {
@@ -386,7 +392,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
   };
 }
 
-function convertMultiversXESDTTokens([
+export function convertMultiversXESDTTokens([
   ticker,
   identifier,
   decimals,
@@ -467,15 +473,35 @@ function convertAptosTokens(
   };
 }
 
-function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
+export function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
   return convertAptosTokens("coin", token);
 }
 
-function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
+export function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
   return convertAptosTokens("fungible_asset", token);
 }
 
-function convertCardanoNativeTokens([
+export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById("sui"),
+    name,
+    tokenType: "sui",
+    ticker,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+export function convertCardanoNativeTokens([
   parentCurrencyId,
   policyId,
   assetName,
@@ -514,7 +540,7 @@ function convertCardanoNativeTokens([
   };
 }
 
-function convertStellarTokens([
+export function convertStellarTokens([
   assetCode,
   assetIssuer,
   assetType,

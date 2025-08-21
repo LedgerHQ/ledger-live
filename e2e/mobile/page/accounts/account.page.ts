@@ -17,6 +17,8 @@ export default class AccountPage {
   accountSettingsButtonId = "account-settings-button";
   receiveButtonId = "account-quick-action-button-receive";
   sendButtonId = "account-quick-action-button-send";
+  swapButtonId = "account-quick-action-button-swap";
+  buyButtonId = "account-quick-action-button-buy";
 
   accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
@@ -29,7 +31,7 @@ export default class AccountPage {
   getSpecificOperation = (operationType: string) =>
     getElementByIdAndText(this.operationRowRegexp, operationType, 0);
   subAccountId = (account: Account) =>
-    `js:2:${account.currency.id}:${account.parentAccount!.address}:${account.currency.id}Sub+${account.address}`;
+    `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   @Step("Open accounts list via deeplink")
@@ -106,7 +108,7 @@ export default class AccountPage {
   @Step("Scroll to a Specific SubAccount Row")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(subAccountId, this.accountScreenScrollView, 500, "bottom");
+    await scrollToId(subAccountId, this.accountScreenScrollView, 100, "down");
   }
 
   @Step("Expect account balance to be visible")
@@ -142,13 +144,23 @@ export default class AccountPage {
     await tapById(this.earnButtonId);
   }
 
+  @Step("Tap on swap button")
+  async tapSwap() {
+    await scrollToId(this.swapButtonId, this.accountScreenScrollView);
+    await tapById(this.swapButtonId);
+  }
+
+  @Step("Tap on buy button")
+  async tapBuy() {
+    await scrollToId(this.buyButtonId, this.accountScreenScrollView);
+    await tapById(this.buyButtonId);
+  }
+
   @Step("Navigate to token in account")
   async navigateToTokenInAccount(subAccount: Account) {
     const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
     await this.scrollToSubAccount(subAccountId);
-    await waitForElementById(subAccountId);
     await tapById(subAccountId);
-    await waitForElementById(this.accountGraphId(this.subAccountId(subAccount)));
   }
 
   @Step("Scroll to history and click on last operation")

@@ -46,8 +46,10 @@ export function useHook(): HookResult {
   const handleContractAddressChange = (value: string) => setContractAddress(value);
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
   const handleTokenIdChange = (value: string) => setTokenId(value);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const handleReportChange = (option: SelectOption) => setReport(option.value as EventType);
   const handleReportTypeChange = (option: SelectOption) =>
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     setReportType(option.value as ReportOption);
 
   const onClick = () => {

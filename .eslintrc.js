@@ -25,6 +25,12 @@ module.exports = {
         ],
       },
     ],
+    "@typescript-eslint/consistent-type-assertions": [
+      "warn",
+      {
+        assertionStyle: "never",
+      },
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -32,6 +38,7 @@ module.exports = {
         argsIgnorePattern: "^_",
         destructuredArrayIgnorePattern: "^_",
         vars: "all",
+        varsIgnorePattern: "^_",
         args: "after-used",
         ignoreRestSiblings: true,
       },

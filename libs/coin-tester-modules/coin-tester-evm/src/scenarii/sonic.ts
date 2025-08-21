@@ -15,6 +15,9 @@ import { VITALIK, callMyDealer, sonic } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -65,10 +68,17 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
 
 export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
-  setup: async () => {
+  setup: async strategy => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/sonic_mainnet"),
+      spawnSpeculos(`/${defaultNanoApp.firmware}/Sonic/app_${defaultNanoApp.version}.elf`, {
+        libraries: [
+          {
+            name: "Ethereum",
+            endpoint: "/2.4.2/Ethereum/app_1.17.0.elf",
+          },
+        ],
+      }),
+      spawnAnvil("https://sonic-rpc.publicnode.com"),
     ]);
 
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
@@ -90,12 +100,37 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
         showNfts: true,
       },
     }));
+    LiveConfig.setConfig({
+      config_currency_sonic: {
+        type: "object",
+        default: {
+          status: {
+            type: "active",
+          },
+          node: {
+            type: "external",
+            uri: "http://127.0.0.1:8545",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
+          },
+          showNfts: true,
+        },
+      },
+    });
 
     initMswHandlers(getCoinConfig(sonic).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge = buildCurrencyBridge(signerContext);
-    const accountBridge = buildAccountBridge(signerContext);
+    const currencyBridge =
+      strategy === "legacy"
+        ? buildCurrencyBridge(signerContext)
+        : getAlpacaCurrencyBridge("sonic", "local");
+    const accountBridge =
+      strategy === "legacy"
+        ? buildAccountBridge(signerContext)
+        : getAlpacaAccountBridge("sonic", "local");
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",

@@ -1,19 +1,18 @@
-import type { Feature_StakePrograms, PlatformManifestId } from "@ledgerhq/types-live";
+import type { Feature_StakePrograms } from "@ledgerhq/types-live";
 
-export const stakeProgramsToEarnParam = (
-  stakePrograms: Feature_StakePrograms | null,
-): Record<PlatformManifestId, string> | undefined => {
+export const stakeProgramsToEarnParam = (stakePrograms: Feature_StakePrograms | null) => {
+  const list = stakePrograms?.params?.list ?? [];
   const redirects = stakePrograms?.params?.redirects ?? {};
   const result: Record<string, string> = {};
   const keys = Object.keys(redirects);
   if (keys.length === 0) {
-    return undefined;
+    return { stakeProgramsParam: undefined, stakeCurrenciesParam: [] };
   }
   keys.forEach(key => {
     result[key] = redirects[key].platform;
   });
 
-  return result;
+  return { stakeProgramsParam: result, stakeCurrenciesParam: list };
 };
 
 type StablecoinYield = "dapp" | "api" | "inactive";

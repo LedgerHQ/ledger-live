@@ -6,13 +6,15 @@ import {
   logged,
   queued,
 } from "@ledgerhq/coin-solana/network/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { Message } from "@solana/web3.js";
+import { Message, MessageV0 } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
 import { getMockedMethods } from "./mock-data";
+import { scanAccounts, sync } from "../../../bridge/mockHelpers";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
@@ -57,14 +59,67 @@ function removeUndefineds(input: unknown): unknown {
 function preprocessArgs(method: keyof ChainAPI, args: any) {
   if (method === "getFeeForMessage") {
     // getFeeForMessage needs some args preprocessing
-    if (args.length === 1 && args[0] instanceof Message) {
-      return [args[0].serialize().toString("base64")];
+    if (args.length === 1 && (args[0] instanceof Message || args[0] instanceof MessageV0)) {
+      return [Buffer.from(args[0].serialize()).toString("base64")];
     } else {
       throw new Error("unexpected getFeeForMessage function signature");
     }
   }
+  if (method === "getSimulationComputeUnits") {
+    // getSimulationComputeUnits needs args preprocessing
+    // args[0] is instructions array, args[1] is payer PublicKey
+    if (args.length === 2) {
+      const instructions = args[0] as unknown[];
+      const payer = args[1];
+
+      // Serialize the payer PublicKey to string
+      const serializedPayer = (payer as { toString?: () => string })?.toString?.() ?? payer;
+
+      // Serialize PublicKey objects in instruction keys to strings
+      const serializedInstructions =
+        instructions?.map?.(instruction => {
+          const inst = instruction as Record<string, unknown>;
+          return {
+            ...inst,
+            keys:
+              (inst.keys as unknown[])?.map?.(key => {
+                const k = key as Record<string, unknown>;
+                return {
+                  ...k,
+                  pubkey: (k.pubkey as { toString?: () => string })?.toString?.() ?? k.pubkey,
+                };
+              }) || inst.keys,
+            programId:
+              (inst.programId as { toString?: () => string })?.toString?.() ?? inst.programId,
+          };
+        }) || instructions;
+
+      return [serializedInstructions, serializedPayer];
+    }
+  }
   return removeUndefineds(args);
 }
+
+const APP_VERSION = "1.7.1";
+const signature = "fakeSignatureTlaowosfpqwkpofqkpqwpoesHQv6xHyYwDsrPJvqcSKRJGBLrbE";
+const signer = {
+  getAppConfiguration: () =>
+    Promise.resolve({
+      version: APP_VERSION,
+      blindSigningEnabled: false,
+      pubKeyDisplayMode: PubKeyDisplayMode.LONG,
+    }),
+  getAddress: (_path: string, _display?: boolean) =>
+    Promise.resolve({ address: Buffer.from("fakeAddress") }),
+  signTransaction: (_path: string, _txBuffer: Buffer) =>
+    Promise.resolve({ signature: Buffer.from(signature) }),
+  signMessage: (_path: string, _messageHex: string) =>
+    Promise.resolve({ signature: Buffer.from(signature) }),
+};
+const signerContext = <T>(
+  _deviceId: string,
+  fn: (signer: SolanaSigner) => Promise<T>,
+): Promise<T> => fn(signer);
 
 // Bridge with this api will log all api calls to a file.
 // The calls data can be copied to mock-data.ts from the file.
@@ -81,29 +136,11 @@ function createMockDataForAPI() {
     getAPI: apiGetter,
     getQueuedAPI: apiGetter,
     getQueuedAndCachedAPI: apiGetter,
+    signerContext,
   };
 }
 
-const APP_VERSION = "1.7.1";
 function getMockedAPIs() {
-  const signer = {
-    getAppConfiguration: () =>
-      Promise.resolve({
-        version: APP_VERSION,
-        blindSigningEnabled: false,
-        pubKeyDisplayMode: PubKeyDisplayMode.LONG,
-      }),
-    getAddress: (_path: string, _display?: boolean) =>
-      Promise.resolve({ address: Buffer.from("") }),
-    signTransaction: (_path: string, _txBuffer: Buffer) =>
-      Promise.resolve({ signature: Buffer.from("") }),
-    signMessage: (_path: string, _messageHex: string) =>
-      Promise.resolve({ signature: Buffer.from("") }),
-  };
-  const signerContext = <T>(
-    deviceId: string,
-    fn: (signer: SolanaSigner) => Promise<T>,
-  ): Promise<T> => fn(signer);
   const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
   return {
     getAPI: (_: Config) => Promise.resolve(mockedAPI),
@@ -113,5 +150,20 @@ function getMockedAPIs() {
   };
 }
 
-//export default makeBridges(createMockDataForAPI());
-export default makeBridges(getMockedAPIs());
+// const bridges = makeBridges(createMockDataForAPI());
+const bridges = makeBridges(getMockedAPIs());
+
+export default getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX")
+  ? {
+      accountBridge: {
+        ...bridges.accountBridge,
+        sync,
+      },
+      currencyBridge: {
+        ...bridges.currencyBridge,
+        preload: () => Promise.resolve({}),
+        hydrate: () => {},
+        scanAccounts,
+      },
+    }
+  : bridges;

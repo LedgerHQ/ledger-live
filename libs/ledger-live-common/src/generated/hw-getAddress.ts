@@ -3,6 +3,7 @@ import { resolver as aptos } from "../families/aptos/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as casper } from "../families/casper/setup";
+import { resolver as canton } from "../families/canton/setup";
 import { resolver as celo } from "../families/celo/setup";
 import { resolver as cosmos } from "../families/cosmos/setup";
 import { resolver as evm } from "../families/evm/setup";
@@ -31,6 +32,7 @@ export default {
   bitcoin,
   cardano,
   casper,
+  canton,
   celo,
   cosmos,
   evm,

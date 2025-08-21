@@ -22,7 +22,7 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountComponent(accountName).click();
+    await this.accountComponent(accountName).first().click();
   }
 
   @step("Click sync account button for: $0")
@@ -78,6 +78,11 @@ export class AccountsPage extends AppPage {
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
     expect(await this.countAccounts()).toBe(count);
+  }
+
+  @step("Expect number of accounts to be not null")
+  async expectAccountsCountToBeNotNull() {
+    expect(await this.countAccounts()).not.toBeNull();
   }
 
   async getAccountsName() {

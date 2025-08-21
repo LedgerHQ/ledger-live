@@ -41,7 +41,7 @@ jest.mock("./genuineCheck");
 const mockedGetDeviceInfo = jest.mocked(getDeviceInfo);
 const mockedGenuineCheck = jest.mocked(genuineCheck);
 
-const aDeviceInfo = {
+const aDeviceInfo: DeviceInfo = {
   mcuVersion: "A_MCU_VERSION",
   version: "A_VERSION",
   majMin: "A_MAJ_MIN",
@@ -51,6 +51,7 @@ const aDeviceInfo = {
   providerName: undefined,
   managerAllowed: false,
   pinValidated: true,
+  seFlags: Buffer.alloc(0),
 };
 
 describe("getGenuineCheckFromDeviceId", () => {

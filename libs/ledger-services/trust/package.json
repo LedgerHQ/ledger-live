@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-trust-service",
-  "version": "0.3.4",
+  "version": "0.3.10",
   "description": "Ledger Trust service client",
   "keywords": [
     "Ledger",
