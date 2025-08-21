@@ -19,3 +19,5 @@ export const MINA_DECODED_ADDRESS_LENGTH = 72;
 export const MAX_TRANSACTIONS_PER_PAGE = 100;
 export const MINA_ROSETTA_TIMEOUT = 30000;
 export const MINA_API_RETRY_COUNT = 3;
+
+export const MINA_CANCEL_RETURN_CODE = "27013";

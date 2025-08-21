@@ -39,8 +39,12 @@ const StepValidator = ({ account, transaction, onUpdateTransaction, error }: Ste
   );
 };
 
-export function StepValidatorFooter({ transitionTo, onClose, transaction }: StepProps) {
-  const canContinue = transaction?.recipient;
+export function StepValidatorFooter({ transitionTo, onClose, transaction, account }: StepProps) {
+  if (!account) return null;
+
+  const canContinue =
+    transaction?.recipient &&
+    transaction.recipient !== account.minaResources?.delegateInfo?.address;
 
   return (
     <Box horizontal>
