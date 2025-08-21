@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
 import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
-import type { OperationType } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
@@ -14,13 +13,11 @@ import { urls } from "~/utils/urls";
 
 interface OperationDetailsPostAccountSectionProps {
   operation: HederaOperation;
-  type: OperationType;
-  account: HederaAccount;
 }
 
 function OperationDetailsPostAccountSection({
   operation,
-}: OperationDetailsPostAccountSectionProps) {
+}: Readonly<OperationDetailsPostAccountSectionProps>) {
   const { t } = useTranslation();
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
@@ -46,10 +43,9 @@ function OperationDetailsPostAccountSection({
 interface OperationDetailsExtraProps {
   operation: HederaOperation;
   account: HederaAccount;
-  type: OperationType;
 }
 
-function OperationDetailsPostAlert({ account, operation }: OperationDetailsExtraProps) {
+function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDetailsExtraProps>) {
   const navigation = useNavigation();
 
   if (operation.type !== "ASSOCIATE_TOKEN") {

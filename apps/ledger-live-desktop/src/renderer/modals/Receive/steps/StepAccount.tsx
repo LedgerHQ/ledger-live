@@ -83,7 +83,7 @@ const TokenSelection = ({
     </>
   );
 };
-export default function StepAccount(props: StepProps) {
+export default function StepAccount(props: Readonly<StepProps>) {
   const {
     token,
     account,

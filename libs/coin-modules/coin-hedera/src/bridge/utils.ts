@@ -260,7 +260,35 @@ export const getSubAccounts = async (
   return subAccounts;
 };
 
-type CoinOperationForOrphanChild = Operation & Required<Pick<Operation, "subOperations">>;
+type CoinOperationForOrphanChildOperation = Operation & Required<Pick<Operation, "subOperations">>;
+
+// create NONE coin operation that will be a parent of an orphan child operation
+const makeCoinOperationForOrphanChildOperation = (
+  childOperation: Operation,
+): CoinOperationForOrphanChildOperation => {
+  const type = "NONE";
+  const { accountId } = decodeTokenAccountId(childOperation.accountId);
+  const id = encodeOperationId(accountId, childOperation.hash, type);
+
+  return {
+    id,
+    hash: childOperation.hash,
+    type,
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: [],
+    recipients: [],
+    blockHeight: childOperation.blockHeight,
+    blockHash: childOperation.blockHash,
+    transactionSequenceNumber: childOperation.transactionSequenceNumber,
+    subOperations: [],
+    nftOperations: [],
+    internalOperations: [],
+    accountId: "",
+    date: childOperation.date,
+    extra: {},
+  };
+};
 
 // this util handles:
 // - linking sub operations with coin operations, e.g. token transfer with fee payment
@@ -273,36 +301,10 @@ export const prepareOperations = (
   const preparedCoinOperations = coinOperations.map(op => ({ ...op }));
   const preparedTokenOperations = tokenOperations.map(op => ({ ...op }));
 
-  // helper to create a coin operation with type NONE as a parent of an orphan child operation
-  const makeCoinOpForOrphanChildOp = (childOp: Operation): CoinOperationForOrphanChild => {
-    const type = "NONE";
-    const { accountId } = decodeTokenAccountId(childOp.accountId);
-    const id = encodeOperationId(accountId, childOp.hash, type);
-
-    return {
-      id,
-      hash: childOp.hash,
-      type,
-      value: new BigNumber(0),
-      fee: new BigNumber(0),
-      senders: [],
-      recipients: [],
-      blockHeight: childOp.blockHeight,
-      blockHash: childOp.blockHash,
-      transactionSequenceNumber: childOp.transactionSequenceNumber,
-      subOperations: [],
-      nftOperations: [],
-      internalOperations: [],
-      accountId: "",
-      date: childOp.date,
-      extra: {},
-    };
-  };
-
   // loop through coin operations to:
   // - enrich ASSOCIATE_TOKEN operations with extra.associatedTokenId
   // - prepare a map of hash => operations
-  const coinOperationsByHash: Record<string, CoinOperationForOrphanChild[]> = {};
+  const coinOperationsByHash: Record<string, CoinOperationForOrphanChildOperation[]> = {};
   preparedCoinOperations.forEach(op => {
     const extra = isValidExtra(op.extra) ? op.extra : null;
 
@@ -324,7 +326,7 @@ export const prepareOperations = (
     }
 
     op.subOperations = [];
-    coinOperationsByHash[op.hash].push(op as CoinOperationForOrphanChild);
+    coinOperationsByHash[op.hash].push(op as CoinOperationForOrphanChildOperation);
   });
 
   // loop through token operations to potentially copy them as a child operation of a coin operation
@@ -335,7 +337,7 @@ export const prepareOperations = (
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
 
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);
+      const noneOperation = makeCoinOperationForOrphanChildOperation(tokenOperation);
       mainOperations = [noneOperation];
       preparedCoinOperations.push(noneOperation);
     }

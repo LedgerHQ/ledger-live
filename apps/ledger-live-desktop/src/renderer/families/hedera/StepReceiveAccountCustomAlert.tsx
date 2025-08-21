@@ -16,7 +16,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import type { StepProps as ReceiveStepProps } from "~/renderer/modals/Receive/Body";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import type { StepProps as ReceiveWithAssociationStepProps } from "./ReceiveWithAssociationModal/Body";
+import type { StepProps as ReceiveWithAssociationStepProps } from "./ReceiveWithAssociationModal/types";
 
 type Props = (ReceiveStepProps | ReceiveWithAssociationStepProps) & {
   account: AccountLike;
@@ -58,7 +58,7 @@ const AssociationPrerequisiteAlert = ({ account, closeModal }: Props) => {
   );
 };
 
-const AssociationInsufficientFundsError = (props: Props) => {
+const AssociationInsufficientFundsError = (props: Readonly<Props>) => {
   const isReceiveWithAssociationModal = "transaction" in props;
 
   if (!isReceiveWithAssociationModal) {

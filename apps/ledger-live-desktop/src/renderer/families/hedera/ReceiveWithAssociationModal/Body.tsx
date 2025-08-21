@@ -7,7 +7,7 @@ import invariant from "invariant";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/logic";
 import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -24,7 +24,6 @@ import StepConnectDevice, {
 } from "~/renderer/modals/Receive/steps/StepConnectDevice";
 import StepWarning, { StepWarningFooter } from "~/renderer/modals/Receive/steps/StepWarning";
 import StepReceiveFunds from "~/renderer/modals/Receive/steps/StepReceiveFunds";
-import type { StepId as DefaultStepId } from "~/renderer/modals/Receive/Body";
 import StepReceiveStakingFlow, {
   StepReceiveStakingFooter,
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
@@ -33,8 +32,6 @@ import { addPendingOperation } from "@ledgerhq/coin-framework/account/pending";
 import logger from "~/renderer/logger";
 import StepAccount from "~/renderer/modals/Receive/steps/StepAccount";
 import type {
-  Data as DefaultData,
-  StepProps as DefaultStepProps,
   OwnProps as DefaultOwnProps,
   StateProps as DefaultStateProps,
 } from "~/renderer/modals/Receive/Body";
@@ -43,12 +40,7 @@ import StepAssociationConfirmation, {
 } from "./steps/StepAssociationConfirmation";
 import { StepAccountFooter } from "./steps/StepAccountFooter";
 import StepAssociationDevice from "./steps/StepAssociationDevice";
-
-type CustomStepId = "associationDevice" | "associationConfirmation";
-
-export type StepId = DefaultStepId | CustomStepId;
-
-export type Data = DefaultData;
+import type { StepId, StepProps } from "./types";
 
 type OwnProps = Omit<DefaultOwnProps, "stepId" | "onChangeStepId"> & {
   stepId: StepId;
@@ -58,21 +50,6 @@ type OwnProps = Omit<DefaultOwnProps, "stepId" | "onChangeStepId"> & {
 type StateProps = DefaultStateProps;
 
 type Props = OwnProps & StateProps;
-
-export type StepProps = DefaultStepProps & {
-  isAssociationFlow: boolean;
-  transaction: Transaction | undefined | null;
-  optimisticOperation: Operation | undefined;
-  error: Error | undefined;
-  status: TransactionStatus;
-  signed: boolean;
-  bridgePending: boolean;
-  setSigned: (a: boolean) => void;
-  onChangeTransaction: (a: Transaction) => void;
-  onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
-  onTransactionError: (a: Error) => void;
-  onOperationBroadcasted: (a: Operation) => void;
-};
 
 type St = Step<StepId, StepProps>;
 
@@ -152,8 +129,8 @@ const Body = ({
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
-  const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
-  const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
+  const [account, setAccount] = useState(() => params?.account || accounts[0]);
+  const [parentAccount, setParentAccount] = useState(() => params?.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState<number[]>([]);
   const [token, setToken] = useState<TokenCurrency | null>(null);
   const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
@@ -282,14 +259,22 @@ const Body = ({
   );
 
   useEffect(() => {
-    const stepId =
-      params && params.startWithWarning ? "warning" : params.receiveTokenMode ? "account" : null;
+    let stepId: StepId | null;
+
+    if (params.startWithWarning) {
+      stepId = "warning";
+    } else if (params.receiveTokenMode) {
+      stepId = "account";
+    } else {
+      stepId = null;
+    }
+
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
 
   useEffect(() => {
     if (!account) {
-      if (params && params.account) {
+      if (params?.account) {
         handleChangeAccount(params.account, params?.parentAccount);
       } else {
         handleChangeAccount(accounts[0]);
