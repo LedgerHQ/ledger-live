@@ -10,7 +10,6 @@ import {
   Reward,
   Stake,
 } from "@ledgerhq/coin-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
