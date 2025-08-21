@@ -145,7 +145,20 @@ export const test = base.extend<TestFixtures>({
           PLAYWRIGHT_RUN: true,
           CRASH_ON_INTERNAL_CRASH: true,
           LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          FEATURE_FLAGS: JSON.stringify({
+            ...featureFlags,
+            lldModularDrawer: {
+              enabled: false,
+              params: {
+                add_account: true,
+                earn_flow: true,
+                live_app: true,
+                receive_flow: true,
+                send_flow: true,
+                enableModularization: false,
+              },
+            },
+          }),
           MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
           SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
         },
