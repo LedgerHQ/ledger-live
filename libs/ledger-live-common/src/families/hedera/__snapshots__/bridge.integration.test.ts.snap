@@ -600,6 +600,26 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 5,
       "extra": {
+        "consensusTimestamp": "1755785525.693277000",
+        "transactionId": "0.0.8313485-1755785490-483918521",
+      },
+      "fee": "424851",
+      "hash": "kPQrVav4moSwtzRn6jm5LOs_PCxv03Ka8WOZ_sLPuIqpnHxJDX9OC4_Lo1v0ktTI",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-kPQrVav4moSwtzRn6jm5LOs_PCxv03Ka8WOZ_sLPuIqpnHxJDX9OC4_Lo1v0ktTI-NONE",
+      "recipients": [
+        "0.0.3",
+      ],
+      "senders": [
+        "0.0.8313485",
+      ],
+      "type": "NONE",
+      "value": "0",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
         "consensusTimestamp": "1753690711.015332718",
         "transactionId": "0.0.8313635-1753690706-348075771",
       },
@@ -1979,6 +1999,26 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "IN",
       "value": "10000",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "extra": {
+        "consensusTimestamp": "1755008519.962485000",
+        "transactionId": "0.0.507737-1755008487-226122597",
+      },
+      "fee": "397764",
+      "hash": "Q-L4mmsKI8ssDoI1KlOsGFYuVMpVxJW5uZDOdU9Q9ClU5uxewOAoeFUevLcrcL0B",
+      "id": "js:2:hedera:0.0.8313485:hederaBip44-Q-L4mmsKI8ssDoI1KlOsGFYuVMpVxJW5uZDOdU9Q9ClU5uxewOAoeFUevLcrcL0B-NONE",
+      "recipients": [
+        "0.0.31",
+      ],
+      "senders": [
+        "0.0.507737",
+      ],
+      "type": "NONE",
+      "value": "0",
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
