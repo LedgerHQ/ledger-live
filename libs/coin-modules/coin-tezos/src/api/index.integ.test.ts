@@ -78,6 +78,17 @@ describe("Tezos Api", () => {
       const checkSet = new Set(tx.map(elt => `${elt.tx.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
     });
+
+    it("returns operations in reverse order", async () => {
+      // When
+      const [txDesc] = await module.listOperations(address, { minHeight: 0, order: "desc" });
+      const [txAsc] = await module.listOperations(address, { minHeight: 0, order: "desc" });
+
+      // Then
+      // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
+      expect(txDesc[0]).toEqual(txAsc[txAsc.length - 1]);
+      expect(txDesc[txDesc.length - 1]).toEqual(txAsc[0]);
+    });
   });
 
   describe("lastBlock", () => {

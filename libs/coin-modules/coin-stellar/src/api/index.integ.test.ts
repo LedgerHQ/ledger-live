@@ -61,6 +61,11 @@ describe.skip("Stellar Api", () => {
       const checkSet = new Set(txs.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(txs.length);
     });
+
+    it("returns all operations in reverse order", async () => {
+      const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
+      expect(txsDesc[0]).toBe(txs[txs.length - 1]);
+    });
   });
 
   describe("lastBlock", () => {
