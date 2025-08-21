@@ -24,7 +24,12 @@ export class ModularAccountDrawer extends Drawer {
   async selectAccountByName(account: AccountType) {
     const isAccountDrawerVisible = await this.isModularAccountDrawerVisible();
     if (isAccountDrawerVisible) {
-      await this.accountRowByName(getParentAccountName(account)).first().click();
+      const accountRow = this.accountRowByName(getParentAccountName(account));
+      if (await accountRow.isVisible()) {
+        await accountRow.first().click();
+      } else {
+        await this.addNewExistingAccountButton.click();
+      }
     }
   }
 
