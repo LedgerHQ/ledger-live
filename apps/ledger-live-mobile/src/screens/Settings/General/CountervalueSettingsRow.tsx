@@ -24,8 +24,14 @@ export default function CountervalueSettingsRow() {
       desc={t("settings.display.counterValueDesc")}
       arrowRight
       onPress={() => navigate(ScreenName.CountervalueSettings)}
+      testID="countervalue-settings-row"
     >
-      <Text variant={"body"} fontWeight={"medium"} color="primary.c80">
+      <Text
+        variant={"body"}
+        fontWeight={"medium"}
+        color="primary.c80"
+        testID="countervalue-ticker-settings-row"
+      >
         {counterValueCurrency.ticker}
       </Text>
     </SettingsRow>

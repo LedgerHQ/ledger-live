@@ -1,5 +1,29 @@
 # @ledgerhq/icons-ui
 
+## 1.17.0
+
+### Minor Changes
+
+- [#11225](https://github.com/LedgerHQ/ledger-live/pull/11225) [`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - add canton icon
+
+## 1.17.0-next.0
+
+### Minor Changes
+
+- [#11225](https://github.com/LedgerHQ/ledger-live/pull/11225) [`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - add canton icon
+
+## 1.16.0
+
+### Minor Changes
+
+- [#10774](https://github.com/LedgerHQ/ledger-live/pull/10774) [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix: remove icon for SKY
+
+## 1.16.0-next.0
+
+### Minor Changes
+
+- [#10774](https://github.com/LedgerHQ/ledger-live/pull/10774) [`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix: remove icon for SKY
+
 ## 1.15.0
 
 ### Minor Changes

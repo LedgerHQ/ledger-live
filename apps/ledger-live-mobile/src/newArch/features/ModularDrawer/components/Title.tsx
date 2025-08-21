@@ -26,10 +26,8 @@ export const Title = ({ step }: Props) => {
 
 const TitleContainer = styled(Box)`
   margin-top: 0px;
-  margin-bottom: 16px;
-  margin-left: 8px;
+  margin-bottom: 12px;
   margin-right: 0px;
-  flex: 0 1 auto;
   width: 100%;
   flex-direction: row;
   align-items: center;

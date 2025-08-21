@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-
 import {
   type AccountData,
   Aptos,
@@ -9,6 +8,7 @@ import {
   type InputEntryFunctionData,
   type InputGenerateTransactionOptions,
   MimeType,
+  MoveStructId,
   type RawTransaction,
   type SimpleTransaction,
   type TransactionResponse,
@@ -18,6 +18,7 @@ import {
   Hex,
   postAptosFullNode,
   type PendingTransactionResponse,
+  Network,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -30,7 +31,12 @@ import {
   ESTIMATE_GAS_MUL,
   TOKEN_TYPE,
 } from "../constants";
-import type { AptosBalance, AptosTransaction, TransactionOptions } from "../types";
+import type {
+  AptosBalance,
+  AptosTransaction,
+  StakePoolResource,
+  TransactionOptions,
+} from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import type {
   GetAccountTransactionsDataQuery,
@@ -43,7 +49,6 @@ import {
   Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import { log } from "@ledgerhq/logs";
 import { transactionsToOperations } from "../logic/transactionsToOperations";
 import { isTestnet } from "../logic/isTestnet";
@@ -55,17 +60,28 @@ const getIndexerEndpoint = (currencyId: string) =>
   isTestnet(currencyId)
     ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
     : getEnv("APTOS_INDEXER_ENDPOINT");
+const getNetwork = (currencyId: string) =>
+  isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
 
 export class AptosAPI {
   private readonly aptosConfig: AptosConfig;
   private readonly aptosClient: Aptos;
-  private readonly apolloClient: ApolloClient<object>;
+
+  readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
+    const appVersion = getEnv("LEDGER_CLIENT_VERSION");
+
     if (typeof currencyIdOrSettings === "string") {
       this.aptosConfig = new AptosConfig({
+        network: getNetwork(currencyIdOrSettings),
         fullnode: getApiEndpoint(currencyIdOrSettings),
         indexer: getIndexerEndpoint(currencyIdOrSettings),
+        clientConfig: {
+          HEADERS: {
+            "X-Ledger-Client-Version": appVersion,
+          },
+        },
       });
     } else {
       this.aptosConfig = new AptosConfig(currencyIdOrSettings);
@@ -76,7 +92,7 @@ export class AptosAPI {
       uri: this.aptosConfig.indexer ?? "",
       cache: new InMemoryCache(),
       headers: {
-        "x-client": "ledger-live",
+        "X-Ledger-Client-Version": appVersion,
       },
     });
   }
@@ -175,7 +191,7 @@ export class AptosAPI {
     };
   }
 
-  async estimateFees(transactionIntent: TransactionIntent<AptosAsset>): Promise<FeeEstimation> {
+  async estimateFees(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
     const publicKeyEd = new Ed25519PublicKey(transactionIntent?.senderPublicKey ?? "");
 
     const txPayload: InputEntryFunctionData = {
@@ -184,20 +200,21 @@ export class AptosAPI {
       functionArguments: [transactionIntent.recipient, transactionIntent.amount],
     };
 
-    if (transactionIntent.asset.type === "token") {
-      const { standard } = transactionIntent.asset;
+    // TODO: this should be looked over again, might be more precise in terms of types..
+    if (transactionIntent.asset.type !== "native") {
+      const { type } = transactionIntent.asset;
 
-      if (standard === TOKEN_TYPE.FUNGIBLE_ASSET) {
+      if (type === TOKEN_TYPE.FUNGIBLE_ASSET) {
         txPayload.function = "0x1::primary_fungible_store::transfer";
         txPayload.typeArguments = ["0x1::fungible_asset::Metadata"];
         txPayload.functionArguments = [
-          transactionIntent.asset.contractAddress,
+          transactionIntent.asset.assetReference,
           transactionIntent.recipient,
           transactionIntent.amount,
         ];
-      } else if (standard === TOKEN_TYPE.COIN) {
+      } else if (type === TOKEN_TYPE.COIN) {
         txPayload.function = "0x1::aptos_account::transfer_coins";
-        txPayload.typeArguments = [transactionIntent.asset.contractAddress];
+        txPayload.typeArguments = [transactionIntent.asset.assetReference as string];
       }
     }
 
@@ -211,7 +228,9 @@ export class AptosAPI {
     const simulation = await this.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
 
-    const gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+    const gasLimit = new BigNumber(completedTx.gas_used)
+      .multipliedBy(ESTIMATE_GAS_MUL)
+      .integerValue();
     const gasPrice = new BigNumber(completedTx.gas_unit_price);
 
     const expectedGas = gasPrice.multipliedBy(gasLimit);
@@ -226,10 +245,39 @@ export class AptosAPI {
     };
   }
 
-  async listOperations(
-    rawAddress: string,
-    pagination: Pagination,
-  ): Promise<[Operation<AptosAsset>[], string]> {
+  async getNextUnlockTime(stakingPoolAddress: string): Promise<string | undefined> {
+    const resourceType: MoveStructId = "0x1::stake::StakePool";
+    try {
+      const resource = await this.aptosClient.getAccountResource<StakePoolResource>({
+        accountAddress: stakingPoolAddress,
+        resourceType,
+      });
+      return resource.locked_until_secs;
+    } catch (error) {
+      log("error", "Failed to fetch StakePool resource:", { error });
+    }
+  }
+
+  async getDelegatorBalanceInPool(
+    poolAddress: string,
+    delegatorAddress: string,
+  ): Promise<Array<string>> {
+    try {
+      // Query the delegator balance in the pool
+      return await this.aptosClient.view<[string]>({
+        payload: {
+          function: "0x1::delegation_pool::get_stake",
+          typeArguments: [],
+          functionArguments: [poolAddress, delegatorAddress],
+        },
+      });
+    } catch (error) {
+      log("error", "Failed to fetch delegation_pool::get_stake", { error });
+      return ["0", "0", "0"];
+    }
+  }
+
+  async listOperations(rawAddress: string, pagination: Pagination): Promise<[Operation[], string]> {
     const address = normalizeAddress(rawAddress);
     const transactions = await this.getAccountInfo(address, pagination.minHeight.toString());
     const newOperations = transactionsToOperations(address, transactions.transactions);
@@ -261,9 +309,12 @@ export class AptosAPI {
     });
 
     return Promise.all(
-      queryResponse.data.account_transactions.map(({ transaction_version }) => {
-        return this.richItemByVersion(transaction_version);
-      }),
+      queryResponse.data.account_transactions
+        .slice()
+        .sort((a, b) => b.transaction_version - a.transaction_version)
+        .map(({ transaction_version }) => {
+          return this.richItemByVersion(transaction_version);
+        }),
     );
   }
 

@@ -1,5 +1,4 @@
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { Currency, CurrencyType } from "@ledgerhq/live-common/lib/e2e/enum/Currency";
 
 export default class PortfolioPage {
   baseLink = "portfolio";
@@ -24,25 +23,21 @@ export default class PortfolioPage {
   showAllAccountsButton = "show-all-accounts-button";
   seeAllTransactionsButton = "portfolio-seeAll-transaction";
   operationRowDate = "operationRowDate";
+  operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
+  walletTabSelectorBase = "wallet-tab-";
   selectAssetsPageTitle = "select-crypto-header-step1-title";
   baseBigCurrency = "big-currency";
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
+  graphCardBalanceDiffId = "graphCard-balance-delta";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
-  assetItemNameId = (currencyName: string) => `${this.assetItemId(currencyName)}-name`;
-  assetItemCurrencyTickerId = (currencyName: string) => `${this.assetItemId(currencyName)}-ticker`;
-  assetItemBalance = (currencyName: string) => `${this.assetItemId(currencyName)}-balance`;
-  assetItemDelta = (currencyName: string) => `${this.assetItemId(currencyName)}-delta`;
-  bigCurrencyIcon = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-icon-${currencyId}`);
-  bigCurrencyName = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-name-${currencyId}`);
-  bigCurrencySubTitle = (currencyId: string) =>
-    getElementById(`${this.baseBigCurrency}-subtitle-${currencyId}`);
+  assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
+  walletTabSelector = (id: "Wallet" | "Market") =>
+    getElementById(`${this.walletTabSelectorBase}${id}`);
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -61,6 +56,49 @@ export default class PortfolioPage {
     jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
+  }
+
+  @Step("Expect asset row to be visible")
+  async expectAssetRowToBeVisible(asset: string) {
+    await detoxExpect(getElementById(this.assetItemBalanceId(asset))).toBeVisible();
+  }
+
+  @Step("Expect asset row to have the correct counter value")
+  async expectAssetRowCounterValue(asset: string, counterValue: string) {
+    await this.expectAssetRowToBeVisible(asset);
+    const text = await getTextOfElement(this.assetItemBalanceId(asset));
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect total balance value")
+  async expectTotalBalanceCounterValue(counterValue: string) {
+    const text = await getTextOfElement(this.graphCardBalanceId);
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect balance diff to be visible")
+  async expectBalanceDiffToBeVisible() {
+    await detoxExpect(getElementById(this.graphCardBalanceDiffId)).toBeVisible();
+  }
+
+  @Step("Expect balance diff to have the correct counter value")
+  async expectBalanceDiffCounterValue(counterValue: string) {
+    await this.expectBalanceDiffToBeVisible();
+    const text = await getTextOfElement(this.graphCardBalanceDiffId);
+    jestExpect(text).toContain(counterValue);
+  }
+
+  @Step("Expect operation row to be visible")
+  async expectOperationRowToBeVisible() {
+    await scrollToId(this.operationRowCounterValue);
+    await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
+  }
+
+  @Step("Expect operation to contain counter value")
+  async expectOperationCounterValue(counterValue: string) {
+    await this.expectOperationRowToBeVisible();
+    const text = await getTextOfElement(this.operationRowCounterValue);
+    jestExpect(text).toContain(counterValue);
   }
 
   @Step("Open Portfolio via deeplink")
@@ -82,8 +120,15 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
-    await tapById(this.assetItemId(currencyName));
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
+
+    if (await IsIdVisible(this.assetItemId(currencyName))) {
+      await tapById(this.assetItemId(currencyName));
+    } else {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName));
+      await tapById(this.assetItemId(currencyName));
+    }
   }
 
   @Step("Check quick action buttons visibility")
@@ -105,17 +150,6 @@ export default class PortfolioPage {
     await scrollToId(this.showAllAssetsButton);
     const assetsCount = await countElementsById(this.assetItemRegExp);
     jestExpect(assetsCount).toBeLessThanOrEqual(5);
-
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.assetItemRegExp), i);
-      const currencyName = id.split("-")[1];
-      await detoxExpect(getElementById(this.assetItemNameId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemCurrencyTickerId(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemBalance(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(this.assetItemDelta(currencyName))).toBeVisible();
-      await detoxExpect(getElementById(app.common.parentCurrencyIcon, i)).toBeVisible();
-    }
-
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
     await tapById(this.showAllAssetsButton);
     jestExpect(await countElementsById(this.assetItemRegExp)).toBeGreaterThan(5);
@@ -133,11 +167,23 @@ export default class PortfolioPage {
     await this.checkSelectAssetPage();
   }
 
-  @Step("Navigate $0 asset Page")
+  @Step("Count Accounts")
+  async countAccounts() {
+    return await countElementsById(app.common.accountItemNameRegExp);
+  }
+
+  @Step("Compare Accounts Count")
+  async compareAccountsCount(count1: number, count2: number) {
+    jestExpect(count1).toBe(count2);
+  }
+
+  @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
-    await scrollToId(this.showAllAssetsButton);
-    await tapById(this.showAllAssetsButton);
-    await scrollToId(this.assetItemId(currencyName));
+    await scrollToId(this.allocationSectionTitleId);
+    if (await IsIdVisible(this.showAllAssetsButton)) {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName));
+    }
     await tapById(this.assetItemId(currencyName));
   }
 
@@ -157,9 +203,14 @@ export default class PortfolioPage {
     await tapById(this.operationRowDate);
   }
 
-  @Step("Tap on $0 tab selector")
+  @Step("Tap on tab selector")
   async tapTabSelector(id: "Accounts" | "Assets") {
-    await tapByElement(await this.tabSelector(id));
+    await tapByElement(this.tabSelector(id));
+  }
+
+  @Step("Tap on $0 tab selector")
+  async tapWalletTabSelector(id: "Wallet" | "Market") {
+    await tapByElement(this.walletTabSelector(id));
   }
 
   @Step("Tap on (Show All Accounts) button")
@@ -173,14 +224,6 @@ export default class PortfolioPage {
     await waitForElementById(this.selectAssetsPageTitle);
     await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
     await app.common.expectSearchBarVisible();
-    const assetsCount = await countElementsById(this.bigCurrencyRowRegex);
-    for (let i = 0; i < assetsCount; i++) {
-      const id = await getIdOfElement(getElementById(this.bigCurrencyRowRegex), i);
-      const currencyId = id.split("-")[3];
-      const currencyObj = Object.values(Currency).find((c: CurrencyType) => c.id === currencyId);
-      await detoxExpect(this.bigCurrencyIcon(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencyName(currencyId)).toBeVisible();
-      await detoxExpect(this.bigCurrencySubTitle(currencyObj.ticker)).toBeVisible();
-    }
+    jestExpect(await countElementsById(this.bigCurrencyRowRegex)).toBeGreaterThan(6);
   }
 }

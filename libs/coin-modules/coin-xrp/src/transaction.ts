@@ -12,7 +12,7 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 export const formatTransaction = (
-  { amount, recipient, fee, tag, useAllAmount }: Transaction,
+  { amount, recipient, fees, tag, useAllAmount }: Transaction,
   account: Account,
 ): string => `
 SEND ${
@@ -25,9 +25,9 @@ SEND ${
 }
 TO ${recipient}
 with fee=${
-  !fee
+  !fees
     ? "?"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], fee, {
+    : formatCurrencyUnit(getAccountCurrency(account).units[0], fees, {
         showCode: true,
         disableRounding: true,
       })
@@ -40,7 +40,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     ...common,
     family: tr.family,
     tag: tr.tag,
-    fee: tr.fee ? new BigNumber(tr.fee) : null,
+    fees: tr.fees ? new BigNumber(tr.fees) : null,
     feeCustomUnit: tr.feeCustomUnit,
     // FIXME remove this field. this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
@@ -58,7 +58,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     tag: t.tag,
-    fee: t.fee ? t.fee.toString() : null,
+    fees: t.fees ? t.fees.toString() : null,
     feeCustomUnit: t.feeCustomUnit,
     // FIXME remove this field. this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {

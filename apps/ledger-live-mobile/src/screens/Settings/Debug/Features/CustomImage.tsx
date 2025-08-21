@@ -27,6 +27,16 @@ export default function CustomImage() {
     });
   }, [navigation]);
 
+  const handlePressApex = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImageStep0Welcome,
+      params: {
+        device: null,
+        deviceModelId: DeviceModelId.apex,
+      },
+    });
+  }, [navigation]);
+
   return (
     <>
       <SettingsRow
@@ -40,6 +50,12 @@ export default function CustomImage() {
         desc="Convenient access to the flow"
         iconLeft={<Icons.Flex size="M" color="black" />}
         onPress={handlePressEuropa}
+      />
+      <SettingsRow
+        title="Custom lockscreen Apex"
+        desc="Convenient access to the flow"
+        iconLeft={<Icons.Flex size="M" color="black" />}
+        onPress={handlePressApex}
       />
     </>
   );

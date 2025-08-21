@@ -61,22 +61,44 @@ async function githubApiRequest<T = unknown>({
 function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
+    let currentRequest: ReturnType<typeof https.get> | null = null;
+
+    function cleanup() {
+      if (currentRequest) {
+        currentRequest.destroy();
+        currentRequest = null;
+      }
+    }
 
     function check() {
-      https
-        .get(url, res => {
-          if (res.statusCode && res.statusCode >= 200 && res.statusCode < 400) {
-            process.env.SPECULOS_ADDRESS = url;
-            resolve(true);
-          } else {
-            retry();
-          }
-        })
-        .on("error", retry);
+      cleanup();
+
+      currentRequest = https.get(url, { timeout: 10000 }, res => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 400) {
+          process.env.SPECULOS_ADDRESS = url;
+          cleanup();
+          console.warn(`Speculos is ready at ${url}`);
+          resolve(true);
+        } else {
+          console.warn(`Speculos not ready yet, status: ${res.statusCode}`);
+          retry();
+        }
+      });
+
+      currentRequest.on("error", error => {
+        console.error(`Request error: ${error.message}`);
+        retry();
+      });
+
+      currentRequest.on("timeout", () => {
+        console.error("Request timeout");
+        retry();
+      });
     }
 
     function retry() {
       if (Date.now() - startTime >= timeout) {
+        cleanup();
         reject(new Error(`Timeout: ${url} did not become available within ${timeout}ms`));
       } else {
         setTimeout(check, interval);

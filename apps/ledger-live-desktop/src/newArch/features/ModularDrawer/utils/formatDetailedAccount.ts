@@ -1,10 +1,10 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { formatAddress } from "LLD/utils/formatAddress";
-import { getBalanceAndFiatValue } from "LLD/utils/getBalanceAndFiatValue";
 import { Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
 import { isAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
 
 /**
  *

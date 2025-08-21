@@ -1,14 +1,18 @@
 import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import {
   createTransaction,
   DEFAULT_COIN_TYPE,
   getAccountBalances,
   getOperations,
+  getCheckpoint,
   paymentInfo,
+  getBlock,
+  getBlockInfo,
+  getStakes,
 } from "./sdk";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
@@ -50,7 +54,7 @@ describe("SUI SDK Integration tests", () => {
 
         it("should return the first operation at index 0 and the last at the end", async () => {
           const oldestTxHash = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
-          const newestTxHash = "2jXqsRSZNHZm4uEfpFxJE7A7RoZxWPZeANfBP4qGWkPR";
+          const newestTxHash = "2GjCnxe8wRqzG4Nr1pad6QAZzCxP8qJY4ioAaVaHvhF7";
           expect(operations[operations.length - TOTAL_OPERATIONS_COUNT].hash).toEqual(newestTxHash);
           expect(operations[operations.length - 1].hash).toEqual(oldestTxHash);
         });
@@ -171,6 +175,69 @@ describe("SUI SDK Integration tests", () => {
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
+    });
+  });
+
+  describe("getCheckpoint", () => {
+    test("getCheckpoint", async () => {
+      const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      const checkpointBySequenceNumber = await getCheckpoint("164167623");
+      expect(checkpointById.epoch).toEqual("814");
+      expect(checkpointById.sequenceNumber).toEqual("164167623");
+      expect(checkpointById.timestampMs).toEqual("1751696298663");
+      expect(checkpointById.digest).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      expect(checkpointById.previousDigest).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+      expect(checkpointById.transactions.length).toEqual(19);
+      expect(checkpointById.digest).toEqual(checkpointBySequenceNumber.digest);
+    });
+  });
+
+  describe("getBlockInfo", () => {
+    test("getBlockInfo should get block info by id or sequence number", async () => {
+      const blockById = await getBlockInfo("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      const blockBySequenceNumber = await getBlockInfo("164167623");
+      expect(blockById.height).toEqual(164167623);
+      expect(blockById.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      expect(blockById.time).toEqual(new Date(1751696298663));
+      expect(blockById.parent?.height).toEqual(164167622);
+      expect(blockById.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+      expect(blockById).toEqual(blockBySequenceNumber);
+    });
+  });
+
+  describe("getBlock", () => {
+    test("getBlock should get block by id or sequence number", async () => {
+      const blockById = await getBlock("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      const blockBySequenceNumber = await getBlock("164167623");
+      expect(blockById.info.height).toEqual(164167623);
+      expect(blockById.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
+      expect(blockById.info.time).toEqual(new Date(1751696298663));
+      expect(blockById.info.parent?.height).toEqual(164167622);
+      expect(blockById.info.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
+      expect(blockById.transactions.length).toEqual(19);
+      expect(blockById).toEqual(blockBySequenceNumber);
+    });
+  });
+
+  describe("getStakes", () => {
+    test("Account 0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce", async () => {
+      const stakes = await getStakes(
+        "0xea438b6ce07762ea61e04af4d405dfcf197d5f77d30765f365f75460380f3cce",
+      );
+      expect(stakes.length).toBeGreaterThan(0);
+      stakes.forEach(stake => {
+        expect(stake.uid).toMatch(/0x[0-9a-z]+/);
+        expect(stake.address).toMatch(/0x[0-9a-z]+/);
+        expect(stake.delegate).toMatch(/0x[0-9a-z]+/);
+        expect(stake.state).toMatch(/(activating|active|inactive)/);
+        expect(stake.asset).toEqual({ type: "native" });
+        expect(stake.amount).toBeGreaterThan(0);
+        expect(stake.amountDeposited).toBeGreaterThan(0);
+        expect(stake.amountRewarded).toBeGreaterThanOrEqual(0);
+        // @ts-expect-error properties are defined
+        expect(stake.amount).toEqual(stake.amountDeposited + stake.amountRewarded);
+        expect(stake.details).toBeDefined();
+      });
     });
   });
 });

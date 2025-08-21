@@ -20,14 +20,18 @@ import {
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
 
 const alpacaized = {
   xrp: true,
+  stellar: true,
 };
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;
 const bridgeCache: Record<string, AccountBridge<any>> = {};
-let currencyBridgeInstance: CurrencyBridge | null = null;
+const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
@@ -39,10 +43,10 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   if (alpacaized[currency.family]) {
-    if (!currencyBridgeInstance) {
-      currencyBridgeInstance = getAlpacaCurrencyBridge(currency.family, "local");
+    if (!currencyBridgeCache[currency.family]) {
+      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
     }
-    return currencyBridgeInstance;
+    return currencyBridgeCache[currency.family];
   }
 
   const jsBridge = jsBridges[currency.family];
@@ -98,6 +102,11 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
     throw new CurrencyNotSupported("account bridge not found " + family);
   }
   return wrapAccountBridge(jsBridge.accountBridge);
+}
+
+export function setup(store: CryptoAssetsStore) {
+  setCryptoAssetsStore(store);
+  setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(

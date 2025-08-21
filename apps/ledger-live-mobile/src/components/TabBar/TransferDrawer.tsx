@@ -18,13 +18,13 @@ import BuyDeviceBanner, {
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
 import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { track, useAnalytics } from "~/analytics";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "~/hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { EntryOf } from "~/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useToastsActions } from "~/actions/toast";
 
 type ButtonItem = {
   title: string;
@@ -47,7 +47,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   } = useQuickActions();
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
-  const { pushToast, dismissToast } = useToasts();
+  const { pushToast, dismissToast } = useToastsActions();
 
   const { page } = useAnalytics();
 
@@ -192,7 +192,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: SWAP.disabled,
-      testID: "swap-transfer-button",
+      testID: "transfer-swap-button",
     },
     RECOVER && {
       eventProperties: {

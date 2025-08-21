@@ -2,8 +2,9 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { useRightBalanceModule } from "./useRightBalanceModule";
 import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { composeHooks } from "LLD/utils/composeHooks";
+import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { useLeftApyModule } from "./useLeftApyModule";
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -28,6 +29,7 @@ const getRightElement = (rightElement: string) => {
 const getLeftElement = (leftElement: string) => {
   switch (leftElement) {
     case "apy":
+      return useLeftApyModule;
     case "priceVariation":
     case "undefined":
     default:

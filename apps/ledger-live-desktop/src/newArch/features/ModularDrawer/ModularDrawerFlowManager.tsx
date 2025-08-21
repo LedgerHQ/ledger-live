@@ -17,14 +17,14 @@ import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { useAssetSelection } from "./hooks/useAssetSelection";
 import { useModularDrawerFlowState } from "./hooks/useModularDrawerFlowState";
 import SkeletonList from "./components/SkeletonList";
-import { haveOneCommonProvider } from "./utils/haveOneCommonProvider";
+import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { BackButtonArrow } from "./components/BackButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   buildProviderCoverageMap,
   filterProvidersByIds,
   extractProviderCurrencies,
-} from "./utils/currencyUtils";
+} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
 import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
@@ -236,6 +236,16 @@ const ModularDrawerFlowManager = ({
     }
   };
 
+  const testIdMap: Record<ModularDrawerStep, string> = {
+    [MODULAR_DRAWER_STEP.ASSET_SELECTION]: "modular-asset-selection-container",
+    [MODULAR_DRAWER_STEP.NETWORK_SELECTION]: "modular-network-selection-container",
+    [MODULAR_DRAWER_STEP.ACCOUNT_SELECTION]: "modular-account-selection-container",
+  };
+
+  const getTestId = (step: ModularDrawerStep): string => {
+    return testIdMap[step];
+  };
+
   return (
     <>
       {handleBack && <BackButtonArrow onBackClick={handleBack} />}
@@ -244,6 +254,7 @@ const ModularDrawerFlowManager = ({
           key={currentStep}
           screenKey={currentStep}
           direction={navigationDirection}
+          data-testid={getTestId(currentStep)}
         >
           {isReadyToBeDisplayed ? (
             <>

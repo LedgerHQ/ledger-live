@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
-import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useLocale } from "~/context/Locale";
 
 type PerformanceProps = {

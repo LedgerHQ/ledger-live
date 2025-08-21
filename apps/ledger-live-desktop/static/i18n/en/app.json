@@ -344,6 +344,7 @@
           "provider": "provider",
           "rate": "rate",
           "fees": "Network Fees",
+          "feesDescription": "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
           "target": "target account"
         },
         "tooltip": {
@@ -384,6 +385,7 @@
         "onhold": "Onhold",
         "expired": "Expired",
         "finished": "Finished",
+        "unknown": "Processing",
         "refunded": "Refunded"
       }
     },
@@ -570,7 +572,7 @@
         "pending": "Please wait while the swap provider is processing the transaction.",
         "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
         "finished": "Your swap was completed successfully.",
-        "unknown": "Please contact the swap provider with your swap ID for more information."
+        "unknown": "We are awaiting information from the provider."
       },
       "date": "Date",
       "from": "From",
@@ -2385,6 +2387,10 @@
         "title": "Device"
       },
       "details": {
+        "solanaRawTransaction": {
+          "title": "Blind signing required",
+          "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
+        },
         "utxoLag": "This transaction may take long to verify and sign because the account has a significant number of coins.",
         "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
         "from": "From",
@@ -3694,6 +3700,7 @@
     "delegation": {
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "delegate": "Add",
       "listHeader": "Delegations",
       "availableBalance": "Withdrawable",
@@ -3860,6 +3867,179 @@
       }
     }
   },
+  "aptos": {
+    "account": {
+      "stakedBalance": "Staked balance",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "withdrawableBalance": "Withdrawable balance",
+      "withdrawableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability."
+    },
+    "common": {
+      "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+      "viewDetails": "View details",
+      "connectDevice": {
+        "title": "Device"
+      },
+      "confirmation": {
+        "title": "Confirmation"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount",
+        "unstakedAmount": "Unstaked amount",
+        "withdrawnAmount": "Withdrawn amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn Aptos rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "active": "Staked",
+        "pendingInactive": "Pending release",
+        "inactive": "Withdrawable",
+        "nextUnlock": "Next unlock"
+      },
+      "nextUnlockIn": "Next unlock in",
+      "unstake": "Unstake",
+      "withdraw": "Withdraw",
+      "restake": "Reactivate",
+      "activeTooltip": "Staked amounts generate rewards",
+      "inactiveTooltip": "Unstaked amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "minSafeWarning": "Not enough funds",
+      "reserveWarning": "Please ensure you reserve at least {{amount}} APT in your wallet to cover future network fees to deactivate and withdraw your stake",
+      "flow": {
+        "title": "Stake",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by staking your Aptos assets to a validator.",
+            "bullet": [
+              "You keep ownership of staked assets",
+              "Stake using your Ledger device",
+              "Assets will be available 0-14 days after unstaking"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "restake": {
+      "flow": {
+        "title": "Reactivate stake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The restake process will stake your withdrawable balance again.",
+            "warning": "All the available balance will be restaked. The restaked amount will be available for withdrawal after the unstake operation and the unlock time.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to restake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully restaked your assets.",
+              "description": "{{amount}} were restaked from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process will take {{timeToUnlock}} to finalize.",
+            "subtitle2": "The unstaking process could take up to 30 days to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the unlock time.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to unstake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets.",
+              "description": "{{amount}} were unstaked from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "disabledTooltip": "There aren't enough assets to withdraw",
+      "flow": {
+        "title": "Withdraw",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to withdraw"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "description": "{{amount}} were withdrawn from {{validator}}",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "ethereum": {
     "stake_deprecated": {
       "title": "Grow your ETH holdings",
@@ -3967,7 +4147,7 @@
     "account": {
       "stakedBalance": "Staked balance",
       "stakedBalanceTooltip": "This amount is currently staked with validators.",
-      "availableBalance": "Withdawable balance",
+      "availableBalance": "Withdrawable balance",
       "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
@@ -4318,6 +4498,40 @@
             "check": "Spam Score"
           }
         },
+        "mockAccounts": {
+          "title": "Generate Mock Accounts",
+          "description": "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+          "customGenerate": {
+            "title": "Custom Generate",
+            "desc": "Select specific currencies and add tokens"
+          },
+          "quickGenerate": {
+            "title": "Quick Generate",
+            "desc": "Generate 10 random accounts with random currencies"
+          },
+          "currencySelector": {
+            "placeholder": "Choose currencies...",
+            "searchPlaceholder": "Search currencies...",
+            "noCurrenciesFound": "No currencies found",
+            "noCurrenciesAvailable": "No currencies available",
+            "selectedCount": "{{count}} currency selected",
+            "selectedCount_other": "{{count}} currencies selected"
+          },
+          "tokenIds": {
+            "label": "Token IDs (optional)",
+            "placeholder": "token1, token2, token3"
+          },
+          "buttons": {
+            "generateAccounts": "Generate {{count}} Account",
+            "generateAccounts_other": "Generate {{count}} Accounts",
+            "generateAccountsQuick": "Generate {{count}} Accounts"
+          },
+          "alerts": {
+            "selectCurrency": "Please select at least one currency",
+            "confirmErase": "This will erase existing accounts. Continue?",
+            "generateError": "Failed to generate mock accounts. Please try again."
+          }
+        },
         "debugSpamNft": {
           "report": "Report",
           "contractAddress": "Contract Address",
@@ -4431,6 +4645,10 @@
           }
         }
       },
+      "modularDrawerDevTool": {
+        "title": "Modular Drawer Dev Tool",
+        "description": "Allows you to test the Modular Drawer easily"
+      },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "mockAppUpdate": "Mock app update",
@@ -4441,6 +4659,8 @@
       "customCALRefDesc": "Specify a custom branch, commit or tag to use for all CAL requests",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreenTester": "Custom lock-screen tester",
+      "customLockScreenTesterDesc": "Test custom lock-screen for supported devices",
       "customLockScreen": "Custom lock-screen assets",
       "customLockScreenDesc": "Debug custom lock-screen graphical assets",
       "customLockScreenCTA": "Launch",
@@ -5756,10 +5976,6 @@
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try again."
     },
-    "DisconnectedDeviceDuringOperation": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try again."
-    },
     "EConnReset": {
       "title": "The Ledger application store can't be reached",
       "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
@@ -5907,9 +6123,29 @@
       "title": "Sorry, fee estimation failed",
       "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
     },
+    "NotEnoughToStake": {
+      "title": "You can't stake less than {{minStake}} {{currency}}",
+      "description": "A minimum amount of {{minStake}} {{currency}} is necessary to stake."
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft": {
+      "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
+      "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
+    },
+    "RestakeNotEnoughStakedBalanceLeft": {
+      "title": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked",
+      "description": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked"
+    },
+    "NotEnoughToRestake": {
+      "title": "You can't restake less than {{minAmount}}",
+      "description": "You can't restake less than {{minAmount}}."
+    },
+    "NotEnoughToUnstake": {
+      "title": "You can't unstake less than {{minAmount}}",
+      "description": "You can't unstake less than {{minAmount}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",
@@ -6343,9 +6579,6 @@
     "PolkadotAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
-    "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
-    },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least {{minimumBondAmount}}."
     },
@@ -6559,7 +6792,7 @@
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     },
-    "DeviceNotOnboardedError": {
+    "DeviceNotOnboardedDAError": {
       "title": "Your Ledger is not set up",
       "description": "Set it up to start using it. We will guide you through the setup process.",
       "goToOnboardingButton": "Set up my Ledger",
@@ -6639,6 +6872,118 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedWhileSendingError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedBeforeSendingApdu": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError": {
+      "title": "Device locked",
+      "description": "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError": {
+      "title": "Not enough memory",
+      "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError": {
+      "title": "OS is unsupported",
+      "description": "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError": {
+      "title": "Battery error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError": {
+      "title": "Battery error",
+      "description": "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     }
   },
   "cryptoOrg": {
@@ -7114,6 +7459,15 @@
       "addAccountSelection": "Choose account to add funds",
       "addAccountSelectionPtxFlow": "Select account"
     },
+    "editAccountName": {
+      "title": "Edit account name",
+      "input": {
+        "name": "Name"
+      },
+      "cta": {
+        "save": "Save"
+      }
+    },
     "fundAccount": {
       "receive": "Receive",
       "receiveDescription": "Receive crypto from another wallet",
@@ -7170,7 +7524,7 @@
   },
   "geoBlocking": {
     "title": "Location unavailable",
-    "description": "Ledger wallet is not available in this location.",
+    "description": "Ledger Live is not available in this location.",
     "learnMore": "Learn more"
   },
   "versionBlocking": {

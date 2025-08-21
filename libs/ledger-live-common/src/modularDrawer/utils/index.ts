@@ -1,5 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId } from "../../deposit/type";
+import { haveOneCommonProvider } from "./haveOneCommonProvider";
+import { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
 
 function isCorrespondingCurrency(
   elem: CryptoOrTokenCurrency,
@@ -26,4 +28,9 @@ const getEffectiveCurrency = (
   return provider.currenciesByNetwork.find(elem => currencyIds.includes(elem.id)) ?? currency;
 };
 
-export { isCorrespondingCurrency, getEffectiveCurrency };
+export {
+  isCorrespondingCurrency,
+  getEffectiveCurrency,
+  haveOneCommonProvider,
+  getBalanceAndFiatValue,
+};

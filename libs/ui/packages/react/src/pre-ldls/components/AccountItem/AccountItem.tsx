@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon, Text, Flex } from "../../../components";
+import { Icons } from "../../../assets";
+import { Flex, Icon, Text } from "../../../components";
 import { withTokens } from "../../libs";
 import { Address } from "../Address/Address";
-import { Tag } from "../Tag/Tag";
 import type { CheckboxProps } from "../Checkbox/Checkbox";
 import { Checkbox } from "../Checkbox/Checkbox";
+import { Tag } from "../Tag/Tag";
 
 export type Account = {
   address: string;
@@ -19,16 +20,21 @@ export type Account = {
   ticker?: string;
 };
 
+export type RightElementArrow = {
+  type: "arrow";
+};
+
 export type RightElementCheckbox = {
   type: "checkbox";
   checkbox: CheckboxProps;
 };
 
-export type RightElementArrow = {
-  type: "arrow";
+export type RightElementEdit = {
+  type: "edit";
+  onClick: () => void;
 };
 
-export type RightElement = RightElementCheckbox | RightElementArrow;
+export type RightElement = RightElementArrow | RightElementCheckbox | RightElementEdit;
 
 export type AccountItemProps = {
   onClick?: () => void;
@@ -37,6 +43,21 @@ export type AccountItemProps = {
   showIcon?: boolean;
   backgroundColor?: string;
 };
+
+const ICON_BUTTONS_SIZE = "32px";
+
+// TODO a proper IconButton component that handles hover and pressed states.
+const IconButton = styled.button`
+  ${withTokens("colors-content-default-default")}
+
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: ${ICON_BUTTONS_SIZE};
+  width: ${ICON_BUTTONS_SIZE};
+`;
 
 const Wrapper = styled.div<{ backgroundColor?: string; isClickable: boolean }>`
   ${withTokens(
@@ -145,12 +166,13 @@ export const AccountItem = ({
   const { name, balance, fiatValue, protocol, address, ticker, cryptoId, parentId } = account;
 
   return (
-    <Wrapper onClick={onClick} backgroundColor={backgroundColor} isClickable={!!onClick}>
+    <Wrapper backgroundColor={backgroundColor} isClickable={Boolean(onClick)} onClick={onClick}>
       <ContentContainer>
         <AccountInfoContainer>
           <NameRow>
             <NameDiv>
               <Text
+                data-testid={`account-row-${name}`}
                 variant="largeLineHeight"
                 fontWeight="semiBold"
                 color="var(--colors-content-default-default)"
@@ -190,14 +212,28 @@ export const AccountItem = ({
           )}
         </BalanceContainer>
         {rightElement && rightElement.type === "checkbox" && (
-          <Flex data-testid="right-element-checkbox">
+          <Flex data-testid="right-element-checkbox" aria-label="Checkbox account item">
             <Checkbox {...rightElement.checkbox} size={20} />
           </Flex>
         )}
         {rightElement && rightElement.type === "arrow" && (
-          <Flex data-testid="right-element-arrow-icon">
+          <Flex data-testid="right-element-arrow-icon" aria-label="Arrow account item">
             <Icon name="ChevronRight" size={24} />
           </Flex>
+        )}
+        {rightElement && rightElement.type === "edit" && (
+          <IconButton
+            aria-label="Edit account item"
+            data-testid="right-element-edit-icon"
+            onClick={e => {
+              e.stopPropagation();
+              if (rightElement?.type === "edit") {
+                rightElement.onClick();
+              }
+            }}
+          >
+            <Icons.PenEdit size="S" color="var(--colors-content-default-default)" />
+          </IconButton>
         )}
       </ContentContainer>
     </Wrapper>

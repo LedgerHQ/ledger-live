@@ -1,9 +1,8 @@
 import { AptosTransaction } from "../types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { AptosAsset } from "../types/assets";
 import BigNumber from "bignumber.js";
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { APTOS_ASSET_ID, DIRECTION } from "../constants";
+import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
 import { compareAddress, getCoinAndAmounts } from "./getCoinAndAmounts";
 import { calculateAmount } from "./calculateAmount";
 import { processRecipients } from "./processRecipients";
@@ -18,18 +17,18 @@ export const convertFunctionPayloadResponseToInputEntryFunctionData = (
   functionArguments: payload.arguments,
 });
 
-const detectType = (address: string, tx: AptosTransaction, value: BigNumber): DIRECTION => {
-  let type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
+const detectType = (address: string, tx: AptosTransaction, value: BigNumber): OP_TYPE => {
+  let type = compareAddress(tx.sender, address) ? OP_TYPE.OUT : OP_TYPE.IN;
 
   if (!value) {
     // skip transaction that result no Aptos change
-    type = DIRECTION.UNKNOWN;
+    type = OP_TYPE.UNKNOWN;
   }
 
   return type;
 };
 
-const getTokenStandard = (coin_id: string): string => {
+const getTokenType = (coin_id: string) => {
   const parts = coin_id.split("::");
   if (parts.length === 3) {
     return "coin";
@@ -40,8 +39,8 @@ const getTokenStandard = (coin_id: string): string => {
 export function transactionsToOperations(
   address: string,
   txs: (AptosTransaction | null)[],
-): Operation<AptosAsset>[] {
-  const operations: Operation<AptosAsset>[] = [];
+): Operation[] {
+  const operations: Operation[] = [];
 
   return txs.reduce((acc, tx) => {
     if (tx === null) {
@@ -62,7 +61,7 @@ export function transactionsToOperations(
     const value = calculateAmount(tx.sender, address, amount_in, amount_out);
     const type = detectType(address, tx, value);
 
-    const op: Operation<AptosAsset> = {
+    const op: Operation = {
       id: tx.hash,
       type,
       senders: [],
@@ -88,15 +87,14 @@ export function transactionsToOperations(
 
     processRecipients(payload, address, op, function_address);
 
-    if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+    if (op.type !== OP_TYPE.UNKNOWN && coin_id !== null) {
       if (coin_id === APTOS_ASSET_ID) {
         acc.push(op);
         return acc;
       } else {
         op.asset = {
-          type: "token",
-          standard: getTokenStandard(coin_id),
-          contractAddress: coin_id,
+          type: getTokenType(coin_id),
+          assetReference: coin_id,
         };
         acc.push(op);
       }

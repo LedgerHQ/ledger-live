@@ -344,6 +344,7 @@
           "provider" : "Anbieter",
           "rate" : "Kurs",
           "fees" : "Netzgebühren",
+          "feesDescription" : "Diese Gebühr wird vom Blockchain-Netzwerk für die Abwicklung des Swaps erhoben. Auf den veranschlagten Preis wird lediglich die Sendegebühr aufgeschlagen. Die Empfangsgebühr ist dagegen bereits inbegriffen.",
           "target" : "Zielkonto"
         },
         "tooltip" : {
@@ -384,6 +385,7 @@
         "onhold" : "Zurückgestellt",
         "expired" : "Abgelaufen",
         "finished" : "Abgeschlossen",
+        "unknown" : "In Bearbeitung",
         "refunded" : "Zurückerstattet"
       }
     },
@@ -570,7 +572,7 @@
         "pending" : "Bitte warte, während der Swap-Provider die Transaktion verarbeitet.",
         "onhold" : "Bitte kontaktiere den Swap-Anbieter unter Angabe deiner Swap-ID, um das Problem zu beheben.",
         "finished" : "Dein Swap wurde erfolgreich abgeschlossen.",
-        "unknown" : "Bitte kontaktiere den Swap-Anbieter mit deiner Swap-ID für weitere Informationen."
+        "unknown" : "Wir warten auf Informationen vom Anbieter."
       },
       "date" : "Datum",
       "from" : "Von",
@@ -2385,6 +2387,10 @@
         "title" : "Gerät"
       },
       "details" : {
+        "solanaRawTransaction" : {
+          "title" : "Blindsignatur erforderlich",
+          "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
         "from" : "Von",
@@ -3678,6 +3684,7 @@
     "delegation" : {
       "totalStake" : "Stake-Gesamtsumme",
       "commission" : "Provision",
+      "netApy" : "Netto-APY",
       "delegate" : "Hinzufügen",
       "listHeader" : "Delegierungen",
       "availableBalance" : "Auszahlbar",
@@ -3840,6 +3847,175 @@
           "accruedDelta" : "{{delta}} aufgelaufen.",
           "interestRateNotSetup" : "Der aktuelle Zinssatz ist eingerichtet auf 0 %.",
           "description" : "Token, deren Wert sich je nach Zinssatz stetig erhöht oder verringert. Es werden nie neue Token erstellt, die Funktion ist rein optischer Natur."
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "account" : {
+      "stakedBalance" : "Kontostand gestaked",
+      "stakedBalanceTooltip" : "Dieser Betrag ist derzeit mit Validatoren gestaked.",
+      "withdrawableBalance" : "Auszahlbares Guthaben",
+      "withdrawableBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden.",
+      "pendingBalance" : "Ausstehender Saldo",
+      "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung."
+    },
+    "common" : {
+      "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf.",
+      "viewDetails" : "Details anzeigen",
+      "connectDevice" : {
+        "title" : "Gerät"
+      },
+      "confirmation" : {
+        "title" : "Bestätigung"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Betrag gestaked",
+        "unstakedAmount" : "Unstaking-Betrag",
+        "withdrawnAmount" : "Abgehobener Betrag"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Du kannst Aptos-Prämien verdienen, indem du deine Assets stakest.",
+        "info" : "So funktioniert Staking",
+        "earnRewards" : "Rewards verdienen"
+      },
+      "table" : {
+        "header" : "Position(en) gestaked",
+        "stake" : "Hinzufügen",
+        "active" : "Gestaked",
+        "pendingInactive" : "Freigabe ausstehend",
+        "inactive" : "Auszahlbar",
+        "nextUnlock" : "Nächste Freischaltung"
+      },
+      "nextUnlockIn" : "Nächste Freischaltung in",
+      "unstake" : "Unstake",
+      "withdraw" : "Abheben",
+      "restake" : "Reaktivieren",
+      "activeTooltip" : "Beträge, die gestaked wurden, generieren Belohnungen",
+      "inactiveTooltip" : "Beträge, die nicht mehr gestaked werden, generieren keine Belohnungen",
+      "commission" : "Provision",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "minSafeWarning" : "Zu niedriges Guthaben",
+      "reserveWarning" : "Bitte stelle sicher, dass du mindestens {{amount}} APT in deiner Wallet hast, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung deines Stakes zu decken.",
+      "flow" : {
+        "title" : "Staken",
+        "steps" : {
+          "starter" : {
+            "description" : "Du kannst durch Staking deiner Aptos-Assets bei einem Validator Prämien verdienen.",
+            "bullet" : ["Du behältst das Eigentum an den gestaketen Vermögenswerten.", "Staking mit deinem Ledger-Gerät", "Nach dem Unstaking dauert es 0 bis 14 Tage, bis die Assets verfügbar sind"],
+            "warning" : {
+              "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner gestaketen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            }
+          },
+          "amount" : {
+            "title" : "Betrag"
+          },
+          "validator" : {
+            "title" : "Validatoren",
+            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Vermögenswerte erfolgreich gestaket",
+              "text" : "Dein Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "restake" : {
+      "flow" : {
+        "title" : "Stake reaktivieren",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Beim Restaking wird dein abhebbares Guthaben erneut gestaket.",
+            "warning" : "Dabei wird das gesamte verfügbare Guthaben erneut gestaket. Der Restaking-Betrag kann nach einem Unstaking und dem Verstreichen der Entsperrfrist wieder abgehoben werden.",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Restaking-Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich erneut gestaket.",
+              "description" : "{{amount}} wurden von {{validator}} erneut gestaket",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Es gibt nicht genug Vermögenswerte, die gestaked sind, um den Staking-Prozess aufzuheben.",
+      "flow" : {
+        "title" : "Unstake",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Bis zum Abschluss des Unstakings dauert es {{timeToUnlock}}.",
+            "subtitle2" : "Es kann bis zu 30 Tage dauern, bis das Unstaking vollständig abgeschlossen ist.",
+            "warning" : "Prämien werden sofort eingelöst. Der dem Staking entzogene Betrag steht nach Ablauf der Entsperrfrist zur Auszahlung bereit.",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Aufzuhebender Staking-Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast das Staking deiner Vermögenswerte erfolgreich aufgehoben.",
+              "description" : "{{amount}} werden von {{validator}} nicht mehr gestaket",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "disabledTooltip" : "Es gibt nicht genügend Vermögenswerte zum Abheben",
+      "flow" : {
+        "title" : "Abheben",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Abzuhebender Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich zurückgezogen.",
+              "description" : "{{amount}} wurden bei {{validator}} abgehoben",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
         }
       }
     }
@@ -4298,6 +4474,40 @@
             "check" : "Spam-Bewertung"
           }
         },
+        "mockAccounts" : {
+          "title" : "Pseudokonten generieren",
+          "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
+          "customGenerate" : {
+            "title" : "Benutzerdefiniert generieren",
+            "desc" : "Bestimmte Währungen auswählen und Token hinzufügen"
+          },
+          "quickGenerate" : {
+            "title" : "Schnell generieren",
+            "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
+          },
+          "currencySelector" : {
+            "placeholder" : "Währungen auswählen…",
+            "searchPlaceholder" : "Währungen durchsuchen…",
+            "noCurrenciesFound" : "Keine Währungen gefunden",
+            "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+            "selectedCount" : "{{count}} Währung ausgewählt",
+            "selectedCount_other" : "{{count}} Währungen ausgewählt"
+          },
+          "tokenIds" : {
+            "label" : "Token-IDs (optional)",
+            "placeholder" : "token1, token2, token3"
+          },
+          "buttons" : {
+            "generateAccounts" : "{{count}} Konto generieren",
+            "generateAccounts_other" : "{{count}} Konten generieren",
+            "generateAccountsQuick" : "{{count}} Konten generieren"
+          },
+          "alerts" : {
+            "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+            "confirmErase" : "Dadurch werden bestehende Konten gelöscht. Vorgang fortsetzen?",
+            "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
+          }
+        },
         "debugSpamNft" : {
           "report" : "Melden",
           "contractAddress" : "Vertragsadresse",
@@ -4411,6 +4621,10 @@
           }
         }
       },
+      "modularDrawerDevTool" : {
+        "title" : "Modular Drawer-Entwicklungstool",
+        "description" : "Damit kannst du Modular Drawer ganz einfach testen"
+      },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "mockAppUpdate" : "Mock-App-Update",
@@ -4421,6 +4635,8 @@
       "customCALRefDesc" : "Gib einen individuellen Branch, Commit oder Tag an, der für alle CAL-Anfragen verwendet werden sollen.",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "customLockScreenTester" : "Tester für den individuellen Sperrbildschirm",
+      "customLockScreenTesterDesc" : "Individuellen Sperrbildschirm auf unterstützten Geräten testen",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
       "customLockScreenDesc" : "Debuggen von individuellen Grafikelementen für den Sperrbildschirm",
       "customLockScreenCTA" : "Starten",
@@ -5733,10 +5949,6 @@
       "title" : "Gerät nicht verbunden",
       "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
     },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Gerät nicht verbunden",
-      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal."
-    },
     "EConnReset" : {
       "title" : "Der Ledger Application Store kann nicht erreicht werden",
       "description" : "Ihre Internetverbindung ist möglicherweise ausgefallen oder Sie verwenden eine ungewöhnliche Konfiguration. Überprüfen Sie zunächst, ob Ihre Verbindung blockiert wird (Proxy oder Firewall). Wenn das Problem weiterhin besteht, klicken Sie unten, um Lösungen zu erhalten, oder wenden Sie sich an unseren Kundensupport."
@@ -5884,9 +6096,29 @@
       "title" : "Sorry, Gebührenschätzung fehlgeschlagen",
       "description" : "Gebührenschätzung im Netzwerk fehlgeschlagen. Prüfe die Eingabe; die Transaktion schlägt höchstwahrscheinlich fehl"
     },
+    "NotEnoughToStake" : {
+      "title" : "Du kannst nicht weniger als {{minStake}} {{currency}} staken",
+      "description" : "Für das Staking ist ein Mindestbetrag von {{minStake}} {{currency}} erforderlich."
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Wenn du mehr als {{maxAmount}} unstakest, wird das Staking des Gesamtbetrags von {{totalAmount}} aufgehoben.",
+      "description" : "Wenn du mehr als {{maxAmount}} unstakest, wird das Staking des Gesamtbetrags von {{totalAmount}} aufgehoben."
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "Wenn du mehr als {{maxAmount}} erneut stakest, wird der Gesamtbetrag von {{totalAmount}} erneut gestaket.",
+      "description" : "Wenn du mehr als {{maxAmount}} erneut stakest, wird der Gesamtbetrag von {{totalAmount}} erneut gestaket."
+    },
+    "NotEnoughToRestake" : {
+      "title" : "Du kannst nicht weniger als {{minAmount}} erneut staken.",
+      "description" : "Du kannst nicht weniger als {{minAmount}} erneut staken."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "Du kannst nicht weniger als {{minAmount}} unstaken.",
+      "description" : "Du kannst nicht weniger als {{minAmount}} unstaken."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Leider reicht das Guthaben zur Deckung der Gebühren nicht aus",
@@ -6320,9 +6552,6 @@
     "PolkadotAllFundsWarning" : {
       "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
     },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "Kontostand darf nicht unter {{minimumBalance}} liegen. Maximalbetrag zu leerem Konto senden."
-    },
     "PolkadotBondMinimumAmount" : {
       "title" : "Sie müssen eine Kaution von mindestens {{minimumBondAmount}} hinterlegen."
     },
@@ -6536,9 +6765,9 @@
       "description" : "Entsperren Sie Ihr Gerät und versuchen Sie es erneut.",
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     },
-    "DeviceNotOnboardedError" : {
+    "DeviceNotOnboardedDAError" : {
       "title" : "Dein Ledger-Gerät ist nicht eingerichtet",
-      "description" : "Richte es für die Nutzung ein. Wir führen dich durch den Einrichtungsprozess.",
+      "description" : "Richte es für die Nutzung ein. Wir begleiten dich durch den Einrichtungsprozess.",
       "goToOnboardingButton" : "Mein Ledger-Gerät einrichten",
       "goToOnboardingButtonWithProductName" : "Meine {{ productName }} einrichten"
     },
@@ -6612,6 +6841,122 @@
     },
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "Wir sorgen für deine Sicherheit",
+      "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceDisconnectedWhileSendingError" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DisconnectError" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceDisconnectedBeforeSendingApdu" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "Fehler bei der Verbindungsmethode",
+      "description" : "Bei der verwendeten Geräteverbindungsmethode ist ein Problem aufgetreten. Bitte probiere eine andere Verbindungsmethode aus oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "Onboarding des Geräts ausstehend",
+      "description" : "Dein Gerät kann nicht verwendet werden. Bitte befolge die Einrichtungsanweisungen und wiederhole den Vorgang nach erfolgreichem Onboarding."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "Onboarding des Geräts ausstehend",
+      "description" : "Dein Gerät kann nicht verwendet werden. Bitte befolge die Einrichtungsanweisungen und wiederhole den Vorgang nach erfolgreichem Onboarding."
+    },
+    "DeviceLockedError" : {
+      "title" : "Gerät gesperrt",
+      "description" : "Dein Gerät ist gesperrt. Bitte entsperre es und versuche es dann noch einmal."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "Zu wenig Speicherplatz",
+      "description" : "Dein Gerät hat nicht genügend Speicherplatz. Bitte deinstalliere Apps und versuche es dann noch einmal."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "OS nicht unterstützt",
+      "description" : "Das Betriebssystem deines Geräts wird nicht unterstützt. Bitte führe ein Update über Ledger Live durch oder wende dich an den Ledger-Kundenservice, falls du Probleme hast."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "Batteriefehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "Batteriefehler",
+      "description" : "Batteriestatusfehler. Bitte kontaktiere den Ledger-Kundenservice."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDAError" : {
+      "title" : "Geräteverbindungsfehler",
+      "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDeviceError" : {
+      "title" : "Gerät nicht erkannt",
+      "description" : "Ledger Live konnte dein Gerät nicht erkennen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "ReceiverApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "FramerApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "Kommunikationsfehler",
+      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
     }
   },
   "cryptoOrg" : {
@@ -7083,7 +7428,18 @@
       "cta" : {
         "confirm" : "Bestätigen"
       },
-      "newAccount" : "Neues Konto"
+      "newAccount" : "Neues Konto",
+      "addAccountSelection" : "Konto auswählen, um Guthaben hinzuzufügen",
+      "addAccountSelectionPtxFlow" : "Konto auswählen"
+    },
+    "editAccountName" : {
+      "title" : "Kontonamen bearbeiten",
+      "input" : {
+        "name" : "Name"
+      },
+      "cta" : {
+        "save" : "Speichern"
+      }
     },
     "fundAccount" : {
       "receive" : "Empfangen",
@@ -7143,7 +7499,7 @@
   },
   "geoBlocking" : {
     "title" : "Nicht am Ort verfügbar",
-    "description" : "Eine Ledger-Wallet ist an diesem Standort nicht verfügbar.",
+    "description" : "Ledger Live ist an diesem Standort nicht verfügbar.",
     "learnMore" : "Weitere Informationen"
   },
   "versionBlocking" : {

@@ -1,5 +1,182 @@
 # @ledgerhq/coin-framework
 
+## 6.1.0
+
+### Minor Changes
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/devices@8.5.0
+  - @ledgerhq/live-network@2.0.15
+
+## 6.1.0-next.0
+
+### Minor Changes
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+
+## 6.0.0
+
+### Major Changes
+
+- [#11138](https://github.com/LedgerHQ/ledger-live/pull/11138) [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-framework): pass `FeeEstimation` to `craftTransaction`
+
+### Minor Changes
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+- [#11147](https://github.com/LedgerHQ/ledger-live/pull/11147) [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-framework): add `feesStrategy` property to `TransactionIntent`
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/cryptoassets@13.24.0
+  - @ledgerhq/types-cryptoassets@7.25.0
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/live-env@2.13.0
+  - @ledgerhq/live-network@2.0.14
+
+## 6.0.0-next.0
+
+### Major Changes
+
+- [#11138](https://github.com/LedgerHQ/ledger-live/pull/11138) [`417e4fc`](https://github.com/LedgerHQ/ledger-live/commit/417e4fc8b92ebc95542ca915e14023fdb62497bb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-framework): pass `FeeEstimation` to `craftTransaction`
+
+### Minor Changes
+
+- [#11154](https://github.com/LedgerHQ/ledger-live/pull/11154) [`5bb2111`](https://github.com/LedgerHQ/ledger-live/commit/5bb2111d6a0c84cd0d6508bbf33d184bc89f9da3) Thanks [@qperrot](https://github.com/qperrot)! - Remove generic type for token assets
+
+- [#11027](https://github.com/LedgerHQ/ledger-live/pull/11027) [`9c63d6b`](https://github.com/LedgerHQ/ledger-live/commit/9c63d6b8d5fb629a19514ec36396c35eeefb96aa) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Replace CoinFmk cryptoassets lib calls
+
+- [#11147](https://github.com/LedgerHQ/ledger-live/pull/11147) [`8b0b4ef`](https://github.com/LedgerHQ/ledger-live/commit/8b0b4efaf2c0968cfb60c0cecebca9c575b00748) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-framework): add `feesStrategy` property to `TransactionIntent`
+
+### Patch Changes
+
+- Updated dependencies [[`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636), [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be), [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/cryptoassets@13.24.0-next.0
+  - @ledgerhq/types-cryptoassets@7.25.0-next.0
+  - @ledgerhq/types-live@6.80.0-next.0
+  - @ledgerhq/live-env@2.13.0-next.0
+  - @ledgerhq/live-network@2.0.14-next.0
+
+## 5.8.0
+
+### Minor Changes
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+- [#10992](https://github.com/LedgerHQ/ledger-live/pull/10992) [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add CoinFmk setup function
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0
+  - @ledgerhq/cryptoassets@13.23.0
+  - @ledgerhq/types-cryptoassets@7.24.0
+
+## 5.8.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0)]:
+  - @ledgerhq/types-live@6.79.0-next.1
+
+## 5.8.0-next.0
+
+### Minor Changes
+
+- [#10838](https://github.com/LedgerHQ/ledger-live/pull/10838) [`d5f6793`](https://github.com/LedgerHQ/ledger-live/commit/d5f6793c6ae52178e93a19efc75931994bf930a8) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules][ALPACA] add getBlock to coin-framework API, implement it for SUI
+
+- [#10992](https://github.com/LedgerHQ/ledger-live/pull/10992) [`132af3d`](https://github.com/LedgerHQ/ledger-live/commit/132af3db5863fb6e54587dd53d4db7b0ec19259e) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add CoinFmk setup function
+
+### Patch Changes
+
+- Updated dependencies [[`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf), [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf), [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118), [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa)]:
+  - @ledgerhq/types-live@6.79.0-next.0
+  - @ledgerhq/cryptoassets@13.23.0-next.0
+  - @ledgerhq/types-cryptoassets@7.24.0-next.0
+
+## 5.7.0
+
+### Minor Changes
+
+- [#10856](https://github.com/LedgerHQ/ledger-live/pull/10856) [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab) Thanks [@qperrot](https://github.com/qperrot)! - Fix sequencer number too high
+
+- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/cryptoassets@13.22.0
+  - @ledgerhq/types-live@6.78.0
+  - @ledgerhq/errors@6.23.0
+  - @ledgerhq/live-network@2.0.13
+  - @ledgerhq/devices@8.4.8
+
+## 5.7.0-next.0
+
+### Minor Changes
+
+- [#10856](https://github.com/LedgerHQ/ledger-live/pull/10856) [`bb7e311`](https://github.com/LedgerHQ/ledger-live/commit/bb7e31139763b9fd943bf237d2c6260d6aef24ab) Thanks [@qperrot](https://github.com/qperrot)! - Fix sequencer number too high
+
+- [#10859](https://github.com/LedgerHQ/ledger-live/pull/10859) [`63cdeb1`](https://github.com/LedgerHQ/ledger-live/commit/63cdeb1ea20fe0c16b623546ce00f3fe26b7ec80) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Add unit tests to Bitcoin and Cardano getTransactionStatus function
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958), [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a), [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/cryptoassets@13.22.0-next.0
+  - @ledgerhq/types-live@6.78.0-next.0
+  - @ledgerhq/errors@6.23.0-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+  - @ledgerhq/devices@8.4.8-next.0
+
+## 5.6.0
+
+### Minor Changes
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.77.0
+
+## 5.6.0-next.0
+
+### Minor Changes
+
+- [#10365](https://github.com/LedgerHQ/ledger-live/pull/10365) [`90b023d`](https://github.com/LedgerHQ/ledger-live/commit/90b023d9a6db34fef865abf96ab31a5e0bcef42a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add sanctioned address check on get transaction status definition
+
+- [#10822](https://github.com/LedgerHQ/ledger-live/pull/10822) [`2f38d03`](https://github.com/LedgerHQ/ledger-live/commit/2f38d032ec8e8481e4ff3b37f33aa4eb3872b542) Thanks [@Canestin](https://github.com/Canestin)! - feat(coin-evm): EVM Alpacaization (part 1)
+
+### Patch Changes
+
+- Updated dependencies [[`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32), [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7)]:
+  - @ledgerhq/types-live@6.77.0-next.0
+
 ## 5.5.0
 
 ### Minor Changes

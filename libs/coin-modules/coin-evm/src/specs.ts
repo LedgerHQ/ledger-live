@@ -48,6 +48,9 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   linea_sepolia: 0.001,
   blast: 0.001,
   blast_sepolia: 0.001,
+  hyperevm: 0.001,
+  berachain: 0.001,
+  sei_network_evm: 0.001,
 };
 
 /**
@@ -367,7 +370,7 @@ const getAppQuery = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>[
     case "polygon":
       return { model: DeviceModelId.nanoS, appName: "Polygon" };
     case "bsc":
-      return { model: DeviceModelId.nanoS, appName: "Binance Smart Chain" };
+      return { model: DeviceModelId.nanoS, appName: "BNB Chain" };
     case "ethereum_classic":
       return { model: DeviceModelId.nanoS, appName: "Ethereum Classic" };
     case "sonic":

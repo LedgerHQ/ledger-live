@@ -18,6 +18,8 @@ import { inferDescriptorFromAccount, AccountDescriptor } from "@ledgerhq/coin-bi
 import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 setSupportedCurrencies(["bitcoin"]);
 jest.setTimeout(10000);
@@ -230,6 +232,11 @@ describe("stringifySatStackConfig", () => {
   });
 });
 describe("editSatStackConfig", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  setCryptoAssetsStoreForCoinFramework({
+    findTokenById: (_: string) => undefined,
+    findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  } as CryptoAssetsStore);
   const config = {
     node: { ...mockConfig, tls: false },
     extra: {

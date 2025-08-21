@@ -1,5 +1,45 @@
 # @ledgerhq/live-env
 
+## 2.14.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.14.0-next.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.13.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
+## 2.13.0-next.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
+## 2.12.0
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+## 2.12.0-next.0
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
 ## 2.11.0
 
 ### Minor Changes

@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.15.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+## 0.14.0
+
+### Minor Changes
+
+- [#10789](https://github.com/LedgerHQ/ledger-live/pull/10789) [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - track swap-live-app version in api calls headers
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#10789](https://github.com/LedgerHQ/ledger-live/pull/10789) [`6e8ef64`](https://github.com/LedgerHQ/ledger-live/commit/6e8ef645cbb33ae4ce98c1d39c3b54d076d61b9b) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - track swap-live-app version in api calls headers
+
+- [#10119](https://github.com/LedgerHQ/ledger-live/pull/10119) [`f5105d2`](https://github.com/LedgerHQ/ledger-live/commit/f5105d216264b2fd59fc66cf2b9b71f9ef6eb818) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Swap - Create custom method "custom.exchange.swap"
+
 ## 0.13.0
 
 ### Minor Changes

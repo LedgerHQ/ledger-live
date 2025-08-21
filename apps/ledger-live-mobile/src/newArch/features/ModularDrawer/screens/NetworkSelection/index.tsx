@@ -1,43 +1,106 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { FlatList } from "react-native";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  AssetType,
+  NetworkItem,
+  Network as NetworkType,
+} from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import { Flex } from "@ledgerhq/native-ui";
+import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import {
+  useModularDrawerAnalytics,
+  TrackDrawerScreen,
+  EVENTS_NAME,
+  MODULAR_DRAWER_PAGE_NAME,
+} from "../../analytics";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import orderBy from "lodash/orderBy";
+import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
 
 export type NetworkSelectionStepProps = {
-  availableNetworks?: CryptoOrTokenCurrency[];
+  availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
+  flow: string;
+  source: string;
+  networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
 
-// TODO: This component will be replaced with NetworkList from pre-ldls
-
-const NetworkList: React.FC<{
-  networks?: CryptoOrTokenCurrency[];
-  onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
-}> = ({ networks, onNetworkSelected }) => {
-  return (
-    <FlatList
-      data={networks}
-      keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <Flex height={40} alignItems="center" justifyContent="center">
-          <TouchableOpacity onPress={() => onNetworkSelected?.(item)}>
-            <Text color="neutral.c100">
-              {"Network =>"} {item.name} ({item.ticker})
-            </Text>
-          </TouchableOpacity>
-        </Flex>
-      )}
-      ItemSeparatorComponent={() => <Box height={1} bg="neutral.c50" mx={2} />}
-    />
-  );
-};
+const SAFE_MARGIN_BOTTOM = 48;
 
 const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
+  flow,
+  source,
+  networksConfiguration,
 }: Readonly<NetworkSelectionStepProps>) => {
-  return <NetworkList networks={availableNetworks} onNetworkSelected={onNetworkSelected} />;
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+
+  const handleNetworkClick = useCallback(
+    (networkId: string) => {
+      const originalNetwork = availableNetworks.find(n => n.id === networkId);
+      if (originalNetwork) {
+        trackModularDrawerEvent(
+          EVENTS_NAME.NETWORK_CLICKED,
+          {
+            flow,
+            source,
+            network: originalNetwork.name,
+            page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
+          },
+          {
+            formatNetworkConfig: true,
+            networksConfig: networksConfiguration,
+          },
+        );
+
+        onNetworkSelected(originalNetwork);
+      }
+    },
+    [
+      availableNetworks,
+      flow,
+      source,
+      networksConfiguration,
+      trackModularDrawerEvent,
+      onNetworkSelected,
+    ],
+  );
+
+  const transformNetworks = createNetworkConfigurationHook({
+    networksConfig: networksConfiguration,
+    accounts$: undefined,
+  });
+
+  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+
+  const formattedNetworks = transformNetworks(orderedNetworks);
+
+  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
+
+  return (
+    <Flex flexGrow={1}>
+      <TrackDrawerScreen
+        page={EVENTS_NAME.MODULAR_NETWORK_SELECTION}
+        flow={flow}
+        source={source}
+        networksConfig={networksConfiguration}
+        formatNetworkConfig
+      />
+      <BottomSheetFlatList
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+        data={formattedNetworks}
+        keyExtractor={keyExtractor}
+        renderItem={({ item }: { item: NetworkType }) => (
+          <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
+        )}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+        }}
+      />
+    </Flex>
+  );
 };
 
 export default React.memo(NetworkSelection);

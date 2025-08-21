@@ -73,7 +73,9 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
-import { isWebHidSendReportError } from "@ledgerhq/live-dmk-desktop";
+import { DmkError } from "@ledgerhq/live-dmk-desktop";
+import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
+import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -709,8 +711,8 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       <Wrapper id="error-device-not-onboarded">
         <ErrorBody
           top={device ? <DeviceIllustration size={120} deviceId={device.modelId} /> : null}
-          title={t("errors.DeviceNotOnboardedError.title")}
-          description={t("errors.DeviceNotOnboardedError.description")}
+          title={t("errors.DeviceNotOnboardedDAError.title")}
+          description={t("errors.DeviceNotOnboardedDAError.description")}
           buttons={
             <ButtonV3
               variant="main"
@@ -719,10 +721,10 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
               Icon={IconsLegacy.ArrowRightMedium}
             >
               {productName
-                ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                ? t("errors.DeviceNotOnboardedDAError.goToOnboardingButtonWithProductName", {
                     productName,
                   })
-                : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+                : t("errors.DeviceNotOnboardedDAError.goToOnboardingButton")}
             </ButtonV3>
           }
         />
@@ -786,7 +788,7 @@ export const renderError = ({
   Icon,
   stretch,
 }: {
-  error: Error | ErrorConstructor;
+  error: Error | ErrorConstructor | DmkError;
   t: TFunction;
   withOpenManager?: boolean;
   onRetry?: (() => void) | null | undefined;
@@ -817,7 +819,7 @@ export const renderError = ({
   } else if (tmpError instanceof FirmwareNotRecognized) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   } else if (tmpError instanceof CompleteExchangeError) {
-    if (tmpError.message === "User refused") {
+    if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
   } else if (tmpError instanceof NoSuchAppOnProvider) {
@@ -829,15 +831,15 @@ export const renderError = ({
         learnMoreTextKey={learnMoreTextKey}
       />
     );
-  } else if (isWebHidSendReportError(tmpError)) {
+  } else if (isDisconnectedWhileSendingApduError(tmpError)) {
     tmpError = new DisconnectedDevice();
   }
   // if no supportLink is provided, we fallback on the related url linked to
   // tmpError name, if any
-  const supportLinkUrl = supportLink ?? urls.errors[error?.name];
+  const supportLinkUrl = supportLink ?? urls.errors[isDmkError(error) ? error._tag : error?.name];
 
   return (
-    <Wrapper id={`error-${error.name}`}>
+    <Wrapper id={`error-${isDmkError(error) ? error._tag : error.name}`}>
       <ErrorBody
         Icon={
           Icon

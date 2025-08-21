@@ -2,6 +2,8 @@ import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUt
 import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { isIos } from "../helpers/commonHelpers";
+import { device } from "detox";
 
 const proxyAddress = "localhost";
 
@@ -13,7 +15,6 @@ export default class CommonPage {
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
   deviceRowRegex = /device-item-.*/;
-  parentCurrencyIcon = "parent-currency-icon";
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -117,7 +118,11 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    await tapById(this.deviceRowRegex, index);
+    if (isIos()) await device.disableSynchronization();
+    const proxyUrl = process.env.DEVICE_PROXY_URL;
+    const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
+    await waitForElementById(elementId);
+    await tapById(elementId, proxyUrl ? undefined : index);
   }
 
   @Step("Tap proceed button")

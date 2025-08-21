@@ -1,5 +1,85 @@
 # @ledgerhq/types-live
 
+## 6.81.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+## 6.81.0-next.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+## 6.80.0
+
+### Minor Changes
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+## 6.80.0-next.0
+
+### Minor Changes
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+## 6.79.0
+
+### Minor Changes
+
+- [#10935](https://github.com/LedgerHQ/ledger-live/pull/10935) [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix reporting not sending currency
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- [#11125](https://github.com/LedgerHQ/ledger-live/pull/11125) [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ignore specific OS updates in onboarding based on remote config
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+## 6.79.0-next.1
+
+### Minor Changes
+
+- [#11125](https://github.com/LedgerHQ/ledger-live/pull/11125) [`8423a9f`](https://github.com/LedgerHQ/ledger-live/commit/8423a9fbba0d54d18ff35c0519a82829fc8042e0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ignore specific OS updates in onboarding based on remote config
+
+## 6.79.0-next.0
+
+### Minor Changes
+
+- [#10935](https://github.com/LedgerHQ/ledger-live/pull/10935) [`4eee376`](https://github.com/LedgerHQ/ledger-live/commit/4eee3767b513dfb58a156cf2ce8086e31a7d55bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix reporting not sending currency
+
+- [#11075](https://github.com/LedgerHQ/ledger-live/pull/11075) [`6312f3a`](https://github.com/LedgerHQ/ledger-live/commit/6312f3a039e3018dfd78d231fa91ecf8fc82a118) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add lldModularDrawerBackendData FF
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+## 6.78.0
+
+### Minor Changes
+
+- [#10839](https://github.com/LedgerHQ/ledger-live/pull/10839) [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a) Thanks [@themooneer](https://github.com/themooneer)! - chore: toggle sentry initialization based on llmSentry
+
+## 6.78.0-next.0
+
+### Minor Changes
+
+- [#10839](https://github.com/LedgerHQ/ledger-live/pull/10839) [`0e32a4e`](https://github.com/LedgerHQ/ledger-live/commit/0e32a4e5482ad2d3002483632770a2d7981b7a5a) Thanks [@themooneer](https://github.com/themooneer)! - chore: toggle sentry initialization based on llmSentry
+
+## 6.77.0
+
+### Minor Changes
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
+## 6.77.0-next.0
+
+### Minor Changes
+
+- [#10766](https://github.com/LedgerHQ/ledger-live/pull/10766) [`d053a79`](https://github.com/LedgerHQ/ledger-live/commit/d053a7969ac7976ea6d10955c3cfa47621be1b32) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove llmNetworkBasedAddAccountFlow FF
+
+- [#10761](https://github.com/LedgerHQ/ledger-live/pull/10761) [`0232f73`](https://github.com/LedgerHQ/ledger-live/commit/0232f73efa73eb3a16c306f25dd110e12b9c1fb7) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - add openWithDevTools feature flag param on recover webview
+
 ## 6.76.0
 
 ### Minor Changes

@@ -1,3 +1,19 @@
+# 2.124.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.120.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.120.0
 
 ### 🌷 Improvements

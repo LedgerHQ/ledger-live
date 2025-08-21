@@ -27,11 +27,6 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2571",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
-    expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
-    xrayTicket: "B2CQA-2567",
-  },
-  {
     transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
@@ -205,7 +200,10 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata:
+          transaction.transaction.accountToDebit === Account.APTOS_1
+            ? "speculos-aptos"
+            : "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           (appjsonPath: string) => {

@@ -1,9 +1,6 @@
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  findCryptoCurrencyByTicker,
-  findFiatCurrencyByTicker,
-  findTokenByTicker,
-} from "@ledgerhq/cryptoassets/index";
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "../crypto-assets";
 
 export { encodeURIScheme, decodeURIScheme } from "./CurrencyURIScheme";
 export { sanitizeValueString } from "./sanitizeValueString";
@@ -15,4 +12,4 @@ export { isCurrencySupported, listSupportedCurrencies, setSupportedCurrencies } 
 export const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
   findCryptoCurrencyByTicker(ticker) ||
   findFiatCurrencyByTicker(ticker) ||
-  findTokenByTicker(ticker);
+  getCryptoAssetsStore().findTokenByTicker(ticker);

@@ -1,5 +1,7 @@
 import marketHandlers from "./market";
 import ledgerSyncHandlers from "./ledgerSync";
+import cryptoIconsHandlers from "./crypto-icons";
+import supportedCvsHandlers from "./supportedCvs";
 
 export const ALLOWED_UNHANDLED_REQUESTS = [
   "ledger.statuspage.io",
@@ -9,4 +11,9 @@ export const ALLOWED_UNHANDLED_REQUESTS = [
   "https://crypto-assets-service.api.ledger.com/v1/partners?output=name,signature,public_key,public_key_curve&service_name=swap",
 ];
 
-export default [...marketHandlers, ...ledgerSyncHandlers];
+export default [
+  ...marketHandlers,
+  ...ledgerSyncHandlers,
+  ...cryptoIconsHandlers,
+  ...supportedCvsHandlers,
+];

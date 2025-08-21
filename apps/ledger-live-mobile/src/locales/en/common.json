@@ -287,20 +287,124 @@
       "description": "Please try again."
     },
     "DisconnectedDevice": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try it again."
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try it again."
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedWhileSendingError": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try again."
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "ReconnectionFailedError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
     },
     "DeviceDisconnectedBeforeSendingApdu": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try again."
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError": {
+      "title": "Device locked",
+      "description": "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError": {
+      "title": "Not enough memory",
+      "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError": {
+      "title": "OS is unsupported",
+      "description": "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError": {
+      "title": "Battery error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError": {
+      "title": "Battery error",
+      "description": "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     },
     "CasperInvalidTransferId": {
       "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
@@ -517,9 +621,29 @@
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."
     },
+    "NotEnoughToStake": {
+      "title": "You need at least {{minStake}} {{currency}} to activate your stake",
+      "description": "You need at least {{minStake}} {{currency}} to activate your stake"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft": {
+      "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
+      "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
+    },
+    "RestakeNotEnoughStakedBalanceLeft": {
+      "title": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked",
+      "description": "If you restake more than {{maxAmount}}, your total stake of {{totalAmount}} will be restaked"
+    },
+    "NotEnoughToRestake": {
+      "title": "You can't restake less than {{minAmount}}",
+      "description": "You can't restake less than {{minAmount}}."
+    },
+    "NotEnoughToUnstake": {
+      "title": "You can't unstake less than {{minAmount}}",
+      "description": "You can't unstake less than {{minAmount}}."
     },
     "NotEnoughBalanceFees": {
       "title": "Sorry, insufficient funds to cover fees",
@@ -776,9 +900,6 @@
     },
     "PolkadotAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
-    },
-    "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
     },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least {{minimumBondAmount}}."
@@ -1086,7 +1207,7 @@
       "title": "Minimum required amount for this transaction is {{amount}}"
     },
     "AddressesSanctionedError": {
-      "title": "Keep you safe",
+      "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
     }
   },
@@ -1184,7 +1305,8 @@
     "estimatedTime": {
       "slow": "≈ 2-3 min",
       "medium": "≈ 30 sec",
-      "fast": "≈ 15 sec"
+      "fast": "≈ 15 sec",
+      "custom": ""
     }
   },
   "signout": {
@@ -3116,12 +3238,12 @@
         "desc": "Receive important Ledger Live updates"
       },
       "largeMover": {
-        "title": "Large Mover",
-        "desc": "You’ll be notified of important price movements if you own BTC, ETH, SOL, ADA or XRP"
+        "title": "Price Alerts",
+        "desc": "You’ll be notified of important price movements for popular tokens you own"
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
       "price": {
         "title": "Price Alerts",
@@ -3539,7 +3661,8 @@
           "refunded": "Please contact the swap provider with your swap ID for more information.",
           "pending": "Please wait while the swap provider is processing the transaction.",
           "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
-          "finished": "Your swap was completed successfully."
+          "finished": "Your swap was completed successfully.",
+          "unknown": "We are awaiting information from the provider."
         }
       },
       "missingApp": {
@@ -3600,6 +3723,7 @@
             "provider": "Provider",
             "rate": "Rate",
             "fees": "Network fees",
+            "feesDescription": "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
             "target": "Target account"
           },
           "noAccount": "Create an account to receive {{name}}",
@@ -3924,6 +4048,10 @@
       "quantityAvailable": "Quantity available"
     },
     "summary": {
+      "solanaRawTransaction": {
+        "title": "Blind signing required",
+        "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
+      },
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
@@ -6124,6 +6252,7 @@
       "iWithdraw": "I withdraw",
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "stakeActivationState": "State",
       "stakeActivePercent": "Active",
       "stakeAvailableBalance": "Available balance",
@@ -6305,6 +6434,141 @@
             "steps": {
               "0": "Staked assets remain yours.",
               "1": "You will have to wait 52 - 65 hours for unstaking to complete.",
+              "2": "Stake securely with your Ledger device."
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction."
+            }
+          }
+        }
+      }
+    }
+  },
+  "aptos": {
+    "info": {
+      "available": {
+        "title": "Aptos available",
+        "description": "This amount is disposable."
+      },
+      "storageUsage": {
+        "title": "Minimum balance",
+        "description": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
+      },
+      "staked": {
+        "title": "Staked balance",
+        "description": "This amount is currently staked with validators."
+      },
+      "pending": {
+        "title": "Pending balance",
+        "description": "This amount has been unstaked and is currently pending availability."
+      },
+      "withdrawable": {
+        "title": "Withdrawable balance",
+        "description": "This amount has been unstaked and is currently able to be withdrawn."
+      },
+      "stakingUnavailable": {
+        "title": "Staking unavailable",
+        "description": "Not enough available balance in your account to stake, unstake, and withdraw."
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount",
+        "unstakedAmount": "Unstaked amount",
+        "withdrawnAmount": "Withdrawn amount"
+      }
+    },
+    "unstaking": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to unstake"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully unstaked your assets"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to withdraw"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully withdrawn your assets"
+            }
+          }
+        }
+      }
+    },
+    "restaking": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to restake"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully restaken your assets"
+            }
+          }
+        }
+      }
+    },
+    "staking": {
+      "sectionLabel": "Staking Position(s)",
+      "info": "How Staking Works",
+      "add": "Add",
+      "stakingEarn": "You can earn Aptos rewards by staking your assets.",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "comm": "Comm.",
+      "timeToUnlock": "Unlock in",
+      "iStake": "I stake",
+      "actions": {
+        "unstake": "Unstake",
+        "withdraw": "Withdraw",
+        "restake": "Restake"
+      },
+      "drawer": {
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending",
+        "available": "Withdrawable"
+      },
+      "stepperHeader": {
+        "amountSubTitle": "Amount to stake",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Stake your Aptos to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "0": "Staked assets remain yours.",
+              "1": "You will have to wait ~2 hours for unstaking to complete.",
               "2": "Stake securely with your Ledger device."
             },
             "warning": {
@@ -6733,8 +6997,8 @@
       "7d": "7D",
       "30d": "30D",
       "1y": "1Y",
-      "1D_label": "1D",
       "1H_label": "1H",
+      "1D_label": "1D",
       "1W_label": "1W",
       "1M_label": "1M",
       "1Y_label": "1Y"
@@ -7514,7 +7778,7 @@
   },
   "geoBlocking": {
     "title": "Location unavailable",
-    "description": "Ledger wallet is not available in this location.",
+    "description": "Ledger Live is not available in this location.",
     "learnMore": "Learn more"
   },
   "versionBlocking": {
@@ -7525,6 +7789,88 @@
   "modularDrawer": {
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
-    "selectAccount": "Select account"
+    "selectAccount": "Select account",
+    "searchPlaceholder": "Search",
+    "emptyAssetList": "No assets found",
+    "accountCount": "{{count}} account",
+    "accountCount_plural": "{{count}} accounts"
+  },
+  "swapErrors": {
+    "incorrectCommandData": {
+      "title": "Incorrect command data",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "deserializationFailed": {
+      "title": "Payload deserialization failed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongTransactionId": {
+      "title": "Wrong transaction ID",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidAddress": {
+      "title": "Invalid address",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to the connected device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description": "This sending account does not belong to the connected device. Please change and retry."
+    },
+    "userRefused": {
+      "title": "Operation denied on device",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "internalError": {
+      "title": "Internal error",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP1": {
+      "title": "Wrong P1",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP2": {
+      "title": "Wrong P2",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "wrongP2Extension": {
+      "title": "Wrong P2 extension",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidP2Extension": {
+      "title": "Something went wrong",
+      "description": "Invalid P2 extension"
+    },
+    "unexpectedInstruction": {
+      "title": "Something went wrong",
+      "description": "Unexpected instruction"
+    },
+    "classNotSupported": {
+      "title": "Something went wrong",
+      "description": "Class not supported"
+    },
+    "invalidInstruction": {
+      "title": "Invalid instruction",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "malformedApdu": {
+      "title": "APDU header malformed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "invalidDataLength": {
+      "title": "Invalid data length",
+      "description": "This command does not accept data of that length"
+    },
+    "signatureVerificationFail": {
+      "title": "Signature verification failed",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "default": {
+      "title": "Something went wrong",
+      "description": "Please retry or contact Ledger Support if in doubt"
+    }
   }
 }

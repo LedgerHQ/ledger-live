@@ -1,5 +1,95 @@
 # @ledgerhq/react-ui
 
+## 0.35.1
+
+### Patch Changes
+
+- Updated dependencies [[`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c)]:
+  - @ledgerhq/crypto-icons-ui@1.17.0
+
+## 0.35.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`96654b0`](https://github.com/LedgerHQ/ledger-live/commit/96654b01611519901cb1957213c154f8bcda599c)]:
+  - @ledgerhq/crypto-icons-ui@1.17.0-next.0
+
+## 0.35.0
+
+### Minor Changes
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10968](https://github.com/LedgerHQ/ledger-live/pull/10968) [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update chip design
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11059](https://github.com/LedgerHQ/ledger-live/pull/11059) [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update swap ui to use the react ui Chip components
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#11036](https://github.com/LedgerHQ/ledger-live/pull/11036) [`3bce0cd`](https://github.com/LedgerHQ/ledger-live/commit/3bce0cd5bb6d3a30157eae14fd327ad6fdd05f95) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add APY indicator
+
+- [#10968](https://github.com/LedgerHQ/ledger-live/pull/10968) [`3d957e9`](https://github.com/LedgerHQ/ledger-live/commit/3d957e9fac4f032d704af4a958aa9a863812fdb1) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update chip design
+
+- [#10930](https://github.com/LedgerHQ/ledger-live/pull/10930) [`a617656`](https://github.com/LedgerHQ/ledger-live/commit/a617656473c34636ee8874742fcbb754670831d4) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds a new page to the Add Account flow that lets the user edit the account name that they want to add.
+
+- [#11059](https://github.com/LedgerHQ/ledger-live/pull/11059) [`4c2e43f`](https://github.com/LedgerHQ/ledger-live/commit/4c2e43fe0239e662bc02e0b0b9ca542fa6068594) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Update swap ui to use the react ui Chip components
+
+## 0.34.0
+
+### Minor Changes
+
+- [#10860](https://github.com/LedgerHQ/ledger-live/pull/10860) [`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add checkbox to pre-LDLS with correct purple
+
+- [#10883](https://github.com/LedgerHQ/ledger-live/pull/10883) [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds new TextInput component and stories
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#10860](https://github.com/LedgerHQ/ledger-live/pull/10860) [`35f66ef`](https://github.com/LedgerHQ/ledger-live/commit/35f66effa38507a907defa843aced199049c414a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Add checkbox to pre-LDLS with correct purple
+
+- [#10883](https://github.com/LedgerHQ/ledger-live/pull/10883) [`d97bfd5`](https://github.com/LedgerHQ/ledger-live/commit/d97bfd5316588662cbca5e8ec1c5c5c70d0469b2) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Adds new TextInput component and stories
+
+- [#10909](https://github.com/LedgerHQ/ledger-live/pull/10909) [`9d55265`](https://github.com/LedgerHQ/ledger-live/commit/9d55265f75fa7d1b27b51a83d5ec74484b6b7fd5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - Bump crypto icons package -- Use flatlist instead of flashlist inside the ui lib -- Display select asset list and select account list -- Add search placeholder and logic
+
+### Patch Changes
+
+- Updated dependencies [[`07ec46c`](https://github.com/LedgerHQ/ledger-live/commit/07ec46c5b46829f2660ed8bb35e75376796f1756)]:
+  - @ledgerhq/icons-ui@0.13.0-next.0
+
+## 0.33.0
+
+### Minor Changes
+
+- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0
+
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#10783](https://github.com/LedgerHQ/ledger-live/pull/10783) [`758e37c`](https://github.com/LedgerHQ/ledger-live/commit/758e37ccfb0bd44541b2aeca57fb4a902882c375) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove border radius if account item isn't clickable
+
+### Patch Changes
+
+- Updated dependencies [[`061f626`](https://github.com/LedgerHQ/ledger-live/commit/061f6268cbbf0f56d90cd2d117b714fe8559d271)]:
+  - @ledgerhq/crypto-icons-ui@1.16.0-next.0
+
 ## 0.32.0
 
 ### Minor Changes

@@ -1,48 +1,216 @@
-import React, { useState } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import Button from "~/components/Button";
-import { ModularDrawer } from "../ModularDrawer";
-import { ModularDrawerStep } from "../types";
+import React, { useCallback, useState, useMemo } from "react";
+import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { useModularDrawerController } from "../hooks/useModularDrawerController";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-
-const steps = [ModularDrawerStep.Asset, ModularDrawerStep.Network, ModularDrawerStep.Account];
+import FeatureFlagDetails from "~/screens/FeatureFlagsSettings/FeatureFlagDetails";
+import { ScrollView } from "react-native-gesture-handler";
+import { Alert } from "react-native";
+import { useTheme } from "styled-components/native";
+import { SectionCard, ToggleRow, PickerField, Divider } from "./components";
+import {
+  assetLeftOptions,
+  assetRightOptions,
+  networkLeftOptions,
+  networkRightOptions,
+} from "./const/configurationOptions";
+import { AssetConfiguration, NetworkConfiguration } from "./types";
 
 function ModularDrawerScreenDebug() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedStep, setSelectedStep] = useState<ModularDrawerStep>(ModularDrawerStep.Asset);
+  const { openDrawer } = useModularDrawerController();
+  const { colors } = useTheme();
 
-  const handleToggleDrawer = () => setIsDrawerOpen(open => !open);
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
-    setSelectedStep(ModularDrawerStep.Asset);
-  };
-  const handleStepSelect = (step: ModularDrawerStep) => setSelectedStep(step);
+  const [includeTokens, setIncludeTokens] = useState(true);
+  const [enableAccountSelection, setEnableAccountSelection] = useState(true);
+  const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [selectedAssetLeftElement, setSelectedAssetLeftElement] =
+    useState<AssetConfiguration["leftElement"]>("undefined");
+  const [selectedAssetRightElement, setSelectedAssetRightElement] =
+    useState<AssetConfiguration["rightElement"]>("undefined");
+  const [selectedNetworkLeftElement, setSelectedNetworkLeftElement] =
+    useState<NetworkConfiguration["leftElement"]>("undefined");
+  const [selectedNetworkRightElement, setSelectedNetworkRightElement] =
+    useState<NetworkConfiguration["rightElement"]>("undefined");
 
-  const currencies = listAndFilterCurrencies({ includeTokens: true });
+  const currencies = useMemo(() => listAndFilterCurrencies({ includeTokens }), [includeTokens]);
+
+  const handleAccountSelected = useCallback(() => {
+    Alert.alert("Account Selected", "An account has been selected via MAD flow");
+  }, []);
+
+  const handleToggleDrawer = useCallback(() => {
+    openDrawer({
+      currencies,
+      enableAccountSelection,
+      onAccountSelected: enableOnAccountSelected ? handleAccountSelected : undefined,
+      flow: "debug_flow",
+      source: "debug_source",
+      assetsConfiguration: {
+        leftElement:
+          selectedAssetLeftElement === "undefined" ? undefined : selectedAssetLeftElement,
+        rightElement:
+          selectedAssetRightElement === "undefined" ? undefined : selectedAssetRightElement,
+      },
+      networksConfiguration: {
+        leftElement:
+          selectedNetworkLeftElement === "undefined" ? undefined : selectedNetworkLeftElement,
+        rightElement:
+          selectedNetworkRightElement === "undefined" ? undefined : selectedNetworkRightElement,
+      },
+    });
+  }, [
+    openDrawer,
+    handleAccountSelected,
+    currencies,
+    enableAccountSelection,
+    enableOnAccountSelected,
+    selectedAssetLeftElement,
+    selectedAssetRightElement,
+    selectedNetworkLeftElement,
+    selectedNetworkRightElement,
+  ]);
 
   return (
-    <Flex flexDirection="column" rowGap={4} px={6}>
-      <Button size="small" type="main" title="Open MAD Drawer" onPress={handleToggleDrawer} />
-      <Flex mt={3} flexDirection="row" columnGap={8} alignItems="center" justifyContent="center">
-        {steps.map(step => (
-          <Button
-            key={step}
-            size="small"
-            type={selectedStep === step ? "color" : "main"}
-            title={step}
-            onPress={() => handleStepSelect(step)}
+    <Flex flex={1}>
+      <ScrollView
+        style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}
+        contentContainerStyle={{ paddingBottom: 16 }}
+      >
+        <SectionCard>
+          <Text variant="body" color="neutral.c80" lineHeight="20px">
+            {
+              "Test the Modular Drawer with different configurations. Adjust settings below to explore various behaviors and features."
+            }
+          </Text>
+        </SectionCard>
+
+        <SectionCard title="Feature Flag">
+          <FeatureFlagDetails
+            key={"llmModularDrawer"}
+            focused={isFocused}
+            flagName={"llmModularDrawer"}
+            setFocusedName={v => setIsFocused(v === "llmModularDrawer")}
           />
-        ))}
+        </SectionCard>
+
+        <SectionCard title="Basic Configuration">
+          <ToggleRow
+            label="Include Tokens"
+            description="Show tokens alongside main currencies"
+            value={includeTokens}
+            onChange={setIncludeTokens}
+          />
+
+          <Divider />
+
+          <ToggleRow
+            label="Add Account / Account Selection"
+            description="Allow users to add an account or select specific accounts"
+            value={enableAccountSelection}
+            onChange={setEnableAccountSelection}
+          />
+
+          <Divider />
+
+          <ToggleRow
+            label="Selection Callback"
+            description="Enable callback when account is selected"
+            value={enableOnAccountSelected}
+            onChange={setEnableOnAccountSelected}
+          />
+        </SectionCard>
+
+        <SectionCard title="Assets Configuration">
+          <PickerField
+            label="Left Element"
+            description="Choose what to display on the left side of asset rows"
+            value={selectedAssetLeftElement || "undefined"}
+            onValueChange={(value: string) => {
+              if (value === "undefined" || value === "apy" || value === "priceVariation") {
+                setSelectedAssetLeftElement(value);
+              }
+            }}
+            options={assetLeftOptions}
+          />
+
+          <PickerField
+            label="Right Element"
+            description="Choose what to display on the right side of asset rows"
+            value={selectedAssetRightElement || "undefined"}
+            onValueChange={(value: string) => {
+              if (value === "undefined" || value === "balance" || value === "marketTrend") {
+                setSelectedAssetRightElement(value);
+              }
+            }}
+            options={assetRightOptions}
+          />
+        </SectionCard>
+
+        <SectionCard title="Networks Configuration">
+          <PickerField
+            label="Left Element"
+            description="Choose what to display on the left side of network rows"
+            value={selectedNetworkLeftElement || "undefined"}
+            onValueChange={(value: string) => {
+              if (
+                value === "undefined" ||
+                value === "numberOfAccounts" ||
+                value === "numberOfAccountsAndApy"
+              ) {
+                setSelectedNetworkLeftElement(value);
+              }
+            }}
+            options={networkLeftOptions}
+          />
+
+          <PickerField
+            label="Right Element"
+            description="Choose what to display on the right side of network rows"
+            value={selectedNetworkRightElement || "undefined"}
+            onValueChange={(value: string) => {
+              if (value === "undefined" || value === "balance") {
+                setSelectedNetworkRightElement(value);
+              }
+            }}
+            options={networkRightOptions}
+          />
+        </SectionCard>
+
+        <SectionCard title="Current Configuration">
+          <Flex rowGap={2}>
+            <Text variant="body" color="neutral.c80">
+              <Text fontWeight="semiBold">{"Currencies:"}</Text> {currencies.length}
+              {includeTokens ? " (including tokens)" : " (excluding tokens)"}
+            </Text>
+            <Text variant="body" color="neutral.c80">
+              <Text fontWeight="semiBold">{"Account Selection:"}</Text>
+              {enableAccountSelection ? " Enabled" : " Disabled"}
+            </Text>
+            <Text variant="body" color="neutral.c80">
+              <Text fontWeight="semiBold">{"Selection Callback:"}</Text>
+              {enableOnAccountSelected ? " Enabled" : " Disabled"}
+            </Text>
+          </Flex>
+        </SectionCard>
+      </ScrollView>
+
+      <Flex
+        px={4}
+        pb={16}
+        pt={2}
+        backgroundColor="background.main"
+        style={{
+          shadowColor: colors.neutral.c100,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+        }}
+      >
+        <Button size="large" type="main" onPress={handleToggleDrawer}>
+          {"Open Modular Drawer "}({currencies.length} {"currencies"})
+        </Button>
       </Flex>
-      <Flex alignItems="center" mt={2}>
-        <Text style={{ fontSize: 14, marginTop: 8 }}>{`Selected step: ${selectedStep}`}</Text>
-      </Flex>
-      <ModularDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleDrawerClose}
-        selectedStep={selectedStep}
-        currencies={currencies}
-      />
     </Flex>
   );
 }

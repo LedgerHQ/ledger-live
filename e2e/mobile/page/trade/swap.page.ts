@@ -96,9 +96,15 @@ export default class SwapPage {
     jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/Pending|Finished/);
     await detoxExpect(getElementByText("Swap ID")).toBeVisible();
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
-      normalizeText(provider.uiName),
-    );
+    if (await IsIdVisible(this.operationDetails.providerLink)) {
+      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
+        normalizeText(provider.uiName),
+      );
+    } else {
+      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.provider))).toEqual(
+        normalizeText(provider.uiName),
+      );
+    }
     jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(
       /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
     );
@@ -145,13 +151,13 @@ export default class SwapPage {
   @Step("Verify the amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndAcceptSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
+    await addDelayBeforeInteractingWithDevice(40_000, 30_000);
   }
 
   @Step("Verify the amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await app.speculos.verifyAmountsAndRejectSwap(swap, amount);
-    await addDelayBeforeInteractingWithDevice(20_000, 20_000);
+    await addDelayBeforeInteractingWithDevice(40_000, 20_000);
   }
 
   @Step("Verify device action loading is not visible")

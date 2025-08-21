@@ -157,6 +157,7 @@ export enum ScreenName {
   SignValidationError = "SignValidationError",
   SignValidationSuccess = "SignValidationSuccess",
   Swap = "Swap",
+  SwapCustomError = "SwapCustomError",
   SwapError = "SwapError",
   SwapForm = "SwapForm",
   SwapFormAmount = "SwapFormAmount",
@@ -496,6 +497,30 @@ export enum ScreenName {
   NearWithdrawingConnectDevice = "NearWithdrawingConnectDevice",
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
+  // Aptos
+  AptosStakingValidator = "AptosStakingValidator",
+  AptosStakingValidatorSelect = "AptosStakingValidatorSelect",
+  AptosStakingAmount = "AptosStakingAmount",
+  AptosStakingStarted = "AptosStakingStarted",
+  AptosStakingSelectDevice = "AptosStakingSelectDevice",
+  AptosStakingConnectDevice = "AptosStakingConnectDevice",
+  AptosStakingValidationError = "AptosStakingValidationError",
+  AptosStakingValidationSuccess = "AptosStakingValidationSuccess",
+  AptosRestakingAmount = "AptosRestakingAmount",
+  AptosRestakingSelectDevice = "AptosRestakingSelectDevice",
+  AptosRestakingConnectDevice = "AptosRestakingConnectDevice",
+  AptosRestakingValidationError = "AptosRestakingValidationError",
+  AptosRestakingValidationSuccess = "AptosRestakingValidationSuccess",
+  AptosUnstakingAmount = "AptosUnstakingAmount",
+  AptosUnstakingSelectDevice = "AptosUnstakingSelectDevice",
+  AptosUnstakingConnectDevice = "AptosUnstakingConnectDevice",
+  AptosUnstakingValidationError = "AptosUnstakingValidationError",
+  AptosUnstakingValidationSuccess = "AptosUnstakingValidationSuccess",
+  AptosWithdrawingAmount = "AptosWithdrawingAmount",
+  AptosWithdrawingSelectDevice = "AptosWithdrawingSelectDevice",
+  AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
+  AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
+  AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
 
   Newsfeed = "Newsfeed",
 
@@ -531,8 +556,10 @@ export enum ScreenName {
   WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
   WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
+  ModularDrawerDeepLinkHandler = "ModularDrawerDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
+  MockedModularDrawer = "MockedModularDrawer",
   MockedWalletScreen = "MockedWalletScreen",
   GenericLandingPage = "GenericLandingPage",
 
@@ -644,6 +671,11 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+  // Aptos
+  AptosStakingFlow = "AptosStakingFlow",
+  AptosUnstakingFlow = "AptosUnstakingFlow",
+  AptosWithdrawingFlow = "AptosWithdrawingFlow",
+  AptosRestakingFlow = "AptosRestakingFlow",
 
   // Tab
   Main = "Main",
@@ -671,6 +703,7 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  ModularDrawer = "ModularDrawer",
   AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",

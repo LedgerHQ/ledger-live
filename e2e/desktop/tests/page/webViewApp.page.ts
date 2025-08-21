@@ -3,7 +3,8 @@ import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
 export abstract class WebViewAppPage extends AppPage {
-  private _webviewPage?: Page;
+  public _webviewPage?: Page;
+  public webviewUrlHistory: string[] = [];
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
@@ -29,6 +30,16 @@ export abstract class WebViewAppPage extends AppPage {
       timeout: this.defaultWebViewTimeout,
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
+
+    if (!(webview as any)._ledgerUrlListenerAttached) {
+      webview.on("framenavigated", frame => {
+        if (frame === webview.mainFrame()) {
+          this.webviewUrlHistory.push(frame.url());
+        }
+      });
+      (webview as any)._ledgerUrlListenerAttached = true;
+    }
+
     this._webviewPage = webview;
     return webview;
   }
@@ -127,5 +138,23 @@ export abstract class WebViewAppPage extends AppPage {
   protected async expectTextToBeVisible(text: string) {
     const webview = await this.getWebView();
     await expect(webview.getByText(text, { exact: true })).toBeVisible();
+  }
+
+  @step("Click text in WebView")
+  protected async clickElementByText(text: string) {
+    const webview = await this.getWebView();
+    await webview.getByText(text, { exact: true }).click();
+  }
+
+  @step("Check if text is visible in WebView")
+  protected async isTextVisible(text: string): Promise<boolean> {
+    const webview = await this.getWebView();
+    const element = webview.getByText(text, { exact: true });
+    try {
+      await expect(element).toBeVisible({ timeout: 1000 });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

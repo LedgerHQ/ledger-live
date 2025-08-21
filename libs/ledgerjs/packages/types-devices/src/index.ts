@@ -8,12 +8,17 @@ export enum DeviceModelId {
   nanoX = "nanoX",
   stax = "stax",
   europa = "europa",
+  apex = "apex",
 }
 
 /**
  * DevicesWithTouchScreen is a list of DeviceModelId of whom the Ledger device can present a QR code.
  */
-export const DevicesWithTouchScreen: DeviceModelId[] = [DeviceModelId.stax, DeviceModelId.europa];
+export const DevicesWithTouchScreen: DeviceModelId[] = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.apex,
+];
 
 /**
  * a DeviceModel contains all the information of a specific Ledger hardware wallet model.

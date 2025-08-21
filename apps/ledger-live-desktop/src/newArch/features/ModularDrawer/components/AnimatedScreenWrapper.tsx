@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
-import type { ModularDrawerAddAccountStep, ModularDrawerStep, NavigationDirection } from "../types";
+import type { ModularDrawerAddAccountStep } from "../../AddAccountDrawer/domain";
+import type { ModularDrawerStep, NavigationDirection } from "../types";
 
 const TOP_BAR = 62;
 
@@ -8,10 +9,13 @@ const AnimatedScreenWrapper = ({
   children,
   screenKey,
   direction,
+  testID,
+  ...props
 }: {
   children: React.ReactNode;
   screenKey: ModularDrawerStep | ModularDrawerAddAccountStep;
   direction: NavigationDirection;
+  testID?: string;
 }) => {
   const variants = {
     enter: (direction: NavigationDirection) => ({
@@ -43,6 +47,7 @@ const AnimatedScreenWrapper = ({
         paddingLeft: "16px",
         paddingRight: "16px",
       }}
+      {...props}
     >
       {children}
     </motion.div>

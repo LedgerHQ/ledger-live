@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
@@ -52,6 +51,7 @@ import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";
+import { useToastsActions } from "~/actions/toast";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -83,7 +83,6 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
@@ -95,6 +94,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
+  const { pushToast } = useToastsActions();
 
   const onClose = useCallback(() => {
     const mainAccount = account && getMainAccount(account, parentAccount);
@@ -252,14 +252,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const bannerHeight = useSharedValue(screenHeight * 0.23);
   const bannerOpacity = useSharedValue(1);
 
-  const animatedBannerStyle = useAnimatedStyle(() => ({
-    height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
-      if (onFinish && bannerHeight.value === 0) {
-        runOnJS(hideBanner)();
-      }
+  const animatedBannerStyle = useAnimatedStyle(
+    () => ({
+      height: withTiming(bannerHeight.value, { duration: 200 }, onFinish => {
+        if (onFinish && bannerHeight.value === 0) {
+          runOnJS(hideBanner)();
+        }
+      }),
+      opacity: withTiming(bannerOpacity.value, { duration: 200 }),
     }),
-    opacity: withTiming(bannerOpacity.value, { duration: 200 }),
-  }));
+    [bannerHeight.value, bannerOpacity.value, hideBanner],
+  );
 
   const handleBannerClose = useCallback(() => {
     bannerHeight.value = 0;

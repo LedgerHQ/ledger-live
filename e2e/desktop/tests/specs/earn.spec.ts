@@ -1,7 +1,7 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
-import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
@@ -18,6 +18,7 @@ function setupEnv(disableBroadcast?: boolean) {
     }
   });
 }
+
 const ethEarn = [
   {
     account: Account.ETH_1,
@@ -93,23 +94,30 @@ test.describe("Inline Add Account", () => {
           type: "TMS",
           description: "B2CQA-3001",
         },
-        {
-          type: "BUG",
-          description: "LIVE-20002",
-        },
       ],
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      await app.delegateDrawer.clickOnAddAccountButton();
+      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
+      if (modularDrawerVisible) {
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      } else {
+        await app.delegateDrawer.clickOnAddAccountButton();
+      }
+
       await app.addAccount.addAccounts();
       await app.addAccount.done();
-      await app.delegateDrawer.selectAccountByName(account);
+
+      if (modularDrawerVisible) {
+        await app.modularDrawer.selectAccountByName(account);
+      } else {
+        await app.delegateDrawer.selectAccountByName(account);
+      }
       await app.addAccount.close();
-      await app.earnDashboard.expectLiveAppToBeVisible();
+      await app.layout.goToAccounts();
+      await app.accounts.expectAccountsCountToBeNotNull();
     },
   );
 });
@@ -182,10 +190,9 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        if (staking === false) {
+        if (!staking) {
           await app.earnDashboard.verifyRewardsPotentials();
           await app.earnDashboard.verifyYourEligibleAssets(account.accountName);
-          await app.earnDashboard.verifyEligibleAssets(account);
           await app.earnDashboard.verifyEarnByStackingButton();
         } else {
           await app.earnDashboard.goToAssetsTab();

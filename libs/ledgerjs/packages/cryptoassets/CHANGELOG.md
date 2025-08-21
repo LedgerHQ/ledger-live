@@ -1,5 +1,95 @@
 # @ledgerhq/cryptoassets
 
+## 13.25.0
+
+### Minor Changes
+
+- [#11294](https://github.com/LedgerHQ/ledger-live/pull/11294) [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Add dmc to supported sui tokens
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0
+
+## 13.25.0-next.0
+
+### Minor Changes
+
+- [#11294](https://github.com/LedgerHQ/ledger-live/pull/11294) [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Add dmc to supported sui tokens
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0-next.0
+
+## 13.24.0
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+### Patch Changes
+
+- Updated dependencies [[`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/live-env@2.13.0
+
+## 13.24.0-next.0
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+- [#11164](https://github.com/LedgerHQ/ledger-live/pull/11164) [`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton module init
+
+### Patch Changes
+
+- Updated dependencies [[`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/live-env@2.13.0-next.0
+
+## 13.23.0
+
+### Minor Changes
+
+- [#10965](https://github.com/LedgerHQ/ledger-live/pull/10965) [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf) Thanks [@joaoccmartins](https://github.com/joaoccmartins)! - Added Celo tokens
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+## 13.23.0-next.0
+
+### Minor Changes
+
+- [#10965](https://github.com/LedgerHQ/ledger-live/pull/10965) [`72c2a6c`](https://github.com/LedgerHQ/ledger-live/commit/72c2a6c91cfee66fac3505774ba16049fba1c0cf) Thanks [@joaoccmartins](https://github.com/joaoccmartins)! - Added Celo tokens
+
+- [#10772](https://github.com/LedgerHQ/ledger-live/pull/10772) [`6792990`](https://github.com/LedgerHQ/ledger-live/commit/6792990d8130ec297192bb7d6b98aef024e81dfa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Berachain, hyperevm, sei evm
+
+## 13.22.0
+
+### Minor Changes
+
+- [#10951](https://github.com/LedgerHQ/ledger-live/pull/10951) [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - sync Cardano tokens list with nano app
+
+- [#10864](https://github.com/LedgerHQ/ledger-live/pull/10864) [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update evm dead addr for zksync
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+
+## 13.22.0-next.0
+
+### Minor Changes
+
+- [#10951](https://github.com/LedgerHQ/ledger-live/pull/10951) [`6ece1b8`](https://github.com/LedgerHQ/ledger-live/commit/6ece1b80ed05f9dab6541702e40a43b51887f958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - sync Cardano tokens list with nano app
+
+- [#10864](https://github.com/LedgerHQ/ledger-live/pull/10864) [`9fd5b54`](https://github.com/LedgerHQ/ledger-live/commit/9fd5b5449f1d15fc559e966e9d71e2ad6573547c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update evm dead addr for zksync
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+
 ## 13.21.0
 
 ### Minor Changes

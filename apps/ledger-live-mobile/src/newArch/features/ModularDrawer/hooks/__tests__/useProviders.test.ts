@@ -1,11 +1,11 @@
 import { renderHook } from "@tests/test-renderer";
 import { getProvider, useProviders } from "../useProviders";
-import { ethereumCurrency } from "../../__mocks__/currencies.mock";
-import { providers } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
+import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { providers } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 
 describe("getProvider", () => {
   it("should return the provider containing the given currency", () => {
-    const result = getProvider(ethereumCurrency, providers);
+    const result = getProvider(mockEthCryptoCurrency, providers);
     expect(result).toBe(providers[1]);
   });
 });

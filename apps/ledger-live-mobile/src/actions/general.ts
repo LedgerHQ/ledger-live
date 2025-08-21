@@ -100,6 +100,7 @@ export function useCleanCache() {
     flushAll();
   }, [dispatch, wipe]);
 }
+
 export function useUserSettings() {
   const trackingPairs = useTrackingPairs();
 
@@ -128,11 +129,13 @@ export function useUserSettings() {
     [granularitiesRates, trackingPairs],
   );
 }
+
 export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
   const value = extraSessionTrackingPairsChanges.value;
   if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
     extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
 }
+
 export function useExtraSessionTrackingPair() {
   const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
   useEffect(() => {
@@ -141,6 +144,7 @@ export function useExtraSessionTrackingPair() {
   }, []);
   return extraSessionTrackingPair;
 }
+
 export function useTrackingPairs(): TrackingPair[] {
   const accounts = useSelector(accountsSelector);
   const countervalue = useSelector(counterValueCurrencySelector);

@@ -41,11 +41,11 @@ export default function AnimatedBar({
     );
 
     return {
-      backgroundColor: backgroundColor,
+      backgroundColor,
       paddingTop: pt,
       height: headerHeight + pt,
     };
-  });
+  }, [layoutY, animationHeight, totalHeight, pt, backgroundColor]);
 
   const transformStyle = useAnimatedStyle(() => {
     if (!layoutY) return {};
@@ -64,7 +64,7 @@ export default function AnimatedBar({
         },
       ],
     };
-  });
+  }, [layoutY, animationHeight, totalHeight]);
 
   const opacityStyle = useAnimatedStyle(() => {
     if (!layoutY) return {};
@@ -73,7 +73,7 @@ export default function AnimatedBar({
       height: opacityHeight,
       opacity: interpolate(layoutY.value, [0, animationHeight], [1, 0], Extrapolation.CLAMP),
     };
-  });
+  }, [layoutY, animationHeight, opacityHeight]);
 
   return (
     <Animated.View style={[style, heightStyle]}>

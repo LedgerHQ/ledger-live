@@ -51,6 +51,7 @@ import { getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
+import { FAMILIES_MAPPING_LL_TO_WAPI } from "../constants";
 
 export { ExchangeType };
 
@@ -485,7 +486,9 @@ export const handlers = ({
       });
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-      const mainFromAccountFamily = mainFromAccount.currency.family;
+      const mainFromAccountFamily =
+        FAMILIES_MAPPING_LL_TO_WAPI[mainFromAccount.currency.family] ||
+        mainFromAccount.currency.family;
 
       if (transaction.family !== mainFromAccountFamily) {
         return Promise.reject(
@@ -568,6 +571,9 @@ export const handlers = ({
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapAppVersion,
+              fromAccountId: fromAccount.id,
+              toAccountId: toAccount?.id,
+              amount: amountExpectedTo.toString(),
             });
 
             resolve({ operationHash, swapId });
@@ -584,6 +590,13 @@ export const handlers = ({
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapType: quoteId ? "fixed" : "float",
               swapAppVersion,
+              fromAccountId: fromAccount.id,
+              toAccountId: toAccount?.id,
+              refundAddress,
+              payoutAddress,
+              amount: amountExpectedTo.toString(),
+              seedIdFrom: mainFromAccount.seedIdentifier,
+              seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             });
 
             reject(error);
@@ -741,9 +754,7 @@ async function getStrategy(
   customErrorType?: any,
 ): Promise<Transaction> {
   const family =
-    currency.type === "TokenCurrency"
-      ? (currency.parentCurrency?.family as Transaction["family"])
-      : (currency.family as Transaction["family"]);
+    currency.type === "TokenCurrency" ? currency.parentCurrency?.family : currency.family;
 
   if (!family) {
     throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
@@ -755,7 +766,7 @@ async function getStrategy(
   }
 
   // Normalize family key for strategy lookup
-  const familyKey = family === "evm" ? "ethereum" : family;
+  const familyKey = FAMILIES_MAPPING_LL_TO_WAPI[family] || family;
   const strategy = transactionStrategy?.[familyKey];
 
   if (!strategy) {
@@ -764,7 +775,7 @@ async function getStrategy(
 
   try {
     return await strategy({
-      family,
+      family: familyKey,
       amount,
       recipient,
       customFeeConfig: customFeeConfig || {},

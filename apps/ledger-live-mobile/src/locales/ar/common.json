@@ -287,20 +287,124 @@
       "description" : "يرجى إعادة المحاولة."
     },
     "DisconnectedDevice" : {
-      "title" : "الجهاز غير متصل",
-      "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "الجهاز غير متصل",
-      "description" : "Ledger Live غير قادر على الاتصال بجهازك. يُرجى إعادة المحاولة."
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "DeviceDisconnectedWhileSendingError" : {
-      "title" : "الجهاز غير متصل",
-      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DisconnectError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceSessionNotFound" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReconnectionFailedError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "DeviceDisconnectedBeforeSendingApdu" : {
-      "title" : "الجهاز غير متصل",
-      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى إعادة المحاولة."
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "TransportNotSupportedError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "TransportAlreadyExistsError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "NoTransportProvidedError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "NoAccessibleDeviceError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ConnectionOpeningError" : {
+      "title" : "خطأ في طريقة الاتصال",
+      "description" : "حدثت مشكلة في طريقة اتصال الجهاز المستخدمة. يُرجى المحاولة عن طريق طريقة اتصال مختلفة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceNotInitializedError" : {
+      "title" : "لم تتم تهيئة الجهاز",
+      "description" : "جهازك غير مُستعد للاستخدام. يُرجى اتباع تعليمات الإعداد والمحاولة مرةً أخرى بمجرد التهيئة."
+    },
+    "DeviceNotOnboardedError" : {
+      "title" : "لم تتم تهيئة الجهاز",
+      "description" : "جهازك غير مُستعد للاستخدام. يُرجى اتباع تعليمات الإعداد والمحاولة مرةً أخرى بمجرد التهيئة."
+    },
+    "DeviceLockedError" : {
+      "title" : "الجهاز مقفل",
+      "description" : "جهازك مقفل. يُرجى إلغاء قفله والمحاولة مرةً أخرى."
+    },
+    "OutOfMemoryDAError" : {
+      "title" : "لا توجد ذاكرة كافية",
+      "description" : "ليس لدى جهازك ذاكرة كافية. يُرجى إلغاء تثبيت بعض التطبيقات والمحاولة مرةً أخرى."
+    },
+    "UnsupportedFirmwareDAError" : {
+      "title" : "نظام التشغيل غير مدعوم",
+      "description" : "نظام تشغيل جهازك غير مدعوم. يُرجى تحديثه من خلال Ledger Live، أو التواصل مع دعم Ledger للمساعدة إذا واجهتك صعوبات."
+    },
+    "InvalidBatteryStatusTypeError" : {
+      "title" : "خطأ في البطارية",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "InvalidBatteryDataError" : {
+      "title" : "خطأ في البطارية",
+      "description" : "خطأ في حالة البطارية. يُرجى التواصل مع دعم Ledger."
+    },
+    "InvalidStatusWordError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "InvalidResponseFormatError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDAError" : {
+      "title" : "خطأ في اتصال الجهاز",
+      "description" : "حدث خطأ ما. يُرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceNotRecognizedError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "DeviceAlreadyDiscoveredError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDeviceError" : {
+      "title" : "لم يتم التعرف على الجهاز",
+      "description" : "Ledger Live لم يتمكن من التعرف على جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "ReceiverApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "FramerApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "SendApduTimeoutError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "AlreadySendingApduError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "UnknownDeviceExchangeError" : {
+      "title" : "خطأ في الاتصال",
+      "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "CasperInvalidTransferId" : {
       "title" : "مُعرّف التحويل يجب أن يكون رقماً موجباً أصغر من {{maxTransferId}}"
@@ -517,9 +621,29 @@
       "title" : "لا يوجد ما يكفي من EGLD لدفع رسوم المعاملة",
       "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
     },
+    "NotEnoughToStake" : {
+      "title" : "ستحتاج على الأقل إلى {{currency}} {{minStake}} لتنشيط حصتك",
+      "description" : "ستحتاج على الأقل إلى {{currency}} {{minStake}} لتنشيط حصتك"
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "UnstakeNotEnoughStakedBalanceLeft" : {
+      "title" : "إذا ألغيت تكديس أكثر من {{maxAmount}}، فإن إجمالي حصتك البالغ {{totalAmount}} سيتم إلغاء تكديسه",
+      "description" : "إذا ألغيت تكديس أكثر من {{maxAmount}}، فإن إجمالي حصتك البالغ {{totalAmount}} سيتم إلغاء تكديسه"
+    },
+    "RestakeNotEnoughStakedBalanceLeft" : {
+      "title" : "إذا أعدت تكديس أكثر من {{maxAmount}}، فإن إجمالي حصتك البالغ {{totalAmount}} سيتم إلغاء تكديسه",
+      "description" : "إذا أعدت تكديس أكثر من {{maxAmount}}، فإن إجمالي حصتك البالغ {{totalAmount}} سيتم إلغاء تكديسه"
+    },
+    "NotEnoughToRestake" : {
+      "title" : "لا يمكنك إعادة تكديس أقل من {{minAmount}}",
+      "description" : "لا يمكنك إعادة تكديس أقل من {{minAmount}}."
+    },
+    "NotEnoughToUnstake" : {
+      "title" : "لا يمكنك إلغاء تكديس أقل من {{minAmount}}",
+      "description" : "لا يمكنك إلغاء تكديس أقل من {{minAmount}}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "عذراً، الأموال غير كافية لتغطية الرسوم",
@@ -776,9 +900,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "لا يمكن للرصيد أن يقل عن {{minimumBalance}} أرسل الحد الأقصى الى حساب خالي."
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "يجب عليك تقييد على الأقل {{minimumBondAmount}}."
@@ -1084,6 +1205,10 @@
     },
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
+    },
+    "AddressesSanctionedError" : {
+      "title" : "إبقاؤك آمناً",
+      "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
     }
   },
   "crash" : {
@@ -3112,8 +3237,8 @@
         "desc" : "تلقى تحديثات Ledger Live المهمة"
       },
       "largeMover" : {
-        "title" : "تحرك كبير في السعر",
-        "desc" : "سيتم إخطارك بالتحركات المهمة في السعر إذا كنت تمتلك BTC أو ETH أو SOL أو ADA أو XRP"
+        "title" : "تنبيهات الأسعار",
+        "desc" : "سيتم إخطارك بالتحركات المهمة في سعر رموز التوكن الشائعة التي تملكها"
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
@@ -3400,7 +3525,13 @@
         "verify" : "لم يتم التحقق من عنوان {{accountType}}. تحقق من العناوين على جهازك لتظل آمناً."
       },
       "noResultsFound" : "لم يتم العثور على أي أصول مشفرة",
-      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى"
+      "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
+      "sanctionedAddress" : {
+        "title" : "إبقاؤك آمناً",
+        "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n--{{sanctionedAddress}}\n<Link>{{learnMore}}</Link>",
+        "close" : "إغلاق",
+        "learnMore" : "تعرّف على المزيد"
+      }
     },
     "buy" : {
       "title" : "شراء",
@@ -3529,7 +3660,8 @@
           "refunded" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات.",
           "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
           "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
-          "finished" : "تم تنفيذ مبادلتك بنجاح."
+          "finished" : "تم تنفيذ مبادلتك بنجاح.",
+          "unknown" : "نحن بانتظار معلومات من المزود."
         }
       },
       "missingApp" : {
@@ -3590,6 +3722,7 @@
             "provider" : "المزود",
             "rate" : "مُعدل",
             "fees" : "رسوم الشبكة",
+            "feesDescription" : "يتم فرض هذه الرسوم من قِبل شبكة سلسلة الكتل (بلوكتشين) لمعالجة المبادلة. يتم فرض رسوم الإرسال فقط بالإضافة إلى عرض السعر المُقدّر. رسوم التلقي مشمولة",
             "target" : "الحساب المستهدف"
           },
           "noAccount" : "إنشاء حساب لتلقي {{name}}",
@@ -3914,6 +4047,10 @@
       "quantityAvailable" : "الكمية المتاحة"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "التوقيع بدون اطلاع مطلوب",
+        "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+      },
       "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن من هذا الحساب",
       "tag" : "علامة (اختيارية)",
       "validateTag" : "التحقق من العلامة",
@@ -6112,6 +6249,7 @@
       "iWithdraw" : "أنا أسحب",
       "totalStake" : "إجمالي التكديس",
       "commission" : "العمولة",
+      "netApy" : "صافي المردود المئوي السنوي (APY)",
       "stakeActivationState" : "الولاية",
       "stakeActivePercent" : "نشِط",
       "stakeAvailableBalance" : "الرصيد المتاح",
@@ -6262,7 +6400,7 @@
       }
     },
     "staking" : {
-      "sectionLabel" : "موضع (أو مواضع) التكديس",
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
       "info" : "كيف يعمل التكديس",
       "add" : "إضافة",
       "stakingEarn" : "يمكنك كسب مكافآت NEAR عن طريق تكديس أصولك.",
@@ -6303,6 +6441,141 @@
           "amount" : {
             "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
             "allAssetsUsed" : "جميع الأصول مستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتكديس أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
+            }
+          }
+        }
+      }
+    }
+  },
+  "aptos" : {
+    "info" : {
+      "available" : {
+        "title" : "Aptos متاح",
+        "description" : "هذا المبلغ يمكن التخلص منه."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للحفظ والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الرصيد المُكدَّس",
+        "description" : "هذا المبلع مُكدَّس حالياً مع مدققين."
+      },
+      "pending" : {
+        "title" : "الرصيد المُعلَّق",
+        "description" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة."
+      },
+      "withdrawable" : {
+        "title" : "الرصيد القابل للسحب",
+        "description" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب."
+      },
+      "stakingUnavailable" : {
+        "title" : "التكديس غير متاح",
+        "description" : "ليس هناك رصيد متاح كافٍ في حسابك للتكديس وإلغاء التكديس والسحب."
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "المبلغ المُكدَّس",
+        "unstakedAmount" : "المبلغ غير المُكدّس",
+        "withdrawnAmount" : "المبلغ المسحوب"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد ألغيت تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المراد سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "restaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إعادة تكديسه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بإعادة تكديس أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "مركز (أو مراكز) التكديس",
+      "info" : "كيف يعمل التكديس",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت Aptos عن طريق تكديس أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "comm" : "العمولة",
+      "timeToUnlock" : "إلغاء القفل خلال",
+      "iStake" : "أنا أقوم بتكديس",
+      "actions" : {
+        "unstake" : "إلغاء التكديس",
+        "withdraw" : "سحب",
+        "restake" : "إعادة التكديس"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "pending" : "مُعلقّ",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تكديسه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتكديس Aptos خاصتك لكسب المكافآت بأمان، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المُكدَّسة تظل ملكك.",
+              "1" : "يجب عليك الانتظار ~2 ساعة حتى يكتمل إلغاء التكديس.",
+              "2" : "قم بالتكديس بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المُكدسة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
             "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
             "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
             "cta" : "متابعة"
@@ -6717,8 +6990,8 @@
       "7d" : "7 أيام",
       "30d" : "30 يوم",
       "1y" : "1 سنة",
-      "1D_label" : "1 يوم",
       "1H_label" : "1 ساعة",
+      "1D_label" : "1 يوم",
       "1W_label" : "1 أسبوع",
       "1M_label" : "1 شهر",
       "1Y_label" : "1 سنة"
@@ -7498,12 +7771,99 @@
   },
   "geoBlocking" : {
     "title" : "الموقع غير متاح",
-    "description" : "محفظة Ledger غير متاحة في هذا الموقع.",
+    "description" : "Ledger Live غير متاح في هذا الموقع.",
     "learnMore" : "تعرّف على المزيد"
   },
   "versionBlocking" : {
     "title" : "تحديث Ledger Live مطلوب",
     "description" : "هذا الإصدار من Ledger Live غير متوافق مع أحدث أنظمة تشغيل الجهاز. قم بالتحديث الآن للاستمتاع باتصال مُحسّن.",
     "openStore" : "تحديث"
+  },
+  "modularDrawer" : {
+    "selectAsset" : "اختر أصل",
+    "selectNetwork" : "اختر شبكة",
+    "selectAccount" : "اختر حساب",
+    "searchPlaceholder" : "بحث",
+    "emptyAssetList" : "لم يتم العثور على أصول",
+    "accountCount" : "{{count}} حساب",
+    "accountCount_plural" : "{{count}} حساب"
+  },
+  "swapErrors" : {
+    "incorrectCommandData" : {
+      "title" : "بيانات أمر غير صحيحة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "deserializationFailed" : {
+      "title" : "فشل إلغاء تسلسل الحمولة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongTransactionId" : {
+      "title" : "مُعرف معاملة خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidAddress" : {
+      "title" : "عنوان غير صحيح",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "حدث خطأ ما",
+      "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز المتصل. يُرجى تغييره وإعادة المحاولة."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "حدث خطأ ما",
+      "description" : "حساب الإرسال هذا لا ينتمي إلى الجهاز المتصل. يُرجى تغييره وإعادة المحاولة."
+    },
+    "userRefused" : {
+      "title" : "تم رفض العملية على الجهاز",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "internalError" : {
+      "title" : "خطأ داخلي",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP1" : {
+      "title" : "P1 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP2" : {
+      "title" : "P2 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "wrongP2Extension" : {
+      "title" : "ملحق P2 خاطئ",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidP2Extension" : {
+      "title" : "حدث خطأ ما",
+      "description" : "ملحق P2 غير صالح"
+    },
+    "unexpectedInstruction" : {
+      "title" : "حدث خطأ ما",
+      "description" : "تعليمات غير متوقعة"
+    },
+    "classNotSupported" : {
+      "title" : "حدث خطأ ما",
+      "description" : "الفئة غير مدعومة"
+    },
+    "invalidInstruction" : {
+      "title" : "تعليمات غير صالحة",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "malformedApdu" : {
+      "title" : "عنوان APDU مشوه",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "invalidDataLength" : {
+      "title" : "طول بيانات غير صالح",
+      "description" : "هذا الأمر لا يقبل بيانات بهذا الطول"
+    },
+    "signatureVerificationFail" : {
+      "title" : "فشل التحقق من التوقيع",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "default" : {
+      "title" : "حدث خطأ ما",
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    }
   }
 }

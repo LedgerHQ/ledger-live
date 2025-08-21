@@ -16,26 +16,32 @@ import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
+import countervalues, { CountervaluesState } from "./countervalues";
+import { assetsDataApi } from "~/newArch/features/ModularDrawer/data/state-manager/api";
 
 export type State = {
   accounts: AccountsState;
   application: ApplicationState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
-  modals: ModalsState;
-  settings: SettingsState;
-  UI: UIState;
-  swap: SwapStateType;
-  postOnboarding: PostOnboardingState;
   market: MarketState;
+  modals: ModalsState;
+  postOnboarding: PostOnboardingState;
+  settings: SettingsState;
+  swap: SwapStateType;
+  trustchain: TrustchainStore;
+  UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;
-  trustchain: TrustchainStore;
 };
 
 export default combineReducers({
   accounts,
   application,
+  assetsDataApi: assetsDataApi.reducer,
+  countervalues,
   devices,
   dynamicContent,
   modals,

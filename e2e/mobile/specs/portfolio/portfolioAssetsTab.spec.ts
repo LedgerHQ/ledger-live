@@ -1,5 +1,5 @@
 const testConfig = {
-  tmsLinks: ["B2CQA-2869"],
+  tmsLinks: ["B2CQA-2869", "B2CQA-2870"],
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 

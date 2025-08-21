@@ -4,6 +4,8 @@ import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { __clearAllLists } from "@ledgerhq/cryptoassets/tokens";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
 import { getAccountShape } from "../../bridge/synchronization";
@@ -17,6 +19,10 @@ import {
   NTMTransaction,
   TMUSDTTransaction,
 } from "../fixtures/accounts.fixtures";
+import usdtTokenData from "../../__fixtures__/scroll_sepolia-erc20-mock_usdt.json";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const USDT_TOKEN = usdtTokenData as TokenCurrency;
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
@@ -67,6 +73,9 @@ describe("EVM Family", () => {
     });
 
     it("should add an account and find no token account without a preload first", async () => {
+      const store = getCryptoAssetsStore();
+      jest.spyOn(store, "findTokenById").mockImplementation((_id: string) => undefined);
+
       const { subAccounts } = await getAccountShape(getAccountShapeParameters, {
         paginationConfig: {},
       });
@@ -75,6 +84,15 @@ describe("EVM Family", () => {
     });
 
     it("should preload currency and add an account with 1 token account in it when there is nothing new in remote CAL", async () => {
+      const store = getCryptoAssetsStore();
+      jest.spyOn(store, "findTokenById").mockImplementation((id: string) => {
+        if (id === "scroll_sepolia/erc20/mock_usdt") {
+          return USDT_TOKEN;
+        }
+
+        return undefined;
+      });
+
       mockedAxios.get.mockImplementationOnce(() => {
         throw new axios.AxiosError("", "", undefined, undefined, { status: 304 } as AxiosResponse);
       });
@@ -190,6 +208,15 @@ describe("EVM Family", () => {
     });
 
     it("should preload again a currency and get the same account with 2 tokens accounts even with a failing CAL service", async () => {
+      const store = getCryptoAssetsStore();
+      jest.spyOn(store, "findTokenById").mockImplementation((id: string) => {
+        if (id === "scroll_sepolia/erc20/mock_usdt") {
+          return USDT_TOKEN;
+        }
+
+        return undefined;
+      });
+
       mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
         if (
           url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
@@ -240,6 +267,15 @@ describe("EVM Family", () => {
     });
 
     it("should hydrate the tokens necessary to deserialize an account with 1 token account when there is nothing new in remote CAL", async () => {
+      const store = getCryptoAssetsStore();
+      jest.spyOn(store, "findTokenById").mockImplementation((id: string) => {
+        if (id === "scroll_sepolia/erc20/mock_usdt") {
+          return USDT_TOKEN;
+        }
+
+        return undefined;
+      });
+
       const preloaded = await preload(currency);
       await hydrate(preloaded, currency);
       const account = await getAccountShape(getAccountShapeParameters, {

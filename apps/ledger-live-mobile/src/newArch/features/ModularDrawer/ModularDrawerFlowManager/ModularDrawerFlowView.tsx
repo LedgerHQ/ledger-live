@@ -1,46 +1,67 @@
 import React from "react";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import Animated from "react-native-reanimated";
+import { View, StyleSheet } from "react-native";
 import { ModularDrawerStep } from "../types";
 import { Title } from "../components/Title";
 import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
+import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
+import SkeletonList from "../components/Skeleton/SkeletonList";
+import useScreenTransition from "./useScreenTransition";
 
 export function ModularDrawerFlowView({
   navigationStepViewModel,
   assetsViewModel,
   networksViewModel,
+  accountsViewModel,
   isReadyToBeDisplayed,
 }: ModularDrawerFlowProps) {
   const { currentStep } = navigationStepViewModel;
 
-  const renderStepContent = () => {
-    switch (currentStep) {
+  const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
+
+  const renderStepContent = (step: ModularDrawerStep) => {
+    switch (step) {
       case ModularDrawerStep.Asset:
         return <AssetSelection {...assetsViewModel} />;
       case ModularDrawerStep.Network:
         return <NetworkSelection {...networksViewModel} />;
       case ModularDrawerStep.Account:
-        return <Text>{"Account Selection Step Content"}</Text>;
+        return <AccountSelection {...accountsViewModel} />;
       default:
         return null;
     }
   };
 
-  return (
-    <Flex flexDirection="column" rowGap={5}>
-      {isReadyToBeDisplayed ? (
-        <>
-          <Title step={currentStep} />
+  const renderAnimatedStep = (step: ModularDrawerStep) => {
+    const stepAnimations = getStepAnimations(step);
+    if (!stepAnimations) return null;
 
-          {renderStepContent()}
-        </>
-      ) : (
-        // TODO: to be replaced with a proper loading component Skeleton
-        <Flex height={50} width="100%" justifyContent="center" alignItems="center">
-          <InfiniteLoader color="primary.c50" size={38} />
-        </Flex>
-      )}
-    </Flex>
-  );
+    return (
+      <Animated.View
+        key={`${step}`}
+        style={[{ flex: 1 }, stepAnimations.animatedStyle]}
+        testID={`${step}-screen`}
+      >
+        {isReadyToBeDisplayed ? (
+          <>
+            <Title step={step} />
+            {renderStepContent(step)}
+          </>
+        ) : (
+          <SkeletonList />
+        )}
+      </Animated.View>
+    );
+  };
+
+  return <View style={styles.container}>{activeSteps.map(renderAnimatedStep)}</View>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+  },
+});

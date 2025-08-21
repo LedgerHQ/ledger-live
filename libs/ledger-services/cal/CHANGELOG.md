@@ -1,5 +1,61 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.3.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/live-network@2.0.15
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5)]:
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+
+## 1.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/live-env@2.13.0
+  - @ledgerhq/live-network@2.0.14
+
+## 1.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777)]:
+  - @ledgerhq/live-env@2.13.0-next.0
+  - @ledgerhq/live-network@2.0.14-next.0
+
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0
+  - @ledgerhq/live-network@2.0.13
+
+## 1.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b), [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac)]:
+  - @ledgerhq/live-env@2.12.0-next.0
+  - @ledgerhq/live-network@2.0.13-next.0
+
 ## 1.2.0
 
 ### Minor Changes

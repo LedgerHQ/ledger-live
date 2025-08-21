@@ -34,6 +34,7 @@ type Props = {
     isLoading: boolean;
     pinCode: string | null;
   };
+  onCloseAddAccountDrawer?: () => void;
 };
 
 const StepFlow = ({
@@ -46,6 +47,7 @@ const StepFlow = ({
   onQrCodeScanned,
   qrProcess,
   onCreateKey,
+  onCloseAddAccountDrawer,
 }: Props) => {
   const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
@@ -71,9 +73,10 @@ const StepFlow = ({
             <SelectAddAccountMethod
               doesNotHaveAccount={doesNotHaveAccount}
               currency={currency}
-              setWalletSyncDrawerVisible={
+              onShowWalletSyncDrawer={
                 trustchain?.rootId ? navigateToQrCodeMethod : navigateToChooseSyncMethod
               }
+              onCloseAddAccountDrawer={onCloseAddAccountDrawer}
             />
           </>
         );
@@ -99,7 +102,7 @@ const StepFlow = ({
 
       case Steps.PinInput:
         return nbDigits ? (
-          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} />
+          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} focusOnMount />
         ) : null;
 
       case Steps.SyncError:

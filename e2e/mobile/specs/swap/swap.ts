@@ -3,8 +3,7 @@ import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { device } from "detox";
-import { isIos } from "../../helpers/commonHelpers";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -73,18 +72,22 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
         swap.accountToDebit,
         swap.accountToCredit,
       );
+      const swapAmount =
+        swap.accountToDebit.currency.name === Account.XRP_1.currency.name
+          ? parseFloat(Number(minAmount).toFixed(6)).toString()
+          : minAmount;
+
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
-        minAmount,
+        swapAmount,
       );
-      const selectedProvider: string = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.checkExchangeButtonHasProviderName(selectedProvider);
-      await app.swapLiveApp.tapExecuteSwap();
-      if (isIos()) await device.disableSynchronization();
-      await app.common.selectKnownDevice();
 
-      await app.swap.verifyAmountsAndAcceptSwap(swap, minAmount);
+      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+      await app.swapLiveApp.tapExecuteSwap();
+      await app.common.selectKnownDevice();
+      await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
     });

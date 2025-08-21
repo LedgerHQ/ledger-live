@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, VerticalTimeline, Link, Icons } from "@ledgerhq/react-ui";
+import { Flex, VerticalTimeline, Link, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { StepText } from "./shared";
-import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getDeviceModel } from "@ledgerhq/devices";
 import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -24,17 +21,23 @@ export type SeedPathStatus =
 
 export type Props = {
   seedPathStatus: SeedPathStatus;
-  deviceModelId: DeviceModelId;
+  deviceName: string;
+  deviceIcon: React.ComponentType<{ size: number; color?: string }>;
   charonSupported: boolean;
   charonStatus: CharonStatus | null;
 };
 
 const CHARON_LEARN_MORE_URL = "https://shop.ledger.com/products/ledger-recovery-key";
 
-const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus }: Props) => {
+const SeedStep = ({
+  seedPathStatus,
+  deviceName: productName,
+  deviceIcon,
+  charonSupported,
+  charonStatus,
+}: Props) => {
   const { t } = useTranslation();
   const track = useTrack();
-  const productName = getDeviceModel(deviceModelId).productName;
 
   const handleLearnMoreClick = useCallback(() => {
     track("button_clicked", {
@@ -123,8 +126,8 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
               {t("syncOnboarding.manual.seedContent.selectionNewSeedDescription")}
             </StepText>
           </Flex>
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.selectionNewSeedContinueOnDevice", {
               productName,
             })}
@@ -134,36 +137,53 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
         <Flex flexDirection="column">
           {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.restoreDescription")}</StepText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <VerticalTimeline.SubtitleText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
-          </VerticalTimeline.SubtitleText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText mb={6}>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
-          </StepText>
-          {charonSupported && (
-            <>
+
+          <Flex mb={8}>
+            <Icons.Note size="M" color="white" />
+            <Flex ml={5} flexDirection="column" flex={1}>
               {/* @ts-expect-error weird props issue with React 18 */}
-              <VerticalTimeline.SubtitleText>
-                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
+              <VerticalTimeline.SubtitleText mb={2}>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
               </VerticalTimeline.SubtitleText>
               {/* @ts-expect-error weird props issue with React 18 */}
-              <StepText mb={6}>
-                {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
+              <StepText>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}
               </StepText>
-            </>
+            </Flex>
+          </Flex>
+          {charonSupported && (
+            <Flex mb={8}>
+              <Icons.RecoveryKey size="M" color="white" />
+
+              <Flex ml={5} flexDirection="column" flex={1}>
+                {/* @ts-expect-error weird props issue with React 18 */}
+                <VerticalTimeline.SubtitleText mb={2}>
+                  {t("syncOnboarding.manual.seedContent.restoreChoiceCharonTitle")}
+                </VerticalTimeline.SubtitleText>
+                {/* @ts-expect-error weird props issue with React 18 */}
+                <StepText>
+                  {t("syncOnboarding.manual.seedContent.restoreChoiceCharonDescription")}
+                </StepText>
+              </Flex>
+            </Flex>
           )}
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <VerticalTimeline.SubtitleText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
-          </VerticalTimeline.SubtitleText>
-          {/* @ts-expect-error weird props issue with React 18 */}
-          <StepText>
-            {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
-          </StepText>
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+
+          <Flex mb={0}>
+            <Icons.ShieldCheck size="M" color="white" />
+
+            <Flex ml={5} flexDirection="column" flex={1}>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <VerticalTimeline.SubtitleText mb={2}>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
+              </VerticalTimeline.SubtitleText>
+              {/* @ts-expect-error weird props issue with React 18 */}
+              <StepText>
+                {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
+              </StepText>
+            </Flex>
+          </Flex>
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.restoreChoiceContinueOnDevice", {
               productName,
             })}
@@ -173,8 +193,8 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
         <>
           {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>{t("syncOnboarding.manual.seedContent.restoreSeed", { productName })}</StepText>
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.followInstructions", { productName })}
           />
         </>
@@ -216,8 +236,8 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
             </Flex>
           </Flex>
 
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.backupCharonContinueOnDevice", {
               productName,
             })}
@@ -231,8 +251,8 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
           </VerticalTimeline.SubtitleText>
           {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>{t("syncOnboarding.manual.seedContent.restoreCharonDescription")}</StepText>
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.restoreCharonContinueOnDevice", {
               productName,
             })}
@@ -264,8 +284,8 @@ const SeedStep = ({ seedPathStatus, deviceModelId, charonSupported, charonStatus
               ? t("syncOnboarding.manual.seedContent.selectionRestoreDescriptionWithCharon")
               : t("syncOnboarding.manual.seedContent.selectionRestoreDescription")}
           </StepText>
-          <ContinueOnDeviceWithAnim
-            deviceModelId={deviceModelId}
+          <ContinueOnDevice
+            Icon={deviceIcon}
             text={t("syncOnboarding.manual.seedContent.selectionContinueOnDevice", {
               productName,
             })}

@@ -1,18 +1,19 @@
-import { useCallback } from "react";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import ModularDrawerAddAccountFlowManager from "../ModularDrawerAddAccountFlowManager";
-import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { Account } from "@ledgerhq/types-live";
+import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { CloseButton } from "../components/CloseButton";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { Account } from "@ledgerhq/types-live";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import { GlobalModalData } from "~/renderer/modals/types";
+import ModularDrawerAddAccountFlowManager from "../../AddAccountDrawer/ModularDrawerAddAccountFlowManager";
+import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
+import { CloseButton } from "../components/CloseButton";
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -22,6 +23,7 @@ function selectCurrency(
   includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
+  drawerConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
   const filteredCurrencies =
     currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
@@ -33,7 +35,7 @@ function selectCurrency(
       onAssetSelected,
       source,
       flow,
-      drawerConfiguration: {
+      drawerConfiguration: drawerConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "undefined" },
         networks: { leftElement: "undefined", rightElement: "undefined" },
       },
@@ -46,7 +48,7 @@ function selectCurrency(
 }
 
 export function useOpenAssetFlow(
-  modularDrawerLocation: ModularDrawerLocation,
+  modularDrawerVisibleParams: ModularDrawerVisibleParams,
   source: string,
   modalNameToReopen?: keyof GlobalModalData,
 ) {
@@ -61,10 +63,10 @@ export function useOpenAssetFlow(
     setDrawer();
     trackModularDrawerEvent("button_clicked", {
       button: "Close",
-      flow: modularDrawerLocation,
+      flow: modularDrawerVisibleParams.location,
       page: currentRouteNameRef.current ?? "Unknown",
     });
-  }, [modularDrawerLocation, trackModularDrawerEvent]);
+  }, [modularDrawerVisibleParams.location, trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
     (
@@ -121,16 +123,17 @@ export function useOpenAssetFlow(
   );
 
   const openAssetFlow = useCallback(
-    (includeTokens: boolean) => {
-      if (isModularDrawerVisible(modularDrawerLocation)) {
+    (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
+      if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         selectCurrency(
           openAddAccountFlow,
           source,
-          modularDrawerLocation,
+          modularDrawerVisibleParams.location,
           undefined,
           includeTokens,
           undefined,
           handleClose,
+          drawerConfiguration,
         );
       } else {
         dispatch(
@@ -145,7 +148,7 @@ export function useOpenAssetFlow(
       handleClose,
       isModularDrawerVisible,
       modalNameToReopen,
-      modularDrawerLocation,
+      modularDrawerVisibleParams,
       openAddAccountFlow,
       source,
     ],

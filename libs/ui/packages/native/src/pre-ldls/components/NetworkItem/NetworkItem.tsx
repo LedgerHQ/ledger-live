@@ -19,7 +19,7 @@ type NetworkItemProps = Network & {
 
 const Wrapper = styled(Pressable)<{ tokens: Tokens }>`
   flex-direction: row;
-  padding: ${({ tokens }) => tokens["spacing-xxs"]}px;
+  padding-vertical: ${({ tokens }) => tokens["spacing-xxs"]}px;
   border-radius: ${({ tokens }) => tokens["radius-s"]}px;
   align-items: center;
   width: 100%;
@@ -28,7 +28,7 @@ const Wrapper = styled(Pressable)<{ tokens: Tokens }>`
 const InfoWrapper = styled(View)<{ tokens: Tokens }>`
   flex-direction: column;
   justify-content: center;
-  margin-left: ${({ tokens }) => tokens["margin-s"]}px;
+  margin-left: 16px;
   flex: 1;
 `;
 
@@ -69,7 +69,7 @@ export const NetworkItem = ({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper tokens={tokens}>
         <Text
           variant="largeLineHeight"

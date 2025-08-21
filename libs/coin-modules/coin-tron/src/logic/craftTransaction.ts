@@ -1,13 +1,13 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
-import { TronAsset, TronMemo } from "../types";
+import { TronMemo } from "../types";
 import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronAsset, TronMemo>,
-  customFees?: bigint,
+  transactionIntent: TransactionIntent<TronMemo>,
+  customFees?: FeeEstimation,
 ): Promise<string> {
   const { asset, recipient, sender, amount, expiration } = transactionIntent;
   const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
@@ -16,8 +16,9 @@ export async function craftTransaction(
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
-  if (asset.type === "token" && asset.standard === "trc20" && asset.contractAddress) {
-    if (customFees !== undefined && (customFees <= 0 || customFees > Number.MAX_SAFE_INTEGER)) {
+  if (asset.type === "trc20" && asset.assetReference) {
+    const fees = customFees?.value;
+    if (fees !== undefined && (fees <= 0 || fees > Number.MAX_SAFE_INTEGER)) {
       throw new Error(
         `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
       );
@@ -28,18 +29,17 @@ export async function craftTransaction(
     }
 
     const { raw_data_hex: rawDataHex } = await craftTrc20Transaction(
-      asset.contractAddress,
+      asset.assetReference,
       recipientAddress,
       senderAddress,
       new BigNumber(amount.toString()),
-      feesToNumber(customFees),
+      feesToNumber(fees),
       expiration,
     );
     return rawDataHex as string;
   } else {
-    const isTransferAsset = asset.type === "token" && asset.standard === "trc10";
-    const tokenId =
-      asset.type === "token" && asset.standard === "trc10" ? asset.tokenId : undefined;
+    const isTransferAsset = asset.type === "trc10";
+    const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
     const { raw_data_hex: rawDataHex } = await craftStandardTransaction(
       tokenId,
       recipientAddress,

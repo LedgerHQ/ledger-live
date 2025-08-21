@@ -1,9 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import Share from "react-native-share";
 import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
+import { getEnv } from "@ledgerhq/live-env";
+import { sendFile } from "../../e2e/bridge/client";
 
 const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {
   const ancestors: unknown[] = [];
@@ -38,34 +40,48 @@ const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown =
 };
 
 export default function useExportLogs() {
-  return useCallback(() => {
-    const exportLogs = async () => {
+  const isExportingRef = useRef(false);
+
+  return useCallback(async () => {
+    // Prevent concurrent exports
+    if (isExportingRef.current) {
+      return;
+    }
+
+    isExportingRef.current = true;
+
+    try {
       const logs = logReport.getLogs();
       const base64 = Buffer.from(JSON.stringify(logs, getJSONStringifyReplacer(), 2)).toString(
         "base64",
       );
+
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
       const humanReadableName = `ledger-live-mob-${version}-${date}-logs.txt`;
       const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
-      try {
-        await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
-        const options = {
-          failOnCancel: false,
-          saveToFiles: true,
-          type: "text/plain",
-          url: `file://${filePath}`,
-        };
+      await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
+      const options = {
+        failOnCancel: false,
+        saveToFiles: true,
+        type: "text/plain",
+        url: `file://${filePath}`,
+      };
 
+      if (getEnv("DETOX")) {
+        const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
+        sendFile({ fileName: "ledgerlive-logs.txt", fileContent });
+      } else {
         await Share.open(options);
-      } catch (err) {
-        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
-          logger.critical(err as Error);
-        }
       }
-    };
-    exportLogs();
+    } catch (err) {
+      if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
+        logger.critical(err as Error);
+      }
+    } finally {
+      isExportingRef.current = false;
+    }
   }, []);
 }

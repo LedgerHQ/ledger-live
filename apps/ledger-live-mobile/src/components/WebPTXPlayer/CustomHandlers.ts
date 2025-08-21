@@ -19,12 +19,15 @@ import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
   accounts: AccountLike[];
   sendAppReady: () => void;
   onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
+  onCompleteError?: (error: Error) => void;
 };
 
 export function useCustomExchangeHandlers({
@@ -32,6 +35,7 @@ export function useCustomExchangeHandlers({
   accounts,
   onCompleteResult,
   sendAppReady,
+  onCompleteError,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
@@ -53,6 +57,45 @@ export function useCustomExchangeHandlers({
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
+    const ptxCustomHandlers = {
+      "custom.close": () => {
+        navigation.getParent()?.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
+      },
+      "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
+        const accountId = request.params?.accountId;
+
+        return new Promise<void>((resolve, reject) => {
+          try {
+            if (accountId) {
+              const id = getAccountIdFromWalletAccountId(accountId);
+              const account = accounts.find(acc => acc.id === id);
+
+              if (!account) {
+                reject(new Error("Account not found"));
+                return;
+              }
+
+              navigation.navigate(NavigatorName.NoFundsFlow, {
+                screen: ScreenName.NoFunds,
+                params: {
+                  account,
+                  parentAccount: isTokenAccount(account)
+                    ? getParentAccount(account, accounts)
+                    : undefined,
+                },
+              });
+
+              resolve();
+            }
+          } catch (error) {
+            reject(error);
+          }
+        });
+      },
+    };
+
     return {
       ...exchangeHandlers({
         accounts,
@@ -109,12 +152,8 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     onCancel(result.error);
 
-                    navigation.navigate(NavigatorName.CustomError, {
-                      screen: ScreenName.CustomErrorScreen,
-                      params: {
-                        error: result.error,
-                        displayError: result.error instanceof AddressesSanctionedError,
-                      },
+                    navigation.navigate(ScreenName.SwapCustomError, {
+                      error: result.error,
                     });
                   }
 
@@ -144,6 +183,14 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            let cancelCalled = false;
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
             const currentDevice = deviceRef.current || device; // Use ref value first
 
             navigation.navigate(NavigatorName.PlatformExchange, {
@@ -162,14 +209,9 @@ export function useCustomExchangeHandlers({
                 device: currentDevice,
                 onResult: result => {
                   if (result.error) {
-                    onCancel(result.error);
+                    safeOnCancel(result.error);
                     navigation.pop();
-                    navigation.navigate(NavigatorName.CustomError, {
-                      screen: ScreenName.CustomErrorScreen,
-                      params: {
-                        error: result.error,
-                      },
-                    });
+                    onCompleteError?.(result.error);
                   }
                   if (result.operation && exchangeParams.swapId) {
                     syncAccountById(exchangeParams.exchange.fromAccount.id);
@@ -188,12 +230,14 @@ export function useCustomExchangeHandlers({
           },
         },
       }),
+      ...ptxCustomHandlers,
     };
   }, [
     accounts,
     device,
     manifest,
     navigation,
+    onCompleteError,
     onCompleteResult,
     sendAppReady,
     syncAccountById,
