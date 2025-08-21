@@ -408,13 +408,13 @@ const swapWithoutAccount = [
     account1: Account.BTC_NATIVE_SEGWIT_1,
     account2: Account.ETH_1,
     testTitle: "from Account present to Account not present",
-    xrayTicket: "B2CQA-3353, B2CQA-3273",
+    xrayTicket: "B2CQA-3353",
   },
   {
     account1: Account.ETH_1,
     account2: Account.BTC_NATIVE_SEGWIT_1,
     testTitle: "from Account not present to Account present",
-    xrayTicket: "B2CQA-3354, B2CQA-3273",
+    xrayTicket: "B2CQA-3354",
   },
 ];
 
