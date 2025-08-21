@@ -1,5 +1,49 @@
 # @ledgerhq/coin-evm
 
+## 2.27.0
+
+### Minor Changes
+
+- [#11221](https://github.com/LedgerHQ/ledger-live/pull/11221) [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): populate `assetOwner` in `getBalance` and `listOperations`
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+- [#11248](https://github.com/LedgerHQ/ledger-live/pull/11248) [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-evm): improve Alpaca integration tests
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/coin-framework@6.1.0
+  - @ledgerhq/devices@8.5.0
+  - @ledgerhq/evm-tools@1.7.3
+  - @ledgerhq/live-network@2.0.15
+  - @ledgerhq/domain-service@1.2.40
+
+## 2.27.0-next.0
+
+### Minor Changes
+
+- [#11221](https://github.com/LedgerHQ/ledger-live/pull/11221) [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): populate `assetOwner` in `getBalance` and `listOperations`
+
+- [#11016](https://github.com/LedgerHQ/ledger-live/pull/11016) [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - [coin-modules] add coin-framework staking API + SUI implementation
+
+- [#11248](https://github.com/LedgerHQ/ledger-live/pull/11248) [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(coin-evm): improve Alpaca integration tests
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/coin-framework@6.1.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/evm-tools@1.7.3-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+  - @ledgerhq/domain-service@1.2.40-next.0
+
 ## 2.26.0
 
 ### Minor Changes

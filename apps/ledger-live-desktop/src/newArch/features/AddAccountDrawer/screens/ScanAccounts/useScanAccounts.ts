@@ -81,8 +81,6 @@ export function useScanAccounts({
   }, []);
 
   useEffect(() => {
-    const processedAccountIds = new Set<string>();
-
     scanSubscriptionRef.current = getCurrencyBridge(currency)
       .scanAccounts({
         currency,
@@ -97,19 +95,6 @@ export function useScanAccounts({
       .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
       .subscribe({
         next: accounts => {
-          const unimportedAccounts = getUnimportedAccounts(accounts, existingAccounts);
-          const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
-
-          const freshAccounts = unimportedAccounts.filter(acc => {
-            if (processedAccountIds.has(acc.id)) {
-              return false;
-            }
-            processedAccountIds.add(acc.id);
-            return true;
-          });
-
-          setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
-
           setScannedAccounts(accounts);
           setScanning(true);
         },
@@ -118,7 +103,24 @@ export function useScanAccounts({
       });
 
     return () => stopSubscription(false);
-  }, [blacklistedTokenIds, currency, deviceId, existingAccounts, stopSubscription]);
+  }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
+
+  useEffect(() => {
+    const processedAccountIds = new Set<string>();
+
+    const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
+    const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
+
+    const freshAccounts = unimportedAccounts.filter(acc => {
+      if (processedAccountIds.has(acc.id)) {
+        return false;
+      }
+      processedAccountIds.add(acc.id);
+      return true;
+    });
+
+    setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
+  }, [existingAccounts, scannedAccounts]);
 
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {

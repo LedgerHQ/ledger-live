@@ -1,9 +1,10 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import Config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-env";
+import { isEqual } from "lodash/fp";
+import React from "react";
+import Config from "react-native-config";
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
 import { cryptoCurrenciesSelector } from "~/reducers/accounts";
 import networkApi from "../Settings/Debug/__mocks__/serviceStatus";
 
@@ -13,34 +14,19 @@ if (Config.MOCK || getEnv("MOCK")) {
   serviceStatusApi = networkApi;
 }
 
-type Props = {
+interface Props {
   children: React.ReactNode;
-};
-export default function NotificationsProvider({ children }: Props) {
-  const currenciesRaw: CryptoCurrency[] = useSelector(cryptoCurrenciesSelector);
+}
 
-  const { tickers } = currenciesRaw.reduce<{
-    currencies: string[];
-    tickers: string[];
-  }>(
-    ({ currencies, tickers }, { id, ticker }) => ({
-      currencies: [...currencies, id],
-      tickers: [...tickers, ticker],
-    }),
-    {
-      currencies: [],
-      tickers: [],
-    },
-  );
+const selectContext = createSelector(cryptoCurrenciesSelector, xs => ({
+  tickers: xs.map(x => x.ticker),
+}));
+
+export default function NotificationsProvider({ children }: Props) {
+  const context = useSelector(selectContext, (a, b) => isEqual(a.tickers, b.tickers));
 
   return (
-    <ServiceStatusProvider
-      context={{
-        tickers,
-      }}
-      autoUpdateDelay={60000}
-      networkApi={serviceStatusApi}
-    >
+    <ServiceStatusProvider context={context} autoUpdateDelay={60000} networkApi={serviceStatusApi}>
       {children}
     </ServiceStatusProvider>
   );

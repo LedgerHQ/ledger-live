@@ -1,5 +1,31 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.34.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/hw-app-eth@6.45.15
+  - @ledgerhq/hw-transport@6.31.9
+
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#10895](https://github.com/LedgerHQ/ledger-live/pull/10895) [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Support Apex
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c)]:
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.15-next.0
+  - @ledgerhq/hw-transport@6.31.9-next.0
+
 ## 6.33.12
 
 ### Patch Changes

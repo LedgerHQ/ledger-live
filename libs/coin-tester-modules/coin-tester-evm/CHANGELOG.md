@@ -1,5 +1,53 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.5.0
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8), [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d), [`dd2110a`](https://github.com/LedgerHQ/ledger-live/commit/dd2110a4259614eb39c62991d3cf92cae745d710)]:
+  - @ledgerhq/live-common@34.45.0
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/coin-evm@2.27.0
+  - @ledgerhq/coin-tester@0.9.0
+  - @ledgerhq/coin-framework@6.1.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/live-signer-evm@0.7.0
+
+## 1.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.45.0-next.2
+
+## 1.5.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`dd2110a`](https://github.com/LedgerHQ/ledger-live/commit/dd2110a4259614eb39c62991d3cf92cae745d710)]:
+  - @ledgerhq/live-common@34.45.0-next.1
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`f8c5aaf`](https://github.com/LedgerHQ/ledger-live/commit/f8c5aafb44f3e9ad7c00f808778a66cfa853e7b8), [`f6ca949`](https://github.com/LedgerHQ/ledger-live/commit/f6ca949d03801ac1a0815f89906b17e5f4625821), [`4ba9d04`](https://github.com/LedgerHQ/ledger-live/commit/4ba9d04975b17d9d25f2c60dca87bdd71638d7d1), [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6), [`5e8bfda`](https://github.com/LedgerHQ/ledger-live/commit/5e8bfda844f0c53f0340d2ca7017e6314a657bc8), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-common@34.45.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/coin-evm@2.27.0-next.0
+  - @ledgerhq/coin-tester@0.9.0-next.0
+  - @ledgerhq/coin-framework@6.1.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/live-signer-evm@0.7.0-next.0
+
 ## 1.4.0
 
 ### Minor Changes

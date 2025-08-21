@@ -1,5 +1,43 @@
 # @ledgerhq/coin-celo
 
+## 1.2.0
+
+### Minor Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0
+  - @ledgerhq/cryptoassets@13.25.0
+  - @ledgerhq/coin-evm@2.27.0
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/coin-framework@6.1.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/devices@8.5.0
+  - @ledgerhq/live-network@2.0.15
+  - @ledgerhq/hw-app-eth@6.45.15
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#11161](https://github.com/LedgerHQ/ledger-live/pull/11161) [`f5f652e`](https://github.com/LedgerHQ/ledger-live/commit/f5f652e308477ff38176e5782eaf0e1bb96956ba) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Countervalues' state moved to app-specific reducers for both desktop and mobile.
+
+### Patch Changes
+
+- Updated dependencies [[`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5), [`0c8486e`](https://github.com/LedgerHQ/ledger-live/commit/0c8486ea830e9e2abf1dfc5d108117e1db733072), [`4cc85de`](https://github.com/LedgerHQ/ledger-live/commit/4cc85de8d28a3a0c28d095449b155f0e3e739caa), [`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`a8b4f57`](https://github.com/LedgerHQ/ledger-live/commit/a8b4f57bf7d82e6c2444a65901e927c3c3d64412), [`6746cf0`](https://github.com/LedgerHQ/ledger-live/commit/6746cf0f61be566026b5d53d2dc648db543354d2), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/live-env@2.14.0-next.0
+  - @ledgerhq/cryptoassets@13.25.0-next.0
+  - @ledgerhq/coin-evm@2.27.0-next.0
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/coin-framework@6.1.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/devices@8.5.0-next.0
+  - @ledgerhq/live-network@2.0.15-next.0
+  - @ledgerhq/hw-app-eth@6.45.15-next.0
+
 ## 1.1.14
 
 ### Patch Changes
