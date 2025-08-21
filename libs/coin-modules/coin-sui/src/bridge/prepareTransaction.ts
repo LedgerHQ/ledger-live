@@ -35,7 +35,7 @@ export const prepareTransaction: AccountBridge<
     fees = BigNumber(0);
   }
 
-  let mode: SuiTransactionMode = "send";
+  let mode: SuiTransactionMode = transaction.mode ?? "send";
   let coinType = DEFAULT_COIN_TYPE;
   if (transaction?.subAccountId) {
     mode = "token.send";
