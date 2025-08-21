@@ -44,8 +44,8 @@ type Props = BaseComposite<
 const A_B_TEST_FLAG = true;
 
 const CompletionScreen = ({ route }: Props) => {
-  const { dark } = useTheme();
-  const { t } = useTranslation();
+  // const { dark } = useTheme();
+  // const { t } = useTranslation();
   const isFocused = useIsFocused();
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
@@ -109,7 +109,7 @@ const CompletionScreen = ({ route }: Props) => {
           <StaxCompletionView />
         )}
         <CTAWrapper>
-          <Flex flex={1} alignItems="center" mb={57}>
+          {/*  <Flex flex={1} alignItems="center" mb={57}>
             <Svg height="30" width="225">
               <Defs>
                 {dark ? (
@@ -130,12 +130,12 @@ const CompletionScreen = ({ route }: Props) => {
                 </TSpan>
               </Text>
             </Svg>
-          </Flex>
+              </Flex> */}
           <Button
             event="CompletionScreenContinue"
             containerStyle={styles.confirmationButton}
             type={"secondary"}
-            title={<Trans i18nKey="common.close" />}
+            title={<Trans i18nKey="common.continue" />}
             testID="completion-screen-continue-button"
             onPress={redirectToMainScreen}
           />
