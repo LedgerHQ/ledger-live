@@ -274,7 +274,9 @@ export async function createSpeculosDevice(
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by")) {
       rejectReady(
-        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+        new Error(
+          `speculos ${speculosID} already in use! Try "ledger-live cleanSpeculos" or check logs`,
+        ),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
