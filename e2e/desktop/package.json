@@ -7,13 +7,13 @@
     "test:playwright:setup": "playwright install chromium"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@playwright/test": "^1.51.0",
     "@types/node": "22.10.10",
     "allure-js-commons": "^3.2.1",

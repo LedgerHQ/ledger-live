@@ -10,9 +10,10 @@ import {
   unregisterAllTransportModules,
 } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
-import SpeculosHttpTransport, {
+import {
+  DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos-http";
+} from "@ledgerhq/live-dmk-speculos";
 
 export type LiveDataOpts = {
   currency: string;
@@ -216,7 +217,7 @@ export const CLI = {
 
     registerTransportModule({
       id: "speculos-http",
-      open: () => retry(() => SpeculosHttpTransport.open(req)),
+      open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
   },
