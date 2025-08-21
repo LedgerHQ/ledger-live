@@ -100,9 +100,9 @@ runs:
       id: pnpm-cache
       with:
         path: ${{ env.STORE_PATH }}
-        key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}1
+        key: weekly-${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
-          weekly-${{ runner.os }}-pnpm-store-1
+          weekly-${{ runner.os }}-pnpm-store-
         accessKey: ${{ inputs.cache-access-key != '' && inputs.cache-access-key || env.AWS_ACCESS_KEY_ID }}
         secretKey: ${{ inputs.cache-secret-key != '' && inputs.cache-secret-key || env.AWS_SECRET_ACCESS_KEY }}
         bucket: ${{ inputs.cache-bucket }}
