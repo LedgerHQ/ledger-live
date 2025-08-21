@@ -27,6 +27,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import { Transaction as KadenaTransaction } from "@ledgerhq/live-common/families/kadena/types";
 import {
   SolanaAccount,
   Transaction as SolanaTransaction,
@@ -316,6 +317,33 @@ export type SwapNavigatorParamList = {
   [NavigatorName.AssetSelection]?: Partial<
     NavigatorScreenParams<AssetSelectionNavigatorParamsList>
   >;
+  [ScreenName.KadenaEditReceiverChainId]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: KadenaTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.KadenaEditSenderChainId]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: KadenaTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
   [ScreenName.SwapCustomError]: {
     error?: SwapLiveError | Error;
   };

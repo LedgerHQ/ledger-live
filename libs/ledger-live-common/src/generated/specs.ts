@@ -23,6 +23,7 @@ import tron from "@ledgerhq/coin-tron/specs";
 import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 import mina from "@ledgerhq/coin-mina/specs";
+import kadena from "@ledgerhq/coin-kadena/specs";
 
 export default {
   algorand,
@@ -50,4 +51,5 @@ export default {
   vechain,
   xrp,
   mina,
+  kadena,
 };

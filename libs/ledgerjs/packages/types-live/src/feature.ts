@@ -135,6 +135,7 @@ export type CurrencyFeatures = {
   currencySui: DefaultFeature;
   currencyMina: DefaultFeature;
   currencyBabylon: DefaultFeature;
+  currencyKadena: DefaultFeature;
   currencySeiNetworkEvm: DefaultFeature;
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
