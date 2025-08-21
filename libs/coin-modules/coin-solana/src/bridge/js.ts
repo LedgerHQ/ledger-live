@@ -7,6 +7,8 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SolanaSigner } from "../signer";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import solanaCoinConfig, { SolanaCoinConfig } from "../config";
+import { CryptoAssetsStoreGetter } from "@ledgerhq/coin-framework/crypto-assets/type";
+import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 
 const httpRequestLogger = (url: string, options: any) => {
   log("network", url, {
@@ -38,8 +40,10 @@ const getQueuedAndCachedAPI = makeLRUCache(
 export function createBridges(
   signerContext: SignerContext<SolanaSigner>,
   coinConfig: CoinConfig<SolanaCoinConfig>,
+  cryptoAssetsStoreGetter: CryptoAssetsStoreGetter,
 ) {
   solanaCoinConfig.setCoinConfig(coinConfig);
+  setCryptoAssetsStoreGetter(cryptoAssetsStoreGetter);
   return makeBridges({
     getAPI,
     getQueuedAPI,
