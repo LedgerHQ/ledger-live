@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.126.0-nightly.1
+
+### Patch Changes
+
+- [#11392](https://github.com/LedgerHQ/ledger-live/pull/11392) [`b68b096`](https://github.com/LedgerHQ/ledger-live/commit/b68b0963abe18cd06a6266b93f84ece1cd283098) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: (rtk) disable immutable check in the stores middleware setup
+
 ## 2.126.0-nightly.0
 
 ### Minor Changes

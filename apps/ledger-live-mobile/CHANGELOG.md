@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.91.0-nightly.1
+
+### Minor Changes
+
+- [#11326](https://github.com/LedgerHQ/ledger-live/pull/11326) [`a6d7fde`](https://github.com/LedgerHQ/ledger-live/commit/a6d7fde875c7db4644e60bea57c0c6b79c14b2b1) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD analytics
+
+### Patch Changes
+
+- [#11387](https://github.com/LedgerHQ/ledger-live/pull/11387) [`3ebc305`](https://github.com/LedgerHQ/ledger-live/commit/3ebc30546f65fc4c097bf1e5891179e27403d202) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Improve NotificationsProvider's performance by memoizing its state
+
 ## 3.91.0-nightly.0
 
 ### Minor Changes
