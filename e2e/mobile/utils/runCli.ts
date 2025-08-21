@@ -23,8 +23,7 @@ function extractFlagValue<K extends keyof LiveDataOpts>(
 export function runCliCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = command.split("+");
-    const env = { ...process.env };
-    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env });
+    const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env: process.env });
 
     let output = "";
     let errorOutput = "";

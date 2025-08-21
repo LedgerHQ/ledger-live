@@ -36,7 +36,7 @@ export async function launchSpeculos(appName: string) {
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
   speculosDevices.set(device.id, device.port);
-  invariant(device.port, "[E2E Setup Speculos port not null");
+  invariant(device.port, "[E2E Setup] Speculos port not null");
   log.info("E2E Setup", "Device info before map set:", {
     port: device.port,
     deviceId: device.id,
