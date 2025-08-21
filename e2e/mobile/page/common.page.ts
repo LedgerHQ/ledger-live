@@ -14,8 +14,7 @@ export default class CommonPage {
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
-  deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
-  deviceItemRegex = /device-item-.*/;
+  deviceRowRegex = /device-item-.*/;
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
