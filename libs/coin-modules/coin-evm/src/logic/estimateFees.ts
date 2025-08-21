@@ -13,22 +13,10 @@ import { getErc20Data, getTransactionType } from "./common";
 export async function estimateFees(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported>,
-  customFees?: FeeEstimation,
 ): Promise<FeeEstimation> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
 
   const transactionType = getTransactionType(type);
-
-  if (
-    (transactionType === TransactionTypes.legacy &&
-      typeof customFees?.parameters?.gasPrice === "bigint") ||
-    (transactionType === TransactionTypes.eip1559 &&
-      typeof customFees?.parameters?.maxFeePerGas === "bigint" &&
-      typeof customFees?.parameters?.maxPriorityFeePerGas === "bigint")
-  ) {
-    return customFees;
-  }
-
   const node = getNodeApi(currency);
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
