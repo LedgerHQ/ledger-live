@@ -101,6 +101,11 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "start:msw": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "unimported": {
       "cache": false
     },
