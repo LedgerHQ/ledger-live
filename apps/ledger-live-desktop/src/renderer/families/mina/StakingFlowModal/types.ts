@@ -2,7 +2,11 @@ import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/mina/types";
+import {
+  MinaAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/mina/types";
 import { OpenModal } from "~/renderer/actions/modals";
 
 export type StepId = "validator" | "connectDevice" | "confirmation";
@@ -11,7 +15,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
+  account: MinaAccount | undefined | null;
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;

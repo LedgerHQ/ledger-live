@@ -114,7 +114,10 @@ function StakingValidator({ navigation, route }: Props) {
                 : t("common.continue")
             }
             onPress={onContinue}
-            disabled={!transaction?.recipient}
+            disabled={
+              !transaction?.recipient ||
+              transaction?.recipient === mainAccount?.minaResources?.delegateInfo?.address
+            }
           />
         </Box>
       </Flex>
