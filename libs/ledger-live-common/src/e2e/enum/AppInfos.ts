@@ -60,4 +60,6 @@ export class AppInfos {
   static readonly CELO = new AppInfos("Celo");
 
   static readonly LTC = new AppInfos("Litecoin");
+
+  static readonly KASPA = new AppInfos("Kaspa");
 }
