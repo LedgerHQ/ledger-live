@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2–3 Min.",
       "medium" : "≈ 30 Sek.",
-      "fast" : "≈ 15 Sek."
+      "fast" : "≈ 15 Sek.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3242,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Transaktionsbenachrichtigungen (Beta)",
-        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, Binance Smart Chain, Avalanche und Ethereum Classic"
+        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, BNB Chain, Avalanche und Ethereum Classic"
       },
       "price" : {
         "title" : "Preisalarme",
