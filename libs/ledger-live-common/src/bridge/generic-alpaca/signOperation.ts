@@ -100,9 +100,12 @@ export const genericSignOperation =
             assetOwner: transaction?.["assetOwner"] || "",
             subAccountId: transaction.subAccountId || "",
           };
-          const { amount } = await getAlpacaApi(network, kind).validateIntent(
-            transactionToIntent(account, draftTransaction),
-          );
+          const { amount } = await getAlpacaApi(
+            network,
+            kind,
+            account.freshAddress,
+            account.xpub || "",
+          ).validateIntent(transactionToIntent(account, draftTransaction));
           transaction.amount = new BigNumber(amount.toString());
         }
         const signedInfo = await signerContext(deviceId, async signer => {
@@ -116,15 +119,21 @@ export const genericSignOperation =
           transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await getAlpacaApi(network, kind).getSequence(
-            transactionIntent.sender,
-          );
+          const sequenceNumber = await getAlpacaApi(
+            network,
+            kind,
+            account.freshAddress,
+            account.xpub || "",
+          ).getSequence(transactionIntent.sender);
           transactionIntent.sequence = sequenceNumber;
 
           /* Craft unsigned blob via Alpaca */
-          const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
-            transactionIntent,
-          );
+          const unsigned: string = await getAlpacaApi(
+            network,
+            kind,
+            account.freshAddress,
+            account.xpub || "",
+          ).craftTransaction(transactionIntent);
 
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
@@ -138,11 +147,12 @@ export const genericSignOperation =
         o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await getAlpacaApi(network, kind).combine(
-          signedInfo.unsigned,
-          signedInfo.txnSig,
-          signedInfo.publicKey,
-        );
+        const combined = await getAlpacaApi(
+          network,
+          kind,
+          account.freshAddress,
+          account.xpub || "",
+        ).combine(signedInfo.unsigned, signedInfo.txnSig, signedInfo.publicKey);
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
 
         // NOTE: we set the transactionSequenceNumber before on the operation

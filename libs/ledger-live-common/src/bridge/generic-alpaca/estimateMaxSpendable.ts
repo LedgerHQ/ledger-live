@@ -21,12 +21,18 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
       fees: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n,
     };
-    const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(mainAccount, draftTransaction),
-    );
-    const { amount } = await getAlpacaApi(network, kind).validateIntent(
-      transactionToIntent(account, { ...draftTransaction }),
-    );
+    const fees = await getAlpacaApi(
+      network,
+      kind,
+      account.freshAddress,
+      account.xpub || "",
+    ).estimateFees(transactionToIntent(mainAccount, draftTransaction));
+    const { amount } = await getAlpacaApi(
+      network,
+      kind,
+      account.freshAddress,
+      account.xpub || "",
+    ).validateIntent(transactionToIntent(account, { ...draftTransaction }));
     if (network === "stellar") {
       return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
     }
