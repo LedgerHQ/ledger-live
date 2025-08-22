@@ -938,6 +938,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "List of sanctioned addresses",
   },
+  HYPEREVM_ENABLE_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable tokens on HyperEVM",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {

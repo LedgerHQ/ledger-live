@@ -13,6 +13,7 @@ import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
+import { tokens as hyperevmTokens } from "./data/evm/999";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
@@ -72,6 +73,11 @@ if (getEnv("APTOS_ENABLE_TOKENS")) {
   addTokens(aptCoinTokens.map(convertAptCoinTokens));
   // Aptos fungible assets tokens
   addTokens(aptFATokens.map(convertAptFaTokens));
+}
+
+if (getEnv("HYPEREVM_ENABLE_TOKENS")) {
+  // HyperEVM
+  addTokens(hyperevmTokens.map(convertERC20));
 }
 
 type TokensListOptions = {
