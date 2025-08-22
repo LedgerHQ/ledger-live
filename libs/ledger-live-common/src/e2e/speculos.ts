@@ -419,6 +419,30 @@ function getSpeculosAddress(): string {
   return speculosAddress || "http://127.0.0.1";
 }
 
+export function resolveSpeculosBase(): string {
+  const address =
+    process.env.SPECULOS_ADDRESS ||
+    process.env.LLD_SPECULOS_BASE_URL ||
+    process.env.SPECULOS_BASE_URL ||
+    "http://127.0.0.1";
+
+  const cleaned = address.replace(/\/+$/, "");
+  // if a :port is already present, use as-is
+  if (/:\d+$/.test(cleaned)) return cleaned;
+
+  let port = "";
+  try {
+    const v = getEnv("SPECULOS_API_PORT");
+    if (v != null && String(v).trim() !== "") port = String(v);
+  } catch {
+    // ignore if not defined in live-env
+  }
+  if (!port) {
+    port = process.env.LLD_SPECULOS_HTTP_PORT || process.env.SPECULOS_HTTP_PORT || "5000";
+  }
+  return `${cleaned}:${port}`;
+}
+
 async function retryAxiosRequest<T>(
   requestFn: () => Promise<AxiosResponse<T>>,
   maxRetries: number = 5,
@@ -480,13 +504,8 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string[]>
 }
 
 export async function pressBoth() {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = getSpeculosAddress();
-  await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/button/both`, {
-      action: "press-and-release",
-    }),
-  );
+  const base = resolveSpeculosBase();
+  await retryAxiosRequest(() => axios.post(`${base}/button/both`, { action: "press-and-release" }));
 }
 
 export async function pressUntilTextFound(
@@ -511,33 +530,26 @@ export async function pressUntilTextFound(
   );
 }
 
-async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
-  const speculosAddress = getSpeculosAddress();
+async function fetchCurrentScreenTexts(_speculosApiPort: number): Promise<string> {
+  const base = resolveSpeculosBase();
   const response = await retryAxiosRequest(() =>
-    axios.get<ResponseData>(
-      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
-    ),
+    axios.get<ResponseData>(`${base}/events?stream=false&currentscreenonly=true`),
   );
-  return response.data.events.map(event => event.text).join("");
+  return response.data.events.map(e => e.text).join("");
 }
 
-async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
-  const speculosAddress = getSpeculosAddress();
+async function fetchAllEvents(_speculosApiPort: number): Promise<string[]> {
+  const base = resolveSpeculosBase();
   const response = await retryAxiosRequest(() =>
-    axios.get<ResponseData>(
-      `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
-    ),
+    axios.get<ResponseData>(`${base}/events?stream=false&currentscreenonly=false`),
   );
-  return response.data.events.map(event => event.text);
+  return response.data.events.map(e => e.text);
 }
 
 export async function pressRightButton(): Promise<void> {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  const speculosAddress = getSpeculosAddress();
+  const base = resolveSpeculosBase();
   await retryAxiosRequest(() =>
-    axios.post(`${speculosAddress}:${speculosApiPort}/button/right`, {
-      action: "press-and-release",
-    }),
+    axios.post(`${base}/button/right`, { action: "press-and-release" }),
   );
 }
 
@@ -556,13 +568,10 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
-  const speculosAddress = getSpeculosAddress();
-  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
+    const base = port ? `${getSpeculosAddress()}:${port}` : resolveSpeculosBase();
     const response = await retryAxiosRequest(() =>
-      axios.get(`${speculosAddress}:${speculosApiPort}/screenshot`, {
-        responseType: "arraybuffer",
-      }),
+      axios.get(`${base}/screenshot`, { responseType: "arraybuffer" }),
     );
     return response.data;
   } catch (error) {
