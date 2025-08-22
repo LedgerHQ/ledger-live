@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.46.0-nightly.2
+
+### Minor Changes
+
+- [#11319](https://github.com/LedgerHQ/ledger-live/pull/11319) [`23cd759`](https://github.com/LedgerHQ/ledger-live/commit/23cd7596d34692e5ca75b1aebaedb7c8d5f34927) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: llc swap change amountInAtomicUnit type to BigNumber for better precision
+
+### Patch Changes
+
+- Updated dependencies [[`23cd759`](https://github.com/LedgerHQ/ledger-live/commit/23cd7596d34692e5ca75b1aebaedb7c8d5f34927)]:
+  - @ledgerhq/wallet-api-exchange-module@0.16.0-nightly.0
+
 ## 34.45.1-nightly.1
 
 ### Patch Changes

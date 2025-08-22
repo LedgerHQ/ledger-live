@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.91.0-nightly.3
+
+### Minor Changes
+
+- [#11208](https://github.com/LedgerHQ/ledger-live/pull/11208) [`276136f`](https://github.com/LedgerHQ/ledger-live/commit/276136fb45d5d366ce676b6e2c350b7bcfc5f681) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Refactor AuthPath
+
 ## 3.91.0-nightly.2
 
 ### Minor Changes
