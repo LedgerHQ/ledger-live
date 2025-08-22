@@ -124,8 +124,8 @@ const AssetSelection = ({
         />
       )}
       <SearchInputContainer
-        source="modular-drawer"
-        flow="asset-selection"
+        source={source}
+        flow={flow}
         items={availableAssets}
         setItemsToDisplay={setItemsToDisplay}
         assetsToDisplay={itemsToDisplay}
