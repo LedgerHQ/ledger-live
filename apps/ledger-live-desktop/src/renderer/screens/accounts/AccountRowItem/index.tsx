@@ -12,6 +12,7 @@ import AngleDown from "~/renderer/icons/AngleDown";
 import { matchesSearch } from "../AccountList";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import Balance from "./Balance";
+import DualBalance from "~/renderer/components/DualBalance";
 import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
@@ -227,7 +228,7 @@ const AccountRowItem = (props: Props) => {
                 <AccountSyncStatusIndicator accountId={mainAccount.id} account={account} />
               </div>
             </Box>
-            <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+            <DualBalance account={account} unit={unit} disableRounding={disableRounding} />
             <Countervalue account={account} currency={currency} range={range} />
             <Delta account={account} range={range} />
             <Star accountId={account.id} />

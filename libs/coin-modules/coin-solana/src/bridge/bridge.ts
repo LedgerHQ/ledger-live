@@ -53,13 +53,13 @@ function makeSyncAndScan(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
   getAddress: GetAddressFn,
 ) {
-  const getAccountShape: GetAccountShape<SolanaAccount> = async info => {
+  const getAccountShape: GetAccountShape<SolanaAccount> = async (info, syncConfig) => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.currency.id),
     };
 
     const chainAPI = await getChainAPI(config);
-    return getAccountShapeWithAPI(info, chainAPI);
+    return getAccountShapeWithAPI(info, chainAPI, syncConfig);
   };
   return {
     sync: makeSync({ getAccountShape }),

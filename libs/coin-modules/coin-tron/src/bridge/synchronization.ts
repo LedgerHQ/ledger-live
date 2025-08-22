@@ -81,6 +81,11 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
   const balance = computeBalanceBridge(acc);
 
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  if (syncConfig.onBalancesUpdate) {
+    syncConfig.onBalancesUpdate([{ id: accountId, balance }]);
+  }
+
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, address, tx)),
@@ -183,6 +188,19 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const parentOpsAndSubOutOpsWithFee = parentOperations
     .concat(subOutOperationsWithFee)
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+  // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+  if (syncConfig.onBalancesUpdate && mergedSubAccounts.length > 0) {
+    const tokenBalances = mergedSubAccounts
+      .filter(subAccount => subAccount.id && subAccount.balance)
+      .map(subAccount => ({
+        id: subAccount.id!,
+        balance: subAccount.balance!,
+      }));
+    if (tokenBalances.length > 0) {
+      syncConfig.onBalancesUpdate(tokenBalances);
+    }
+  }
 
   return {
     id: accountId,

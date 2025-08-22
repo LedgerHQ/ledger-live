@@ -94,6 +94,26 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operationsWithSubs.length,
     };
+
+    // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+    // This applies to all Alpaca-compatible coins: XRP, Stellar, Tezos, Polkadot
+    if (syncConfig.onBalancesUpdate) {
+      syncConfig.onBalancesUpdate([{ id: accountId, balance: res.balance }]);
+    }
+
+    // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+    if (syncConfig.onBalancesUpdate && subAccounts.length > 0) {
+      const tokenBalances = subAccounts
+        .filter(subAccount => subAccount.id && subAccount.balance)
+        .map(subAccount => ({
+          id: subAccount.id!,
+          balance: subAccount.balance!,
+        }));
+      if (tokenBalances.length > 0) {
+        syncConfig.onBalancesUpdate(tokenBalances);
+      }
+    }
+
     return res;
   };
 }

@@ -5,6 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
+import DualBalance from "./DualBalance";
 import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
@@ -51,7 +52,7 @@ function TokenRow(props: Props) {
       tabIndex={-1}
     >
       <Header nested={nested} account={account} />
-      <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+      <DualBalance account={account} unit={unit} disableRounding={disableRounding} />
       <Countervalue account={account} currency={currency} range={range} />
       <Delta account={account} range={range} />
       <Star accountId={account.id} />

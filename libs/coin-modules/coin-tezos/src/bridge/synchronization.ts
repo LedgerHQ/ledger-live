@@ -7,12 +7,16 @@ import { encodeAddress, isStringHex, reconciliatePublicKey, txToOp } from "./log
 import api, { fetchAllTransactions } from "../network/tzkt";
 import { TezosAccount, TezosOperation } from "../types";
 
-export const getAccountShape: GetAccountShape<TezosAccount> = async ({
-  initialAccount,
-  rest,
-  currency,
-  derivationMode,
-}) => {
+export const getAccountShape: GetAccountShape<TezosAccount> = async (
+  {
+    initialAccount,
+    rest,
+    currency,
+    derivationMode,
+  },
+  syncConfig?: any,
+) => {
+  const { onBalancesUpdate } = syncConfig || {};
   const publicKey = reconciliatePublicKey(rest?.publicKey, initialAccount);
   invariant(
     isStringHex(publicKey),
@@ -72,6 +76,12 @@ export const getAccountShape: GetAccountShape<TezosAccount> = async ({
   };
 
   const balance = new BigNumber(apiAccount.balance);
+  
+  // Emit balance update for optimistic UI updates (Step 1 of balance freshness strategy)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
+  
   const subAccounts: TokenAccount[] = [];
 
   const newOps = apiOperations

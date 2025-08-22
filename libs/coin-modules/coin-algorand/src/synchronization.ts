@@ -220,6 +220,7 @@ const mapTransactionToASAOperation = (
 
 export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
+  const { onBalancesUpdate } = syncConfig || {};
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const accountId = encodeAccountId({
@@ -231,6 +232,11 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
   });
 
   const { round, balance, pendingRewards, assets } = await algorandAPI.getAccount(address);
+
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
 
   const nbAssets = assets.length;
 
@@ -255,6 +261,19 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
     newTransactions,
     syncConfig,
   });
+
+  // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+  if (onBalancesUpdate && subAccounts && subAccounts.length > 0) {
+    const tokenBalances = subAccounts
+      .filter(subAccount => subAccount.id && subAccount.balance)
+      .map(subAccount => ({
+        id: subAccount.id!,
+        balance: subAccount.balance!,
+      }));
+    if (tokenBalances.length > 0) {
+      onBalancesUpdate(tokenBalances);
+    }
+  }
 
   const newOperations = newTransactions.map(tx =>
     mapTransactionToOperation(tx, accountId, address, subAccounts),

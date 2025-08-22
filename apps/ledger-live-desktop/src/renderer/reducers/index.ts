@@ -18,6 +18,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import { assetsDataApi } from "~/newArch/features/ModularDrawer/data/state-manager/api";
+import freshBalances, { FreshBalancesState } from "./freshBalances";
 
 export type State = {
   accounts: AccountsState;
@@ -28,6 +29,7 @@ export type State = {
   dynamicContent: DynamicContentState;
   market: MarketState;
   modals: ModalsState;
+  freshBalances: FreshBalancesState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
   swap: SwapStateType;
@@ -45,6 +47,7 @@ export default combineReducers({
   devices,
   dynamicContent,
   modals,
+  freshBalances,
   settings,
   UI,
   postOnboarding,

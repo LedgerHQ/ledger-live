@@ -184,7 +184,9 @@ const tokenAccountIsNFT = (tokenAccount: ParsedOnChainTokenAccountWithInfo) => {
 export const getAccountShapeWithAPI = async (
   info: AccountShapeInfo,
   api: ChainAPI,
+  syncConfig?: any,
 ): Promise<Partial<SolanaAccount>> => {
+  const { onBalancesUpdate } = syncConfig || {};
   const {
     address: mainAccAddress,
     initialAccount: mainInitialAcc,
@@ -206,6 +208,11 @@ export const getAccountShapeWithAPI = async (
     xpubOrAddress: mainAccAddress,
     derivationMode,
   });
+
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  if (onBalancesUpdate && mainAccBalance) {
+    onBalancesUpdate([{ id: mainAccountId, balance: mainAccBalance }]);
+  }
 
   // known token accounts
   const subAccByMint = pipe(
@@ -394,6 +401,19 @@ export const getAccountShapeWithAPI = async (
     }
     return nfts;
   }, [] as ProtoNFT[]);
+
+  // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+  if (onBalancesUpdate && nextSubAccs.length > 0) {
+    const tokenBalances = nextSubAccs
+      .filter(subAccount => subAccount.id && subAccount.balance)
+      .map(subAccount => ({
+        id: subAccount.id!,
+        balance: subAccount.balance!,
+      }));
+    if (tokenBalances.length > 0) {
+      onBalancesUpdate(tokenBalances);
+    }
+  }
 
   const shape: Partial<SolanaAccount> = {
     nfts: nextNfts,

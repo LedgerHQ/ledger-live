@@ -12,8 +12,12 @@ import { getMainMessage, isAccountEmpty } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
-export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any) => {
+export const getAccountShape: GetAccountShape<CosmosAccount> = async (
+  info: any,
+  syncConfig?: any,
+) => {
   const { address, currency, derivationMode, initialAccount } = info;
+  const { onBalancesUpdate } = syncConfig || {};
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -37,6 +41,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
   let balance = balances;
+
   let delegatedBalance = new BigNumber(0);
   let pendingRewardsBalance = new BigNumber(0);
   let unbondingBalance = new BigNumber(0);
@@ -51,6 +56,12 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
   for (const unbonding of unbondings) {
     unbondingBalance = unbondingBalance.plus(unbonding.amount);
     balance = balance.plus(unbonding.amount);
+  }
+
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  // Now includes staking balances (delegations + unbondings)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
   }
 
   let spendableBalance = balance.minus(unbondingBalance.plus(delegatedBalance));

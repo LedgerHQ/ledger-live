@@ -12,6 +12,7 @@ import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountBalance } from "@ledgerhq/types-live";
 
 export type Props = {
   // this is a wrapping component that you need to put in your tree
@@ -31,6 +32,8 @@ export type Props = {
   hydrateCurrency: (currency: CryptoCurrency) => Promise<any>;
   // an array of token ids to blacklist from the account sync
   blacklistedTokenIds?: string[];
+  // optional callback to receive balance updates during sync for optimistic UI updates
+  onBalancesUpdate?: (balances: AccountBalance[]) => void;
 };
 
 type SyncJob = {
@@ -47,6 +50,7 @@ export const BridgeSync = ({
   prepareCurrency,
   hydrateCurrency,
   blacklistedTokenIds,
+  onBalancesUpdate,
 }: Props): JSX.Element => {
   useHydrate({
     accounts,
@@ -59,6 +63,7 @@ export const BridgeSync = ({
     trackAnalytics,
     updateAccountWithUpdater,
     blacklistedTokenIds,
+    onBalancesUpdate,
   });
   const sync = useSync({
     syncQueue,
@@ -111,6 +116,7 @@ function useSyncQueue({
   trackAnalytics,
   updateAccountWithUpdater,
   blacklistedTokenIds,
+  onBalancesUpdate,
 }) {
   const [bridgeSyncState, setBridgeSyncState]: [BridgeSyncState, any] = useState({});
   const setAccountSyncState = useCallback((accountId: string, s: SyncState) => {
@@ -190,6 +196,7 @@ function useSyncQueue({
         const syncConfig = {
           paginationConfig: {},
           blacklistedTokenIds,
+          onBalancesUpdate,
         };
         concat(
           from(prepareCurrency(account.currency)).pipe(ignoreElements()),
@@ -243,6 +250,7 @@ function useSyncQueue({
       trackAnalytics,
       updateAccountWithUpdater,
       blacklistedTokenIds,
+      onBalancesUpdate,
     ],
   );
   const synchronizeRef = useRef(synchronize);

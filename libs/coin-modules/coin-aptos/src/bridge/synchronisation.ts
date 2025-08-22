@@ -161,8 +161,10 @@ export const getSubAccounts = async (
 
 export const getAccountShape: GetAccountShape<AptosAccount> = async (
   info: AccountShapeInfo<AptosAccount>,
+  syncConfig?: any,
 ) => {
   const { address, initialAccount, currency, derivationMode, rest } = info;
+  const { onBalancesUpdate } = syncConfig || {};
 
   const publicKey =
     rest?.publicKey || (initialAccount && decodeAccountId(initialAccount.id).xpubOrAddress);
@@ -186,6 +188,11 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
+
   const [newOperations, tokenOperations, stakingOperations]: [
     Operation[],
     Operation[],
@@ -198,6 +205,19 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
+
+  // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+  if (onBalancesUpdate && subAccounts.length > 0) {
+    const tokenBalances = subAccounts
+      .filter(subAccount => subAccount.id && subAccount.balance)
+      .map(subAccount => ({
+        id: subAccount.id!,
+        balance: subAccount.balance!,
+      }));
+    if (tokenBalances.length > 0) {
+      onBalancesUpdate(tokenBalances);
+    }
+  }
 
   operations?.forEach(op => {
     const subOperations = inferSubOperations(op.hash, subAccounts);

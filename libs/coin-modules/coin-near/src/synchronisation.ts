@@ -4,8 +4,9 @@ import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { NearAccount } from "./types";
 
-export const getAccountShape: GetAccountShape<NearAccount> = async info => {
+export const getAccountShape: GetAccountShape<NearAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
+  const { onBalancesUpdate } = syncConfig || {};
   const oldOperations = initialAccount?.operations || [];
 
   const accountId = encodeAccountId({
@@ -17,6 +18,11 @@ export const getAccountShape: GetAccountShape<NearAccount> = async info => {
   });
 
   const { blockHeight, balance, spendableBalance, nearResources } = await getAccount(address);
+  
+  // Emit balance update for optimistic UI updates (Step 1 of balance freshness strategy)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
 
   const newOperations = await getOperations(accountId, address);
   const operations = mergeOps(oldOperations, newOperations);

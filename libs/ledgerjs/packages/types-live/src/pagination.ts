@@ -1,3 +1,5 @@
+import { BigNumber } from "bignumber.js";
+
 /**
  * A pagination config holds the user's pagination state
  * this is a state that usually should leave during the app lifecycle, but is not persisted
@@ -15,11 +17,23 @@ export type PaginationConfig = {
 };
 
 /**
- *
+ * Account balance information for optimistic UI updates
+ * Used to provide quick balance feedback during sync
+ */
+export type AccountBalance = {
+  id: string;
+  balance: BigNumber;
+  // Note: spendableBalance could be added later for more complete balance info
+};
+
+/**
+ * Configuration for account synchronization
  */
 export type SyncConfig = {
   paginationConfig: PaginationConfig;
   // allows to disable the synchronization part – typically to only paginate more
   withoutSynchronize?: boolean;
   blacklistedTokenIds?: string[];
+  // callback to receive balance updates during sync for optimistic UI updates
+  onBalancesUpdate?: (balances: AccountBalance[]) => void;
 };

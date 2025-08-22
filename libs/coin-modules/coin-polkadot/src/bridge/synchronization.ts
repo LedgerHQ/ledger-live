@@ -5,9 +5,10 @@ import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import { PolkadotAccount } from "../types";
 import polkadotAPI from "../network";
 
-export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
+export const getAccountShape: GetAccountShape<PolkadotAccount> = async (info, syncConfig) => {
   await loadPolkadotCrypto();
   const { address, initialAccount, currency, derivationMode } = info;
+  const { onBalancesUpdate } = syncConfig || {};
 
   // Retrieve account info
   const {
@@ -33,6 +34,12 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
     xpubOrAddress: address,
     derivationMode,
   });
+
+  // Emit balance update for optimistic UI updates (Step 1 of balance freshness strategy)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
+
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const newOperations = await polkadotAPI.getOperations(accountId, address, startAt);

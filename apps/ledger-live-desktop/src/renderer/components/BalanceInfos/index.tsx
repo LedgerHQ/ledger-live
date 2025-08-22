@@ -19,6 +19,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import PilldDaysSelect from "../PillsDaysSelect";
 import { PlaceholderLine } from "./Placeholder";
+import PortfolioBalanceFresh from "~/renderer/components/PortfolioBalanceFresh";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -100,17 +101,20 @@ export function BalanceTotal({
           {!isAvailable && !showCryptoEvenIfNotAvailable ? (
             <PlaceholderLine width={150} />
           ) : (
-            <FormattedVal
-              inline
-              animateTicker
-              color="palette.text.shade100"
-              unit={unit}
-              fontSize={8}
-              showCode
-              val={totalBalance}
-              dynamicSignificantDigits={dynamicSignificantDigits}
-              data-testid="total-balance"
-            />
+            <>
+              <FormattedVal
+                inline
+                animateTicker
+                color="palette.text.shade100"
+                unit={unit}
+                fontSize={8}
+                showCode
+                val={totalBalance}
+                dynamicSignificantDigits={dynamicSignificantDigits}
+                data-testid="total-balance"
+              />
+              <PortfolioBalanceFresh unit={unit} normalBalance={totalBalance} fontSize={8} />
+            </>
           )}
           {withTransactionsPendingConfirmationWarning ? (
             <TransactionsPendingConfirmationWarning maybeAccount={account} />

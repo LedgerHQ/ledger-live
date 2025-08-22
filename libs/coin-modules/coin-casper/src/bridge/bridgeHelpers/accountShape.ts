@@ -7,7 +7,7 @@ import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from 
 import { mapTxToOps } from "./txn";
 import { ITxnHistoryData } from "../../api/types";
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({
@@ -25,6 +25,12 @@ export const getAccountShape: GetAccountShape = async info => {
   const blockHeight = await fetchBlockHeight();
 
   const balance = purseUref ? await fetchBalance(purseUref) : new BigNumber(0);
+  
+  // Emit balance update for optimistic UI updates (Step 1 of balance freshness strategy)
+  if (syncConfig?.onBalancesUpdate) {
+    syncConfig.onBalancesUpdate([{ id: accountId, balance }]);
+  }
+  
   const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
 
   return {

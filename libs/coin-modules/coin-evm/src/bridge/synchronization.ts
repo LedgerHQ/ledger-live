@@ -34,7 +34,8 @@ export const SAFE_REORG_THRESHOLD = 80;
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
-export const getAccountShape: GetAccountShape<Account> = async (infos, { blacklistedTokenIds }) => {
+export const getAccountShape: GetAccountShape<Account> = async (infos, syncConfig) => {
+  const { blacklistedTokenIds, onBalancesUpdate } = syncConfig || {};
   const { initialAccount, address, derivationMode, currency } = infos;
   const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
@@ -49,6 +50,12 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
     xpubOrAddress: address,
     derivationMode,
   });
+
+  // Emit main account balance immediately (Step 1 - Balance Freshness Strategy - Part 1)
+  if (onBalancesUpdate && balance) {
+    onBalancesUpdate([{ id: accountId, balance }]);
+  }
+
   const syncHash = getSyncHash(currency, blacklistedTokenIds);
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch =
@@ -88,6 +95,19 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+
+  // Emit token balances (Step 1 - Balance Freshness Strategy - Part 2)
+  if (onBalancesUpdate && subAccounts.length > 0) {
+    const tokenBalances = subAccounts
+      .filter(subAccount => subAccount.id && subAccount.balance)
+      .map(subAccount => ({
+        id: subAccount.id!,
+        balance: subAccount.balance!,
+      }));
+    if (tokenBalances.length > 0) {
+      onBalancesUpdate(tokenBalances);
+    }
+  }
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
   // Useful for integrations without explorers
