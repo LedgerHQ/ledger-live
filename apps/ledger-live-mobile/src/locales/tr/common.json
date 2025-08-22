@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 dk.",
       "medium" : "≈ 30 s.",
-      "fast" : "≈ 15 s."
+      "fast" : "≈ 15 s.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,26 +2133,6 @@
         "title" : "Ledger Nano X bağlantısı",
         "description" : "Ledger cihazınızın telefonunuza yakın olduğundan emin olun ve tekrar deneyin. <LinkBluethooth>Bluetooth® bağlantı sorunları \n</LinkBluethooth>.\nBluetooth® çalışıyorsa Ledger'ın işletim sistemini güncellemeniz gerekebilir. İşletim sistemini güncellemeyi deneyin veya yardım almak için Ledger Destek ile iletişime geçin. ",
         "learnHowToUpdate" : "Güncelleme yönergeleri"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "Masaüstünden kripto senkronizasyonu",
-      "desc" : "Kriptolarınızı Ledger masaüstü uygulamasında zaten kurduysanız, telefonunuzdan da yönetmek için senkronize edebilirsiniz.",
-      "cta" : "Taramaya hazırım.",
-      "bullets" : {
-        "0" : {
-          "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "İçe aktarılacak kripto hesaplarını seçin."
-        }
-      },
-      "warning" : {
-        "title" : "Masaüstü ve mobil uygulamalarınız manuel olarak senkronize edilmelidir.",
-        "desc" : "Ledger Live gizliliğinize saygı duyar ve verilerinizi yerel olarak saklar. Telefonunuzdaki hesapları ve ayarları değiştirirseniz, aynı şeyi bilgisayarınızda da yapmanız gerekir ve bunun aksi de geçerlidir. İşlemleriniz blok zinciri ile senkronize kalır.",
-        "cta" : "Anladım!"
       }
     },
     "stepSetupPin" : {
@@ -3241,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, Binance Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
