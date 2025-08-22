@@ -1,0 +1,69 @@
+{
+  "type": "TokenCurrency",
+  "id": "optimism/erc20/usd_coin",
+  "ledgerSignature": "30440220597e4a9911df217d680aa240ca96f7e8fca24c24e7c673c43820c94b08ef69e402206e975e27e82b3370eca40041fca772bd6c4ca7dd087d2bfcc8aa146cb8e1de53",
+  "contractAddress": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+  "parentCurrency": {
+    "type": "CryptoCurrency",
+    "id": "optimism",
+    "coinType": 60,
+    "name": "OP Mainnet",
+    "managerAppName": "Ethereum",
+    "ticker": "ETH",
+    "scheme": "optimism",
+    "color": "#FF0421",
+    "family": "evm",
+    "units": [
+      {
+        "name": "ether",
+        "code": "ETH",
+        "magnitude": 18
+      },
+      {
+        "name": "Gwei",
+        "code": "Gwei",
+        "magnitude": 9
+      },
+      {
+        "name": "Mwei",
+        "code": "Mwei",
+        "magnitude": 6
+      },
+      {
+        "name": "Kwei",
+        "code": "Kwei",
+        "magnitude": 3
+      },
+      {
+        "name": "wei",
+        "code": "wei",
+        "magnitude": 0
+      }
+    ],
+    "ethereumLikeInfo": {
+      "chainId": 10
+    },
+    "explorerViews": [
+      {
+        "tx": "https://optimism.blockscout.com/tx/$hash",
+        "address": "https://optimism.blockscout.com/address/$address",
+        "token": "https://optimism.blockscout.com/address/$address?tab=token_transfer&token=$contractAddress"
+      }
+    ],
+    "keywords": [
+      "optimism"
+    ]
+  },
+  "tokenType": "erc20",
+  "name": "USD Coin",
+  "ticker": "USDC",
+  "delisted": false,
+  "disableCountervalue": false,
+  "units": [
+    {
+      "name": "USD Coin",
+      "code": "USDC",
+      "magnitude": 6
+    }
+  ]
+}

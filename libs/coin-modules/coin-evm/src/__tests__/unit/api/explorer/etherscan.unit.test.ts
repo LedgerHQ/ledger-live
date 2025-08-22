@@ -3,6 +3,7 @@ import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 import * as ETHERSCAN_API from "../../../../network/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
@@ -21,6 +22,17 @@ import {
   etherscanOperationToOperations,
 } from "../../../../adapters";
 import { getCoinConfig } from "../../../../config";
+import { setCryptoAssetsStoreGetter } from "../../../../cryptoAssetsStore";
+
+setCryptoAssetsStoreGetter(
+  () =>
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    ({
+      findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+        return undefined;
+      },
+    }) as CryptoAssetsStore,
+);
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
