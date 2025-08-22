@@ -4776,6 +4776,10 @@
           "title" : "测试新手引导后 Europa 的功能",
           "description" : "测试新手引导后 Europa 的所有功能"
         },
+        "testApexPostonboarding" : {
+          "title" : "测试新手引导后 Apex 的功能",
+          "description" : "测试新手引导后 Apex 的所有功能"
+        },
         "1559DeactivateGate" : {
           "title" : "停用 EIP1559 最低优先费用限额",
           "description" : "这将允许发送交易时没有最低优先费用要求。这可能会导致交易永远停滞在内存池中。"
