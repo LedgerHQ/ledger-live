@@ -72,8 +72,14 @@ function logSilentError(err: Error) {
     allure.step(err.message, () => {
       allure.status("failed", { message: err.message, trace: err.stack });
     });
-  } catch (_) {
-    /* empty */
+  } catch (reportErr) {
+    log.error(
+      "Failed to report silent error to Allure. ",
+      "Original error:",
+      err,
+      "Reporting error:",
+      reportErr,
+    );
   }
 }
 
