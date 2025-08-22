@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3分",
       "medium" : "≈ 30秒",
-      "fast" : "≈ 15秒"
+      "fast" : "≈ 15秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,26 +2133,6 @@
         "title" : "Ledger Nano Xの接続",
         "description" : "Ledgerがスマートフォンの近くにあることを確認してから、もう一度お試しください。<LinkBluethooth>Bluetooth®接続の問題 \n</LinkBluethooth>。\nBluetooth®が機能している場合は、LedgerのOSをアップデートする必要がある場合があります。OSをアップデートしてみるか、Ledgerサポートにご連絡ください。 ",
         "learnHowToUpdate" : "アップデート方法を確認"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "デスクトップアプリから暗号資産を同期",
-      "desc" : "Ledgerデスクトップ版アプリで、すでに暗号資産をセットアップ済みの場合は、それらを同期してスマートフォンで管理することができます。",
-      "cta" : "スキャン準備完了",
-      "bullets" : {
-        "0" : {
-          "label" : "デスクトップアプリで\n<1>「設定」>「アカウント」>「アカウントをエクスポート」</1>を選択。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "インポートする暗号資産のアカウントを選択する。"
-        }
-      },
-      "warning" : {
-        "title" : "デスクトップアプリとモバイルアプリは、手動で同期する必要があります。",
-        "desc" : "Ledger Liveはあなたのプライバシーを尊重し、ローカルにのみデータを保存します。スマートフォン上でアカウントや設定を変更した場合は、コンピューター上でも同様の変更を行う必要があります。その逆も同様です。トランザクションのブロックチェーンとの同期は保たれます。",
-        "cta" : "了解！"
       }
     },
     "stepSetupPin" : {
@@ -3241,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
-        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+        "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
