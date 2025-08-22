@@ -44,7 +44,7 @@ import type { StepId, StepProps } from "./types";
 
 type OwnProps = Omit<DefaultOwnProps, "stepId" | "onChangeStepId"> & {
   stepId: StepId;
-  onChangeStepId: (a: StepId) => void;
+  onChangeStepId: (stepId: StepId) => void;
 };
 
 type StateProps = DefaultStateProps;

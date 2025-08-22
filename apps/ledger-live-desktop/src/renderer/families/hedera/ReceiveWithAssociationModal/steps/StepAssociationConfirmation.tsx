@@ -97,24 +97,26 @@ export function StepAssociationConfirmationFooter({
     concernedOperation = hasSubOperations ? subOperations[0] : optimisticOperation;
   }
 
+  const closeModalAndViewDetails = () => {
+    closeModal();
+    if (account && concernedOperation) {
+      setDrawer(OperationDetails, {
+        operationId: concernedOperation.id,
+        accountId: account.id,
+        parentId: parentAccount?.id,
+      });
+    }
+  };
+
   const renderActionButton = () => {
     if (concernedOperation) {
       return (
         <Button
-          ml={2}
-          id={"hedera-token-association-confirmation-opc-button"}
-          event="Hedera Token Association Flow View OpD Clicked"
-          onClick={() => {
-            closeModal();
-            if (account && concernedOperation) {
-              setDrawer(OperationDetails, {
-                operationId: concernedOperation.id,
-                accountId: account.id,
-                parentId: parentAccount?.id,
-              });
-            }
-          }}
           primary
+          ml={2}
+          id="hedera-token-association-confirmation-opc-button"
+          event="Hedera Token Association Flow View OpD Clicked"
+          onClick={closeModalAndViewDetails}
         >
           <Trans i18nKey="hedera.receiveWithAssociation.steps.associationConfirmation.success.cta" />
         </Button>
