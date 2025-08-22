@@ -53,6 +53,35 @@ const familiesWPackage = [
   "mina",
 ];
 
+const familiesWPackage2 = [
+  // "algorand",
+  // "aptos",
+  "bitcoin",
+  // "cardano",
+  // "casper",
+  // "canton",
+  // "celo",
+  // "cosmos",
+  "evm",
+  // "hedera",
+  // "filecoin",
+  // "internet_computer",
+  // "icon",
+  // "multiversx",
+  // "near",
+  // "polkadot",
+  "solana",
+  // "stacks",
+  // "stellar",
+  // "tezos",
+  // "ton",
+  // "tron",
+  // "vechain",
+  // "xrp",
+  // "sui",
+  // "mina",
+];
+
 const alpacaized = {
   xrp: true,
   stellar: true,
@@ -74,7 +103,7 @@ async function genTarget(targets, families) {
     let imports = ``;
     let exprts = `export default {`;
 
-    for (const family of families) {
+    for (const family of familiesWPackage2) {
       if (fs.existsSync(path.join("families", family, target))) {
         const subPath = target.split("/");
         let rewind = "../";
@@ -112,7 +141,7 @@ function genCoinFrameworkTarget(targetFile) {
 
   // Behavior for coin family with their own package
   const libsDir = path.join(__dirname, "../..");
-  for (const family of familiesWPackage) {
+  for (const family of familiesWPackage2) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
     switch (targetFile) {

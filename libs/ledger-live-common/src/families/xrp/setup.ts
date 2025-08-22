@@ -7,6 +7,7 @@ import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
 import { CreateSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
+console.log("HERE IN coin-xrp setup");
 const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
   return new Xrp(transport);
 };

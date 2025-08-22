@@ -10,6 +10,8 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { Resolver } from "../../hw/getAddress/types";
 import { StacksSigner, Transaction } from "./types";
 
+console.log("HERE IN coin-stacks setup");
+
 const createSigner: CreateSigner<StacksSigner> = (transport: Transport) => {
   return new BlockstackApp(transport);
 };
