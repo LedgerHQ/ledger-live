@@ -363,6 +363,9 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
+      '@exodus/patch-broken-hermes-typed-arrays':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(patch_hash=ecaeewznpxnxc6n3nmclgrg6na)
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
