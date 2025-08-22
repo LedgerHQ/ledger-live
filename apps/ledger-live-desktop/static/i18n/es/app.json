@@ -4776,6 +4776,10 @@
           "title" : "Test Europa Post Onboarding",
           "description" : "Test all europa post onboarding features"
         },
+        "testApexPostonboarding" : {
+          "title" : "Test Apex Post Onboarding",
+          "description" : "Test all apex post onboarding features"
+        },
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
           "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
