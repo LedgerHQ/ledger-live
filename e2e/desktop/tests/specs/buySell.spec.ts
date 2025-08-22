@@ -183,7 +183,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = 
     amount: "0.0006",
     operation: OperationType.Sell,
   },
-  xrayTicket: "B2CQA-3524, B2CQA-3448",
+  xrayTicket: "B2CQA-3524, B2CQA-3448, B2CQA-3447",
   provider: Provider.MOONPAY,
 };
 
@@ -244,21 +244,10 @@ test.describe("Sell flow - ", () => {
   );
 });
 
-const sell: { buySell: BuySell; xrayTicket: string; provider: Provider } = {
-  buySell: {
-    crypto: Account.ETH_1,
-    fiat: { locale: "en-US", currencyTicker: "USD" },
-    amount: "0.04",
-    operation: OperationType.Sell,
-  },
-  xrayTicket: "B2CQA-3447",
-  provider: Provider.MOONPAY,
-};
-
 test.describe("Sell flow - ", () => {
   setupEnv(true);
 
-  const { crypto, amount, operation } = sell.buySell;
+  const { crypto, fiat, amount, operation } = sellAsset.buySell;
 
   test.use({
     userdata: "skip-onboarding",
@@ -283,18 +272,20 @@ test.describe("Sell flow - ", () => {
       await app.buyAndSell.verifyProviderInfoIsNotVisible();
 
       await app.buyAndSell.selectTab(operation);
+      await app.buyAndSell.changeRegionAndCurrency(fiat);
+      await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       await app.buyAndSell.chooseAssetIfNotSelected(crypto);
       await app.addAccount.addAccounts();
       await app.addAccount.done();
       await app.modularDrawer.selectAccountByName(crypto);
 
       await app.buyAndSell.setAmountToPay(amount, operation);
-      await app.buyAndSell.selectProviderQuote(operation, sell.provider.uiName);
+      await app.buyAndSell.selectProviderQuote(operation, sellAsset.provider.uiName);
       await app.buyAndSell.selectQuote();
 
       await app.buyAndSell.verifyProviderUrl(
-        sell.provider.uiName,
-        sell.buySell,
+        sellAsset.provider.uiName,
+        sellAsset.buySell,
         userdataDestinationPath,
       );
     },
