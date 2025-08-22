@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "约 2-3 分钟",
       "medium" : "约 30 秒",
-      "fast" : "约 15 秒"
+      "fast" : "约 15 秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,26 +2133,6 @@
         "title" : "Ledger Nano X 连接",
         "description" : "确保您的 Ledger 设备靠近手机，然后重试。<LinkBluethooth>蓝牙连接问题\n</LinkBluethooth>。\n如果蓝牙功能正常，您可能需要更新 Ledger 设备的操作系统。请尝试更新操作系统或联系 Ledger 客服寻求帮助。 ",
         "learnHowToUpdate" : "了解如何更新"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "通过桌面应用程序同步加密资产",
-      "desc" : "如果您已经在 Ledger 桌面应用程序设置好了您的加密资产，就可以通过您的手机完成同步并进行管理。",
-      "cta" : "我准备好扫描了",
-      "bullets" : {
-        "0" : {
-          "label" : "在桌面应用程序中，选择 <1>设置 > 账户 > 账户导出</1>。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "选择需要导入的加密资产账户。"
-        }
-      },
-      "warning" : {
-        "title" : "必须手动完成桌面应用程序和手机应用程序的同步。",
-        "desc" : "Ledger Live 尊重您的隐私，只会本地存储您的数据。如果您在手机上更改了账户和设置，那么也需要在电脑上做出同样的操作，反之亦然。您的交易数据会和区块链保持同步。",
-        "cta" : "知道了！"
       }
     },
     "stepSetupPin" : {
@@ -3241,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
