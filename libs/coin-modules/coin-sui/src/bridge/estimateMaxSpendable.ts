@@ -30,7 +30,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     let spendableBalance = account.spendableBalance;
 
-    if (account.type == "Account") {
+    if (account.type === "Account") {
       const fees = await getFeesForTransaction({
         account: mainAccount,
         transaction: estimatedTransaction,

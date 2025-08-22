@@ -34,9 +34,9 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
     if (isWriteSetChangeWriteResource(change)) {
       const storeData = change.data as MoveResource<AptosFungibleoObjectCoreResourceData>;
       if (
-        change.address == event.data.store &&
-        storeData.type == APTOS_OBJECT_CORE &&
-        storeData.data.owner == user_address
+        change.address === event.data.store &&
+        storeData.type === APTOS_OBJECT_CORE &&
+        storeData.data.owner === user_address
       ) {
         return true;
       }

@@ -31,7 +31,7 @@ const getASAOperationAmount = (transaction: AlgoTransaction, accountAddress: str
       : transaction.senderAddress;
 
     // Account is either sender or recipient (if both the balance is unchanged)
-    if ((assetSender === accountAddress) !== (details.assetRecipientAddress == accountAddress)) {
+    if ((assetSender === accountAddress) !== (details.assetRecipientAddress === accountAddress)) {
       assetAmount = assetAmount.plus(details.assetAmount);
     }
     // Account is either sender or close-to, but not both
@@ -62,7 +62,7 @@ const getOperationAmounts = (
 
   if (transaction.type === AlgoTransactionType.PAYMENT) {
     const details = transaction.details as AlgoPaymentInfo;
-    if (transaction.senderAddress == details.recipientAddress) {
+    if (transaction.senderAddress === details.recipientAddress) {
       return {
         amount,
         rewards,
@@ -71,7 +71,7 @@ const getOperationAmounts = (
     if (transaction.senderAddress === accountAddress) {
       amount = amount.plus(details.amount);
     }
-    if (details.recipientAddress == accountAddress) {
+    if (details.recipientAddress === accountAddress) {
       const recipientRewards = transaction.recipientRewards;
       amount = amount.plus(details.amount).plus(recipientRewards);
       rewards = rewards.plus(recipientRewards);
@@ -105,10 +105,10 @@ const getOperationType = (transaction: AlgoTransaction, accountAddress: string):
     const details = transaction.details as AlgoAssetTransferInfo;
     if (
       details.assetAmount.isZero() &&
-      transaction.senderAddress == details.assetRecipientAddress
+      transaction.senderAddress === details.assetRecipientAddress
     ) {
       return "OPT_IN";
-    } else if (details.assetCloseToAddress && transaction.senderAddress == accountAddress) {
+    } else if (details.assetCloseToAddress && transaction.senderAddress === accountAddress) {
       return "OPT_OUT";
     } else {
       return "FEES";
@@ -304,7 +304,7 @@ async function buildSubAccount({
       const details = tx.details as AlgoAssetTransferInfo;
       return Number(details.assetId) === Number(extractedId);
     })
-    .filter(tx => getOperationType(tx, parentAccountAddress) != "OPT_IN")
+    .filter(tx => getOperationType(tx, parentAccountAddress) !== "OPT_IN")
     .map(tx => mapTransactionToASAOperation(tx, tokenAccountId, parentAccountAddress));
 
   const operations = mergeOps(oldOperations, newOperations);
