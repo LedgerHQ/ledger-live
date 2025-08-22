@@ -183,7 +183,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = 
     amount: "0.0006",
     operation: OperationType.Sell,
   },
-  xrayTicket: "B2CQA-3524, B2CQA-3448, B2CQA-3447",
+  xrayTicket: "B2CQA-3524, B2CQA-3448",
   provider: Provider.MOONPAY,
 };
 
@@ -260,7 +260,7 @@ test.describe("Sell flow - ", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: sellAsset.xrayTicket,
+        description: "B2CQA-3447",
       },
     },
     async ({ app, userdataDestinationPath }) => {

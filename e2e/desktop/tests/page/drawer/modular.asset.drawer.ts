@@ -31,6 +31,45 @@ export class ModularAssetDrawer extends Drawer {
     await this.searchInput.waitFor();
     await this.drawerCloseButton.waitFor();
     await this.assetListContainer.waitFor();
+    await this.validateTopAssetsMarketCapOrder([Currency.BTC.ticker, Currency.ETH.ticker]);
+  }
+
+  @step("Get list of asset tickers in order")
+  async getAssetTickersList(): Promise<string[]> {
+    const tickerElements = this.page.locator('[data-testid^="asset-item-ticker-"]');
+    const count = await tickerElements.count();
+
+    const tickers: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const ticker = await tickerElements.nth(i).textContent();
+      if (ticker) {
+        tickers.push(ticker.trim());
+      }
+    }
+
+    return tickers;
+  }
+
+  @step("Validate top assets market cap order")
+  async validateTopAssetsMarketCapOrder(expectedOrder: string[]) {
+    const tickers = await this.getAssetTickersList();
+
+    if (tickers.length === 0) {
+      throw new Error("No assets found in asset list");
+    }
+
+    const actualTopAssets = tickers.slice(0, expectedOrder.length);
+
+    for (let i = 0; i < expectedOrder.length; i++) {
+      const expectedTicker = expectedOrder[i];
+      const actualTicker = actualTopAssets[i];
+
+      if (actualTicker !== expectedTicker) {
+        throw new Error(
+          `Market cap order validation failed at position ${i}: expected ${expectedTicker} but found ${actualTicker}. Expected order: ${expectedOrder.join(", ")}. Actual order: ${actualTopAssets.join(", ")}`,
+        );
+      }
+    }
   }
 
   @step("Select asset by ticker and name")
