@@ -15,7 +15,25 @@ if (os.platform() === "win32") {
   usePowerShell();
 }
 
+const cleanup_logs = async () => {
+  if (process.env.CI) {
+    // eslint-disable-next-line no-console
+    console.log("Cleaning up large log files in CI...");
+    try {
+      // Remove large detox log files if they exist
+      await $`find . -name "detox.trace.json" -size +100M -delete 2>/dev/null || true`;
+      await $`find . -name "detox.log" -size +100M -delete 2>/dev/null || true`;
+      // eslint-disable-next-line no-console
+      console.log("Log cleanup completed");
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log("Log cleanup failed:", error.message);
+    }
+  }
+};
+
 const usage = (exitCode = 1) => {
+  // eslint-disable-next-line no-console
   console.log(
     `Usage: ${basename(
       __filename,
@@ -183,5 +201,7 @@ within(async () => {
   }
   if (test) {
     await getTasksFrom[platform].test();
+    // Clean up logs after tests complete
+    await cleanup_logs();
   }
 });

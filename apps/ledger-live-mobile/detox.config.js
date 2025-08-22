@@ -15,7 +15,16 @@ module.exports = {
     retries: 0,
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "info",
+    level: process.env.DEBUG_DETOX ? "trace" : process.env.CI ? "error" : "warn",
+    maxSize: "100MB",
+    maxFiles: 3,
+    // CI-specific settings to reduce log verbosity
+    ...(process.env.CI && {
+      maxSize: "50MB",
+      maxFiles: 2,
+      // Disable detailed logging in CI unless explicitly needed
+      detailed: false,
+    }),
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
