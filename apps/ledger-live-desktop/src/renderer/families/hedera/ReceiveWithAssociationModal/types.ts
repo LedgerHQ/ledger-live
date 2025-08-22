@@ -20,9 +20,9 @@ export type StepProps = DefaultStepProps & {
   status: TransactionStatus;
   signed: boolean;
   bridgePending: boolean;
-  setSigned: (a: boolean) => void;
-  onChangeTransaction: (a: Transaction) => void;
-  onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
-  onTransactionError: (a: Error) => void;
-  onOperationBroadcasted: (a: Operation) => void;
+  setSigned: (signed: boolean) => void;
+  onChangeTransaction: (tx: Transaction) => void;
+  onUpdateTransaction: (updater: (tx: Transaction) => Transaction) => void;
+  onTransactionError: (err: Error) => void;
+  onOperationBroadcasted: (op: Operation) => void;
 };

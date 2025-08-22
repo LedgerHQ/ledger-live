@@ -8,7 +8,7 @@ interface Props {
   status: TransactionStatus;
 }
 
-export default function AssociationInsufficientFundsError(props: Props) {
+export default function AssociationInsufficientFundsError(props: Readonly<Props>) {
   const { colors } = useTheme();
   const { insufficientAssociateBalance } = props.status.errors;
 
