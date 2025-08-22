@@ -108,7 +108,7 @@ export default class AccountPage {
   @Step("Scroll to a Specific SubAccount Row")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(subAccountId, this.accountScreenScrollView, 100, "down");
+    await scrollToId(subAccountId, this.accountScreenScrollView, 500, "down");
   }
 
   @Step("Expect account balance to be visible")

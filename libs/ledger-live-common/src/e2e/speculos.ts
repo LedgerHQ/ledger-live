@@ -622,7 +622,7 @@ const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
   [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
   [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
-  [AppInfos.SOLANA, [DeviceLabels.PUBKEY, DeviceLabels.APPROVE]],
+  [AppInfos.SOLANA, [DeviceLabels.VERIFY_SOLANA_ADDRESS, DeviceLabels.CONFIRM]],
   [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],

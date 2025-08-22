@@ -43,8 +43,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
-      customFees?: FeeEstimation,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFees),
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (

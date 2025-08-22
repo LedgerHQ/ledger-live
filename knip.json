@@ -46,7 +46,7 @@
       "ignore": [
         "src/newArch/features/Collectibles/**",
         ".storybook/stub.ts",
-        "src/newArch/features/ModularDrawer/analytics/**"
+        "src/renderer/mockServiceWorker.js"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
       "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
