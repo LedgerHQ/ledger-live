@@ -32,7 +32,7 @@ module.exports = {
     retries: 0,
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "info",
+    level: process.env.DEBUG_DETOX ? "trace" : "warn",
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
@@ -114,10 +114,54 @@ module.exports = {
     "ios.sim.release": {
       device: "simulator",
       app: "ios.release",
+      artifacts: {
+        plugins: {
+          screenshot: {
+            enabled: true,
+            shouldTakeAutomaticSnapshots: false,
+            keepOnlyFailedTestsArtifacts: true,
+          },
+          video: {
+            enabled: false,
+          },
+          log: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: true,
+            maxFileSize: "10MB",
+          },
+          trace: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: true,
+            maxFileSize: "50MB",
+          },
+        },
+      },
     },
     "ios.sim.prerelease": {
       device: "simulator",
       app: "ios.prerelease",
+      artifacts: {
+        plugins: {
+          screenshot: {
+            enabled: true,
+            shouldTakeAutomaticSnapshots: false,
+            keepOnlyFailedTestsArtifacts: true,
+          },
+          video: {
+            enabled: false,
+          },
+          log: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: true,
+            maxFileSize: "10MB",
+          },
+          trace: {
+            enabled: true,
+            keepOnlyFailedTestsArtifacts: true,
+            maxFileSize: "50MB",
+          },
+        },
+      },
     },
     "android.emu.debug": {
       device: "emulator",
