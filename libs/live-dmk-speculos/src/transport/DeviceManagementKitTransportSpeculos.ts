@@ -110,27 +110,32 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
     return transport;
   }
 
-  private openSsePersistent(path: string, connectTimeoutMs: number) {
+  private openSsePersistent(path: string, connectTimeoutMs?: number) {
     const ac = new AbortController();
-    const connectTimer = setTimeout(() => ac.abort(), connectTimeoutMs);
+    let connectTimer: NodeJS.Timeout | null = null;
+
+    // Abort only if we fail to CONNECT within connectTimeoutMs.
+    if (connectTimeoutMs && connectTimeoutMs > 0) {
+      connectTimer = setTimeout(() => ac.abort(), connectTimeoutMs);
+    }
 
     this.http
       .get(path, {
         responseType: "stream",
-        timeout: connectTimeoutMs,
+        timeout: 0, // never time out the live SSE stream
         signal: ac.signal,
-        headers: { Accept: "text/event-stream", Connection: "close" },
+        // IMPORTANT: override any instance default "Connection: close"
+        headers: { Accept: "text/event-stream", Connection: "keep-alive" },
         transitional: { clarifyTimeoutError: true },
       })
       .then((res: AxiosResponse) => {
-        clearTimeout(connectTimer);
+        if (connectTimer) clearTimeout(connectTimer);
 
         const stream = res.data as NodeJS.ReadableStream;
         this.eventStream = stream;
 
         stream.on("data", (chunk: Buffer) => {
           const text = chunk.toString();
-          log("speculos-event", text);
           for (const line of text.split("\n")) {
             if (line.startsWith("data: ")) {
               try {
@@ -141,17 +146,19 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
             }
           }
         });
+
         stream.on("close", () => {
           log("speculos-event", "close");
-          this.emit("disconnect", new DisconnectedDevice("Speculos exited"));
+          this.emit("disconnect", new DisconnectedDevice("Speculos events stream closed"));
         });
+
         stream.on("error", (err: unknown) => {
           log("speculos-event", "error", { err: String(err) });
           this.emit("disconnect", new DisconnectedDevice("Speculos SSE error"));
         });
       })
       .catch(err => {
-        clearTimeout(connectTimer);
+        if (connectTimer) clearTimeout(connectTimer);
         this.tracer.trace("SSE open error", { error: String(err) });
       });
   }
