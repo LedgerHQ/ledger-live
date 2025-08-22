@@ -190,8 +190,8 @@
       "SLASH" : "Slashé",
       "WITHDRAW_UNBONDED" : "Retiré",
       "NOMINATE" : "Nomination",
-      "CHILL" : "Retirer les nominations",
-      "SET_CONTROLLER" : "Définir contrôleur",
+      "CHILL" : "Retrait de nominations",
+      "SET_CONTROLLER" : "Contrôleur défini",
       "LOCK" : "Immobilisé",
       "UNLOCK" : "Dégelé",
       "WITHDRAW" : "Retiré",
@@ -4775,6 +4775,10 @@
         "testEuropaPostonboarding" : {
           "title" : "Tester le Post-Onboarding du Ledger Europa",
           "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding du Ledger Europa."
+        },
+        "testApexPostonboarding" : {
+          "title" : "Tester le Post-Onboarding d’Apex",
+          "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding d’Apex"
         },
         "1559DeactivateGate" : {
           "title" : "Désactiver le seuil minimal pour les frais de priorité (EIP-1559)",
