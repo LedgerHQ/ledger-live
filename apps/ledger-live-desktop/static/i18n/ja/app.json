@@ -4776,6 +4776,10 @@
           "title" : "Europaオンボーディング後テスト",
           "description" : "Europaオンボーディング後の全機能テスト"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apexオンボーディング後テスト",
+          "description" : "Apexオンボーディング後の全機能テスト"
+        },
         "1559DeactivateGate" : {
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
           "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
