@@ -1,6 +1,7 @@
 import { combineReducers, Store } from "redux";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import accounts from "./accounts";
+import auth from "./auth";
 import settings from "./settings";
 import appstate from "./appstate";
 import ble from "./ble";
@@ -27,6 +28,7 @@ export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  auth,
   countervalues,
   settings,
   appstate,
