@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.126.0-nightly.2
+
+### Minor Changes
+
+- [#11349](https://github.com/LedgerHQ/ledger-live/pull/11349) [`5805550`](https://github.com/LedgerHQ/ledger-live/commit/5805550dd581f9e952df6a444506f85c60386860) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Adds MSW to LLD for MAD/DADA development
+
+- [#11406](https://github.com/LedgerHQ/ledger-live/pull/11406) [`39f9d28`](https://github.com/LedgerHQ/ledger-live/commit/39f9d2868bc2218e21499f978740d881b8cf3f2e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix a bug when opening My Ledger for Apex
+
+### Patch Changes
+
+- Updated dependencies [[`2a4070b`](https://github.com/LedgerHQ/ledger-live/commit/2a4070b594271007fa47dc7451b612008a233006)]:
+  - @ledgerhq/coin-evm@2.28.0-nightly.1
+  - @ledgerhq/live-common@34.45.1-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.9.1-nightly.1
+
 ## 2.126.0-nightly.1
 
 ### Patch Changes

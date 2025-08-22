@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.91.0-nightly.2
+
+### Minor Changes
+
+- [#11419](https://github.com/LedgerHQ/ledger-live/pull/11419) [`d80010c`](https://github.com/LedgerHQ/ledger-live/commit/d80010cd96f24d76ec31ecfbf102239f62aaba5e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add utm source to terms and conditions links
+
+- [#11406](https://github.com/LedgerHQ/ledger-live/pull/11406) [`39f9d28`](https://github.com/LedgerHQ/ledger-live/commit/39f9d2868bc2218e21499f978740d881b8cf3f2e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add fake image for Apex
+
+- [#11361](https://github.com/LedgerHQ/ledger-live/pull/11361) [`c2d7d2a`](https://github.com/LedgerHQ/ledger-live/commit/c2d7d2a92824f118d2693a8ad8f2f802020130ce) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - promise tracking and cleanup in custom exchange handlers
+
+### Patch Changes
+
+- Updated dependencies [[`2a4070b`](https://github.com/LedgerHQ/ledger-live/commit/2a4070b594271007fa47dc7451b612008a233006)]:
+  - @ledgerhq/coin-evm@2.28.0-nightly.1
+
 ## 3.91.0-nightly.1
 
 ### Minor Changes
