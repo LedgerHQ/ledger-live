@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2 à 3 min",
       "medium" : "≈ 30 sec",
-      "fast" : "≈ 15 sec"
+      "fast" : "≈ 15 sec",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,27 +2133,6 @@
         "title" : "Connecter votre Ledger Nano X",
         "description" : "Assurez-vous que votre appareil Ledger est à proximité de votre téléphone et réessayez. <LinkBluethooth>En savoir plus sur les problèmes de connexion Bluetooth®. \n</LinkBluethooth>\nSi le Bluetooth® fonctionne, vous devez peut-être mettre à jour le système d’exploitation de votre Ledger. Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide. ",
         "learnHowToUpdate" : "Comment mettre à jour"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "Synchroniser vos cryptos depuis un ordinateur",
-      "desc" : "Si vous gérez déjà vos cryptos dans l’app Ledger Live pour l’ordinateur, vous pouvez synchroniser pour les gérer depuis votre téléphone.",
-      "cta" : "Je suis prêt(e) à scanner",
-      "bullets" : {
-        "0" : {
-          "label" : "Sur Ledger Live pour l’ordinateur, allez dans\n<1>Paramètres > Comptes > Exporter les comptes</1>."
-        },
-        "1" : {
-          "label" : "Scannez le code QR avec votre téléphone."
-        },
-        "2" : {
-          "label" : "Sélectionnez les comptes de cryptos à importer."
-        }
-      },
-      "warning" : {
-        "title" : "Vos apps pour l’ordinateur et pour le mobile doivent être synchronisées manuellement.",
-        "desc" : "Ledger Live respecte votre vie privée et stocke vos données localement. Si vous modifiez vos comptes ou paramètres sur votre téléphone, vous devez le faire aussi sur votre ordinateur, et inversement. Vos transactions restent synchronisées avec la blockchain.",
-        "cta" : "Compris"
       }
     },
     "stepSetupPin" : {
@@ -3242,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Alertes transactionnelles (Bêta)",
-        "desc" : "Recevez des notifications relatives à vos transactions sur Ethereum, Polygon, BNB Smart Chain, Avalanche et Ethereum Classic."
+        "desc" : "Recevez des notifications relatives à vos transactions sur Ethereum, Polygon, BNB Chain, Avalanche et Ethereum Classic."
       },
       "price" : {
         "title" : "Alertes sur les prix",
