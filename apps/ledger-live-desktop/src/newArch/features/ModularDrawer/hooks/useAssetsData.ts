@@ -1,18 +1,19 @@
 import { useState, useCallback } from "react";
-import { AssetsDataWithPagination, useGetAssetsDataQuery } from "../data/state-manager/api";
+import { useGetAssetsDataQuery } from "../data/state-manager/api";
 
-export interface UseAssetsDataResult {
-  data?: AssetsDataWithPagination;
-  isLoading: boolean;
-  error?: unknown;
-  hasMore: boolean;
-  cursor?: string;
-  loadNext: () => void;
-}
-
-export function useAssetsData(): UseAssetsDataResult {
+export function useAssetsData({
+  search,
+  currencyIds,
+}: {
+  search?: string;
+  currencyIds?: string[];
+}) {
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const { data, isLoading, error } = useGetAssetsDataQuery({ cursor });
+  const { data, error, isLoading, isSuccess } = useGetAssetsDataQuery({
+    cursor,
+    search,
+    currencyIds,
+  });
 
   const loadNext = useCallback(() => {
     const nextCursor = data?.pagination?.nextCursor;
@@ -25,8 +26,9 @@ export function useAssetsData(): UseAssetsDataResult {
 
   return {
     data,
-    isLoading,
     error,
+    isLoading,
+    isSuccess,
     hasMore,
     cursor,
     loadNext,
