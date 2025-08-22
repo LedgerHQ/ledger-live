@@ -4776,6 +4776,10 @@
           "title" : "Testar Pós-Introdução da Europa",
           "description" : "Testar todos os recursos de pós-introdução da Europa"
         },
+        "testApexPostonboarding" : {
+          "title" : "Testar Pós-Onboarding da Apex",
+          "description" : "Testar todos os recursos de pós-onboarding da Apex"
+        },
         "1559DeactivateGate" : {
           "title" : "Desativar taxa de prioridade mínima (EIP1559)",
           "description" : "Permite que a transação seja enviada sem esperar qualquer taxa de prioridade mínima. Isso pode fazer a transação ficar presa na mempool para sempre."
