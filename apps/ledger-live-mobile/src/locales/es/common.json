@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,26 +2133,6 @@
         "title" : "Conexión con el Ledger Nano X",
         "description" : "Asegúrate de que tienes el teléfono móvil cerca de tu Ledger e inténtalo de nuevo. <LinkBluethooth>Problemas de conexión Bluetooth® \n</LinkBluethooth>.\nSi el Bluetooth® funciona correctamente, puede que tengas que actualizar el SO del Ledger. Prueba a actualizar el SO o contactar con el servicio de soporte de Ledger para pedir ayuda. ",
         "learnHowToUpdate" : "Aprende cómo actualizarlo"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "Sincroniza tus cripto desde la PC",
-      "desc" : "Si ya tienes tus cripto configuradas en la aplicación Ledger Desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
-      "cta" : "Estoy listo para escanear",
-      "bullets" : {
-        "0" : {
-          "label" : "Dentro de la aplicación Desktop, selecciona<1>Ajustes > Cuentas > Exportar cuenta</1>"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Selecciona las cuentas de cripto a importar."
-        }
-      },
-      "warning" : {
-        "title" : "Es necesario sincronizar manualmente tus aplicaciones Desktop y Mobile.",
-        "desc" : "Ledger Live respeta tu privacidad y almacena tus datos de manera local. Si cambias las cuentas y la configuración en tu teléfono, deberás hacer lo mismo en tu PC y viceversa. Tus transacciones se mantienen sincronizadas con la cadena de bloques.",
-        "cta" : "¡Entendido!"
       }
     },
     "stepSetupPin" : {
@@ -3241,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
