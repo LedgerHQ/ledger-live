@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 min",
       "medium" : "≈ 30 sec",
-      "fast" : "≈ 15 sec"
+      "fast" : "≈ 15 sec",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2132,27 +2133,6 @@
         "title" : "Conexão da Ledger Nano X",
         "description" : "Certifique-se de que sua Ledger está próxima ao seu celular e tente novamente. <LinkBluethooth>Problemas de conexão Bluetooth®  </LinkBluethooth>.\nSe o Bluetooth® estiver funcionando, talvez você precise atualizar o sistema operacional da Ledger. Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência. ",
         "learnHowToUpdate" : "Aprenda como atualizar"
-      }
-    },
-    "stepImportAccounts" : {
-      "title" : "Sincronizar contas com o desktop",
-      "desc" : "Se você já configurou suas contas no aplicativo desktop, sincronize-as para gerenciá-las pelo smartphone.",
-      "cta" : "Tudo pronto para escanear",
-      "bullets" : {
-        "0" : {
-          "label" : "No aplicativo de desktop, selecione\n<1>Configurações > Contas > Exportar Contas</1>."
-        },
-        "1" : {
-          "label" : "Escaneie os QR codes com seu smartphone."
-        },
-        "2" : {
-          "label" : "Selecione quais contas cripto importar."
-        }
-      },
-      "warning" : {
-        "title" : "Aplicativos desktop e móvel devem ser manualmente sincronizados.",
-        "desc" : "O Ledger Live respeita sua privacidade e armazena seus dados localmente. Se você mudar contas e configurações no seu telefone, precisará fazer o mesmo em seu computador e vice-versa. Suas transações são sincronizadas com a blockchain.",
-        "cta" : "Entendi!"
       }
     },
     "stepSetupPin" : {
@@ -3242,7 +3222,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Alertas de Transações (Beta)",
-        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, Binance Smart Chain, Avalanche e Ethereum Classic"
+        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, BNB Chain, Avalanche e Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de preço",
