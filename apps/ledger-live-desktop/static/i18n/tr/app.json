@@ -4776,6 +4776,10 @@
           "title" : "Europa İlk Kurulum Sonrası testi",
           "description" : "Europa cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apex İlk Kurulum Sonrası Testi",
+          "description" : "Apex cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
+        },
         "1559DeactivateGate" : {
           "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
