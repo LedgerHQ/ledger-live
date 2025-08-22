@@ -8,8 +8,8 @@ import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveF
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import type { StepId } from "./Body";
 import Body from "./Body";
+import type { StepId } from "./types";
 
 type State = {
   stepId: StepId;
@@ -18,7 +18,7 @@ type State = {
 };
 
 const INITIAL_STATE = {
-  stepId: "account" as StepId,
+  stepId: "account" as const satisfies StepId,
   isAddressVerified: null,
   verifyAddressError: null,
 };

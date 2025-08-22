@@ -1,6 +1,6 @@
 import type { MakeModalsType } from "~/renderer/modals/types";
-import { Data as ReceiveModalProps } from "./ReceiveWithAssociationModal/Body";
 import MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION from "./ReceiveWithAssociationModal";
+import type { Data as ReceiveModalProps } from "./ReceiveWithAssociationModal/types";
 
 export type ModalsData = {
   MODAL_HEDERA_RECEIVE_WITH_ASSOCIATION: ReceiveModalProps;

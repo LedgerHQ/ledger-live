@@ -14,7 +14,7 @@ interface Props {
   account: Account;
 }
 
-function SummaryToSection({ account }: Props) {
+function SummaryToSection({ account }: Readonly<Props>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const name = useAccountName(account);

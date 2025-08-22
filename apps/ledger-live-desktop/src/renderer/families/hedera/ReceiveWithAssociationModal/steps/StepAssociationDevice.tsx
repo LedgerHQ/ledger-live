@@ -10,7 +10,7 @@ import StepProgress from "~/renderer/components/StepProgress";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
-import type { StepProps } from "../Body";
+import type { StepProps } from "../types";
 
 const Result = (
   props:

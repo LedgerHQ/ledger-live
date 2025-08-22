@@ -29,7 +29,7 @@ function shouldShowTokenAssociationAlert({ account, mainAccount, token }: Props)
   return isNotTokenAccount && isAutoAssociationDisabled && isNotAssociated;
 }
 
-export default function ReceiveConfirmationTokenAlert(props: Props) {
+export default function ReceiveConfirmationTokenAlert(props: Readonly<Props>) {
   const { account } = props;
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);

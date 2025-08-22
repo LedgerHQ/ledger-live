@@ -11,7 +11,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import type { StepProps } from "../Body";
+import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs<{
   shouldSpace?: boolean;
@@ -89,18 +89,17 @@ export function StepAssociationConfirmationFooter({
   closeModal,
   onClose,
 }: StepProps) {
-  const concernedOperation = optimisticOperation
-    ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
-      ? optimisticOperation.subOperations[0]
-      : optimisticOperation
-    : null;
+  let concernedOperation = null;
 
-  return (
-    <Box horizontal alignItems="right">
-      <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
-        <Trans i18nKey="common.close" />
-      </Button>
-      {concernedOperation ? (
+  if (optimisticOperation) {
+    const { subOperations } = optimisticOperation;
+    const hasSubOperations = subOperations && subOperations.length > 0;
+    concernedOperation = hasSubOperations ? subOperations[0] : optimisticOperation;
+  }
+
+  const renderActionButton = () => {
+    if (concernedOperation) {
+      return (
         <Button
           ml={2}
           id={"hedera-token-association-confirmation-opc-button"}
@@ -111,7 +110,7 @@ export function StepAssociationConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: (parentAccount && parentAccount.id) || undefined,
+                parentId: parentAccount?.id,
               });
             }
           }}
@@ -119,9 +118,22 @@ export function StepAssociationConfirmationFooter({
         >
           <Trans i18nKey="hedera.receiveWithAssociation.steps.associationConfirmation.success.cta" />
         </Button>
-      ) : error ? (
-        <RetryButton primary ml={2} onClick={onRetry} />
-      ) : null}
+      );
+    }
+
+    if (error) {
+      return <RetryButton primary ml={2} onClick={onRetry} />;
+    }
+
+    return null;
+  };
+
+  return (
+    <Box horizontal alignItems="right">
+      <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
+        <Trans i18nKey="common.close" />
+      </Button>
+      {renderActionButton()}
     </Box>
   );
 }

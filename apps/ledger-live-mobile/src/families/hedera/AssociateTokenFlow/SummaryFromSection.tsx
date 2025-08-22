@@ -14,7 +14,7 @@ interface Props {
   token: TokenCurrency;
 }
 
-function SummaryFromSection({ token }: Props) {
+function SummaryFromSection({ token }: Readonly<Props>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
