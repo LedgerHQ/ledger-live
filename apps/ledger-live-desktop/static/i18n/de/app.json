@@ -4776,6 +4776,10 @@
           "title" : "Europa-Post-Onboarding testen",
           "description" : "Alle Europa-Post-Onboarding-Funktionen testen"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apex-Post-Onboarding testen",
+          "description" : "Alle Apex-Post-Onboarding-Funktionen testen"
+        },
         "1559DeactivateGate" : {
           "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
           "description" : "Dies ermöglicht die Übermittlung einer Transaktion, ohne dass eine Mindestprioritätsgebühr erhoben wird. Dies kann dazu führen, dass eine Transaktion für immer im Mempool stecken bleibt."
