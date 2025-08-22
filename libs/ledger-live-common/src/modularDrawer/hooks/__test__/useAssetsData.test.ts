@@ -4,21 +4,27 @@
 
 import { renderHook } from "@testing-library/react";
 import { useAssetsData } from "../useAssetsData";
-import { useGetAssetsDataQuery } from "../../data/state-manager/api";
+import { useGetAssetsDataInfiniteQuery } from "../../data/state-manager/api";
 
 jest.mock("../../data/state-manager/api", () => ({
-  useGetAssetsDataQuery: jest.fn(),
+  useGetAssetsDataInfiniteQuery: jest.fn(),
 }));
 
-const mockSetCursor = jest.fn();
-jest.mock("react", () => ({
-  ...jest.requireActual("react"),
-  useState: jest.fn(() => [undefined, mockSetCursor]),
-  useCallback: jest.fn(fn => fn),
-  useMemo: jest.fn(fn => fn()),
-}));
+const mockuseGetAssetsDataInfiniteQuery = jest.mocked(useGetAssetsDataInfiniteQuery);
 
-const mockUseGetAssetsDataQuery = jest.mocked(useGetAssetsDataQuery);
+const defaultMockValues = {
+  data: undefined,
+  isLoading: false,
+  error: undefined,
+  fetchNextPage: jest.fn(),
+  isSuccess: true,
+  isFetching: false,
+  isError: false,
+  fetchPreviousPage: jest.fn(),
+  isFetchingPreviousPage: false,
+  refetch: jest.fn(),
+  status: "success",
+};
 
 describe("useAssetsData", () => {
   beforeEach(() => {
@@ -26,58 +32,92 @@ describe("useAssetsData", () => {
   });
 
   it("should return loading state when API is loading", () => {
-    mockUseGetAssetsDataQuery.mockReturnValue({
-      data: undefined,
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
       isLoading: true,
-      error: undefined,
-      refetch: jest.fn(),
-      isFetching: false,
-      isSuccess: false,
-      isError: false,
-      currentData: undefined,
+      status: "pending",
     });
 
     const { result } = renderHook(() => useAssetsData({}));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBe(undefined);
-    expect(result.current.hasMore).toBe(false);
   });
 
-  it("should return data and hasMore when API returns data", () => {
-    const mockData = {
-      assetsData: [],
-      pagination: { nextCursor: "test-cursor" },
-    };
-    mockUseGetAssetsDataQuery.mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      error: undefined,
-      refetch: jest.fn(),
-      isFetching: false,
-      isSuccess: true,
-      isError: false,
-      currentData: mockData,
+  it("should return combined data from multiple pages", () => {
+    const mockPages = [
+      {
+        cryptoAssets: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
+        networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
+        cryptoOrTokenCurrencies: { bitcoin: { id: "bitcoin" } },
+        interestRates: {},
+        markets: {},
+        currenciesOrder: {
+          currenciesIds: ["bitcoin"],
+          metaCurrencyIds: ["bitcoin"],
+          key: "marketCap",
+          order: "desc",
+        },
+        pagination: { nextCursor: "cursor-2" },
+      },
+      {
+        cryptoAssets: { ethereum: { id: "ethereum", name: "Ethereum" } },
+        networks: { ethereum: { id: "ethereum", name: "Ethereum" } },
+        cryptoOrTokenCurrencies: { ethereum: { id: "ethereum" } },
+        interestRates: {},
+        markets: {},
+        currenciesOrder: {
+          currenciesIds: ["ethereum"],
+          metaCurrencyIds: ["ethereum"],
+          key: "marketCap",
+          order: "desc",
+        },
+        pagination: { nextCursor: undefined },
+      },
+    ];
+
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: mockPages, pageParams: [{ cursor: "" }, { cursor: "cursor-2" }] },
     });
 
     const { result } = renderHook(() => useAssetsData({}));
 
-    expect(result.current.data).toBe(mockData);
+    expect(result.current.data).toEqual({
+      cryptoAssets: {
+        bitcoin: { id: "bitcoin", name: "Bitcoin" },
+        ethereum: { id: "ethereum", name: "Ethereum" },
+      },
+      networks: {
+        bitcoin: { id: "bitcoin", name: "Bitcoin" },
+        ethereum: { id: "ethereum", name: "Ethereum" },
+      },
+      cryptoOrTokenCurrencies: {
+        bitcoin: { id: "bitcoin" },
+        ethereum: { id: "ethereum" },
+      },
+      interestRates: {},
+      markets: {},
+      currenciesOrder: {
+        currenciesIds: ["bitcoin", "ethereum"],
+        metaCurrencyIds: ["bitcoin", "ethereum"],
+        key: "marketCap",
+        order: "desc",
+      },
+      pagination: { nextCursor: undefined },
+    });
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.hasMore).toBe(true);
   });
 
   it("should return error when API has error", () => {
     const mockError = new Error("API Error");
-    mockUseGetAssetsDataQuery.mockReturnValue({
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
       data: undefined,
-      isLoading: false,
       error: mockError,
-      refetch: jest.fn(),
-      isFetching: false,
       isSuccess: false,
       isError: true,
-      currentData: undefined,
+      status: "error",
     });
 
     const { result } = renderHook(() => useAssetsData({}));
@@ -86,54 +126,75 @@ describe("useAssetsData", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should call setCursor when loadNext is called and there's a nextCursor", () => {
-    const nextCursor = "next-cursor-456";
-    mockUseGetAssetsDataQuery.mockReturnValue({
-      data: {
-        assetsData: [],
-        pagination: { nextCursor },
+  it("should provide loadNext function when there's a nextCursor", () => {
+    const mockFetchNextPage = jest.fn();
+    const mockPages = [
+      {
+        cryptoAssets: {},
+        networks: {},
+        cryptoOrTokenCurrencies: {},
+        interestRates: {},
+        markets: {},
+        currenciesOrder: {
+          currenciesIds: [],
+          metaCurrencyIds: [],
+          key: "marketCap",
+          order: "desc",
+        },
+        pagination: { nextCursor: "next-cursor-456" },
       },
-      isLoading: false,
-      error: undefined,
-      refetch: jest.fn(),
-      isFetching: false,
-      isSuccess: true,
-      isError: false,
-      currentData: {
-        assetsData: [],
-        pagination: { nextCursor },
-      },
+    ];
+
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: mockPages, pageParams: [{ cursor: "" }] },
+      fetchNextPage: mockFetchNextPage,
     });
 
     const { result } = renderHook(() => useAssetsData({}));
 
-    result.current.loadNext();
+    expect(result.current.loadNext).toBeDefined();
+    result.current.loadNext?.();
 
-    expect(mockSetCursor).toHaveBeenCalledWith(nextCursor);
+    expect(mockFetchNextPage).toHaveBeenCalled();
   });
 
-  it("should not call setCursor when there's no nextCursor", () => {
-    mockUseGetAssetsDataQuery.mockReturnValue({
-      data: {
-        assetsData: [],
+  it("should not provide loadNext function when there's no nextCursor", () => {
+    const mockPages = [
+      {
+        cryptoAssets: {},
+        networks: {},
+        cryptoOrTokenCurrencies: {},
+        interestRates: {},
+        markets: {},
+        currenciesOrder: {
+          currenciesIds: [],
+          metaCurrencyIds: [],
+          key: "marketCap",
+          order: "desc",
+        },
         pagination: { nextCursor: undefined },
       },
-      isLoading: false,
-      error: undefined,
-      refetch: jest.fn(),
-      isFetching: false,
-      isSuccess: true,
-      isError: false,
-      currentData: {
-        assetsData: [],
-        pagination: { nextCursor: undefined },
-      },
+    ];
+
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: mockPages, pageParams: [{ cursor: "" }] },
     });
 
     const { result } = renderHook(() => useAssetsData({}));
 
-    result.current.loadNext();
+    expect(result.current.loadNext).toBeUndefined();
+  });
 
-    expect(mockSetCursor).not.toHaveBeenCalled();
+  it("should return undefined data when no pages exist", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+    });
+
+    const { result } = renderHook(() => useAssetsData({}));
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.loadNext).toBeUndefined();
   });
 });

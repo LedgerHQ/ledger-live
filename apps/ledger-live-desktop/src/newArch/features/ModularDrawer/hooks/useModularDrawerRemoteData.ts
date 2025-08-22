@@ -29,8 +29,14 @@ export function useModularDrawerRemoteData({
   const { assetsConfiguration, networkConfiguration } =
     useModularDrawerConfiguration(drawerConfiguration);
 
-  const { currenciesByProvider, sortedCryptoCurrencies, error, isSuccess, loadingStatus } =
-    useModularDrawerData({ currencies, searchedValue });
+  const {
+    currenciesByProvider,
+    sortedCryptoCurrencies,
+    error,
+    isSuccess,
+    loadingStatus,
+    loadNext,
+  } = useModularDrawerData({ currencies, searchedValue });
 
   const {
     assetsToDisplay,
@@ -106,5 +112,6 @@ export function useModularDrawerRemoteData({
     handleBack,
     goBackToAssetSelection,
     goBackToNetworkSelection,
+    loadNext,
   };
 }
