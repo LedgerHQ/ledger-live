@@ -4776,6 +4776,10 @@
           "title" : "ทดสอบ Europa Post Onboarding",
           "description" : "ทดสอบฟีเจอร์ Europa Post Onboarding ทั้งหมด"
         },
+        "testApexPostonboarding" : {
+          "title" : "ทดสอบ Apex Post Onboarding",
+          "description" : "ทดสอบฟีเจอร์ Apex Post Onboarding ทั้งหมด"
+        },
         "1559DeactivateGate" : {
           "title" : "ปิดใช้งานเกต Priority Fee ขั้นต่ำสำหรับ EIP1559",
           "description" : "วิธีนี้อนุญาตให้ทำธุรกรรมได้โดยไม่ต้องจ่าย Priority Fee ขั้นต่ำ ซึ่งอาจส่งผลให้ธุรกรรมติดอยู่ใน Mempool ถาวร"
