@@ -1,5 +1,23 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.6.0-nightly.3
+
+### Minor Changes
+
+- [#11313](https://github.com/LedgerHQ/ledger-live/pull/11313) [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Update EVM createBridge function signature for CAL lazy loading
+
+### Patch Changes
+
+- Updated dependencies [[`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`2834ca4`](https://github.com/LedgerHQ/ledger-live/commit/2834ca443fe9071979d3b506e4ca4fbc17aeca7b), [`e8899f0`](https://github.com/LedgerHQ/ledger-live/commit/e8899f0dac12c6ca9c655c121eeb907f6bbad844)]:
+  - @ledgerhq/types-live@6.82.0-nightly.0
+  - @ledgerhq/coin-evm@2.28.0-nightly.2
+  - @ledgerhq/live-common@34.46.0-nightly.3
+  - @ledgerhq/coin-framework@6.2.0-nightly.0
+  - @ledgerhq/live-config@3.2.0-nightly.0
+  - @ledgerhq/cryptoassets@13.25.1-nightly.0
+  - @ledgerhq/coin-tester@0.9.0
+  - @ledgerhq/live-signer-evm@0.7.1-nightly.2
+
 ## 1.5.1-nightly.2
 
 ### Patch Changes

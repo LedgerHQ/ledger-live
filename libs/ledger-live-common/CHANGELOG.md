@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 34.46.0-nightly.3
+
+### Minor Changes
+
+- [#11313](https://github.com/LedgerHQ/ledger-live/pull/11313) [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Update EVM createBridge function signature for CAL lazy loading
+
+### Patch Changes
+
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`c3afec6`](https://github.com/LedgerHQ/ledger-live/commit/c3afec63ef552ccc623e859c9d224cdb326413a8), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`d7cfaf7`](https://github.com/LedgerHQ/ledger-live/commit/d7cfaf7d5530a5d493db7ab06bda60d73d56569b), [`2834ca4`](https://github.com/LedgerHQ/ledger-live/commit/2834ca443fe9071979d3b506e4ca4fbc17aeca7b), [`e8899f0`](https://github.com/LedgerHQ/ledger-live/commit/e8899f0dac12c6ca9c655c121eeb907f6bbad844)]:
+  - @ledgerhq/live-env@2.15.0-nightly.0
+  - @ledgerhq/coin-stellar@6.2.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.0
+  - @ledgerhq/coin-evm@2.28.0-nightly.2
+  - @ledgerhq/live-countervalues@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.0-nightly.0
+  - @ledgerhq/live-config@3.2.0-nightly.0
+  - @ledgerhq/live-wallet@0.13.0-nightly.0
+  - @ledgerhq/coin-algorand@0.9.18-nightly.0
+  - @ledgerhq/coin-aptos@3.1.1-nightly.0
+  - @ledgerhq/coin-canton@0.2.2-nightly.0
+  - @ledgerhq/coin-cardano@0.11.2-nightly.0
+  - @ledgerhq/coin-celo@1.2.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.0
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.0
+  - @ledgerhq/coin-hedera@1.10.1-nightly.0
+  - @ledgerhq/coin-icon@0.11.5-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.18-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.0
+  - @ledgerhq/coin-polkadot@6.7.1-nightly.0
+  - @ledgerhq/coin-solana@0.31.1-nightly.0
+  - @ledgerhq/coin-stacks@0.8.18-nightly.0
+  - @ledgerhq/coin-sui@0.10.1-nightly.0
+  - @ledgerhq/coin-ton@0.13.7-nightly.0
+  - @ledgerhq/coin-vechain@2.8.2-nightly.0
+  - @ledgerhq/ledger-cal-service@1.3.1-nightly.0
+  - @ledgerhq/cryptoassets@13.25.1-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.0
+  - @ledgerhq/live-nft@0.8.18-nightly.0
+  - @ledgerhq/speculos-transport@0.2.9-nightly.0
+  - @ledgerhq/coin-casper@2.0.9-nightly.0
+  - @ledgerhq/coin-mina@1.1.17-nightly.0
+  - @ledgerhq/coin-near@0.12.1-nightly.0
+  - @ledgerhq/coin-tezos@6.1.1-nightly.0
+  - @ledgerhq/coin-tron@5.1.1-nightly.0
+  - @ledgerhq/coin-xrp@7.1.1-nightly.0
+  - @ledgerhq/device-core@0.6.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.16-nightly.0
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.0
+  - @ledgerhq/live-signer-canton@0.2.2-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.1-nightly.2
+  - @ledgerhq/live-signer-solana@0.5.3-nightly.0
+  - @ledgerhq/hw-app-vet@0.5.14-nightly.0
+  - @ledgerhq/hw-app-celo@6.34.1-nightly.0
+
 ## 34.46.0-nightly.2
 
 ### Minor Changes

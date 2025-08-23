@@ -1,5 +1,35 @@
 # live-mobile
 
+## 3.91.0-nightly.4
+
+### Minor Changes
+
+- [#11313](https://github.com/LedgerHQ/ledger-live/pull/11313) [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Update EVM createBridge function signature for CAL lazy loading
+
+- [#11436](https://github.com/LedgerHQ/ledger-live/pull/11436) [`dba1bc5`](https://github.com/LedgerHQ/ledger-live/commit/dba1bc5323aec05ba91219e6dcb18b1a40b12289) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD Analytics for Live Apps
+
+### Patch Changes
+
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`2834ca4`](https://github.com/LedgerHQ/ledger-live/commit/2834ca443fe9071979d3b506e4ca4fbc17aeca7b), [`e8899f0`](https://github.com/LedgerHQ/ledger-live/commit/e8899f0dac12c6ca9c655c121eeb907f6bbad844)]:
+  - @ledgerhq/live-env@2.15.0-nightly.0
+  - @ledgerhq/types-live@6.82.0-nightly.0
+  - @ledgerhq/coin-evm@2.28.0-nightly.2
+  - @ledgerhq/live-countervalues@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.0-nightly.0
+  - @ledgerhq/live-config@3.2.0-nightly.0
+  - @ledgerhq/live-wallet@0.13.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.0
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.0
+  - @ledgerhq/coin-stacks@0.8.18-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.13-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.3-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.0
+  - @ledgerhq/live-nft@0.8.18-nightly.0
+  - @ledgerhq/domain-service@1.2.41-nightly.0
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.0
+  - @ledgerhq/live-nft-react@0.9.18-nightly.0
+
 ## 3.91.0-nightly.3
 
 ### Minor Changes

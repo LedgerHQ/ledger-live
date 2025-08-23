@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-canton
 
+## 0.2.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-canton@0.2.2-nightly.0
+
 ## 0.2.1
 
 ### Patch Changes

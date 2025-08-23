@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.15.0-nightly.0
+
+### Minor Changes
+
+- [#11385](https://github.com/LedgerHQ/ledger-live/pull/11385) [`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Modular Drawer is now leveraging the DADA service instead of local data
+
 ## 2.14.0
 
 ### Minor Changes
