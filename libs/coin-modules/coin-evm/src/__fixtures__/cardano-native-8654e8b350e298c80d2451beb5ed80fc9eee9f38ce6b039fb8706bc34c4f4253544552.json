@@ -1,0 +1,52 @@
+{
+    "type": "TokenCurrency",
+    "id": "cardano/native/8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552",
+    "contractAddress": "8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552",
+    "parentCurrency": {
+      "type": "CryptoCurrency",
+      "id": "cardano",
+      "coinType": 1815,
+      "name": "Cardano",
+      "managerAppName": "Cardano ADA",
+      "ticker": "ADA",
+      "scheme": "cardano",
+      "color": "#0A1D2C",
+      "family": "cardano",
+      "blockAvgTime": 20,
+      "units": [
+        {
+          "name": "ada",
+          "code": "ADA",
+          "magnitude": 6
+        },
+        {
+          "name": "Lovelace",
+          "code": "Lovelace",
+          "magnitude": 0
+        }
+      ],
+      "explorerViews": [
+        {
+          "tx": "https://cardanoscan.io/transaction/$hash",
+          "address": "https://cardanoscan.io/address/$address",
+          "stakePool": "https://cardanoscan.io/pool/$poolId"
+        }
+      ],
+      "keywords": [
+        "ada",
+        "cardano"
+      ]
+    },
+    "tokenType": "native",
+    "name": "LOBSTER",
+    "ticker": "$LOBSTER",
+    "delisted": false,
+    "disableCountervalue": false,
+    "units": [
+      {
+        "name": "LOBSTER",
+        "code": "$LOBSTER",
+        "magnitude": 0
+      }
+    ]
+  }

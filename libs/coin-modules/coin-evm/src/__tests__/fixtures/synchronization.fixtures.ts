@@ -4,12 +4,9 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
-import usdTetherTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
+import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
 import {
   makeAccount,
   makeNft,
@@ -59,9 +56,9 @@ export const swapHistory = [
 
 export const tokenCurrencies = [
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  Object.freeze(usdCoinTokenData as TokenCurrency),
+  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  Object.freeze(usdTetherTokenData as TokenCurrency),
+  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
 ];
 
 export const tokenAccount = {
@@ -98,20 +95,6 @@ export const coinOperations = [
     blockHeight: 1000,
   }),
 ];
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({
-  findTokenById: (id: string) => {
-    if (id === "ethereum/erc20/usd__coin") {
-      return usdCoinTokenData;
-    } else if (id === "ethereum/erc20/usd_tether__erc20_") {
-      return usdTetherTokenData;
-    }
-
-    return undefined;
-  },
-  findTokenByAddressInCurrency: (_address: string, _currencyId: string) => undefined,
-} as CryptoAssetsStore);
 
 export const tokenOperations = [
   makeOperation({

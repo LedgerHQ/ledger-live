@@ -29,6 +29,9 @@ patchedDependencies:
   '@datadog/datadog-ci@3.11.0':
     hash: hshtsvjisk4nrwuydtrlg3tpk4
     path: patches/@datadog__datadog-ci@3.11.0.patch
+  '@exodus/patch-broken-hermes-typed-arrays':
+    hash: ecaeewznpxnxc6n3nmclgrg6na
+    path: patches/@exodus__patch-broken-hermes-typed-arrays.patch
   '@hashgraph/sdk@2.14.2':
     hash: hno7opkpqo3efbuenv6ysglr4m
     path: patches/@hashgraph__sdk@2.14.2.patch
@@ -3923,7 +3926,7 @@ importers:
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays':
         specifier: 1.0.0-alpha.1
-        version: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(patch_hash=ecaeewznpxnxc6n3nmclgrg6na)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -37156,7 +37159,7 @@ snapshots:
     dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.0
+      debug: 4.3.4
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -37167,7 +37170,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.0
+      debug: 4.3.4
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -38784,7 +38787,7 @@ snapshots:
       '@babel/parser': 7.27.5
       '@babel/template': 7.27.2
       '@babel/types': 7.27.6
-      debug: 4.4.0
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -40875,7 +40878,7 @@ snapshots:
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
 
-  '@exodus/patch-broken-hermes-typed-arrays@1.0.0-alpha.1': {}
+  '@exodus/patch-broken-hermes-typed-arrays@1.0.0-alpha.1(patch_hash=ecaeewznpxnxc6n3nmclgrg6na)': {}
 
   '@expo/bunyan@4.0.0':
     dependencies:
@@ -52831,7 +52834,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 

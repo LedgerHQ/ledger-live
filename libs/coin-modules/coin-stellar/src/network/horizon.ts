@@ -396,14 +396,18 @@ export async function fetchSigners(account: string): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
-  patchHermesTypedArraysIfNeeded();
-  const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
-  // Immediately restore
-  unpatchHermesTypedArrays();
-  const res = await getServer().submitTransaction(transaction, {
-    skipMemoRequiredCheck: true,
-  });
-  return res.hash;
+  try {
+    patchHermesTypedArraysIfNeeded();
+    const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+
+    const res = await getServer().submitTransaction(transaction, {
+      skipMemoRequiredCheck: true,
+    });
+    return res.hash;
+  } finally {
+    // Restore
+    unpatchHermesTypedArrays();
+  }
 }
 
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {

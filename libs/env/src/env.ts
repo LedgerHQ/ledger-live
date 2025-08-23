@@ -788,6 +788,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Trustchain API Prod",
   },
+  DADA_API_STAGING: {
+    def: "https://dada.api.ledger-test.com/v1/",
+    parser: stringParser,
+    desc: "Dynamic Assets Data Aggregator API Staging",
+  },
+  DADA_API_PROD: {
+    def: "https://dada.api.ledger.com/v1/",
+    parser: stringParser,
+    desc: "Dynamic Assets Data Aggregator API Prod",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,

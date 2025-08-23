@@ -7,3 +7,5 @@ export type CryptoAssetsStore = {
   findTokenByAddressInCurrency(address: string, currencyId: string): TokenCurrency | undefined;
   findTokenByTicker(ticker: string): TokenCurrency | undefined;
 };
+
+export type CryptoAssetsStoreGetter = () => CryptoAssetsStore;

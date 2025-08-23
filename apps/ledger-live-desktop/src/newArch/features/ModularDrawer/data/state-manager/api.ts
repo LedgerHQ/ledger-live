@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import { convertApiAssets } from "@ledgerhq/cryptoassets";
 import { AssetsData, RawApiResponse } from "../entities";
+import { getEnv } from "@ledgerhq/live-env";
 
 export enum AssetsDataTags {
   Assets = "Assets",
@@ -8,6 +9,8 @@ export enum AssetsDataTags {
 
 export interface GetAssetsDataParams {
   cursor?: string;
+  search?: string;
+  currencyIds?: string[];
 }
 
 export interface AssetsDataWithPagination extends AssetsData {
@@ -35,13 +38,20 @@ function transformAssetsResponse(
 
 export const assetsDataApi = createApi({
   reducerPath: "assetsDataApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://dada.api.ledger-test.com/v1/" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: __DEV__ ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD"),
+  }),
   tagTypes: [AssetsDataTags.Assets],
   endpoints: build => ({
     getAssetsData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
-      query: ({ cursor }) => ({
+      query: ({ cursor, search, currencyIds: _currencyIds }) => ({
         url: "assets",
-        ...(cursor && { params: { cursor } }),
+        params: {
+          ...(cursor && { cursor }),
+          ...(search && { search }),
+          // ...(currencyIds && currencyIds.length > 0 && { currencyIds }),
+          pageSize: 100,
+        },
       }),
       providesTags: [AssetsDataTags.Assets],
       transformResponse: transformAssetsResponse,

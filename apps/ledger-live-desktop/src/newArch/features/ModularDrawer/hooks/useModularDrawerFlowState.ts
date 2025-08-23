@@ -44,7 +44,6 @@ export function useModularDrawerFlowState({
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
-  const [searchedValue, setSearchedValue] = useState<string>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
 
   const goBackToAssetSelection = useCallback(() => {
@@ -203,8 +202,6 @@ export function useModularDrawerFlowState({
     setSelectedAsset,
     selectedNetwork,
     setSelectedNetwork,
-    searchedValue,
-    setSearchedValue,
     providers,
     setProviders,
     goBackToAssetSelection,
