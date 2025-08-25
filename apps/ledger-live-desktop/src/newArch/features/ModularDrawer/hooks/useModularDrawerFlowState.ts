@@ -47,6 +47,15 @@ export function useModularDrawerFlowState({
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
+  const [hasOneInitialCurrency, setHasOneInitialCurrency] = useState<boolean | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (hasOneInitialCurrency === undefined && hasOneCurrency && searchedValue === undefined) {
+      setHasOneInitialCurrency(true);
+    }
+  }, [hasOneInitialCurrency, hasOneCurrency, searchedValue]);
 
   const goBackToAssetSelection = useCallback(() => {
     setSelectedAsset(undefined);
@@ -181,7 +190,7 @@ export function useModularDrawerFlowState({
   };
 
   useEffect(() => {
-    if (hasOneCurrency && !selectedAsset && !searchedValue) {
+    if (hasOneInitialCurrency && !selectedAsset) {
       const currencyIdToFind = currenciesIdsArray[0];
       const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
@@ -198,6 +207,7 @@ export function useModularDrawerFlowState({
     selectedAsset,
     currenciesIdsArray,
     searchedValue,
+    hasOneInitialCurrency,
   ]);
 
   return {

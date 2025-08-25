@@ -81,6 +81,7 @@ export function useModularDrawerRemoteData({
     hasOneCurrency,
     hasOneNetwork,
     networksToDisplay,
+    searchedValue,
   });
 
   return {
