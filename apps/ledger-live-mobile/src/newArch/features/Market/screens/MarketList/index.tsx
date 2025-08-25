@@ -20,6 +20,7 @@ import { LIMIT } from "~/reducers/market";
 import { DdRum } from "@datadog/mobile-react-native";
 import { ScreenName } from "~/const";
 import { MARKET_LIST_VIEW_ID } from "~/utils/constants";
+import { buildFeatureFlagTags } from "~/utils";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -106,7 +107,9 @@ function View({
   }, []);
 
   useEffect(() => {
-    DdRum.startView(MARKET_LIST_VIEW_ID, ScreenName.MarketList);
+    DdRum.startView(MARKET_LIST_VIEW_ID, ScreenName.MarketList, {
+      featureFlags: buildFeatureFlagTags(),
+    });
     DdRum.addViewLoadingTime(true);
   }, []);
   /**

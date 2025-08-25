@@ -50,6 +50,7 @@ import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
+import { buildFeatureFlagTags } from "~/utils";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -108,7 +109,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       if (TOP_CHAINS.includes(currencyName)) acc.push(getAccountCurrency(account).name);
       return acc;
     }, []);
-    DdRum.startView(PORTFOLIO_VIEW_ID, ScreenName.Portfolio, { topChains }, Date.now());
+    DdRum.startView(
+      PORTFOLIO_VIEW_ID,
+      ScreenName.Portfolio,
+      { topChains, featureFlags: buildFeatureFlagTags() },
+      Date.now(),
+    );
     DdRum.addViewLoadingTime(true);
   }, [allAccounts, llmDatadog?.enabled]);
 

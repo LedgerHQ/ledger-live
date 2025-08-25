@@ -1,11 +1,8 @@
 import Config from "react-native-config";
 import * as Sentry from "@sentry/react-native";
-import { EnvName, getEnv } from "@ledgerhq/live-env";
-import { getAllDivergedFlags } from "./components/FirebaseFeatureFlags";
-import { enabledExperimentalFeatures } from "./experimental";
-import { languageSelector } from "./reducers/settings";
-import { store } from "./context/store";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
+import { Primitive } from "./types/helpers";
+import { buildFeatureFlagTags } from "./utils";
 
 const sentryEnabled =
   Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
@@ -71,35 +68,9 @@ export const initSentry = (automaticBugReportingEnabled: boolean) => {
     },
   });
 
-  const MAX_KEYLEN = 32;
-  const safekey = (k: string): string => {
-    if (k.length > MAX_KEYLEN) {
-      const sep = "..";
-      const max = MAX_KEYLEN - sep.length;
-      const split1 = Math.floor(max / 2);
-      return k.slice(0, split1) + sep + k.slice(k.length - (max - split1));
-    }
-    return k;
-  };
-
-  type Primitive = number | string | boolean | bigint | symbol | null | undefined;
-
   // This sync the Sentry tags to include the extra information in context of events
   const syncTheTags = () => {
-    const tags: { [_: string]: Primitive } = {};
-    // if there are experimental on, we will add them in tags
-    enabledExperimentalFeatures().forEach(key => {
-      const v = getEnv(key as EnvName);
-      if (typeof v !== "object" || !Array.isArray(v)) {
-        tags[safekey(key)] = v;
-      }
-    });
-    // if there are features on, we will add them in tags
-    const appLanguage = languageSelector(store.getState());
-    const features = getAllDivergedFlags(appLanguage);
-    Object.keys(features).forEach(key => {
-      tags[safekey(`f_${key}`)] = features[key as keyof typeof features];
-    });
+    const tags: { [_: string]: Primitive } = buildFeatureFlagTags();
     Sentry.setTags(tags);
   };
 
