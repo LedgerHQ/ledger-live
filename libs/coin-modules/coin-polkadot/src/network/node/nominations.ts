@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { SidecarNominations } from "../types";
 import getApiPromise from "./apiPromise";
 

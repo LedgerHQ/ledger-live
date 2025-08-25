@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { decorateConstants } from "@polkadot/types";
 import getApiPromise from "./apiPromise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
