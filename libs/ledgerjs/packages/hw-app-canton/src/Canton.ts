@@ -13,7 +13,8 @@ const P1_CONFIRM = 0x01;
 const P2 = 0x00;
 
 const INS = {
-  GET_VERSION: 0x04,
+  GET_VERSION: 0x03,
+  GET_APP_NAME: 0x04,
   GET_ADDR: 0x05,
   SIGN: 0x06,
 };
@@ -34,7 +35,11 @@ export default class Canton {
     this.transport = transport;
     this.transportMock = new MockCantonDevice();
 
-    transport.decorateAppAPIMethods(this, ["getAddress", "signTransaction"], scrambleKey);
+    transport.decorateAppAPIMethods(
+      this,
+      ["getAddress", "signTransaction", "getAppConfiguration"],
+      scrambleKey,
+    );
   }
 
   /**
@@ -49,12 +54,13 @@ export default class Canton {
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
-    const response = await this.transportMock.send(CLA, INS.GET_ADDR, p1, P2, serializedPath);
+    const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2, serializedPath);
 
     const responseData = this.handleTransportResponse(response, "address");
+    const { pubKey } = this.extractPubkeyAndChainCode(responseData);
 
     // Handle 65-byte uncompressed SECP256R1 public key
-    const publicKey = "0x" + responseData.toString("hex");
+    const publicKey = "0x" + pubKey;
 
     const addressHash = this.hashString(publicKey);
     const address = "canton_" + addressHash.substring(0, 36);
@@ -90,13 +96,16 @@ export default class Canton {
    * @return the app configuration including version
    */
   async getAppConfiguration(): Promise<AppConfig> {
-    const [major, minor, patch] = await this.transportMock.send(
+    const response = await this.transport.send(
       CLA,
       INS.GET_VERSION,
       P1_NON_CONFIRM,
       P2,
       Buffer.alloc(0),
     );
+
+    const responseData = this.handleTransportResponse(response, "version");
+    const { major, minor, patch } = this.extractVersion(responseData);
 
     return {
       version: `${major}.${minor}.${patch}`,
@@ -107,15 +116,21 @@ export default class Canton {
    * Helper method to handle transport response and check for errors
    * @private
    */
-  private handleTransportResponse(response: Buffer, errorType: "address" | "transaction"): Buffer {
+  private handleTransportResponse(
+    response: Buffer,
+    errorType: "address" | "transaction" | "version",
+  ): Buffer {
     const statusCode = response.readUInt16BE(response.length - 2);
     const responseData = response.slice(0, response.length - 2);
 
     if (statusCode === STATUS.USER_CANCEL) {
-      if (errorType === "address") {
-        throw new UserRefusedAddress();
-      } else {
-        throw new UserRefusedOnDevice();
+      switch (errorType) {
+        case "address":
+          throw new UserRefusedAddress();
+        case "transaction":
+          throw new UserRefusedOnDevice();
+        default:
+          throw new Error();
       }
     }
 
@@ -149,5 +164,33 @@ export default class Canton {
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
+  }
+
+  /**
+   * Extract Pubkey info from APDU response
+   * @private
+   */
+  private extractPubkeyAndChainCode(data: Buffer): { pubKey: string; chainCode: string } {
+    const pubkeySize = parseInt(data.subarray(0, 1).toString("hex"), 16);
+    const pubKey = data.subarray(1, pubkeySize + 1);
+
+    const chainCodeSize = parseInt(
+      data.subarray(pubkeySize + 1, pubkeySize + 2).toString("hex"),
+      16,
+    );
+    const chainCode = data.subarray(pubkeySize + 2, pubkeySize + chainCodeSize + 2);
+    return { pubKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
+  }
+
+  /**
+   * Extract AppVersion from APDU response
+   * @private
+   */
+  private extractVersion(data: Buffer): { major: number; minor: number; patch: number } {
+    return {
+      major: parseInt(data.subarray(0, 1).toString("hex"), 16),
+      minor: parseInt(data.subarray(1, 2).toString("hex"), 16),
+      patch: parseInt(data.subarray(2, 3).toString("hex"), 16),
+    };
   }
 }
