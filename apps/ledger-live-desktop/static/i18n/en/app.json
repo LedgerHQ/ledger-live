@@ -4801,6 +4801,10 @@
           "title": "Test Europa Post Onboarding",
           "description": "Test all europa post onboarding features"
         },
+        "testApexPostonboarding": {
+          "title": "Test Apex Post Onboarding",
+          "description": "Test all apex post onboarding features"
+        },
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
