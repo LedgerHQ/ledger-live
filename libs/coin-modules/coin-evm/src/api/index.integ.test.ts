@@ -136,12 +136,46 @@ describe.each([
       expect(result[0]).toEqual({
         value: expect.any(BigInt),
         asset: { type: "native" },
+        ...(result[0].value > 0n && {
+          stake: {
+            uid: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
+            address: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
+            state: "active",
+            asset: { type: "native" },
+            amount: expect.any(BigInt),
+          },
+        }),
       });
       expect(result[0].value).toBeGreaterThan(0);
       result.slice(1).forEach(balance => {
         expect(balance.asset.type).not.toEqual("native");
         expect(balance.value).toBeGreaterThanOrEqual(0);
       });
+    });
+  });
+
+  describe("getStakes", () => {
+    it("returns empty stakes for a pristine account", async () => {
+      const result = await module.getStakes("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551");
+
+      expect(result).toEqual({ items: [] });
+    });
+
+    it("returns staking positions for an address with balance", async () => {
+      const result = await module.getStakes("0x9bcd841436ef4f85dacefb1aec772af71619024e");
+
+      expect(result).toEqual({
+        items: [
+          {
+            uid: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
+            address: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
+            state: "active",
+            asset: { type: "native" },
+            amount: expect.any(BigInt),
+          },
+        ],
+      });
+      expect(result.items[0].amount).toBeGreaterThan(0n);
     });
   });
 
