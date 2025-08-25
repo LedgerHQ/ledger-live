@@ -29,7 +29,7 @@ export const buildSignOperation =
         );
         o.next({ type: "device-signature-requested" });
         const { aminoMsgs, protoMsgs } = txToMessages(account, transaction);
-        if (transaction.fees == null || transaction.gas == null) {
+        if (!BigNumber.isBigNumber(transaction.fees) || !BigNumber.isBigNumber(transaction.gas)) {
           throw new Error("Transaction misses gas information");
         }
         const feeToEncode = {

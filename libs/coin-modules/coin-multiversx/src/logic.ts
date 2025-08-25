@@ -23,12 +23,12 @@ function fromBech32(value: string): string {
   }
 
   const prefix = decoded.prefix;
-  if (prefix != HRP) {
+  if (prefix !== HRP) {
     throw new Error("Bad HRP");
   }
 
   const pubkey = Buffer.from(fromWords(decoded.words));
-  if (pubkey.length != PUBKEY_LENGTH) {
+  if (pubkey.length !== PUBKEY_LENGTH) {
     throw new Error("Erd address can't be created");
   }
 

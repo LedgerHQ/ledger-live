@@ -60,7 +60,7 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   const oldOps = (initialAccount?.operations ?? []) as TonOperation[];
   const { last_transaction_lt, balance } = await fetchAccountInfo(address);
   // if last_transaction_lt is empty, then there are no transactions in account (as well in token accounts)
-  if (last_transaction_lt != null) {
+  if (last_transaction_lt) {
     if (oldOps.length === 0 || shouldSyncFromScratch) {
       const [tmpTxs, tmpJettonTxs] = await Promise.all([
         getTransactions(address),

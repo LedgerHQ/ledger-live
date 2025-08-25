@@ -1039,7 +1039,7 @@ function isValidStakeCreateAccountCommandDescriptor(
   if (
     commandDescriptor &&
     txCommand?.amount &&
-    txCommand.amount == amount &&
+    txCommand.amount === amount &&
     txCommand.stakeAccRentExemptAmount &&
     txCommand.fromAccAddress &&
     txCommand.stakeAccAddress &&

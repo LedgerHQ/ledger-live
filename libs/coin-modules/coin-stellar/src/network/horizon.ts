@@ -323,7 +323,7 @@ export async function fetchOperations({
 
     // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
     const nextCursor =
-      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+      filteredOps.length === rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
 
     return [filteredOps, nextCursor];
   } catch (e: unknown) {

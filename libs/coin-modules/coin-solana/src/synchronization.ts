@@ -364,7 +364,7 @@ export const getAccountShapeWithAPI = async (
     ]);
 
     const activeStakes = stakes.filter(
-      s => s.activation.state == "active" || s.activation.state == "activating",
+      s => s.activation.state === "active" || s.activation.state === "activating",
     );
 
     // "active" and "activating" stakes require "deactivating" + "withdrawing" steps
