@@ -28,6 +28,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
+    "@ledgerhq/device-signer-kit-solana": "0.0.0-context-module-fix-20250813175248",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
@@ -35,6 +37,9 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@types/bs58": "^4.0.1",
+    "bs58": "^4.0.1",
+    "rxjs": "7.8.2",
     "semver": "^7"
   },
   "scripts": {
