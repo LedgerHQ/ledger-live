@@ -1597,6 +1597,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
+  },
   "currentAddress" : {
     "title" : "Endereço Atual",
     "for" : "Endereço para <1><0>{{name}}</0></1>",
