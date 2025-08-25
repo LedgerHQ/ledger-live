@@ -41,6 +41,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { AnyAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -655,4 +656,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>;
+  | Action<NftPayload>
+  | AnyAction;
