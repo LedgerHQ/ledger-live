@@ -47,6 +47,15 @@ export type Transaction = TransactionCommon & {
   // add here all transaction-specific fields when implement other modes than "send"
 };
 
+export type CreateExtrinsicArg = {
+  amount: BigNumber;
+  coinType: string;
+  mode: SuiTransactionMode;
+  recipient: string;
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+};
+
 /**
  * Sui transaction from a raw JSON
  */
