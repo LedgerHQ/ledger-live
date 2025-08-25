@@ -26,6 +26,7 @@ import {
   lastBlock,
   listOperations,
   getBalance,
+  getStakes,
   getSequence,
   validateIntent,
   getStakes,
