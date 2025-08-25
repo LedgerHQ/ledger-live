@@ -28,7 +28,6 @@ import {
   lastBlock,
   listOperations,
   getBalance,
-  getStakes,
   getSequence,
   validateIntent,
   getTokenFromAsset,
