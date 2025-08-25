@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "约 2-3 分钟",
       "medium" : "约 30 秒",
-      "fast" : "约 15 秒"
+      "fast" : "约 15 秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1523,25 @@
     "cta" : "设置我的 Ledger 设备",
     "bannerTitle" : "已收到您的 Ledger 设备？",
     "bannerCta" : "开始设置",
+    "continue" : "继续"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
     "continue" : "继续"
   },
   "purchaseDevice" : {
@@ -3242,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
