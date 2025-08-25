@@ -2,7 +2,7 @@ import Config from "react-native-config";
 import * as Sentry from "@sentry/react-native";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { Primitive } from "./types/helpers";
-import { buildFeatureFlagTags } from "./utils";
+import { buildFeatureFlagTags } from "./utils/datadogUtils";
 
 const sentryEnabled =
   Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);

@@ -5,7 +5,7 @@ import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
-import { buildFeatureFlagTags } from "./utils";
+import { buildFeatureFlagTags } from "./utils/datadogUtils";
 import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
 import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
 

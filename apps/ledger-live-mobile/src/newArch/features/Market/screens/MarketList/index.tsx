@@ -20,7 +20,7 @@ import { LIMIT } from "~/reducers/market";
 import { DdRum } from "@datadog/mobile-react-native";
 import { ScreenName } from "~/const";
 import { MARKET_LIST_VIEW_ID } from "~/utils/constants";
-import { buildFeatureFlagTags } from "~/utils";
+import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,

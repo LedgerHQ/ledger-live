@@ -6,7 +6,7 @@ import { languageSelector } from "../reducers/settings";
 import { store } from "../context/store";
 
 const MAX_KEYLEN = 32;
-export const parseSafeKey = (k: string): string => {
+const parseSafeKey = (k: string): string => {
   if (k.length > MAX_KEYLEN) {
     const sep = "..";
     const max = MAX_KEYLEN - sep.length;
