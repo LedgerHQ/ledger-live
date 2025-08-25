@@ -306,6 +306,10 @@
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1518,6 +1523,25 @@
     "cta" : "Configurar mi Ledger",
     "bannerTitle" : "¿Has recibido tu Ledger?",
     "bannerCta" : "Empezar la configuración",
+    "continue" : "Continuar"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -3238,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
@@ -6245,6 +6269,7 @@
       "iWithdraw" : "Retirar",
       "totalStake" : "Participación total",
       "commission" : "Comisión",
+      "netApy" : "APY neto",
       "stakeActivationState" : "Provincia",
       "stakeActivePercent" : "Activo",
       "stakeAvailableBalance" : "Saldo disponible",
@@ -7780,8 +7805,8 @@
     "selectAccount" : "Seleccionar cuenta",
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
-    "accountCount" : "{{count}} cuenta (detectada)",
-    "accountCount_plural" : "{{count}} cuentas (detectadas)"
+    "accountCount" : "{{count}} cuenta",
+    "accountCount_plural" : "{{count}} cuentas"
   },
   "swapErrors" : {
     "incorrectCommandData" : {
