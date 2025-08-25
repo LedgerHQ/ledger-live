@@ -1,10 +1,10 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
 import { groupAccountsByAsset, type GroupedAccount } from "./groupAccountsByAsset";
+import { AssetType } from "./type";
+import { AccountLike } from "@ledgerhq/types-live";
+import { counterValueFormatter } from "./counterValueFormatter";
 
 interface ExtendedAssetType extends AssetType {
   balance?: string;

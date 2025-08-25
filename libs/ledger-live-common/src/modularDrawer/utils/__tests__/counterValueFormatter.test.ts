@@ -1,4 +1,4 @@
-import { counterValueFormatter } from "../counterValueFormatter";
+import { counterValueFormatter } from "@ledgerhq/live-common/modularDrawer/utils/counterValueFormatter";
 import { TFunction } from "i18next";
 
 const translations = {

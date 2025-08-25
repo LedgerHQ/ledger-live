@@ -1,28 +1,31 @@
 import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
+import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import orderBy from "lodash/orderBy";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import styled from "styled-components/native";
+import { counterValueFormatter } from "~/newArch/features/Market/utils";
+import { accountsSelector } from "~/reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
   localeSelector,
-} from "~/renderer/reducers/settings";
-import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
+} from "~/reducers/settings";
+import { Text } from "@ledgerhq/native-ui/index";
 import { groupAccountsByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import styled from "styled-components";
-import { Text } from "@ledgerhq/react-ui/index";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
-import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { counterValueFormatter } from "@ledgerhq/live-common/modularDrawer/utils/counterValueFormatter";
-import orderBy from "lodash/orderBy";
-import { ProviderBalanceAsset, ProviderBalanceResultsMap } from "./types";
+import {
+  ProviderBalanceAsset,
+  ProviderBalanceResultsMap,
+} from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
 import { getProviderCurrency } from "@ledgerhq/live-common/modularDrawer/utils/getProviderCurrency";
 import { calculateProviderTotals } from "@ledgerhq/live-common/modularDrawer/utils/calculateProviderTotal";
 
-const BalanceContainer = styled.div`
+const BalanceContainer = styled.View`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -31,12 +34,7 @@ const BalanceContainer = styled.div`
 
 const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
   <BalanceContainer>
-    <Text
-      fontSize="14px"
-      variant="largeLineHeight"
-      fontWeight="semiBold"
-      color="var(--colors-content-default-default)"
-    >
+    <Text fontSize="14px" variant="largeLineHeight" fontWeight="semiBold" color="neutral.c100">
       {asset.fiatValue}
     </Text>
     <Text
@@ -44,7 +42,7 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
       lineHeight="16px"
       variant="bodyLineHeight"
       fontWeight="medium"
-      color="var(--colors-content-subdued-default-default)"
+      color="neutral.c80"
     >
       {asset.balance}
     </Text>
@@ -69,7 +67,6 @@ const formatProviderResult = (
     value: totalFiatValue.toNumber(),
     locale,
     allowZeroValue: true,
-    discreetMode: discreet,
   });
 
   const sortValue = discreet ? 0 : totalFiatValue.toNumber();
@@ -141,6 +138,7 @@ export const useRightBalanceModule = (
       if (!assetsToDisplaySet.has(mainCurrency.id)) continue;
 
       const providerCurrency = getProviderCurrency(mainCurrency, currencies);
+      if (!providerCurrency) continue;
       const { totalBalance, totalFiatValue, hasAccounts } = calculateProviderTotals(
         currencies,
         groupedAccountsByAsset,

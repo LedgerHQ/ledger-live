@@ -5426,6 +5426,9 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
+      i18next:
+        specifier: 20.6.1
+        version: 20.6.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4

@@ -12,7 +12,6 @@ export const counterValueFormatter = ({
   if (!value) {
     return "-";
   }
-
   return new Intl.NumberFormat(locale, {
     style: currency ? "currency" : "decimal",
     currency,

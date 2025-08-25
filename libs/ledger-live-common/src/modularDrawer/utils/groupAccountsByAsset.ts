@@ -1,9 +1,9 @@
-import { getBalanceAndFiatValue } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValue";
+import { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { parseToBigNumber } from "LLD/utils/parseToBigNumber";
+import { parseToBigNumber } from "./parseToBigNumber";
 
 export type GroupedAccount = {
   totalBalance: BigNumber;
