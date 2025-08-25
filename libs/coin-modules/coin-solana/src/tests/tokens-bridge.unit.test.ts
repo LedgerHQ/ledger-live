@@ -11,7 +11,7 @@ import {
 } from "../types";
 
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, CryptoAssetsStore } from "@ledgerhq/types-live";
 import {
   SolanaRecipientMemoIsRequired,
   SolanaTokenAccountFrozen,
@@ -33,7 +33,6 @@ import { calculateToken2022TransferFees } from "../helpers/token";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import usdcTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 
 const USDC_TOKEN = usdcTokenData as unknown as TokenCurrency;
 
