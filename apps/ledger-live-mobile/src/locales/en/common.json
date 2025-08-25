@@ -1074,6 +1074,18 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
+    "HederaInsufficientFundsForAssociation": {
+      "title": "Insufficient balance",
+      "description": "Not enough HBAR to pay for the token association. At least ${{requiredWorthInUSD}} worth of HBAR is required."
+    },
+    "HederaRecipientTokenAssociationRequired": {
+      "title": "Token association required",
+      "description": "The token you’re trying to send is not associated with the destination account. It needs to be associated by the recipient account to be received."
+    },
+    "HederaRecipientTokenAssociationUnverified": {
+      "title": "Unable to verify token association",
+      "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
+    },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
     },
@@ -2728,7 +2740,8 @@
       "WITHDRAW": "Withdrawn",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
-      "WITHDRAW_UNSTAKED": "Withdrawn"
+      "WITHDRAW_UNSTAKED": "Withdrawn",
+      "ASSOCIATE_TOKEN": "Associate token"
     }
   },
   "operationDetails": {
@@ -7085,6 +7098,55 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    },
+    "receive": {
+      "warnings": {
+        "associationPrerequisite": {
+          "text": "In order to receive HTS tokens, your account needs to be associated. If you did not already associate your account with the HTS token that you want to receive, <0>click here</0> to start the token association flow.",
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "associate": {
+      "selectToken": {
+        "title": "Choose a token you want to receive"
+      },
+      "summary": {
+        "title": "Associate token",
+        "from": "Token",
+        "to": "To",
+        "warning": {
+          "text": "By clicking Continue you will associate the selected token to your Hedera account.",
+          "learnMore": "Learn more"
+        }
+      },
+      "selectDevice": {
+        "title": "Associate token"
+      },
+      "connectDevice": {
+        "title": "Associate token"
+      },
+      "validationSuccess": {
+        "title": "Transaction sent",
+        "text": "You will be able to receive this token once the Associate Token transaction has been confirmed"
+      }
+    },
+    "send": {
+      "warnings": {
+        "missingAssociation": {
+          "learnMore": "Learn more"
+        },
+        "unverifiedAssociation": {
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "operationDetails": {
+      "postAccountSection": "Associated token",
+      "postAlert": {
+        "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
+        "learnMore": "Learn more"
+      }
     }
   },
   "asset": {
