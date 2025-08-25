@@ -31,6 +31,7 @@ import {
 } from "./bridge/bridgeHelpers/txn";
 import { getSyncHash } from "./logic";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
+import { WalletContractV4 } from "@ton/ton";
 
 const jettonTxMessageHashesMap = new Map<string, string>();
 
@@ -38,9 +39,18 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   info,
   { blacklistedTokenIds },
 ) => {
-  const { address, rest, currency, derivationMode, initialAccount } = info;
+  let address = info.address;
+  const { rest, currency, derivationMode, initialAccount } = info;
 
   const publicKey = reconciliatePubkey(rest?.publicKey, initialAccount);
+
+  // handle when address is pubkey, can happen when accounts imported using accountID
+  if (publicKey === address) {
+    address = WalletContractV4.create({
+      workchain: 0,
+      publicKey: Buffer.from(publicKey, "hex"),
+    }).address.toString({ bounceable: false, urlSafe: true });
+  }
 
   const blockHeight = await fetchLastBlockNumber();
   const accountId = encodeAccountId({
