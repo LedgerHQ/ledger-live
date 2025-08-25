@@ -1,6 +1,6 @@
 import { device } from "detox";
 import { closeProxy } from "./bridge/proxy";
-import { close as closeBridge, getLogs } from "./bridge/server";
+import { close as closeBridge } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
@@ -21,9 +21,6 @@ beforeAll(
 );
 
 afterAll(async () => {
-  if (IS_FAILED && process.env.CI) {
-    await allure.attachment("App logs", await getLogs(), "application/json");
-  }
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
   closeProxy();
