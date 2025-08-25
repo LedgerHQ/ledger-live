@@ -7,8 +7,8 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SolanaSigner } from "../signer";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import solanaCoinConfig, { SolanaCoinConfig } from "../config";
-import { CryptoAssetsStoreGetter } from "@ledgerhq/coin-framework/crypto-assets/type";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
+import { CryptoAssetsStoreGetter } from "@ledgerhq/types-live";
 
 const httpRequestLogger = (url: string, options: any) => {
   log("network", url, {

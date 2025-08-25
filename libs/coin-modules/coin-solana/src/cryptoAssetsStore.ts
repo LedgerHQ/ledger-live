@@ -1,7 +1,4 @@
-import {
-  CryptoAssetsStore,
-  CryptoAssetsStoreGetter,
-} from "@ledgerhq/coin-framework/crypto-assets/type";
+import { CryptoAssetsStore, CryptoAssetsStoreGetter } from "@ledgerhq/types-live";
 
 export const CRYPTO_ASSETS_STORE_NO_SET_ERROR_MESSAGE =
   "CryptoAssetsStore is not set. Please call setCryptoAssetsStore first on coin solana";

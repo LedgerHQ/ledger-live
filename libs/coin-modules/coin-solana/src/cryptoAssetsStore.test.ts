@@ -1,5 +1,4 @@
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
-
+import { CryptoAssetsStore } from "@ledgerhq/types-live";
 import {
   CRYPTO_ASSETS_STORE_NO_SET_ERROR_MESSAGE,
   getCryptoAssetsStore,
