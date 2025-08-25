@@ -26,6 +26,7 @@ type Props = {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   hasOneCurrency: boolean;
   flow: string;
+  searchedValue?: string;
 };
 
 export function useModularDrawerFlowState({
@@ -39,6 +40,7 @@ export function useModularDrawerFlowState({
   onAccountSelected,
   hasOneCurrency,
   flow,
+  searchedValue,
 }: Props) {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -179,7 +181,7 @@ export function useModularDrawerFlowState({
   };
 
   useEffect(() => {
-    if (hasOneCurrency && !selectedAsset) {
+    if (hasOneCurrency && !selectedAsset && !searchedValue) {
       const currencyIdToFind = currenciesIdsArray[0];
       const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
@@ -195,6 +197,7 @@ export function useModularDrawerFlowState({
     hasOneCurrency,
     selectedAsset,
     currenciesIdsArray,
+    searchedValue,
   ]);
 
   return {

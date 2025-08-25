@@ -51,31 +51,25 @@ const ModularDrawerFlowManagerRemoteData = ({
   });
 
   const renderStepContent = (step: ModularDrawerStep) => {
-    // TODO: We should find a better way to handle that. THe issue is that we always display AssetSelection screen
-    // but in some cases we don't want to trigger analytics events as it may have been dismissed automatically depending on the flow.
-    // For now we just return null if we are in ASSET_SELECTION step and there is only one currency.
-    // This is a temporary solution until we find a better way to handle this but it works as we just don't render a skipped step.
     switch (step) {
       case MODULAR_DRAWER_STEP.ASSET_SELECTION:
-        if (!hasOneCurrency) {
-          return (
-            <AssetSelection
-              assetsToDisplay={assetsToDisplay}
-              providersLoadingStatus={loadingStatus}
-              originalAssetsToDisplay={originalAssetsToDisplay}
-              sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
-              defaultSearchValue={searchedValue}
-              assetsConfiguration={assetsConfiguration}
-              currenciesByProvider={currenciesByProvider}
-              setAssetsToDisplay={() => {}} // Not needed anymore with the search filtering done by the backend
-              setSearchedValue={setSearchedValue}
-              onAssetSelected={handleAssetSelected}
-              flow={flow}
-              source={source}
-            />
-          );
-        }
-        return null;
+        return (
+          <AssetSelection
+            assetsToDisplay={assetsToDisplay}
+            providersLoadingStatus={loadingStatus}
+            originalAssetsToDisplay={originalAssetsToDisplay}
+            sortedCryptoCurrencies={filteredSortedCryptoCurrencies}
+            defaultSearchValue={searchedValue}
+            assetsConfiguration={assetsConfiguration}
+            currenciesByProvider={currenciesByProvider}
+            setAssetsToDisplay={() => {}} // Not needed anymore with the search filtering done by the backend
+            setSearchedValue={setSearchedValue}
+            onAssetSelected={handleAssetSelected}
+            flow={flow}
+            source={source}
+            hasOneCurrency={hasOneCurrency}
+          />
+        );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
         return (
           <NetworkSelection
