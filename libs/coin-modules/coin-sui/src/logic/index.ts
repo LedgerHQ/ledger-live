@@ -7,3 +7,4 @@ export { lastBlock } from "./lastBlock";
 export { getBlock, getBlockInfo } from "./getBlock";
 export { listOperations } from "./listOperations";
 export { getStakes, getRewards } from "./staking";
+export { canStake } from "./stake";
