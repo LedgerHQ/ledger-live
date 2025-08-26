@@ -202,7 +202,8 @@
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
       "SENDING" : "送信中",
-      "BURN" : "バーン済み"
+      "BURN" : "バーン済み",
+      "ASSOCIATE_TOKEN" : "トークンの関連付け"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -1596,6 +1597,25 @@
         "all" : "年"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™はこのトランザクションにクリア署名できません",
+      "subtitle" : "署名する前に、他のLedgerデバイスを使用してこのトランザクションの詳細を認証してください。クリア署名がない場合、すべての資産を失うリスクがあります。",
+      "continue" : "以降の操作は自己責任となります"
+    },
+    "info" : {
+      "title" : "{{date}}をもって、Ledger Live™経由の{{device}}™での{{coinName}}サポートは終了いたします。",
+      "subtitle" : "Ledger Liveの全サービスプロバイダー、最適なサポートをご利用いただくために、最新のLedgerデバイスへのアップグレードをご検討ください",
+      "reminder" : "今後、このメッセージを表示しない"
+    },
+    "error" : {
+      "title" : "{{device}}™はこの機能をサポートしていません",
+      "subtitle" : "Ledger Liveの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをおすすめいたします。"
+    },
+    "update" : "お客様に最適なアップグレードプランをご確認ください",
+    "learnMore" : "詳細はこちら",
+    "continue" : "続行"
   },
   "currentAddress" : {
     "title" : "現在のアドレス",
@@ -4776,6 +4796,10 @@
           "title" : "Europaオンボーディング後テスト",
           "description" : "Europaオンボーディング後の全機能テスト"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apexオンボーディング後テスト",
+          "description" : "Apexオンボーディング後の全機能テスト"
+        },
         "1559DeactivateGate" : {
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
           "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "残高不足",
+      "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "トークンの関連付けが必要です",
+      "description" : "送付しようとしているトークンは、送付先アカウントに関連付けられていません。受け取るには受取人のアカウントに関連付ける必要があります。"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "トークンの関連付けを確認できませんでした",
+      "description" : "送付先アカウントがこのトークンを受け取れるか確認できませんでした。アドレスが無効であるか、ネットワークまたはサービスの問題が発生している可能性があります。"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "ファイルからの画像の読み込みに失敗しました。",
       "description" : "画像でもう一度お試しください。"
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTSトークンを受け取るには、アカウントを関連付ける必要があります。受け取るHTSトークンにアカウントをまだ関連付けていない場合は、<0>こちらをクリック</0>してトークンの関連付けフローを開始してください。",
+          "learnMore" : "詳細はこちら"
+        },
+        "associationRequired" : {
+          "text" : "「続行（Continue）」をクリックすると、選択したトークンがHederaアカウントに関連付けられます。",
+          "learnMore" : "詳細はこちら"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "関連付け",
+          "title" : "トークンの関連付け",
+          "pending" : {
+            "title" : "トランザクションをブロードキャスト中…"
+          },
+          "success" : {
+            "title" : "トランザクションが送信されました。",
+            "description" : "トークン関連付けのトランザクションが確認されると、このトークンを受け取れるようになります",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "メモ (任意)",
         "characterCount" : "{{memoLength}}/ {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "詳細はこちら"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "詳細はこちら"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "関連付け済みトークン",
+      "postAlert" : {
+        "text" : "このトランザクションが確認されると、トークンを受け取ることができるようになります。受取フローを開始するには、<0>こちらをクリック</0>してください。",
+        "learnMore" : "詳細はこちら"
       }
     }
   },
