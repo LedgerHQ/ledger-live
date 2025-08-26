@@ -202,7 +202,8 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
-      "BURN" : "Yakıldı"
+      "BURN" : "Yakıldı",
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1596,6 +1597,25 @@
         "all" : "yılda"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
   },
   "currentAddress" : {
     "title" : "Geçerli adres",
@@ -4776,6 +4796,10 @@
           "title" : "Europa İlk Kurulum Sonrası testi",
           "description" : "Europa cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apex İlk Kurulum Sonrası Testi",
+          "description" : "Apex cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
+        },
         "1559DeactivateGate" : {
           "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Yetersiz bakiye",
+      "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Token ilişkilendirme gerekli",
+      "description" : "Göndermeye çalıştığınız token, hedef hesapla ilişkilendirilmemiş. Token’ın alınabilmesi için alıcı hesapla ilişkilendirilmesi gerekir."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Token ilişkilendirmesi doğrulanamıyor",
+      "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTS token’larını alabilmesi için hesabınızın ilişkilendirilmesi gerekiyor. Almak istediğiniz HTS token’ıyla hesabınızı henüz ilişkilendirmediyseniz, token ilişkilendirme akışını başlatmak için <0>buraya tıklayın</0>.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "associationRequired" : {
+          "text" : "Devam tuşuna tıkladığınızda seçili token’ı Hedera hesabınızla ilişkilendireceksiniz.",
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "İlişkilendirin",
+          "title" : "Token'ı ilişkilendirin",
+          "pending" : {
+            "title" : "İşlem yayınlanıyor..."
+          },
+          "success" : {
+            "title" : "İşlem gönderildi",
+            "description" : "Token İlişkilendirme işlemi onaylandığında bu token’ı alabileceksiniz",
+            "cta" : "Ayrıntıları gör"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (isteğe bağlı)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "İlişkilendirilen token",
+      "postAlert" : {
+        "text" : "Bu işlem onaylandığında token’ınızı alabileceksiniz. Akışı başlatmak için <0>buraya tıklayın</0>.",
+        "learnMore" : "Daha fazla bilgi"
       }
     }
   },
