@@ -71,6 +71,7 @@ export function useModularDrawerRemoteData({
     onAccountSelected,
     flow,
     hasOneCurrency,
+    searchedValue,
   });
 
   const { handleBack } = useModularDrawerBackButton({
@@ -80,6 +81,7 @@ export function useModularDrawerRemoteData({
     hasOneCurrency,
     hasOneNetwork,
     networksToDisplay,
+    searchedValue,
   });
 
   return {
