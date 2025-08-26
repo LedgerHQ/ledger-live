@@ -1,7 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
-  findCurrencyByTicker,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   listSupportedFiats,
@@ -45,6 +44,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 /* Initial state */
 
