@@ -413,6 +413,7 @@
     "src/modularDrawer/data/entities/index.ts",
     "src/modularDrawer/data/state-manager/api.ts",
     "src/modularDrawer/hooks/useAssetsData.ts",
+    "src/modularDrawer/hooks/modules/useLeftApyModule.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
