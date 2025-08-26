@@ -21,7 +21,7 @@ export function genericGetTransactionStatus(
       memoValue?: string;
     },
   ) => {
-    const alpacaApi = getAlpacaApi(network, kind);
+    const alpacaApi = getAlpacaApi(network, kind, account.freshAddress, account.xpub || "");
     const draftTransaction = {
       mode: transaction?.mode,
       recipient: transaction.recipient,

@@ -23,7 +23,12 @@ export function genericPrepareTransaction(
     },
   ) => {
     const [assetReference, assetOwner] = getAssetInfos(transaction);
-    const fees = await getAlpacaApi(network, kind).estimateFees(
+    const fees = await getAlpacaApi(
+      network,
+      kind,
+      account.freshAddress,
+      account.xpub || "",
+    ).estimateFees(
       transactionToIntent(account, {
         ...transaction,
         fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
