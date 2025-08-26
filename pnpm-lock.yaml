@@ -669,6 +669,9 @@ importers:
       write-file-atomic:
         specifier: 5.0.1
         version: 5.0.1
+      ws:
+        specifier: 7.5.10
+        version: 7.5.10
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
@@ -877,6 +880,9 @@ importers:
       listr-verbose-renderer:
         specifier: 0.6.0
         version: 0.6.0
+      local-web-server:
+        specifier: 4.2.1
+        version: 4.2.1
       msw:
         specifier: 2.3.4
         version: 2.3.4(typescript@5.4.3)
@@ -18966,7 +18972,6 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
-
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -30391,7 +30396,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -60781,7 +60785,7 @@ snapshots:
       '@babel/parser': 7.27.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.7.1
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
 
@@ -63485,7 +63489,7 @@ snapshots:
       lodash.isstring: 4.0.1
       lodash.once: 4.1.1
       ms: 2.1.3
-      semver: 7.7.1
+      semver: 7.5.4
 
   jsprim@1.4.2:
     dependencies:
@@ -64215,7 +64219,7 @@ snapshots:
   lws-blacklist@3.0.0:
     dependencies:
       array-back: 4.0.2
-      path-to-regexp: 6.2.1
+      path-to-regexp: 6.3.0
 
   lws-body-parser@2.0.0:
     dependencies:
@@ -64267,7 +64271,7 @@ snapshots:
       http-proxy-agent: 4.0.1
       https-proxy-agent: 5.0.1
       koa-route: 3.2.0
-      path-to-regexp: 6.2.1
+      path-to-regexp: 6.3.0
     transitivePeerDependencies:
       - supports-color
 
@@ -64338,7 +64342,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.1
+      semver: 7.5.4
 
   make-error@1.3.6: {}
 
@@ -65945,7 +65949,7 @@ snapshots:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.13.1
-      semver: 7.7.1
+      semver: 7.5.4
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -71327,7 +71331,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
     transitivePeerDependencies:
       - metro
 
