@@ -4,7 +4,6 @@ import { TextStyle } from "react-native";
 import { Text } from "../../../components";
 
 const Wrapper = styled.View<{ $spacing: "sm" | "md" }>`
-  padding: 1px 4px;
   border-radius: 4px;
   background-color: ${(props) => props.theme.colors.neutral.c30};
   flex-shrink: 0;
