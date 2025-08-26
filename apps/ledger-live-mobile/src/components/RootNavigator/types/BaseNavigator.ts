@@ -93,7 +93,7 @@ export type NavigateInput<
 
 export type PathToDeviceParam = PropertyPath;
 export type NavigationType = "navigate" | "replace" | "push";
-type CommonAddAccountNavigatorParamsList = {
+export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
   token?: TokenCurrency;
   returnToSwap?: boolean;

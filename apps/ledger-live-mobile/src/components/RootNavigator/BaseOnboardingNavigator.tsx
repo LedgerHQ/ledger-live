@@ -20,6 +20,9 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
+import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
+import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
+import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 
 const hitSlop = {
   bottom: 10,
@@ -77,6 +80,24 @@ export default function BaseOnboardingNavigator() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name={NavigatorName.ReceiveFunds}
+        component={ReceiveFundsNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.AddAccounts}
+        component={AddAccountsV2Navigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.DeviceSelection}
+        component={DeviceSelectionNavigator}
+        options={{ headerShown: false }}
+      />
+
       <Stack.Screen
         name={ScreenName.PairDevices}
         component={PairDevices}

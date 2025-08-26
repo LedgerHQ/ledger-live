@@ -5,13 +5,13 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
 
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "../HelpDrawer";
 import DesyncOverlay from "../DesyncOverlay";
 // import { TrackScreen } from "~/analytics";
 
 import type { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import useTwoStepDesync from "./useTwoStepDesync";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { TrackScreen } from "~/analytics";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 /*
  * Constants
@@ -82,6 +83,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   onLostDevice,
   notifyEarlySecurityCheckShouldReset,
 }) => {
+  const baseNavigation = useNavigation<RootNavigation>();
   const { t } = useTranslation();
   /*
    * Local State
@@ -136,8 +138,44 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       if (companionStep === "new_seed") {
         if (done) {
           handleOnboardingDoneState();
-          // TODO: navigate to receive flow
-          navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
+          baseNavigation.reset({
+            index: 1,
+            routes: [
+              {
+                name: NavigatorName.BaseOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.SyncOnboarding,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.SyncOnboardingCompletion,
+                            params: {
+                              device,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      name: NavigatorName.ReceiveFunds,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.ReceiveSelectCrypto,
+                            params: {
+                              device,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          });
         } else {
           handleOnboardingDone();
         }
@@ -148,7 +186,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
     [
       companionStep,
       setCompanionStep,
-      navigation,
+      baseNavigation,
       device,
       handleOnboardingDone,
       handleOnboardingDoneState,

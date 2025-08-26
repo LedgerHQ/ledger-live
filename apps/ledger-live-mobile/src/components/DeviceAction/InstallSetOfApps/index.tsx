@@ -21,6 +21,8 @@ import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import NewSeedConfirmation from "./NewSeedConfirmation";
 
+const A_B_TEST_FLAG = true;
+
 type Props = {
   isNewSeed?: boolean;
   restore?: boolean;
@@ -204,7 +206,7 @@ const InstallSetOfApps = ({
       <NewSeedConfirmation
         onConfirm={() => {
           track("button_clicked", { button: "Secure My Crypto" });
-          setUserConfirmed(true);
+          A_B_TEST_FLAG ? onResult(true) : setUserConfirmed(true);
         }}
         onReject={() => {
           track("button_clicked", { button: "I'll do this later" });
