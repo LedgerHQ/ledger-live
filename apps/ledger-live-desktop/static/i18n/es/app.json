@@ -202,7 +202,8 @@
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
       "SENDING" : "Enviando",
-      "BURN" : "Quemado"
+      "BURN" : "Quemado",
+      "ASSOCIATE_TOKEN" : "Asociar token"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -1596,6 +1597,25 @@
         "all" : "año"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
+    "continue" : "Continuar"
   },
   "currentAddress" : {
     "title" : "Dirección actual",
@@ -4776,6 +4796,10 @@
           "title" : "Test Europa Post Onboarding",
           "description" : "Test all europa post onboarding features"
         },
+        "testApexPostonboarding" : {
+          "title" : "Test Apex Post Onboarding",
+          "description" : "Test all apex post onboarding features"
+        },
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
           "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Saldo insuficiente",
+      "description" : "No tienes HBAR suficiente para pagar la asociación del token. Se necesita un mínimo de ${{requiredWorthInUSD}} USD en HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Asociación de token necesaria",
+      "description" : "El token que estás intentando enviar no está asociado a la cuenta de destino. Para poder recibirlo, la cuenta del destinatario debe asociarlo."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "No se puede verificar la asociación del token",
+      "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Error al cargar la imagen desde el archivo.",
       "description" : "Vuelve a intentarlo con una imagen."
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Para poder recibir tokens HTS, tu cuenta debe estar asociada. Si todavía no has asociado tu cuenta al token HTS que quieres recibir, <0>haz clic aquí</0> para iniciar el proceso de asociación.",
+          "learnMore" : "Más información"
+        },
+        "associationRequired" : {
+          "text" : "Al hacer clic en Continuar, asociarás el token seleccionado a tu cuenta de Hedera.",
+          "learnMore" : "Más información"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "Asociar",
+          "title" : "Asociar token",
+          "pending" : {
+            "title" : "Transmitiendo transacción..."
+          },
+          "success" : {
+            "title" : "Transacción enviada",
+            "description" : "Podrás recibir este token en cuanto se haya confirmado la transacción de asociación de token.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (opcional)",
         "characterCount" : "{{memoLength}}/{{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Más información"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Más información"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Token asociado",
+      "postAlert" : {
+        "text" : "En cuanto esta transacción se haya confirmado, podrás recibir tu token. <0>Haz clic aquí</0> para iniciar el flujo de recepción.",
+        "learnMore" : "Más información"
       }
     }
   },
