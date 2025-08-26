@@ -41,11 +41,7 @@ module.exports = {
       video: {
         enabled: false,
       },
-      log: {
-        enabled: true,
-        keepOnlyFailedTestsArtifacts: true,
-        maxFileSize: "10MB",
-      },
+      log: "none",
       trace: "none",
     },
   },
