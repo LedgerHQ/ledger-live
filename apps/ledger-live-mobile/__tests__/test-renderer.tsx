@@ -27,6 +27,7 @@ import { INITIAL_STATE as BLE_INITIAL_STATE } from "~/reducers/ble";
 import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "~/reducers/countervalues";
 import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynamicContent";
 import { INITIAL_STATE as EARN_INITIAL_STATE } from "~/reducers/earn";
+import { INITIAL_STATE as IN_VIEW_INITIAL_STATE } from "~/reducers/inView";
 import { LARGE_MOVER_INITIAL_STATE } from "~/reducers/largeMover";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
 import { INITIAL_STATE as MODULAR_DRAWER_INITIAL_STATE } from "~/reducers/modularDrawer";
@@ -53,6 +54,7 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
   market: MARKET_INITIAL_STATE,
   modularDrawer: MODULAR_DRAWER_INITIAL_STATE,
