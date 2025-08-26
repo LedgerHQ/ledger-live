@@ -5,12 +5,18 @@ import { useState, useCallback } from "react";
 import { track } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
+import { useNavigation } from "@react-navigation/core";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type Props = {
   accounts: Account[];
   currency: CryptoOrTokenCurrency;
   sourceScreenName: string;
 };
+
+const A_B_TEST_FLAG = true;
 
 export default function useAddFundsButtonViewModel({
   accounts,
@@ -25,20 +31,37 @@ export default function useAddFundsButtonViewModel({
   );
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
+  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
-    if (accounts.length === 1) {
+    const parentNavigationState = navigation.getParent()?.getState();
+
+    if (A_B_TEST_FLAG && parentNavigationState?.routeNames[0] === NavigatorName.Onboarding) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
-      setIsAccountQuickActionsDrawerOpen(true);
+      track(clickMetadata.eventName, clickMetadata.payload);
+      navigation.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+        params: {
+          currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+        },
+      });
     } else {
-      clickMetadata = analyticsMetadata.AddFunds?.onOpenDrawer;
-      setIsAccountListDrawerOpen(true);
+      if (accounts.length === 1) {
+        clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
+        setIsAccountQuickActionsDrawerOpen(true);
+      } else {
+        clickMetadata = analyticsMetadata.AddFunds?.onOpenDrawer;
+        setIsAccountListDrawerOpen(true);
+      }
+      track(clickMetadata.eventName, clickMetadata.payload);
     }
-    track(clickMetadata.eventName, clickMetadata.payload);
   }, [
     accounts.length,
     analyticsMetadata.AddFunds?.onQuickActionOpen,
     analyticsMetadata.AddFunds?.onOpenDrawer,
+    navigation,
+    currency,
   ]);
 
   const closeAccountListDrawer = useCallback(() => {
