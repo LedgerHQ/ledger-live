@@ -83,7 +83,12 @@ import {
   PropagatorType,
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
-import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
+import {
+  customActionEventMapper,
+  customErrorEventMapper,
+  customLogEventMapper,
+  initializeDatadogProvider,
+} from "./datadog";
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
@@ -132,6 +137,8 @@ function App() {
       trackInteractions: datadogFF?.params?.trackInteractions ?? false,
       trackResources: datadogFF?.params?.trackResources ?? false,
       errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+      actionEventMapper: customActionEventMapper,
+      logEventMapper: customLogEventMapper,
       firstPartyHosts: [
         {
           match: FIRST_PARTY_MAIN_HOST_DOMAIN,

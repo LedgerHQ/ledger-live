@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";

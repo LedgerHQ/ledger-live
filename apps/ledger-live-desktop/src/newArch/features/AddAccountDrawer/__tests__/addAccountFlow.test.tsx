@@ -9,7 +9,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import createStore from "~/renderer/createStore";
 import { State } from "~/renderer/reducers";
-import { ARB_ACCOUNT, BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
   bitcoinCurrency,
@@ -356,5 +356,17 @@ describe("ModularDrawerAddAccountFlowManager", () => {
 
     expect(screen.getByText("We couldn't add a new Hedera account")).toBeInTheDocument();
     expectTrackPage(3, "cant add new account", { reason: "NO_ASSOCIATED_ACCOUNTS" });
+  });
+
+  it("should add a Hedera account when one is scanned", async () => {
+    setup(hederaCurrency);
+
+    await mockScanAccountsSubscription([HEDERA_ACCOUNT]);
+
+    expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    expectTrackPage(3, "add account success");
+    expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 });

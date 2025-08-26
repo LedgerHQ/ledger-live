@@ -86,13 +86,13 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
       switch (counterGetTrc20) {
         case 0: {
           const tx1 = ret.data[0];
-          assert(tx1.transaction_id == tx1Hash);
+          assert(tx1.transaction_id === tx1Hash);
           ret.data[0].detail.ret = undefined;
           break;
         }
         case 1: {
           const tx2 = ret.data[1];
-          assert(tx2.transaction_id == tx2Hash);
+          assert(tx2.transaction_id === tx2Hash);
           ret.data[1].detail.ret = undefined;
           break;
         }
@@ -131,7 +131,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
     () => {
       const ret: any = JSON.parse(JSON.stringify(TRC20_FIXTURE));
       const tx1 = ret.data[0];
-      assert(tx1.transaction_id == tx1Hash);
+      assert(tx1.transaction_id === tx1Hash);
       ret.data[0].detail.ret = undefined;
       return HttpResponse.json(ret);
     },

@@ -43,7 +43,7 @@ export const getTransactionStatus = async (
 
   if (!transactionIntent.fees) {
     errors.fee = new FeeNotLoaded();
-  } else if (transactionIntent.fees == 0n) {
+  } else if (transactionIntent.fees === 0n) {
     errors.fee = new FeeRequired();
   } else if (totalSpent > nativeBalance.value - BigInt(reserveBaseXRP.toString())) {
     errors.amount = new NotEnoughSpendableBalance("", {
@@ -81,7 +81,7 @@ export const getTransactionStatus = async (
     });
   }
 
-  if (!errors.amount && amount == 0n) {
+  if (!errors.amount && amount === 0n) {
     errors.amount = new AmountRequired();
   }
 

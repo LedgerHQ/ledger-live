@@ -16,6 +16,7 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
+import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -48,6 +49,11 @@ const AssetSelection = ({
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const transformAssets = createAssetConfigurationHook({
+    assetsConfiguration,
+  });
+  const formattedAssets = transformAssets(itemsToDisplay);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -87,11 +93,10 @@ const AssetSelection = ({
     }
 
     if (availableAssets.length > 0) {
-      setItemsToDisplay(
-        availableAssets.filter(asset =>
-          asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-        ),
+      const filteredAssets = availableAssets.filter(asset =>
+        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
       );
+      setItemsToDisplay(filteredAssets);
     }
   }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
 
@@ -139,7 +144,7 @@ const AssetSelection = ({
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled={true}
-        data={itemsToDisplay}
+        data={formattedAssets}
         keyExtractor={item => item.id}
         getItemCount={itemsToDisplay => itemsToDisplay.length}
         getItem={(itemsToDisplay, index) => itemsToDisplay[index]}

@@ -126,7 +126,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     };
   }, [dispatch]);
 
-  const videoSource = videoSources.welcomeScreenStax;
+  const videoSource = videoSources.welcomeScreen;
 
   return (
     <ForceTheme selectedPalette={"dark"}>

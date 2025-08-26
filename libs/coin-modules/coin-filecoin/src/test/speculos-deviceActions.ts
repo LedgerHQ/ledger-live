@@ -24,7 +24,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
       button: SpeculosButton.RIGHT,
     },
   ]);
-  if (scenario == BotScenario.F4_RECIPIENT) {
+  if (scenario === BotScenario.F4_RECIPIENT) {
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
@@ -36,7 +36,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
         return "unexpected flow... address should be eth type";
       },
     });
-  } else if (scenario == BotScenario.ETH_RECIPIENT) {
+  } else if (scenario === BotScenario.ETH_RECIPIENT) {
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
@@ -45,7 +45,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
         return transaction.recipient + addr.toString();
       },
     });
-  } else if (scenario == BotScenario.TOKEN_TRANSFER) {
+  } else if (scenario === BotScenario.TOKEN_TRANSFER) {
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
@@ -74,7 +74,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
     },
   ]);
 
-  if (scenario == BotScenario.TOKEN_TRANSFER) {
+  if (scenario === BotScenario.TOKEN_TRANSFER) {
     data.steps.push({
       title: "Value",
       button: SpeculosButton.RIGHT,
@@ -138,13 +138,13 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
     ]);
   }
 
-  if (scenario == BotScenario.ETH_RECIPIENT || scenario == BotScenario.F4_RECIPIENT) {
+  if (scenario === BotScenario.ETH_RECIPIENT || scenario === BotScenario.F4_RECIPIENT) {
     data.steps.push({
       title: "Method",
       button: SpeculosButton.RIGHT,
       expectedValue: () => Methods.InvokeEVM.toString(),
     });
-  } else if (scenario == BotScenario.TOKEN_TRANSFER) {
+  } else if (scenario === BotScenario.TOKEN_TRANSFER) {
     data.steps.push({
       title: "Method",
       button: SpeculosButton.RIGHT,

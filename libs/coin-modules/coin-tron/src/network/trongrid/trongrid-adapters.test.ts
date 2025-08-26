@@ -25,7 +25,7 @@ describe("fromTrongridTxInfoToOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fromBigNumberToBigInt as jest.Mock).mockImplementation(
-      (value: string, defaultValue: bigint) => (value != null ? BigInt(value) : defaultValue),
+      (value: string, defaultValue: bigint) => (value ? BigInt(value) : defaultValue),
     );
   });
 

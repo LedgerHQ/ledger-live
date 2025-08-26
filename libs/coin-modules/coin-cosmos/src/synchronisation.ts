@@ -280,7 +280,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
       }
     }
 
-    if (tx.tx.body.memo != null) {
+    if (tx.tx.body.memo !== null && tx.tx.body.memo !== undefined) {
       op.extra.memo = tx.tx.body.memo;
     }
     op.id = encodeOperationId(accountId, tx.txhash, op.type);

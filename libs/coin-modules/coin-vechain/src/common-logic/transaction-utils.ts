@@ -58,7 +58,7 @@ const getBaseGasPrice = async (): Promise<string> => {
   const response = await query([queryData]);
 
   // Expect 1 value
-  if (response && response.length != 1) throw Error("Unexpected response received for query");
+  if (response && response.length !== 1) throw Error("Unexpected response received for query");
 
   return response[0].data;
 };

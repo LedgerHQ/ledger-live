@@ -21,8 +21,7 @@ class BitcoinLikeExplorer implements IExplorer {
     cryptoCurrency: CryptoCurrency;
     forcedExplorerURI?: string;
   }) {
-    this.baseUrl =
-      forcedExplorerURI != null ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
+    this.baseUrl = forcedExplorerURI ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {

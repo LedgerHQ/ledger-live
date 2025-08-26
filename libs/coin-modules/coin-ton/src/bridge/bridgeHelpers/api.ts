@@ -58,8 +58,8 @@ export async function fetchTransactions(
   const address = Address.parse(addr);
   const urlAddr = address.toString({ bounceable: false, urlSafe: true });
   let url = `/transactions?account=${urlAddr}&limit=256`;
-  if (opts?.startLt != null) url += `&start_lt=${opts.startLt}`;
-  if (opts?.endLt != null) url += `&end_lt=${opts.endLt}`;
+  if (opts?.startLt) url += `&start_lt=${opts.startLt}`;
+  if (opts?.endLt) url += `&end_lt=${opts.endLt}`;
   return await fetch<TonTransactionsList>(url);
 }
 
@@ -97,9 +97,9 @@ export async function fetchJettonTransactions(
   const address = Address.parse(addr);
   const urlAddr = address.toString({ bounceable: false, urlSafe: true });
   let url = `/jetton/transfers?address=${urlAddr}&limit=256`;
-  if (opts?.jettonMaster != null) url += `&jetton_master=${opts.jettonMaster}`;
-  if (opts?.startLt != null) url += `&start_lt=${opts.startLt}`;
-  if (opts?.endLt != null) url += `&end_lt=${opts.endLt}`;
+  if (opts?.jettonMaster) url += `&jetton_master=${opts.jettonMaster}`;
+  if (opts?.startLt) url += `&start_lt=${opts.startLt}`;
+  if (opts?.endLt) url += `&end_lt=${opts.endLt}`;
   return (await fetch<TonResponseJettonTransfer>(url)).jetton_transfers;
 }
 
@@ -108,8 +108,8 @@ export async function fetchJettonWallets(opts?: {
   jettonMaster?: string;
 }): Promise<TonJettonWallet[]> {
   let url = `/jetton/wallets?limit=256`;
-  if (opts?.jettonMaster != null) url += `&jetton_address=${opts.jettonMaster}`;
-  if (opts?.address != null) {
+  if (opts?.jettonMaster) url += `&jetton_address=${opts.jettonMaster}`;
+  if (opts?.address) {
     const address = Address.parse(opts.address);
     const urlAddr = address.toString({ bounceable: false, urlSafe: true });
     url += `&owner_address=${urlAddr}`;

@@ -8,18 +8,19 @@ import {
   counterValueCurrencySelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { getBalanceAndFiatValueByAssets } from "../../../utils/getBalanceAndFiatValueByAssets";
-import { groupAccountsByAsset, GroupedAccount } from "../../../utils/groupAccountsByAsset";
+import { getBalanceAndFiatValueByAssets } from "@ledgerhq/live-common/modularDrawer/utils/getBalanceAndFiatValueByAssets";
+import { groupAccountsByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupAccountsByAsset";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui/index";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { counterValueFormatter } from "LLD/utils/counterValueFormatter";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
+import { counterValueFormatter } from "@ledgerhq/live-common/modularDrawer/utils/counterValueFormatter";
 import orderBy from "lodash/orderBy";
 import { ProviderBalanceAsset, ProviderBalanceResultsMap } from "./types";
+import { getProviderCurrency } from "@ledgerhq/live-common/modularDrawer/utils/getProviderCurrency";
+import { calculateProviderTotals } from "@ledgerhq/live-common/modularDrawer/utils/calculateProviderTotal";
 
 const BalanceContainer = styled.div`
   display: flex;
@@ -49,37 +50,6 @@ const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
     </Text>
   </BalanceContainer>
 );
-
-const getProviderCurrency = (
-  mainCurrency: CryptoOrTokenCurrency,
-  currencies: CryptoOrTokenCurrency[],
-) => {
-  try {
-    return getTokenOrCryptoCurrencyById(mainCurrency.id);
-  } catch {
-    return getTokenOrCryptoCurrencyById(currencies[0].id);
-  }
-};
-
-const calculateProviderTotals = (
-  currencies: CryptoOrTokenCurrency[],
-  groupedAccountsByAsset: Record<string, GroupedAccount>,
-) => {
-  let totalBalance = new BigNumber(0);
-  let totalFiatValue = new BigNumber(0);
-  let hasAccounts = false;
-
-  for (const currency of currencies) {
-    const assetGroup = groupedAccountsByAsset[currency.id];
-    if (assetGroup?.accounts.length > 0) {
-      totalBalance = totalBalance.plus(assetGroup.totalBalance);
-      totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
-      hasAccounts = true;
-    }
-  }
-
-  return { totalBalance, totalFiatValue, hasAccounts };
-};
 
 const formatProviderResult = (
   providerCurrency: CryptoOrTokenCurrency,

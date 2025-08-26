@@ -232,7 +232,7 @@ export function transactionToOperation(
       coinType,
     },
     fee: getOperationFee(transaction),
-    hasFailed: transaction.effects?.status.status != "success",
+    hasFailed: transaction.effects?.status.status !== "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
@@ -278,7 +278,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
     time: new Date(parseInt(checkpoint.timestampMs)),
   };
 
-  if (typeof checkpoint.previousDigest == "string")
+  if (typeof checkpoint.previousDigest === "string")
     return {
       ...info,
       parent: {
@@ -303,7 +303,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   return {
     hash: transaction.digest,
-    failed: transaction.effects?.status.status != "success",
+    failed: transaction.effects?.status.status !== "success",
     operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
     fees: BigInt(getOperationFee(transaction).toString()),
     feesPayer: transaction.transaction?.data.sender || "",
@@ -316,7 +316,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
  * @param change balance change
  */
 export function toBlockOperation(change: BalanceChange): BlockOperation[] {
-  if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
+  if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
   return [
     {
       type: "transfer",

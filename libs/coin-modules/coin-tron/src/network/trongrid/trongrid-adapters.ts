@@ -17,18 +17,16 @@ export function fromTrongridTxInfoToOperation(
     type: inferOperationType(trongridTxInfo, userAddress),
     value: fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0)),
     senders: [trongridTxInfo.from],
-    recipients: trongridTxInfo.to != null ? [trongridTxInfo.to] : [],
+    recipients: trongridTxInfo.to ? [trongridTxInfo.to] : [],
     asset: inferAssetInfo(trongridTxInfo),
   };
 }
 
 function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
   switch (true) {
-    case trongridTxInfo.from === userAddress &&
-      trongridTxInfo.to != null &&
-      trongridTxInfo.to != userAddress:
+    case trongridTxInfo.from === userAddress && trongridTxInfo.to !== userAddress:
       return "OUT";
-    case trongridTxInfo.to === userAddress && trongridTxInfo.from != userAddress:
+    case trongridTxInfo.to === userAddress && trongridTxInfo.from !== userAddress:
       return "IN";
     default:
       return "UNKNOWN";

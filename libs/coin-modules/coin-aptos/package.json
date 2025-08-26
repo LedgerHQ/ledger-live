@@ -99,7 +99,7 @@
     "@noble/hashes": "1.7.0",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
-    "got": "11.8.2",
+    "got": "11.8.5",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
