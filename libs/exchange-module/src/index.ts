@@ -266,7 +266,6 @@ export class ExchangeModule extends CustomModule {
         provider,
         fromAccountId,
         rawTransaction: serializeTransaction(transaction),
-        // TODO: for sell they accept Binary for coinify legacy, do we need to do the same thing here for fund?
         hexBinaryPayload:
           typeof binaryPayload === "string" ? binaryPayload : binaryPayload.toString("hex"),
         hexSignature: typeof signature === "string" ? signature : signature.toString("hex"),
