@@ -1,5 +1,12 @@
 # next.js-example
 
+## 0.1.36-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.35.2-nightly.0
+
 ## 0.1.35
 
 ### Patch Changes

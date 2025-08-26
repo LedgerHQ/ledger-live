@@ -1,5 +1,87 @@
 # @ledgerhq/live-common
 
+## 34.46.0-nightly.4
+
+### Minor Changes
+
+- [#11414](https://github.com/LedgerHQ/ledger-live/pull/11414) [`9fcc4eb`](https://github.com/LedgerHQ/ledger-live/commit/9fcc4eb5cd6e96e772daa154bd87ae374f925ddc) Thanks [@Canestin](https://github.com/Canestin)! - Update Solana createBridge function signature for Lazy CAL
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11355](https://github.com/LedgerHQ/ledger-live/pull/11355) [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - EVM dont call preload and hydrate when cal lazy loading is enabled
+
+### Patch Changes
+
+- Updated dependencies [[`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`9fcc4eb`](https://github.com/LedgerHQ/ledger-live/commit/9fcc4eb5cd6e96e772daa154bd87ae374f925ddc), [`7e4ac62`](https://github.com/LedgerHQ/ledger-live/commit/7e4ac62bd383f96e5649b225e0ff824fe7663695), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.1
+  - @ledgerhq/coin-algorand@0.9.18-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.1
+  - @ledgerhq/coin-polkadot@6.7.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.1
+  - @ledgerhq/coin-cardano@0.11.2-nightly.1
+  - @ledgerhq/coin-stellar@6.2.0-nightly.1
+  - @ledgerhq/coin-vechain@2.8.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.1
+  - @ledgerhq/coin-solana@0.32.0-nightly.1
+  - @ledgerhq/coin-stacks@0.8.18-nightly.1
+  - @ledgerhq/coin-aptos@3.1.1-nightly.1
+  - @ledgerhq/coin-celo@1.2.1-nightly.3
+  - @ledgerhq/coin-mina@1.1.17-nightly.1
+  - @ledgerhq/coin-tron@5.1.1-nightly.1
+  - @ledgerhq/coin-sui@0.10.1-nightly.1
+  - @ledgerhq/coin-ton@0.13.7-nightly.1
+  - @ledgerhq/coin-xrp@7.1.1-nightly.1
+  - @ledgerhq/coin-canton@0.2.2-nightly.1
+  - @ledgerhq/coin-casper@2.0.9-nightly.1
+  - @ledgerhq/coin-evm@2.28.0-nightly.3
+  - @ledgerhq/coin-hedera@1.11.0-nightly.1
+  - @ledgerhq/coin-icon@0.11.5-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.18-nightly.1
+  - @ledgerhq/coin-near@0.12.1-nightly.1
+  - @ledgerhq/coin-tezos@6.1.1-nightly.1
+  - @ledgerhq/coin-framework@6.2.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@1.18.0-nightly.0
+  - @ledgerhq/cryptoassets@13.26.0-nightly.1
+  - @ledgerhq/errors@6.25.0-nightly.0
+  - @ledgerhq/live-env@2.15.0-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.3-nightly.1
+  - @ledgerhq/live-signer-canton@0.2.2-nightly.1
+  - @ledgerhq/live-signer-evm@0.7.1-nightly.3
+  - @ledgerhq/live-countervalues@0.7.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.1
+  - @ledgerhq/live-nft@0.8.18-nightly.1
+  - @ledgerhq/live-wallet@0.13.0-nightly.1
+  - @ledgerhq/hw-app-vet@0.5.14-nightly.1
+  - @ledgerhq/device-core@0.6.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.16-nightly.1
+  - @ledgerhq/devices@8.5.1-nightly.0
+  - @ledgerhq/hw-app-algorand@6.31.6-nightly.0
+  - @ledgerhq/hw-app-aptos@6.34.6-nightly.0
+  - @ledgerhq/hw-app-celo@6.34.1-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.32.6-nightly.0
+  - @ledgerhq/hw-app-exchange@0.12.1-nightly.0
+  - @ledgerhq/hw-app-hedera@1.2.6-nightly.0
+  - @ledgerhq/hw-app-icon@1.3.6-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.34.6-nightly.0
+  - @ledgerhq/hw-app-str@7.2.6-nightly.0
+  - @ledgerhq/hw-transport@6.31.10-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.1
+  - @ledgerhq/ledger-cal-service@1.3.1-nightly.1
+  - @ledgerhq/speculos-transport@0.2.9-nightly.1
+  - @ledgerhq/hw-app-btc@10.10.2-nightly.0
+  - @ledgerhq/hw-app-multiversx@6.25.1-nightly.0
+  - @ledgerhq/hw-app-near@6.31.6-nightly.0
+  - @ledgerhq/hw-app-tezos@6.31.6-nightly.0
+  - @ledgerhq/hw-app-trx@6.31.6-nightly.0
+  - @ledgerhq/hw-app-xrp@6.32.4-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.10-nightly.0
+  - @ledgerhq/live-dmk-shared@0.12.1-nightly.0
+  - @ledgerhq/hw-app-sui@1.3.0-nightly.0
+
 ## 34.46.0-nightly.3
 
 ### Minor Changes

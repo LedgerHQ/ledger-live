@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-algorand
 
+## 6.31.6-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/errors@6.25.0-nightly.0
+  - @ledgerhq/hw-transport@6.31.10-nightly.0
+
 ## 6.31.5
 
 ### Patch Changes

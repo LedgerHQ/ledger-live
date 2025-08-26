@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.26.0-nightly.0
+
+### Minor Changes
+
+- [#11355](https://github.com/LedgerHQ/ledger-live/pull/11355) [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - EVM dont call preload and hydrate when cal lazy loading is enabled
+
 ## 7.25.0
 
 ### Minor Changes

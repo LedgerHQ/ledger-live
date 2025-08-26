@@ -1,5 +1,22 @@
 # @ledgerhq/coin-framework
 
+## 6.2.0-nightly.1
+
+### Minor Changes
+
+- [#11414](https://github.com/LedgerHQ/ledger-live/pull/11414) [`9fcc4eb`](https://github.com/LedgerHQ/ledger-live/commit/9fcc4eb5cd6e96e772daa154bd87ae374f925ddc) Thanks [@Canestin](https://github.com/Canestin)! - Update Solana createBridge function signature for Lazy CAL
+
+### Patch Changes
+
+- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/cryptoassets@13.26.0-nightly.1
+  - @ledgerhq/types-live@6.82.0-nightly.1
+  - @ledgerhq/errors@6.25.0-nightly.0
+  - @ledgerhq/live-env@2.15.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.0
+  - @ledgerhq/devices@8.5.1-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.1
+
 ## 6.2.0-nightly.0
 
 ### Minor Changes

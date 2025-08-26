@@ -1,5 +1,22 @@
 # @ledgerhq/cryptoassets
 
+## 13.26.0-nightly.1
+
+### Minor Changes
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11355](https://github.com/LedgerHQ/ledger-live/pull/11355) [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - EVM dont call preload and hydrate when cal lazy loading is enabled
+
+### Patch Changes
+
+- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/live-env@2.15.0-nightly.1
+
 ## 13.25.1-nightly.0
 
 ### Patch Changes

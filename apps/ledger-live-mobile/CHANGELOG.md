@@ -1,5 +1,53 @@
 # live-mobile
 
+## 3.91.0-nightly.5
+
+### Minor Changes
+
+- [#11479](https://github.com/LedgerHQ/ledger-live/pull/11479) [`8b3762e`](https://github.com/LedgerHQ/ledger-live/commit/8b3762e6337deadd50f3c74d7b5f56c2a7e4611d) Thanks [@themooneer](https://github.com/themooneer)! - Add feature flags in datadog custom attributes for Errors, logs and actions
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11352](https://github.com/LedgerHQ/ledger-live/pull/11352) [`5bf7d00`](https://github.com/LedgerHQ/ledger-live/commit/5bf7d004c325403ad273c4058199e1beaa7b81fd) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD add balance in asset selection
+
+- [#11330](https://github.com/LedgerHQ/ledger-live/pull/11330) [`fc3d26f`](https://github.com/LedgerHQ/ledger-live/commit/fc3d26f218ed110e6852a8a9a4c01801a6769bd8) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add onboarding success videos for Apex
+
+### Patch Changes
+
+- [#11101](https://github.com/LedgerHQ/ledger-live/pull/11101) [`bcce6ff`](https://github.com/LedgerHQ/ledger-live/commit/bcce6ff57e80315c8108f56a7c84523cf0c5b44a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Track useTrackDmkErrorsEvents as screen events (prefix "Page ")
+
+- Updated dependencies [[`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`9fcc4eb`](https://github.com/LedgerHQ/ledger-live/commit/9fcc4eb5cd6e96e772daa154bd87ae374f925ddc), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.1
+  - @ledgerhq/coin-stacks@0.8.18-nightly.1
+  - @ledgerhq/coin-evm@2.28.0-nightly.3
+  - @ledgerhq/coin-framework@6.2.0-nightly.1
+  - @ledgerhq/types-live@6.82.0-nightly.1
+  - @ledgerhq/errors@6.25.0-nightly.0
+  - @ledgerhq/live-env@2.15.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.0
+  - @ledgerhq/live-countervalues@0.7.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.1
+  - @ledgerhq/live-nft@0.8.18-nightly.1
+  - @ledgerhq/live-nft-react@0.9.18-nightly.1
+  - @ledgerhq/live-wallet@0.13.0-nightly.1
+  - @ledgerhq/native-ui@0.43.1-nightly.0
+  - @ledgerhq/domain-service@1.2.41-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.3-nightly.1
+  - @ledgerhq/devices@8.5.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.10-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.10-nightly.0
+  - @ledgerhq/react-native-hid@6.32.10-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.3-nightly.0
+  - @ledgerhq/live-dmk-mobile@0.11.1-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.13-nightly.1
+
 ## 3.91.0-nightly.4
 
 ### Minor Changes

@@ -1,5 +1,51 @@
 # ledger-live-desktop
 
+## 2.126.0-nightly.5
+
+### Minor Changes
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11330](https://github.com/LedgerHQ/ledger-live/pull/11330) [`fc3d26f`](https://github.com/LedgerHQ/ledger-live/commit/fc3d26f218ed110e6852a8a9a4c01801a6769bd8) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add onboarding success videos for Apex
+
+- [#11467](https://github.com/LedgerHQ/ledger-live/pull/11467) [`6a55662`](https://github.com/LedgerHQ/ledger-live/commit/6a55662ffa76ec9f67ef248c622d53919526af4c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD Fix Hedera add account
+
+### Patch Changes
+
+- Updated dependencies [[`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`9fcc4eb`](https://github.com/LedgerHQ/ledger-live/commit/9fcc4eb5cd6e96e772daa154bd87ae374f925ddc), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.1
+  - @ledgerhq/coin-evm@2.28.0-nightly.3
+  - @ledgerhq/live-common@34.46.0-nightly.4
+  - @ledgerhq/coin-framework@6.2.0-nightly.1
+  - @ledgerhq/cryptoassets@13.26.0-nightly.1
+  - @ledgerhq/types-live@6.82.0-nightly.1
+  - @ledgerhq/errors@6.25.0-nightly.0
+  - @ledgerhq/live-env@2.15.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.1-nightly.4
+  - @ledgerhq/live-countervalues@0.7.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.1
+  - @ledgerhq/live-nft@0.8.18-nightly.1
+  - @ledgerhq/live-nft-react@0.9.18-nightly.1
+  - @ledgerhq/live-wallet@0.13.0-nightly.1
+  - @ledgerhq/react-ui@0.35.2-nightly.0
+  - @ledgerhq/domain-service@1.2.41-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.3-nightly.1
+  - @ledgerhq/devices@8.5.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.10-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.10-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.11-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.10-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.10-nightly.0
+  - @ledgerhq/live-network@2.0.16-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.13-nightly.1
+
 ## 2.126.0-nightly.4
 
 ### Minor Changes
