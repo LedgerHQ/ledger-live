@@ -202,7 +202,8 @@
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
       "SENDING" : "发送",
-      "BURN" : "已销毁"
+      "BURN" : "已销毁",
+      "ASSOCIATE_TOKEN" : "关联代币"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -1596,6 +1597,25 @@
         "all" : "年"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
   },
   "currentAddress" : {
     "title" : "当前地址",
@@ -4776,6 +4796,10 @@
           "title" : "测试新手引导后 Europa 的功能",
           "description" : "测试新手引导后 Europa 的所有功能"
         },
+        "testApexPostonboarding" : {
+          "title" : "测试新手引导后 Apex 的功能",
+          "description" : "测试新手引导后 Apex 的所有功能"
+        },
         "1559DeactivateGate" : {
           "title" : "停用 EIP1559 最低优先费用限额",
           "description" : "这将允许发送交易时没有最低优先费用要求。这可能会导致交易永远停滞在内存池中。"
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "余额不足",
+      "description" : "HBAR 数额不足以支付代币关联费用。至少需要价值 {{requiredWorthInUSD}} 美元的 HBAR。"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "需要关联代币",
+      "description" : "您尝试发送的代币未与目标账户关联。需要与接收方账户关联才能接收代币。"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "无法验证代币关联",
+      "description" : "我们无法确认目标账户是否可以接收此代币。地址可能无效，或者存在网络或服务问题。"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "从文件加载图片失败。",
       "description" : "请使用图片再试一次。"
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "如要接收 HTS 代币，您需要关联您的账户。如果您还未将您的账户与您要接收的 HTS 代币关联，请<0>点击此处</0>启动代币关联流程。",
+          "learnMore" : "了解更多"
+        },
+        "associationRequired" : {
+          "text" : "点击“继续”，即可将所选代币关联到您的 Hedera 账户。",
+          "learnMore" : "了解更多"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "关联",
+          "title" : "关联代币",
+          "pending" : {
+            "title" : "正在播送交易……"
+          },
+          "success" : {
+            "title" : "交易已发送",
+            "description" : "关联代币交易确认后，您便能够接收此代币。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo（可选）",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "了解更多"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "了解更多"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "已关联代币",
+      "postAlert" : {
+        "text" : "该交易确认后，您便能够接收您的代币。<0>点击此处</0>启动接收流程。",
+        "learnMore" : "了解更多"
       }
     }
   },
