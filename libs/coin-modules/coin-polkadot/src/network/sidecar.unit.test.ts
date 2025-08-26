@@ -13,6 +13,10 @@ jest.mock("./node", () => ({
   fetchNominations: jest.fn(),
 }));
 
+beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+afterEach(() => mockServer.resetHandlers());
+afterAll(() => mockServer.close());
+
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
 
@@ -45,10 +49,6 @@ describe("getAccount", () => {
         return HttpResponse.json(balanceResponseStub);
       }),
     );
-  });
-
-  afterAll(() => {
-    mockServer.close();
   });
 
   it("should return no staking info when no controller found", async () => {
