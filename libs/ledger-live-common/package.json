@@ -81,7 +81,7 @@
     "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
     "unimported": "unimported",
-    "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci --updateSnapshot"
+    "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
   "files": [
     "lib",
