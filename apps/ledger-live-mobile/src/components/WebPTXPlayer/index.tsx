@@ -57,7 +57,15 @@ function BackToInternalDomain({
     const manifestId = (await storage.getString("manifest-id")) ?? "";
 
     const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
-    if (manifestId && isStateValid) {
+
+    if (!isStateValid) {
+      navigation.getParent()?.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      });
+      return;
+    }
+
+    if (manifestId) {
       const [lastScreen = "", flowName = ""] = await Promise.all([
         storage.getString("last-screen"),
         storage.getString("flow-name"),
@@ -78,8 +86,7 @@ function BackToInternalDomain({
     } else if (
       internalAppIds.includes(manifest.id) &&
       lastMatchingURL &&
-      webviewURL &&
-      isStateValid
+      webviewURL
     ) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
@@ -92,8 +99,6 @@ function BackToInternalDomain({
         flow: flowName,
       });
       navigation.goBack();
-    } else {
-      navigation.popToTop();
     }
   };
 
