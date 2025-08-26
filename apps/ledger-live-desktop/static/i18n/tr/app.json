@@ -202,7 +202,8 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
-      "BURN" : "Yakıldı"
+      "BURN" : "Yakıldı",
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -6688,6 +6689,18 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Yetersiz bakiye",
+      "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Token ilişkilendirme gerekli",
+      "description" : "Göndermeye çalıştığınız token, hedef hesapla ilişkilendirilmemiş. Token’ın alınabilmesi için alıcı hesapla ilişkilendirilmesi gerekir."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Token ilişkilendirmesi doğrulanamıyor",
+      "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -6973,10 +6986,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTS token’larını alabilmesi için hesabınızın ilişkilendirilmesi gerekiyor. Almak istediğiniz HTS token’ıyla hesabınızı henüz ilişkilendirmediyseniz, token ilişkilendirme akışını başlatmak için <0>buraya tıklayın</0>.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "associationRequired" : {
+          "text" : "Devam tuşuna tıkladığınızda seçili token’ı Hedera hesabınızla ilişkilendireceksiniz.",
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "İlişkilendirin",
+          "title" : "Token'ı ilişkilendirin",
+          "pending" : {
+            "title" : "İşlem yayınlanıyor..."
+          },
+          "success" : {
+            "title" : "İşlem gönderildi",
+            "description" : "Token İlişkilendirme işlemi onaylandığında bu token’ı alabileceksiniz",
+            "cta" : "Ayrıntıları gör"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (isteğe bağlı)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "İlişkilendirilen token",
+      "postAlert" : {
+        "text" : "Bu işlem onaylandığında token’ınızı alabileceksiniz. Akışı başlatmak için <0>buraya tıklayın</0>.",
+        "learnMore" : "Daha fazla bilgi"
       }
     }
   },
