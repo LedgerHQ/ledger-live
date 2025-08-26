@@ -1,5 +1,6 @@
 import { step } from "../../misc/reporters/step";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getTopCurrenciesByMarketCap } from "@ledgerhq/live-common/e2e/getAssetsByMarketCap";
 import { Drawer } from "../../component/drawer.component";
 
 export class ModularAssetDrawer extends Drawer {
@@ -10,8 +11,12 @@ export class ModularAssetDrawer extends Drawer {
   private searchInput = this.page.getByTestId(this.searchInputTestId);
   private drawerCloseButton = this.page.getByTestId("mad-close-button");
   private assetListContainer = this.page.getByTestId("asset-selector-list-container");
+  private assetTickerTestIdPrefix = "asset-item-ticker-";
+  private get assetTickerElements() {
+    return this.page.locator(`[data-testid^="${this.assetTickerTestIdPrefix}"]`);
+  }
   private assetItemTicker = (ticker: string) =>
-    this.page.getByTestId(`asset-item-ticker-${ticker}`);
+    this.page.getByTestId(`${this.assetTickerTestIdPrefix}${ticker}`);
   private assetItemName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
 
   @step("Wait for drawer to be visible")
@@ -31,12 +36,22 @@ export class ModularAssetDrawer extends Drawer {
     await this.searchInput.waitFor();
     await this.drawerCloseButton.waitFor();
     await this.assetListContainer.waitFor();
-    await this.validateTopAssetsMarketCapOrder([Currency.BTC.ticker, Currency.ETH.ticker]);
+    await this.validateTopAssetsByMarketCapOrder();
+  }
+
+  @step("Fetch assets based on market cap order from backend")
+  private async fetchAssetsBasedOnMarketCapOrder(): Promise<string[]> {
+    try {
+      return await getTopCurrenciesByMarketCap();
+    } catch (error) {
+      console.error("Error fetching market cap data:", error);
+      return [Currency.BTC.ticker, Currency.ETH.ticker];
+    }
   }
 
   @step("Get list of asset tickers in order")
   async getAssetTickersList(): Promise<string[]> {
-    const tickerElements = this.page.locator('[data-testid^="asset-item-ticker-"]');
+    const tickerElements = this.assetTickerElements;
     const count = await tickerElements.count();
 
     const tickers: string[] = [];
@@ -51,16 +66,18 @@ export class ModularAssetDrawer extends Drawer {
   }
 
   @step("Validate top assets market cap order")
-  async validateTopAssetsMarketCapOrder(expectedOrder: string[]) {
+  async validateTopAssetsByMarketCapOrder() {
+    const expectedOrder = await this.fetchAssetsBasedOnMarketCapOrder();
     const tickers = await this.getAssetTickersList();
 
     if (tickers.length === 0) {
       throw new Error("No assets found in asset list");
     }
 
-    const actualTopAssets = tickers.slice(0, expectedOrder.length);
+    const compareLength = Math.min(expectedOrder.length, tickers.length);
+    const actualTopAssets = tickers.slice(0, compareLength);
 
-    for (let i = 0; i < expectedOrder.length; i++) {
+    for (let i = 0; i < compareLength; i++) {
       const expectedTicker = expectedOrder[i];
       const actualTicker = actualTopAssets[i];
 
@@ -102,11 +119,11 @@ export class ModularAssetDrawer extends Drawer {
 
   async waitForTickerToAppear(ticker: string) {
     await this.page.waitForFunction(
-      ticker => {
-        const elements = document.querySelectorAll(`[data-testid^="asset-item-ticker-${ticker}"]`);
+      ({ ticker, prefix }) => {
+        const elements = document.querySelectorAll(`[data-testid^="${prefix}${ticker}"]`);
         return elements.length > 0;
       },
-      ticker,
+      { ticker, prefix: this.assetTickerTestIdPrefix },
       { timeout: 10000 },
     );
   }
