@@ -7,6 +7,7 @@ module.exports = {
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
+    "!src/index.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
