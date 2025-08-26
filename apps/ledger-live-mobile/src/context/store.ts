@@ -15,10 +15,7 @@ export const store = configureStore({
       .concat(rebootMiddleware),
 
   enhancers: getDefaultEnhancers =>
-    new Tuple(
-      ...(__DEV__ ? [...getDefaultEnhancers(), Rectotron.createEnhancer()] : []),
-      ...getDefaultEnhancers(),
-    ),
+    new Tuple(...(__DEV__ ? [Rectotron.createEnhancer()] : []), ...getDefaultEnhancers()),
 });
 
 export type StoreType = typeof store;
