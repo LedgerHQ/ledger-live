@@ -202,7 +202,8 @@
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
       "SENDING" : "Senden",
-      "BURN" : "Verbrannt"
+      "BURN" : "Verbrannt",
+      "ASSOCIATE_TOKEN" : "Token zuordnen"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -1596,6 +1597,25 @@
         "all" : "Jahr"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
+    "continue" : "Weiter"
   },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
@@ -4776,6 +4796,10 @@
           "title" : "Europa-Post-Onboarding testen",
           "description" : "Alle Europa-Post-Onboarding-Funktionen testen"
         },
+        "testApexPostonboarding" : {
+          "title" : "Apex-Post-Onboarding testen",
+          "description" : "Alle Apex-Post-Onboarding-Funktionen testen"
+        },
         "1559DeactivateGate" : {
           "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
           "description" : "Dies ermöglicht die Übermittlung einer Transaktion, ohne dass eine Mindestprioritätsgebühr erhoben wird. Dies kann dazu führen, dass eine Transaktion für immer im Mempool stecken bleibt."
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Unzureichendes Guthaben",
+      "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Tokenzuordnung erforderlich",
+      "description" : "Das Token, das du senden möchtest, ist dem Zielkonto nicht zugeordnet. Es muss dem Empfängerkonto zugeordnet werden, damit es empfangen werden kann."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Tokenzuordnung kann nicht verifiziert werden",
+      "description" : "Wir konnten nicht überprüfen, ob das Zielkonto dieses Token empfangen kann. Möglicherweise ist die Adresse ungültig oder es liegt ein Problem mit dem Netzwerk oder dem Service vor."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
       "description" : "Bitte versuchen Sie es erneut mit einem Bild."
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Um HTS-Token empfangen zu können, muss dein Konto zugeordnet sein. Wenn du dein Konto noch nicht mit dem HTS-Token verknüpft hast, das du erhalten möchtest, dann <0>klicke hier</0>, um das Token zuzuordnen.",
+          "learnMore" : "Weitere Informationen"
+        },
+        "associationRequired" : {
+          "text" : "Durch Klicken auf „Weiter“ ordnest du das ausgewählte Token deinem Hedera-Konto zu.",
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "Zuordnen",
+          "title" : "Token zuordnen",
+          "pending" : {
+            "title" : "Sende Transaktion..."
+          },
+          "success" : {
+            "title" : "Transaktion gesendet",
+            "description" : "Du kannst dieses Token empfangen, sobald die Transaktion „Token zuordnen“ bestätigt wurde",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (Optional)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Zugeordnetes Token",
+      "postAlert" : {
+        "text" : "Sobald diese Transaktion bestätigt wurde, kannst du dein Token empfangen. <0>Klicke hier</0>, um den Empfangsvorgang zu starten.",
+        "learnMore" : "Weitere Informationen"
       }
     }
   },
