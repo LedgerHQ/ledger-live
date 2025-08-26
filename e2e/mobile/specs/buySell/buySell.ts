@@ -53,26 +53,23 @@ export async function runNavigateToBuyFromPortfolioPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  (isIos() ? describe.skip : describe)(
-    "Navigate to Buy / Sell flow from portfolio page - LLM",
-    () => {
-      beforeAll(async () => {
-        await beforeAllFunction({
-          userdata: "skip-onboarding",
-          speculosApp: buySell.crypto.currency.speculosApp,
-          cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-        });
+  describe("Navigate to Buy / Sell flow from portfolio page - LLM", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: buySell.crypto.currency.speculosApp,
+        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
       });
+    });
 
-      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-      tags.forEach(tag => $Tag(tag));
-      test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
-        await app.transferMenuDrawer.open();
-        await app.transferMenuDrawer.navigateToBuy();
-        await handleBuySellFlow(buySell, paymentMethod, provider);
-      });
-    },
-  );
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
+      await app.transferMenuDrawer.open();
+      await app.transferMenuDrawer.navigateToBuy();
+      await handleBuySellFlow(buySell, paymentMethod, provider);
+    });
+  });
 }
 
 export async function runNavigateToBuyFromAccountPageTest(
@@ -82,30 +79,27 @@ export async function runNavigateToBuyFromAccountPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  (isIos() ? describe.skip : describe)(
-    "Navigate to Buy / Sell flow from account page - LLM",
-    () => {
-      beforeAll(async () => {
-        await beforeAllFunction({
-          userdata: "skip-onboarding",
-          speculosApp: buySell.crypto.currency.speculosApp,
-          cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
-        });
+  describe("Navigate to Buy / Sell flow from account page - LLM", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: buySell.crypto.currency.speculosApp,
+        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
       });
+    });
 
-      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-      tags.forEach(tag => $Tag(tag));
-      test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
-        await app.accounts.openViaDeeplink();
-        await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
-        if (buySell.crypto.tokenType) {
-          await app.account.navigateToTokenInAccount(buySell.crypto);
-        }
-        await app.account.tapBuy();
-        await handleBuySellFlow(buySell, paymentMethod, provider);
-      });
-    },
-  );
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
+      await app.accounts.openViaDeeplink();
+      await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
+      if (buySell.crypto.tokenType) {
+        await app.account.navigateToTokenInAccount(buySell.crypto);
+      }
+      await app.account.tapBuy();
+      await handleBuySellFlow(buySell, paymentMethod, provider);
+    });
+  });
 }
 
 export async function runNavigateToBuyFromMarketPageTest(
@@ -115,7 +109,7 @@ export async function runNavigateToBuyFromMarketPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  (isIos() ? describe.skip : describe)("Navigate to Buy / Sell flow from market page - LLM", () => {
+  describe("Navigate to Buy / Sell flow from market page - LLM", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",

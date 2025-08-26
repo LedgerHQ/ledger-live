@@ -31,6 +31,24 @@ module.exports = {
     noRetryArgs: ["outputFile"],
     retries: 0,
   },
+  artifacts: {
+    plugins: {
+      screenshot: {
+        enabled: true,
+        shouldTakeAutomaticSnapshots: false,
+        keepOnlyFailedTestsArtifacts: true,
+      },
+      video: {
+        enabled: false,
+      },
+      log: {
+        enabled: true,
+        keepOnlyFailedTestsArtifacts: true,
+        maxFileSize: "10MB",
+      },
+      trace: "none",
+    },
+  },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : process.env.CI ? "error" : "info",
     maxSize: 0, // Set to 0 to prevent file creation
@@ -116,54 +134,10 @@ module.exports = {
     "ios.sim.release": {
       device: "simulator",
       app: "ios.release",
-      artifacts: {
-        plugins: {
-          screenshot: {
-            enabled: true,
-            shouldTakeAutomaticSnapshots: false,
-            keepOnlyFailedTestsArtifacts: true,
-          },
-          video: {
-            enabled: false,
-          },
-          log: {
-            enabled: true,
-            keepOnlyFailedTestsArtifacts: true,
-            maxFileSize: "10MB",
-          },
-          trace: {
-            enabled: true,
-            keepOnlyFailedTestsArtifacts: true,
-            maxFileSize: "50MB",
-          },
-        },
-      },
     },
     "ios.sim.prerelease": {
       device: "simulator",
       app: "ios.prerelease",
-      artifacts: {
-        plugins: {
-          screenshot: {
-            enabled: true,
-            shouldTakeAutomaticSnapshots: false,
-            keepOnlyFailedTestsArtifacts: true,
-          },
-          video: {
-            enabled: false,
-          },
-          log: {
-            enabled: true,
-            keepOnlyFailedTestsArtifacts: true,
-            maxFileSize: "10MB",
-          },
-          trace: {
-            enabled: true,
-            keepOnlyFailedTestsArtifacts: true,
-            maxFileSize: "50MB",
-          },
-        },
-      },
     },
     "android.emu.debug": {
       device: "emulator",
