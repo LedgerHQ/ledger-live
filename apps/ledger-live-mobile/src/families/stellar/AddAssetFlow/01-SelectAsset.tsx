@@ -110,8 +110,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
       const tokenId = assetId.split("/")[2];
       const [assetCode, assetIssuer] = tokenId.split(":");
       const t = bridge.updateTransaction(transaction, {
-        assetCode,
-        assetIssuer,
+        assetReference: assetCode,
+        assetOwner: assetIssuer,
       }) as StellarTransaction;
       navigation.navigate(ScreenName.StellarAddAssetSelectDevice, {
         ...route.params,

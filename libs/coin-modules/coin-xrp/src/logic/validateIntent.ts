@@ -1,7 +1,6 @@
 import {
   AmountRequired,
   FeeNotLoaded,
-  FeeRequired,
   FeeTooHigh,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -14,12 +13,17 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getServerInfos } from "../network";
 import { cachedRecipientIsNew } from "./utils";
 import { parseAPIValue } from "./common";
-import { TransactionValidation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  TransactionValidation,
+  TransactionIntent,
+  FeeEstimation,
+} from "@ledgerhq/coin-framework/api/types";
 import { XrpMapMemo } from "../types";
 import { getBalance } from "./getBalance";
 
-export const getTransactionStatus = async (
+export const validateIntent = async (
   transactionIntent: TransactionIntent<XrpMapMemo>,
+  customFees?: FeeEstimation,
 ): Promise<TransactionValidation> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -27,7 +31,7 @@ export const getTransactionStatus = async (
   const reserveBaseXRP = parseAPIValue(
     serverInfos.info.validated_ledger.reserve_base_xrp.toString(),
   );
-  const estimatedFees = transactionIntent.fees || 0n;
+  const estimatedFees = customFees?.value || 0n;
   const totalSpent = transactionIntent.amount + estimatedFees;
   const amount = transactionIntent.amount;
 
@@ -41,10 +45,8 @@ export const getTransactionStatus = async (
     throw Error("Shouldn't happen");
   }
 
-  if (!transactionIntent.fees) {
+  if (!estimatedFees) {
     errors.fee = new FeeNotLoaded();
-  } else if (transactionIntent.fees === 0n) {
-    errors.fee = new FeeRequired();
   } else if (totalSpent > nativeBalance.value - BigInt(reserveBaseXRP.toString())) {
     errors.amount = new NotEnoughSpendableBalance("", {
       minimumAmount: transactionIntent.asset.unit
