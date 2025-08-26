@@ -8,7 +8,7 @@ import { Network } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import ApyIndicator from "../../../components/ApyIndicator";
+import { ApyIndicator } from "@ledgerhq/react-ui/pre-ldls/index";
 import { getAccountTuplesForCurrency } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 
 const createAccountsCount = ({ label }: { label: string }) => (
