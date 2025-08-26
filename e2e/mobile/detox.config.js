@@ -32,7 +32,9 @@ module.exports = {
     retries: 0,
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "info",
+    level: process.env.DEBUG_DETOX ? "trace" : process.env.CI ? "error" : "info",
+    maxSize: 0, // Set to 0 to prevent file creation
+    maxFiles: 0, // Set to 0 to prevent file creation
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
