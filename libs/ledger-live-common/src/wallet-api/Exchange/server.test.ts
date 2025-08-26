@@ -156,7 +156,7 @@ describe("handlers", () => {
 
       const params: ExchangeStartFundParams = {
         exchangeType: "FUND",
-        provider: "TestSellProvider",
+        provider: "TestFundProvider",
         fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
@@ -173,6 +173,7 @@ describe("handlers", () => {
       expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
       const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
       expect(receivedParams.exchangeType).toBe("FUND");
+      expect(receivedParams.provider).toBe("TestFundProvider");
       expect(mockUiCompleteExchange).not.toHaveBeenCalled();
     });
   });
