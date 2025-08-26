@@ -60,18 +60,14 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         </>
       )}
       {mode === ExchangeModeEnum.Sell && sourceCurrency && (
-        <>
-          <Box justifyContent="center" flex={1}>
-            <SellCompleted />
-          </Box>
-        </>
+        <Box justifyContent="center" flex={1}>
+          <SellCompleted />
+        </Box>
       )}
       {mode === ExchangeModeEnum.Fund && sourceCurrency && (
-        <>
-          <Box justifyContent="center" flex={1}>
-            <FundCompleted />
-          </Box>
-        </>
+        <Box justifyContent="center" flex={1}>
+          <FundCompleted />
+        </Box>
       )}
     </Box>
   );
