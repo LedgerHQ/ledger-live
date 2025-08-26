@@ -56,7 +56,8 @@ function BackToInternalDomain({
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
 
-    if (manifestId) {
+    const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
+    if (manifestId && isStateValid) {
       const [lastScreen = "", flowName = ""] = await Promise.all([
         storage.getString("last-screen"),
         storage.getString("flow-name"),
@@ -74,7 +75,12 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
+    } else if (
+      internalAppIds.includes(manifest.id) &&
+      lastMatchingURL &&
+      webviewURL &&
+      isStateValid
+    ) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -85,8 +91,9 @@ function BackToInternalDomain({
         provider: currentHostname,
         flow: flowName,
       });
-
       navigation.goBack();
+    } else {
+      navigation.popToTop();
     }
   };
 
