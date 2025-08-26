@@ -37,6 +37,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -412,4 +413,5 @@ export type State = {
   modularDrawer: ModularDrawerState;
   largeMover: LargeMoverState;
   toasts: ToastState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
 };

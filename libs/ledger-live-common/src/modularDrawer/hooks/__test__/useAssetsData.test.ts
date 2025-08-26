@@ -1,5 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { renderHook } from "@testing-library/react";
 import { useAssetsData } from "../useAssetsData";
+import { useGetAssetsDataQuery } from "../../data/state-manager/api";
 
 jest.mock("../../data/state-manager/api", () => ({
   useGetAssetsDataQuery: jest.fn(),
@@ -13,7 +18,6 @@ jest.mock("react", () => ({
   useMemo: jest.fn(fn => fn()),
 }));
 
-import { useGetAssetsDataQuery } from "../../data/state-manager/api";
 const mockUseGetAssetsDataQuery = jest.mocked(useGetAssetsDataQuery);
 
 describe("useAssetsData", () => {

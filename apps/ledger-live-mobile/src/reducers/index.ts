@@ -23,6 +23,7 @@ import { ActionsPayload } from "../actions/types";
 import largeMover from "./largeMover";
 import countervalues from "./countervalues";
 import toasts from "./toast";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 export type AppStore = Store<State>;
 
@@ -49,6 +50,7 @@ const appReducer = combineReducers({
   modularDrawer,
   largeMover,
   toasts,
+  assetsDataApi: assetsDataApi.reducer,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
