@@ -50,4 +50,23 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(/ethereum/i));
     expect(queryByText(/2 accounts/i)).toBeNull();
   });
+
+  it("should display the apy indicator on asset list", async () => {
+    const { getByText, queryAllByText, user } = render(
+      <ModularDrawerSharedNavigator
+        assetsConfiguration={{
+          leftElement: "apy",
+        }}
+      />,
+    );
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    expect(getByText(/ethereum/i)).toBeVisible();
+    expect(queryAllByText(/5.11% APY/i).length).toBe(2);
+  });
+
+  it("should not display the apy indicator if the configuration is not provided", async () => {
+    const { queryByText, user } = render(<ModularDrawerSharedNavigator />);
+    await user.press(queryByText(WITHOUT_ACCOUNT_SELECTION));
+    expect(queryByText(/5.11% APY/i)).toBeNull();
+  });
 });
