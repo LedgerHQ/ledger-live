@@ -88,6 +88,7 @@ docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
 The rest of the documentation is about testing on NanoSP.
 
 ### 2. Compile app-canton
+
 You have to [compile](https://github.com/ledgerhq/app-canton) or retrieve the app binaries. In the following line, the binaries directory is set as `<ABSOLUTE_PATH_TO_ELFS>`
 
 ### 3. Launch CantonApp within Speculos
@@ -103,5 +104,5 @@ docker exec -it speculos bash -c 'speculos --model "nanosp" /app/exchange_nanosp
 From Ledger Live root directory:
 
 ```sh
-pnpm ljs:hw-app-canton test
+pnpm ljs:hw-app-canton test-integ
 ```

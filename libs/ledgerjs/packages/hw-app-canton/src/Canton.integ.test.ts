@@ -1,4 +1,3 @@
-// import Transport from "@ledgerhq/hw-transport";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import Canton from "./Canton";
 import Transport from "@ledgerhq/hw-transport";
