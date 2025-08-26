@@ -1597,6 +1597,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
+  },
   "currentAddress" : {
     "title" : "当前地址",
     "for" : "<1><0>{{name}}</0></1> 的地址。",
