@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 นาที",
       "medium" : "≈ 30 วินาที",
-      "fast" : "≈ 15 วินาที"
+      "fast" : "≈ 15 วินาที",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1523,25 @@
     "cta" : "ติดตั้ง Ledger ของฉัน",
     "bannerTitle" : "ได้รับ Ledger แล้วหรือยัง?",
     "bannerCta" : "เริ่มการติดตั้ง",
+    "continue" : "ดำเนินการต่อ"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "continue" : "ดำเนินการต่อ"
   },
   "purchaseDevice" : {
@@ -3242,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
-        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, Binance Smart Chain, Avalanche และ Ethereum Classic"
+        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
