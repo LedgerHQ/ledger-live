@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2 à 3 min",
       "medium" : "≈ 30 sec",
-      "fast" : "≈ 15 sec"
+      "fast" : "≈ 15 sec",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1523,25 @@
     "cta" : "Configurer mon wallet",
     "bannerTitle" : "Vous avez reçu votre wallet ?",
     "bannerCta" : "Démarrer",
+    "continue" : "Continuer"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
     "continue" : "Continuer"
   },
   "purchaseDevice" : {
@@ -3242,7 +3262,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Alertes transactionnelles (Bêta)",
-        "desc" : "Recevez des notifications relatives à vos transactions sur Ethereum, Polygon, BNB Smart Chain, Avalanche et Ethereum Classic."
+        "desc" : "Recevez des notifications relatives à vos transactions sur Ethereum, Polygon, BNB Chain, Avalanche et Ethereum Classic."
       },
       "price" : {
         "title" : "Alertes sur les prix",
