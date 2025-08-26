@@ -21,6 +21,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 // import { useTheme } from "@react-navigation/native";
 import {
   Trans,
@@ -44,14 +45,13 @@ type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
-const A_B_TEST_FLAG = true;
-
 const CompletionScreen = ({ route }: Props) => {
   // const { dark } = useTheme();
   // const { t } = useTranslation();
   const isFocused = useIsFocused();
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
+  const isSyncIncr1Enabled = useFeature("syncOnboardingIncr1")?.enabled || false;
 
   const preventNavigation = useRef(true);
 
@@ -92,12 +92,12 @@ const CompletionScreen = ({ route }: Props) => {
   useEffect(
     () =>
       navigation.addListener("beforeRemove", e => {
-        if (A_B_TEST_FLAG && preventNavigation.current) e.preventDefault();
+        if (isSyncIncr1Enabled && preventNavigation.current) e.preventDefault();
       }),
-    [navigation],
+    [navigation, isSyncIncr1Enabled],
   );
 
-  if (A_B_TEST_FLAG) {
+  if (isSyncIncr1Enabled) {
     return (
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
         {device.modelId === DeviceModelId.europa ? (

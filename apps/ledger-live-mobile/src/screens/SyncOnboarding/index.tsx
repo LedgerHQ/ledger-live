@@ -19,10 +19,10 @@ import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
-const A_B_FLAG = true;
 
 /**
  * Synchronous onboarding screen composed of the "early security/onboarding checks" step and the "synchronous companion" step
@@ -57,6 +57,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
     NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
+
+  const isSyncIncr1Enabled = useFeature("syncOnboardingIncr1")?.enabled || false;
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
@@ -283,7 +285,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       />
     );
   } else if (currentStep === "companion") {
-    stepContent = A_B_FLAG ? (
+    stepContent = isSyncIncr1Enabled ? (
       <TwoStepSyncOnboardingCompanion
         navigation={navigation}
         device={device}

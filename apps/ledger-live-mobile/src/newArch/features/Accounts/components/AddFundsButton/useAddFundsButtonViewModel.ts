@@ -9,14 +9,13 @@ import { useNavigation } from "@react-navigation/core";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "~/const";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type Props = {
   accounts: Account[];
   currency: CryptoOrTokenCurrency;
   sourceScreenName: string;
 };
-
-const A_B_TEST_FLAG = true;
 
 export default function useAddFundsButtonViewModel({
   accounts,
@@ -33,11 +32,13 @@ export default function useAddFundsButtonViewModel({
 
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
 
+  const isSyncIncr1Enabled = useFeature("syncOnboardingIncr1")?.enabled || false;
+
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
     const parentNavigationState = navigation.getParent()?.getState();
 
-    if (A_B_TEST_FLAG && parentNavigationState?.routeNames[0] === NavigatorName.Onboarding) {
+    if (isSyncIncr1Enabled && parentNavigationState?.routeNames[0] === NavigatorName.Onboarding) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, clickMetadata.payload);
       navigation.navigate(NavigatorName.ReceiveFunds, {

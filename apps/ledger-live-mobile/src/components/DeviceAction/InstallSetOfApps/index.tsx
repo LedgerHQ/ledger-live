@@ -20,8 +20,7 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import NewSeedConfirmation from "./NewSeedConfirmation";
-
-const A_B_TEST_FLAG = true;
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   isNewSeed?: boolean;
@@ -53,6 +52,8 @@ const InstallSetOfApps = ({
   const action = useAppDeviceAction();
   const { t } = useTranslation();
   const [userConfirmed, setUserConfirmed] = useState(false);
+  const isSyncIncr1Enabled = useFeature("syncOnboardingIncr1")?.enabled || false;
+
   const productName = getDeviceModel(selectedDevice.modelId).productName;
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
   const lastSeenDeviceModelId = debugLastSeenDeviceModelId || lastSeenDevice?.modelId;
@@ -206,7 +207,7 @@ const InstallSetOfApps = ({
       <NewSeedConfirmation
         onConfirm={() => {
           track("button_clicked", { button: "Secure My Crypto" });
-          A_B_TEST_FLAG ? onResult(true) : setUserConfirmed(true);
+          isSyncIncr1Enabled ? onResult(true) : setUserConfirmed(true);
         }}
         onReject={() => {
           track("button_clicked", { button: "I'll do this later" });
