@@ -1,9 +1,10 @@
 import Video from "react-native-video";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { useTheme } from "styled-components/native";
 import videoSources from "../../../assets/videos";
 import { Device } from "@ledgerhq/types-devices";
+import { useIsFocused } from "@react-navigation/core";
 
 const sourceLight = videoSources.onboardingSuccessStaxLight;
 const sourceDark = videoSources.onboardingSuccessStaxDark;
@@ -25,7 +26,10 @@ const redirectDelay = 5000;
 
 const StaxCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
   const videoMounted = !useIsAppInBackground();
+  const [isPaused, setIsPaused] = useState<boolean>(true);
   const { theme } = useTheme();
+  const isFocused = useIsFocused();
+
   const videoSource = theme === "light" ? sourceLight : sourceDark;
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -42,6 +46,12 @@ const StaxCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
     };
   }, [onAnimationFinish]);
 
+  useEffect(() => {
+    if (isPaused && isFocused) {
+      setIsPaused(false);
+    }
+  }, [isFocused, setIsPaused, isPaused]);
+
   return videoMounted ? (
     <Video
       disableFocus
@@ -50,6 +60,7 @@ const StaxCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
       muted
       repeat
       resizeMode="cover"
+      paused={isPaused}
     />
   ) : null;
 };

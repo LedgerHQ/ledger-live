@@ -21,9 +21,12 @@ import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
-import { Trans, useTranslation } from "react-i18next";
-import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
+// import { useTheme } from "@react-navigation/native";
+import {
+  Trans,
+  /*useTranslation */
+} from "react-i18next";
+// import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
 
 const CTAWrapper = styled(Box)`
   position: absolute;
@@ -96,13 +99,7 @@ const CompletionScreen = ({ route }: Props) => {
 
   if (A_B_TEST_FLAG) {
     return (
-      <Flex
-        width="100%"
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-        backgroundColor="red"
-      >
+      <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
         {device.modelId === DeviceModelId.europa ? (
           <EuropaCompletionView device={device} loop />
         ) : (
