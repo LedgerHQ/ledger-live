@@ -1,11 +1,7 @@
-import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
-import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
-
-const proxyAddress = "localhost";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
@@ -100,21 +96,9 @@ export default class CommonPage {
     await tapByElement(accountTitle);
   }
 
-  async addSpeculos(nanoApp: string) {
-    unregisterAllTransportModules();
-    const proxyPort = await findFreePort();
-    const speculosPort = await launchSpeculos(nanoApp);
-    const speculosAddress = process.env.SPECULOS_ADDRESS;
-    await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
-    return speculosPort;
-  }
-
-  async removeSpeculos(apiPort?: number) {
-    const proxyPort = await deleteSpeculos(apiPort);
-    proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  @Step("Remove Speculos")
+  async removeSpeculos(deviceId?: string) {
+    await removeSpeculosAndDeregisterKnownSpeculos(deviceId);
   }
 
   @Step("Select a known device")
