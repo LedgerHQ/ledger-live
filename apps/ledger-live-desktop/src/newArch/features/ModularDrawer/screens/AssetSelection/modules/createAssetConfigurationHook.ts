@@ -1,10 +1,11 @@
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useRightBalanceModule } from "./useRightBalanceModule";
-import { AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
+import { ApyIndicator, AssetType } from "@ledgerhq/react-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
-import { useLeftApyModule } from "./useLeftApyModule";
+import { createUseLeftApyModule } from "@ledgerhq/live-common/modularDrawer/hooks/useLeftApy";
+import { createUseRightBalanceAsset } from "@ledgerhq/live-common/modularDrawer/hooks/useRightBalanceAsset";
+import { createBalanceItem, useBalanceDeps } from "../../../components/Balance";
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -18,7 +19,10 @@ type CreateAssetConfigurationHook = (
 const getRightElement = (rightElement: string) => {
   switch (rightElement) {
     case "balance":
-      return useRightBalanceModule;
+      return createUseRightBalanceAsset({
+        useBalanceDeps,
+        createBalanceItem,
+      });
     case "marketTrend":
     case "undefined":
     default:
@@ -29,7 +33,7 @@ const getRightElement = (rightElement: string) => {
 const getLeftElement = (leftElement: string) => {
   switch (leftElement) {
     case "apy":
-      return useLeftApyModule;
+      return createUseLeftApyModule({ ApyIndicator });
     case "priceVariation":
     case "undefined":
     default:

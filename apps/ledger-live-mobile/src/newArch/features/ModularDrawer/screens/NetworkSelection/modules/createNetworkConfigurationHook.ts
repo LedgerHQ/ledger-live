@@ -5,8 +5,9 @@ import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 import { useLeftAccountsModule, useLeftAccountsApyModule } from "./useLeftAccountsModule";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import { useRightBalanceModule } from "./useRightBalanceModule";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { useBalanceDeps, createBalanceItem } from "../../../components/Balance";
+import { createUseRightBalanceNetwork } from "@ledgerhq/live-common/modularDrawer/hooks/useRightBalanceNetwork";
 
 type Props = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
@@ -34,7 +35,10 @@ const getLeftElement = (leftElement: LeftElement) => {
 const getRightElement = (rightElement: RightElement) => {
   switch (rightElement) {
     case "balance":
-      return useRightBalanceModule;
+      return createUseRightBalanceNetwork({
+        useBalanceDeps,
+        createBalanceItem,
+      });
     case "undefined":
     default:
       return undefined;
