@@ -1,3 +1,4 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -406,7 +407,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
 };
 
 export type ChainSpecificRules = {
-  getAccountShape: (address: string) => any;
+  getAccountShape: (address: string) => void;
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
@@ -419,6 +420,7 @@ export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
+  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
 };
 
 export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
