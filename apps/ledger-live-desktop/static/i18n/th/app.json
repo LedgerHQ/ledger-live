@@ -202,7 +202,8 @@
       "UNSTAKE" : "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
       "SENDING" : "กำลังส่ง",
-      "BURN" : "เบิร์น"
+      "BURN" : "เบิร์น",
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -1596,6 +1597,25 @@
         "all" : "ปี"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
+    "continue" : "ดำเนินการต่อ"
   },
   "currentAddress" : {
     "title" : "Address ปัจจุบัน",
@@ -4776,6 +4796,10 @@
           "title" : "ทดสอบ Europa Post Onboarding",
           "description" : "ทดสอบฟีเจอร์ Europa Post Onboarding ทั้งหมด"
         },
+        "testApexPostonboarding" : {
+          "title" : "ทดสอบ Apex Post Onboarding",
+          "description" : "ทดสอบฟีเจอร์ Apex Post Onboarding ทั้งหมด"
+        },
         "1559DeactivateGate" : {
           "title" : "ปิดใช้งานเกต Priority Fee ขั้นต่ำสำหรับ EIP1559",
           "description" : "วิธีนี้อนุญาตให้ทำธุรกรรมได้โดยไม่ต้องจ่าย Priority Fee ขั้นต่ำ ซึ่งอาจส่งผลให้ธุรกรรมติดอยู่ใน Mempool ถาวร"
@@ -6688,6 +6712,18 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "ต้องมีการเชื่อมโยงโทเคน",
+      "description" : "โทเคนที่คุณพยายามส่งไม่ได้เชื่อมโยงกับบัญชีปลายทาง ต้องมีการเชื่อมโยงจากบัญชีผู้รับเพื่อรับโทเคน"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
+      "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพ"
@@ -6973,10 +7009,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Address {{name}} ของคุณไม่สามารถยืนยันได้บนอุปกรณ์ Ledger ของคุณ  ใช้งานโดยต้องยอมรับความเสี่ยงเอง"
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "ต้องมีการเชื่อมโยงบัญชีของคุณเพื่อรับโทเคน HTS หากคุณยังไม่ได้ทำการเชื่อมโยงบัญชีกับโทเคน HTS ที่คุณต้องการรับ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการเชื่อมโยงโทเคน",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "associationRequired" : {
+          "text" : "เมื่อคลิก 'ดำเนินการต่อ' คุณจะเชื่อมโยงโทเคนที่เลือกกับบัญชี Hedera ของคุณ",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "เชื่อมโยง",
+          "title" : "เชื่อมโยงโทเคน",
+          "pending" : {
+            "title" : "กำลังประกาศธุรกรรม..."
+          },
+          "success" : {
+            "title" : "ส่งธุรกรรมแล้ว",
+            "description" : "คุณจะได้รับโทเคนนี้เมื่อธุรกรรมการเชื่อมโยงโทเคนได้รับการยืนยันแล้ว",
+            "cta" : "ดูรายละเอียด"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (ไม่บังคับ)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "โทเคนที่เชื่อมโยงแล้ว",
+      "postAlert" : {
+        "text" : "เมื่อมีการยืนยันธุรกรรมนี้แล้ว คุณจะสามารถรับโทเคนของคุณได้ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการรับ",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
       }
     }
   },
