@@ -37,6 +37,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -147,6 +148,12 @@ export type DynamicContentState = {
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
+};
+
+// === IN VIEW STATE ===
+
+export type InViewState = {
+  hasItems: boolean;
 };
 
 // === RATINGS STATE ===
@@ -387,29 +394,32 @@ export type WalletSyncState = {
 export type LargeMoverState = {
   tutorial: boolean;
 };
+
 // === ROOT STATE ===
 
 export type State = {
   accounts: AccountsState;
-  auth: AuthState;
-  countervalues: CountervaluesState;
-  settings: SettingsState;
   appstate: AppState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  auth: AuthState;
   ble: BleState;
-  ratings: RatingsState;
+  countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
-  notifications: NotificationsState;
-  swap: SwapStateType;
   earn: EarnState;
-  walletconnect: WalletConnectState;
+  inView: InViewState;
+  largeMover: LargeMoverState;
+  market: MarketState;
+  modularDrawer: ModularDrawerState;
+  nft: NftState;
+  notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
-  nft: NftState;
-  market: MarketState;
-  wallet: WalletState;
-  trustchain: TrustchainStore;
-  walletSync: WalletSyncState;
-  modularDrawer: ModularDrawerState;
-  largeMover: LargeMoverState;
+  ratings: RatingsState;
+  settings: SettingsState;
+  swap: SwapStateType;
   toasts: ToastState;
+  trustchain: TrustchainStore;
+  wallet: WalletState;
+  walletconnect: WalletConnectState;
+  walletSync: WalletSyncState;
 };

@@ -1,7 +1,7 @@
 import { configureStore, Middleware } from "@reduxjs/toolkit";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
-import { assetsDataApi } from "~/newArch/features/ModularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 type Props = {
   state?: State;

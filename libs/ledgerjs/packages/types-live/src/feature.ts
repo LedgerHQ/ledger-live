@@ -232,6 +232,7 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   lldModularDrawerBackendData: DefaultFeature;
+  llmModularDrawerBackendData: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;

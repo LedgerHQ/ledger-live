@@ -178,8 +178,10 @@ export const NativeElementHelpers = {
 };
 
 export const WebElementHelpers = {
-  getWebElementByTestId(id: string, index = 0): WebElement {
-    const base = web.element(by.web.cssSelector(`[data-testid="${id}"]`)) as IndexedWebElement;
+  getWebElementByTestId(id: string, index = 0, testIdAttribute = "data-testid"): WebElement {
+    const base = web.element(
+      by.web.cssSelector(`[${testIdAttribute}="${id}"]`),
+    ) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 

@@ -99,7 +99,7 @@ export default async function setup(): Promise<void> {
 
   // Initialize global state
   global.IS_FAILED = false;
-  global.speculosDevices = new Map<number, string>();
+  global.speculosDevices = new Map<string, number>();
   global.proxySubscriptions = new Map<number, { port: number; subscription: Subscription }>();
 
   global.app = new Application();

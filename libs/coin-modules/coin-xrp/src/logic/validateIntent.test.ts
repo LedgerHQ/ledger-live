@@ -1,4 +1,4 @@
-import { getTransactionStatus } from "./getTransactionStatus";
+import { validateIntent } from "./validateIntent";
 import * as utils from "./utils";
 
 const mockGetBalance = jest.fn();
@@ -26,7 +26,7 @@ const SENDER = "rPSCfmnX3t9jQJG5RNcZtSaP5UhExZDue4";
 const RECIPIENT = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe";
 const RECIPIENT_NEW = "rDKsbvy9uaNpPtvVFraJyNGfjvTw8xivgK";
 
-describe("getTransactionStatus", () => {
+describe("validateIntent", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -47,15 +47,17 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         amount: 20_000_000n,
-        fees: 10_000n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      {
+        value: 10_000n, // fees
+      },
     );
 
     expect(result.errors).toEqual({});
@@ -79,15 +81,17 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         amount: 1_000_000n,
-        fees: 200_000n, // 20%
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      {
+        value: 200_000n, // fees
+      },
     );
 
     expect(result.warnings.feeTooHigh).toBeInstanceOf(Error);
@@ -110,7 +114,7 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
@@ -139,15 +143,15 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         amount: 10_000_000n,
-        fees: 10_000n,
         recipient: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      { value: 10_000n }, // fees
     );
 
     expect(result.errors.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
@@ -169,15 +173,15 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         amount: 5_000_000n,
-        fees: 10_000n,
         recipient: RECIPIENT_NEW,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      { value: 10_000n }, // fees
     );
 
     expect(result.errors.amount?.name).toBe("NotEnoughBalanceBecauseDestinationNotCreated");
@@ -199,15 +203,15 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         amount: 0n,
-        fees: 10_000n,
         recipient: RECIPIENT,
         asset: { unit: { code: "XRP", magnitude: 6 } },
       } as any,
+      { value: 10_000n }, // fees
     );
 
     expect(result.errors.amount?.name).toBe("AmountRequired");
@@ -229,15 +233,15 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
-        fees: 10_000n,
         recipient: "not-an-address",
       } as any,
+      { value: 10_000n }, // fees
     );
 
     expect(result.errors.recipient?.name).toBe("InvalidAddress");
@@ -259,15 +263,15 @@ describe("getTransactionStatus", () => {
       },
     ]);
 
-    const result = await getTransactionStatus(
+    const result = await validateIntent(
       // account as any,
       {
         sender: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
-        fees: 10_000n,
         recipient: "",
       } as any,
+      { value: 10_000n }, // fees
     );
 
     expect(result.errors.recipient?.name).toBe("RecipientRequired");

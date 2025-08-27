@@ -21,7 +21,7 @@ export interface AssetsDataWithPagination extends AssetsData {
 
 function transformAssetsResponse(
   response: RawApiResponse,
-  meta: FetchBaseQueryMeta | undefined,
+  meta?: FetchBaseQueryMeta,
 ): AssetsDataWithPagination {
   const enrichedCryptoOrTokenCurrencies = convertApiAssets(response.cryptoOrTokenCurrencies);
 

@@ -44,6 +44,7 @@ import {
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
 import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function useWebView(
   {
@@ -97,6 +98,7 @@ export function useWebView(
   const uiHook = useUiHook({
     isModularDrawerVisible: modularDrawerVisible,
     openModularDrawer,
+    manifest,
   });
   const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
@@ -388,17 +390,27 @@ export function useWebviewState(
 export interface Props {
   isModularDrawerVisible: boolean;
   openModularDrawer?: OpenModularDrawerFunction;
+  manifest: LiveAppManifest;
 }
 
-function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook {
+function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
+
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
 
   return useMemo(
     () => ({
       "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         if (isModularDrawerVisible) {
           openModularDrawer?.({
+            source: source,
+            flow: flow,
             currencies,
             enableAccountSelection: true,
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
@@ -566,7 +578,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook
         });
       },
     }),
-    [isModularDrawerVisible, openModularDrawer, navigation, device],
+    [isModularDrawerVisible, openModularDrawer, source, flow, navigation, device],
   );
 }
 

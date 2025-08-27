@@ -33,6 +33,7 @@ import type {
   NftState,
   MarketState,
   LargeMoverState,
+  InViewState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -41,6 +42,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { AnyAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -549,6 +551,14 @@ export type EarnPayload =
   | EarnSetMenuModalPayload
   | EarnSetProtocolInfoModalPayload;
 
+// === IN VIEW ACTIONS ===
+export enum InViewActionTypes {
+  IN_VIEW_SET_HAS_ITEMS = "IN_VIEW_SET_HAS_ITEMS",
+}
+
+export type InViewSetHasItemsPayload = InViewState["hasItems"];
+export type InViewPayload = InViewSetHasItemsPayload;
+
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
@@ -655,4 +665,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>;
+  | Action<NftPayload>
+  | AnyAction;

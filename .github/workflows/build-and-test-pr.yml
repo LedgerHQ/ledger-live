@@ -132,8 +132,9 @@ jobs:
       - test-design-system
       - build-web-tools
       - test-cli
+      - determine-affected
     runs-on: ubuntu-22.04
-    if: always() && !cancelled()
+    if: always() && !cancelled() && needs.determine-affected.result == 'success'
     steps:
       - name: Check result
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

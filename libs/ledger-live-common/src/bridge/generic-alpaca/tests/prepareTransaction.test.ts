@@ -47,7 +47,7 @@ describe("genericPrepareTransaction", () => {
     expect((result as any).fees.toString()).toBe(newFee.toString());
     expect(transactionToIntent).toHaveBeenCalledWith(
       account,
-      expect.objectContaining({ ...baseTransaction, fees: 500n }),
+      expect.objectContaining(baseTransaction),
     );
   });
 

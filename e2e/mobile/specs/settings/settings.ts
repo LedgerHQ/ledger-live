@@ -23,7 +23,7 @@ export function runUserClearApplicationCacheTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User clear application cache - LLM", () => {
+  describe("User clear application cache", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -51,7 +51,7 @@ export function runUserClearApplicationCacheTest(
 }
 
 export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
-  describe("User can export logs - LLM", () => {
+  describe("User can export logs", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -70,7 +70,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: string[]) {
-  describe("User can access Ledger Support (Web Link) - LLM", () => {
+  describe("User can access Ledger Support (Web Link)", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -92,7 +92,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User can select counter value to display amount in Ledger Live - LLM", () => {
+  describe("User can select counter value to display amount in Ledger Live", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",

@@ -28,6 +28,7 @@ export default function RequestAccountNavigator() {
                 currentStep: "1",
                 totalSteps,
               })}
+              testID="select-asset-drawer-title"
             />
           ),
         }}

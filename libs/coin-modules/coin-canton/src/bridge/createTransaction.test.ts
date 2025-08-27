@@ -7,6 +7,6 @@ describe("createTransaction", () => {
   });
 
   it("should create a transaction with boilerplate family", () => {
-    expect(createTransaction({} as AccountLike<Account>).family).toEqual("boilerplate");
+    expect(createTransaction({} as AccountLike<Account>).family).toEqual("canton");
   });
 });

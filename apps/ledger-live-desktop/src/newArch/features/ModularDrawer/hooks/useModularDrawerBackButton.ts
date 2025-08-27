@@ -9,6 +9,7 @@ interface UseModularDrawerBackButtonProps {
   hasOneCurrency: boolean;
   hasOneNetwork: boolean;
   networksToDisplay?: CryptoOrTokenCurrency[];
+  searchedValue?: string;
 }
 
 export function useModularDrawerBackButton({
@@ -18,9 +19,10 @@ export function useModularDrawerBackButton({
   hasOneCurrency,
   hasOneNetwork,
   networksToDisplay,
+  searchedValue,
 }: UseModularDrawerBackButtonProps) {
   const handleBack = useMemo(() => {
-    const canGoBackToAsset = !hasOneCurrency;
+    const canGoBackToAsset = !hasOneCurrency || !!searchedValue;
     const canGoBackToNetwork = !hasOneNetwork && networksToDisplay && networksToDisplay.length > 1;
 
     switch (currentStep) {
@@ -30,7 +32,7 @@ export function useModularDrawerBackButton({
       case "ACCOUNT_SELECTION": {
         if (
           (hasOneNetwork || !networksToDisplay || networksToDisplay.length <= 1) &&
-          !hasOneCurrency
+          canGoBackToAsset
         ) {
           return goBackToAssetSelection;
         } else if (canGoBackToNetwork) {
@@ -49,6 +51,7 @@ export function useModularDrawerBackButton({
     hasOneCurrency,
     hasOneNetwork,
     networksToDisplay,
+    searchedValue,
   ]);
 
   return {
