@@ -16,8 +16,7 @@ export function useRedirectToPostOnboardingCallback() {
   const history = useHistory();
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
 
-  const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect();
-
+  const { shouldRedirectToRecoverUpsell, shouldRedirectToPostOnboarding } = useShouldRedirect(); // false, false
   const openRecoverUpsell = useOpenRecoverCallback();
   const openPostOnboarding = useOpenPostOnboardingCallback();
 

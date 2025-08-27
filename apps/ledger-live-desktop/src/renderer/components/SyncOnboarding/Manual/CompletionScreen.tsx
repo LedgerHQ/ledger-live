@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -8,7 +8,6 @@ import {
   setHasRedirectedToPostOnboarding,
   setLastOnboardedDevice,
 } from "~/renderer/actions/settings";
-
 import StaxCompletionView from "./StaxCompletionView";
 import EuropaCompletionView from "./EuropaCompletionView";
 import ApexCompletionView from "./ApexCompletionView";
@@ -17,16 +16,14 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useHistory } from "react-router";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 
-const COMPLETION_SCREEN_TIMEOUT = 6000;
+const COMPLETION_SCREEN_TIMEOUT = 6_000;
 
-const CompletionScreen = () => {
+export default function CompletionScreen() {
   const dispatch = useDispatch();
   const history = useHistory();
-
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const device = currentDevice || lastSeenDevice;
-
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
 
   useEffect(() => {
@@ -36,11 +33,12 @@ const CompletionScreen = () => {
     dispatch(setLastOnboardedDevice(currentDevice));
     const timeout = setTimeout(redirectToPostOnboarding, COMPLETION_SCREEN_TIMEOUT);
     return () => {
+      console.log("Cleanup");
       clearTimeout(timeout);
     };
   }, [currentDevice, dispatch, history, redirectToPostOnboarding]);
 
-  const onboardingSuccessView = () => {
+  const onboardingSuccessView = useMemo(() => {
     switch (device?.modelId) {
       case DeviceModelId.stax:
         return <StaxCompletionView />;
@@ -51,13 +49,11 @@ const CompletionScreen = () => {
       default:
         return null;
     }
-  };
+  }, [device?.modelId]);
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      {onboardingSuccessView()}
+      {onboardingSuccessView}
     </Flex>
   );
-};
-
-export default CompletionScreen;
+}
