@@ -93,7 +93,6 @@ import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
-import SplashScreen from "react-native-splash-screen";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -237,11 +236,6 @@ function App() {
 
 function RebootProvider({ children }: { children: React.ReactNode }) {
   const rebootId = useSelector(rebootIdSelector);
-
-  useEffect(() => {
-    SplashScreen.show(); // on iOS it seems to not be exposed
-  }, [rebootId]);
-
   return <React.Fragment key={rebootId}>{children}</React.Fragment>;
 }
 
