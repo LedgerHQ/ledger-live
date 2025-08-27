@@ -55,7 +55,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test:debug": "node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   },
@@ -71,7 +71,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "1.7.7",
+    "axios": "1.11.0",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "ethers": "5.7.2",

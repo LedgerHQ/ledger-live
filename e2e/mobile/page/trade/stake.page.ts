@@ -3,6 +3,7 @@ import invariant from "invariant";
 export default class StakePage {
   celoLockAmountInput = "celo-lock-amount-input";
   searchPoolInput = "delegation-search-pool-input";
+  selectAssetTitle = "select-asset-drawer-title";
 
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;
@@ -99,5 +100,11 @@ export default class StakePage {
   @Step("Set Celo lock amount")
   async setCeloLockAmount(amount: string) {
     await typeTextById(this.celoLockAmountInput, amount);
+  }
+
+  @Step("Verify choose asset page is visible")
+  async verifyChooseAssetPage() {
+    await waitForElementById(this.selectAssetTitle);
+    await detoxExpect(app.common.searchBar()).toBeVisible();
   }
 }

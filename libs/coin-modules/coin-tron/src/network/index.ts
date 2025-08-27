@@ -573,7 +573,7 @@ export async function fetchTronAccountTxs(
 
   // Merge the two results
   function mergeAccs(acc1: Acc, acc2: Acc): Acc {
-    assert(acc1.txs.length == acc2.txs.length, "accs should have the same length");
+    assert(acc1.txs.length === acc2.txs.length, "accs should have the same length");
     const accRet: Acc = { txs: acc1.txs, invalids: [] };
     acc1.invalids.forEach(invalidIndex => {
       acc2.invalids.includes(invalidIndex)
@@ -595,7 +595,7 @@ export async function fetchTronAccountTxs(
       invalids: getInvalidTxIndexes(ret),
     };
     const newAcc = acc ? mergeAccs(acc, thisAcc) : thisAcc;
-    if (newAcc.invalids.length == 0) {
+    if (newAcc.invalids.length === 0) {
       return newAcc.txs;
     } else {
       log(

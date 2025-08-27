@@ -478,6 +478,12 @@ export enum ScreenName {
   CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
+  HederaAssociateTokenSelectToken = "HederaAssociateTokenSelectToken",
+  HederaAssociateTokenSummary = "HederaAssociateTokenSummary",
+  HederaAssociateTokenSelectDevice = "HederaAssociateTokenSelectDevice",
+  HederaAssociateTokenConnectDevice = "HederaAssociateTokenConnectDevice",
+  HederaAssociateTokenValidationError = "HederaAssociateTokenValidationError",
+  HederaAssociateTokenValidationSuccess = "HederaAssociateTokenValidationSuccess",
   // near
   NearStakingValidator = "NearStakingValidator",
   NearStakingValidatorSelect = "NearStakingValidatorSelect",
@@ -521,6 +527,25 @@ export enum ScreenName {
   AptosWithdrawingConnectDevice = "AptosWithdrawingConnectDevice",
   AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
   AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
+
+  // sui
+  SuiStakingValidator = "SuiStakingValidator",
+  SuiStakingValidatorSelect = "SuiStakingValidatorSelect",
+  SuiStakingAmount = "SuiStakingAmount",
+  SuiUnstakingAmount = "SuiUnstakingAmount",
+  SuiWithdrawingAmount = "SuiWithdrawingAmount",
+  SuiStakingSelectDevice = "SuiStakingSelectDevice",
+  SuiStakingConnectDevice = "SuiStakingConnectDevice",
+  SuiStakingValidationError = "SuiStakingValidationError",
+  SuiStakingValidationSuccess = "SuiStakingValidationSuccess",
+  SuiUnstakingSelectDevice = "SuiUnstakingSelectDevice",
+  SuiUnstakingConnectDevice = "SuiUnstakingConnectDevice",
+  SuiUnstakingValidationError = "SuiUnstakingValidationError",
+  SuiUnstakingValidationSuccess = "SuiUnstakingValidationSuccess",
+  SuiWithdrawingSelectDevice = "SuiWithdrawingSelectDevice",
+  SuiWithdrawingConnectDevice = "SuiWithdrawingConnectDevice",
+  SuiWithdrawingValidationError = "SuiWithdrawingValidationError",
+  SuiWithdrawingValidationSuccess = "SuiWithdrawingValidationSuccess",
 
   Newsfeed = "Newsfeed",
 
@@ -676,6 +701,11 @@ export enum NavigatorName {
   AptosUnstakingFlow = "AptosUnstakingFlow",
   AptosWithdrawingFlow = "AptosWithdrawingFlow",
   AptosRestakingFlow = "AptosRestakingFlow",
+  // Hedera
+  HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
+  // SUI
+  SuiDelegateFlow = "SuiDelegationFlow",
+  SuiUndelegateFlow = "SuiUndelegateFlow",
 
   // Tab
   Main = "Main",

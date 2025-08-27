@@ -52,9 +52,17 @@ function BackToInternalDomain({
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+  const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
 
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
+
+    if (!isStateValid) {
+      navigation.getParent()?.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+      });
+      return;
+    }
 
     if (manifestId) {
       const [lastScreen = "", flowName = ""] = await Promise.all([
@@ -85,10 +93,16 @@ function BackToInternalDomain({
         provider: currentHostname,
         flow: flowName,
       });
-
       navigation.goBack();
     }
   };
+
+  const buttonLabel = useMemo(() => {
+    if (!isStateValid) {
+      return t("common.back");
+    }
+    return t("common.backTo", { to: btnText });
+  }, [isStateValid, t, btnText]);
 
   return (
     <View style={styles.headerLeft}>
@@ -96,7 +110,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: btnText })}
+            {buttonLabel}
           </Text>
         </Flex>
       </TouchableOpacity>

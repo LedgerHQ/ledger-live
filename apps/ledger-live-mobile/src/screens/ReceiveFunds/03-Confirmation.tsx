@@ -28,6 +28,7 @@ import { ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
 import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
+import byFamilyTokenAlert from "../../generated/ReceiveConfirmationTokenAlert";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
@@ -311,12 +312,25 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         : null;
   }
 
+  let CustomConfirmationTokenAlert;
+  if (
+    currency.type === "TokenCurrency" &&
+    Object.keys(byFamilyTokenAlert).includes(currency.parentCurrency.family)
+  ) {
+    CustomConfirmationTokenAlert =
+      byFamilyTokenAlert[currency.parentCurrency.family as keyof typeof byFamilyTokenAlert];
+  }
+
   const isAnAccount = account.type === "Account";
   const isUTXOCompliantCurrency = isAnAccount && isUTXOCompliant(account.currency.family);
 
   return (
     <Flex flex={1}>
-      <NavigationScrollView testID="receive-screen-scrollView" style={{ flex: 1 }}>
+      <NavigationScrollView
+        testID="receive-screen-scrollView"
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
+      >
         <TrackScreen
           category="Deposit"
           name="Receive Account Qr Code"
@@ -440,6 +454,13 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             </Text>
           </Flex>
           {CustomConfirmationAlert && <CustomConfirmationAlert mainAccount={mainAccount} />}
+          {CustomConfirmationTokenAlert && currency.type === "TokenCurrency" && (
+            <CustomConfirmationTokenAlert
+              account={account}
+              mainAccount={mainAccount}
+              token={currency}
+            />
+          )}
         </Flex>
       </NavigationScrollView>
       {displayBanner && (

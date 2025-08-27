@@ -55,7 +55,13 @@ export function EvmStakingDrawerProvider({ provider, onProviderPress }: Props) {
         />
         <Flex rowGap={2} alignItems="flex-start" flex={3}>
           <Flex flexDirection="column" flex={1} alignItems="flex-start">
-            <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
+            <Text
+              variant="bodyLineHeight"
+              fontSize={14}
+              fontWeight="semiBold"
+              mr={2}
+              testID={`staking-provider-${provider.id}-title`}
+            >
               {displayName}
             </Text>
             <Text variant="paragraph" fontSize={13} color="neutral.c70">

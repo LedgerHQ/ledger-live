@@ -2,9 +2,9 @@ import type { RefObject } from "react";
 import type { View } from "react-native";
 
 export type InViewOptions = {
+  intervalDuration?: number;
   inViewThreshold?: number;
   outOfViewThreshold?: number;
-  interval?: number;
 };
 
 export type InViewContext = {
@@ -13,12 +13,12 @@ export type InViewContext = {
 };
 
 export type WatchedItem = {
-  target: RefObject<View>;
   onInViewUpdate: (entry: InViewEntry) => void;
+  target: RefObject<View>;
 };
 
 export type InViewEntry = {
   boundingClientRect: { x: number; y: number; width: number; height: number };
-  progressRatio: number;
   isInView: boolean;
+  progressRatio: number;
 };

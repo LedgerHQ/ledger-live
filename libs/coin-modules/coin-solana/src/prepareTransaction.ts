@@ -1,4 +1,3 @@
-import { getTokenById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   InvalidAddress,
@@ -82,6 +81,7 @@ import { TokenAccountInfo } from "./network/chain/account/token";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -374,7 +374,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
-  const token = getTokenById(model.uiState.tokenId);
+  const token = getCryptoAssetsStore().getTokenById(model.uiState.tokenId);
   const mint = token.contractAddress;
   const tokenProgram = await getMaybeTokenMintProgram(mint, api);
 
@@ -1039,7 +1039,7 @@ function isValidStakeCreateAccountCommandDescriptor(
   if (
     commandDescriptor &&
     txCommand?.amount &&
-    txCommand.amount == amount &&
+    txCommand.amount === amount &&
     txCommand.stakeAccRentExemptAmount &&
     txCommand.fromAccAddress &&
     txCommand.stakeAccAddress &&

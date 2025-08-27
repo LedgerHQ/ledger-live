@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -18,6 +18,7 @@ import {
 import { ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import fc from "fast-check";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
 import * as getTransactionStatusModule from "../../bridge/getTransactionStatus";
 import {
@@ -32,6 +33,7 @@ import {
   getMinEip1559Fees,
   getMinLegacyFees,
 } from "../../editTransaction/getMinEditTransactionFees";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 const {
   default: getTransactionStatus,
@@ -41,7 +43,8 @@ const {
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
-const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const tokenAccount = makeTokenAccount("0xkvn", usdCoinTokenData as TokenCurrency);
 const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 const legacyTx: EvmTransactionLegacy = {
   amount: new BigNumber(100),

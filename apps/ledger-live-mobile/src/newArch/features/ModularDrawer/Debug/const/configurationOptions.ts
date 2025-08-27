@@ -1,22 +1,23 @@
-export const assetLeftOptions = [
-  { label: "Undefined", value: "undefined" },
-  { label: "APY", value: "apy" },
-  { label: "Price Variation", value: "priceVariation" },
-];
+import {
+  assetsLeftElementOptions,
+  assetsRightElementOptions,
+  networksLeftElementOptions,
+  networksRightElementOptions,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
-export const assetRightOptions = [
-  { label: "Undefined", value: "undefined" },
-  { label: "Balance", value: "balance" },
-  { label: "Market Trend", value: "marketTrend" },
-];
+const toHumanLabel = (value: string): string => {
+  if (value === "undefined") return "Undefined";
+  const withSpaces = value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ");
+  return withSpaces
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+};
 
-export const networkLeftOptions = [
-  { label: "Undefined", value: "undefined" },
-  { label: "Number of Accounts", value: "numberOfAccounts" },
-  { label: "Number of Accounts and APY", value: "numberOfAccountsAndApy" },
-];
+const toPickerOptions = <T extends readonly string[]>(values: T) =>
+  values.map(v => ({ label: toHumanLabel(v), value: v }));
 
-export const networkRightOptions = [
-  { label: "Undefined", value: "undefined" },
-  { label: "Balance", value: "balance" },
-];
+export const assetLeftOptions = toPickerOptions(assetsLeftElementOptions);
+export const assetRightOptions = toPickerOptions(assetsRightElementOptions);
+export const networkLeftOptions = toPickerOptions(networksLeftElementOptions);
+export const networkRightOptions = toPickerOptions(networksRightElementOptions);

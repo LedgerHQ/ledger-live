@@ -202,7 +202,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "SENDING": "Sending",
-      "BURN": "Burned"
+      "BURN": "Burned",
+      "ASSOCIATE_TOKEN": "Associate token"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -4282,6 +4283,106 @@
       }
     }
   },
+  "sui": {
+    "account": {
+      "stakedBalance": "Delegated asset",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "availableBalance": "Withdawable balance",
+      "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
+      "storageUsageBalance": "Minimum balance",
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The SUI token is now available on Ledger Live",
+        "description": "You can now start to manage your SUI tokens and secure them through Ledger Live.",
+        "description2": "The SUI token is native to the SUI chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Delegated amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn Sui rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "staked": "Delegated",
+        "pending": "Pending Release",
+        "available": "Withdrawable"
+      },
+      "unstake": "Undelegate",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Delegated amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Delegation",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
+            "warning": "Once undelegated your balance and accrued rewards will be immediately cashed in",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to undelegate"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets.",
+              "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -4799,6 +4900,10 @@
         "testEuropaPostonboarding": {
           "title": "Test Europa Post Onboarding",
           "description": "Test all europa post onboarding features"
+        },
+        "testApexPostonboarding": {
+          "title": "Test Apex Post Onboarding",
+          "description": "Test all apex post onboarding features"
         },
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
@@ -6715,6 +6820,18 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
+    "HederaInsufficientFundsForAssociation": {
+      "title": "Insufficient balance",
+      "description": "Not enough HBAR to pay for the token association. At least ${{requiredWorthInUSD}} worth of HBAR is required."
+    },
+    "HederaRecipientTokenAssociationRequired": {
+      "title": "Token association required",
+      "description": "The token you’re trying to send is not associated with the destination account. It needs to be associated by the recipient account to be received."
+    },
+    "HederaRecipientTokenAssociationUnverified": {
+      "title": "Unable to verify token association",
+      "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -6848,6 +6965,18 @@
       "getHelp": "Get Help",
       "technicalErrorTitle": "Technical error : ",
       "saveLogs": "Save logs"
+    },
+    "OneSuiMinForStake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft": {
+      "title": "At least 1 SUI should be left in stake"
+    },
+    "SomeSuiForUnstake": {
+      "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
     },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
@@ -7000,10 +7129,54 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
+    "receive": {
+      "warnings": {
+        "associationPrerequisite": {
+          "text": "In order to receive HTS tokens, your account needs to be associated. If you did not already associate your account with the HTS token that you want to receive, <0>click here</0> to start the token association flow.",
+          "learnMore": "Learn more"
+        },
+        "associationRequired": {
+          "text": "By clicking Continue you will associate the selected token to your Hedera account.",
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "receiveWithAssociation": {
+      "steps": {
+        "associationConfirmation": {
+          "breadcrumbTitle": "Associate",
+          "title": "Associate Token",
+          "pending": {
+            "title": "Broadcasting transaction..."
+          },
+          "success": {
+            "title": "Transaction sent",
+            "description": "You will be able to receive this token once the Associate Token transaction has been confirmed",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
     "send": {
       "memo": {
         "label": "Memo (optional)",
         "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings": {
+        "missingAssociation": {
+          "learnMore": "Learn more"
+        },
+        "unverifiedAssociation": {
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "operationDetails": {
+      "postAccountSection": "Associated token",
+      "postAlert": {
+        "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
+        "learnMore": "Learn more"
       }
     }
   },

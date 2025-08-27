@@ -448,7 +448,7 @@ export class CosmosAPI {
   }> {
     let cosmosSDKVersion = await this.cosmosSDKVersion;
     const coerceResult = semver.coerce(cosmosSDKVersion);
-    if (coerceResult != null) {
+    if (coerceResult !== null) {
       cosmosSDKVersion = coerceResult.version;
     }
     let queryparam = "events";
@@ -457,7 +457,7 @@ export class CosmosAPI {
     }
     let serializedOptions = "";
     for (const key of Object.keys(options) as Array<keyof typeof options>) {
-      serializedOptions += options[key] != null ? `&${key}=${options[key]}` : "";
+      serializedOptions += key in options ? `&${key}=${options[key]}` : "";
     }
     const { data } = await network<CosmosSDKTypes.GetTxsEvents>({
       method: "GET",
@@ -494,7 +494,7 @@ export class CosmosAPI {
       },
     });
 
-    if (txResponse.code != 0) {
+    if (txResponse.code !== 0) {
       // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
       // Handle cosmos sequence mismatch error(error code 32) because the backend returns a wrong sequence sometimes
       // This is a temporary fix until we have a better backend

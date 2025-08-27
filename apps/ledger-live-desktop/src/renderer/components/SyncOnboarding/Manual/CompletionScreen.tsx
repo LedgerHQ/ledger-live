@@ -11,6 +11,7 @@ import {
 
 import StaxCompletionView from "./StaxCompletionView";
 import EuropaCompletionView from "./EuropaCompletionView";
+import ApexCompletionView from "./ApexCompletionView";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useHistory } from "react-router";
@@ -39,13 +40,22 @@ const CompletionScreen = () => {
     };
   }, [currentDevice, dispatch, history, redirectToPostOnboarding]);
 
+  const onboardingSuccessView = () => {
+    switch (device?.modelId) {
+      case DeviceModelId.stax:
+        return <StaxCompletionView />;
+      case DeviceModelId.europa:
+        return <EuropaCompletionView />;
+      case DeviceModelId.apex:
+        return <ApexCompletionView />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      {device?.modelId === DeviceModelId.stax ? (
-        <StaxCompletionView />
-      ) : device ? (
-        <EuropaCompletionView device={device} />
-      ) : null}
+      {onboardingSuccessView()}
     </Flex>
   );
 };

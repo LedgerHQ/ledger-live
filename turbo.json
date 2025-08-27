@@ -101,6 +101,11 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "start:msw": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "unimported": {
       "cache": false
     },
@@ -142,7 +147,8 @@
       "persistent": true
     },
     "coverage": {
-      "cache": false
+      "dependsOn": ["^build", "build"],
+      "outputs": ["coverage/lcov.info", "coverage/sonar-executionTests-report.xml"]
     },
     "clean": {
       "cache": false

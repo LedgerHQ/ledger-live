@@ -1,4 +1,4 @@
-import { parseToBigNumber } from "../parseToBigNumber";
+import { parseToBigNumber } from "@ledgerhq/live-common/modularDrawer/utils/parseToBigNumber";
 import BigNumber from "bignumber.js";
 
 describe("parseToBigNumber", () => {

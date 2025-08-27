@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { View, StyleSheet, Linking, TouchableOpacity, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
@@ -44,21 +44,40 @@ export default function StellarFeeRow({
   setTransaction,
 }: Props) {
   const { colors } = useTheme();
+  const [customSelected, setCustomSelected] = useState<boolean | null>(null);
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
+
+  const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(mainAccount);
+  const fees = transaction.family === "stellar" ? transaction.fees : null;
+  const [estimatedFees, setEstimatedFees] = useState(fees || null);
+
+  useEffect(() => {
+    if (transaction.family === "stellar" && unit) {
+      const fetchEstimatedFees = async () => {
+        const preparedTransaction = await bridge.prepareTransaction(account as Account, {
+          ...transaction,
+          customFees: { parameters: { fees: null } },
+        });
+        setEstimatedFees(preparedTransaction.fees);
+      };
+
+      fetchEstimatedFees();
+    }
+  }, [bridge, transaction, account, mainAccount, unit]);
+
   if (transaction.family !== "stellar" || !unit) return null;
-  const bridge = getAccountBridge(account, parentAccount);
-  const suggestedFee = transaction.networkInfo?.fees;
-  const fees = transaction.fees;
-  const isCustomFee = fees && suggestedFee ? !fees.eq(suggestedFee) : false;
+  const isCustomFee = fees && estimatedFees ? !fees.eq(estimatedFees) : false;
+  const isCustom = customSelected ?? isCustomFee;
 
   const currency = getAccountCurrency(account);
 
-  const onFeeModeChange = (isCustom: boolean) => {
-    if (isCustom) {
+  const onFeeModeChange = (selectCustom: boolean) => {
+    setCustomSelected(selectCustom);
+    if (selectCustom) {
       navigation.navigate(ScreenName.StellarEditCustomFees, {
         ...route.params,
         accountId: account.id,
@@ -67,7 +86,8 @@ export default function StellarFeeRow({
     } else {
       setTransaction(
         bridge.updateTransaction(transaction, {
-          fees: suggestedFee,
+          fees: estimatedFees,
+          customFees: { parameters: { fees: estimatedFees } },
         }),
       );
     }
@@ -135,13 +155,13 @@ export default function StellarFeeRow({
       <SafeAreaView style={styles.feesPickerContainer}>
         <FeeItem
           label={<Trans i18nKey="stellar.suggested" />}
-          isSelected={!isCustomFee}
-          fee={suggestedFee}
+          isSelected={!isCustom}
+          fee={estimatedFees}
           onSelect={() => onFeeModeChange(false)}
         />
         <FeeItem
           label={<Trans i18nKey="fees.speed.custom" />}
-          isSelected={isCustomFee}
+          isSelected={isCustom}
           fee={isCustomFee ? fees : null}
           onSelect={() => onFeeModeChange(true)}
         />

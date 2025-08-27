@@ -1,3 +1,10 @@
 {
-  "entry": ["src/index.ts"]
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": [],
+  "ignoreUnimported": [
+    "src/crypto-assets/type.ts"
+  ]
 }
