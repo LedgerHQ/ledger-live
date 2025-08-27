@@ -191,14 +191,22 @@ jobs:
           THREAD_TS: ${{ fromJSON(steps.post_parent.outputs.response).ts }}
           SUMMARY_TEXT: ${{ needs.integ-tests.outputs.summary_text || 'no details found' }}
         run: |
-          # If you want to neutralize backticks so bash/Slack never misreads them:
-          SAFE_SUMMARY=$(printf '%s' "$SUMMARY_TEXT" | sed 's/`/′/g')
+          set -euo pipefail
 
+          header="*Failed coins (one-liners):*\n"
+
+          # Optional: replace backticks with a harmless prime to avoid accidental formatting
+          safe_summary=$(printf '%s' "$SUMMARY_TEXT" | sed 's/`/′/g')
+
+          # Combine header + summary into one string for jq to JSON-escape
+          combined="${header}${safe_summary}"
+
+          # Build JSON payload safely
           jq -n \
             --arg ch "C05FKJ7DFAP" \
             --arg ts "$THREAD_TS" \
-            --arg tx "$SAFE_SUMMARY" \
-            '{channel:$ch, thread_ts:$ts, text:"*Failed coins (one-liners):*\n" + $tx}' \
+            --arg text "$combined" \
+            '{channel:$ch, thread_ts:$ts, text:$text}' \
             > slack-thread-payload.json
 
       - uses: slackapi/slack-github-action@v2.0.0
