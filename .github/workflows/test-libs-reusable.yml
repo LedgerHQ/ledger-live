@@ -52,7 +52,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./libs/**" --filter="!./libs/ui/**"
+        run: pnpm i --filter="./libs/**"
 
       - name: Run coverage on appropriate libraries
         run: |
