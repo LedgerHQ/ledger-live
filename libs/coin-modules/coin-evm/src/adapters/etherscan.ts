@@ -6,7 +6,6 @@ import {
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import {
@@ -17,6 +16,7 @@ import {
   EtherscanInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -82,7 +82,10 @@ export const etherscanERC20EventToOperations = (
   index = 0,
 ): Operation[] => {
   const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = findTokenByAddressInCurrency(event.contractAddress, currencyId);
+  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
+    event.contractAddress,
+    currencyId,
+  );
   if (!tokenCurrency) return [];
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);

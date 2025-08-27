@@ -323,7 +323,7 @@ export async function fetchOperations({
 
     // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
     const nextCursor =
-      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+      filteredOps.length === rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
 
     return [filteredOps, nextCursor];
   } catch (e: unknown) {
@@ -396,14 +396,18 @@ export async function fetchSigners(account: string): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
-  patchHermesTypedArraysIfNeeded();
-  const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
-  // Immediately restore
-  unpatchHermesTypedArrays();
-  const res = await getServer().submitTransaction(transaction, {
-    skipMemoRequiredCheck: true,
-  });
-  return res.hash;
+  try {
+    patchHermesTypedArraysIfNeeded();
+    const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+
+    const res = await getServer().submitTransaction(transaction, {
+      skipMemoRequiredCheck: true,
+    });
+    return res.hash;
+  } finally {
+    // Restore
+    unpatchHermesTypedArrays();
+  }
 }
 
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {

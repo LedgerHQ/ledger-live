@@ -47,6 +47,10 @@ export class LiveConfig {
     LiveConfig.instance.config = config;
   }
 
+  static isConfigSet() {
+    return Object.keys(LiveConfig.instance.config).length > 0;
+  }
+
   static getValueByKey(key: string) {
     if (Object.keys(LiveConfig.instance.config).length === 0) {
       throw new Error("Config not set");

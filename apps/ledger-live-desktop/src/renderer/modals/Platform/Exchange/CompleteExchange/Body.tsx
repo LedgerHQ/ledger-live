@@ -7,7 +7,7 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,9 +21,10 @@ import { BodyContent } from "./BodyContent";
 export enum ExchangeModeEnum {
   Sell = "sell",
   Swap = "swap",
+  Fund = "fund",
 }
 
-export type ExchangeMode = "sell" | "swap";
+export type ExchangeMode = "sell" | "swap" | "fund" | "legacy";
 
 export type Data = {
   provider: string;
@@ -55,6 +56,39 @@ export function isCompleteExchangeData(data: unknown): data is Data {
     return false;
   }
   return "signature" in data && "binaryPayload" in data;
+}
+
+function getExchangeMode({
+  exchangeType,
+  swapId,
+  toAccount,
+  magnitudeAwareRate,
+  sourceCurrency,
+  targetCurrency,
+}: {
+  exchangeType: ExchangeType;
+  swapId?: string;
+  toAccount?: AccountLike;
+  magnitudeAwareRate?: BigNumber;
+  sourceCurrency: CryptoOrTokenCurrency | null;
+  targetCurrency: CryptoOrTokenCurrency | null;
+}): ExchangeMode {
+  if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
+    return "swap";
+  }
+
+  if (
+    (exchangeType === ExchangeType.SELL || exchangeType === ExchangeType.SELL_NG) &&
+    sourceCurrency
+  ) {
+    return "sell";
+  }
+
+  if (exchangeType === ExchangeType.FUND && sourceCurrency) {
+    return "fund";
+  }
+
+  return "legacy"; // Fallback for old platform exchange flow
 }
 
 const Root = styled.div`
@@ -177,13 +211,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     [dispatch, exchange, transactionParams, provider],
   );
 
-  const getResultByTransactionType = (
-    isSwapTransaction: "" | CryptoOrTokenCurrency | null | undefined,
-  ) => {
+  const getResultByTransactionType = (isSwapTransaction: boolean, mode: ExchangeMode) => {
     return isSwapTransaction
       ? {
           swapId,
-          mode: ExchangeModeEnum.Swap,
+          mode,
           provider,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
@@ -192,7 +224,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         }
       : {
           provider,
-          mode: ExchangeModeEnum.Sell,
+          mode,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
         };
@@ -220,20 +252,22 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     handleTransactionResult(result, operation);
   };
 
-  const handleSellTransaction = (operation: Operation, result: ResultsState) => {
-    handleTransactionResult(result, operation);
-  };
-
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      const isSwapTransaction =
-        swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency;
+      const exchangeMode = getExchangeMode({
+        exchangeType: data.exchangeType,
+        swapId,
+        toAccount,
+        magnitudeAwareRate,
+        sourceCurrency,
+        targetCurrency,
+      });
 
-      const isSellTransaction =
-        (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
-        sourceCurrency;
+      const isSwapTransaction = exchangeMode === "swap";
+      const isSellTransaction = exchangeMode === "sell";
+      const isFundTransaction = exchangeMode === "fund";
 
-      const result = getResultByTransactionType(isSwapTransaction);
+      const result = getResultByTransactionType(isSwapTransaction, exchangeMode);
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         if (!isSwapTransaction) {
@@ -248,8 +282,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
       if (isSwapTransaction) {
         handleSwapTransaction(operation, result);
-      } else if (isSellTransaction) {
-        handleSellTransaction(operation, result);
+      } else if (isSellTransaction || isFundTransaction) {
+        handleTransactionResult(result, operation);
       } else {
         // old platform exchange flow
         onResult(operation);

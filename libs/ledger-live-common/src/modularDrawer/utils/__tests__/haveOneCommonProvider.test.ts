@@ -1,8 +1,8 @@
 import { haveOneCommonProvider } from "../haveOneCommonProvider";
 import { useGroupedCurrenciesByProvider } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { LoadingBasedGroupedCurrencies } from "../../../deposit/type";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
+jest.mock("../../../deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
 

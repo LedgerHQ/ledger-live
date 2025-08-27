@@ -1,0 +1,50 @@
+{
+  "type": "TokenCurrency",
+  "id": "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+  "contractAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "parentCurrency": {
+    "type": "CryptoCurrency",
+    "id": "solana",
+    "coinType": 501,
+    "name": "Solana",
+    "managerAppName": "Solana",
+    "ticker": "SOL",
+    "scheme": "solana",
+    "color": "#000",
+    "family": "solana",
+    "units": [
+      {
+        "name": "SOL",
+        "code": "SOL",
+        "magnitude": 9
+      },
+      {
+        "name": "lamports",
+        "code": "lamports",
+        "magnitude": 0
+      }
+    ],
+    "explorerViews": [
+      {
+        "address": "https://explorer.solana.com/address/$address",
+        "tx": "https://explorer.solana.com/tx/$hash"
+      },
+      {
+        "address": "https://solanabeach.io/address/$address",
+        "tx": "https://solanabeach.io/transaction/$hash"
+      }
+    ],
+    "keywords": ["sol", "solana"]
+  },
+  "name": "USD Coin",
+  "tokenType": "spl",
+  "ticker": "USDC",
+  "disableCountervalue": false,
+  "units": [
+    {
+      "name": "USD Coin",
+      "code": "USDC",
+      "magnitude": 6
+    }
+  ]
+}

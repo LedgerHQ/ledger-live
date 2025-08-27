@@ -46,6 +46,7 @@ import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/comp
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
+import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -53,6 +54,8 @@ import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { SuiStakingFlowParamList } from "~/families/sui/StakingFlow/types";
+import { SuiUnstakingFlowParamList } from "~/families/sui/UnstakingFlow/types";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -104,10 +107,16 @@ type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
   | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
   | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>
+  | StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingConnectDevice>
+  | StackNavigatorProps<SuiUnstakingFlowParamList, ScreenName.SuiUnstakingConnectDevice>
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
-  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>;
+  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
+  | StackNavigatorProps<
+      HederaAssociateTokenFlowParamList,
+      ScreenName.HederaAssociateTokenConnectDevice
+    >;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

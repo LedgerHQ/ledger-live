@@ -9,8 +9,9 @@ type Props = {
   disabled: boolean;
   onSuccess: () => void;
   onError: (_: Error) => void;
+  onCancel?: () => void;
 };
-export function useBiometricAuth({ disabled, onSuccess, onError }: Props) {
+export function useBiometricAuth({ disabled, onSuccess, onError, onCancel }: Props) {
   const pending = useRef(false);
   const { t } = useTranslation();
   const auth = useCallback(async () => {
@@ -27,13 +28,17 @@ export function useBiometricAuth({ disabled, onSuccess, onError }: Props) {
 
         if (success) {
           onSuccess();
+        } else {
+          onCancel?.();
         }
-        pending.current = false;
       })
       .catch((e: Error) => {
         onError(e);
+      })
+      .finally(() => {
+        pending.current = false;
       });
-  }, [onError, onSuccess, t]);
+  }, [onError, onSuccess, onCancel, t]);
   useEffect(() => {
     if (disabled) {
       return;

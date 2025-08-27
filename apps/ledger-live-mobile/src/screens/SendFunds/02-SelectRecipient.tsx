@@ -42,6 +42,7 @@ import { useMemoTagInput } from "LLM/features/MemoTag/hooks/useMemoTagInput";
 import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import perFamilySendSelectRecipient from "../../generated/SendSelectRecipient";
 import {
   getTokenExtensions,
   hasProblematicExtension,
@@ -241,7 +242,18 @@ export default function SendSelectRecipient({ route }: Props) {
       !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
   );
 
+  const specific =
+    perFamilySendSelectRecipient[
+      mainAccount.currency.family as keyof typeof perFamilySendSelectRecipient
+    ];
+  const CustomRecipientAlert =
+    specific && "StepRecipientCustomAlert" in specific ? specific.StepRecipientCustomAlert : null;
+  const customSendRecipientCanNext =
+    specific && "sendRecipientCanNext" in specific ? specific.sendRecipientCanNext : null;
+
+  const customValidationSuccess = customSendRecipientCanNext?.(status) ?? true;
   const isContinueDisabled =
+    !customValidationSuccess ||
     debouncedBridgePending ||
     !!status.errors.recipient ||
     memoTag?.isDebouncePending ||
@@ -360,6 +372,12 @@ export default function SendSelectRecipient({ route }: Props) {
               />
             )}
 
+            {CustomRecipientAlert && (
+              <View style={styles.customRecipientAlertContainer}>
+                <CustomRecipientAlert status={status} />
+              </View>
+            )}
+
             {memoTag?.Input && (
               <View style={styles.memoTagInputContainer}>
                 <memoTag.Input
@@ -467,7 +485,12 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: "transparent",
   },
-  memoTagInputContainer: { marginTop: 32 },
+  customRecipientAlertContainer: {
+    marginTop: 8,
+  },
+  memoTagInputContainer: {
+    marginTop: 32,
+  },
   infoBox: {
     marginTop: 24,
     paddingBottom: 24,

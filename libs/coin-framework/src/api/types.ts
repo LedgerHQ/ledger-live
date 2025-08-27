@@ -71,9 +71,6 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
-  networkInfo?: {
-    fees?: bigint;
-  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 /**
@@ -301,7 +298,6 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   expiration?: number;
   recipient: string;
   amount: bigint;
-  fees?: bigint | null | undefined; // Optional, depending on the API
   useAllAmount?: boolean;
   asset: AssetInfo;
   sequence?: number;
@@ -420,6 +416,7 @@ export type ChainSpecificRules = {
 export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType>,
+    customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;

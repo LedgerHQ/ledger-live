@@ -178,6 +178,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               currencies: allCurrencies,
               enableAccountSelection: true,
               onAccountSelected: onSuccess,
+              flow: manifest.name,
+              source:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current ?? "Unknown",
             });
           } else {
             if (currenciesDiff.length === 1) {

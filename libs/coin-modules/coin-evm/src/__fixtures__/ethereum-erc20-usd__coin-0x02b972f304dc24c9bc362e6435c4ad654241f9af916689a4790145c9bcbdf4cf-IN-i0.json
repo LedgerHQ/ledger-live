@@ -1,0 +1,20 @@
+{
+    "accountId": "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+    "blockHash": "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
+    "blockHeight": 16240731,
+    "contract": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "date": "2022-12-22T14:06:23.000Z",
+    "extra": {},
+    "fee": "1595338583295225",
+    "hash": "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
+    "id": "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+js%3A2%3Aethereum%3A0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d%3A%2Bethereum%252Ferc20%252Fusd~!underscore!~~!underscore!~coin~!dash!~0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf~!dash!~OUT~!dash!~i0-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
+    "recipients": [
+      "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"
+    ],
+    "senders": [
+      "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"
+    ],
+    "transactionSequenceNumber": 53,
+    "type": "OUT",
+    "value": "2000000"
+  }

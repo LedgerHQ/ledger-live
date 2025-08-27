@@ -9,11 +9,11 @@ export default React.memo(function ContinueOnEuropa() {
   if (theme === "light") {
     return (
       <svg
+        xmlns="http://www.w3.org/2000/svg"
         width="48"
         height="48"
         viewBox="0 0 48 48"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
       >
         <g clipPath="url(#clip0_15082_6009)">
           <rect width="48" height="48" rx="24" fill="black" fillOpacity="0.1" />
@@ -23,7 +23,7 @@ export default React.memo(function ContinueOnEuropa() {
             fillOpacity="0.4"
           />
           <path
-            d="M35.8082 52.37H36.6546V51.5236V17.8684C36.6546 15.7441 34.9325 14.022 32.8082 14.022H15.5322C13.4079 14.022 11.6859 15.7441 11.6859 17.8684V51.5236V52.37H12.5322H35.8082Z"
+            d="M32.8086 14.0217C34.9327 14.0219 36.6543 15.7442 36.6543 17.8684V52.3704H11.6855V17.8684C11.6855 15.7441 13.4079 14.0217 15.5322 14.0217H32.8086Z"
             fill="black"
             fillOpacity="0.05"
             stroke="#767676"
@@ -54,7 +54,7 @@ export default React.memo(function ContinueOnEuropa() {
     );
   }
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
       <g clipPath="url(#clip0_15009_5922)">
         <rect width="48" height="48" rx="24" fill="white" fillOpacity="0.1" />
         <path
@@ -63,7 +63,7 @@ export default React.memo(function ContinueOnEuropa() {
           fillOpacity="0.4"
         />
         <path
-          d="M35.8082 52.37H36.6546V51.5236V17.8684C36.6546 15.7441 34.9325 14.022 32.8082 14.022H15.5322C13.4079 14.022 11.6859 15.7441 11.6859 17.8684V51.5236V52.37H12.5322H35.8082Z"
+          d="M32.8086 14.0217C34.9327 14.0219 36.6543 15.7442 36.6543 17.8684V52.3704H11.6855V17.8684C11.6855 15.7441 13.4079 14.0217 15.5322 14.0217H32.8086Z"
           fill="white"
           fillOpacity="0.05"
           stroke="#949494"

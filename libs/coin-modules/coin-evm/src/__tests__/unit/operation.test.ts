@@ -1,21 +1,25 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import { getStuckAccountAndOperation, isEditableOperation } from "../../operation";
 import { getCoinConfig } from "../../config";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
+import lobsterTokenData from "../../__fixtures__/cardano-native-8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552.json";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 const ethereum = getCryptoCurrencyById("ethereum");
-const usdc = getTokenById("ethereum/erc20/usd__coin");
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const usdc = usdCoinTokenData as TokenCurrency;
+
 const cardano = getCryptoCurrencyById("cardano");
-const lobster = getTokenById(
-  "cardano/native/8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552",
-);
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const lobster = lobsterTokenData as TokenCurrency;
 
 describe("EVM Family", () => {
   beforeEach(() => {

@@ -2,7 +2,7 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { NetworkInfo } from "./createTransaction";
+import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -16,31 +16,35 @@ export function genericPrepareTransaction(
     account,
     transaction: TransactionCommon & {
       fees: BigNumber | null | undefined;
+      customFees?: FeeEstimation;
       assetReference?: string;
       assetOwner?: string;
       subAccountId?: string;
-      networkInfo?: NetworkInfo | null;
     },
   ) => {
     const [assetReference, assetOwner] = getAssetInfos(transaction);
-    const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(account, {
-        ...transaction,
-        fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
-      }),
-    );
-    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
-    // for reference, stellar checked this:
-    // transaction.networkInfo !== networkInfo ||
-    // transaction.baseReserve !== baseReserve
-    if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
+
+    let fees = transaction.customFees?.parameters?.fees || null;
+    if (fees === null) {
+      fees = (
+        await getAlpacaApi(network, kind).estimateFees(
+          transactionToIntent(account, {
+            ...transaction,
+          }),
+        )
+      ).value;
+    }
+
+    if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
       return {
         ...transaction,
-        fees: new BigNumber(fees.value.toString()),
+        fees: new BigNumber(fees.toString()),
         assetReference,
         assetOwner,
-        networkInfo: {
-          fees: new BigNumber(fees.value.toString()),
+        customFees: {
+          parameters: {
+            fees: new BigNumber(fees.toString()),
+          },
         },
       };
     }

@@ -49,7 +49,14 @@
         "src/renderer/mockServiceWorker.js"
       ],
       "ignoreBinaries": ["eslint", "knip", "prettier", "zx", "lint"],
-      "ignoreDependencies": ["prop-types", "allure-commandline", "msw", "buffer"]
+      "ignoreDependencies": [
+        "prop-types",
+        "allure-commandline",
+        "msw",
+        "buffer",
+        "ws",
+        "@reduxjs/toolkit"
+      ]
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],

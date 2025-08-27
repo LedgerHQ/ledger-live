@@ -83,7 +83,20 @@ export class AptosAPI {
         },
       });
     } else {
-      this.aptosConfig = new AptosConfig(currencyIdOrSettings);
+      // Ensure the header is present when custom settings are provided
+      const settings = { ...currencyIdOrSettings };
+      const existingHeaders = settings.clientConfig?.HEADERS ?? {};
+
+      settings.clientConfig = {
+        ...(settings.clientConfig ?? {}),
+        HEADERS: {
+          ...existingHeaders,
+          // don’t override if caller already provided it
+          "X-Ledger-Client-Version": existingHeaders["X-Ledger-Client-Version"] ?? appVersion,
+        },
+      };
+
+      this.aptosConfig = new AptosConfig(settings);
     }
 
     this.aptosClient = new Aptos(this.aptosConfig);

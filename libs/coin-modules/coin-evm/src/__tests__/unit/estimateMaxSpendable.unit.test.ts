@@ -1,11 +1,12 @@
 import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import { estimateMaxSpendable } from "../../bridge/estimateMaxSpendable";
 import * as nodeApi from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -17,7 +18,8 @@ const currency: CryptoCurrency = {
   } as any,
 };
 const tokenAccount = {
-  ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  ...makeTokenAccount("0xkvn", usdCoinTokenData as TokenCurrency),
   balance: new BigNumber(6969),
 };
 const account = {

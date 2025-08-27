@@ -44,6 +44,10 @@ export function isSpeculosRemote(): boolean {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
+export function isRemoteIos(): boolean {
+  return isSpeculosRemote() && isIos();
+}
+
 export async function addDelayBeforeInteractingWithDevice(
   // TODO: QAA-683
   ciDelay: number = 10_000,
