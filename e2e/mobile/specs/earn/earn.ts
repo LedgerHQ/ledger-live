@@ -72,7 +72,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
     tags.forEach(tag => $Tag(tag));
     it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
       await app.portfolio.openEarnTab();
-      await app.earnDashboard.waitForEarnDashboardToBeReady();
+      await app.earnDashboard.goToEarnMoreTab();
       await app.earnDashboard.clickEarnCurrencyButton(earnButtonId);
       await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
       await app.earnDashboard.goToProviderLiveApp(provider);
@@ -101,7 +101,6 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
     tags.forEach(tag => $Tag(tag));
     it(`Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`, async () => {
       await app.portfolio.openEarnTab();
-      await app.earnDashboard.waitForEarnDashboardToBeReady(staking);
       if (staking) {
         await app.earnDashboard.verifyTotalDeposited();
         await app.earnDashboard.verifyTotalRewardsEarned();
@@ -109,6 +108,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.verifyAmountAvailableToEarn();
       } else {
+        await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.verifyAmountAvailableToEarn();
         await app.earnDashboard.verifyRewardsPotentials();
         await app.earnDashboard.verifyYourEligibleAssets(account, earnButtonId);
