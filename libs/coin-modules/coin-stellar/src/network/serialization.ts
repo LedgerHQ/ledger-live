@@ -7,24 +7,15 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { Horizon } from "@stellar/stellar-sdk";
-import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT, fetchBaseFee } from "./horizon";
 import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
 import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("stellar");
 
-export async function getAccountSpendableBalance(
-  balance: BigNumber,
-  account: Horizon.ServerApi.AccountRecord,
-): Promise<BigNumber> {
-  const minimumBalance = getMinimumBalance(account);
-  const { recommendedFee } = await fetchBaseFee();
-  return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
-}
-
-const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
-  return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
-};
+// Constants
+const BASE_RESERVE_MIN_COUNT = 2;
+export const BASE_RESERVE = 0.5;
+export const MIN_BALANCE = 1;
 
 export function getReservedBalance(account: Horizon.ServerApi.AccountRecord): BigNumber {
   const numOfSponsoringEntries = Number(account.num_sponsoring);
