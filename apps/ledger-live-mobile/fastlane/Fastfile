@@ -486,7 +486,7 @@ platform :android do
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
         },
         project_dir: 'android/',
-        flags: ' -Dorg.gradle.workers.max=1 -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=750m"'
+        flags: ' -Xmx4g -Xms2g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heap-dump -Dfile.encoding=UTF-8'
       )
     end
   end
