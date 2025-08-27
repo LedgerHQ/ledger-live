@@ -50,6 +50,8 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
       workchain: 0,
       publicKey: Buffer.from(publicKey, "hex"),
     }).address.toString({ bounceable: false, urlSafe: true });
+    // update the account info with the correct address
+    info.address = address;
   }
 
   const blockHeight = await fetchLastBlockNumber();
