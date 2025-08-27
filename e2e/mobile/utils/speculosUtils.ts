@@ -11,23 +11,20 @@ import { closeProxy, startProxy } from "../bridge/proxy";
 import { device, log } from "detox";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { isRemoteIos } from "../helpers/commonHelpers";
-import { addKnownSpeculos, removeKnownSpeculos } from "../bridge/server";
+import { addKnownSpeculos, removeKnownSpeculos, findFreePort } from "../bridge/server";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { CLI } from "./cliUtils";
 
-const BASE_PORT = 30000;
-const MAX_PORT = 65535;
-let portCounter = BASE_PORT; // Counter for generating unique ports
 const proxyAddress = "localhost";
 
 export async function launchSpeculos(appName: string) {
-  // Ensure the portCounter stays within the valid port range
-  if (portCounter > MAX_PORT) {
-    portCounter = BASE_PORT;
-  }
-  const speculosPort = portCounter++;
-  const speculosPidOffset =
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
+  // Derive a unique SPECULOS_PID_OFFSET from a free host port to avoid collisions across runs
+  const freeApiPort = await findFreePort();
+  const jestWorkerId = parseInt(process.env.JEST_WORKER_ID || "0", 10);
+  // Offset maps to idCounter; Speculos host ports are computed as 30000 + idCounter (HTTP mode).
+  // Using (freeApiPort - 30000) aligns the mapped API port to the selected free port.
+  // Add a tiny jitter based on worker id to further reduce collision risk.
+  const speculosPidOffset = Math.max(0, freeApiPort - 30000) + jestWorkerId;
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
   const testName = jestExpect.getState().testPath || "unknown";
