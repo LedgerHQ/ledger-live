@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.44.0",
+  "version": "34.45.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -76,11 +76,12 @@
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
+    "ci-test-integration:debug": "env-cmd -f .ci.integration.env node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand --ci --updateSnapshot --passWithNoTests",
     "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests --runInBand",
     "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "test-account-migration": "tsx src/__tests__/migration/account-migration.ts",
     "unimported": "unimported",
-    "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci --updateSnapshot && git diff --exit-code src"
+    "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci --updateSnapshot"
   },
   "files": [
     "lib",
@@ -191,9 +192,9 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
-    "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
@@ -202,6 +203,8 @@
     "@ledgerhq/wallet-api-core": "^1.21.1",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.10.1",
+    "@reduxjs/toolkit": "2.8.2",
+    "@stellar/stellar-sdk": "^14.0.0",
     "@stricahq/typhonjs": "^3.0.0",
     "@taquito/ledger-signer": "^22.0.0",
     "@ton-community/ton-ledger": "^7.2.0",
@@ -219,7 +222,7 @@
     "@zondax/ledger-mina-js": "0.0.2",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",
-    "axios": "1.7.7",
+    "axios": "1.11.0",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
     "bip32": "^2.0.6",
@@ -228,6 +231,7 @@
     "date-fns": "^2.23.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
+    "i18next": "20.6.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "jotai": "2.12.4",

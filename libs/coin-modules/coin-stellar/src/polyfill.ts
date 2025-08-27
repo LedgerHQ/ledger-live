@@ -22,7 +22,10 @@ export function patchHermesTypedArraysIfNeeded() {
   if (global.HermesInternal && !hermesTypedArrayPatched) {
     try {
       log("coin:stellar", "🔵 Patching TypedArray because of Hermes bug");
-      require("@exodus/patch-broken-hermes-typed-arrays");
+      // Only require the module when we're actually running on Hermes
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const fixHermesTypedArrayBug = require("@exodus/patch-broken-hermes-typed-arrays");
+      fixHermesTypedArrayBug();
       hermesTypedArrayPatched = true;
     } catch (e) {
       log("coin:stellar", "Failed to patch typed arrays");

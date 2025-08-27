@@ -1,63 +1,54 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
 import { createBridges } from ".";
 import { getEstimatedFees } from "./utils";
-
-// Balance is 1 Hbar
-const account: Account = {
-  type: "Account",
-  id: "",
-  seedIdentifier: "",
-  derivationMode: "",
-  index: 0,
-  freshAddress: "",
-  freshAddressPath: "",
-  used: false,
-  balance: new BigNumber(100000000),
-  spendableBalance: new BigNumber(0),
-  creationDate: new Date(),
-  blockHeight: 0,
-  currency: {
-    type: "CryptoCurrency",
-    id: "hedera",
-    managerAppName: "",
-    coinType: 0,
-    scheme: "",
-    color: "",
-    family: "",
-    explorerViews: [],
-    name: "",
-    ticker: "",
-    units: [],
-  },
-  operationsCount: 0,
-  operations: [],
-  pendingOperations: [],
-  lastSyncDate: new Date(),
-  balanceHistoryCache: {
-    HOUR: { latestDate: null, balances: [] },
-    DAY: { latestDate: null, balances: [] },
-    WEEK: { latestDate: null, balances: [] },
-  },
-  swapHistory: [],
-};
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import { HEDERA_OPERATION_TYPES } from "../constants";
 
 describe("js-estimateMaxSpendable", () => {
   let bridge: ReturnType<typeof createBridges>;
-  let estimatedFees = new BigNumber("150200").multipliedBy(2); // 0.001502 ℏ (as of 2023-03-14)
+  let estimatedFees: Record<"crypto", BigNumber>;
 
   beforeAll(async () => {
     const signer = jest.fn();
     bridge = createBridges(signer);
-    estimatedFees = await getEstimatedFees(account);
+
+    const mockedAccount = getMockedAccount();
+    const crypto = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
+
+    estimatedFees = { crypto };
   });
 
-  test("estimateMaxSpendable", async () => {
-    const result = await bridge.accountBridge.estimateMaxSpendable({
-      account,
-    });
-    const data = account.balance.minus(estimatedFees);
+  test("estimateMaxSpendable returns balance minus fee", async () => {
+    const mockedAccount = getMockedAccount();
 
-    expect(result).toEqual(data);
+    const result = await bridge.accountBridge.estimateMaxSpendable({
+      account: mockedAccount,
+    });
+
+    expect(result).toEqual(mockedAccount.balance.minus(estimatedFees.crypto));
+  });
+
+  test("estimateMaxSpendable returns 0 if balance < estimated fees", async () => {
+    const mockedAccount = getMockedAccount({ balance: estimatedFees.crypto.minus(1) });
+
+    const result = await bridge.accountBridge.estimateMaxSpendable({
+      account: mockedAccount,
+    });
+
+    expect(result).toEqual(new BigNumber(0));
+  });
+
+  test("estimateMaxSpendable returns token balance for token account", async () => {
+    const mockedTokenCurrency = getMockedTokenCurrency();
+    const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
+    const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
+
+    const result = await bridge.accountBridge.estimateMaxSpendable({
+      account: mockedTokenAccount,
+      parentAccount: mockedAccount,
+    });
+
+    expect(result).toEqual(mockedTokenAccount.balance);
   });
 });

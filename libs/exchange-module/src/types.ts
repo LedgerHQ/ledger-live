@@ -32,7 +32,7 @@ export type ExchangeStartSwapParams = {
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
   fromAmount: string;
-  fromAmountAtomic: number;
+  fromAmountAtomic: BigNumber;
   quoteId?: string;
   toNewTokenId?: string;
   feeStrategy: "slow" | "medium" | "fast" | "custom";

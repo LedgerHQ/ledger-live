@@ -6,6 +6,7 @@ import {
   baseCurrency,
   bitcoinCurrency,
   ethereumCurrency,
+  hederaCurrency,
   scrollCurrency,
 } from "./useSelectAssetFlow.mock";
 
@@ -59,6 +60,10 @@ export const BASE_ACCOUNT = genAccount("base-1", {
 });
 export const SCROLL_ACCOUNT = genAccount("scroll-1", {
   currency: scrollCurrency,
+  operationsSize: 100,
+});
+export const HEDERA_ACCOUNT = genAccount("hedera-1", {
+  currency: hederaCurrency,
   operationsSize: 100,
 });
 

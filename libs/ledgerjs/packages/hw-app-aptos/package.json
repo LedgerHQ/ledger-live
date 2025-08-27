@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-aptos",
-  "version": "6.34.4",
+  "version": "6.34.5",
   "description": "Ledger Hardware Wallet Aptos Application API",
   "keywords": [
     "Ledger",
@@ -46,7 +46,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-aptos.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

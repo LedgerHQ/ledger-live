@@ -76,7 +76,7 @@ describe("Receive Flow", () => {
     await app.addAccount.tapAddFunds();
     await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
+    await app.receive.expectReceivePageIsDisplayed("BNB", "BNB Chain 1");
   });
 
   $TmsLink("B2CQA-1859");

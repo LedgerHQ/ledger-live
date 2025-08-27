@@ -1,4 +1,3 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -11,12 +10,28 @@ export type BlockInfo = {
   parent?: BlockInfo;
 };
 
+// NOTE: from crypto-asset
+export type Unit = {
+  // display name of a given unit (example: satoshi)
+  name: string;
+  // string to use when formatting the unit. like 'BTC' or 'USD'
+  code: string;
+  // number of digits after the '.'
+  magnitude: number;
+  // should it always print all digits even if they are 0 (usually: true for fiats, false for cryptos)
+  showAllDigits?: boolean;
+  // true if the code should prefix amount when formatting
+  prefixCode?: boolean;
+};
+
 export type AssetInfo =
-  | { type: "native" }
+  | { type: "native"; name?: string; unit?: Unit }
   | {
       type: string; // token, coin, fungible_asset, trc10, trc20, erc20, erc721, erc1155, etc.
       assetReference?: string; // contract address (trc20), tokenId (trc10),, etc
       assetOwner?: string;
+      name?: string; // e.g., token name, or asset name
+      unit?: Unit;
     };
 
 // NOTE: CoreOperation
@@ -42,7 +57,7 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
-
+  assetInfo?: AssetInfo;
   tx: {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata
@@ -143,6 +158,7 @@ export type Account = {
   address: string;
   balance: bigint;
   currencyUnit: Unit;
+  spendableBalance: bigint; // NOTE:: check if we can get rid of this one
 };
 
 /**
@@ -260,12 +276,12 @@ export interface StringMemo<Kind extends string = "text"> extends Memo {
 }
 
 export interface MapMemo<Kind extends string, Value> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<Kind, Value>;
 }
 
 export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> extends Memo {
-  type: "map";
+  type: string;
   memos: Map<keyof KindToValueMap, KindToValueMap[keyof KindToValueMap]>;
 }
 
@@ -282,6 +298,7 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   expiration?: number;
   recipient: string;
   amount: bigint;
+  useAllAmount?: boolean;
   asset: AssetInfo;
   sequence?: number;
   feesStrategy?: FeesStrategy;
@@ -306,8 +323,14 @@ export type FeeEstimation = {
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
-export type Pagination = { minHeight: number };
-
+// Future-proof pagination type as suggested in the comment
+export type Pagination = {
+  minHeight: number;
+  lastPagingToken?: string;
+  pagingToken?: string;
+  limit?: number;
+};
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
 export type Cursor = string;
 
@@ -323,6 +346,7 @@ export type AccountInfo = {
   ownerCount: number;
   sequence: number;
 };
+// NOTE: future proof export type Pagination = Record<string, unknown>;
 
 export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
@@ -381,10 +405,21 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
 };
 
-export type BridgeApi = {
-  validateIntent: (account: Account, transaction: Transaction) => Promise<TransactionValidation>;
-  // TODO: make it available on alpacaApi
-  getAccountInfo: (address: string) => Promise<AccountInfo>;
+export type ChainSpecificRules = {
+  getAccountShape: (address: string) => any;
+  getTransactionStatus: {
+    throwIfPendingOperation?: boolean;
+  };
 };
 
-export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> & BridgeApi;
+export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
+  validateIntent: (
+    transactionIntent: TransactionIntent<MemoType>,
+    customFees?: FeeEstimation,
+  ) => Promise<TransactionValidation>;
+  getSequence: (address: string) => Promise<number>;
+  getChainSpecificRules?: () => ChainSpecificRules;
+};
+
+export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
+  BridgeApi<MemoType>;

@@ -37,6 +37,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -84,6 +85,14 @@ export type AppState = {
   isMainNavigatorVisible: boolean;
   /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
   isPasswordLockBlocked: boolean;
+};
+
+// === AUTH STATE ===
+
+export type AuthState = {
+  isLocked: boolean;
+  biometricsError: Error | null;
+  authModalOpen: boolean;
 };
 
 // === BLE STATE ===
@@ -383,6 +392,7 @@ export type LargeMoverState = {
 
 export type State = {
   accounts: AccountsState;
+  auth: AuthState;
   countervalues: CountervaluesState;
   settings: SettingsState;
   appstate: AppState;
@@ -403,4 +413,5 @@ export type State = {
   modularDrawer: ModularDrawerState;
   largeMover: LargeMoverState;
   toasts: ToastState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
 };

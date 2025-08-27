@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/evm-tools",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "description": "EVM tooling used for coin integrations & app bindings",
   "main": "./index.ts",
   "keywords": [
@@ -49,12 +49,11 @@
     "@ethersproject/hash": "^5.7.0",
     "@ledgerhq/cryptoassets-evm-signatures": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "axios": "1.7.7",
+    "axios": "1.11.0",
     "crypto-js": "4.2.0"
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
-    "@types/axios": "^0.14.0",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",

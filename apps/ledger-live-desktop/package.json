@@ -13,10 +13,11 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.124.0",
+  "version": "2.125.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
+    "start:msw": "cross-env NODE_ENV=development ENABLE_MSW=true node ./tools/main.js",
     "build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false STAGING=1 node ./tools/dist --nosign -v",
     "build:js": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
@@ -50,7 +51,8 @@
     "typecheck": "node scripts/typecheck.js",
     "check": "pnpm lint; pnpm typecheck",
     "assets:replace": "zx ./scripts/replace-assets.mjs",
-    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-desktop"
+    "knip-check": "pnpm knip --directory ../.. -W apps/ledger-live-desktop",
+    "test-deep-links": "ws --spa ledger-live-desktop-deeplinks.html"
   },
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
@@ -86,7 +88,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@reduxjs/toolkit": "2.0.1",
+    "@reduxjs/toolkit": "2.8.2",
     "@sentry/electron": "5.2.0",
     "@sentry/node": "8.16.0",
     "@tanstack/react-query": "5.28.9",
@@ -114,7 +116,6 @@
     "json-rpc-2.0": "0.2.19",
     "jsqr": "1.4.0",
     "lodash": "4.17.21",
-    "msw": "2.3.4",
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",
@@ -157,6 +158,7 @@
     "winston": "3.13.0",
     "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
+    "ws": "7.5.10",
     "xstate": "^5.19.2"
   },
   "devDependencies": {
@@ -210,7 +212,7 @@
     "@types/write-file-atomic": "4.0.3",
     "@vitejs/plugin-react": "3.1.0",
     "allure-playwright": "2.15.1",
-    "axios": "1.7.7",
+    "axios": "1.11.0",
     "buffer": "6.0.3",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
@@ -228,6 +230,8 @@
     "jest-environment-jsdom": "29.7.0",
     "listr": "0.14.3",
     "listr-verbose-renderer": "0.6.0",
+    "msw": "2.3.4",
+    "local-web-server": "4.2.1",
     "nock": "13.5.4",
     "prebuild-install": "7.1.2",
     "react-refresh": "0.14.0",

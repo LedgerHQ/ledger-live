@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.33.4",
+  "version": "6.33.5",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",
@@ -41,7 +41,7 @@
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/jest": "^29.5.10",
     "@types/node": "^22.10.10",
-    "axios": "1.7.7",
+    "axios": "1.11.0",
     "documentation": "14.0.2",
     "jest": "^29.7.0",
     "rimraf": "^4.4.1",
@@ -52,7 +52,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-helium.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

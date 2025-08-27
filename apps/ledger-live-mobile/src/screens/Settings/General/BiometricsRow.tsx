@@ -9,6 +9,7 @@ import SettingsRow from "~/components/SettingsRow";
 import { useBiometricAuth } from "~/components/RequestBiometricAuth";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
+import { isLockedSelector } from "~/reducers/auth";
 
 type Props = {
   iconLeft?: React.ReactNode;
@@ -19,6 +20,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const dispatch = useDispatch();
   const privacy = useSelector(privacySelector);
+  const isLocked = useSelector(isLockedSelector);
 
   const [validationPending, setValidationPending] = useState(false);
   const [biometricsEnabled, setBiometricsEnabled] = useState(
@@ -57,10 +59,16 @@ export default function BiometricsRow({ iconLeft }: Props) {
     [t],
   );
 
+  const onCancel = useCallback(() => {
+    setValidationPending(false);
+    setBiometricsEnabled((val: boolean) => !val);
+  }, []);
+
   useBiometricAuth({
-    disabled: !validationPending,
+    disabled: !validationPending || isLocked,
     onSuccess,
     onError,
+    onCancel,
   });
 
   // Reset the switch state if user directly disable password

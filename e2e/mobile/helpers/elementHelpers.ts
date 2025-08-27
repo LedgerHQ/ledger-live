@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Direction, NativeElement, WebElement } from "detox/detox";
 import { by, element, expect as detoxExpect, waitFor, web } from "detox";
 import { delay, isAndroid } from "./commonHelpers";
@@ -298,5 +299,49 @@ export const WebElementHelpers = {
       return String(raw["result"]);
     }
     return String(raw);
+  },
+
+  async scrollToWebElement(element: WebElement) {
+    await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+  },
+
+  async getCurrentWebviewUrl(): Promise<string> {
+    let url = "";
+    try {
+      url = await getWebElementByTag("body").runScript(() => window.location.href);
+    } catch {
+      url = await getWebElementByTag("html").runScript(() => window.location.href);
+    }
+    return String(url);
+  },
+
+  async waitForWebElementToBeEnabled(
+    id: string,
+    timeout = DEFAULT_TIMEOUT,
+    index = 0,
+  ): Promise<void> {
+    const start = Date.now();
+    let lastErr: Error | undefined;
+
+    while (Date.now() - start < timeout) {
+      try {
+        const element = WebElementHelpers.getWebElementByTestId(id, index);
+        const isEnabled = await element.runScript((el: HTMLButtonElement | HTMLInputElement) => {
+          return (
+            el.getAttribute("aria-disabled") !== "true"
+          );
+        });
+
+        if (isEnabled) {
+          return;
+        }
+      } catch (e) {
+        lastErr = e instanceof Error ? e : new Error(String(e));
+      }
+    }
+
+    throw new Error(
+      `Web element '${id}' did not become enabled within ${timeout}ms: ${lastErr?.message}`,
+    );
   },
 };

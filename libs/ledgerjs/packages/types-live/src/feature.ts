@@ -232,6 +232,7 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   lldModularDrawerBackendData: DefaultFeature;
+  llmModularDrawerBackendData: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
@@ -657,8 +658,9 @@ export type Feature_LlmMmkvMigration = Feature<{
 
 type Feature_ModularDrawer = Feature<{
   add_account: boolean;
-  earn_flow: boolean;
   live_app: boolean;
+  live_apps_allowlist: string[];
+  live_apps_blocklist: string[];
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;

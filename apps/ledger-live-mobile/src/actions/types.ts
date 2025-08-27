@@ -41,6 +41,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { AnyAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -619,11 +620,32 @@ export type WalletSyncPayload =
   | WalletSyncSetActivateDrawer
   | WalletSyncSetActivateStep;
 
+// === AUTH ACTIONS ===
+export enum AuthActionTypes {
+  INITIALIZE_AUTH_STATE = "AUTH_INITIALIZE_AUTH_STATE",
+  SET_LOCKED = "AUTH_SET_LOCKED",
+  SET_BIOMETRICS_ERROR = "AUTH_SET_BIOMETRICS_ERROR",
+  SET_AUTH_MODAL_OPEN = "AUTH_SET_AUTH_MODAL_OPEN",
+  LOCK = "AUTH_LOCK",
+  UNLOCK = "AUTH_UNLOCK",
+}
+
+export type AuthInitializeStatePayload = { privacy: Privacy | null | undefined };
+export type AuthSetLockedPayload = boolean;
+export type AuthSetBiometricsErrorPayload = Error | null;
+export type AuthSetAuthModalOpenPayload = boolean;
+export type AuthPayload =
+  | AuthInitializeStatePayload
+  | AuthSetLockedPayload
+  | AuthSetBiometricsErrorPayload
+  | AuthSetAuthModalOpenPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
   | Action<AccountsPayload>
   | Action<AppStatePayload>
+  | Action<AuthPayload>
   | Action<BlePayload>
   | Action<NotificationsPayload>
   | Action<RatingsPayload>
@@ -634,4 +656,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>;
+  | Action<NftPayload>
+  | AnyAction;

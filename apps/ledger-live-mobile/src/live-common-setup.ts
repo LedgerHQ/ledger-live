@@ -138,13 +138,17 @@ setSupportedCurrencies([
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
   setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 
-if (process.env.NODE_ENV === "production") {
-  const value =
-    Platform.OS === "ios"
-      ? `llm-ios/${VersionNumber.appVersion}`
-      : `llm-android/${VersionNumber.appVersion}`;
-  setEnv("LEDGER_CLIENT_VERSION", value);
+let ledgerClientVersion =
+  Platform.OS === "ios"
+    ? `llm-ios/${VersionNumber.appVersion}`
+    : `llm-android/${VersionNumber.appVersion}`;
+
+if (process.env.NODE_ENV !== "production") {
+  ledgerClientVersion += "-dev";
 }
+
+setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
+process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));

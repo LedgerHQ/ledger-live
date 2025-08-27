@@ -7,7 +7,7 @@ import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live"
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getPortfolio, getRanges } from "@ledgerhq/live-countervalues/portfolio";
-import { formatCurrencyUnit, findCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import {
@@ -16,6 +16,7 @@ import {
   inferTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues/logic";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();

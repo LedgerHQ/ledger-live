@@ -125,10 +125,10 @@ const convertToCoreOperation =
         ? BigInt(delivered_amount)
         : BigInt(0);
 
-    const fee = BigInt(Fee);
+    const fees = BigInt(Fee);
     if (type === "OUT") {
-      if (!Number.isNaN(fee)) {
-        value = value + fee;
+      if (!Number.isNaN(fees)) {
+        value = value + fees;
       }
     }
 
@@ -170,7 +170,7 @@ const convertToCoreOperation =
       asset: { type: "native" },
       tx: {
         hash: hash,
-        fees: fee,
+        fees: fees,
         date: new Date(toEpochDate),
         block: {
           time: new Date(close_time_iso),
@@ -184,7 +184,7 @@ const convertToCoreOperation =
       recipients: [Destination],
     };
 
-    if (Object.keys(details).length != 0) {
+    if (Object.keys(details).length !== 0) {
       op = {
         ...op,
         details,

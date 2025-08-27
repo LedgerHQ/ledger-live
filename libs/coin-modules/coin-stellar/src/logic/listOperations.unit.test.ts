@@ -1,7 +1,8 @@
 import { listOperations } from "./listOperations";
 import coinConfig from "../config";
-import { OperationCallBuilder } from "@stellar/stellar-sdk/lib/horizon/operation_call_builder";
-import { HorizonApi } from "@stellar/stellar-sdk/lib/horizon";
+import { Horizon } from "@stellar/stellar-sdk";
+
+jest.mock("@stellar/stellar-sdk");
 
 describe("listOperations", () => {
   coinConfig.setCoinConfig(() => ({
@@ -9,8 +10,34 @@ describe("listOperations", () => {
     explorer: { url: "https://stellar.coin.ledger.com" },
   }));
 
+  const mockCall = jest.fn();
+
+  beforeEach(() => {
+    (Horizon.Server as jest.Mock).mockImplementation(() => ({
+      operations: () => ({
+        forAccount: () => ({
+          limit: () => ({
+            order: () => ({
+              cursor: () => ({
+                includeFailed: () => ({
+                  join: () => ({
+                    call: mockCall,
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }));
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("lists operations associated with an address", async () => {
-    jest.spyOn(OperationCallBuilder.prototype, "call").mockResolvedValue({
+    mockCall.mockResolvedValueOnce({
       records: [
         {
           id: "operation_id1",
@@ -20,7 +47,7 @@ describe("listOperations", () => {
           from: "address",
           to: "receiver1",
           amount: "46.0600000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: true,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -40,7 +67,7 @@ describe("listOperations", () => {
           from: "address",
           to: "receiver2",
           amount: "666.0000000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: false,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -60,7 +87,7 @@ describe("listOperations", () => {
           from: "sender",
           to: "address",
           amount: "50.5000000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: true,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -80,6 +107,13 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
+          details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+            memo: undefined,
+            status: "success",
+          },
           senders: ["address"],
           recipients: ["receiver1"],
           tx: {
@@ -90,11 +124,17 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
-          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
           asset: { type: "native" },
+          details: {
+            assetAmount: "11100",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+            memo: undefined,
+            status: "failed",
+          },
           senders: ["address"],
           recipients: ["receiver2"],
           tx: {
@@ -105,11 +145,17 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
-          details: {},
         },
         {
           id: "transaction_hash2-operation_id3",
           asset: { type: "native" },
+          details: {
+            assetAmount: "505000000",
+            ledgerOpType: "IN",
+            sequence: undefined,
+            memo: undefined,
+            status: "success",
+          },
           senders: ["sender"],
           recipients: ["address"],
           tx: {
@@ -120,7 +166,6 @@ describe("listOperations", () => {
           },
           type: "IN",
           value: 505000000n,
-          details: {},
         },
       ],
       "token3",
@@ -128,7 +173,7 @@ describe("listOperations", () => {
   });
 
   it("stops at minHeight", async () => {
-    jest.spyOn(OperationCallBuilder.prototype, "call").mockResolvedValue({
+    mockCall.mockResolvedValueOnce({
       records: [
         {
           id: "operation_id1",
@@ -138,7 +183,7 @@ describe("listOperations", () => {
           from: "address",
           to: "receiver1",
           amount: "46.0600000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: true,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -158,7 +203,7 @@ describe("listOperations", () => {
           from: "address",
           to: "receiver2",
           amount: "666.0000000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: false,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -178,7 +223,7 @@ describe("listOperations", () => {
           from: "sender",
           to: "address",
           amount: "50.5000000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: true,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -198,6 +243,13 @@ describe("listOperations", () => {
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
+          details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+            memo: undefined,
+            status: "success",
+          },
           senders: ["address"],
           recipients: ["receiver1"],
           tx: {
@@ -208,11 +260,17 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 460600000n,
-          details: {},
         },
         {
           id: "transaction_hash1-operation_id2",
           asset: { type: "native" },
+          details: {
+            assetAmount: "11100",
+            ledgerOpType: "OUT",
+            sequence: undefined,
+            memo: undefined,
+            status: "failed",
+          },
           senders: ["address"],
           recipients: ["receiver2"],
           tx: {
@@ -223,7 +281,6 @@ describe("listOperations", () => {
           },
           type: "OUT",
           value: 11100n,
-          details: {},
         },
       ],
       "",
@@ -231,7 +288,7 @@ describe("listOperations", () => {
   });
 
   it("should return memo if set", async () => {
-    jest.spyOn(OperationCallBuilder.prototype, "call").mockResolvedValue({
+    mockCall.mockResolvedValueOnce({
       records: [
         {
           id: "operation_id1",
@@ -241,7 +298,7 @@ describe("listOperations", () => {
           from: "address",
           to: "receiver1",
           amount: "46.0600000",
-          type: HorizonApi.OperationResponseType.payment,
+          type: Horizon.HorizonApi.OperationResponseType.payment,
           transaction_successful: true,
           created_at: "2025-01-01",
           transaction: () => ({
@@ -274,10 +331,14 @@ describe("listOperations", () => {
           type: "OUT",
           value: 460600000n,
           details: {
+            assetAmount: "460600000",
+            ledgerOpType: "OUT",
+            sequence: undefined,
             memo: {
               type: "MEMO_TEXT",
               value: "momo",
             },
+            status: "success",
           },
         },
       ],

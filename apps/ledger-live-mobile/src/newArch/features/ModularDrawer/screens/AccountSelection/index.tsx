@@ -4,7 +4,12 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
 import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
 import { AccountItem } from "@ledgerhq/native-ui/pre-ldls/index";
-import { TrackDrawerScreen, EVENTS_NAME } from "../../analytics";
+import {
+  TrackDrawerScreen,
+  EVENTS_NAME,
+  MODULAR_DRAWER_PAGE_NAME,
+  useModularDrawerAnalytics,
+} from "../../analytics";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
@@ -49,10 +54,25 @@ const AccountSelectionContent = ({
     },
     [handleAccountSelected],
   );
+  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const onAddNewAccountOnClick = useCallback(() => {
+    onAddNewAccount();
+    trackModularDrawerEvent("button_clicked", {
+      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      flow,
+      source,
+      button: "add_a_new_account",
+    });
+  }, [flow, onAddNewAccount, source, trackModularDrawerEvent]);
 
   const renderFooter = useCallback(() => {
-    return <AddAccountButton label={t("addAccounts.addNewOrExisting")} onClick={onAddNewAccount} />;
-  }, [onAddNewAccount, t]);
+    return (
+      <AddAccountButton
+        label={t("addAccounts.addNewOrExisting")}
+        onClick={onAddNewAccountOnClick}
+      />
+    );
+  }, [onAddNewAccountOnClick, t]);
 
   return (
     <>

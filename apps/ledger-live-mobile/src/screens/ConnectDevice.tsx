@@ -46,6 +46,7 @@ import type { MultiversXWithdrawFlowParamList } from "~/families/multiversx/comp
 import type { NearStakingFlowParamList } from "~/families/near/StakingFlow/types";
 import type { NearUnstakingFlowParamList } from "~/families/near/UnstakingFlow/types";
 import type { NearWithdrawingFlowParamList } from "~/families/near/WithdrawingFlow/types";
+import type { HederaAssociateTokenFlowParamList } from "~/families/hedera/AssociateTokenFlow/types";
 import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/types";
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
@@ -107,7 +108,11 @@ type Props =
   | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
-  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>;
+  | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
+  | StackNavigatorProps<
+      HederaAssociateTokenFlowParamList,
+      ScreenName.HederaAssociateTokenConnectDevice
+    >;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

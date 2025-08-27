@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -58,7 +58,7 @@
         "lib/test/bot-specs"
       ],
       "transaction": [
-        "lib/bridge/transaction"
+        "lib/transaction"
       ],
       "types": [
         "lib/types/index"
@@ -101,8 +101,8 @@
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "require": "./lib/transaction.js",
+      "default": "./lib-es/transaction.js"
     },
     "./types": {
       "require": "./lib/types/index.js",
@@ -128,7 +128,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@stellar/stellar-sdk": "^11.3.0",
+    "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

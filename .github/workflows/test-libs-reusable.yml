@@ -35,9 +35,11 @@ jobs:
 
     runs-on: [ledger-live-4xlarge]
     steps:
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -48,34 +50,57 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
-      - name: Build and Test affected libraries
-        id: test-libs
+        run: pnpm i --filter="./libs/**"
+
+      - name: Run coverage on appropriate libraries
         run: |
+          
           mkdir -p ${{ github.workspace }}/coverage
-          pnpm build:libs
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+        
+          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./libs/**" --concurrency=1 -- --runInBand=1 
+
+      - name: Test libraries without coverage script & Process coverage files
+        id: test-libs
+        run: |
+          
+          echo "::group::Processing coverage files"
+          
+          testCommand=(pnpm turbo test --concurrency=25%)
+          
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
             echo "Processing library at path: $lib"
             if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
-              echo "Running coverage script for $lib"
-              pnpm --prefix "$lib" run coverage
               if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
                 echo "Appending coverage files for $lib"
                 cat "$lib/coverage/lcov.info" >> ${{ github.workspace }}/coverage/lcov.info
                 cat "$lib/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
               fi
-            elif [ -f "$package_json" ] && jq -e '.scripts.test' "$package_json"; then
-              echo "Coverage script not defined for $lib, running test script."
-              pnpm --prefix "$lib" run test
+            elif [ -f "$package_json" ] && ! jq -e '.scripts.coverage' "$package_json" && jq -e '.scripts.test' "$package_json"; then
+              echo "Coverage script not defined for $lib, adding to testflow."
+              
+              name=$(jq -r '.name' "$package_json")
+              testCommand+=(--filter "$name")
+          
             else
               echo "No coverage or test script found for $lib, skipping."
             fi
+          
           done
+          
+          testCommand+=(--api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}")
+          testCommand+=(--token="${{ secrets.TURBOREPO_SERVER_TOKEN }}")
+          testCommand+=(--team="foo")
+
+          echo "::endgroup::"
+          echo "Running tests for libs without coverage with command: ${testCommand[@]}"
+          "${testCommand[@]}"
         shell: bash
+
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v4
         if: failure()
@@ -83,18 +108,21 @@ jobs:
           name: live-common-src
           path: |
             libs/ledger-live-common/src
+
       - uses: actions/github-script@v7
         if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         id: generate_coverage
         with:
           name: coverage-libs
           path: ${{ github.workspace }}/coverage
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

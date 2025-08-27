@@ -143,7 +143,7 @@ const vtho: AppSpec<Transaction> = {
         if (
           !account.subAccounts ||
           !account.subAccounts[0] ||
-          !(account.subAccounts[0].type == "TokenAccount")
+          !(account.subAccounts[0].type === "TokenAccount")
         )
           throw new Error("no VTHO account");
         const tokenAccount = account.subAccounts[0];
@@ -188,7 +188,7 @@ const vtho: AppSpec<Transaction> = {
         if (
           !account.subAccounts ||
           !account.subAccounts[0] ||
-          !(account.subAccounts[0].type == "TokenAccount")
+          !(account.subAccounts[0].type === "TokenAccount")
         )
           throw new Error("no VTHO account");
         const transaction = bridge.createTransaction(account);

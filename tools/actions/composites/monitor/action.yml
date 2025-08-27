@@ -21,10 +21,19 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: install and build dependencies
-      run: |
-        pnpm i
-        pnpm build:llc
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 9.12.3
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22.13.1
+        cache: pnpm
+        cache-dependency-path: "**/pnpm-lock.yaml"
+    - name: Install dependencies
+      run: pnpm i --filter="coin-modules-monitoring..." --silent
+      shell: bash
+    - name: Build dependencies
+      run: pnpm build:llc
       shell: bash
     - name: run monitoring
       env:

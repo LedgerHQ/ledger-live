@@ -18,23 +18,38 @@ type Props = {
 
 const Root = (props: Props) => {
   const { transaction, trackProperties } = props;
-  const { fees, networkInfo } = transaction;
-  const isCustomFee = !fees?.eq(networkInfo?.fees || 0);
-  const [isCustomMode, setCustomMode] = useState(isCustomFee);
-  if (!networkInfo || !fees) return null; // these were loaded on the previous send step
+  const { fees } = transaction;
   const bridge = getAccountBridge(props.account);
+  const [estimatedFees, setEstimatedFees] = useState(fees || null);
+
+  React.useEffect(() => {
+    const fetchEstimatedFees = async () => {
+      const preparedTransaction = await bridge.prepareTransaction(props.account, {
+        ...transaction,
+        customFees: { parameters: { fees: null } },
+      });
+      setEstimatedFees(preparedTransaction.fees);
+    };
+
+    fetchEstimatedFees();
+  }, [bridge, transaction, props.account]);
+
+  const isCustomFee = !fees?.eq(estimatedFees || 0);
+  const [isCustomMode, setCustomMode] = useState(isCustomFee);
+  if (!fees) return null; // these were loaded on the previous send step
   const onFeeModeChange = (isCustom: boolean) => {
     track("button_clicked2", {
       ...trackProperties,
       button: "fee",
       isCustom,
-      fees: networkInfo.fees,
+      fees: estimatedFees,
     });
     setCustomMode(isCustom);
     if (!isCustom) {
       props.updateTransaction(t =>
         bridge.updateTransaction(t, {
-          fees: networkInfo.fees,
+          fees: estimatedFees,
+          customFees: { parameters: { fees: estimatedFees } },
         }),
       );
     }

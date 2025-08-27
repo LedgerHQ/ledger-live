@@ -4,6 +4,7 @@ import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
 import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import hederaTokens, { HederaToken } from "./data/hedera";
 import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
@@ -38,6 +39,8 @@ addTokens(mainnetTokens.map(convertERC20));
 addTokens(sepoliaTokens.map(convertERC20));
 // Polygon tokens
 addTokens(polygonTokens.map(convertERC20));
+// Hedera tokens
+addTokens(hederaTokens.map(convertHederaTokens));
 // Binance Smart Chain tokens
 addTokens(bnbTokens.map(convertERC20));
 // Tron tokens
@@ -310,7 +313,7 @@ export function convertERC20([
   };
 }
 
-function convertAlgorandASATokens([
+export function convertAlgorandASATokens([
   id,
   abbr,
   name,
@@ -338,7 +341,7 @@ function convertAlgorandASATokens([
   };
 }
 
-function convertVechainToken([
+export function convertVechainToken([
   tokenIdenfitier,
   ticker,
   name,
@@ -364,7 +367,7 @@ function convertVechainToken([
   };
 }
 
-function convertTRONTokens(type: "trc10" | "trc20") {
+export function convertTRONTokens(type: "trc10" | "trc20") {
   return ([id, abbr, name, contractAddress, precision, delisted, ledgerSignature]:
     | TRC10Token
     | TRC20Token): TokenCurrency => {
@@ -392,7 +395,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
   };
 }
 
-function convertMultiversXESDTTokens([
+export function convertMultiversXESDTTokens([
   ticker,
   identifier,
   decimals,
@@ -473,15 +476,15 @@ function convertAptosTokens(
   };
 }
 
-function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
+export function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
   return convertAptosTokens("coin", token);
 }
 
-function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
+export function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
   return convertAptosTokens("fungible_asset", token);
 }
 
-function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
@@ -501,7 +504,36 @@ function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): Toke
   };
 }
 
-function convertCardanoNativeTokens([
+function convertHederaTokens([
+  id,
+  tokenId,
+  name,
+  ticker,
+  network,
+  decimals,
+  delisted,
+]: HederaToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: tokenId,
+    parentCurrency: getCryptoCurrencyById(network),
+    tokenType: "hts",
+    name,
+    ticker,
+    delisted,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+export function convertCardanoNativeTokens([
   parentCurrencyId,
   policyId,
   assetName,
@@ -540,7 +572,7 @@ function convertCardanoNativeTokens([
   };
 }
 
-function convertStellarTokens([
+export function convertStellarTokens([
   assetCode,
   assetIssuer,
   assetType,

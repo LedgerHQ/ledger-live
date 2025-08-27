@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -12,6 +10,7 @@ import Select from "~/renderer/components/Select";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { AnimationKey, getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { getProductName } from "LLD/utils/getProductName";
 
 const AnimationWrapper = styled.div<{ dark?: boolean }>`
   width: 600px;
@@ -51,27 +50,42 @@ const LottieDebugger = () => {
     ],
     [],
   );
-  const [modelId, setModelId] = useState<DeviceModelId>(DeviceModelId.nanoS);
-  const [key, setKey] = useState<AnimationKey>("enterPinCode");
+  const [deviceModelId, setDeviceModelId] = useState<DeviceModelId>(DeviceModelId.stax);
+  const [animationKey, setAnimationKey] = useState<AnimationKey>("enterPinCode");
+
   const allKeys = [...keys, ...onBoardingKeys];
-  const animation = useMemo(() => {
-    if (keys.includes(key)) {
+
+  const lightAnimation = useMemo(() => {
+    if (keys.includes(animationKey)) {
       // Normal deviceAction animations
-      return getDeviceAnimation(modelId, "light", key);
+      return getDeviceAnimation(deviceModelId, "light", animationKey);
+    }
+    return null;
+    // Onboarding animations
+  }, [animationKey, keys, deviceModelId]);
+
+  const darkAnimation = useMemo(() => {
+    if (keys.includes(animationKey)) {
+      // Normal deviceAction animations
+      return getDeviceAnimation(deviceModelId, "dark", animationKey);
     }
 
     return null;
     // Onboarding animations
-  }, [key, keys, modelId]);
-  const animation2 = useMemo(() => {
-    if (keys.includes(key)) {
-      // Normal deviceAction animations
-      return getDeviceAnimation(modelId, "dark", key);
-    }
+  }, [animationKey, keys, deviceModelId]);
 
-    return null;
-    // Onboarding animations
-  }, [key, keys, modelId]);
+  const DeviceSelectButton = ({ modelId }: { modelId: DeviceModelId }) => (
+    <Button
+      mr={2}
+      primary
+      onClick={() => {
+        setDeviceModelId(modelId);
+      }}
+    >
+      {getProductName(modelId)}
+    </Button>
+  );
+
   return (
     <Modal
       name="MODAL_LOTTIE_DEBUGGER"
@@ -87,61 +101,36 @@ const LottieDebugger = () => {
               <Alert type="warning">
                 <Trans i18nKey="settings.experimental.features.testAnimations.longDesc" />
               </Alert>
-              <div>{!key ? "Select Animation" : `Showing '${key}' for ${modelId}`}</div>
+              <div>
+                {!animationKey
+                  ? "Select Animation"
+                  : `Showing '${animationKey}' for ${deviceModelId}`}
+              </div>
               <AnimationWrapper>
-                <Animation animation={animation} />
+                <Animation animation={lightAnimation} />
               </AnimationWrapper>
               <AnimationWrapper dark>
-                <Animation animation={animation2} />
+                <Animation animation={darkAnimation} />
               </AnimationWrapper>
               <Box mt={2} mb={2} horizontal>
-                <Button
-                  mr={2}
-                  primary
-                  onClick={() => {
-                    setModelId(DeviceModelId.nanoS);
-                  }}
-                >
-                  Nano S
-                </Button>
-                <Button
-                  mr={2}
-                  primary
-                  onClick={() => {
-                    setModelId(DeviceModelId.nanoSP);
-                  }}
-                >
-                  Nano S Plus
-                </Button>
-                <Button
-                  mr={2}
-                  primary
-                  onClick={() => {
-                    setModelId(DeviceModelId.nanoX);
-                  }}
-                >
-                  Nano X
-                </Button>
-                <Button
-                  primary
-                  onClick={() => {
-                    setModelId(DeviceModelId.stax);
-                  }}
-                >
-                  Stax
-                </Button>
+                <DeviceSelectButton modelId={DeviceModelId.apex} />
+                <DeviceSelectButton modelId={DeviceModelId.europa} />
+                <DeviceSelectButton modelId={DeviceModelId.stax} />
+                <DeviceSelectButton modelId={DeviceModelId.nanoSP} />
+                <DeviceSelectButton modelId={DeviceModelId.nanoX} />
+                <DeviceSelectButton modelId={DeviceModelId.nanoS} />
               </Box>
               <Box>
                 <Select
                   isSearchable={false}
                   onChange={option => {
                     if (option) {
-                      setModelId(DeviceModelId.nanoS);
-                      setKey(option.value as AnimationKey);
+                      setDeviceModelId(DeviceModelId.stax);
+                      setAnimationKey(option.value as AnimationKey);
                     }
                   }}
                   // @ts-expect-error react-select bindings expect an object as a value
-                  value={key}
+                  value={animationKey}
                   options={allKeys.map(k => ({
                     label: k,
                     value: k,
