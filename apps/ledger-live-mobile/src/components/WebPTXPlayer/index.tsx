@@ -52,11 +52,10 @@ function BackToInternalDomain({
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+  const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
 
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
-
-    const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
 
     if (!isStateValid) {
       navigation.getParent()?.navigate(NavigatorName.Base, {
@@ -83,11 +82,7 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (
-      internalAppIds.includes(manifest.id) &&
-      lastMatchingURL &&
-      webviewURL
-    ) {
+    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -102,13 +97,20 @@ function BackToInternalDomain({
     }
   };
 
+  const buttonLabel = useMemo(() => {
+    if (!isStateValid) {
+      return t("common.back");
+    }
+    return t("common.backTo", { to: btnText });
+  }, [isStateValid, t, btnText]);
+
   return (
     <View style={styles.headerLeft}>
       <TouchableOpacity onPress={handleBackClick}>
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: btnText })}
+            {buttonLabel}
           </Text>
         </Flex>
       </TouchableOpacity>
