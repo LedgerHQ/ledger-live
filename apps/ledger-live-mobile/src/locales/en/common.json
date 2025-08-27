@@ -694,6 +694,15 @@
       "title": "Pairing unsuccessful",
       "description": "Please try again or consult our Bluetooth troubleshooting article."
     },
+    "OneSuiMinForStake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft": {
+      "title": "At least 1 SUI should be left in stake"
+    },
     "PasswordIncorrect": {
       "title": "Incorrect password",
       "description": "Please try again."
@@ -2773,6 +2782,7 @@
     "extra": {
       "transferId": "Transfer ID (Memo)",
       "resource": "Resource",
+      "validator": "Validator",
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
@@ -6471,6 +6481,107 @@
       }
     }
   },
+  "sui": {
+    "info": {
+      "available": {
+        "title": "SUI available",
+        "description": "This amount is disposable."
+      },
+      "storageUsage": {
+        "title": "Minimum balance",
+        "description": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
+      },
+      "staked": {
+        "title": "Delegated asset",
+        "description": "The balance that is delegated"
+      }
+    },
+    "unstaking": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to undelegate"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "warning": "Once undelegated your balance and accrued rewards will be immediately cashed in"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully undelegated your assets"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to withdraw"
+      },
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "You have successfully withdrawn your assets"
+            }
+          }
+        }
+      }
+    },
+    "staking": {
+      "sectionLabel": "Delegated Position(s)",
+      "info": "How Delegation Works",
+      "add": "Add",
+      "stakingEarn": "You can earn SUI rewards by delegating your assets.",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "iStake": "I delegate",
+      "actions": {
+        "unstake": "Undelegate"
+      },
+      "drawer": {
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending",
+        "available": "Withdrawable"
+      },
+      "stepperHeader": {
+        "amountSubTitle": "Amount to delegate",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your SUI to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "0": "Delegated assets remain yours.",
+              "1": "Once undelegated your balance and accrued rewards will be immediately cashed in.",
+              "2": "Delegate securely with your Ledger device."
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos": {
     "info": {
       "available": {
@@ -6658,6 +6769,7 @@
       "undelegate": "Your account delegation will end when the operation is confirmed. You can delegate your account again at any time."
     },
     "summaryTitle": "Summary",
+    "delegate": "Delegate",
     "goToAccount": "Go to Accounts",
     "howDelegationWorks": "How delegation works",
     "actions": {
