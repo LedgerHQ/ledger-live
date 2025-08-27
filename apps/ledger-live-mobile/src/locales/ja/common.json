@@ -1074,6 +1074,18 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "残高不足",
+      "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "トークンの関連付けが必要です",
+      "description" : "送付しようとしているトークンは、送付先アカウントに関連付けられていません。受け取るには受取人のアカウントに関連付ける必要があります。"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "トークンの関連付けを確認できませんでした",
+      "description" : "送付先アカウントがこのトークンを受け取れるか確認できませんでしたアドレスが無効であるか、ネットワークまたはサービスの問題が発生している可能性があります。"
+    },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
     },
@@ -1305,7 +1317,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3分",
       "medium" : "≈ 30秒",
-      "fast" : "≈ 15秒"
+      "fast" : "≈ 15秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1535,25 @@
     "cta" : "Ledgerをセットアップ",
     "bannerTitle" : "Ledgerを受け取りましたか？",
     "bannerCta" : "セットアップを開始",
+    "continue" : "続行"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™はこのトランザクションにクリア署名できません",
+      "subtitle" : "署名する前に、他のLedgerデバイスを使用してこのトランザクションの詳細を認証してください。クリア署名がない場合、すべての資産を失うリスクがあります。",
+      "continue" : "以降の操作は自己責任となります"
+    },
+    "info" : {
+      "title" : "{{date}}をもって、Ledger Live™経由の{{device}}™での{{coinName}}サポートは終了いたします。",
+      "subtitle" : "Ledger Liveの全サービスプロバイダー、最適なサポートをご利用いただくために、最新のLedgerデバイスへのアップグレードをご検討ください",
+      "reminder" : "今後、このメッセージを表示しない"
+    },
+    "error" : {
+      "title" : "{{device}}™はこの機能をサポートしていません",
+      "subtitle" : "Ledger Liveの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをおすすめいたします。"
+    },
+    "update" : "最適なアップグレードプランをチェック",
+    "learnMore" : "詳細はこちら",
     "continue" : "続行"
   },
   "purchaseDevice" : {
@@ -2727,7 +2759,8 @@
       "WITHDRAW" : "引き出し済み",
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
-      "WITHDRAW_UNSTAKED" : "引き出し済み"
+      "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "ASSOCIATE_TOKEN" : "トークンの関連付け"
     }
   },
   "operationDetails" : {
@@ -3242,7 +3275,7 @@
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
-        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+        "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
@@ -7078,6 +7111,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTSトークンを受け取るには、アカウントを関連付ける必要があります。受け取るHTSトークンにアカウントをまだ関連付けていない場合は、<0>こちらをクリック</0>してトークンの関連付けフローを開始してください。",
+          "learnMore" : "詳細はこちら"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "受け取りたいトークンを選択"
+      },
+      "summary" : {
+        "title" : "トークンの関連付け",
+        "from" : "トークン",
+        "to" : "送付先",
+        "warning" : {
+          "text" : "「続行（Continue）」をクリックすると、選択したトークンがHederaアカウントに関連付けられます。",
+          "learnMore" : "詳細はこちら"
+        }
+      },
+      "selectDevice" : {
+        "title" : "トークンの関連付け"
+      },
+      "connectDevice" : {
+        "title" : "トークンの関連付け"
+      },
+      "validationSuccess" : {
+        "title" : "トランザクションが送信されました。",
+        "text" : "トークン関連付けのトランザクションが確認されると、このトークンを受け取れるようになります"
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "詳細はこちら"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "詳細はこちら"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "関連付け済みトークン",
+      "postAlert" : {
+        "text" : "このトランザクションが確認されると、トークンを受け取ることができるようになります。受取フローを開始するには、<0>こちらをクリック</0>してください。",
+        "learnMore" : "詳細はこちら"
+      }
     }
   },
   "asset" : {
