@@ -18,6 +18,8 @@ jobs:
   integ-tests:
     name: "Coin modules integration tests"
     runs-on: ubuntu-22.04
+    outputs:
+      summary_text: ${{ steps.summarize.outputs.summary_text }}
 
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -45,8 +47,101 @@ jobs:
         run: pnpm build:coin-modules:deps
 
       - name: Test
+        id: run-tests
         shell: bash
-        run: pnpm coin-modules:test-integ
+        run: |
+          set -o pipefail
+          pnpm coin-modules:test-integ 2>&1 | tee test-output.log
+
+      - name: Summarize failures (all per-coin)
+        id: summarize
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE' > failure_summary.json
+          const fs = require('fs');
+          const text = fs.readFileSync('test-output.log', 'utf8');
+          const lines = text.split('\n');
+
+          // When a coin starts failing in the log
+          const failStart = /libs\/coin-modules\/(coin-[^\s]+)\s+test-integ:\s+FAIL\b/;
+
+          // What we consider a concise "error" line worth showing
+          const isConciseErr = (L) =>
+            /Invalid|Error|expect\(received\)|AssertionError|Timeout|CryptoAssetsStore is not set|A worker process has failed/i.test(L) &&
+            !/^● /.test(L) &&            // ignore Jest suite titles
+            !/^at\s/.test(L) &&          // ignore stack frames
+            !/^>?\s*\d+\s*\|/.test(L) && // ignore code frames
+            !/^\s*\d+\s\|\s/.test(L) &&  // ignore code frames (alt)
+            L.trim().length > 0;
+
+          const reasons = {};         // coin -> Set of messages
+          let currentCoin = null;     // track within the failing block
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            // Detect the start of a failing coin section
+            const m = line.match(failStart);
+            if (m) {
+              currentCoin = m[1];
+              reasons[currentCoin] = reasons[currentCoin] || new Set();
+            }
+
+            // Record any concise error lines that appear under this coin
+            if (currentCoin) {
+              const sanitized = line.replace(/^.*?test-integ:\s*/, '').trim();
+              if (isConciseErr(sanitized)) {
+                reasons[currentCoin].add(sanitized);
+              }
+              // If we hit a PASS/SKIP/SUMMARY for another coin, stop sticking to this one
+              if (/test-integ:\s+(PASS|SKIP|Done)\b/.test(line)) {
+                currentCoin = null;
+              }
+            }
+          }
+
+          // Fallback: parse pnpm tail error blocks if a coin has no reasons captured
+          const tail = text.split(/\n/);
+          for (let i = 0; i < tail.length; i++) {
+            const m = tail[i].match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
+            if (m) {
+              const coin = m[1];
+              reasons[coin] = reasons[coin] || new Set();
+              const next = (tail[i + 1] || '').replace(/^.*?ERROR\s+/, '').trim();
+              if (next) reasons[coin].add(next);
+            }
+          }
+
+          // Format Slack text (dedup, sort, clamp long lines)
+          const clamp = (s, n=200) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+          const sections = Object.entries(reasons)
+            .filter(([_, set]) => set.size > 0)
+            .sort(([a],[b]) => a.localeCompare(b))
+            .map(([coin, set]) => {
+              const msgs = [...set].map(e => `    - ${clamp(e, 240)}`).join('\n');
+              return `• ${coin}:\n${msgs}`;
+            });
+
+          const full = sections.join('\n');
+
+          // Slack hard limit is big, but let’s be safe
+          const MAX = 3000;
+          const summaryText = full.length > MAX
+            ? full.slice(0, MAX - 20) + "\n…(truncated)"
+            : full;
+
+          const result = {
+            failedCoins: Object.keys(reasons).sort(),
+            summaryText
+          };
+
+          process.stdout.write(JSON.stringify(result, null, 2));
+          NODE
+
+          echo "summary_text<<EOF" >> "$GITHUB_OUTPUT"
+          jq -r '.summaryText' failure_summary.json >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
   integ-tests-fail:
     name: failure report
@@ -54,7 +149,8 @@ jobs:
     if: failure() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: post to live-repo-health slack channel
+      - name: Post parent message
+        id: post_parent
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
@@ -62,7 +158,7 @@ jobs:
           payload: |
             channel: "C05FKJ7DFAP"
             text: "[Test] Coin modules"
-            blocks: 
+            blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
@@ -71,6 +167,21 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+
+      - name: Post per-coin errors in thread
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+        run: |
+          # Extract ts from the previous step's JSON response
+          TS=$(jq -r '.ts // .message.ts // .response.ts // empty' <<< '${{ steps.post_parent.outputs.response }}')
+          CHANNEL="C05FKJ7DFAP"
+          TEXT="*Failed coins (one-liners):*\n${{ needs.integ-tests.outputs.summary_text || 'no details found' }}"
+
+          curl -sS -X POST "https://slack.com/api/chat.postMessage" \
+            -H "Content-type: application/json; charset=utf-8" \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            --data "$(jq -n --arg ch "$CHANNEL" --arg ts "$TS" --arg tx "$TEXT" \
+              '{channel:$ch, thread_ts:$ts, text:$tx}')"
   integ-tests-success:
     name: success report
     needs: integ-tests
