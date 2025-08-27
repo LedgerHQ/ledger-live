@@ -2,14 +2,17 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui/index";
-
+import { ApyIndicator } from "@ledgerhq/native-ui/pre-ldls/index";
 import { useTranslation } from "react-i18next";
 import { type Network } from "@ledgerhq/native-ui/pre-ldls/index";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsSelector } from "~/reducers/accounts";
-import { getAccountTuplesForCurrency } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
+import {
+  useAssetAccountCounts,
+  type AssetCountItem,
+} from "@ledgerhq/live-common/modularDrawer/hooks/modules/useAssetAccountCounts";
 
 const createAccountsCount = ({ label }: { label: string }) => (
   <Text variant="body" fontSize="12px" color="neutral.c80">
@@ -19,8 +22,8 @@ const createAccountsCount = ({ label }: { label: string }) => (
 
 const createAccountsCountAndApy = ({
   label,
-  // value,
-  // type,
+  value,
+  type,
 }: {
   label: string;
   value: number;
@@ -28,7 +31,7 @@ const createAccountsCountAndApy = ({
 }) => (
   <>
     {createAccountsCount({ label })}
-    {/* <ApyIndicator value={value} type={type} /> */}
+    <ApyIndicator value={value} type={type} />
   </>
 );
 
@@ -41,25 +44,16 @@ type AccountModuleParams = {
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-const useAccountData = ({ assets, accounts$ }: AccountModuleParams) => {
+const useAccountData = ({ assets, accounts$ }: AccountModuleParams): AssetCountItem[] => {
   const { t } = useTranslation();
   const nestedAccounts = useSelector(accountsSelector);
   const accountIds = useGetAccountIds(accounts$);
-
-  return assets
-    .map(asset => {
-      const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
-      const label = t("modularDrawer.accountCount", { count: length });
-
-      return {
-        asset,
-        label,
-        count: length,
-      };
-    })
-    .sort((a, b) => {
-      return b.count - a.count;
-    });
+  return useAssetAccountCounts({
+    assets,
+    nestedAccounts,
+    accountIds,
+    formatLabel: (count: number) => t("modularDrawer.accountCount", { count }),
+  });
 };
 
 export const useLeftAccountsModule = ({ assets, accounts$ }: AccountModuleParams) => {
