@@ -1,4 +1,4 @@
-import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import {
   ExchangeRate,
   SwapDataType,
@@ -36,6 +36,10 @@ import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
+import type {
+  Transaction as KaspaTransaction,
+  TransactionStatus as KaspaTransactionStatus,
+} from "@ledgerhq/live-common/families/kaspa/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/core";
 import BigNumber from "bignumber.js";
@@ -171,6 +175,22 @@ export type SwapNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
+  };
+  [ScreenName.KaspaEditCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: KaspaTransaction;
+    status?: KaspaTransactionStatus;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+    sompiPerByte?: BigNumber | null;
+    setSompiPerByte?: (_: BigNumber) => void;
   };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;

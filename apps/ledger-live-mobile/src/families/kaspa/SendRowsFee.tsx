@@ -55,7 +55,7 @@ export default function KaspaSendRowsFee({
             {
               label: transaction.feesStrategy,
               forceValueLabel: null,
-              amount: (transaction as KaspaTransaction).feePerByte,
+              amount: (transaction as KaspaTransaction).customFeeRate,
               unit: defaultStrategies[0].unit,
             },
           ]
