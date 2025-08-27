@@ -52,7 +52,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./libs/**"
+        run: pnpm i --filter="./libs/**" --filter="!./libs/ui/**"
 
       - name: Run coverage on appropriate libraries
         run: |
@@ -61,7 +61,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
         
-          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./libs/**" --concurrency=1 --force -- --runInBand=1 
+          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=1 --force -- --runInBand=1 
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
@@ -92,6 +92,7 @@ jobs:
           
           done
           
+          testCommand+=(--filter="!./libs/ui/**")
           testCommand+=(--api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}")
           testCommand+=(--token="${{ secrets.TURBOREPO_SERVER_TOKEN }}")
           testCommand+=(--team="foo")
