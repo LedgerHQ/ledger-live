@@ -163,7 +163,7 @@ jobs:
   integ-tests-fail:
     name: failure report
     needs: integ-tests
-    if: failure() && github.event_name != 'workflow_dispatch'
+    if: failure() && github.event_name
     runs-on: ubuntu-latest
     steps:
       - name: Post parent message
