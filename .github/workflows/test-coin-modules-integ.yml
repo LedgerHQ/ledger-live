@@ -186,19 +186,14 @@ jobs:
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
 
       - name: Post per-coin errors in thread
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-        run: |
-          # Extract ts from the previous step's JSON response
-          TS=$(jq -r '.ts // .message.ts // .response.ts // empty' <<< '${{ steps.post_parent.outputs.response }}')
-          CHANNEL="C05FKJ7DFAP"
-          TEXT="*Failed coins (one-liners):*\n${{ needs.integ-tests.outputs.summary_text || 'no details found' }}"
-
-          curl -sS -X POST "https://slack.com/api/chat.postMessage" \
-            -H "Content-type: application/json; charset=utf-8" \
-            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
-            --data "$(jq -n --arg ch "$CHANNEL" --arg ts "$TS" --arg tx "$TEXT" \
-              '{channel:$ch, thread_ts:$ts, text:$tx}')"
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C05FKJ7DFAP"
+            thread_ts: "${{ fromJSON(steps.post_parent.outputs.response).ts }}"
+            text: "*Failed coins (one-liners):*\n${{ needs.integ-tests.outputs.summary_text || 'no details found' }}"
   integ-tests-success:
     name: success report
     needs: integ-tests
