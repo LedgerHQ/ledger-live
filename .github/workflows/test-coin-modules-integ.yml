@@ -185,15 +185,28 @@ jobs:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
 
-      - name: Post per-coin errors in thread
-        uses: slackapi/slack-github-action@v2.0.0
+      - name: Post per-coin errors in thread (file payload)
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          THREAD_TS: ${{ fromJSON(steps.post_parent.outputs.response).ts }}
+          SUMMARY_TEXT: ${{ needs.integ-tests.outputs.summary_text || 'no details found' }}
+        run: |
+          # If you want to neutralize backticks so bash/Slack never misreads them:
+          SAFE_SUMMARY=$(printf '%s' "$SUMMARY_TEXT" | sed 's/`/′/g')
+
+          jq -n \
+            --arg ch "C05FKJ7DFAP" \
+            --arg ts "$THREAD_TS" \
+            --arg tx "$SAFE_SUMMARY" \
+            '{channel:$ch, thread_ts:$ts, text:"*Failed coins (one-liners):*\n" + $tx}' \
+            > slack-thread-payload.json
+
+      - uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
-          payload: |
-            channel: "C05FKJ7DFAP"
-            thread_ts: "${{ fromJSON(steps.post_parent.outputs.response).ts }}"
-            text: "*Failed coins (one-liners):*\n${{ needs.integ-tests.outputs.summary_text || 'no details found' }}"
+          payload-file-path: slack-thread-payload.json
+
   integ-tests-success:
     name: success report
     needs: integ-tests
