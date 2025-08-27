@@ -4,7 +4,7 @@ import {
   type Operation as Op,
   type Page,
   Pagination,
-} from "@ledgerhq/coin-framework/lib/api/types";
+} from "@ledgerhq/coin-framework/api/types";
 
 jest.mock("../network/sdk");
 
