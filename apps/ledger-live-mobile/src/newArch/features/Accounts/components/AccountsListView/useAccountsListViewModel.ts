@@ -1,5 +1,5 @@
 import type { FlashListProps } from "@shopify/flash-list";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
@@ -19,7 +19,7 @@ import { walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import { TrackingEvent } from "../../enums";
 
 export interface Props {
@@ -53,7 +53,19 @@ const useAccountsListViewModel = ({
   const accounts = specificAccounts || allAccounts;
   const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
 
-  const accountsToDisplay = orderedAccountsByValue.slice(0, limitNumberOfAccounts);
+  const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const filteredAccounts = useMemo(
+    () =>
+      orderedAccountsByValue.filter(account => {
+        if (account.type === "TokenAccount") {
+          return !excludedTokenIds.includes(account.token.id);
+        }
+        return true;
+      }),
+    [orderedAccountsByValue, excludedTokenIds],
+  );
+
+  const accountsToDisplay = filteredAccounts.slice(0, limitNumberOfAccounts);
 
   const pageTrackingEvent = specificAccounts
     ? TrackingEvent.AccountListSummary
