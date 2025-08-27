@@ -70,18 +70,10 @@ export function useDrawerLifecycle({
     navigationStepManager.reset();
     handleKeyboardDismiss();
     onClose?.();
-    const page =
-      navigationStepManager.currentStep === ModularDrawerStep.Network
-        ? "Add Account Select Network"
-        : getCurrentPageName(navigationStepManager.currentStep);
-
-    const flowName =
-      navigationStepManager.currentStep === ModularDrawerStep.Network ? "Add Account" : flow;
-
     trackModularDrawerEvent(EVENTS_NAME.BUTTON_CLICKED, {
       button: "Close",
-      flow: flowName,
-      page,
+      flow,
+      page: getCurrentPageName(navigationStepManager.currentStep),
     });
   }, [trackModularDrawerEvent, flow, navigationStepManager, onClose, resetSelection]);
 
