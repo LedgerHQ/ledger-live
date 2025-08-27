@@ -1,5 +1,54 @@
 # ledger-live-desktop
 
+## 2.126.0
+
+### Minor Changes
+
+- [#11329](https://github.com/LedgerHQ/ledger-live/pull/11329) [`e4d9519`](https://github.com/LedgerHQ/ledger-live/commit/e4d9519ee03cf2c58fc4f5a9919c4eea9f7b215a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add NRR as a possible interest type
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11368](https://github.com/LedgerHQ/ledger-live/pull/11368) [`4f48efd`](https://github.com/LedgerHQ/ledger-live/commit/4f48efd9a6aef2ce5bbfb050cf14c5be6f77da1a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement a useAssetsData hook to call DADA and handle pagination
+
+- [#11266](https://github.com/LedgerHQ/ledger-live/pull/11266) [`787e44e`](https://github.com/LedgerHQ/ledger-live/commit/787e44ef025d34ae8bfda1122f56ba044b027590) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Setup RTK
+
+- [#11281](https://github.com/LedgerHQ/ledger-live/pull/11281) [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device selection for Apex
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
+- [#11353](https://github.com/LedgerHQ/ledger-live/pull/11353) [`a8752d6`](https://github.com/LedgerHQ/ledger-live/commit/a8752d61daf45edeb38b5a1379185301d48bb55f) Thanks [@qperrot](https://github.com/qperrot)! - Bug fix stellar AddAsset
+
+- [#11332](https://github.com/LedgerHQ/ledger-live/pull/11332) [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fixes infinite loop for untracked users with (partially) expired braze campaigns
+
+- [#11378](https://github.com/LedgerHQ/ledger-live/pull/11378) [`4c57e2c`](https://github.com/LedgerHQ/ledger-live/commit/4c57e2c8f046c1169d14ca09bee63990e1657fcb) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix scann accounts loop
+
+- [#11292](https://github.com/LedgerHQ/ledger-live/pull/11292) [`627deec`](https://github.com/LedgerHQ/ledger-live/commit/627deec0491ebe658b069b5e4926739c673317bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add Lotties for Apex
+
+- [#11260](https://github.com/LedgerHQ/ledger-live/pull/11260) [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a allowlist and blocklist FF parameter to enable or disable the mad for specific live apps
+
+- [#11320](https://github.com/LedgerHQ/ledger-live/pull/11320) [`23f7482`](https://github.com/LedgerHQ/ledger-live/commit/23f74820dac35a77581ac05726e5f5a9cb364d49) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add device icon in sync onboarding for Apex
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1), [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`fabdc2d`](https://github.com/LedgerHQ/ledger-live/commit/fabdc2d34fc43302fc31514073fcc74e83d0ee93), [`2fb3986`](https://github.com/LedgerHQ/ledger-live/commit/2fb3986b56c80c331fef5ddf3e1b5988a3245b07), [`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef), [`15c776d`](https://github.com/LedgerHQ/ledger-live/commit/15c776d5d12b275abf09c04d532f350959ef4856), [`03680da`](https://github.com/LedgerHQ/ledger-live/commit/03680da6a8c688b1b63b222de96e746d349a0f4d), [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/coin-evm@2.28.0
+  - @ledgerhq/cryptoassets@13.26.0
+  - @ledgerhq/live-common@34.46.0
+  - @ledgerhq/coin-framework@6.2.0
+  - @ledgerhq/types-devices@6.27.0
+  - @ledgerhq/live-countervalues-react@0.5.0
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/coin-bitcoin@0.20.2
+  - @ledgerhq/coin-cosmos@0.16.7
+  - @ledgerhq/coin-filecoin@1.10.1
+  - @ledgerhq/live-countervalues@0.6.2
+  - @ledgerhq/live-nft@0.8.18
+  - @ledgerhq/live-nft-react@0.9.18
+  - @ledgerhq/live-wallet@0.12.2
+  - @ledgerhq/live-dmk-desktop@0.9.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.3
+  - @ledgerhq/domain-service@1.2.41
+
 ## 2.126.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,0 @@
----
-"@ledgerhq/coin-evm": minor
----
-
-feat(coin-evm): implement `getSequence`
