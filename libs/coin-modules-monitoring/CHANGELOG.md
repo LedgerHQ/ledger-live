@@ -1,5 +1,16 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.2.0-nightly.5
+
+### Minor Changes
+
+- [#11482](https://github.com/LedgerHQ/ledger-live/pull/11482) [`86a0527`](https://github.com/LedgerHQ/ledger-live/commit/86a052718eb3c25fe501175887865d9d8f94cf60) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-monitoring): exit with 1 on failure
+
+### Patch Changes
+
+- Updated dependencies [[`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266), [`bc8932d`](https://github.com/LedgerHQ/ledger-live/commit/bc8932d4c906f2aca99eacc5af89016d4784e6b8), [`c5bb247`](https://github.com/LedgerHQ/ledger-live/commit/c5bb24705c4463eeb519adc79b3b3dfb03ed4487)]:
+  - @ledgerhq/live-common@34.46.0-nightly.5
+
 ## 2.1.1-nightly.4
 
 ### Patch Changes

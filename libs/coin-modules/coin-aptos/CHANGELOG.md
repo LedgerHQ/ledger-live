@@ -1,5 +1,15 @@
 # @ledgerhq/coin-aptos
 
+## 3.1.1-nightly.2
+
+### Patch Changes
+
+- [#11386](https://github.com/LedgerHQ/ledger-live/pull/11386) [`a158f5a`](https://github.com/LedgerHQ/ledger-live/commit/a158f5a58f8d69fee3693f647ca6de99efa4666e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - (Aptos) Ensure X-Ledger-Client-Version header is always included in API requests.
+
+- Updated dependencies [[`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266)]:
+  - @ledgerhq/coin-framework@6.2.0-nightly.2
+  - @ledgerhq/types-live@6.82.0-nightly.2
+
 ## 3.1.1-nightly.1
 
 ### Patch Changes

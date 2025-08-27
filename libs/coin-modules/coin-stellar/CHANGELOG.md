@@ -1,5 +1,19 @@
 # @ledgerhq/coin-stellar
 
+## 6.2.0-nightly.2
+
+### Minor Changes
+
+- [#11338](https://github.com/LedgerHQ/ledger-live/pull/11338) [`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b) Thanks [@qperrot](https://github.com/qperrot)! - Remove NetworkInfo from TransactionIntent and add customFees
+
+- [#11398](https://github.com/LedgerHQ/ledger-live/pull/11398) [`c5bb247`](https://github.com/LedgerHQ/ledger-live/commit/c5bb24705c4463eeb519adc79b3b3dfb03ed4487) Thanks [@qperrot](https://github.com/qperrot)! - Upgrade stellar-sdk to v14
+
+### Patch Changes
+
+- Updated dependencies [[`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266)]:
+  - @ledgerhq/coin-framework@6.2.0-nightly.2
+  - @ledgerhq/types-live@6.82.0-nightly.2
+
 ## 6.2.0-nightly.1
 
 ### Patch Changes

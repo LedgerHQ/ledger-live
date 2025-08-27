@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.82.0-nightly.2
+
+### Minor Changes
+
+- [#11498](https://github.com/LedgerHQ/ledger-live/pull/11498) [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add FF for DADA for LLM
+
 ## 6.82.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,39 @@
 # ledger-live-desktop
 
+## 2.126.0-nightly.6
+
+### Minor Changes
+
+- [#11338](https://github.com/LedgerHQ/ledger-live/pull/11338) [`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b) Thanks [@qperrot](https://github.com/qperrot)! - Remove NetworkInfo from TransactionIntent and add customFees
+
+- [#11480](https://github.com/LedgerHQ/ledger-live/pull/11480) [`8dba033`](https://github.com/LedgerHQ/ledger-live/commit/8dba0333ceab46e6dc4959185193f1fb12dbf26b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fetch assets data on search
+
+- [#11451](https://github.com/LedgerHQ/ledger-live/pull/11451) [`63cf86a`](https://github.com/LedgerHQ/ledger-live/commit/63cf86a271fad0c4e2d375584f86340ec2dffbed) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update icons for Stax and Flex
+
+- [#11422](https://github.com/LedgerHQ/ledger-live/pull/11422) [`44a5ead`](https://github.com/LedgerHQ/ledger-live/commit/44a5eadddf02fb6fe3161af7cb99ef3a3e729699) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - re-introduce Deeplink tools
+
+- [#11474](https://github.com/LedgerHQ/ledger-live/pull/11474) [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - move findCurrencyByTicker impl.
+
+- [#11478](https://github.com/LedgerHQ/ledger-live/pull/11478) [`bc8932d`](https://github.com/LedgerHQ/ledger-live/commit/bc8932d4c906f2aca99eacc5af89016d4784e6b8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate createApi Assets from LLD to live-common and plugged it to LLM
+
+### Patch Changes
+
+- Updated dependencies [[`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266), [`bc8932d`](https://github.com/LedgerHQ/ledger-live/commit/bc8932d4c906f2aca99eacc5af89016d4784e6b8), [`c5bb247`](https://github.com/LedgerHQ/ledger-live/commit/c5bb24705c4463eeb519adc79b3b3dfb03ed4487)]:
+  - @ledgerhq/live-common@34.46.0-nightly.5
+  - @ledgerhq/coin-framework@6.2.0-nightly.2
+  - @ledgerhq/types-live@6.82.0-nightly.2
+  - @ledgerhq/live-countervalues@0.7.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.9.1-nightly.5
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.2
+  - @ledgerhq/coin-evm@2.28.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.2
+  - @ledgerhq/live-nft@0.8.18-nightly.2
+  - @ledgerhq/live-nft-react@0.9.18-nightly.2
+  - @ledgerhq/live-wallet@0.13.0-nightly.2
+  - @ledgerhq/domain-service@1.2.41-nightly.2
+
 ## 2.126.0-nightly.5
 
 ### Minor Changes

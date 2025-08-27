@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.91.0-nightly.6
+
+### Minor Changes
+
+- [#11338](https://github.com/LedgerHQ/ledger-live/pull/11338) [`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b) Thanks [@qperrot](https://github.com/qperrot)! - Remove NetworkInfo from TransactionIntent and add customFees
+
+- [#11451](https://github.com/LedgerHQ/ledger-live/pull/11451) [`63cf86a`](https://github.com/LedgerHQ/ledger-live/commit/63cf86a271fad0c4e2d375584f86340ec2dffbed) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update icons for Stax and Flex
+
+- [#11422](https://github.com/LedgerHQ/ledger-live/pull/11422) [`44a5ead`](https://github.com/LedgerHQ/ledger-live/commit/44a5eadddf02fb6fe3161af7cb99ef3a3e729699) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - re-introduce Deeplink tools
+
+- [#11477](https://github.com/LedgerHQ/ledger-live/pull/11477) [`1072556`](https://github.com/LedgerHQ/ledger-live/commit/1072556c51391ff663cda1f1657e08ff4303876c) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: LLM MAD Analytics
+
+- [#11474](https://github.com/LedgerHQ/ledger-live/pull/11474) [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - move findCurrencyByTicker impl.
+
+- [#11478](https://github.com/LedgerHQ/ledger-live/pull/11478) [`bc8932d`](https://github.com/LedgerHQ/ledger-live/commit/bc8932d4c906f2aca99eacc5af89016d4784e6b8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate createApi Assets from LLD to live-common and plugged it to LLM
+
+### Patch Changes
+
+- [#11372](https://github.com/LedgerHQ/ledger-live/pull/11372) [`f2f76d9`](https://github.com/LedgerHQ/ledger-live/commit/f2f76d9a2f6b465fef48cb95275176366e958991) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - move InView state into a reducer
+
+- Updated dependencies [[`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266)]:
+  - @ledgerhq/coin-framework@6.2.0-nightly.2
+  - @ledgerhq/types-live@6.82.0-nightly.2
+  - @ledgerhq/live-countervalues@0.7.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.2
+  - @ledgerhq/coin-evm@2.28.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.2
+  - @ledgerhq/coin-stacks@0.8.18-nightly.2
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.2
+  - @ledgerhq/live-nft@0.8.18-nightly.2
+  - @ledgerhq/live-nft-react@0.9.18-nightly.2
+  - @ledgerhq/live-wallet@0.13.0-nightly.2
+  - @ledgerhq/domain-service@1.2.41-nightly.2
+
 ## 3.91.0-nightly.5
 
 ### Minor Changes

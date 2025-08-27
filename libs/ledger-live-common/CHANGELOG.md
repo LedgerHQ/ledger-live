@@ -1,5 +1,60 @@
 # @ledgerhq/live-common
 
+## 34.46.0-nightly.5
+
+### Minor Changes
+
+- [#11338](https://github.com/LedgerHQ/ledger-live/pull/11338) [`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b) Thanks [@qperrot](https://github.com/qperrot)! - Remove NetworkInfo from TransactionIntent and add customFees
+
+- [#11498](https://github.com/LedgerHQ/ledger-live/pull/11498) [`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add FF for DADA for LLM
+
+- [#11474](https://github.com/LedgerHQ/ledger-live/pull/11474) [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - move findCurrencyByTicker impl.
+
+- [#11478](https://github.com/LedgerHQ/ledger-live/pull/11478) [`bc8932d`](https://github.com/LedgerHQ/ledger-live/commit/bc8932d4c906f2aca99eacc5af89016d4784e6b8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Migrate createApi Assets from LLD to live-common and plugged it to LLM
+
+- [#11398](https://github.com/LedgerHQ/ledger-live/pull/11398) [`c5bb247`](https://github.com/LedgerHQ/ledger-live/commit/c5bb24705c4463eeb519adc79b3b3dfb03ed4487) Thanks [@qperrot](https://github.com/qperrot)! - Upgrade stellar-sdk to v14
+
+### Patch Changes
+
+- Updated dependencies [[`a158f5a`](https://github.com/LedgerHQ/ledger-live/commit/a158f5a58f8d69fee3693f647ca6de99efa4666e), [`acdc089`](https://github.com/LedgerHQ/ledger-live/commit/acdc089f934461dd2fdfdfd61aa907f1520a5d7b), [`516176d`](https://github.com/LedgerHQ/ledger-live/commit/516176d18c7f53961799e92e8804c4a756684266), [`c5bb247`](https://github.com/LedgerHQ/ledger-live/commit/c5bb24705c4463eeb519adc79b3b3dfb03ed4487)]:
+  - @ledgerhq/coin-aptos@3.1.1-nightly.2
+  - @ledgerhq/coin-stellar@6.2.0-nightly.2
+  - @ledgerhq/coin-xrp@7.2.0-nightly.2
+  - @ledgerhq/coin-framework@6.2.0-nightly.2
+  - @ledgerhq/live-countervalues@0.7.0-nightly.2
+  - @ledgerhq/coin-algorand@0.9.18-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.2
+  - @ledgerhq/coin-canton@0.2.2-nightly.2
+  - @ledgerhq/coin-cardano@0.11.2-nightly.2
+  - @ledgerhq/coin-casper@2.0.9-nightly.2
+  - @ledgerhq/coin-celo@1.2.1-nightly.4
+  - @ledgerhq/coin-cosmos@0.16.7-nightly.2
+  - @ledgerhq/coin-evm@2.28.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.10.1-nightly.2
+  - @ledgerhq/coin-hedera@1.11.0-nightly.2
+  - @ledgerhq/coin-icon@0.11.5-nightly.2
+  - @ledgerhq/coin-internet_computer@1.7.18-nightly.2
+  - @ledgerhq/coin-mina@1.1.17-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.18-nightly.2
+  - @ledgerhq/coin-near@0.12.1-nightly.2
+  - @ledgerhq/coin-polkadot@6.7.1-nightly.2
+  - @ledgerhq/coin-solana@0.32.0-nightly.2
+  - @ledgerhq/coin-stacks@0.8.18-nightly.2
+  - @ledgerhq/coin-sui@0.10.1-nightly.2
+  - @ledgerhq/coin-tezos@6.1.1-nightly.2
+  - @ledgerhq/coin-ton@0.13.7-nightly.2
+  - @ledgerhq/coin-tron@5.1.1-nightly.2
+  - @ledgerhq/coin-vechain@2.8.2-nightly.2
+  - @ledgerhq/live-countervalues-react@0.4.1-nightly.2
+  - @ledgerhq/live-nft@0.8.18-nightly.2
+  - @ledgerhq/live-wallet@0.13.0-nightly.2
+  - @ledgerhq/device-core@0.6.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.16-nightly.2
+  - @ledgerhq/live-signer-canton@0.2.2-nightly.2
+  - @ledgerhq/live-signer-evm@0.7.1-nightly.4
+  - @ledgerhq/live-signer-solana@0.5.3-nightly.2
+  - @ledgerhq/hw-app-celo@6.34.1-nightly.2
+
 ## 34.46.0-nightly.4
 
 ### Minor Changes
