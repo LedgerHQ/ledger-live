@@ -1,4 +1,4 @@
-import type { Middleware } from "redux";
+import { Middleware } from "@reduxjs/toolkit";
 import { start } from "~/renderer/analytics/segment";
 import type { State } from "../reducers";
 

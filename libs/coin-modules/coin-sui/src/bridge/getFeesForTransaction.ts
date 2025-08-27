@@ -4,6 +4,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { SuiAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 import { estimateFees } from "../logic";
+import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
 
 /**
  * Fetch the transaction fees for a transaction
@@ -34,9 +35,7 @@ export default async function getEstimatedFees({
   };
 
   const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-  const asset = subAccount
-    ? { type: "token" as const, coinType: subAccount?.token.contractAddress }
-    : { type: "native" as const };
+  const asset = toSuiAsset(subAccount?.token.contractAddress ?? DEFAULT_COIN_TYPE);
 
   const fees = await estimateFees({
     recipient: getAbandonSeedAddress(account.currency.id),

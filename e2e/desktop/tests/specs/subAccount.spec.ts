@@ -56,9 +56,17 @@ for (const token of subAccounts) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        await app.addAccount.expectModalVisiblity();
 
-        await app.addAccount.selectToken(token.account);
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularDrawer.validateAssetsDrawerItems();
+          await app.modularDrawer.selectAssetByTickerAndName(token.account.currency);
+          await app.modularDrawer.selectNetwork(token.account.currency);
+          await app.addAccount.expectAccountModalToBeVisible();
+        } else {
+          await app.addAccount.expectModalVisibility();
+          await app.addAccount.selectToken(token.account);
+        }
         await app.addAccount.addAccounts();
 
         await app.addAccount.done();
@@ -360,7 +368,7 @@ const tokenTransactionInvalid = [
   {
     tx: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
-      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
+      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
     ),
     xrayTicket: "B2CQA-2700",
   },

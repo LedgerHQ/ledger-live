@@ -40,12 +40,15 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     lastBlock,
     listOperations: operations,
     validateIntent: getTransactionStatus,
-    getAccountInfo,
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
+    },
+    getSequence: async (address: string) => {
+      const accountInfo = await getAccountInfo(address);
+      return accountInfo.sequence;
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
@@ -61,7 +64,7 @@ async function craft(
   customFees?: FeeEstimation,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees?.value ?? (await estimateFees()).fee;
+  const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
 
   const memosMap =
     transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
@@ -83,7 +86,7 @@ async function craft(
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: estimatedFees,
+      fees: estimatedFees,
       destinationTag,
       // NOTE: double check before/after here
       memos: memoEntries,
@@ -96,7 +99,7 @@ async function craft(
 
 async function estimate(): Promise<FeeEstimation> {
   const estimation = await estimateFees();
-  return { value: estimation.fee };
+  return { value: estimation.fees };
 }
 
 type PaginationState = {
@@ -157,9 +160,17 @@ async function operationsFromHeight(
   return [state.accumulator, state.apiNextCursor ?? ""];
 }
 
-async function operations(
-  address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
-  return await operationsFromHeight(address, minHeight);
+// NOTE: double check
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  const { minHeight, lastPagingToken } = pagination;
+  if (minHeight) {
+    return await operationsFromHeight(address, minHeight);
+  }
+  const isInitSync = lastPagingToken === "";
+
+  const newPagination = {
+    minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
+  };
+  // TODO token must be implemented properly (waiting ack from the design document)
+  return await operationsFromHeight(address, newPagination.minHeight);
 }

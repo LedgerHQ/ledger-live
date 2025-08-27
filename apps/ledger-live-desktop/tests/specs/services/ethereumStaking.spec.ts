@@ -68,6 +68,17 @@ test.use({
         },
       },
     },
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        earn_flow: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
   },
 });
 

@@ -2,7 +2,7 @@ import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ApyIndicator from "../../../components/ApyIndicator";
 
-const createApyItem = ({ value, type }: { value: number; type: "APY" | "APR" }) => (
+const createApyItem = ({ value, type }: { value: number; type: "NRR" | "APY" | "APR" }) => (
   <ApyIndicator value={value} type={type} />
 );
 

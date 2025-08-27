@@ -8,11 +8,11 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, ContinueOnDevice, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
@@ -27,7 +27,6 @@ import { analyticsFlowName, StepText } from "./shared";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
-import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
@@ -40,6 +39,9 @@ import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboa
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import BackupBackground from "./assets/BackupBackground";
 import SetupBackground from "./assets/SetupBackground";
+import ContinueOnStax from "./assets/ContinueOnStax";
+import ContinueOnEuropa from "./assets/ContinueOnEuropa";
+import ContinueOnApex from "./assets/ContinueOnApex";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -160,6 +162,19 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
+  const DeviceIcon = useMemo(() => {
+    switch (device.modelId) {
+      case DeviceModelId.stax:
+        return ContinueOnStax;
+      case DeviceModelId.europa:
+        return ContinueOnEuropa;
+      case DeviceModelId.apex:
+        return ContinueOnApex; // Use the same icon as Europa for now
+      default:
+        return ContinueOnEuropa; // Fallback to Europa icon
+    }
+  }, [device.modelId]);
+
   const defaultSteps: Step[] = useMemo(
     () => [
       {
@@ -180,8 +195,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
                 productName,
               })}
             </StepText>
-            <ContinueOnDeviceWithAnim
-              deviceModelId={device.modelId}
+            <ContinueOnDevice
+              Icon={DeviceIcon}
               text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -199,8 +214,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>
-            <ContinueOnDeviceWithAnim
-              deviceModelId={device.modelId}
+            <ContinueOnDevice
+              Icon={DeviceIcon}
               text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -227,9 +242,10 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             <SeedStep
               seedPathStatus={seedPathStatus}
+              deviceName={productName}
+              deviceIcon={DeviceIcon}
               charonSupported={Boolean(deviceOnboardingState?.charonSupported)}
               charonStatus={deviceOnboardingState?.charonStatus ?? null}
-              deviceModelId={device.modelId}
             />
           </>
         ),
@@ -266,9 +282,10 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       seedPathStatus,
       hasAppLoader,
       productName,
-      device,
+      DeviceIcon,
       deviceOnboardingState?.charonSupported,
       deviceOnboardingState?.charonStatus,
+      device,
       shouldRestoreApps,
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,

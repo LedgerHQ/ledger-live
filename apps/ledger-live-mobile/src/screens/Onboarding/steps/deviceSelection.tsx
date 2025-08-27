@@ -15,6 +15,7 @@ import { ScreenName } from "~/const";
 import { DeviceCards } from "./Cards/DeviceCard";
 import OnboardingView from "./OnboardingView";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type NavigationProp = RootNavigationComposite<
   BaseNavigationComposite<
@@ -48,21 +49,28 @@ export const devices = {
     img: require("../../../../assets/images/devices/Europa.webp"),
     setupTime: 300000,
   },
+  apex: {
+    id: DeviceModelId.apex,
+    img: require("../../../../assets/images/devices/Apex.webp"),
+    setupTime: 300000,
+  },
 };
 
 const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 
-const availableDevices = [
-  devices.stax,
-  devices.europa,
-  devices.nanoX,
-  devices.nanoSP,
-  devices.nanoS,
-];
-
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
+
+  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
+  const availableDevices = [
+    devices.stax,
+    devices.europa,
+    ...(isApexSupported ? [devices.apex] : []),
+    devices.nanoX,
+    devices.nanoSP,
+    devices.nanoS,
+  ];
 
   const [isOpen, setOpen] = useState<boolean>(false);
 

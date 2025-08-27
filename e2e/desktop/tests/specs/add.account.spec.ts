@@ -46,8 +46,16 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        await app.addAccount.expectModalVisiblity();
-        await app.addAccount.selectCurrency(currency.currency);
+        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+        if (isModularDrawer) {
+          await app.modularDrawer.validateAssetsDrawerItems();
+          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
+          await app.modularDrawer.selectNetwork(currency.currency);
+          await app.addAccount.expectAccountModalToBeVisible();
+        } else {
+          await app.addAccount.expectModalVisibility();
+          await app.addAccount.selectCurrency(currency.currency);
+        }
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();
