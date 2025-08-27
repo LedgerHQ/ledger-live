@@ -31,7 +31,6 @@ const StepFooter: React.FC<Props> = props => {
     setStep,
     previousStep,
     nextStep,
-
     previousHidden,
     previousDisabled,
     previousLoading,
@@ -68,8 +67,8 @@ const StepFooter: React.FC<Props> = props => {
         alignSelf="stretch"
         flexDirection="row"
         justifyContent="space-between"
-        pt={4}
-        pb={1}
+        pt={6}
+        pb="1px"
       >
         {showPrevious ? (
           <ButtonV3

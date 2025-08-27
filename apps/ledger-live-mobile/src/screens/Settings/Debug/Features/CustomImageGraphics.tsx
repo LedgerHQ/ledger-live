@@ -17,8 +17,6 @@ import {
 } from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import imageSource from "~/components/CustomImage/assets/examplePicture2.webp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
-import { useTheme } from "styled-components/native";
 
 const aStaxDevice: Device = {
   deviceId: "",
@@ -48,8 +46,6 @@ export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
   const [deviceActionStep, setDeviceActionStep] = useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
 
   const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(DeviceModelId.stax);
   const device = {
@@ -70,9 +66,6 @@ export default function DebugCustomImageGraphics() {
     />
   );
 
-  const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId, theme);
-  const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId, theme);
-
   return (
     <ImageSourceContext.Provider value={{ source: imageSource }}>
       {showAllAssets ? (
@@ -82,7 +75,7 @@ export default function DebugCustomImageGraphics() {
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>
             <FramedImageWithContext
-              framedPictureConfig={framedTransferConfig}
+              deviceModelId={deviceModelId}
               style={{ backgroundColor: "red" }}
               loadingProgress={progress}
             />
@@ -90,7 +83,7 @@ export default function DebugCustomImageGraphics() {
             {slider}
             <Divider />
             <Text mb={3}>FramedImage component, previewConfig</Text>
-            <FramedImageWithContext framedPictureConfig={framedPreviewConfig} />
+            <FramedImageWithContext deviceModelId={deviceModelId} />
           </Flex>
         </NavigationScrollView>
       ) : (
@@ -102,9 +95,7 @@ export default function DebugCustomImageGraphics() {
           ) : deviceActionStep === "confirmCommit" ? (
             <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
           ) : deviceActionStep === "preview" ? (
-            <FramedImageWithContext
-              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
-            />
+            <FramedImageWithContext deviceModelId={deviceModelId} />
           ) : null}
         </Flex>
       )}

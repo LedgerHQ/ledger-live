@@ -6880,11 +6880,11 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Installation of lock screen picture\ncancelled on {{productName}}",
+      "title": "Lock screen picture discarded on\n{{productName}}",
       "description": "If this this was a mistake, retry now."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Installation of lock screen picture\ncancelled on {{productName}}",
+      "title": "Lock screen picture cancelled on\n{{productName}}",
       "description": "If this this was a mistake, retry now."
     },
     "ImageDoesNotExistOnDevice": {
@@ -7209,7 +7209,7 @@
     "steps": {
       "choose": {
         "stepLabel": "Choose picture",
-        "description": "Choose an image to set as (...)",
+        "description": "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
         "pickFromNftGallery": "Select from my NFT gallery",
         "myNfts": "My NFTs",
         "upload": "Upload from computer",
@@ -7222,7 +7222,7 @@
       "adjust": {
         "stepLabel": "Crop",
         "rotate": "Rotate",
-        "confirmCrop": "Confirm Crop"
+        "confirmCrop": "Confirm crop"
       },
       "contrast": {
         "stepLabel": "Set contrast",
@@ -7233,7 +7233,7 @@
         "useAnotherPicture": "Upload another picture",
         "allowPreview": "Tap on “Load picture” to\ncustomize the lock screen picture",
         "allowConfirmPreview": "Tap on “Load picture“ to\nrestore lock screen picture",
-        "loadingPicture": "Installing...",
+        "loadingPicture": "Loading...",
         "voila": "Voilà!",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",

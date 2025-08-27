@@ -116,7 +116,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     }
   }, [CLSError]);
   const isError = !!error;
-  const isRefusedOnStaxError =
+  const refusedOnDevice =
     (error as unknown) instanceof ImageLoadRefusedOnDevice ||
     (error as unknown) instanceof ImageCommitRefusedOnDevice;
 
@@ -128,12 +128,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [dispatch, error]);
 
   const handleRetry = useCallback(() => {
-    if (isRefusedOnStaxError) openModal();
+    if (refusedOnDevice) openModal();
     else remountMe();
-  }, [isRefusedOnStaxError, remountMe, openModal]);
+  }, [refusedOnDevice, remountMe, openModal]);
 
   const trackScreenName = isError
-    ? isRefusedOnStaxError
+    ? refusedOnDevice
       ? analyticsScreenNameRefusedOnStax
       : "Error: " + error.name
     : undefined;
@@ -148,8 +148,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               t,
               error,
               device,
-              ...(isRefusedOnStaxError
-                ? { Icon: Icons.Warning, iconColor: "warning.c60", hasExportLogButton: false }
+              ...(refusedOnDevice
+                ? {
+                    Icon: Icons.WarningFill,
+                    iconColor: "warning.c60",
+                    hasExportLogButton: false,
+                  }
                 : {}),
             })}
             {}
@@ -160,14 +164,14 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               onPress={handleRetry}
               event="button_clicked"
               eventProperties={
-                isRefusedOnStaxError
+                refusedOnDevice
                   ? analyticsRefusedOnStaxUploadAnotherEventProps
                   : analyticsErrorTryAgainEventProps
               }
             >
-              {isRefusedOnStaxError ? t("customImage.uploadAnotherImage") : t("common.retry")}
+              {refusedOnDevice ? t("customImage.uploadAnotherImage") : t("common.retry")}
             </Button>
-            {isRefusedOnStaxError ? (
+            {refusedOnDevice ? (
               <Flex py={7}>
                 <Link
                   size="large"

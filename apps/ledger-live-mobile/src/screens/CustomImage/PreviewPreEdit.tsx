@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components/native";
+import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   NFTMetadataLoadingError,
@@ -53,7 +53,6 @@ import useCenteredImage, {
 import Button from "~/components/wrappedUi/Button";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import {
   getAvailableDitheringConfigKeys,
   mapDitheringConfigKeyToConfig,
@@ -121,8 +120,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -424,15 +421,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
+                deviceModelId={deviceModelId}
               />
             </Flex>
           </Flex>
-          <Flex pb={8} px={8}>
+          <Flex pb={8} px={6}>
             <Button
               type="main"
               size="large"
-              outline
               mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}

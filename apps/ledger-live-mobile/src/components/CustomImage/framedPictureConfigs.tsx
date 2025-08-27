@@ -1,123 +1,55 @@
-import staxPreviewBackground from "./assets/staxPreviewBackground.webp";
-import staxBackgroundLight from "./assets/staxBackgroundLight.webp";
-import staxBackgroundDark from "./assets/staxBackgroundDark.webp";
-import europaBackgroundLight from "./assets/europaBackgroundLight.webp";
-import europaBackgroundDark from "./assets/europaBackgroundDark.webp";
+import STAX_DEVICE from "./assets/stax_device.png";
+import FLEX_DEVICE from "./assets/flex_device.png";
+import APEX_DEVICE from "./assets/apex_device.png";
 import { FramedPictureConfig } from "./FramedPicture";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
-const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 960,
-  frameWidth: 960,
-  innerHeight: 765,
-  innerWidth: 483,
-  innerRight: 239,
-  innerTop: 89,
-  borderRightRadius: 36,
+const STAX_FRAME_HEIGHT = 425;
+const STAX_FRAME_WIDTH = 270;
+
+export const staxFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameHeight: STAX_FRAME_HEIGHT,
+  frameWidth: STAX_FRAME_WIDTH,
+  innerHeight: 402,
+  innerWidth: 245,
+  innerRight: 15,
+  innerTop: 12,
+  borderRightRadius: 18,
   resizeMode: "cover",
 };
 
-const staxPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 1283,
-  frameWidth: 810,
-  innerHeight: 1211,
-  innerWidth: 1211 * (400 / 670),
-  innerRight: 35,
-  innerTop: 38,
-  borderRightRadius: 57,
-  resizeMode: "cover",
-};
+const EUROPA_FRAME_WIDTH = 354;
+const EUROPA_FRAME_HEIGHT = 392;
 
-const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  frameWidth: 960,
-  frameHeight: 960,
-  innerWidth: 440,
-  innerHeight: 557,
-  innerRight: 252,
-  innerTop: 147,
-  borderRightRadius: 6,
-  borderLeftRadius: 6,
+export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameWidth: EUROPA_FRAME_WIDTH,
+  frameHeight: EUROPA_FRAME_HEIGHT,
+  innerWidth: 224,
+  innerHeight: 282,
+  innerRight: 66,
+  innerTop: 29,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
   resizeMode: "cover",
-};
-
-const europaPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  ...europaTransferConfig,
-  scale: 0.4,
 };
 
 const configs = {
-  transfer: {
-    stax: {
-      light: {
-        ...staxTransferConfig,
-        backgroundSource: staxBackgroundLight,
-      },
-      dark: {
-        ...staxTransferConfig,
-        backgroundSource: staxBackgroundDark,
-      },
-    },
-    europa: {
-      light: {
-        ...europaTransferConfig,
-        backgroundSource: europaBackgroundLight,
-      },
-      dark: {
-        ...europaTransferConfig,
-        backgroundSource: europaBackgroundDark,
-      },
-    },
-    apex: {
-      light: {
-        ...europaTransferConfig,
-        backgroundSource: europaBackgroundLight,
-      },
-      dark: {
-        ...europaTransferConfig,
-        backgroundSource: europaBackgroundDark,
-      },
-    },
+  stax: {
+    ...staxFrameConfig,
+    backgroundSource: STAX_DEVICE,
   },
-  preview: {
-    stax: {
-      light: {
-        ...staxPreviewConfig,
-        backgroundSource: staxPreviewBackground,
-      },
-      dark: {
-        ...staxPreviewConfig,
-        backgroundSource: staxPreviewBackground,
-      },
-    },
-    europa: {
-      light: {
-        ...europaPreviewConfig,
-        backgroundSource: europaBackgroundLight,
-      },
-      dark: {
-        ...europaPreviewConfig,
-        backgroundSource: europaBackgroundDark,
-      },
-    },
-    apex: {
-      light: {
-        ...europaPreviewConfig,
-        backgroundSource: europaBackgroundLight,
-      },
-      dark: {
-        ...europaPreviewConfig,
-        backgroundSource: europaBackgroundDark,
-      },
-    },
+  europa: {
+    ...europaFrameConfig,
+    backgroundSource: FLEX_DEVICE,
+  },
+  apex: {
+    ...europaFrameConfig,
+    backgroundSource: APEX_DEVICE,
   },
 };
 
 export function getFramedPictureConfig(
-  type: "preview" | "transfer",
   deviceModelId: CLSSupportedDeviceModelId,
-  theme: "light" | "dark",
 ): FramedPictureConfig {
-  return configs[type][deviceModelId][theme];
+  return configs[deviceModelId];
 }

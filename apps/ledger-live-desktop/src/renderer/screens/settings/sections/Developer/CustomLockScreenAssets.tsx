@@ -9,7 +9,6 @@ import Slider from "~/renderer/components/Slider";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import source from "./sampleimage";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getFramedPictureConfig } from "~/renderer/components/CustomImage/framedPictureConfigs";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -41,7 +40,7 @@ const CustomLockScreenAssets = () => {
       <Box horizontal>
         <Flex mr={3}>
           <FramedPicture
-            frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
+            deviceModelId={deviceModelId}
             source={source}
             loadingProgress={0}
             background={
@@ -51,7 +50,7 @@ const CustomLockScreenAssets = () => {
         </Flex>
         <Flex mr={3}>
           <FramedPicture
-            frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
+            deviceModelId={deviceModelId}
             source={source}
             loadingProgress={1}
             background={
@@ -62,7 +61,7 @@ const CustomLockScreenAssets = () => {
           />
         </Flex>
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
+          deviceModelId={deviceModelId}
           source={source}
           loadingProgress={+(fixedPercentage / 100).toFixed(2)}
         />

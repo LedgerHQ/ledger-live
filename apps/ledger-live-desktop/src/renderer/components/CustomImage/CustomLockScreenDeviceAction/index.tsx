@@ -7,7 +7,7 @@ import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
-import { Theme, Flex, IconsLegacy } from "@ledgerhq/react-ui";
+import { Theme, Flex, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/ButtonV3";
@@ -96,7 +96,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
-  const isRefusedOnStaxError = checkIfIsRefusedOnStaxError(error);
+  const refusedOnDevice = checkIfIsRefusedOnStaxError(error);
 
   useEffect(() => {
     if (!error) return;
@@ -123,14 +123,12 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
           deviceModelId={deviceModelId}
           progress={progress}
           source={source}
-          type={type}
         />
       ) : imageCommitRequested && device ? (
         <RenderImageCommitRequested
           device={device}
           deviceModelId={deviceModelId}
           source={source}
-          type={type}
           restore={restore}
         />
       ) : isError ? (
@@ -139,18 +137,18 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
             t,
             error,
             device: device ?? undefined,
-            ...(isRefusedOnStaxError
-              ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
+            ...(refusedOnDevice
+              ? { Icon: () => <Icons.WarningFill />, iconColor: "warning.c50" }
               : {}),
           })}
           {inlineRetry ? (
             <Button size="large" variant="main" outline={false} onClick={handleRetry}>
-              {isRefusedOnStaxError
+              {refusedOnDevice
                 ? t("customImage.steps.transfer.uploadAnotherImage")
                 : t("common.retry")}
             </Button>
           ) : null}
-          {isRefusedOnStaxError ? (
+          {refusedOnDevice ? (
             <Button size="large" onClick={onSkip}>
               {t("customImage.steps.transfer.doThisLater")}
             </Button>
