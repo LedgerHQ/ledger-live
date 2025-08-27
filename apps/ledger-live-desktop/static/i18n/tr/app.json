@@ -202,7 +202,8 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor",
-      "BURN" : "Yakıldı"
+      "BURN" : "Yakıldı",
+      "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1596,6 +1597,25 @@
         "all" : "yılda"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
   },
   "currentAddress" : {
     "title" : "Geçerli adres",
@@ -4258,6 +4278,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Yetkisi devredilen varlık",
+      "stakedBalanceTooltip" : "Doğrulayıcılarla stake edilmiş olan güncel miktar.",
+      "availableBalance" : "Çekilebilir bakiye",
+      "availableBalanceTooltip" : "Stake’i durdurulmuş ve çekilebilecek olan güncel miktar.",
+      "pendingBalance" : "Bekleyen bakiye",
+      "pendingBalanceTooltip" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar.",
+      "storageUsageBalance" : "Minimum bakiye",
+      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir.",
+      "subHeader" : {
+        "cardTitle" : "Figment desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Figment desteğiyle",
+        "title" : "SUI token artık Ledger Live’da",
+        "description" : "Artık SUI token’larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "description2" : "SUI token, SUI zincirinin native token’ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
+        "website" : "Figment desteğiyle"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Yetkisi devredilen tutar"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Varlıklarınızı stake ederek Sui ödülleri kazanabilirsiniz.",
+        "info" : "Staking Nasıl Çalışır?",
+        "earnRewards" : "Ödüller kazanın"
+      },
+      "table" : {
+        "header" : "Staking Pozisyonları",
+        "stake" : "Ekle",
+        "staked" : "Yetki devredildi",
+        "pending" : "Bırakılmayı bekleyen",
+        "available" : "Çekilebilir bakiye"
+      },
+      "unstake" : "Yetki devrini sonlandır",
+      "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
+      "inactiveTooltip" : "Yetkisi devredilen tutar ödül üretmiyor",
+      "commission" : "Komisyon",
+      "totalStake" : "Toplam Yetki Devri",
+      "minSafeWarning" : "Yetersiz fon miktarı",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "amount" : {
+            "title" : "Miktar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızla yetki devretmeyi tamamladınız",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Stake edilen varlık miktarı stake durdurma için yeterli değil",
+      "flow" : {
+        "title" : "Varlıkların Yetki Devrini İptal Edin",
+        "steps" : {
+          "amount" : {
+            "title" : "Miktar",
+            "subtitle" : "Yetki iptali işleminin sonuçlanması <0>52 ila 65 saat</0> sürer.",
+            "warning" : "Yetki devri sonlandırıldığında bakiyeniz ve biriken ödüller anında hesabınıza geçecektir",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Yetki devri sonlandırılan tutar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetkilendirme iptal edildi",
+              "cta" : "Ayrıntıları gör"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Ödüller kazanın",
     "header" : "Yetki Devri",
@@ -4775,6 +4895,10 @@
         "testEuropaPostonboarding" : {
           "title" : "Europa İlk Kurulum Sonrası testi",
           "description" : "Europa cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
+        },
+        "testApexPostonboarding" : {
+          "title" : "Apex İlk Kurulum Sonrası Testi",
+          "description" : "Apex cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
         },
         "1559DeactivateGate" : {
           "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
@@ -6688,6 +6812,18 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Yetersiz bakiye",
+      "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Token ilişkilendirme gerekli",
+      "description" : "Göndermeye çalıştığınız token, hedef hesapla ilişkilendirilmemiş. Token’ın alınabilmesi için alıcı hesapla ilişkilendirilmesi gerekir."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Token ilişkilendirmesi doğrulanamıyor",
+      "description" : "Hedef hesabın bu token’ı alıp alamayacağını doğrulayamadık. Adres geçersiz olabilir veya bir ağ ya da hizmet sorunu yaşanıyor olabilir."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Dosyadan görüntü yüklenemedi.",
       "description" : "Lütfen bir görüntü seçerek tekrar deneyin."
@@ -6821,6 +6957,18 @@
       "getHelp" : "Yardım alın",
       "technicalErrorTitle" : "Teknik hata: ",
       "saveLogs" : "Logları kaydedin"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "Minimum tutar 1 SUI’dir"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Minimum tutar 1 SUI’dir"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "En az 1 SUI stake'te bırakılmalıdır"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "İleride gerekecek ağ ücretlerini karşılamak ve stake’inizin yetki devrini sonlandırmak üzere cüzdanınızda en az 0,1 SUI bulunduğundan lütfen emin olun"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Kullanılabilir (stake edilmemiş) bakiyeniz şu anda {{currentBalance}} ve {{assetName}} varlığınızın stake'ini durdurmak için gereken ağ ücretini karşılamıyor.",
@@ -6973,10 +7121,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTS token’larını alabilmesi için hesabınızın ilişkilendirilmesi gerekiyor. Almak istediğiniz HTS token’ıyla hesabınızı henüz ilişkilendirmediyseniz, token ilişkilendirme akışını başlatmak için <0>buraya tıklayın</0>.",
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "associationRequired" : {
+          "text" : "Devam tuşuna tıkladığınızda seçili token’ı Hedera hesabınızla ilişkilendireceksiniz.",
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "İlişkilendirin",
+          "title" : "Token'ı ilişkilendirin",
+          "pending" : {
+            "title" : "İşlem yayınlanıyor..."
+          },
+          "success" : {
+            "title" : "İşlem gönderildi",
+            "description" : "Token İlişkilendirme işlemi onaylandığında bu token’ı alabileceksiniz",
+            "cta" : "Ayrıntıları gör"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (isteğe bağlı)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Daha fazla bilgi"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "İlişkilendirilen token",
+      "postAlert" : {
+        "text" : "Bu işlem onaylandığında token’ınızı alabileceksiniz. Akışı başlatmak için <0>buraya tıklayın</0>.",
+        "learnMore" : "Daha fazla bilgi"
       }
     }
   },
