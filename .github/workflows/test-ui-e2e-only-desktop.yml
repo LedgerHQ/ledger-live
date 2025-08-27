@@ -80,21 +80,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup caches
-        id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      # - name: Setup caches
+      #   id: caches
+      #   uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@feat/e2e-dmk-speculos
+      #   with:
+      #     skip-turbo-cache: "false"
+      #     accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      #     roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      #     region: ${{ secrets.AWS_CACHE_REGION }}
+      #     turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
-          turborepo-server-port: ${{ steps.caches.outputs.port }}
+          # turborepo-server-port: ${{ steps.caches.outputs.port }}
 
       - name: Generate token
         id: generate-token
