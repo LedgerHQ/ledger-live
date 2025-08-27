@@ -63,80 +63,97 @@ jobs:
           const text = fs.readFileSync('test-output.log', 'utf8');
           const lines = text.split('\n');
 
-          // When a coin starts failing in the log
-          const failStart = /libs\/coin-modules\/(coin-[^\s]+)\s+test-integ:\s+FAIL\b/;
+          // Detect a coin context anywhere we see its prefix
+          const coinPrefix = /libs\/coin-modules\/(coin-[^\s:]+)\s+test-integ(?::|\$)/;
 
-          // What we consider a concise "error" line worth showing
+          // Anchor events
+          const failLine  = /test-integ:\s+FAIL\b/;
+          const passLine  = /test-integ:\s+(PASS|Done|SKIP)\b/;
+
+          // Heuristics for concise error content
           const isConciseErr = (L) =>
-            /Invalid|Error|expect\(received\)|AssertionError|Timeout|CryptoAssetsStore is not set|A worker process has failed/i.test(L) &&
-            !/^● /.test(L) &&            // ignore Jest suite titles
-            !/^at\s/.test(L) &&          // ignore stack frames
-            !/^>?\s*\d+\s*\|/.test(L) && // ignore code frames
-            !/^\s*\d+\s\|\s/.test(L) &&  // ignore code frames (alt)
+            /Invalid|Error|expect\(received\)|AssertionError|Timeout|CryptoAssetsStore is not set|A worker process has failed|Failed\b/i.test(L) &&
+            !/^●\s/.test(L) &&              // suite header handled separately
+            !/^at\s/.test(L) &&             // stack frames
+            !/^>?\s*\d+\s*\|/.test(L) &&    // code frame
+            !/^\s*\d+\s\|\s/.test(L) &&
             L.trim().length > 0;
 
-          const reasons = {};         // coin -> Set of messages
-          let currentCoin = null;     // track within the failing block
+          const reasons = {}; // coin -> Set
+          let currentCoin = null;
+          let inFailBlock = false;
+
+          // Helper to ensure set exists
+          const ensure = (coin) => (reasons[coin] ||= new Set());
 
           for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-
-            // Detect the start of a failing coin section
-            const m = line.match(failStart);
-            if (m) {
-              currentCoin = m[1];
-              reasons[currentCoin] = reasons[currentCoin] || new Set();
+            const raw = lines[i];
+            const coinHit = raw.match(coinPrefix);
+            if (coinHit) {
+              currentCoin = coinHit[1];
+              inFailBlock = false;
+              ensure(currentCoin);
             }
 
-            // Record any concise error lines that appear under this coin
+            // Track FAIL start/end within a coin
             if (currentCoin) {
-              const sanitized = line.replace(/^.*?test-integ:\s*/, '').trim();
-              if (isConciseErr(sanitized)) {
-                reasons[currentCoin].add(sanitized);
+              if (failLine.test(raw)) inFailBlock = true;
+              if (passLine.test(raw)) { inFailBlock = false; currentCoin = null; }
+            }
+
+            if (!currentCoin) continue;
+
+            // Normalize line (strip pnpm prefix)
+            const L = raw.replace(/^.*?test-integ:\s*/, '').trim();
+
+            // 1) Inline concise errors
+            if (isConciseErr(L)) ensure(currentCoin).add(L);
+
+            // 2) Jest "● title" + first meaningful line after it
+            if (/^● /.test(L)) {
+              // Combine the suite/test title with the next meaningful line as context
+              let k = i + 1, detail = '';
+              for (; k < Math.min(i + 20, lines.length); k++) {
+                const nextSanitized = lines[k].replace(/^.*?test-integ:\s*/, '').trim();
+                if (isConciseErr(nextSanitized)) { detail = nextSanitized; break; }
               }
-              // If we hit a PASS/SKIP/SUMMARY for another coin, stop sticking to this one
-              if (/test-integ:\s+(PASS|SKIP|Done)\b/.test(line)) {
-                currentCoin = null;
-              }
+              const title = L.replace(/^●\s+/, '');
+              ensure(currentCoin).add(`${title} — ${detail || 'failed'}`);
             }
           }
 
-          // Fallback: parse pnpm tail error blocks if a coin has no reasons captured
-          const tail = text.split(/\n/);
-          for (let i = 0; i < tail.length; i++) {
-            const m = tail[i].match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
+          // 3) Fallback on pnpm tail error blocks (your cosmos case)
+          // Looks like:
+          // /home/.../libs/coin-modules/coin-cosmos:
+          // ERROR @ledgerhq/coin-cosmos@... test-integ: `jest ...`
+          // Exit status 1
+          lines.forEach((line, idx) => {
+            const m = line.match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
             if (m) {
               const coin = m[1];
-              reasons[coin] = reasons[coin] || new Set();
-              const next = (tail[i + 1] || '').replace(/^.*?ERROR\s+/, '').trim();
-              if (next) reasons[coin].add(next);
+              ensure(coin);
+              let msg = '';
+              for (let j = idx + 1; j < idx + 5 && j < lines.length; j++) {
+                const s = lines[j].trim();
+                if (/^ERROR\b/.test(s)) continue;
+                if (s && !/^\s*$/.test(s)) { msg = s; break; }
+              }
+              ensure(coin).add(msg || 'Exit status 1 (see full log)');
             }
-          }
+          });
 
-          // Format Slack text (dedup, sort, clamp long lines)
-          const clamp = (s, n=200) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+          // Format Slack text
+          const clamp = (s, n=240) => (s.length > n ? s.slice(0, n-1) + '…' : s);
           const sections = Object.entries(reasons)
-            .filter(([_, set]) => set.size > 0)
+            .filter(([_, set]) => set.size)
             .sort(([a],[b]) => a.localeCompare(b))
-            .map(([coin, set]) => {
-              const msgs = [...set].map(e => `    - ${clamp(e, 240)}`).join('\n');
-              return `• ${coin}:\n${msgs}`;
-            });
+            .map(([coin, set]) => `• ${coin}:\n${[...set].map(e => '    - ' + clamp(e)).join('\n')}`);
 
           const full = sections.join('\n');
-
-          // Slack hard limit is big, but let’s be safe
           const MAX = 3000;
-          const summaryText = full.length > MAX
-            ? full.slice(0, MAX - 20) + "\n…(truncated)"
-            : full;
+          const summaryText = full.length > MAX ? full.slice(0, MAX-20) + '\n…(truncated)' : full;
 
-          const result = {
-            failedCoins: Object.keys(reasons).sort(),
-            summaryText
-          };
-
-          process.stdout.write(JSON.stringify(result, null, 2));
+          process.stdout.write(JSON.stringify({ summaryText }, null, 2));
           NODE
 
           echo "summary_text<<EOF" >> "$GITHUB_OUTPUT"
