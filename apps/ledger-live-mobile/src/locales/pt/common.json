@@ -1074,6 +1074,18 @@
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Saldo insuficiente",
+      "description" : "Não há HBAR suficiente para pagar pela associação do token. É necessário um mínimo de US${{requiredWorthInUSD}} em HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Requer associação do token",
+      "description" : "O token que você está tentando enviar não está associado à conta de destino. É necessário que ele esteja associado à conta do destinatário para ser recebido."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Não foi possível verificar a associação do token",
+      "description" : "Não foi possível confirmar se a conta de destino pode receber este token. O endereço pode estar inválido ou pode haver um problema de rede ou serviço."
+    },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
     },
@@ -1305,7 +1317,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 min",
       "medium" : "≈ 30 sec",
-      "fast" : "≈ 15 sec"
+      "fast" : "≈ 15 sec",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1535,25 @@
     "cta" : "Configurar minha Ledger",
     "bannerTitle" : "Recebeu sua Ledger?",
     "bannerCta" : "Iniciar configuração",
+    "continue" : "Continuar"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -2727,7 +2759,8 @@
       "WITHDRAW" : "Sacado",
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
-      "WITHDRAW_UNSTAKED" : "Sacado"
+      "WITHDRAW_UNSTAKED" : "Sacado",
+      "ASSOCIATE_TOKEN" : "Associar token"
     }
   },
   "operationDetails" : {
@@ -3242,7 +3275,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Alertas de Transações (Beta)",
-        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, Binance Smart Chain, Avalanche e Ethereum Classic"
+        "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, BNB Chain, Avalanche e Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de preço",
@@ -7078,6 +7111,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Para receber tokens HTS, sua conta precisa estar associada. Se você ainda não associou sua conta ao token HTS que deseja receber, <0>clique aqui</0> para iniciar o processo de associação do token.",
+          "learnMore" : "Saiba mais"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "Selecione o token que você deseja receber"
+      },
+      "summary" : {
+        "title" : "Associar token",
+        "from" : "Token",
+        "to" : "Para",
+        "warning" : {
+          "text" : "Ao clicar em Continuar, você associará o token selecionado à sua conta Hedera.",
+          "learnMore" : "Saiba mais"
+        }
+      },
+      "selectDevice" : {
+        "title" : "Associar token"
+      },
+      "connectDevice" : {
+        "title" : "Associar token"
+      },
+      "validationSuccess" : {
+        "title" : "Transação enviada",
+        "text" : "Você poderá receber este token assim que a transação de associação do token for confirmada"
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Saiba mais"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Saiba mais"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Associar token",
+      "postAlert" : {
+        "text" : "Assim que esta transação for confirmada, você poderá receber seu token. <0>Clique aqui</0> para começar o fluxo de recebimento.",
+        "learnMore" : "Saiba mais"
+      }
     }
   },
   "asset" : {
