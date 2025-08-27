@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { counterValueFormatter } from "../utils/counterValueFormatter";
-import { compareByHasThenFiat } from "../utils/sortByBalance";
+import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { UseBalanceDeps } from "../utils/type";
 import { buildProviderCurrenciesMap } from "../utils/buildProviderCurrenciesMap";
 import { CurrenciesByProviderId } from "../../deposit/type";
@@ -15,10 +15,10 @@ import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
 
 export type AssetDeps = {
   useBalanceDeps: UseBalanceDeps;
-  createBalanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
 };
 
-export function createUseRightBalanceAsset({ useBalanceDeps, createBalanceItem }: AssetDeps) {
+export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: AssetDeps) {
   const formatProviderResult = (
     providerCurrency: CryptoOrTokenCurrency,
     totalBalance: BigNumber,
@@ -67,18 +67,22 @@ export function createUseRightBalanceAsset({ useBalanceDeps, createBalanceItem }
           locale,
         );
         const balanceMap = new Map(allBalance.map(b => [b.id, b]));
-        const rows = assets.map(asset => {
+        const assetsWithBalanceData = assets.map(asset => {
           const balanceData = balanceMap.get(asset.id) || {};
           return {
-            ...asset,
-            rightElement: createBalanceItem(balanceData),
+            asset,
             balanceData,
           };
         });
 
-        rows.sort((a, b) => compareByHasThenFiat(a.balanceData, b.balanceData, discreet));
+        assetsWithBalanceData.sort((a, b) =>
+          compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
+        );
 
-        return rows.map(({ balanceData, ...rest }) => rest);
+        return assetsWithBalanceData.map(({ asset, balanceData }) => ({
+          ...asset,
+          rightElement: balanceItem(balanceData),
+        }));
       }
 
       const assetsSet = new Set(assets.map(a => a.id));
@@ -106,18 +110,22 @@ export function createUseRightBalanceAsset({ useBalanceDeps, createBalanceItem }
         providerResultsMap.set(mainCurrency.id, { balance, fiatValue });
       }
 
-      const rows = assets.map(asset => {
+      const assetsWithBalanceData = assets.map(asset => {
         const balanceData = providerResultsMap.get(asset.id) || {};
         return {
-          ...asset,
-          rightElement: createBalanceItem(balanceData),
+          asset,
           balanceData,
         };
       });
 
-      rows.sort((a, b) => compareByHasThenFiat(a.balanceData, b.balanceData, discreet));
+      assetsWithBalanceData.sort((a, b) =>
+        compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
+      );
 
-      return rows.map(({ balanceData, ...rest }) => rest);
+      return assetsWithBalanceData.map(({ asset, balanceData }) => ({
+        ...asset,
+        rightElement: balanceItem(balanceData),
+      }));
     }, [
       assets,
       providerMap,

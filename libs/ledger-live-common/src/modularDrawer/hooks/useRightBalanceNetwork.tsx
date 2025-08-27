@@ -1,13 +1,12 @@
-import { useMemo } from "react";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { compareByHasThenFiat } from "../utils/sortByBalance";
+import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { BalanceUI, UseBalanceDeps } from "../utils/type";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 
 export type NetworkDeps = {
-  createBalanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
 };
 
@@ -17,7 +16,7 @@ type Params = {
   currenciesByProvider: CurrenciesByProviderId[];
 };
 
-export function createUseRightBalanceNetwork({ useBalanceDeps, createBalanceItem }: NetworkDeps) {
+export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: NetworkDeps) {
   return function useRightBalanceNetwork({
     assets: networks,
     selectedAssetId,
@@ -33,7 +32,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, createBalanceItem
       if (!providerOfSelectedAsset) {
         return networks.map(network => ({
           ...network,
-          rightElement: createBalanceItem({}),
+          rightElement: balanceItem({}),
         }));
       }
 
@@ -62,18 +61,22 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, createBalanceItem
 
       const balanceMap = new Map(allBalanceData.map(b => [b.id, b]));
 
-      const rows = pairs.map(({ network, asset }) => {
+      const networkWithBalanceData = pairs.map(({ network, asset }) => {
         const balanceData: BalanceUI = asset ? balanceMap.get(asset.id) || {} : {};
         return {
-          ...network,
-          rightElement: createBalanceItem(balanceData),
+          network,
           balanceData,
         };
       });
 
-      rows.sort((a, b) => compareByHasThenFiat(a.balanceData, b.balanceData, discreet));
+      networkWithBalanceData.sort((a, b) =>
+        compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
+      );
 
-      return rows.map(({ balanceData, ...rest }) => rest);
+      return networkWithBalanceData.map(({ network, balanceData }) => ({
+        ...network,
+        rightElement: balanceItem(balanceData),
+      }));
     }, [
       networks,
       selectedAssetId,

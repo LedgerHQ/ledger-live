@@ -9,11 +9,15 @@ export function toFiatString(x?: BalanceUI): string | undefined {
   return x && "fiatValue" in x ? String(x.fiatValue) : undefined;
 }
 
-export function hasBalance(x?: BalanceUI): boolean {
-  return !!x && (("fiatValue" in x && !!x.fiatValue) || ("balance" in x && !!x.balance));
+export function hasBalance(balanceData?: BalanceUI): boolean {
+  return (
+    !!balanceData &&
+    (("fiatValue" in balanceData && !!balanceData.fiatValue) ||
+      ("balance" in balanceData && !!balanceData.balance))
+  );
 }
 
-export function compareByHasThenFiat(
+export function compareByBalanceThenFiat(
   a: BalanceUI | undefined,
   b: BalanceUI | undefined,
   discreet: boolean,

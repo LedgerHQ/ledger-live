@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
+import { ApyIndicator, AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
@@ -17,10 +17,12 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
-import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
+import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
+import { balanceItem } from "../../components/Balance";
+import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -60,7 +62,15 @@ const AssetSelection = ({
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
-  const transformAssets = createAssetConfigurationHook({
+  const deps = {
+    ApyIndicator,
+    useBalanceDeps,
+    balanceItem,
+  };
+
+  const makeAssetConfigurationHook = createAssetConfigurationHook(deps);
+
+  const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
   });
   const formattedAssets = transformAssets(availableAssets);

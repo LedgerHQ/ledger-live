@@ -15,8 +15,13 @@ import {
 } from "../../analytics";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import orderBy from "lodash/orderBy";
-import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
+import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { accountsCount } from "../../components/AccountCount";
+import { accountsCountAndApy } from "../../components/AccountCountAndApy";
+import { balanceItem } from "../../components/Balance";
+import { useAccountData } from "../../hooks/useAccountData";
+import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -67,7 +72,17 @@ const NetworkSelection = ({
     [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
   );
 
-  const transformNetworks = createNetworkConfigurationHook({
+  const deps = {
+    useAccountData,
+    accountsCount,
+    accountsCountAndApy,
+    useBalanceDeps,
+    balanceItem,
+  };
+
+  const makeNetworkConfigurationHook = createNetworkConfigurationHook(deps);
+
+  const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
     selectedAssetId: asset ? asset.id : "",
