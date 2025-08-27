@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { getMetadataMediaTypes } from "~/helpers/nft";
@@ -8,7 +8,7 @@ import ImportNFTButton from "~/renderer/components/CustomImage/ImportNFTButton";
 import NFTGallerySelector from "~/renderer/components/CustomImage/NFTGallerySelector";
 import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
-import { Flex, IconsLegacy, InfiniteLoader, Link } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, InfiniteLoader, Link, Text } from "@ledgerhq/react-ui";
 import StepFooter from "./StepFooter";
 import {
   ImageLoadFromNftError,
@@ -20,8 +20,15 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import { useTrack } from "~/renderer/analytics/segment";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import STAX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/stax.json";
+import FLEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/flex.json";
+import APEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/apex.json";
+import Animation from "~/renderer/animations";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type Props = StepProps & {
+  deviceModelId: DeviceModelId | null;
   onResult: (res: ImageBase64Data) => void;
   setLoading: (_: boolean) => void;
   isShowingNftGallery?: boolean;
@@ -48,6 +55,7 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
 
 const StepChooseImage: React.FC<Props> = props => {
   const {
+    deviceModelId,
     loading,
     setLoading,
     onResult,
@@ -64,6 +72,22 @@ const StepChooseImage: React.FC<Props> = props => {
 
   const [selectedNftId, setSelectedNftId] = useState<string>();
   const [selectedNftBase64Data, setSelectedNftBase64] = useState<ImageBase64Data | null>(null);
+
+  const animationSource = useMemo(() => {
+    switch (deviceModelId) {
+      case DeviceModelId.stax:
+        return STAX_CLS_PREVIEW;
+      case DeviceModelId.europa:
+        return FLEX_CLS_PREVIEW;
+      case DeviceModelId.apex:
+        return APEX_CLS_PREVIEW;
+    }
+  }, [deviceModelId]);
+
+  const productName: string = useMemo(() => {
+    if (!deviceModelId) return "";
+    return getDeviceModel(deviceModelId)?.productName;
+  }, [deviceModelId]);
 
   const handleClickNext = useCallback(() => {
     if (!selectedNftBase64Data) {
@@ -142,7 +166,23 @@ const StepChooseImage: React.FC<Props> = props => {
           <InfiniteLoader />
         </Flex>
       ) : !isShowingNftGallery ? (
-        <Flex flexDirection="column" rowGap={6} px={12}>
+        <Flex flexDirection="column">
+          <Flex py={"15px"}>
+            <Animation animation={animationSource} height="fit-content" />
+          </Flex>
+          <Text
+            variant="h5Inter"
+            fontWeight="semiBold"
+            textAlign="center"
+            textTransform="none"
+            whiteSpace="pre"
+            lineHeight="normal"
+            marginY="32px"
+          >
+            {t("customImage.steps.choose.description", {
+              productName,
+            })}
+          </Text>
           <ImportImage
             setLoading={setLoading}
             onResult={onResult}
