@@ -49,6 +49,7 @@
     "transactionDate" : "トランザクション日",
     "outdated" : "最新の状態ではありません",
     "satPerByte" : "sat/バイト",
+    "sompiPerByte" : "sompi/バイト",
     "notAvailable" : "利用不可",
     "import" : "インポート",
     "bluetooth" : "Bluetooth",

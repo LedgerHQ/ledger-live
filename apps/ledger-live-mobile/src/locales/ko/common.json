@@ -49,6 +49,7 @@
     "transactionDate" : "트랜잭션 날짜",
     "outdated" : "오래됨",
     "satPerByte" : "sat/bytes",
+    "sompiPerByte" : "sompi/bytes",
     "notAvailable" : "이용할 수 없습니다",
     "import" : "가져오기",
     "bluetooth" : "블루투스",
