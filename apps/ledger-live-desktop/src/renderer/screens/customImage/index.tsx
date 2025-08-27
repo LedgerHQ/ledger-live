@@ -281,6 +281,7 @@ const CustomImage: React.FC<Props> = props => {
             label={t("customImage.steps.choose.stepLabel")}
           >
             <StepChooseImage
+              deviceModelId={deviceModelId}
               onError={errorHandlers[Step.chooseImage]}
               onResult={handleStepChooseImageResult}
               setStep={setStepWrapper}

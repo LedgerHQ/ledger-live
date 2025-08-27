@@ -7209,7 +7209,7 @@
     "steps": {
       "choose": {
         "stepLabel": "Choose picture",
-        "description": "Choose an image to set as (...)",
+        "description": "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
         "pickFromNftGallery": "Select from my NFT gallery",
         "myNfts": "My NFTs",
         "upload": "Upload from computer",
@@ -7222,7 +7222,7 @@
       "adjust": {
         "stepLabel": "Crop",
         "rotate": "Rotate",
-        "confirmCrop": "Confirm Crop"
+        "confirmCrop": "Confirm crop"
       },
       "contrast": {
         "stepLabel": "Set contrast",
