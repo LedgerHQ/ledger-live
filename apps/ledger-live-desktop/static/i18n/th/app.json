@@ -202,7 +202,8 @@
       "UNSTAKE" : "ยังไม่ได้ Stake",
       "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
       "SENDING" : "กำลังส่ง",
-      "BURN" : "เบิร์น"
+      "BURN" : "เบิร์น",
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -1596,6 +1597,25 @@
         "all" : "ปี"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
+    "continue" : "ดำเนินการต่อ"
   },
   "currentAddress" : {
     "title" : "Address ปัจจุบัน",
@@ -4258,6 +4278,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "สินทรัพย์ที่ Delegate",
+      "stakedBalanceTooltip" : "จำนวนที่กำลังสเตคกับผู้ตรวจสอบในขณะนี้",
+      "availableBalance" : "ยอดคงเหลือที่ถอนได้",
+      "availableBalanceTooltip" : "จำนวนนี้ถูกยกเลิกการสเตคแล้ว และสามารถถอนออกได้ทันที",
+      "pendingBalance" : "ยอดคงเหลือที่รอดำเนินการ",
+      "pendingBalanceTooltip" : "จำนวนนี้ถูกยกเลิกการสเตคแล้ว และอยู่ระหว่างรอก่อนสามารถถอนได้",
+      "storageUsageBalance" : "ยอดคงเหลือขั้นต่ำ",
+      "storageUsageBalanceTooltip" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและการทำธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังสามารถใช้งานได้อยู่",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "ข้อมูลเพิ่มเติม",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "สามารถใช้โทเคน SUI ได้ในตอนนี้ทางแอป Ledger Live",
+        "description" : "ตอนนี้คุณสามารถเริ่มจัดการกับโทเคน SUI ของคุณได้อย่างปลอดภัยผ่านแอป Ledger Live",
+        "description2" : "โทเคน SUI เป็นโทเคนหลักของเครือข่าย SUI และใช้สำหรับทุกอย่างตั้งแต่การทำธุรกรรม, การสเตคกิ้ง และฟีเจอร์ใหม่ ๆ ในอนาคต",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "จำนวนที่ Delegate"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "คุณสามารถรับ SUI Reward ได้ด้วยการสเตคกิ้งสินทรัพย์ของคุณ",
+        "info" : "วิธีการสเตคกิ้ง",
+        "earnRewards" : "สร้าง Reward"
+      },
+      "table" : {
+        "header" : "Staking Position",
+        "stake" : "เพิ่ม",
+        "staked" : "Delegate เรียบร้อยแล้ว",
+        "pending" : "รอการเผยแพร่",
+        "available" : "สามารถถอนได้"
+      },
+      "unstake" : "Undelegate",
+      "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
+      "inactiveTooltip" : "จำนวนที่ Delegate แต่ไม่สร้าง Reward",
+      "commission" : "คอมมิชชัน",
+      "totalStake" : "การ Delegate ทั้งหมด",
+      "minSafeWarning" : "เงินทุนไม่เพียงพอ",
+      "flow" : {
+        "title" : "Delegate",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน"
+          },
+          "validator" : {
+            "title" : "ผู้ตรวจสอบ",
+            "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+            "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีในบัญชีของคุณจะได้รับการอัปเดตเมื่อบล็อกเชนได้ยืนยันธุรกรรมของคุณแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "ไม่มีสินทรัพย์ที่จะสเตคเพียงพอที่จะ Unstake",
+      "flow" : {
+        "title" : "Undelegate สินทรัพย์",
+        "steps" : {
+          "amount" : {
+            "title" : "จำนวน",
+            "subtitle" : "กระบวนการ Unstake ต้องใช้เวลา <0>52 ถึง 65 วัน</0> จึงจะแล้วเสร็จ",
+            "warning" : "เมื่อ Undelegate แล้ว ยอดคงเหลือในบัญชีและ Reward ที่สะสมจะถูกโอนเข้าบัญชีทันที",
+            "fields" : {
+              "validator" : "ผู้ตรวจสอบ",
+              "amount" : "จำนวนที่จะ Undelegate"
+            }
+          },
+          "connectDevice" : {
+            "title" : "อุปกรณ์"
+          },
+          "confirmation" : {
+            "title" : "การยืนยัน",
+            "success" : {
+              "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+              "description" : "<0>{{amount}}</0> ได้รับการ Undelegate จาก <0>{{validator}}</0> แล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "รับ Reward",
     "header" : "การ Delegate",
@@ -4775,6 +4895,10 @@
         "testEuropaPostonboarding" : {
           "title" : "ทดสอบ Europa Post Onboarding",
           "description" : "ทดสอบฟีเจอร์ Europa Post Onboarding ทั้งหมด"
+        },
+        "testApexPostonboarding" : {
+          "title" : "ทดสอบ Apex Post Onboarding",
+          "description" : "ทดสอบฟีเจอร์ Apex Post Onboarding ทั้งหมด"
         },
         "1559DeactivateGate" : {
           "title" : "ปิดใช้งานเกต Priority Fee ขั้นต่ำสำหรับ EIP1559",
@@ -6688,6 +6812,18 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "ต้องมีการเชื่อมโยงโทเคน",
+      "description" : "โทเคนที่คุณพยายามส่งไม่ได้เชื่อมโยงกับบัญชีปลายทาง ต้องมีการเชื่อมโยงจากบัญชีผู้รับเพื่อรับโทเคน"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
+      "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพ"
@@ -6821,6 +6957,18 @@
       "getHelp" : "ต้องการความช่วยเหลือ",
       "technicalErrorTitle" : "ข้อผิดพลาดทางเทคนิค : ",
       "saveLogs" : "บันทึก Log"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "จำนวนขั้นต่ำคือ 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "จำนวนขั้นต่ำคือ 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "ควรเหลืออย่างน้อย 1 SUI ไว้ในสเตค (Stake)"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "โปรดตรวจสอบให้แน่ใจว่าคุณมีอย่างน้อย 0.1 SUI ในวอลเล็ตของคุณเพื่อครอบคลุมค่าธรรมเนียมเครือข่ายในครั้งต่อไปและจะสามารถ Undelegate การสเตคของคุณได้"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "ยอดคงเหลือ (ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ",
@@ -6973,10 +7121,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Address {{name}} ของคุณไม่สามารถยืนยันได้บนอุปกรณ์ Ledger ของคุณ  ใช้งานโดยต้องยอมรับความเสี่ยงเอง"
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "ต้องมีการเชื่อมโยงบัญชีของคุณเพื่อรับโทเคน HTS หากคุณยังไม่ได้ทำการเชื่อมโยงบัญชีกับโทเคน HTS ที่คุณต้องการรับ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการเชื่อมโยงโทเคน",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "associationRequired" : {
+          "text" : "เมื่อคลิก 'ดำเนินการต่อ' คุณจะเชื่อมโยงโทเคนที่เลือกกับบัญชี Hedera ของคุณ",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "เชื่อมโยง",
+          "title" : "เชื่อมโยงโทเคน",
+          "pending" : {
+            "title" : "กำลังประกาศธุรกรรม..."
+          },
+          "success" : {
+            "title" : "ส่งธุรกรรมแล้ว",
+            "description" : "คุณจะได้รับโทเคนนี้เมื่อธุรกรรมการเชื่อมโยงโทเคนได้รับการยืนยันแล้ว",
+            "cta" : "ดูรายละเอียด"
+          },
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (ไม่บังคับ)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "โทเคนที่เชื่อมโยงแล้ว",
+      "postAlert" : {
+        "text" : "เมื่อมีการยืนยันธุรกรรมนี้แล้ว คุณจะสามารถรับโทเคนของคุณได้ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการรับ",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
       }
     }
   },
