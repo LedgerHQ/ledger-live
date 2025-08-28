@@ -202,7 +202,8 @@
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
       "SENDING" : "Enviando",
-      "BURN" : "Queimado"
+      "BURN" : "Queimado",
+      "ASSOCIATE_TOKEN" : "Associar token"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -1596,6 +1597,25 @@
         "all" : "ano"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
   },
   "currentAddress" : {
     "title" : "Endereço Atual",
@@ -4258,6 +4278,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Ativo delegado",
+      "stakedBalanceTooltip" : "Esta quantia está atualmente em staking com validadores.",
+      "availableBalance" : "Saldo disponível para saque",
+      "availableBalanceTooltip" : "Esta quantia foi desaplicada e pode ser sacada no momento.",
+      "pendingBalance" : "Saldo pendente",
+      "pendingBalanceTooltip" : "Esta quantia foi desaplicada e sua disponibilidade está pendente no momento.",
+      "storageUsageBalance" : "Saldo mínimo",
+      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mais informações",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "O token SUI já está disponível no Ledger Live",
+        "description" : "Agora você pode começar a gerenciar seus tokens SUI e protegê-los por meio do Ledger Live.",
+        "description2" : "O token SUI é nativo da cadeia SUI e é usado para tudo, desde transações, staking e muitos recursos por vir.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Quantia delegada"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Você pode ganhar recompensas Sui fazendo staking de seus ativos.",
+        "info" : "Como o Staking Funciona",
+        "earnRewards" : "Receba recompensas"
+      },
+      "table" : {
+        "header" : "Posições de Staking",
+        "stake" : "Adicionar",
+        "staked" : "Delegado",
+        "pending" : "Liberação Pendente",
+        "available" : "Disponíveis para saque"
+      },
+      "unstake" : "Desdelegar",
+      "activeTooltip" : "Quantias delegadas geram recompensas",
+      "inactiveTooltip" : "Quantias delegadas não geram recompensas",
+      "commission" : "Comissão",
+      "totalStake" : "Delegação total",
+      "minSafeWarning" : "Fundos Insuficientes",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByChorusOneTC" : "Termos e Condições da Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Não há ativos aplicados o suficiente para desaplicar",
+      "flow" : {
+        "title" : "Desdelegar ativos",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "subtitle" : "O processo de desaplicação leva de <0>52 a 65 horas</0> para ser finalizado.",
+            "warning" : "Depois de cancelar a delegação, seu saldo e as recompensas acumuladas serão sacadas imediatamente",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Quantia a desdelegar"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Ativos desdelegados com sucesso.",
+              "description" : "<0>{{amount}}</0> foram removidos de delegação do <0>{{validator}}</0>",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Receba Recompensas",
     "header" : "Delegação",
@@ -4775,6 +4895,10 @@
         "testEuropaPostonboarding" : {
           "title" : "Testar Pós-Introdução da Europa",
           "description" : "Testar todos os recursos de pós-introdução da Europa"
+        },
+        "testApexPostonboarding" : {
+          "title" : "Testar Pós-Onboarding da Apex",
+          "description" : "Testar todos os recursos de pós-onboarding da Apex"
         },
         "1559DeactivateGate" : {
           "title" : "Desativar taxa de prioridade mínima (EIP1559)",
@@ -6688,6 +6812,18 @@
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Saldo insuficiente",
+      "description" : "Não há HBAR suficiente para pagar pela associação do token. É necessário um mínimo de US${{requiredWorthInUSD}} em HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Requer associação do token",
+      "description" : "O token que você está tentando enviar não está associado à conta de destino. É necessário que ele esteja associado à conta do destinatário para ser recebido."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Não foi possível verificar a associação do token",
+      "description" : "Não foi possível confirmar se a conta de destino pode receber este token. O endereço pode estar inválido ou pode haver um problema de rede ou serviço."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Falha no carregamento da imagem do arquivo.",
       "description" : "Tente novamente com uma imagem."
@@ -6821,6 +6957,18 @@
       "getHelp" : "Obter ajuda",
       "technicalErrorTitle" : "Erro técnico: ",
       "saveLogs" : "Salvar registros"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "A quantia mínima é 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "A quantia mínima é 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Você deve aplicar pelo menos 1 SUI em staking"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "Certifique-se de reservar pelo menos 0,1 SUI em sua carteira para cobrir futuras taxas de rede e de desdelegação do seu staking"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}.",
@@ -6973,10 +7121,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Para receber tokens HTS, sua conta precisa estar associada. Se você ainda não associou sua conta ao token HTS que deseja receber, <0>clique aqui</0> para iniciar o processo de associação do token.",
+          "learnMore" : "Saiba mais"
+        },
+        "associationRequired" : {
+          "text" : "Ao clicar em Continuar, você associará o token selecionado à sua conta Hedera.",
+          "learnMore" : "Saiba mais"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "Associar",
+          "title" : "Associar Token",
+          "pending" : {
+            "title" : "Transmitindo transação…"
+          },
+          "success" : {
+            "title" : "Transação enviada",
+            "description" : "Você poderá receber este token assim que a transação de associação do token for confirmada",
+            "cta" : "Ver detalhes"
+          },
+          "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (opcional)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Saiba mais"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Saiba mais"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Associar token",
+      "postAlert" : {
+        "text" : "Assim que esta transação for confirmada, você poderá receber seu token. <0>Clique aqui</0> para começar o fluxo de recebimento.",
+        "learnMore" : "Saiba mais"
       }
     }
   },
