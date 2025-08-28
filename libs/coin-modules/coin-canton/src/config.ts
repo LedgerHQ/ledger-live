@@ -9,6 +9,7 @@ export type CantonConfig = {
   minReserve?: number;
   networkType: "mainnet" | "devnet" | "localnet";
   useGateway?: boolean;
+  nativeInstrumentId?: string;
 };
 
 export type CantonCoinConfig = CurrencyConfig & CantonConfig;
