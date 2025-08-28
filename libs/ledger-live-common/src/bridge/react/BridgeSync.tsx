@@ -60,6 +60,8 @@ export const BridgeSync = ({
     updateAccountWithUpdater,
     blacklistedTokenIds,
   });
+  const timeRef = useRef(performance.now());
+  console.log(">>> timeRef", timeRef.current);
   const sync = useSync({
     syncQueue,
     accounts,
@@ -71,6 +73,40 @@ export const BridgeSync = ({
     sync,
     accounts,
   });
+  const isAllAccountsSynced = useMemo(() => {
+    // Check if all accounts are synced
+    return (
+      accounts.length > 0 &&
+      Object.keys(syncState).length > 0 &&
+      accounts.length === Object.keys(syncState).length &&
+      accounts.every(a => !syncState[a.id]?.pending)
+    );
+  }, [accounts, syncState]);
+
+  useEffect(() => {
+    if (Object.values(syncState).length === 0) return; // FIXME remove debug log --- IGNORE ---
+    if (Object.values(syncState).length === 1 && !syncState[Object.keys(syncState)[0]].pending) {
+      timeRef.current = Date.now();
+    } // FIXME remove debug log --- IGNORE ---
+
+    console.log(">>> all accounts synced", { syncState, accounts });
+    if (isAllAccountsSynced) {
+      const durationByReason = (Object.values(syncState) as SyncState[])
+        .filter((s: SyncState) => !!s.duration && !!s.reason)
+        .reduce(
+          (acc, { duration, reason }) => {
+            acc[reason!] = (acc[reason!] || 0) + duration!;
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
+
+      console.log(">>> Duration totals by reason:", durationByReason);
+      const timeToLoadAllAccount = Date.now() - timeRef.current;
+      console.log(">>> Time to load all accounts:", timeToLoadAllAccount);
+    } // FIXME remove debug log --- IGNORE ---
+  }, [syncState, isAllAccountsSynced, accounts]);
+
   return (
     <BridgeSyncStateContext.Provider value={syncState}>
       <BridgeSyncContext.Provider value={sync}>{children}</BridgeSyncContext.Provider>
@@ -141,11 +177,11 @@ function useSyncQueue({
         });
         const startSyncTime = Date.now();
         const trackedRecently =
-          lastTimeAnalyticsTrackPerAccountId[accountId] &&
-          startSyncTime - lastTimeAnalyticsTrackPerAccountId[accountId] < 90 * 1000;
+          lastTimeAnalyticsTrackPerAccountId[`${accountId}_${reason}`] &&
+          startSyncTime - lastTimeAnalyticsTrackPerAccountId[`${accountId}_${reason}`] < 90 * 1000;
 
         if (!trackedRecently) {
-          lastTimeAnalyticsTrackPerAccountId[accountId] = startSyncTime;
+          lastTimeAnalyticsTrackPerAccountId[`${accountId}_${reason}`] = startSyncTime;
         }
 
         const trackSyncSuccessEnd = () => {
@@ -155,13 +191,16 @@ function useSyncQueue({
           const subAccounts: TokenAccount[] = account.subAccounts || [];
 
           // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
-          if (lastTimeSuccessSyncPerAccountId[accountId]) {
+          if (lastTimeSuccessSyncPerAccountId[`${accountId}_${reason}`]) {
             return;
           }
-          lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
+          lastTimeSuccessSyncPerAccountId[`${accountId}_${reason}`] = startSyncTime;
+          console.log(">>> Sync success:", accountId, reason);
+
+          const syncDuration = (Date.now() - startSyncTime) / 1000;
 
           trackAnalytics("SyncSuccess", {
-            duration: (Date.now() - startSyncTime) / 1000,
+            duration: syncDuration,
             currencyName: account.currency.name,
             derivationMode: account.derivationMode,
             freshAddressPath: account.freshAddressPath,
@@ -185,6 +224,8 @@ function useSyncQueue({
               reason,
             });
           });
+
+          return { duration: syncDuration, reason };
         };
 
         const syncConfig = {
@@ -199,10 +240,11 @@ function useSyncQueue({
             updateAccountWithUpdater(accountId, accountUpdater);
           },
           complete: () => {
-            trackSyncSuccessEnd();
+            const syncMetadata = trackSyncSuccessEnd();
             setAccountSyncState(accountId, {
               pending: false,
               error: null,
+              ...syncMetadata,
             });
             next();
           },
@@ -249,12 +291,12 @@ function useSyncQueue({
   useEffect(() => {
     synchronizeRef.current = synchronize;
   }, [synchronize]);
-  const [syncQueue] = useState(() =>
-    priorityQueue(
+  const [syncQueue] = useState(() => {
+    return priorityQueue(
       (job: SyncJob, next: () => void) => synchronizeRef.current(job, next),
       getEnv("SYNC_MAX_CONCURRENT"),
-    ),
-  );
+    );
+  });
   return [syncQueue, bridgeSyncState];
 }
 
@@ -263,6 +305,7 @@ function useSync({ syncQueue, accounts }) {
   const skipUnderPriority = useRef(-1);
   const sync = useMemo(() => {
     const schedule = (ids: string[], priority: number, reason: string) => {
+
       if (priority < skipUnderPriority.current) return;
       // by convention we remove concurrent tasks with same priority
       // FIXME this is somehow a hack. ideally we should just dedup the account ids in the pending queue...

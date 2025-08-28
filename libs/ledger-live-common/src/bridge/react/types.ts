@@ -26,6 +26,8 @@ export type SyncAction =
     };
 export type SyncState = {
   pending: boolean;
+  duration?: number;
+  reason?: string;
   error: Error | null | undefined;
 };
 export type BridgeSyncState = Record<string, SyncState>;

@@ -8,10 +8,14 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { track } from "~/analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 import { Account } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DdRum, RumActionType } from "@datadog/mobile-react-native";
+import { DD_ACCOUNT_SYNC_ACTION } from "~/utils/constants";
 
 export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const datadogFF = useFeature("llmDatadog");
   const dispatch = useDispatch();
   const updateAccount = useCallback(
     (accountId: string, updater: (arg0: Account) => Account) =>
@@ -26,7 +30,12 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
       accounts={accounts}
       updateAccountWithUpdater={updateAccount}
       recoverError={recoverError}
-      trackAnalytics={track}
+      trackAnalytics={(event, properties, mandatory) => {
+        track(event, properties, mandatory);
+        if(datadogFF?.enabled) {
+          DdRum.addAction(RumActionType.CUSTOM, DD_ACCOUNT_SYNC_ACTION, { event: properties });
+        }
+      }}
       prepareCurrency={prepareCurrency}
       hydrateCurrency={hydrateCurrency}
       blacklistedTokenIds={blacklistedTokenIds}
