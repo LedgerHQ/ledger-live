@@ -3,7 +3,7 @@ import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
@@ -74,7 +74,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
   const { page, track } = useAnalytics();
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
         name,
         options,
       );

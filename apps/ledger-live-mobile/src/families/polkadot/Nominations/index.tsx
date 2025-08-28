@@ -23,7 +23,7 @@ import type {
 
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenName, NavigatorName } from "~/const";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import { urls } from "~/utils/urls";
@@ -137,7 +137,7 @@ export default function Nominations(props: Props) {
     }) => {
       setNomination(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });

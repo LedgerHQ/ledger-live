@@ -19,7 +19,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   margin-right: ${p => p.theme.space[4]}px;
 `;
 
-const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
+const StyledAnimatedView = styled(Animated.View).attrs({ pointerEvents: "none" })<BaseStyledProps>`
   position: absolute;
   top: 0;
   height: 100%;
@@ -41,50 +41,28 @@ function Tab({
   label,
   isActive,
   navigation,
-  index,
-  scrollX,
 }: {
   route: { name: string; key: string };
   label?: string;
   isActive: boolean;
   navigation: MaterialTopTabBarProps["navigation"];
-  index: number;
-  scrollX: MaterialTopTabBarProps["position"];
 }) {
   const { colors } = useTheme();
 
-  const opacity = scrollX.interpolate({
-    inputRange: [index - 1, index, index + 1],
-    outputRange: [0, 1, 0],
-    extrapolate: "clamp",
-  });
-
   const onPress = useCallback(() => {
-    const event = navigation.emit({
-      type: "tabPress",
-      target: route.key,
-      canPreventDefault: true,
+    if (isActive) return;
+    track("tab_clicked", {
+      tab: getAnalyticsEvent(route.name),
     });
-
-    if (!isActive && !event.defaultPrevented) {
-      track("tab_clicked", {
-        tab: getAnalyticsEvent(route.name),
-      });
-      navigation.navigate(route.name);
-    }
+    navigation.navigate(route.name);
   }, [isActive, navigation, route]);
-
-  const backgroundColor = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [colors.opacityDefault.c10, colors.neutral.c100],
-  });
 
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         borderRadius={2}
         style={{
-          backgroundColor,
+          backgroundColor: isActive ? colors.neutral.c100 : colors.opacityDefault.c10,
           opacity: 1,
         }}
       />
@@ -105,12 +83,7 @@ const MemoTab = memo(Tab);
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-function WalletTabNavigatorTabBar({
-  state,
-  descriptors,
-  navigation,
-  position,
-}: MaterialTopTabBarProps) {
+function WalletTabNavigatorTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
   const { colors } = useTheme();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -124,17 +97,12 @@ function WalletTabNavigatorTabBar({
     extrapolateRight: "clamp",
   });
 
-  const opacity = scrollY.interpolate({
-    inputRange: [headerHeight, headerHeight + 1],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
   const insets = useSafeAreaInsets();
 
   return (
     <>
       <WalletTabBackgroundGradient
-        scrollX={position}
+        visible={state.routes[state.index].name === ScreenName.Portfolio}
         color={readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined}
       />
       <AnimatedFlex
@@ -153,8 +121,7 @@ function WalletTabNavigatorTabBar({
             position: "absolute",
             width: "100%",
             height: tabBarHeight,
-            backgroundColor: colors.background.main,
-            opacity,
+            backgroundColor: "transparent",
           }}
         />
         <Flex px={6} py={2} justifyContent={"flex-end"}>
@@ -168,8 +135,6 @@ function WalletTabNavigatorTabBar({
                   label={options.title}
                   isActive={state.index === index}
                   navigation={navigation}
-                  index={index}
-                  scrollX={position}
                 />
               );
             })}

@@ -1,7 +1,7 @@
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
@@ -15,17 +15,20 @@ import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawe
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
+import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 
-const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
+const Stack = createNativeStackNavigator<EarnLiveAppNavigatorParamList>();
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>
 >;
 
+type EarnNavigation = NavigationProp<ParamListBase>;
+
 const Earn = (props: NavigationProps) => {
   const dispatch = useDispatch();
   const paramAction = props.route.params?.action;
-  const navigation = props.navigation;
+  const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
 
@@ -153,7 +156,7 @@ const Earn = (props: NavigationProps) => {
       />
       <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
-      <EarnMenuDrawer navigation={props.navigation} />
+      <EarnMenuDrawer navigation={navigation} />
     </>
   );
 };

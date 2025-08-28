@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -20,7 +20,7 @@ import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
-const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<WalletSyncNavigatorStackParamList>();
 
 export default function WalletSyncNavigator() {
   const { colors } = useTheme();

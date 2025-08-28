@@ -1,6 +1,6 @@
 import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { NavigatorName } from "~/const";
 import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
@@ -46,7 +46,8 @@ export function RootDrawerSelector() {
 export function RootDrawer({ drawer }: RootDrawerProps) {
   // this keeps track initial drawers closed during the session.
   const [initialDrawers, setInitialDrawers] = useState(Object.values(InitialDrawerID));
-  const { navigate } = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const { navigate } =
+    useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
 
   useEffect(() => {
     async function displayDrawers() {

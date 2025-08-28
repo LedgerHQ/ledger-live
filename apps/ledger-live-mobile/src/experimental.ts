@@ -171,7 +171,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
   }
 };
 
-export const isReadOnly = (key: EnvName) => key in Config;
+export const isReadOnly = (key: EnvName) => Object.keys(Config).includes(key);
 
 export const enabledExperimentalFeatures = (): string[] =>
   [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));
