@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -20,7 +20,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage || true",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

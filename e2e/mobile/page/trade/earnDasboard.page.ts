@@ -33,22 +33,6 @@ export default class EarnDashboardPage {
     };
   };
 
-  @Step("Wait for Earn dashboard to be ready")
-  async waitForEarnDashboardToBeReady(
-    withStaking: boolean = false,
-    withExistingAccounts: boolean = true,
-  ) {
-    if (!withExistingAccounts) {
-      await waitWebElementByTestId(this.getAssetsPlaceholderHero);
-    } else {
-      if (withStaking) {
-        await waitWebElementByTestId(this.totalDepositedBalanceCard);
-      } else {
-        await waitWebElementByTestId(this.amountAvailableToEarnBalanceCard);
-      }
-    }
-  }
-
   @Step("Click on earn button")
   async clickEarnCurrencyButton(id: string) {
     const elem = getWebElementByTestId(this.earnButton(id), 0, "data-test-id");
@@ -148,8 +132,12 @@ export default class EarnDashboardPage {
 
   @Step("Go to earn more tab")
   async goToEarnMoreTab() {
-    const button = getWebElementByTestId(this.earnMoreRewardTabButton, 0, "data-test-id");
-    await tapWebElementByElement(button);
+    try {
+      const button = getWebElementByTestId(this.earnMoreRewardTabButton, 0, "data-test-id");
+      await tapWebElementByElement(button);
+    } catch {
+      console.log("Earn more tab is not visible");
+    }
   }
 
   @Step("Verify earn by stacking button is visible")

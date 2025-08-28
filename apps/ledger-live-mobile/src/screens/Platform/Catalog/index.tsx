@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useBanner } from "~/components/banners/hooks";
 import TrackScreen from "~/analytics/TrackScreen";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import TwitterBanner from "./TwitterBanner";
 import DAppDisclaimer, { Props as DisclaimerProps } from "./DAppDisclaimer";
 import Banner from "./Banner";
@@ -42,10 +42,13 @@ export function Catalog({ route, navigation }: Props) {
   const handlePressCard = useCallback(
     (manifest: LiveAppManifest) => {
       const openDApp = () =>
-        navigation.navigate(ScreenName.PlatformApp, {
-          ...routeParams,
-          platform: manifest.id,
-          name: manifest.name,
+        navigation.navigate(NavigatorName.Base, {
+          screen: ScreenName.PlatformApp,
+          params: {
+            ...routeParams,
+            platform: manifest.id,
+            name: manifest.name,
+          },
         });
 
       if (!disclaimerDisabled && !readOnlyModeEnabled) {
@@ -74,10 +77,13 @@ export function Catalog({ route, navigation }: Props) {
       const manifest = manifests.find(m => m.id === platform);
 
       if (manifest) {
-        navigation.navigate(ScreenName.PlatformApp, {
-          ...routeParams,
-          platform: manifest.id,
-          name: manifest.name,
+        navigation.navigate(NavigatorName.Base, {
+          screen: ScreenName.PlatformApp,
+          params: {
+            ...routeParams,
+            platform: manifest.id,
+            name: manifest.name,
+          },
         });
       }
     }
@@ -107,7 +113,7 @@ export function Catalog({ route, navigation }: Props) {
         {manifests.map(manifest => (
           <AppCard
             key={`${manifest.id}.${manifest.branch}`}
-            manifest={manifest as LiveAppManifest}
+            manifest={manifest}
             onPress={handlePressCard}
           />
         ))}
