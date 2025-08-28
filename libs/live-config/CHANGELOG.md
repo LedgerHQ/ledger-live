@@ -1,5 +1,11 @@
 # @ledgerhq/live-config
 
+## 3.2.0-next.0
+
+### Minor Changes
+
+- [#11313](https://github.com/LedgerHQ/ledger-live/pull/11313) [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Update EVM createBridge function signature for CAL lazy loading
+
 ## 3.1.0
 
 ### Minor Changes
