@@ -51,37 +51,37 @@ process.once("exit", async () => {
   await cleanupSpeculos();
 });
 
-process.on("unhandledRejection", reason => {
-  const err = reason instanceof Error ? reason : new Error(String(reason));
-  logSilentError(err);
-});
+// process.on("unhandledRejection", reason => {
+//   const err = reason instanceof Error ? reason : new Error(String(reason));
+//   logSilentError(err);
+// });
 
-process.on("uncaughtException", err => {
-  logSilentError(err);
-});
+// process.on("uncaughtException", err => {
+//   logSilentError(err);
+// });
 
-Subscriber.prototype.error = function (err: Error) {
-  logSilentError(err);
-};
+// Subscriber.prototype.error = function (err: Error) {
+//   logSilentError(err);
+// };
 
-function logSilentError(err: Error) {
-  const errorMessage = `❌ Exception occurred during test → ${err.message}`;
-  log.error(errorMessage);
-  try {
-    allure.description(errorMessage);
-    allure.step(err.message, () => {
-      allure.status("failed", { message: err.message, trace: err.stack });
-    });
-  } catch (reportErr) {
-    log.error(
-      "Failed to report silent error to Allure. ",
-      "Original error:",
-      err,
-      "Reporting error:",
-      reportErr,
-    );
-  }
-}
+// function logSilentError(err: Error) {
+//   const errorMessage = `❌ Exception occurred during test → ${err.message}`;
+//   log.error(errorMessage);
+//   try {
+//     allure.description(errorMessage);
+//     allure.step(err.message, () => {
+//       allure.status("failed", { message: err.message, trace: err.stack });
+//     });
+//   } catch (reportErr) {
+//     log.error(
+//       "Failed to report silent error to Allure. ",
+//       "Original error:",
+//       err,
+//       "Reporting error:",
+//       reportErr,
+//     );
+//   }
+// }
 
 export default async function setup(): Promise<void> {
   // Validate .env.mock file
