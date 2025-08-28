@@ -33,7 +33,7 @@ jobs:
       matrix:
         config:
           [
-            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", output-name: "linux" },
+            { name: "Linux", os: "ledger-live-linux-8CPU-32RAM", image: "linux-x86_64.AppImage", output-name: "linux" },
             { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
             { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
