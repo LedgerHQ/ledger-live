@@ -1,23 +1,27 @@
 import { step } from "../../misc/reporters/step";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { getTopCurrenciesByMarketCap } from "@ledgerhq/live-common/e2e/getAssetsByMarketCap";
+import { getTopAssetsByMarketCap } from "@ledgerhq/live-common/e2e/getAssetsByMarketCap";
 import { Drawer } from "../../component/drawer.component";
 
 export class ModularAssetDrawer extends Drawer {
-  private searchInputTestId = "modular-asset-drawer-search-input";
-  private modularAssetSelectorContainer = this.page.getByTestId(
-    "modular-asset-selection-container",
-  );
-  private searchInput = this.page.getByTestId(this.searchInputTestId);
-  private drawerCloseButton = this.page.getByTestId("mad-close-button");
-  private assetListContainer = this.page.getByTestId("asset-selector-list-container");
-  private assetTickerTestIdPrefix = "asset-item-ticker-";
-  private get assetTickerElements() {
-    return this.page.locator(`[data-testid^="${this.assetTickerTestIdPrefix}"]`);
+  private readonly searchInputTestId = "modular-asset-drawer-search-input";
+  private readonly assetNameTestIdPrefix = "asset-item-name-";
+
+  private readonly modularAssetSelectorContainer = this.page
+    .getByTestId("modular-asset-selection-container")
+    .first();
+  private readonly searchInput = this.page.getByTestId(this.searchInputTestId).first();
+  private readonly drawerCloseButton = this.page.getByTestId("mad-close-button");
+  private readonly assetListContainer = this.page
+    .getByTestId("asset-selector-list-container")
+    .first();
+
+  private get assetNameElements() {
+    return this.page.locator(`[data-testid^="${this.assetNameTestIdPrefix}"]`);
   }
-  private assetItemTicker = (ticker: string) =>
-    this.page.getByTestId(`${this.assetTickerTestIdPrefix}${ticker}`);
-  private assetItemName = (ticker: string) => this.page.getByTestId(`asset-item-name-${ticker}`);
+
+  private assetItemByName = (name: string) =>
+    this.page.getByTestId(`${this.assetNameTestIdPrefix}${name}`);
 
   @step("Wait for drawer to be visible")
   async waitForDrawerToBeVisible() {
@@ -36,94 +40,91 @@ export class ModularAssetDrawer extends Drawer {
     await this.searchInput.waitFor();
     await this.drawerCloseButton.waitFor();
     await this.assetListContainer.waitFor();
-    await this.validateTopAssetsByMarketCapOrder();
   }
 
   @step("Fetch assets based on market cap order from backend")
   private async fetchAssetsBasedOnMarketCapOrder(): Promise<string[]> {
     try {
-      return await getTopCurrenciesByMarketCap();
+      return await getTopAssetsByMarketCap();
     } catch (error) {
-      console.error("Error fetching market cap data:", error);
-      return [Currency.BTC.ticker, Currency.ETH.ticker];
+      console.error("Error fetching asset data:", error);
+      return [Currency.BTC.name, Currency.ETH.name];
     }
   }
 
-  @step("Get list of asset tickers in order")
-  async getAssetTickersList(): Promise<string[]> {
-    const tickerElements = this.assetTickerElements;
-    const count = await tickerElements.count();
+  @step("Get list of asset names in order")
+  async getAssetNamesList(): Promise<string[]> {
+    const nameElements = this.assetNameElements;
+    const count = await nameElements.count();
 
-    const tickers: string[] = [];
+    const names: string[] = [];
     for (let i = 0; i < count; i++) {
-      const ticker = await tickerElements.nth(i).textContent();
-      if (ticker) {
-        tickers.push(ticker.trim());
+      const name = await nameElements.nth(i).textContent();
+      if (name) {
+        names.push(name.trim());
       }
     }
 
-    return tickers;
+    return names;
   }
 
   @step("Validate top assets market cap order")
   async validateTopAssetsByMarketCapOrder() {
     const expectedOrder = await this.fetchAssetsBasedOnMarketCapOrder();
-    const tickers = await this.getAssetTickersList();
+    const names = await this.getAssetNamesList();
 
-    if (tickers.length === 0) {
+    if (names.length === 0) {
       throw new Error("No assets found in asset list");
     }
 
-    const compareLength = Math.min(expectedOrder.length, tickers.length);
-    const actualTopAssets = tickers.slice(0, compareLength);
+    const compareLength = Math.min(expectedOrder.length, names.length);
+    const actualTopAssets = names.slice(0, compareLength);
 
     for (let i = 0; i < compareLength; i++) {
-      const expectedTicker = expectedOrder[i];
-      const actualTicker = actualTopAssets[i];
+      const expectedName = expectedOrder[i];
+      const actualName = actualTopAssets[i];
 
-      if (actualTicker !== expectedTicker) {
+      if (actualName !== expectedName) {
         throw new Error(
-          `Market cap order validation failed at position ${i}: expected ${expectedTicker} but found ${actualTicker}. Expected order: ${expectedOrder.join(", ")}. Actual order: ${actualTopAssets.join(", ")}`,
+          `Asset order validation failed at position ${i}: expected ${expectedName} but found ${actualName}. Expected order: ${expectedOrder.slice(0, compareLength).join(", ")}. Actual order: ${actualTopAssets.join(", ")}`,
         );
       }
     }
   }
 
-  @step("Select asset by ticker and name")
-  async selectAssetByTickerAndName(currency: Currency) {
+  @step("Select asset by name")
+  async selectAssetByName(currency: Currency) {
     await this.searchInput.waitFor();
 
-    const tickerElement = await this.ensureTickerVisible(currency);
+    await this.validateTopAssetsByMarketCapOrder();
 
-    const nameElement = this.assetItemName(currency.name);
-    if (await nameElement.isVisible()) {
-      await nameElement.first().click();
-      return;
-    }
-
-    await tickerElement.click();
+    const nameElement = await this.ensureNameVisible(currency);
+    await nameElement.click();
   }
 
-  async ensureTickerVisible(currency: Currency) {
-    let tickerElement = this.assetItemTicker(currency.ticker).first();
-    if (!(await tickerElement.isVisible())) {
-      await this.searchInput.first().fill(currency.ticker);
-      await this.waitForTickerToAppear(currency.ticker);
-      tickerElement = this.assetItemTicker(currency.ticker).first();
-      if (!(await tickerElement.isVisible())) {
-        throw new Error(`Asset with ticker ${currency.ticker} not found.`);
+  private async ensureNameVisible(currency: Currency) {
+    let nameElement = this.assetItemByName(currency.name).first();
+
+    if (!(await nameElement.isVisible())) {
+      await this.searchInput.first().fill(currency.name);
+      await this.waitForNameToAppear(currency.name);
+      nameElement = this.assetItemByName(currency.name).first();
+
+      if (!(await nameElement.isVisible())) {
+        throw new Error(`Asset with name ${currency.name} not found.`);
       }
     }
-    return tickerElement;
+
+    return nameElement;
   }
 
-  async waitForTickerToAppear(ticker: string) {
+  private async waitForNameToAppear(name: string) {
     await this.page.waitForFunction(
-      ({ ticker, prefix }) => {
-        const elements = document.querySelectorAll(`[data-testid^="${prefix}${ticker}"]`);
+      ({ name, prefix }) => {
+        const elements = document.querySelectorAll(`[data-testid^="${prefix}${name}"]`);
         return elements.length > 0;
       },
-      { ticker, prefix: this.assetTickerTestIdPrefix },
+      { name, prefix: this.assetNameTestIdPrefix },
       { timeout: 10000 },
     );
   }
