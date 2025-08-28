@@ -7,5 +7,6 @@ export * from "./listOperations";
 export * from "./craftTransaction";
 export * from "./getSequence";
 export * from "./validateIntent";
+export * from "./getStakes";
 export * from "./getTokenFromAsset";
 export * from "./getStakes";
