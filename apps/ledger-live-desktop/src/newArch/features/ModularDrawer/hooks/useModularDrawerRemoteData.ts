@@ -33,6 +33,7 @@ export function useModularDrawerRemoteData({
     currenciesByProvider,
     sortedCryptoCurrencies,
     error,
+    refetch,
     isSuccess,
     loadingStatus,
     loadNext,
@@ -92,6 +93,7 @@ export function useModularDrawerRemoteData({
 
   return {
     error,
+    refetch,
     loadingStatus,
     assetsConfiguration,
     networkConfiguration,

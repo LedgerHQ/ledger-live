@@ -13,9 +13,11 @@ interface UseModularDrawerDataProps {
 export function useModularDrawerData({ currencies, searchedValue }: UseModularDrawerDataProps) {
   const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
 
-  const { data, isLoading, isSuccess, error, loadNext } = useAssetsData({
+  const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
   });
 
   const assetsSorted = useMemo(() => {
@@ -65,6 +67,7 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
     isLoading,
     isSuccess,
     error,
+    refetch,
     loadingStatus,
     assetsSorted,
     currenciesByProvider,

@@ -10,6 +10,8 @@ export enum AssetsDataTags {
 export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
+  product: "llm" | "lld";
+  version: string;
 }
 
 export interface PageParam {
@@ -53,6 +55,8 @@ export const assetsDataApi = createApi({
           ...(pageParam?.cursor && { cursor: pageParam.cursor }),
           // ...(queryArg?.currencyIds && queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
           ...(queryArg?.search && { search: queryArg.search }),
+          product: queryArg.product,
+          minVersion: queryArg.version,
         };
 
         return {

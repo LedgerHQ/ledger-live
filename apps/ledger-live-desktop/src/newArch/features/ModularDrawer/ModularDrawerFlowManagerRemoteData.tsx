@@ -23,6 +23,7 @@ const ModularDrawerFlowManagerRemoteData = ({
 
   const {
     error,
+    refetch,
     loadingStatus,
     assetsConfiguration,
     networkConfiguration,
@@ -70,6 +71,8 @@ const ModularDrawerFlowManagerRemoteData = ({
             source={source}
             hasOneCurrency={hasOneCurrency}
             loadNext={loadNext}
+            error={!!error}
+            refetch={refetch}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
@@ -112,14 +115,8 @@ const ModularDrawerFlowManagerRemoteData = ({
           screenKey={currentStep}
           direction={navigationDirection}
         >
-          {error ? (
-            <>{JSON.stringify(error)}</> // TODO: Handle error state
-          ) : (
-            <>
-              <Title step={currentStep} />
-              {renderStepContent(currentStep)}
-            </>
-          )}
+          <Title step={currentStep} />
+          {renderStepContent(currentStep)}
         </AnimatedScreenWrapper>
       </AnimatePresence>
     </>

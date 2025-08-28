@@ -19,14 +19,20 @@ const emptyData = () => ({
 export function useAssetsData({
   search,
   currencyIds,
+  product,
+  version,
 }: {
   search?: string;
   currencyIds?: string[];
+  product: "llm" | "lld";
+  version: string;
 }) {
   const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
     useGetAssetsDataInfiniteQuery({
       search,
       currencyIds,
+      product,
+      version,
     });
 
   const joinedPages = useMemo(() => {
