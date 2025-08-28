@@ -1,5 +1,12 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.1.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9), [`a6a97f1`](https://github.com/LedgerHQ/ledger-live/commit/a6a97f1daeaf3d90e69fe12d23d59cf4d4c7d78b), [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c)]:
+  - @ledgerhq/live-common@34.47.0-nightly.0
+
 ## 2.1.1
 
 ### Patch Changes

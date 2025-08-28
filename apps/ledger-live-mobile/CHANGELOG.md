@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.92.0-nightly.0
+
+### Minor Changes
+
+- [#11493](https://github.com/LedgerHQ/ledger-live/pull/11493) [`43dfb79`](https://github.com/LedgerHQ/ledger-live/commit/43dfb798f96a8481d8debbcba51bcef5c8af6e84) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Plug the apy component to the Wallet API parameter (hardcoded values)
+
+- [#11502](https://github.com/LedgerHQ/ledger-live/pull/11502) [`0dd50ce`](https://github.com/LedgerHQ/ledger-live/commit/0dd50ce246e1170bf68ef236d3160e748074e934) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Adapt Modular Dev Tool
+
+- [#11501](https://github.com/LedgerHQ/ledger-live/pull/11501) [`a6a97f1`](https://github.com/LedgerHQ/ledger-live/commit/a6a97f1daeaf3d90e69fe12d23d59cf4d4c7d78b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - APY on network selection screen
+
+- [#11178](https://github.com/LedgerHQ/ledger-live/pull/11178) [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - feat: added staking feature for sui
+
+- [#11511](https://github.com/LedgerHQ/ledger-live/pull/11511) [`1ed7c36`](https://github.com/LedgerHQ/ledger-live/commit/1ed7c3625b2c1b3e808e00bfbc25cf455823b495) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: LLM MAD analytics
+
+- [#11495](https://github.com/LedgerHQ/ledger-live/pull/11495) [`1fd62ec`](https://github.com/LedgerHQ/ledger-live/commit/1fd62ec958fb7277f7743ed0ab966bfdfe57f4c7) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Added state validation and fallback navigation
+
+### Patch Changes
+
+- Updated dependencies [[`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809)]:
+  - @ledgerhq/native-ui@0.44.0-nightly.1
+
 ## 3.91.0
 
 ### Minor Changes

@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.0
+
+### Minor Changes
+
+- [#11390](https://github.com/LedgerHQ/ledger-live/pull/11390) [`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Updates to support exchangeSDK fund flow in LL
+
+- [#11501](https://github.com/LedgerHQ/ledger-live/pull/11501) [`a6a97f1`](https://github.com/LedgerHQ/ledger-live/commit/a6a97f1daeaf3d90e69fe12d23d59cf4d4c7d78b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - APY on network selection screen
+
+- [#11178](https://github.com/LedgerHQ/ledger-live/pull/11178) [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - feat: added staking feature for sui
+
+### Patch Changes
+
+- Updated dependencies [[`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9), [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c), [`ad4a534`](https://github.com/LedgerHQ/ledger-live/commit/ad4a534ce02b1b6c99f70539042e88a141141806), [`19e0b97`](https://github.com/LedgerHQ/ledger-live/commit/19e0b97f12404f0bb857e5430cecf77c7eb128e9)]:
+  - @ledgerhq/wallet-api-exchange-module@0.16.0-nightly.1
+  - @ledgerhq/hw-app-sui@1.4.0-nightly.0
+  - @ledgerhq/coin-sui@0.12.0-nightly.0
+  - @ledgerhq/coin-ton@0.13.8-nightly.0
+  - @ledgerhq/coin-tron@5.3.0-nightly.0
+  - @ledgerhq/live-signer-canton@0.2.3-nightly.0
+
 ## 34.46.0
 
 ### Minor Changes

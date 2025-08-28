@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#11481](https://github.com/LedgerHQ/ledger-live/pull/11481) [`d571ef1`](https://github.com/LedgerHQ/ledger-live/commit/d571ef1104092e41de4dfb6dd9b26d27348b82cf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add integration tests and communicate with a real transport implementation
+
 ## 0.2.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.13.8-nightly.0
+
+### Patch Changes
+
+- [#11485](https://github.com/LedgerHQ/ledger-live/pull/11485) [`ad4a534`](https://github.com/LedgerHQ/ledger-live/commit/ad4a534ce02b1b6c99f70539042e88a141141806) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix sync issues when account imported using accountID
+
 ## 0.13.7
 
 ### Patch Changes

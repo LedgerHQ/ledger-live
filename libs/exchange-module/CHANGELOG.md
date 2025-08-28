@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.16.0-nightly.1
+
+### Minor Changes
+
+- [#11390](https://github.com/LedgerHQ/ledger-live/pull/11390) [`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Updates to support exchangeSDK fund flow in LL
+
 ## 0.16.0-nightly.0
 
 ### Minor Changes

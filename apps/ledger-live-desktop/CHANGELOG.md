@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.0
+
+### Minor Changes
+
+- [#11493](https://github.com/LedgerHQ/ledger-live/pull/11493) [`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add APYIndicator component for LLM to native-ui lib. Move from LLD to react-ui the APYIndicator to be iso
+
+- [#11390](https://github.com/LedgerHQ/ledger-live/pull/11390) [`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Updates to support exchangeSDK fund flow in LL
+
+- [#11501](https://github.com/LedgerHQ/ledger-live/pull/11501) [`a6a97f1`](https://github.com/LedgerHQ/ledger-live/commit/a6a97f1daeaf3d90e69fe12d23d59cf4d4c7d78b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - APY on network selection screen
+
+- [#11178](https://github.com/LedgerHQ/ledger-live/pull/11178) [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - feat: added staking feature for sui
+
+### Patch Changes
+
+- Updated dependencies [[`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809), [`64dcecb`](https://github.com/LedgerHQ/ledger-live/commit/64dcecb1a971fc250e80344ba6d42b815ddd18c9), [`a6a97f1`](https://github.com/LedgerHQ/ledger-live/commit/a6a97f1daeaf3d90e69fe12d23d59cf4d4c7d78b), [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c)]:
+  - @ledgerhq/react-ui@0.36.0-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.0
+
 ## 2.126.0
 
 ### Minor Changes

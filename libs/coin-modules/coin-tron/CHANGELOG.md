@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 5.3.0-nightly.0
+
+### Minor Changes
+
+- [#11526](https://github.com/LedgerHQ/ledger-live/pull/11526) [`19e0b97`](https://github.com/LedgerHQ/ledger-live/commit/19e0b97f12404f0bb857e5430cecf77c7eb128e9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tron): transaction type is unknown on staking
+
 ## 5.2.0
 
 ### Minor Changes

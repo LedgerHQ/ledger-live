@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.44.0-nightly.1
+
+### Minor Changes
+
+- [#11493](https://github.com/LedgerHQ/ledger-live/pull/11493) [`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add APYIndicator component for LLM to native-ui lib. Move from LLD to react-ui the APYIndicator to be iso
+
 ## 0.43.1-nightly.0
 
 ### Patch Changes

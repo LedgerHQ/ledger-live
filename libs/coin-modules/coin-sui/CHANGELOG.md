@@ -1,5 +1,16 @@
 # @ledgerhq/coin-sui
 
+## 0.12.0-nightly.0
+
+### Minor Changes
+
+- [#11178](https://github.com/LedgerHQ/ledger-live/pull/11178) [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - feat: added staking feature for sui
+
+### Patch Changes
+
+- Updated dependencies [[`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c)]:
+  - @ledgerhq/hw-app-sui@1.4.0-nightly.0
+
 ## 0.11.0
 
 ### Minor Changes
