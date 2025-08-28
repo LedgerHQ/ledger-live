@@ -135,12 +135,13 @@ describe("useDateFormatter", () => {
 
     const setLocale_Mock = (
       locale: string,
+      forcedLanguage?: string,
       opts?: {
         intlOpts?: Intl.DateTimeFormatOptions;
       },
     ) => {
       spy.mockReturnValue(locale);
-      const { result } = renderHook(() => useDateFormatter(opts?.intlOpts), {
+      const { result } = renderHook(() => useDateFormatter(opts?.intlOpts, forcedLanguage), {
         wrapper: HookWrapper,
       });
       f = result.current;
@@ -157,6 +158,12 @@ describe("useDateFormatter", () => {
 
       setLocale_Mock("pt-BR");
       expect(f(date)).toEqual("01/02/2000");
+    });
+
+    test("should format date properly with forced language", () => {
+      const date = new Date("February 1, 2000 10:00:00");
+      setLocale_Mock("fr", "en");
+      expect(f(date)).toEqual("2/1/2000");
     });
   });
 });
