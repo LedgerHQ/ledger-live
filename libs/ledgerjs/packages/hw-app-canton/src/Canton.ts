@@ -83,8 +83,14 @@ export default class Canton {
     // 1. Send the derivation path
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
-    
-    const pathResponse = await this.transport.send(CLA, INS.SIGN, P1_NON_CONFIRM, P2_FIRST | P2_MORE, serializedPath);
+
+    const pathResponse = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_NON_CONFIRM,
+      P2_FIRST | P2_MORE,
+      serializedPath,
+    );
 
     this.handleTransportResponse(pathResponse, "transaction");
 
