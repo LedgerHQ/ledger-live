@@ -1,9 +1,6 @@
 import type Transport from "@ledgerhq/hw-transport";
 import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { CantonAddress, CantonSignature } from "@ledgerhq/coin-canton";
 import BIPPath from "bip32-path";
-
-import { AppConfig } from "./MockDevice";
 
 const CLA = 0xe0;
 
@@ -28,6 +25,17 @@ const STATUS = {
   OK: 0x9000,
   USER_CANCEL: 0x6985,
 };
+
+export type AppConfig = {
+  version: string;
+};
+
+export type CantonAddress = {
+  publicKey: string;
+  address: string;
+};
+
+export type CantonSignature = string;
 
 /**
  * Canton BOLOS API

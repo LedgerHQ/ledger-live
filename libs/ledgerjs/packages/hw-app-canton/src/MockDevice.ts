@@ -1,4 +1,4 @@
-import { CantonAddress, CantonSignature } from "@ledgerhq/coin-canton";
+import { CantonAddress, CantonSignature } from "./Canton";
 
 const INS = {
   GET_VERSION: 0x04,
@@ -9,10 +9,6 @@ const INS = {
 const STATUS = {
   OK: 0x9000,
   USER_CANCEL: 0x6985,
-};
-
-export type AppConfig = {
-  version: string;
 };
 
 // SECP256R1-compatible mock addresses

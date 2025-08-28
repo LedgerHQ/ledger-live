@@ -6081,9 +6081,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-canton:
     dependencies:
-      '@ledgerhq/coin-canton':
-        specifier: workspace:^
-        version: link:../../../coin-modules/coin-canton
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
