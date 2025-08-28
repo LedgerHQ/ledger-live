@@ -8,9 +8,12 @@ export enum AssetsDataTags {
 }
 
 export interface GetAssetsDataParams {
-  cursor?: string;
   search?: string;
   currencyIds?: string[];
+}
+
+export interface PageParam {
+  cursor?: string;
 }
 
 export interface AssetsDataWithPagination extends AssetsData {
@@ -43,20 +46,38 @@ export const assetsDataApi = createApi({
   }),
   tagTypes: [AssetsDataTags.Assets],
   endpoints: build => ({
-    getAssetsData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
-      query: ({ cursor, search, currencyIds: _currencyIds }) => ({
-        url: "assets",
-        params: {
-          ...(cursor && { cursor }),
-          ...(search && { search }),
-          // ...(currencyIds && currencyIds.length > 0 && { currencyIds }),
+    getAssetsData: build.infiniteQuery<AssetsDataWithPagination, GetAssetsDataParams, PageParam>({
+      query: ({ pageParam, queryArg }) => {
+        const params = {
           pageSize: 100,
-        },
-      }),
+          ...(pageParam?.cursor && { cursor: pageParam.cursor }),
+          // ...(queryArg?.currencyIds && queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
+          ...(queryArg?.search && { search: queryArg.search }),
+        };
+
+        return {
+          url: "assets",
+          params,
+        };
+      },
       providesTags: [AssetsDataTags.Assets],
       transformResponse: transformAssetsResponse,
+      infiniteQueryOptions: {
+        initialPageParam: {
+          cursor: "",
+        },
+        getNextPageParam: lastPage => {
+          if (lastPage.pagination.nextCursor) {
+            return {
+              cursor: lastPage.pagination.nextCursor,
+            };
+          } else {
+            return undefined;
+          }
+        },
+      },
     }),
   }),
 });
 
-export const { useGetAssetsDataQuery } = assetsDataApi;
+export const { useGetAssetsDataInfiniteQuery } = assetsDataApi;
