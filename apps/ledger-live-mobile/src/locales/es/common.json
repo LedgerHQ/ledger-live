@@ -306,6 +306,10 @@
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Se ha perdido la conexión con el dispositivo",
+      "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
@@ -6245,6 +6250,7 @@
       "iWithdraw" : "Retirar",
       "totalStake" : "Participación total",
       "commission" : "Comisión",
+      "netApy" : "APY neto",
       "stakeActivationState" : "Provincia",
       "stakeActivePercent" : "Activo",
       "stakeAvailableBalance" : "Saldo disponible",
@@ -7780,8 +7786,8 @@
     "selectAccount" : "Seleccionar cuenta",
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
-    "accountCount" : "{{count}} cuenta (detectada)",
-    "accountCount_plural" : "{{count}} cuentas (detectadas)"
+    "accountCount" : "{{count}} cuenta",
+    "accountCount_plural" : "{{count}} cuentas"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

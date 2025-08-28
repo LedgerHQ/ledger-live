@@ -110,7 +110,13 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
       <Track onMount event="ETH Stake Modal" />
       <Animated.View style={animatedStyle} onLayout={onLayout}>
         <Flex rowGap={16} alignItems="center">
-          <Text variant="h3Inter" textAlign="center" fontWeight="semiBold" fontSize={24}>
+          <Text
+            variant="h3Inter"
+            textAlign="center"
+            fontWeight="semiBold"
+            fontSize={24}
+            testID="staking-provider-modal-title"
+          >
             {t("stake.ethereum.title")}
           </Text>
           <ChipTabs

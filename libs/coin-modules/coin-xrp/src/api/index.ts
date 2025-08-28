@@ -23,7 +23,7 @@ import {
   getNextValidSequence,
   lastBlock,
   listOperations,
-  getTransactionStatus,
+  validateIntent,
   MemoInput,
 } from "../logic";
 import { ListOperationsOptions, XrpMapMemo } from "../types";
@@ -39,7 +39,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    validateIntent: getTransactionStatus,
+    validateIntent,
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },

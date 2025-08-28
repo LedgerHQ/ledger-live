@@ -13,7 +13,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect, fn, userEvent, waitFor, within } from "@storybook/test";
 import React from "react";
 import { Provider } from "react-redux";
-import { legacy_createStore as createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import { track } from "~/renderer/analytics/__mocks__/segment";
 import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
 import {
@@ -22,11 +22,11 @@ import {
   bitcoinCurrency,
   ethereumCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import ModularDrawerFlowManager, {
-  ModularDrawerFlowManagerProps,
-} from "./ModularDrawerFlowManager";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
+import { ModularDrawerFlowManagerProps } from "./types";
 
-const store = createStore(() => ({
+const createMockState = () => ({
   accounts: [ARB_ACCOUNT, ETH_ACCOUNT, BTC_ACCOUNT],
   wallet: {
     accountNames: new Map([
@@ -36,7 +36,7 @@ const store = createStore(() => ({
     ]),
   },
   currency: {
-    type: "FiatCurrency",
+    type: "FiatCurrency" as const,
     ticker: "USD",
     name: "US Dollar",
     symbol: "$",
@@ -51,7 +51,24 @@ const store = createStore(() => ({
     ],
   },
   application: { debug: {} },
-}));
+});
+
+const initialMockState = createMockState();
+
+const store = configureStore({
+  reducer: {
+    accounts: (state = initialMockState.accounts) => state,
+    wallet: (state = initialMockState.wallet) => state,
+    currency: (state = initialMockState.currency) => state,
+    application: (state = initialMockState.application) => state,
+    assetsDataApi: assetsDataApi.reducer,
+  },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      immutableCheck: false,
+    }).concat(assetsDataApi.middleware),
+});
 
 function makeMockedContextValue(
   mockedFeatures: Partial<Record<FeatureId, Feature>>,
@@ -72,6 +89,7 @@ type ExtraStoryArgs = {
   networksLeftElement?: (typeof networksLeftElementOptions)[number] | "default";
   networksRightElement?: (typeof networksRightElementOptions)[number] | "default";
   assetsFilter?: (typeof filterOptions)[number] | "default";
+  lldModularDrawerBackendDataEnabled?: boolean;
 };
 
 type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
@@ -85,6 +103,7 @@ const meta: Meta<StoryArgs> = {
     onAccountSelected: () => null,
     source: "sourceTest",
     flow: "Modular Asset Flow",
+    lldModularDrawerBackendDataEnabled: false,
   },
   argTypes: {
     assetsFilter: {
@@ -107,14 +126,20 @@ const meta: Meta<StoryArgs> = {
       options: [...networksRightElementOptions, "default"],
       control: { type: "select" },
     },
+    lldModularDrawerBackendDataEnabled: {
+      control: { type: "boolean" },
+      description: "Enable/disable the lldModularDrawerBackendData feature flag",
+    },
   },
   decorators: [
-    Story => {
+    (Story, context) => {
+      const { lldModularDrawerBackendDataEnabled = false } = context.args;
       return (
         <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
           <FeatureFlagsProvider
             value={makeMockedContextValue({
               lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+              lldModularDrawerBackendData: { enabled: lldModularDrawerBackendDataEnabled },
             })}
           >
             <Provider store={store}>
@@ -168,13 +193,18 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
         <div style={{ color: "#333", backgroundColor: "#f9f9f9", padding: "5px" }}>
           <p style={{ fontSize: "16px", marginBottom: "8px" }}>
             Use the storybook controls below to alter the{" "}
-            <span style={{ fontWeight: 600 }}>drawerConfiguration</span> parameters:
+            <span style={{ fontWeight: 600 }}>drawerConfiguration</span> parameters and feature
+            flags:
           </p>
           <p style={{ fontSize: "14px", marginBottom: "16px", color: "#555" }}>
             &quot;undefined&quot; represents no element shown, &quot;default&quot; represents the
             default element if the parameter is not provided in the drawerConfiguration object.
           </p>
           <ul style={{ paddingLeft: "20px", fontSize: "14px", marginBottom: "16px" }}>
+            <li>
+              <span style={{ fontWeight: 600 }}>lldModularDrawerBackendDataEnabled:</span> Toggle
+              the lldModularDrawerBackendData feature flag to enable/disable backend data fetching.
+            </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsFilter:</span> Element to display at the top
               of the drawer to filter assets.

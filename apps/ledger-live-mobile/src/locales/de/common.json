@@ -306,6 +306,10 @@
       "title" : "Geräteverbindung unterbrochen",
       "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Geräteverbindung unterbrochen",
+      "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Geräteverbindung unterbrochen",
       "description" : "Ledger Live konnte keine Verbindung mit deinem Gerät herstellen. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2–3 Min.",
       "medium" : "≈ 30 Sek.",
-      "fast" : "≈ 15 Sek."
+      "fast" : "≈ 15 Sek.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Transaktionsbenachrichtigungen (Beta)",
-        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, Binance Smart Chain, Avalanche und Ethereum Classic"
+        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, BNB Chain, Avalanche und Ethereum Classic"
       },
       "price" : {
         "title" : "Preisalarme",
@@ -6245,6 +6250,7 @@
       "iWithdraw" : "Ich entziehe mich",
       "totalStake" : "Stake-Gesamtsumme",
       "commission" : "Provision",
+      "netApy" : "Netto-APY",
       "stakeActivationState" : "Status",
       "stakeActivePercent" : "Aktiv",
       "stakeAvailableBalance" : "Verfügbares Guthaben",
@@ -7780,8 +7786,8 @@
     "selectAccount" : "Konto auswählen",
     "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
-    "accountCount" : "{{count}} Konto (erkannt)",
-    "accountCount_plural" : "{{count}} Konten (erkannt)"
+    "accountCount" : "{{count}} Konto",
+    "accountCount_plural" : "{{count}} Konten"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

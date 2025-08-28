@@ -6,12 +6,12 @@ import {
   ERC1155_CLEAR_SIGNED_SELECTORS,
 } from "@ledgerhq/evm-tools/selectors/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { findTokenByAddress } from "@ledgerhq/cryptoassets/tokens";
 import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Transaction as EvmTransaction, TransactionStatus } from "./types";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 type DeviceTransactionField = CommonDeviceTransactionField;
 
@@ -29,7 +29,8 @@ const inferDeviceTransactionConfigWalletApi = (
   const knownNft = mainAccount.nfts?.find(
     nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
   );
-  const token = findTokenByAddress(transaction.recipient);
+
+  const token = getCryptoAssetsStore().findTokenByAddress(transaction.recipient);
 
   // ERC20 fields
   if (token && Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)) {

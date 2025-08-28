@@ -3,7 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
-import { findCurrencyByTicker } from "@ledgerhq/coin-framework/currencies/index";
+import { findCurrencyByTicker } from "../findCurrencyByTicker";
 
 const DAY = 24 * 60 * 60 * 1000;
 

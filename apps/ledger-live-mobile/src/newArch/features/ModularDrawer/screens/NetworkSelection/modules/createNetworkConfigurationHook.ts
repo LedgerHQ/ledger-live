@@ -2,7 +2,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { type Network } from "@ledgerhq/native-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
-import { useLeftAccountsModule } from "./useLeftAccountsModule";
+import { useLeftAccountsModule, useLeftAccountsApyModule } from "./useLeftAccountsModule";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
@@ -20,6 +20,7 @@ const getLeftElement = (leftElement: LeftElement) => {
     case "numberOfAccounts":
       return useLeftAccountsModule;
     case "numberOfAccountsAndApy":
+      return useLeftAccountsApyModule;
     case "undefined":
     default:
       return undefined;

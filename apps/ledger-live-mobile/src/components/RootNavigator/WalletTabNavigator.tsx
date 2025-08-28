@@ -53,18 +53,19 @@ export default function WalletTabNavigator() {
           initialRouteName={initialRouteName}
           tabBar={tabBarOptions}
           style={{ backgroundColor: "transparent" }}
-          sceneContainerStyle={{ backgroundColor: "transparent" }}
           screenOptions={{
             lazy: true,
             swipeEnabled: false, // For Contents Cards issue
+            sceneStyle: { backgroundColor: "transparent" },
           }}
           screenListeners={{
-            state: e => {
-              const data = e.data as NavigationContainerEventMap["state"]["data"];
+            state: (e: { data: NavigationContainerEventMap["state"]["data"] }) => {
+              const data = e.data;
               if (data?.state?.routeNames && (data?.state?.index || data?.state?.index === 0)) {
                 setCurrentRouteName(data.state.routeNames[data.state.index]);
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     data.state.routeNames[
                       data.state.index
                     ] as keyof WalletTabNavigatorStackParamList,

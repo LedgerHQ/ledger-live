@@ -2,10 +2,11 @@ import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
   baseLink = "account";
-  quickActionSwapButton = "asset-quick-action-button-swap";
   assetBalance = () => getElementById("asset-graph-balance");
   titleId = (assetName: string) => `accounts-title-${assetName}`;
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
+  assetQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
+    getElementById(`asset-quick-action-button-${action}`);
 
   @Step("Wait for asset page to load")
   async waitForAccountPageToLoad(assetName: string) {
@@ -30,8 +31,8 @@ export default class AssetAccountsPage {
     await openDeeplink(link);
   }
 
-  @Step("Tap swap quick action button")
-  async tapSwap() {
-    await tapById(this.quickActionSwapButton);
+  @Step("Tap on asset quick action button ")
+  async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
+    await tapByElement(this.assetQuickActionButton(action));
   }
 }

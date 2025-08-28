@@ -2646,6 +2646,7 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 2`] = `
       "senders": [
         "bc1qtc9gkextz267qgaupcmqpz9hl64nwqn6y4t0qk",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "2717",
     },
@@ -15474,6 +15475,7 @@ exports[`decred currency bridge scanAccounts decred seed 1 2`] = `
       "senders": [
         "DskW13e355a7M3kmhBjZrSGrGYTYn9T4dbk",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "621400",
     },
@@ -18429,6 +18431,7 @@ exports[`decred currency bridge scanAccounts decred seed 1 2`] = `
       "senders": [
         "Dshb98SrdLmgDoy3PRouifMYCERdDYuCcEM",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "625888",
     },
@@ -19077,6 +19080,7 @@ exports[`decred currency bridge scanAccounts decred seed 1 2`] = `
       "senders": [
         "DseydKh2Cgzht5dwbSgXBDLLDNdjcSu8Qu2",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "623776",
     },
@@ -21359,6 +21363,7 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 2`] = `
       "senders": [
         "DCTZJgCwmkTko41GXvWF4BrutEY5NSr1hC",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "4988700000",
     },
@@ -21825,6 +21830,7 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 2`] = `
       "senders": [
         "ltc1qmynthzpjrtdwp87anmwqc9mam0wjn0nuskm43r",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "100283",
     },
@@ -22879,6 +22885,7 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 2`] = `
       "senders": [
         "MSyowFrsqmk9MjgAQerz5HAQjHAcDGM8aV",
       ],
+      "transactionSequenceNumber": 0,
       "type": "OUT",
       "value": "100323",
     },

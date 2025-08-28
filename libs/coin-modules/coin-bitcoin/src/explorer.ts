@@ -17,7 +17,7 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
     };
   }
 
-  if (currency.explorerId == null) {
+  if (!currency.explorerId) {
     console.warn("no explorerId for", currency.id);
   }
 
@@ -31,7 +31,7 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
 export const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
   const res = findCurrencyExplorer(currency);
   invariant(res, `no Ledger explorer for ${currency.id}`);
-  return <LedgerExplorer>res;
+  return res;
 };
 
 export const blockchainBaseURL = (currency: CryptoCurrency): string => {

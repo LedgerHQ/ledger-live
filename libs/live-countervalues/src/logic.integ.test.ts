@@ -5,7 +5,7 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { findCurrencyByTicker } from "@ledgerhq/coin-framework/currencies/index";
+import { findCurrencyByTicker } from "./findCurrencyByTicker";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,

@@ -5,8 +5,8 @@ import {
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import axios from "axios";
@@ -23,6 +23,7 @@ import {
 } from "../fixtures/transaction.fixtures";
 import { getCoinConfig } from "../../config";
 import { getEstimatedFees } from "../../utils";
+import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 jest.useFakeTimers();
 
@@ -44,7 +45,8 @@ const currency: CryptoCurrency = {
     ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
   } as any,
 };
-const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const tokenCurrency = usdtTokenData as TokenCurrency;
 const tokenAccount: TokenAccount = makeTokenAccount(
   "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
   tokenCurrency,

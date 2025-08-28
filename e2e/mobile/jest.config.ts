@@ -13,6 +13,7 @@ const jestAllure2ReporterOptions: ReporterOptions = {
     labels: {
       host: process.env.RUNNER_NAME,
     },
+    status: ({ value }) => (value === "broken" ? "failed" : value),
   },
   overwrite: false,
   environment: async ({ $ }) => ({

@@ -1,82 +1,40 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionRaw } from "../types";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../transaction";
-
-const account: Account = {
-  type: "Account",
-  id: "",
-  seedIdentifier: "",
-  derivationMode: "",
-  index: 0,
-  freshAddress: "",
-  freshAddressPath: "",
-  used: false,
-  balance: new BigNumber(200000),
-  spendableBalance: new BigNumber(0),
-  creationDate: new Date(),
-  blockHeight: 0,
-  currency: {
-    type: "CryptoCurrency",
-    id: "hedera",
-    managerAppName: "",
-    coinType: 0,
-    scheme: "",
-    color: "",
-    family: "",
-    explorerViews: [],
-    name: "",
-    ticker: "",
-    units: [
-      {
-        name: "",
-        code: "",
-        magnitude: 0,
-      },
-    ],
-  },
-  operationsCount: 0,
-  operations: [],
-  pendingOperations: [],
-  lastSyncDate: new Date(),
-  balanceHistoryCache: {
-    HOUR: { latestDate: null, balances: [] },
-    DAY: { latestDate: null, balances: [] },
-    WEEK: { latestDate: null, balances: [] },
-  },
-  swapHistory: [],
-};
-
-const transaction: Transaction = {
-  family: "hedera",
-  amount: new BigNumber(1),
-  recipient: "0.0.3",
-};
-
-const transactionRaw: TransactionRaw = {
-  family: "hedera",
-  amount: "1",
-  recipient: "0.0.3",
-};
+import { getMockedAccount } from "../test/fixtures/account.fixture";
+import {
+  getMockedTransaction,
+  getMockedTransactionRaw,
+} from "../test/fixtures/transaction.fixture";
 
 describe("transaction", () => {
+  const mockedAccount = getMockedAccount();
+  const mockedTransaction = getMockedTransaction({
+    amount: new BigNumber(100000000),
+    recipient: "0.0.3",
+  });
+  const mockedTransactionRaw = getMockedTransactionRaw({
+    amount: "100000000",
+    recipient: "0.0.3",
+  });
+
   test("formatTransaction", () => {
-    const result = formatTransaction(transaction, account);
-    const string = `SEND 1\nTO 0.0.3`;
+    const result = formatTransaction(mockedTransaction, mockedAccount);
+    const nonBreakingSpace = String.fromCharCode(160);
+    const string = `SEND 1${nonBreakingSpace}HBAR\nTO 0.0.3`;
 
     expect(result).toEqual(string);
   });
 
   test("fromTransactionRaw", () => {
-    const result = fromTransactionRaw(transactionRaw);
-    const data = transaction;
+    const result = fromTransactionRaw(mockedTransactionRaw);
+    const data = mockedTransaction;
 
     expect(result).toEqual(data);
   });
 
   test("toTransactionRaw", () => {
-    const result = toTransactionRaw(transaction);
-    const data = transactionRaw;
+    const result = toTransactionRaw(mockedTransaction);
+    const data = mockedTransactionRaw;
 
     expect(result).toEqual(data);
   });

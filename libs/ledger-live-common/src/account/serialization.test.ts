@@ -4,7 +4,7 @@ import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import solanaSplTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 

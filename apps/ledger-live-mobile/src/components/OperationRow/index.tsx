@@ -252,7 +252,12 @@ function OperationRow({
             >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
+            <Text
+              variant="paragraph"
+              fontWeight="medium"
+              color={colors.neutral.c70}
+              testID="operationRow-counterValue-label"
+            >
               <CounterValue
                 showCode
                 date={operation.date}

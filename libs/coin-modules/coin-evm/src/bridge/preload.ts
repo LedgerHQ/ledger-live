@@ -10,6 +10,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { getCALHash, setCALHash } from "../logic";
 
+let shouldSkipTokenLoading = false;
+export function setShouldSkipTokenLoading(skip: boolean): void {
+  shouldSkipTokenLoading = skip;
+}
+
 export const fetchERC20Tokens: (
   currency: CryptoCurrency,
 ) => Promise<ERC20Token[] | null> = async currency => {
@@ -78,6 +83,8 @@ export const fetchERC20Tokens: (
 };
 
 export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | undefined> {
+  if (shouldSkipTokenLoading) return;
+
   const erc20 = await fetchERC20Tokens(currency);
   if (!erc20) return;
 
@@ -87,6 +94,7 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | 
 }
 
 export function hydrate(value: unknown, currency: CryptoCurrency): void {
+  if (shouldSkipTokenLoading) return;
   if (!Array.isArray(value)) {
     const { chainId } = currency.ethereumLikeInfo || {};
     const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];

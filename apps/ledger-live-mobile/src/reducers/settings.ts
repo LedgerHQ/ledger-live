@@ -1,10 +1,7 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
 import merge from "lodash/merge";
-import {
-  findCurrencyByTicker,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -91,6 +88,7 @@ import {
 import { ScreenName } from "~/const";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
+import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 export const timeRangeDaysByKey = {
   day: 1,

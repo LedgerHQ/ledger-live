@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -16,6 +17,8 @@ import {
   LedgerExplorerInternalTransaction,
   LedgerExplorerOperation,
 } from "../../../types";
+import usdCoinTokenData from "../../../__fixtures__/ethereum-erc20-usd__coin.json";
+import { setCryptoAssetsStoreGetter } from "../../../cryptoAssetsStore";
 
 const accountId = encodeAccountId({
   type: "js",
@@ -728,7 +731,22 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerERC20EventToOperations", () => {
-        const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        const tokenCurrency = usdCoinTokenData as TokenCurrency;
+
+        beforeAll(() => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              ({
+                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                  return _address === "0x000000000000000000000000000000000000dead"
+                    ? undefined
+                    : tokenCurrency;
+                },
+              }) as CryptoAssetsStore,
+          );
+        });
 
         it("should return an empty array for an unknown token", () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {

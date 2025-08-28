@@ -1,5 +1,21 @@
 # @ledgerhq/swift-bridge-hw-app-solana
 
+## 1.2.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-solana@7.5.2
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.9
+
+## 1.2.11-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-solana@7.5.2-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.9-next.0
+
 ## 1.2.10
 
 ### Patch Changes

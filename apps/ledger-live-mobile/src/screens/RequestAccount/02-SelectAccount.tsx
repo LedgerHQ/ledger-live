@@ -103,10 +103,37 @@ function SelectAccount({ navigation, route }: Props) {
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds));
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
-      onSuccess && onSuccess(account, parentAccount);
       const n =
         navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() || navigation;
-      n.pop();
+
+      // Navigation Conflict Resolution:
+      //
+      // Problem: RequestAccount screen automatically calls n.pop() after onSuccess,
+      // but some onSuccess callbacks (like staking flows) navigate to new screens.
+      // This creates a race condition where:
+      // 1. onSuccess navigates to a new flow (e.g., CosmosDelegationFlow)
+      // 2. RequestAccount immediately pops, undoing the navigation
+      // 3. User ends up back at portfolio instead of the intended flow
+      //
+      // So, we check if onSuccess actually navigated before popping:
+      // - Track navigation stack size before calling onSuccess
+      // - Use setTimeout(0) to defer the check until after React Navigation processes
+      // - Only pop if no new route was added (stack size unchanged),
+      //   meaning we are in drawer case
+      //
+      // Covered behaviors:
+      // - Drawer navigation: onSuccess opens drawer → no stack change → we pop as usual
+      // - Navigator flows: onSuccess navigates to flow → stack grows → we don't pop
+      const initialRouteCount = n.getState().routes.length;
+
+      onSuccess && onSuccess(account, parentAccount);
+
+      setTimeout(() => {
+        const currentRouteCount = n.getState().routes.length;
+        if (currentRouteCount === initialRouteCount) {
+          n.pop();
+        }
+      }, 0);
     },
     [navigation, onSuccess],
   );

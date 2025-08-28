@@ -306,6 +306,10 @@
       "title" : "设备连接中断",
       "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
+    "ReconnectionFailedError" : {
+      "title" : "设备连接中断",
+      "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "设备连接中断",
       "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "约 2-3 分钟",
       "medium" : "约 30 秒",
-      "fast" : "约 15 秒"
+      "fast" : "约 15 秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
@@ -6245,6 +6250,7 @@
       "iWithdraw" : "我提取",
       "totalStake" : "质押总额",
       "commission" : "佣金",
+      "netApy" : "净年收益率",
       "stakeActivationState" : "状态",
       "stakeActivePercent" : "活跃",
       "stakeAvailableBalance" : "可用余额",
@@ -7780,8 +7786,8 @@
     "selectAccount" : "选择账户",
     "searchPlaceholder" : "搜索",
     "emptyAssetList" : "未找到资产",
-    "accountCount" : "{{count}} 个账户（已检测到）",
-    "accountCount_plural" : "{{count}} 个账户（已检测到）"
+    "accountCount" : "{{count}} 个账户",
+    "accountCount_plural" : "{{count}} 个账户"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

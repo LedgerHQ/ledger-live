@@ -45,6 +45,7 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
+import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -302,6 +303,9 @@ export type BaseNavigatorStackParamList = {
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
 
+  // Hedera
+  [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
+
   [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
 
   [ScreenName.DeviceConnect]: {
@@ -349,6 +353,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
+  [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 
 declare global {

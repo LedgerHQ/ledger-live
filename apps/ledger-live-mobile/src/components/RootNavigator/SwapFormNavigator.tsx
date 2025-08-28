@@ -25,6 +25,9 @@ export default function SwapFormNavigator({
   const { colors } = useTheme();
   const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [colors]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const initialParams = params as any;
+
   return (
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen
@@ -37,11 +40,9 @@ export default function SwapFormNavigator({
               {t("transfer.swap.form.tab")}
             </Text>
           ),
-          tabBarTestID: "swap-form-tab",
+          tabBarButtonTestID: "swap-form-tab",
         }}
-        initialParams={{
-          ...params,
-        }}
+        initialParams={initialParams}
       />
 
       <Tab.Screen
@@ -54,7 +55,7 @@ export default function SwapFormNavigator({
               {t("transfer.swap.history.tab")}
             </Text>
           ),
-          tabBarTestID: "swap-history-tab",
+          tabBarButtonTestID: "swap-history-tab",
         }}
       />
     </Tab.Navigator>

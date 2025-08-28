@@ -58,6 +58,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         fees: BigNumber(customFee || 0),
+        customFees: { parameters: { fees: BigNumber(customFee || 0) } },
       }),
     });
   }, [customFee, account, parentAccount, route.params, navigation, transaction]);

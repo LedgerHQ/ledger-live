@@ -447,7 +447,7 @@ const generateGenericCosmosTest = (
     currency: getCryptoCurrencyById(currencyId),
     appQuery: {
       model: DeviceModelId.nanoS,
-      appName: currencyId == "crypto_org" ? "Cronos POS Chain" : "Cosmos",
+      appName: currencyId === "crypto_org" ? "Cronos POS Chain" : "Cosmos",
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,

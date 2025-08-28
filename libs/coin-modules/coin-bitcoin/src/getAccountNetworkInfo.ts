@@ -31,7 +31,7 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
     Object.fromEntries,
     Object.values,
     // Safety against invalid data
-    f => f.filter((f: unknown) => f != null && typeof f === "number"),
+    f => f.filter((f: unknown) => typeof f === "number"),
     // Normalize values
     f => f.map((f: number) => new BigNumber(f).div(1000).integerValue(BigNumber.ROUND_CEIL)),
     avoidDups,

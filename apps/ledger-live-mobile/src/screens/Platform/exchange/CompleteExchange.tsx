@@ -22,7 +22,7 @@ type Props = StackNavigatorProps<
 
 const PlatformCompleteExchange: React.FC<Props> = ({
   route: {
-    params: { request, onResult, device },
+    params: { request, onResult, device, onClose },
   },
   navigation,
 }) => {
@@ -52,13 +52,14 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     }
   }, [onResult, error]);
 
-  const onClose = useCallback(() => {
+  const onCloseHandler = useCallback(() => {
     // Prevent onClose being called twice
     if (!hasPopped.current) {
       navigation.pop();
     }
     hasPopped.current = true;
-  }, [navigation]);
+    onClose?.();
+  }, [navigation, onClose]);
 
   const onCompleteExchange = useCallback(
     (res: { completeExchangeResult: Transaction } | { completeExchangeError: Error }) => {
@@ -106,7 +107,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           key="completeExchange"
           device={device}
           action={exchangeAction}
-          onClose={onClose}
+          onClose={onCloseHandler}
           onResult={onCompleteExchange}
           request={request}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
@@ -116,7 +117,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           key="sign"
           device={device}
           action={sendAction}
-          onClose={onClose}
+          onClose={onCloseHandler}
           onResult={onSign}
           request={signRequest}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}

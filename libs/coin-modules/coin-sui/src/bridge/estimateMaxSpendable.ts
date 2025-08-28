@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { SuiAccount, Transaction } from "../types";
 import getFeesForTransaction from "./getFeesForTransaction";
 import createTransaction from "./createTransaction";
+import { ONE_SUI } from "../constants";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -30,17 +31,30 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     let spendableBalance = account.spendableBalance;
 
-    if (account.type == "Account") {
+    if (account.type === "Account") {
       const fees = await getFeesForTransaction({
         account: mainAccount,
         transaction: estimatedTransaction,
       });
       if (fees) {
-        spendableBalance = BigNumber.max(spendableBalance.minus(fees), 0);
+        spendableBalance = spendableBalance.minus(fees);
       }
     }
 
-    return spendableBalance;
+    // Apply delegation-specific constraints
+    if (transaction?.mode === "delegate") {
+      // Reserve 0.1 SUI for future gas fees as recommended
+      const gasReserve = new BigNumber(ONE_SUI).div(10);
+      spendableBalance = spendableBalance.minus(gasReserve);
+
+      // Ensure we don't go below 1 SUI minimum for delegation
+      const oneSui = new BigNumber(ONE_SUI);
+      if (spendableBalance.lt(oneSui)) {
+        return new BigNumber(0);
+      }
+    }
+
+    return BigNumber.max(spendableBalance, 0);
   } catch (e) {
     return new BigNumber(0);
   }

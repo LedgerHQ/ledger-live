@@ -306,6 +306,10 @@
       "title" : "انقطع اتصال الجهاز",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
+    "ReconnectionFailedError" : {
+      "title" : "انقطع اتصال الجهاز",
+      "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "انقطع اتصال الجهاز",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 دقائق",
       "medium" : "≈ 30 ثانية",
-      "fast" : "≈ 15 ثانية"
+      "fast" : "≈ 15 ثانية",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3238,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
-        "desc" : "تلقى إشعارات بخصوص معاملاتك من إيثريوم و Polygon وسلسلة بينانس الذكية و Avalanche و Ethereum Classic"
+        "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
@@ -6245,6 +6250,7 @@
       "iWithdraw" : "أنا أسحب",
       "totalStake" : "إجمالي التكديس",
       "commission" : "العمولة",
+      "netApy" : "صافي المردود المئوي السنوي (APY)",
       "stakeActivationState" : "الولاية",
       "stakeActivePercent" : "نشِط",
       "stakeAvailableBalance" : "الرصيد المتاح",
@@ -7780,8 +7786,8 @@
     "selectAccount" : "اختر حساب",
     "searchPlaceholder" : "بحث",
     "emptyAssetList" : "لم يتم العثور على أصول",
-    "accountCount" : "{{count}} حساب (تم اكتشافه)",
-    "accountCount_plural" : "{{count}} حساب (تم اكتشافه)"
+    "accountCount" : "{{count}} حساب",
+    "accountCount_plural" : "{{count}} حساب"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

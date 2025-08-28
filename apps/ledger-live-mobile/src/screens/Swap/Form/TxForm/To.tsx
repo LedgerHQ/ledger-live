@@ -13,8 +13,11 @@ import { CurrencyValue } from "./CurrencyValue";
 import { ScreenName } from "~/const";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
-import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -22,10 +25,15 @@ interface Props {
   exchangeRate?: ExchangeRate;
 }
 
+type SwapFormNavigation = CompositeNavigationProp<
+  MaterialTopTabNavigationProp<SwapFormNavigatorParamList>,
+  StackNavigationProp<SwapNavigatorParamList>
+>;
+
 export function To({ swapTx, provider, exchangeRate }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const navigation = useNavigation<SwapFormNavigation>();
 
   const allCurrencies = useFetchCurrencyTo({ fromCurrencyAccount: swapTx.swap.from.account });
   const currencies = useSelectableCurrencies({ allCurrencies: allCurrencies.data ?? [] });
@@ -37,6 +45,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
       ...sharedSwapTracking,
       button: "edit target account",
     });
+
     navigation.navigate(ScreenName.SwapSelectCurrency, {
       currencies,
       provider,

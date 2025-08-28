@@ -16,6 +16,7 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
+import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -42,11 +43,17 @@ const AssetSelection = ({
   flow,
   source,
   assetsConfiguration,
+  isOpen,
 }: Readonly<AssetSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const transformAssets = createAssetConfigurationHook({
+    assetsConfiguration,
+  });
+  const formattedAssets = transformAssets(itemsToDisplay);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -86,11 +93,10 @@ const AssetSelection = ({
     }
 
     if (availableAssets.length > 0) {
-      setItemsToDisplay(
-        availableAssets.filter(asset =>
-          asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-        ),
+      const filteredAssets = availableAssets.filter(asset =>
+        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
       );
+      setItemsToDisplay(filteredAssets);
     }
   }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
 
@@ -113,16 +119,18 @@ const AssetSelection = ({
 
   return (
     <>
-      <TrackDrawerScreen
-        page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
-        flow={flow}
-        source={source}
-        assetsConfig={assetsConfiguration}
-        formatAssetConfig
-      />
+      {isOpen && (
+        <TrackDrawerScreen
+          page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
+          flow={flow}
+          source={source}
+          assetsConfig={assetsConfiguration}
+          formatAssetConfig
+        />
+      )}
       <SearchInputContainer
-        source="modular-drawer"
-        flow="asset-selection"
+        source={source}
+        flow={flow}
         items={availableAssets}
         setItemsToDisplay={setItemsToDisplay}
         assetsToDisplay={itemsToDisplay}
@@ -136,7 +144,7 @@ const AssetSelection = ({
       <BottomSheetVirtualizedList
         ref={listRef}
         scrollToOverflowEnabled={true}
-        data={itemsToDisplay}
+        data={formattedAssets}
         keyExtractor={item => item.id}
         getItemCount={itemsToDisplay => itemsToDisplay.length}
         getItem={(itemsToDisplay, index) => itemsToDisplay[index]}

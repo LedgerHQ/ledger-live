@@ -14,13 +14,13 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
-import { DeviceLabels } from "../e2e/enum/DeviceLabels";
+import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from ".//families/evm";
+import { sendEVM, sendEvmNFT } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -385,13 +385,12 @@ export async function startSpeculos(
     onSpeculosDeviceCreated,
   };
   try {
-    const device = isSpeculosRemote
+    return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return { id: device.id, port: device.ports.apiPort };
         });
-    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -622,7 +621,7 @@ const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
   [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
   [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
-  [AppInfos.SOLANA, [DeviceLabels.PUBKEY, DeviceLabels.APPROVE]],
+  [AppInfos.SOLANA, [DeviceLabels.VERIFY_SOLANA_ADDRESS, DeviceLabels.CONFIRM]],
   [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],

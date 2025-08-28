@@ -18,6 +18,7 @@ function setupEnv(disableBroadcast?: boolean) {
     }
   });
 }
+
 const ethEarn = [
   {
     account: Account.ETH_1,
@@ -99,10 +100,21 @@ test.describe("Inline Add Account", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      await app.delegateDrawer.clickOnAddAccountButton();
+      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
+      if (modularDrawerVisible) {
+        await app.modularDrawer.clickOnAddAndExistingAccountButton();
+      } else {
+        await app.delegateDrawer.clickOnAddAccountButton();
+      }
+
       await app.addAccount.addAccounts();
       await app.addAccount.done();
-      await app.delegateDrawer.selectAccountByName(account);
+
+      if (modularDrawerVisible) {
+        await app.modularDrawer.selectAccountByName(account);
+      } else {
+        await app.delegateDrawer.selectAccountByName(account);
+      }
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();

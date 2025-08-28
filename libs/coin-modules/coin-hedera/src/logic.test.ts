@@ -1,62 +1,152 @@
-import { BigNumber } from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getTransactionExplorer } from "./logic";
+import {
+  getTransactionExplorer,
+  isAutoTokenAssociationEnabled,
+  isTokenAssociateTransaction,
+  isTokenAssociationRequired,
+  isValidExtra,
+  sendRecipientCanNext,
+} from "./logic";
+import { getMockedAccount, getMockedTokenAccount } from "./test/fixtures/account.fixture";
+import { getMockedOperation } from "./test/fixtures/operation.fixture";
+import { getMockedTokenCurrency } from "./test/fixtures/currency.fixture";
+import { HEDERA_TRANSACTION_KINDS } from "./constants";
 
-describe("getTransactionExplorer", () => {
-  test("Tx explorer URL is converted from hash to consensus timestamp", async () => {
-    const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
-    expect(explorerView).toEqual({
-      tx: expect.any(String),
-      address: expect.any(String),
+describe("logic", () => {
+  describe("getTransactionExplorer", () => {
+    test("Tx explorer URL is converted from hash to consensus timestamp", async () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+      expect(explorerView).toEqual({
+        tx: expect.any(String),
+        address: expect.any(String),
+      });
+
+      const mockedOperation = getMockedOperation({
+        extra: { consensusTimestamp: "1.2.3.4" },
+      });
+
+      const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+      expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/1.2.3.4");
     });
 
-    const mockOperation: Operation = {
-      extra: {
-        consensusTimestamp: "1.2.3.4",
-      },
-      id: "",
-      hash: "",
-      type: "IN",
-      value: new BigNumber(0),
-      fee: new BigNumber(0),
-      senders: [],
-      recipients: [],
-      blockHeight: undefined,
-      blockHash: undefined,
-      accountId: "",
-      date: new Date(),
-    };
+    test("Tx explorer URL is based on transaction id if consensus timestamp is not available", async () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+      expect(explorerView).toEqual({
+        tx: expect.any(String),
+        address: expect.any(String),
+      });
 
-    const newUrl = getTransactionExplorer(explorerView, mockOperation);
-    expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/1.2.3.4");
+      const mockedOperation = getMockedOperation({
+        extra: { transactionId: "0.0.1234567-123-123" },
+      });
+
+      const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+      expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+    });
   });
 
-  test("Tx explorer URL is based on transaction id if consensus timestamp is not available", async () => {
-    const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
-    expect(explorerView).toEqual({
-      tx: expect.any(String),
-      address: expect.any(String),
+  describe("isTokenAssociateTransaction", () => {
+    test("returns correct value based on tx.properties", () => {
+      expect(
+        isTokenAssociateTransaction({
+          properties: { name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name },
+        } as any),
+      ).toBe(true);
+
+      expect(
+        isTokenAssociateTransaction({
+          properties: { name: "transfer" },
+        } as any),
+      ).toBe(false);
+
+      expect(isTokenAssociateTransaction({} as any)).toBe(false);
+    });
+  });
+
+  describe("isAutoTokenAssociationEnabled", () => {
+    test("returns value based on isAutoTokenAssociationEnabled flag", () => {
+      expect(
+        isAutoTokenAssociationEnabled({
+          hederaResources: { isAutoTokenAssociationEnabled: true },
+        } as any),
+      ).toBe(true);
+
+      expect(
+        isAutoTokenAssociationEnabled({
+          hederaResources: { isAutoTokenAssociationEnabled: false },
+        } as any),
+      ).toBe(false);
+
+      expect(isAutoTokenAssociationEnabled({} as any)).toBe(false);
+    });
+  });
+
+  describe("isTokenAssociationRequired", () => {
+    test("should return false if token is already associated (token account exists)", () => {
+      const mockedTokenCurrency = getMockedTokenCurrency();
+      const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
+      const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });
+
+      expect(isTokenAssociationRequired(mockedAccount, mockedTokenCurrency)).toBe(false);
     });
 
-    const mockOperation: Operation = {
-      extra: {
-        transactionId: "0.0.1234567-123-123",
-      },
-      id: "",
-      hash: "",
-      type: "IN",
-      value: new BigNumber(0),
-      fee: new BigNumber(0),
-      senders: [],
-      recipients: [],
-      blockHeight: undefined,
-      blockHash: undefined,
-      accountId: "",
-      date: new Date(),
-    };
+    test("should return false if auto token associations are enabled", () => {
+      const mockedTokenCurrency = getMockedTokenCurrency();
+      const mockedAccount = getMockedAccount({
+        subAccounts: [],
+        hederaResources: {
+          maxAutomaticTokenAssociations: -1,
+          isAutoTokenAssociationEnabled: true,
+        },
+      });
 
-    const newUrl = getTransactionExplorer(explorerView, mockOperation);
-    expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+      expect(isTokenAssociationRequired(mockedAccount, mockedTokenCurrency)).toBe(false);
+    });
+
+    test("should return true if token is not associated and auto associations are disabled", () => {
+      const mockedTokenCurrency = getMockedTokenCurrency();
+      const mockedAccount = getMockedAccount({ subAccounts: [] });
+
+      expect(isTokenAssociationRequired(mockedAccount, mockedTokenCurrency)).toBe(true);
+    });
+
+    test("should return false if token is undefined", () => {
+      const mockedAccount = getMockedAccount({ subAccounts: [] });
+
+      expect(isTokenAssociationRequired(mockedAccount, undefined)).toBe(false);
+    });
+
+    test("should return false for legacy accounts without subAccounts or hederaResources", () => {
+      const mockedTokenCurrency = getMockedTokenCurrency();
+      const mockedAccount = getMockedAccount();
+
+      delete mockedAccount.subAccounts;
+      delete mockedAccount.hederaResources;
+
+      expect(isTokenAssociationRequired(mockedAccount, mockedTokenCurrency)).toBe(true);
+    });
+  });
+
+  describe("isValidExtra", () => {
+    test("returns true for object and false for invalid types", () => {
+      expect(isValidExtra({ some: "value" })).toBe(true);
+      expect(isValidExtra(null)).toBe(false);
+      expect(isValidExtra(undefined)).toBe(false);
+      expect(isValidExtra("string")).toBe(false);
+      expect(isValidExtra(123)).toBe(false);
+      expect(isValidExtra([])).toBe(false);
+    });
+  });
+
+  describe("sendRecipientCanNext", () => {
+    test("handles association warnings", () => {
+      expect(sendRecipientCanNext({ warnings: {} } as any)).toBe(true);
+      expect(sendRecipientCanNext({ warnings: { missingAssociation: new Error() } } as any)).toBe(
+        false,
+      );
+      expect(
+        sendRecipientCanNext({ warnings: { unverifiedAssociation: new Error() } } as any),
+      ).toBe(false);
+    });
   });
 });

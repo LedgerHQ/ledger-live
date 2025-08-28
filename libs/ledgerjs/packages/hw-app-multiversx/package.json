@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-multiversx",
-  "version": "6.24.4",
+  "version": "6.25.0",
   "description": "Ledger Hardware Wallet MultiversX Application API",
   "keywords": [
     "Ledger",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "@multiversx/sdk-core": "^13.7.0",
-    "axios": "^1.7.4",
+    "axios": "1.11.0",
     "bignumber.js": "^9.0.1",
     "bip32-path": "^0.4.2",
     "protobufjs": "^7.2.6"
@@ -48,7 +48,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-multiversx.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

@@ -14,7 +14,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
+
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
@@ -50,11 +50,11 @@ import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags"
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
-import PerformanceConsole from "~/components/PerformanceConsole";
+
 import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
-import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
+
 import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
@@ -83,7 +83,12 @@ import {
   PropagatorType,
 } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
-import { customErrorEventMapper, initializeDatadogProvider } from "./datadog";
+import {
+  customActionEventMapper,
+  customErrorEventMapper,
+  customLogEventMapper,
+  initializeDatadogProvider,
+} from "./datadog";
 import { initSentry } from "./sentry";
 import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
@@ -132,6 +137,8 @@ function App() {
       trackInteractions: datadogFF?.params?.trackInteractions ?? false,
       trackResources: datadogFF?.params?.trackResources ?? false,
       errorEventMapper: customErrorEventMapper(!automaticBugReportingEnabled),
+      actionEventMapper: customActionEventMapper,
+      logEventMapper: customLogEventMapper,
       firstPartyHosts: [
         {
           match: FIRST_PARTY_MAIN_HOST_DOMAIN,
@@ -181,7 +188,8 @@ function App() {
       });
     };
     initializeDatadogProvider(
-      datadogFF?.params as Partial<PartialInitializationConfiguration>,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      datadogFF?.params as PartialInitializationConfiguration,
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )
       .then(setUserEquipmentId)
@@ -217,7 +225,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
-      <PerformanceConsole />
+
       <DebugTheme />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
@@ -226,23 +234,6 @@ function App() {
     </>
   );
 }
-
-const PerformanceProvider = ({ children }: { children: React.ReactNode }) => {
-  const onReportPrepared = useCallback((report: RenderPassReport) => {
-    performanceReportSubject.next({ report, date: new Date() });
-  }, []);
-  const performanceConsoleEnabled = useEnv("PERFORMANCE_CONSOLE");
-
-  return (
-    <PerformanceProfiler
-      onReportPrepared={onReportPrepared}
-      logLevel={LogLevel.Info}
-      enabled={!!performanceConsoleEnabled}
-    >
-      {children}
-    </PerformanceProfiler>
-  );
-};
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   const { theme } = useSettings();
@@ -322,25 +313,23 @@ export default class Root extends Component {
                         <LocaleProvider>
                           <PlatformAppProviderWrapper>
                             <SafeAreaProvider>
-                              <PerformanceProvider>
-                                <StorylyProvider>
-                                  <StylesProvider>
-                                    <StyledStatusBar />
-                                    <NavBarColorHandler />
-                                    <AuthPass>
-                                      <GestureHandlerRootView style={styles.root}>
-                                        <AppProviders initialCountervalues={initialCountervalues}>
-                                          <AppGeoBlocker>
-                                            <AppVersionBlocker>
-                                              <App />
-                                            </AppVersionBlocker>
-                                          </AppGeoBlocker>
-                                        </AppProviders>
-                                      </GestureHandlerRootView>
-                                    </AuthPass>
-                                  </StylesProvider>
-                                </StorylyProvider>
-                              </PerformanceProvider>
+                              <StorylyProvider>
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <AuthPass>
+                                    <GestureHandlerRootView style={styles.root}>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <AppGeoBlocker>
+                                          <AppVersionBlocker>
+                                            <App />
+                                          </AppVersionBlocker>
+                                        </AppGeoBlocker>
+                                      </AppProviders>
+                                    </GestureHandlerRootView>
+                                  </AuthPass>
+                                </StylesProvider>
+                              </StorylyProvider>
                             </SafeAreaProvider>
                           </PlatformAppProviderWrapper>
                         </LocaleProvider>
