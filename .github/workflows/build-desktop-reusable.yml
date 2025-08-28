@@ -33,7 +33,7 @@ jobs:
       matrix:
         config:
           [
-            { name: "Linux", os: "ledger-live-4xlarge", image: "linux-x86_64.AppImage", output-name: "linux" },
+            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", output-name: "linux" },
             { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
             { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
@@ -58,7 +58,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: ${{ matrix.config.name != 'Linux' }} # ledger-live-4xlarge has proto pre-installed
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}

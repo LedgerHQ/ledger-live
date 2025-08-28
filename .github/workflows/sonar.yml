@@ -16,11 +16,13 @@ permissions:
 jobs:
   scan:
     name: Scan LLM && LLD
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ ubuntu-24.04 ]
     steps:
+
       - uses: actions/checkout@v4
-      - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        with:
+          persist-credentials: false
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: caches
@@ -30,6 +32,8 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          install-proto: true
+
       - name: Install dependencies
         env:
           LANG: en_US.UTF-8
