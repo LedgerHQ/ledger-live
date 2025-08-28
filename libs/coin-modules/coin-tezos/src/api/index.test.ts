@@ -85,7 +85,7 @@ describe("get operations", () => {
     logicGetTransactions.mockResolvedValue([[op], "888"]);
     const [operations, token] = await api.listOperations("addr", { minHeight: 100, order: "asc" });
     expect(logicGetTransactions).toHaveBeenCalledTimes(1);
-    expect(operations.length).toBe(10);
+    expect(operations.length).toBe(1);
     expect(token).toEqual("888");
   });
 });
