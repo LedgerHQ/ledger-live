@@ -528,6 +528,25 @@ export enum ScreenName {
   AptosWithdrawingValidationError = "AptosWithdrawingValidationError",
   AptosWithdrawingValidationSuccess = "AptosWithdrawingValidationSuccess",
 
+  // sui
+  SuiStakingValidator = "SuiStakingValidator",
+  SuiStakingValidatorSelect = "SuiStakingValidatorSelect",
+  SuiStakingAmount = "SuiStakingAmount",
+  SuiUnstakingAmount = "SuiUnstakingAmount",
+  SuiWithdrawingAmount = "SuiWithdrawingAmount",
+  SuiStakingSelectDevice = "SuiStakingSelectDevice",
+  SuiStakingConnectDevice = "SuiStakingConnectDevice",
+  SuiStakingValidationError = "SuiStakingValidationError",
+  SuiStakingValidationSuccess = "SuiStakingValidationSuccess",
+  SuiUnstakingSelectDevice = "SuiUnstakingSelectDevice",
+  SuiUnstakingConnectDevice = "SuiUnstakingConnectDevice",
+  SuiUnstakingValidationError = "SuiUnstakingValidationError",
+  SuiUnstakingValidationSuccess = "SuiUnstakingValidationSuccess",
+  SuiWithdrawingSelectDevice = "SuiWithdrawingSelectDevice",
+  SuiWithdrawingConnectDevice = "SuiWithdrawingConnectDevice",
+  SuiWithdrawingValidationError = "SuiWithdrawingValidationError",
+  SuiWithdrawingValidationSuccess = "SuiWithdrawingValidationSuccess",
+
   Newsfeed = "Newsfeed",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
@@ -684,6 +703,9 @@ export enum NavigatorName {
   AptosRestakingFlow = "AptosRestakingFlow",
   // Hedera
   HederaAssociateTokenFlow = "HederaAssociateTokenFlow",
+  // SUI
+  SuiDelegateFlow = "SuiDelegationFlow",
+  SuiUndelegateFlow = "SuiUndelegateFlow",
 
   // Tab
   Main = "Main",

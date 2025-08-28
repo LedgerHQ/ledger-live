@@ -98,6 +98,8 @@ export const urls = {
   cardanoStakingRewards: "https://support.ledger.com/article/7880073204253-zd",
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
+  // TODO: change to LL sui link
+  suiStakingRewards: "",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
   multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",

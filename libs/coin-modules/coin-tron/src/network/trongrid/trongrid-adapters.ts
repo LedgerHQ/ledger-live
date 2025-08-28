@@ -24,7 +24,9 @@ export function fromTrongridTxInfoToOperation(
 
 function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
   switch (true) {
-    case trongridTxInfo.from === userAddress && trongridTxInfo.to !== userAddress:
+    case trongridTxInfo.from === userAddress &&
+      trongridTxInfo.to &&
+      trongridTxInfo.to !== userAddress:
       return "OUT";
     case trongridTxInfo.to === userAddress && trongridTxInfo.from !== userAddress:
       return "IN";

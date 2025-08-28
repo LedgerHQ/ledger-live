@@ -21,7 +21,10 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signe
     transactionBlock: unsigned,
     signature,
     options: {
+      showInput: true,
+      showBalanceChanges: true,
       showEffects: true,
+      showEvents: true,
     },
   };
   const hash = await logicBroadcast(params);

@@ -1,12 +1,16 @@
 # @ledgerhq/hw-app-exchange
 
-## 0.12.1-nightly.0
+## 0.13.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
-  - @ledgerhq/errors@6.25.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
+- [#11346](https://github.com/LedgerHQ/ledger-live/pull/11346) [`fa8605b`](https://github.com/LedgerHQ/ledger-live/commit/fa8605befcc07e8446f8babfbe1bb99e5641c827) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Added new payinExtraId to payload
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#11346](https://github.com/LedgerHQ/ledger-live/pull/11346) [`fa8605b`](https://github.com/LedgerHQ/ledger-live/commit/fa8605befcc07e8446f8babfbe1bb99e5641c827) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Added new payinExtraId to payload
 
 ## 0.12.0
 

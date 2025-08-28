@@ -1,36 +1,24 @@
 # @ledgerhq/hw-app-eth
 
-## 6.45.16-nightly.2
+## 6.45.16
 
 ### Patch Changes
 
-- Updated dependencies [[`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3)]:
-  - @ledgerhq/types-live@6.82.0-nightly.2
-  - @ledgerhq/domain-service@1.2.41-nightly.2
-  - @ledgerhq/evm-tools@1.7.4-nightly.1
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.0
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/evm-tools@1.7.4
+  - @ledgerhq/domain-service@1.2.41
 
-## 6.45.16-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
-  - @ledgerhq/types-live@6.82.0-nightly.1
-  - @ledgerhq/errors@6.25.0-nightly.0
-  - @ledgerhq/domain-service@1.2.41-nightly.1
-  - @ledgerhq/evm-tools@1.7.4-nightly.1
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.13-nightly.1
-  - @ledgerhq/hw-transport-mocker@6.29.10-nightly.0
-
-## 6.45.16-nightly.0
+## 6.45.16-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f)]:
-  - @ledgerhq/types-live@6.82.0-nightly.0
-  - @ledgerhq/evm-tools@1.7.4-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.13-nightly.0
-  - @ledgerhq/domain-service@1.2.41-nightly.0
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.0-next.0
+  - @ledgerhq/types-live@6.82.0-next.0
+  - @ledgerhq/evm-tools@1.7.4-next.0
+  - @ledgerhq/domain-service@1.2.41-next.0
 
 ## 6.45.15
 

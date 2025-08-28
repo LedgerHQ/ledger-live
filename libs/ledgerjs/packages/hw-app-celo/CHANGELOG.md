@@ -1,27 +1,18 @@
 # @ledgerhq/hw-app-polkadot
 
-## 6.34.1-nightly.2
+## 6.34.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.16-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.16
 
-## 6.34.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
-  - @ledgerhq/errors@6.25.0-nightly.0
-  - @ledgerhq/hw-app-eth@6.45.16-nightly.1
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
-
-## 6.34.1-nightly.0
+## 6.34.1-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.16-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.16-next.0
 
 ## 6.34.0
 

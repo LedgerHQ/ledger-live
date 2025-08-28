@@ -4,6 +4,7 @@ import { AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { composeHooks } from "@ledgerhq/live-common/utils/composeHooks";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { useLeftApyModule } from "./useLeftApyModule";
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
@@ -28,6 +29,7 @@ const getRightElement = (rightElement: string) => {
 const getLeftElement = (leftElement: string) => {
   switch (leftElement) {
     case "apy":
+      return useLeftApyModule;
     case "priceVariation":
     case "undefined":
     default:

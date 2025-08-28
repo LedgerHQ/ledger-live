@@ -1,11 +1,18 @@
 # @ledgerhq/live-dmk
 
-## 0.12.1-nightly.0
+## 0.12.1
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0
+
+## 0.12.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0-next.0
 
 ## 0.12.0
 

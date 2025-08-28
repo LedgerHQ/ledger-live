@@ -1,27 +1,18 @@
 # @ledgerhq/live-wallet
 
-## 0.6.3-nightly.1
+## 0.6.3
 
 ### Patch Changes
 
-- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
-  - @ledgerhq/errors@6.25.0-nightly.0
-  - @ledgerhq/live-env@2.15.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
-  - @ledgerhq/live-network@2.0.16-nightly.1
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.13-nightly.1
-  - @ledgerhq/speculos-transport@0.2.9-nightly.1
-  - @ledgerhq/hw-transport-mocker@6.29.10-nightly.0
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0
 
-## 0.6.3-nightly.0
+## 0.6.3-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184)]:
-  - @ledgerhq/live-env@2.15.0-nightly.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.13-nightly.0
-  - @ledgerhq/live-network@2.0.16-nightly.0
-  - @ledgerhq/speculos-transport@0.2.9-nightly.0
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0-next.0
 
 ## 0.6.2
 

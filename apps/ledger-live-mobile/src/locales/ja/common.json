@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3分",
       "medium" : "≈ 30秒",
-      "fast" : "≈ 15秒"
+      "fast" : "≈ 15秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -3242,7 +3243,7 @@
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
-        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+        "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
