@@ -30,7 +30,7 @@ import {
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
-import { OptionMetadata } from "~/reducers/types";
+
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import {
@@ -634,7 +634,7 @@ export const DeeplinksProvider = ({
                 const validatedModal = validateEarnInfoModal(
                   searchParams.get("message"),
                   searchParams.get("messageTitle"),
-                  searchParams.get("learnMoreLink")
+                  searchParams.get("learnMoreLink"),
                 );
 
                 if (!validatedModal) {
@@ -652,7 +652,7 @@ export const DeeplinksProvider = ({
               case EarnDeeplinkAction.MENU_MODAL: {
                 const validatedModal = validateEarnMenuModal(
                   searchParams.get("title"),
-                  searchParams.get("options")
+                  searchParams.get("options"),
                 );
 
                 if (!validatedModal) {
