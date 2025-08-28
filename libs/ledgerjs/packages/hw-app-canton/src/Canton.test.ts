@@ -1,5 +1,5 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import Canton from "../src/Canton";
+import Canton from "./Canton";
 
 describe("Canton", () => {
   describe("decorateAppAPIMethods", () => {
