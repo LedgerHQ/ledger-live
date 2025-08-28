@@ -202,7 +202,8 @@
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
       "SENDING" : "보내기",
-      "BURN" : "소각됨"
+      "BURN" : "소각됨",
+      "ASSOCIATE_TOKEN" : "토큰 연동"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -1596,6 +1597,25 @@
         "all" : "년"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
   },
   "currentAddress" : {
     "title" : "현재 주소",
@@ -4258,6 +4278,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "위임한 자산",
+      "stakedBalanceTooltip" : "검증인에게 스테이킹된 수량입니다.",
+      "availableBalance" : "출금 가능 수량",
+      "availableBalanceTooltip" : "언스테이킹된 수량으로 현재 출금이 가능합니다.",
+      "pendingBalance" : "승인 대기 수량",
+      "pendingBalanceTooltip" : "언스테이킹된 수량으로 현재 사용 승인 대기 중입니다.",
+      "storageUsageBalance" : "최소 수량",
+      "storageUsageBalanceTooltip" : "저장 및 트랜잭션용으로 예약된 수량이며, 계정이 활성 상태를 유지하기 위해 필요한 최소 수량입니다.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "자세한 정보",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "이제 Ledger Live에서 SUI 토큰을 사용할 수 있습니다.",
+        "description" : "Ledger Live에서 SUI 토큰을 관리하고 안전하게 보호하세요.",
+        "description2" : "SUI 토큰은 SUI 체인의 네이티브 토큰입니다. 트랜잭션과 스테이킹뿐 아니라, 앞으로 도입될 다양한 서비스에 활용될 예정입니다.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "위임된 수량"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "보유 자산을 스테이킹하고 SUI 보상을 받아보세요.",
+        "info" : "스테이킹 작동 방식",
+        "earnRewards" : "보상 받기"
+      },
+      "table" : {
+        "header" : "스테이킹 포지션",
+        "stake" : "추가",
+        "staked" : "위임됨",
+        "pending" : "보류 중인 릴리스",
+        "available" : "출금 가능"
+      },
+      "unstake" : "위임 해제",
+      "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
+      "inactiveTooltip" : "위임된 수량에는 보상이 발생하지 않습니다.",
+      "commission" : "수수료",
+      "totalStake" : "총 위임 수량",
+      "minSafeWarning" : "자금이 부족합니다",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "amount" : {
+            "title" : "수량"
+          },
+          "validator" : {
+            "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "스테이킹된 자산이 충분하지 않아 언스테이킹이 불가능합니다.",
+      "flow" : {
+        "title" : "위임 해제 자산",
+        "steps" : {
+          "amount" : {
+            "title" : "수량",
+            "subtitle" : "언스테이킹 프로세스는 완료까지 <0>52~65시간</0>이 소요됩니다.",
+            "warning" : "위임을 해제하면, 스테이킹한 수량과 보상이 즉시 지급됩니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "위임 해제 수량"
+            }
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
+              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "보상 받기",
     "header" : "위임",
@@ -4775,6 +4895,10 @@
         "testEuropaPostonboarding" : {
           "title" : "Europa Post Onboarding 테스트",
           "description" : "모든 europa post onboarding 기능 테스트"
+        },
+        "testApexPostonboarding" : {
+          "title" : "Apex Post Onboarding 테스트",
+          "description" : "Apex Post Onboarding 기능을 모두 테스트할 수 있습니다."
         },
         "1559DeactivateGate" : {
           "title" : "EIP1559 최소 우선 수수료 게이트 비활성화",
@@ -6688,6 +6812,18 @@
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "보유 수량 부족",
+      "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "토큰 연동 필요",
+      "description" : "보내려는 토큰이 수령할 계정과 연동되어 있지 않습니다. 수령할 계정과 연동 되어야 토큰 수령이 가능합니다."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "토큰 연동 확인 불가능",
+      "description" : "수령 계정에서 이 토큰을 수령할 수 있는지 확인할 수 없습니다. 주소가 잘못되었거나 네트워크 또는 서비스에 문제가 있을 수 있습니다."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "파일 이미지 로딩 실패.",
       "description" : "다른 이미지로 재시도해보세요."
@@ -6821,6 +6957,18 @@
       "getHelp" : "도움 받기",
       "technicalErrorTitle" : "기술적 에러: ",
       "saveLogs" : "로그 저장"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "최소 스테이킹 수량: 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "최소 스테이킹 수량: 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "향후 네트워크 수수료 지불과 위임 철회를 위해 지갑에 최소 0.1 SUI를 남겨주세요."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "사용 가능한(스테이킹되지 않은) 잔액은 현재 {{currentBalance}}이며, {{assetName}} 언스테이킹에 필요한 네트워크 수수료를 지불하기에 부족합니다.",
@@ -6973,10 +7121,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTS 토큰을 수령하려면 사용자 계정을 연동해야 합니다. 수령하고자 하는 HTS 토큰과 사용자 계정이 연동되어 있지 않은 경우 <0>여기를 클릭</0>하여 토큰 연동 절차를 시작하세요.",
+          "learnMore" : "자세히 알아보기"
+        },
+        "associationRequired" : {
+          "text" : "'계속'을 클릭하면 선택한 토큰이 헤데라 계정에 연동됩니다.",
+          "learnMore" : "자세히 알아보기"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "연동하기",
+          "title" : "토큰 연동하기",
+          "pending" : {
+            "title" : "트랜잭션 브로드캐스팅 중..."
+          },
+          "success" : {
+            "title" : "트랜잭션 전송 완료",
+            "description" : "'토큰 연동' 트랜잭션이 확인되면 해당 토큰을 수령할 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "메모(선택)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "자세히 알아보기"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "자세히 알아보기"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "연동된 토큰",
+      "postAlert" : {
+        "text" : "해당 트랜잭션의 확인이 완료되면 토큰 수령이 가능해집니다. <0>여기를 클릭</0>하여 수령 절차를 시작하세요.",
+        "learnMore" : "자세히 알아보기"
       }
     }
   },
