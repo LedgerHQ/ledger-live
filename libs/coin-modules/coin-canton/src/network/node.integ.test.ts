@@ -1,7 +1,8 @@
 import coinConfig from "../config";
 import { getLedgerEnd } from "./node";
 
-describe("Node (localnet)", () => {
+// enable manually, as it requires a running node locally
+describe.skip("Node (localnet)", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "http://gateway.url",
@@ -19,7 +20,8 @@ describe("Node (localnet)", () => {
   });
 });
 
-describe("Node (devnet)", () => {
+// enable manually, as it requires an auth token in env variable
+describe.skip("Node (devnet)", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",

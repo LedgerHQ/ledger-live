@@ -84,6 +84,7 @@ type TxInfo = {
 };
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
+const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-live-devnet-prd";
 
 export async function prepareOnboarding(
   pubKey: string,
@@ -91,7 +92,7 @@ export async function prepareOnboarding(
 ): Promise<OnboardingPrepareResponse> {
   const { data } = await network<OnboardingPrepareResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/0/onboarding/prepare`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/prepare`,
     data: {
       public_key: pubKey,
       public_key_type: pubKeyType,
@@ -107,7 +108,7 @@ export async function submitOnboarding(
 ) {
   const { data } = await network<OnboardingSubmitResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/0/onboarding/submit`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/submit`,
     data: {
       prepare_request: prepareRequest,
       prepare_response: prepareResponse,
@@ -120,7 +121,7 @@ export async function submitOnboarding(
 export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
   const { data } = await network<InstrumentBalance[]>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}/balance`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/balance`,
   });
   return data;
 }
@@ -128,7 +129,7 @@ export async function getBalance(partyId: string): Promise<InstrumentBalance[]> 
 export async function getParty(partyId: string): Promise<PartyInfo> {
   const { data } = await network<PartyInfo>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}`,
   });
   return data;
 }
@@ -142,7 +143,7 @@ export async function getTransactions(partyId: string): Promise<{
     transactions: TxInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}/transactions`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transactions`,
   });
   return data;
 }
@@ -150,7 +151,7 @@ export async function getTransactions(partyId: string): Promise<{
 export async function getLedgerEnd(): Promise<number> {
   const { data } = await network<number>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/ledger-end`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/ledger-end`,
   });
   return data;
 }

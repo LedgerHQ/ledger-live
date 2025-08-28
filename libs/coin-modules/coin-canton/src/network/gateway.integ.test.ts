@@ -5,6 +5,7 @@ describe("gateway (devnet)", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      useGateway: true,
       networkType: "devnet",
       status: {
         type: "active",

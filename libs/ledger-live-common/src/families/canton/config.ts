@@ -9,6 +9,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       },
       // TBC
       nodeUrl: "https://wallet-validator-canton.ledger.com",
+      nodeId: "figment",
       // TBC
       gatewayUrl: "https://canton-gateway.api.live.ledger.com",
       minReserve: 0,
@@ -22,6 +23,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com",
+      nodeId: "ledger-live-devnet-prd",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,
@@ -34,6 +36,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       nodeUrl: "http://localhost:2975/v2",
+      nodeId: undefined,
       gatewayUrl: undefined,
       minReserve: 0,
       useGateway: false,
