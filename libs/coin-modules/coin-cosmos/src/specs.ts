@@ -642,6 +642,14 @@ const babylon = {
   }),
 };
 
+const terraMinimalTransactionAmount = new BigNumber(20000); // TODO: check amount
+const terra = {
+  ...generateGenericCosmosTest("terra", false, {
+    minViableAmount: terraMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(terraMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
 export default {
   axelar,
   cosmos,
@@ -662,4 +670,5 @@ export default {
   xion,
   zenrock,
   babylon,
+  terra,
 };

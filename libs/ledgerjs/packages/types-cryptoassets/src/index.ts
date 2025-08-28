@@ -68,6 +68,7 @@ export type CryptoCurrencyId =
   | "mix"
   | "monero"
   | "moonriver"
+  | "terra"
   // | "multiversx"
   | "elrond"
   | "musicoin"
