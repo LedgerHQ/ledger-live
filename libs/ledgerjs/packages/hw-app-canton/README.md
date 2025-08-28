@@ -106,3 +106,5 @@ From Ledger Live root directory:
 ```sh
 pnpm ljs:hw-app-canton test-integ
 ```
+
+You can take a look at [Speculos UI](http://127.0.0.1:5000/)

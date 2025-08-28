@@ -11,7 +11,7 @@ export type SpeculosHttpTransportOpts = {
   baseURL?: string;
 };
 
-enum SpeculosButton {
+export enum SpeculosButton {
   LEFT = "Ll",
   RIGHT = "Rr",
   BOTH = "LRlr",
