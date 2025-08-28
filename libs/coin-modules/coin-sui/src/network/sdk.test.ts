@@ -1639,7 +1639,7 @@ describe("filterOperations", () => {
         operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
         cursor: null,
       };
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
       expect(result.operations).toHaveLength(4);
@@ -1656,7 +1656,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
       expect(result.operations).toHaveLength(4);
@@ -1673,7 +1673,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
       expect(result.operations).toHaveLength(4);
@@ -1696,7 +1696,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1000 + 299*100 = 30900
@@ -1720,7 +1720,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1000 + 299*100 = 30900
@@ -1744,7 +1744,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1500
@@ -1774,7 +1774,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
       expect(result.operations).toHaveLength(4);
@@ -1793,7 +1793,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should apply timestamp filtering since one list reaches limit
       // Filter timestamp should be the timestamp of the last operation in list1 (1000 + 299*100 = 30900)
@@ -1826,7 +1826,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be the timestamp of the last operation in list1 (4000 + 296*100 = 33600)
       // Only operations with timestamp >= 33600 should remain
@@ -1839,6 +1839,7 @@ describe("filterOperations", () => {
       const result = sdk.filterOperations(
         { operations: [], cursor: null },
         { operations: [], cursor: null },
+        "ascending"
       );
       expect(result.operations).toHaveLength(0);
     });
@@ -1856,7 +1857,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       expect(result.operations).toHaveLength(2);
       expect(result.operations.map(tx => tx.digest)).toEqual(["tx1_2", "tx1_1"]);
@@ -1875,7 +1876,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should remove duplicate tx2
       expect(result.operations).toHaveLength(3);
@@ -1896,7 +1897,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should be sorted by timestamp in descending order
       const timestamps = result.operations.map(tx => Number(tx.timestampMs));
@@ -1919,7 +1920,7 @@ describe("filterOperations", () => {
         cursor: null,
       };
 
-      const result = sdk.filterOperations(operationList1, operationList2);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be 1000 (the common timestamp)
       // All operations have timestamp 1000, so all should pass the filter

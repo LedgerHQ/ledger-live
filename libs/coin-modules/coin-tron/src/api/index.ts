@@ -62,7 +62,7 @@ async function listOperations(
   const options: Options = {
     softLimit: 200,
     minHeight: pagination.minHeight,
-    order: pagination.order,
+    order: pagination.order || "asc",
   } as const;
   return logicListOperations(address, options);
 }

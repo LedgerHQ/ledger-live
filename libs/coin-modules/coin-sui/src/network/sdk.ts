@@ -449,16 +449,17 @@ export const getLastBlock = () =>
 export const getOperations = async (
   accountId: string,
   addr: string,
-  order: "asc" | "desc",
   cursor?: QueryTransactionBlocksParams["cursor"],
+  order?: "asc" | "desc",
 ): Promise<Operation[]> =>
   withApi(async api => {
     let rpcOrder: "ascending" | "descending";
-    if (order === "asc") {
-      rpcOrder = "ascending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
     } else {
       rpcOrder = cursor ? "ascending" : "descending";
     }
+
     const sendOps = await loadOperations({
       api,
       addr,
@@ -527,13 +528,13 @@ export const filterOperations = (
 export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
-  order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
+  order?: "asc" | "desc",
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     let rpcOrder: "ascending" | "descending";
-    if (order === "asc") {
-      rpcOrder = "ascending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
     } else {
       rpcOrder = cursor ? "ascending" : "descending";
     }

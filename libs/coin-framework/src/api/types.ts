@@ -329,7 +329,7 @@ export type Pagination = {
   lastPagingToken?: string;
   pagingToken?: string;
   limit?: number;
-  order: "asc" | "desc";
+  order?: "asc" | "desc";
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
