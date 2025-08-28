@@ -3,8 +3,8 @@ import { getListOperations } from "../network/sdk";
 
 export const listOperations = async (
   address: string,
-  { lastPagingToken }: Pagination,
+  { lastPagingToken, order }: Pagination,
 ): Promise<[Operation[], string]> => {
-  const ops = await getListOperations(address, lastPagingToken);
+  const ops = await getListOperations(address, lastPagingToken, order);
   return [ops.items, ops.next || ""];
 };

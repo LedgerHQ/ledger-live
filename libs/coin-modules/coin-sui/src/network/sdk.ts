@@ -449,9 +449,16 @@ export const getLastBlock = () =>
 export const getOperations = async (
   accountId: string,
   addr: string,
+  order: "asc" | "desc",
   cursor?: QueryTransactionBlocksParams["cursor"],
 ): Promise<Operation[]> =>
   withApi(async api => {
+    let rpcOrder: "ascending" | "descending";
+    if (order === "asc") {
+      rpcOrder = "ascending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
     const sendOps = await loadOperations({
       api,
       addr,
@@ -469,7 +476,7 @@ export const getOperations = async (
       operations: [],
     });
     // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
-    const rawTransactions = filterOperations(sendOps, receivedOps, !cursor);
+    const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
     return rawTransactions.operations.map(transaction =>
       transactionToOperation(accountId, addr, transaction),
@@ -479,6 +486,7 @@ export const getOperations = async (
 export const filterOperations = (
   sendOps: LoadOperationResponse,
   receiveOps: LoadOperationResponse,
+  order: "ascending" | "descending",
   shouldFilter: boolean = true,
 ): LoadOperationResponse => {
   let filterTimestamp: number = 0;
@@ -505,8 +513,10 @@ export const filterOperations = (
     }
   }
   const result = [...sendOps.operations, ...receiveOps.operations]
-    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= filterTimestamp);
+    .sort((a, b) => {
+      if (order === "ascending") return Number(b.timestampMs) - Number(a.timestampMs);
+      else return Number(a.timestampMs) - Number(b.timestampMs);
+    }).filter(op => Number(op.timestampMs) >= filterTimestamp);
 
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
@@ -517,15 +527,23 @@ export const filterOperations = (
 export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
+  order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
+    let rpcOrder: "ascending" | "descending";
+    if (order === "asc") {
+      rpcOrder = "ascending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
+
     const opsOut = await loadOperations({
       api,
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const opsIn = await loadOperations({
@@ -533,10 +551,10 @@ export const getListOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
-    const list = filterOperations(opsIn, opsOut, true);
+    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
 
     return {
       items: list.operations.map(t => transactionToOp(addr, t)),
