@@ -202,7 +202,8 @@
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
       "SENDING" : "Senden",
-      "BURN" : "Verbrannt"
+      "BURN" : "Verbrannt",
+      "ASSOCIATE_TOKEN" : "Token zuordnen"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -1596,6 +1597,25 @@
         "all" : "Jahr"
       }
     }
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
+    "continue" : "Weiter"
   },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
@@ -4258,6 +4278,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "Delegiertes Asset",
+      "stakedBalanceTooltip" : "Dieser Betrag ist derzeit mit Validatoren gestaked.",
+      "availableBalance" : "Auszahlbares Guthaben",
+      "availableBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked und kann derzeit abgehoben werden.",
+      "pendingBalance" : "Ausstehender Saldo",
+      "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung.",
+      "storageUsageBalance" : "Minimales Guthaben",
+      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und ist das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben.",
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "Das SUI-Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Du kannst deine SUI-Token jetzt über Ledger Live verwalten und schützen.",
+        "description2" : "Das SUI-Token ist Teil der SUI-Chain und wird für alle möglichen Funktionen verwendet – von Transaktionen über Staking bis hin zu vielen neuen Features, die demnächst kommen.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "Delegierter Betrag"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "Du kannst SUI-Prämien verdienen, indem du deine Assets stakest.",
+        "info" : "So funktioniert Staking",
+        "earnRewards" : "Rewards verdienen"
+      },
+      "table" : {
+        "header" : "Position(en) gestaked",
+        "stake" : "Hinzufügen",
+        "staked" : "Delegiert",
+        "pending" : "Freigabe ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "unstake" : "Delegierung aufheben",
+      "activeTooltip" : "Delegierte Beträge generieren Prämien",
+      "inactiveTooltip" : "Delegierte Beträge generieren keine Prämien",
+      "commission" : "Provision",
+      "totalStake" : "Gesamtdelegierung",
+      "minSafeWarning" : "Zu niedriges Guthaben",
+      "flow" : {
+        "title" : "Delegieren",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag"
+          },
+          "validator" : {
+            "title" : "Validatoren",
+            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich delegiert",
+              "text" : "Dein Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "Es gibt nicht genug Assets, die gestaked sind, um den Staking-Prozess aufzuheben.",
+      "flow" : {
+        "title" : "Assets mit aufgehobener Delegierung",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "subtitle" : "Die Aufhebung des Staking-Prozesses dauert <0>52 bis 65 Stunden</0>.",
+            "warning" : "Nach dem Aufheben der Delegierung werden dein Guthaben und die erworbenen Prämien sofort ausgezahlt",
+            "fields" : {
+              "validator" : "Validator",
+              "amount" : "Nicht zu delegierender Betrag"
+            }
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast die Delegierung deiner Assets erfolgreich aufgehoben.",
+              "description" : "Die Delegierung von <0>{{amount}}</0> wurde von <0>{{validator}}</0> aufgehoben",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "Belohnungen verdienen",
     "header" : "Delegation",
@@ -4775,6 +4895,10 @@
         "testEuropaPostonboarding" : {
           "title" : "Europa-Post-Onboarding testen",
           "description" : "Alle Europa-Post-Onboarding-Funktionen testen"
+        },
+        "testApexPostonboarding" : {
+          "title" : "Apex-Post-Onboarding testen",
+          "description" : "Alle Apex-Post-Onboarding-Funktionen testen"
         },
         "1559DeactivateGate" : {
           "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
@@ -6688,6 +6812,18 @@
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Unzureichendes Guthaben",
+      "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Tokenzuordnung erforderlich",
+      "description" : "Das Token, das du senden möchtest, ist dem Zielkonto nicht zugeordnet. Es muss dem Empfängerkonto zugeordnet werden, damit es empfangen werden kann."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Tokenzuordnung kann nicht verifiziert werden",
+      "description" : "Wir konnten nicht überprüfen, ob das Zielkonto dieses Token empfangen kann. Möglicherweise ist die Adresse ungültig oder es liegt ein Problem mit dem Netzwerk oder dem Service vor."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "Das Laden des Bildes aus einer Datei ist fehlgeschlagen.",
       "description" : "Bitte versuchen Sie es erneut mit einem Bild."
@@ -6821,6 +6957,18 @@
       "getHelp" : "Hilfe erhalten",
       "technicalErrorTitle" : "Technischer Fehler: ",
       "saveLogs" : "Protokolle speichern"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "Der Mindestbetrag beläuft sich auf 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Der Mindestbetrag beläuft sich auf 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Mindestens 1 SUI muss im Stake verbleiben"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "Bitte achte darauf, dass du mindestens 0,1 SUI in deiner Wallet hast, um zukünftige Netzwerkgebühren zu decken und die Delegierung deines Stakes aufzuheben."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Dein verfügbares (nicht gestaketes) Guthaben beläuft sich derzeit auf {{currentBalance}}. Dies reicht nicht aus, um die Netzwerkgebühren für das Beenden des Stakings deiner {{assetName}} zu bezahlen.",
@@ -6973,10 +7121,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Um HTS-Token empfangen zu können, muss dein Konto zugeordnet sein. Wenn du dein Konto noch nicht mit dem HTS-Token verknüpft hast, das du erhalten möchtest, dann <0>klicke hier</0>, um das Token zuzuordnen.",
+          "learnMore" : "Weitere Informationen"
+        },
+        "associationRequired" : {
+          "text" : "Durch Klicken auf „Weiter“ ordnest du das ausgewählte Token deinem Hedera-Konto zu.",
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "Zuordnen",
+          "title" : "Token zuordnen",
+          "pending" : {
+            "title" : "Sende Transaktion..."
+          },
+          "success" : {
+            "title" : "Transaktion gesendet",
+            "description" : "Du kannst dieses Token empfangen, sobald die Transaktion „Token zuordnen“ bestätigt wurde",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "Memo (Optional)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Zugeordnetes Token",
+      "postAlert" : {
+        "text" : "Sobald diese Transaktion bestätigt wurde, kannst du dein Token empfangen. <0>Klicke hier</0>, um den Empfangsvorgang zu starten.",
+        "learnMore" : "Weitere Informationen"
       }
     }
   },
