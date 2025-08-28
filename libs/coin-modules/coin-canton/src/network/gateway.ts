@@ -26,7 +26,7 @@ type OnboardingSubmitResponse = {
   };
 };
 
-type InstrumentBalance = {
+export type InstrumentBalance = {
   instrumentId: string;
   amount: number;
   locked: boolean;
@@ -126,10 +126,21 @@ export async function getBalance(partyId: string): Promise<InstrumentBalance[]> 
   return data;
 }
 
-export async function getParty(partyId: string): Promise<PartyInfo> {
+export async function getPartyById(partyId: string): Promise<PartyInfo> {
+  return await getParty(partyId, "ID");
+}
+
+export async function getPartyByPubKey(pubKey: string): Promise<PartyInfo> {
+  return await getParty(pubKey, "PK");
+}
+
+async function getParty(identifier: string, by: "ID" | "PK"): Promise<PartyInfo> {
   const { data } = await network<PartyInfo>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}`,
+    data: {
+      by,
+    },
   });
   return data;
 }
