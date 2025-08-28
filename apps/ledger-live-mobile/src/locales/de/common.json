@@ -694,6 +694,15 @@
       "title" : "Kopplung fehlgeschlagen",
       "description" : "Bitte versuchen Sie es erneut oder lesen Sie unseren Artikel zur Bluetooth-Fehlerbehebung."
     },
+    "OneSuiMinForStake" : {
+      "title" : "Der Mindestbetrag beläuft sich auf 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Der Mindestbetrag beläuft sich auf 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Mindestens 1 SUI muss im Stake verbleiben"
+    },
     "PasswordIncorrect" : {
       "title" : "Falsches Passwort",
       "description" : "Bitte versuchen Sie es erneut."
@@ -1074,6 +1083,18 @@
     "HederaAddAccountError" : {
       "title" : "Dein Konto wurde nicht hinzugefügt. Bitte versuche es noch einmal."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Unzureichendes Guthaben",
+      "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Tokenzuordnung erforderlich",
+      "description" : "Das Token, das du senden möchtest, ist dem Zielkonto nicht zugeordnet. Es muss dem Empfängerkonto zugeordnet werden, damit es empfangen werden kann."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Tokenzuordnung kann nicht verifiziert werden",
+      "description" : "Wir konnten nicht überprüfen, ob das Zielkonto dieses Token empfangen kann. Möglicherweise ist die Adresse ungültig oder es liegt ein Problem mit dem Netzwerk oder dem Service vor."
+    },
     "NearNewAccountWarning" : {
       "title" : "Das Empfängerkonto wurde noch nicht erstellt. Das Protokoll erfordert einen Transfer von {{formattedNewAccountStorageCost}}, um es zu erstellen."
     },
@@ -1305,7 +1326,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2–3 Min.",
       "medium" : "≈ 30 Sek.",
-      "fast" : "≈ 15 Sek."
+      "fast" : "≈ 15 Sek.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1544,25 @@
     "cta" : "Mein Ledger-Gerät einrichten",
     "bannerTitle" : "Hast du dein Ledger-Gerät erhalten?",
     "bannerCta" : "Einrichtung starten",
+    "continue" : "Weiter"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
     "continue" : "Weiter"
   },
   "purchaseDevice" : {
@@ -2727,7 +2768,8 @@
       "WITHDRAW" : "Ausgezahlt",
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
-      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt",
+      "ASSOCIATE_TOKEN" : "Token zuordnen"
     }
   },
   "operationDetails" : {
@@ -2759,6 +2801,7 @@
     "extra" : {
       "transferId" : "Transfer-ID (Memo)",
       "resource" : "Ressource",
+      "validator" : "Validator",
       "frozenAmount" : "Eingefrorener Betrag",
       "unfreezeAmount" : "Betrag entsperren",
       "address" : "Adresse",
@@ -3242,7 +3285,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Transaktionsbenachrichtigungen (Beta)",
-        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, Binance Smart Chain, Avalanche und Ethereum Classic"
+        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, BNB Chain, Avalanche und Ethereum Classic"
       },
       "price" : {
         "title" : "Preisalarme",
@@ -6455,6 +6498,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI erhältlich",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "storageUsage" : {
+        "title" : "Minimales Guthaben",
+        "description" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und ist das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben."
+      },
+      "staked" : {
+        "title" : "Delegiertes Asset",
+        "description" : "Delegiertes Guthaben"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Nicht zu delegierender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "Nach dem Aufheben der Delegierung werden dein Guthaben und die erworbenen Prämien sofort ausgezahlt"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast die Delegierung deiner Assets erfolgreich aufgehoben."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Abzuhebender Betrag"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich abgehoben."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Delegierte Position(en)",
+      "info" : "So funktioniert Delegierung",
+      "add" : "Hinzufügen",
+      "stakingEarn" : "Du kannst SUI-Prämien verdienen, indem du deine Assets delegierst.",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "iStake" : "Ich delegiere",
+      "actions" : {
+        "unstake" : "Delegierung aufheben"
+      },
+      "drawer" : {
+        "status" : "Status",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "pending" : "Ausstehend",
+        "available" : "Auszahlbar"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Zu delegierender Betrag",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegiere deine SUI, um sicher Prämien zu verdienen, und behalte die Kontrolle über deine Assets.",
+            "steps" : {
+              "0" : "Delegierte Assets bleiben dein Eigentum.",
+              "1" : "Nach dem Aufheben der Delegierung werden dein Guthaben und die erworbenen Rewards sofort ausgezahlt.",
+              "2" : "Delegiere sicher mit deinem Ledger-Gerät."
+            },
+            "warning" : {
+              "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Assets: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Assets",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich delegiert",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6642,6 +6786,7 @@
       "undelegate" : "Deine Kontodelegierung endet, sobald der Vorgang bestätigt ist. Du kannst dein Konto jederzeit erneut delegieren."
     },
     "summaryTitle" : "Zusammenfassung",
+    "delegate" : "Delegieren",
     "goToAccount" : "Zu den Konten gehen",
     "howDelegationWorks" : "So funktioniert Delegation",
     "actions" : {
@@ -7078,6 +7223,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Um HTS-Token empfangen zu können, muss dein Konto zugeordnet sein. Wenn du dein Konto noch nicht mit dem HTS-Token verknüpft hast, das du erhalten möchtest, dann <0>klicke hier</0>, um das Token zuzuordnen.",
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "Wähle ein Token aus, das du empfangen möchtest"
+      },
+      "summary" : {
+        "title" : "Token zuordnen",
+        "from" : "Token",
+        "to" : "An",
+        "warning" : {
+          "text" : "Durch Klicken auf „Weiter“ ordnest du das ausgewählte Token deinem Hedera-Konto zu.",
+          "learnMore" : "Weitere Informationen"
+        }
+      },
+      "selectDevice" : {
+        "title" : "Token zuordnen"
+      },
+      "connectDevice" : {
+        "title" : "Token zuordnen"
+      },
+      "validationSuccess" : {
+        "title" : "Transaktion gesendet",
+        "text" : "Du kannst dieses Token empfangen, sobald die Transaktion „Token zuordnen“ bestätigt wurde"
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Weitere Informationen"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Zugeordnetes Token",
+      "postAlert" : {
+        "text" : "Sobald diese Transaktion bestätigt wurde, kannst du dein Token empfangen. <0>Klicke hier</0>, um den Empfangsvorgang zu starten.",
+        "learnMore" : "Weitere Informationen"
+      }
     }
   },
   "asset" : {
