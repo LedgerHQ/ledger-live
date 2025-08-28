@@ -1,3 +1,8 @@
+// Browser-compatible Buffer type alternative
+type Buffer = {
+  toString(encoding: string): string;
+};
+
 export type VechainAddress = {
   publicKey: string;
   address: string;

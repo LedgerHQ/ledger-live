@@ -236,6 +236,7 @@ export function TransferTabIcon() {
       >
         <ButtonAnimation
           source={themeType === "light" ? lightAnimSource : darkAnimSource}
+          // @ts-expect-error TypeScript 5.9 React Native Reanimated compatibility issue
           animatedProps={lottieProps}
           loop={false}
         />

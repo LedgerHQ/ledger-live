@@ -7,6 +7,7 @@ import styled, { useTheme } from "styled-components/native";
 
 import { getCurrencyColor, useCurrencyColor } from "~/helpers/getCurrencyColor";
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   height: ${p => p.size}px;
   width: ${p => p.size}px;
@@ -15,6 +16,7 @@ const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   opacity: ${p => (p.disabled ? 0.6 : 1)};
 `;
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const CircleWrapper = styled(Flex)<{ disabled?: boolean }>`
   border-radius: 9999px;
   border: 1px solid transparent;

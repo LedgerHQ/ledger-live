@@ -21,7 +21,8 @@ const Status = styled(Flex).attrs<StatusCustomProps>(p => ({
   borderWidth: 0,
   height: 10,
   width: 10,
-}))<StatusCustomProps>``;
+  active: p.active,
+}))``;
 
 type Props = { state: State };
 

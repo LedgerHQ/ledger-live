@@ -6,7 +6,7 @@ import WebViewError from "./Error";
 import noConnectionImg from "~/images/noConnection.webp";
 
 const NoConnectionIllustration = styled.Image.attrs({ resizeMode: "contain" })`
-  tint-color: ${p => p.theme.colors.neutral.c100};
+  tint-color: ${p => p.theme?.colors.neutral.c100 || "#000"};
   height: 204px;
   width: 204px;
 `;
@@ -21,6 +21,7 @@ const WebViewNoConnectionError = ({ screenName }: Props) => {
   return (
     <WebViewError
       screenName={screenName}
+      // @ts-expect-error TypeScript 5.9 React Native component props issue
       Illustration={<NoConnectionIllustration source={noConnectionImg} />}
       title={t("webview.noConnectionError.title")}
       description={t("webview.noConnectionError.description")}

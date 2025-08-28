@@ -12,6 +12,7 @@ import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "~/utils/constants";
 import Config from "react-native-config";
 
 const CheckboxContainer = styled(View)(
+  // @ts-expect-error TypeScript 5.9 styled-components theme typing issue
   ({ theme }) => `
   padding: ${theme.space[4]}px ${theme.space[5]}px;
   background-color: ${theme.colors.neutral.c30};

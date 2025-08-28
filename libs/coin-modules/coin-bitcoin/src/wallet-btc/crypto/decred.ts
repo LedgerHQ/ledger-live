@@ -19,7 +19,7 @@ class Decred extends Base {
   static blake256(buffer: Buffer): Buffer {
     let b = buffer;
     if (buffer instanceof Uint8Array) {
-      b = Buffer.from(buffer);
+      b = Buffer.from(buffer as any);
     }
     return createBlakeHash("blake256").update(b).digest();
   }
@@ -30,9 +30,9 @@ class Decred extends Base {
     const pkhash = Buffer.concat([
       prefix,
       new RIPEMD160().update(Decred.blake256(publicKey)).digest(),
-    ]);
+    ] as any[]) as Buffer;
     const checksum = Decred._blake256x2(pkhash).slice(0, 4);
-    return bs58.encode(Buffer.concat([pkhash, checksum]));
+    return bs58.encode(Buffer.concat([pkhash, checksum] as any[]) as Buffer);
   }
 
   static readonly _blake256x2 = (buffer: Buffer): Buffer =>

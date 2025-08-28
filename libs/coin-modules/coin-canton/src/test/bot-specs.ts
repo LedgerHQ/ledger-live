@@ -74,3 +74,6 @@ export default {
   boilerplateSpec,
 };
 */
+
+// Temporary export to make this a valid module for TypeScript compilation
+export default {};

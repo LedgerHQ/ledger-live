@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 test file compatibility issues line by line
 import { createApi } from "./index";
 import * as logic from "../logic";
 import type { SuiCoinConfig } from "../config";

@@ -15,6 +15,7 @@ const Container = styled(Flex).attrs((p: { withoutMarginBottom?: boolean }) => (
   borderRadius: 2,
   marginTop: 7,
   marginBottom: !p.withoutMarginBottom && 3,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ withoutMarginBottom?: boolean }>``;
 
 function SectionHeader({ day, withoutMarginBottom = false }: Props) {

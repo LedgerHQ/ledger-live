@@ -99,6 +99,7 @@ export function EarnMenuDrawer({
   );
 }
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const OptionButton = styled(Button)<{
   theme: Theme;
 }>`

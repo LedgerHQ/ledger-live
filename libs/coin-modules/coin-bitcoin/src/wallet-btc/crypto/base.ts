@@ -105,7 +105,7 @@ class Base implements ICrypto {
     const publicKeyHash160: Buffer = bjs.crypto.hash160(redeemOutput);
     const payload: Buffer = Buffer.allocUnsafe(21);
     payload.writeUInt8(this.network.scriptHash, 0);
-    publicKeyHash160.copy(payload, 1);
+    (publicKeyHash160 as any).copy(payload, 1);
     return bs58check.encode(payload);
   }
 

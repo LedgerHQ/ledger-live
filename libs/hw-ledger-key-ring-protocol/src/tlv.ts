@@ -22,14 +22,14 @@ function pushTLV(a: Uint8Array, t: number, l: number, v: Uint8Array): Uint8Array
   c.set(a);
   c.set(new Uint8Array([t, l]), a.length);
   c.set(v, a.length + 2);
-  return c;
+  return c as Uint8Array;
 }
 
 function push(a: Uint8Array, b: Uint8Array): Uint8Array {
   const c = new Uint8Array(a.length + b.length);
   c.set(a);
   c.set(b, a.length);
-  return c;
+  return c as Uint8Array;
 }
 
 // Generic part of the TLV encoding/decoding
@@ -88,7 +88,7 @@ export const TLV = {
     offset: number;
   } {
     const bytes = TLV.readBytes(read);
-    const view = new DataView(bytes.value.buffer);
+    const view = new DataView(bytes.value.buffer as ArrayBuffer);
     const value: number[] = [];
     for (let offset = 0; offset < bytes.value.length; offset += 4) {
       value.push(view.getUint32(offset, false));
@@ -201,7 +201,7 @@ export const TLV = {
   },
 
   pushDerivationPath: function (a: Uint8Array, b: number[]): Uint8Array {
-    let bytes = new Uint8Array();
+    let bytes: Uint8Array<ArrayBufferLike> = new Uint8Array();
     for (let i = 0; i < b.length; i++) {
       bytes = push(bytes, BigEndian.numberToArray(b[i]));
     }

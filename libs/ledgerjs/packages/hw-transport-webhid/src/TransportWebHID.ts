@@ -204,7 +204,7 @@ export default class TransportWebHID extends Transport {
       const blocks = framing.makeBlocks(apdu);
 
       for (let i = 0; i < blocks.length; i++) {
-        await this.device.sendReport(0, blocks[i]);
+        await this.device.sendReport(0, blocks[i] as BufferSource);
       }
 
       // Read...

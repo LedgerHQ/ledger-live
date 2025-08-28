@@ -18,6 +18,7 @@ const Container = styled(Box).attrs((p: { selected: boolean }) => ({
   alignItems: "center",
   borderWidth: p.selected ? 2 : 0,
   borderColor: p.selected ? "constant.white" : "neutral.c40",
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ selected: boolean }>``;
 
 const ContrastOption = styled(Box).attrs({

@@ -71,6 +71,7 @@ const AnimatedStoryGroupWrapper = Animated.createAnimatedComponent<
       children?: React.ReactNode;
     }
 >(
+  // @ts-expect-error TypeScript 5.9 styled-components attrs type issue
   styled(Flex).attrs<StoryGroupItemWrapperProps>(p => ({
     mr: p.isLast || p.vertical ? 0 : 5,
     mb: p.isLast || !p.vertical ? 0 : 16,

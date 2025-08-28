@@ -15,7 +15,7 @@ import { CommandStream } from "..";
 describe("Encode/Decode command stream tester", () => {
   it("should encode and decode a byte", () => {
     const byte = 42;
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushByte(buffer, 42);
     const decoded = TLV.readVarInt(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(byte);
@@ -23,7 +23,7 @@ describe("Encode/Decode command stream tester", () => {
 
   it("should encode and decode a Int32", () => {
     const varint = 0xdeadbeef;
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushInt32(buffer, varint);
     const decoded = TLV.readVarInt(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(varint);
@@ -31,7 +31,7 @@ describe("Encode/Decode command stream tester", () => {
 
   it("should encode and decode a string", () => {
     const str = "Hello World";
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushString(buffer, str);
     const decoded = TLV.readString(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(str);
@@ -39,7 +39,7 @@ describe("Encode/Decode command stream tester", () => {
 
   it("should encode and decode a hash", () => {
     const hash = crypto.hash(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushHash(buffer, hash);
     const decoded = TLV.readHash(TLV.readTLV(buffer, 0));
     expect(crypto.to_hex(decoded.value)).toEqual(crypto.to_hex(hash));
@@ -47,7 +47,7 @@ describe("Encode/Decode command stream tester", () => {
 
   it("should encode and decode bytes", () => {
     const bytes = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushBytes(buffer, bytes);
     const decoded = TLV.readBytes(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(bytes);
@@ -60,7 +60,7 @@ describe("Encode/Decode command stream tester", () => {
       alice.publicKey,
       alice.privateKey,
     );
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushSignature(buffer, block.signature);
     const decoded = TLV.readSignature(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(block.signature);
@@ -68,7 +68,7 @@ describe("Encode/Decode command stream tester", () => {
 
   it("should encode and decode a public key", () => {
     const alice = crypto.randomKeypair();
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushPublicKey(buffer, alice.publicKey);
     const decoded = TLV.readPublicKey(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(alice.publicKey);

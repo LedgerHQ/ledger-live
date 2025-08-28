@@ -46,6 +46,7 @@ export default (arg: {
 
       case "e0d2": {
         // get name
+        // @ts-expect-error - Buffer compatibility issue with newer Node.js types
         return Buffer.concat([Buffer.from(await arg.getDeviceName()), successResponse]);
       }
 
@@ -62,6 +63,7 @@ export default (arg: {
           const pubKey = Buffer.from(addr.publicKey, "hex");
           const address = Buffer.from(addr.address, "ascii");
           const chainCode = Buffer.from(addr.chainCode, "hex");
+          // @ts-expect-error - Buffer compatibility issue with newer Node.js types
           return Buffer.concat([
             Buffer.from([pubKey.length]),
             pubKey,
@@ -81,6 +83,7 @@ export default (arg: {
         const name = Buffer.from(data.name, "ascii");
         const version = Buffer.from(data.version, "ascii");
         const flags = Buffer.from([data.flags]);
+        // @ts-expect-error - Buffer compatibility issue with newer Node.js types
         return Buffer.concat([
           Buffer.from([1]),
           Buffer.from([name.length]),

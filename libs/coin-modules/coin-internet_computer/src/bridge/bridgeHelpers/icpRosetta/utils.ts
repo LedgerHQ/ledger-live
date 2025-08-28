@@ -81,10 +81,10 @@ function expiryEncode(val: BigNumber): ArrayBuffer {
     const i = Number(value.and(BigInteger(0x7f)));
     value = value.divide(BigInteger(0x80));
     if (value.eq(BigInteger(0))) {
-      pipe.write(new Uint8Array([i]));
+      pipe.write(new Uint8Array([i]) as any);
       break;
     } else {
-      pipe.write(new Uint8Array([i | 0x80]));
+      pipe.write(new Uint8Array([i | 0x80]) as any);
     }
   }
 

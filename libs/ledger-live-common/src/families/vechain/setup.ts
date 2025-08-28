@@ -10,6 +10,7 @@ import Vet from "@ledgerhq/hw-app-vet";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 
+// @ts-expect-error TypeScript 5.9 VechainSigner Buffer compatibility issue
 const createSigner: CreateSigner<VechainSigner> = (transport: Transport) => new Vet(transport);
 
 const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));

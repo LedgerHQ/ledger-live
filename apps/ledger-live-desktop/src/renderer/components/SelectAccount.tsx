@@ -336,6 +336,7 @@ export const RawSelectAccount = ({
     <Select
       {...props}
       value={selectedOption}
+      // @ts-expect-error TypeScript 5.9 react-select type compatibility issue
       options={structuredResults}
       getOptionValue={getOptionValue}
       renderValue={renderValue || defaultRenderValue}
@@ -343,6 +344,7 @@ export const RawSelectAccount = ({
       onInputChange={v => setSearchInputValue(v)}
       inputValue={searchInputValue}
       filterOption={null}
+      // @ts-expect-error TypeScript 5.9 react-select type compatibility issue
       isOptionDisabled={option => !option.matched}
       placeholder={placeholder || t("common.selectAccount")}
       noOptionsMessage={({ inputValue }) =>

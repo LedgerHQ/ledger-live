@@ -7,6 +7,7 @@
     "checkJs": false,
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
+
     "types": [
       "jest",
       "@testing-library/jest-native/extend-expect",
@@ -23,7 +24,7 @@
       "@mocks/*": ["__mocks__/*"]
     }
   },
-  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
+  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*", "types/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

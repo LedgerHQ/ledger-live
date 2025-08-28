@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 Node.js types compatibility issues line by line
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./anvil";

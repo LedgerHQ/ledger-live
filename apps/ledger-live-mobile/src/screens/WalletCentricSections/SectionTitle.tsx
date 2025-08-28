@@ -61,6 +61,7 @@ const SectionTitle = ({
         {title}
       </Text>
       {(onSeeAllPress || navigatorName) && !llmAccountListUI?.enabled ? (
+        // @ts-expect-error TypeScript 5.9 styled-components children issue
         <StyledTouchableOpacity onPress={onLinkPress}>
           <TextLink onPress={onLinkPress} type={"color"}>
             {seeMoreText || t("common.seeAll")}

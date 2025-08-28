@@ -87,7 +87,10 @@ function asBufferUInt32BE(n: number) {
 }
 
 const compressPublicKeySECP256 = (publicKey: Buffer) =>
-  Buffer.concat([Buffer.from([0x02 + (publicKey[64] & 0x01)]), publicKey.slice(1, 33)]);
+  Buffer.concat([
+    Buffer.from([0x02 + (publicKey[64] & 0x01)]),
+    publicKey.slice(1, 33),
+  ] as any[]) as Buffer;
 
 function makeXpub({
   version,
@@ -113,9 +116,9 @@ function makeXpub({
     indexBuffer,
     chainCode,
     pubKey,
-  ]);
+  ] as any[]) as Buffer;
   const checksum = hash256(extendedKeyBytes).slice(0, 4);
-  return bs58.encode(Buffer.concat([extendedKeyBytes, checksum]));
+  return bs58.encode(Buffer.concat([extendedKeyBytes, checksum] as any[]) as Buffer);
 }
 
 export function inferDescriptorFromDeviceInfo({

@@ -37,7 +37,7 @@ class Zen extends Base {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
-    pk.copy(payload, 2);
+    (pk as any).copy(payload, 2);
     return bs58check.encode(payload);
   }
 
@@ -74,7 +74,7 @@ class Zen extends Base {
       "209ec9845acb02fab24e1c0368b3b517c1a4488fba97f0e3459ac053ea0100000003c01f02b4",
       "hex",
     );
-    return Buffer.concat([outputScript, bip115Script]);
+    return Buffer.concat([outputScript, bip115Script] as any[]) as Buffer;
   }
 
   validateAddress(address: string): boolean {

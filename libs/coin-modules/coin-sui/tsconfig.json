@@ -9,7 +9,8 @@
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "typeRoots": ["./node_modules/@types", "index.d.ts"]
+    "typeRoots": ["./node_modules/@types", "index.d.ts"],
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "index.d.ts"]
 }

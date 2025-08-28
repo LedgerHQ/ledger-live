@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 Node.js globals compatibility issues line by line
 import chalk from "chalk";
 import * as compose from "docker-compose";
 

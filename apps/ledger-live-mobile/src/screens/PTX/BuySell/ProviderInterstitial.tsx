@@ -36,6 +36,7 @@ const VisualWrapper = styled(Flex)`
   gap: 24px;
 `;
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const IconContainer = styled(Flex)<{ bgColor?: string }>`
   width: 60px;
   height: 60px;

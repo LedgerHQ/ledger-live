@@ -179,7 +179,7 @@ export default class TransportWebUSB extends Transport {
       const blocks = framing.makeBlocks(apdu);
 
       for (let i = 0; i < blocks.length; i++) {
-        await this.device.transferOut(endpointNumber, blocks[i]);
+        await this.device.transferOut(endpointNumber, blocks[i] as BufferSource);
       }
 
       // Read...

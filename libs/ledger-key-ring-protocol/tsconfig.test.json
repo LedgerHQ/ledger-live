@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "types": ["node", "jest"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "declaration": false,
+    "declarationMap": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib-test"
+  },
+  "include": ["src/**/*"],
+  "exclude": []
+}

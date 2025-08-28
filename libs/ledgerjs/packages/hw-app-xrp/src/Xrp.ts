@@ -167,10 +167,16 @@ export default class Xrp {
       offset += chunkSize;
     }
 
-    let response = Buffer.alloc(0);
+    let response: Buffer<ArrayBufferLike> = Buffer.alloc(0);
 
     for (const apdu of apdus) {
-      response = await this.transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data);
+      response = (await this.transport.send(
+        apdu.cla,
+        apdu.ins,
+        apdu.p1,
+        apdu.p2,
+        apdu.data,
+      )) as Buffer;
     }
 
     // the last 2 bytes are status code from the hardware

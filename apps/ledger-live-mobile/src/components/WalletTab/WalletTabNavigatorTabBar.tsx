@@ -13,11 +13,13 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
   justify-content: center;
-  margin-right: ${p => p.theme.space[4]}px;
+  margin-right: ${(p: any) => p.theme.space[4]}px;
 `;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
   position: absolute;

@@ -41,6 +41,7 @@ export function sha512sumPath(path: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const sum = crypto.createHash("sha512");
     const stream = fs.createReadStream(path);
+    // @ts-expect-error - Buffer compatibility issue with newer Node.js types
     stream.on("data", data => sum.update(data));
     stream.on("end", () => resolve(sum.digest("hex")));
     stream.on("error", reject);

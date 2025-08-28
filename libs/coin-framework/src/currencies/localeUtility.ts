@@ -1,5 +1,5 @@
 import memoize from "lodash/memoize";
-const options = {
+const options: Intl.NumberFormatOptions = {
   style: "currency",
   currency: "USD",
 };

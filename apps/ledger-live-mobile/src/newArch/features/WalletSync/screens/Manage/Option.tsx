@@ -37,4 +37,5 @@ export const Option = ({ label, description, onClick, testId, disabled }: Option
 
 const Container = styled(Flex).attrs((p: { disabled?: boolean }) => ({
   opacity: p.disabled ? 0.3 : 1,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ disabled?: boolean }>``;

@@ -3,6 +3,7 @@ module.exports = {
     "^.+\\.(ts|tsx)?$": [
       "ts-jest",
       {
+        tsconfig: "tsconfig.test.json",
         globals: {
           isolatedModules: true,
         },

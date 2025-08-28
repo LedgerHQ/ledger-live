@@ -19,6 +19,7 @@ const innerImageSize = 56;
 const borderWidth = 2;
 const borderInnerPadding = 2;
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const IllustrationContainer = styled(Flex)<{ seen: boolean }>`
   padding: ${borderInnerPadding + borderWidth}px;
   border-radius: 100px;

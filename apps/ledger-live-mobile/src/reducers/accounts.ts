@@ -416,12 +416,14 @@ export const tokenAccountsNotBlacklistedSelector = createSelector(
 export const tokenAccountsCountSelector = makeAccountsCountSelectors(tokenAccountsSelector);
 
 export const tokenAccountsNotBlacklistedCountSelector = makeAccountsCountSelectors(
+  // @ts-expect-error TypeScript 5.9 selector type compatibility issue
   tokenAccountsNotBlacklistedSelector,
 );
 
 export const hasTokenAccountsSelector = makeHasAccountsSelectors(tokenAccountsSelector);
 
 export const hasTokenAccountsNotBlacklistedSelector = makeHasAccountsSelectors(
+  // @ts-expect-error TypeScript 5.9 selector type compatibility issue
   tokenAccountsNotBlacklistedSelector,
 );
 
@@ -429,12 +431,14 @@ export const tokenAccountsWithPositiveBalanceCountSelector =
   makeAccountsWithPositiveBalanceCountSelector(tokenAccountsSelector);
 
 export const tokenAccountsNotBlackListedWithPositiveBalanceCountSelector =
+  // @ts-expect-error TypeScript 5.9 selector type compatibility issue
   makeAccountsWithPositiveBalanceCountSelector(tokenAccountsNotBlacklistedSelector);
 
 export const hasTokenAccountsWithPositiveBalanceSelector =
   makeHasAccountsWithPositiveBalanceSelector(tokenAccountsSelector);
 
 export const hasTokenAccountsNotBlackListedWithPositiveBalanceSelector =
+  // @ts-expect-error TypeScript 5.9 selector type compatibility issue
   makeHasAccountsWithPositiveBalanceSelector(tokenAccountsNotBlacklistedSelector);
 
 /**

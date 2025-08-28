@@ -155,6 +155,7 @@ MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE9VjphHsJx7kCWOYsA8qWLhW8VlNR0MEk
       // Verify using Node.js crypto (compatible with sign function)
       const verify = crypto.createVerify("sha256");
       verify.update(message);
+      // @ts-expect-error - Buffer compatibility issue with newer Node.js types
       const isValid = verify.verify(testPublicKeyPem, signature);
       expect(isValid).toBe(true);
     });
@@ -187,6 +188,7 @@ MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE9VjphHsJx7kCWOYsA8qWLhW8VlNR0MEk
         // Verify each signature
         const verify = crypto.createVerify("sha256");
         verify.update(message);
+        // @ts-expect-error - Buffer compatibility issue with newer Node.js types
         const isValid = verify.verify(testPublicKeyPem, signature);
         expect(isValid).toBe(true);
       }

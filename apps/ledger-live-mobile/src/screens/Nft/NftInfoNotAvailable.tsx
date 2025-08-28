@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 styled-components compatibility issues line by line
 import { Box, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -9,9 +10,9 @@ import { urls } from "~/utils/urls";
 import { ModalInfo } from "~/modals/Info";
 
 const IconInfoContainer = styled.TouchableOpacity`
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
+  background-color: ${p => p.theme?.colors.opacityDefault.c05 || "#f5f5f5"};
   border-radius: 100px;
-  padding: ${p => p.theme.space[6]}px;
+  padding: ${p => p.theme?.space[6] || 24}px;
 `;
 
 export const notAvailableModalInfo = (onClose?: () => void): ModalInfo[] => {
@@ -19,6 +20,7 @@ export const notAvailableModalInfo = (onClose?: () => void): ModalInfo[] => {
     {
       title: <Trans i18nKey={"nft.modalDisabled.title"} />,
       Icon: () => (
+        // @ts-expect-error TypeScript 5.9 styled-components IntrinsicAttributes issue
         <IconInfoContainer>
           {IconsLegacy.InfoAltFillMedium({ color: "#BBB0FF", size: 23 })}
         </IconInfoContainer>

@@ -107,6 +107,7 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         isFocused={isFocused}
+        // @ts-expect-error TypeScript 5.9 styled-components implicit any issue
         onKeyPress={e => onKeyPress(e, index)}
         textAlign="center"
       />
@@ -114,6 +115,7 @@ const DigitInput = forwardRef<TextInput, DigitInputProps>(
   },
 );
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const NumberContainer = styled(TextInput)<{ isFocused: boolean }>`
   border-radius: 8px;
   height: 50px;

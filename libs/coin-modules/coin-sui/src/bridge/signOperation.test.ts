@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+// Fixed TypeScript 5.9 test file compatibility issues line by line
 import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";

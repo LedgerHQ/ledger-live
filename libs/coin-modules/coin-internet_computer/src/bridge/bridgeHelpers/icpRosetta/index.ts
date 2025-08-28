@@ -70,7 +70,7 @@ export const signICPTransaction = async ({
   signatures: { txnSig: string; readSig: string };
   signedTxn: string;
 }> => {
-  const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
+  const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex") as any);
   const txnReqFromCbor = decodedTxn.updates[0][1];
   const expiry = new ingressExpiry(BigNumber(decodedTxn.ingress_expiries[0].toString()));
 

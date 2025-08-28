@@ -82,7 +82,7 @@ function useMarketListViewModel() {
 
   const refetchData = useCallback(
     (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1 ?? 0));
+      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1));
       if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
@@ -106,7 +106,7 @@ function useMarketListViewModel() {
   const onViewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const lastVisible = viewableItems.map((elem: ViewToken) => elem.index).at(-1);
     if (lastVisible) {
-      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 2 ?? 0);
+      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 2);
     }
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);

@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 test file compatibility issues line by line
 import { createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
 

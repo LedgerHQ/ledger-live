@@ -10,7 +10,7 @@ import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 
-const webusbDevices: Record<string, USBDevice> = {};
+const webusbDevices: Record<string, any> = {};
 
 registerTransportModule({
   id: "webhid",

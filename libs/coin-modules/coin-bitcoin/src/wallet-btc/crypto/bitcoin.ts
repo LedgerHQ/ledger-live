@@ -162,7 +162,7 @@ class Bitcoin extends Base {
     // hash_tag(x) = SHA256(SHA256(tag) || SHA256(tag) || x), see BIP340
     // See https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#specification
     const h = bjs.crypto.sha256(Buffer.from("TapTweak", "utf-8"));
-    return bjs.crypto.sha256(Buffer.concat([h, h, x]));
+    return bjs.crypto.sha256(Buffer.concat([h, h, x] as any[]) as Buffer);
   }
 
   private async getTaprootAddress(xpub: string, account: number, index: number): Promise<string> {
@@ -173,12 +173,15 @@ class Bitcoin extends Base {
     // https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#public-key-conversion
     const schnorrInternalPubkey = ecdsaPubkey.slice(1);
 
-    const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), schnorrInternalPubkey]);
+    const evenEcdsaPubkey = Buffer.concat([
+      Buffer.from([0x02]),
+      schnorrInternalPubkey,
+    ] as any[]) as Buffer;
     const tweak = this.hashTapTweak(schnorrInternalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
     const outputEcdsaKey = Buffer.from(
-      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey, tweak),
+      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey as any, tweak as any),
     );
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);

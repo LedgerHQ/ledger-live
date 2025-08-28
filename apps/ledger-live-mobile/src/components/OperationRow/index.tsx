@@ -41,8 +41,10 @@ const ContainerTouchable = styled(Flex).attrs(_ => ({
   alignItems: "center",
   px: 0,
   py: 6,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ isLast?: boolean }>``;
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const Wrapper = styled(Flex).attrs<{ isOptimistic?: boolean }>(p => ({
   flex: 1,
   flexDirection: "row",
@@ -51,6 +53,7 @@ const Wrapper = styled(Flex).attrs<{ isOptimistic?: boolean }>(p => ({
   marginLeft: 4,
   marginRight: 0,
   opacity: p.isOptimistic ? 0.5 : 1,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ isOptimistic?: boolean }>``;
 
 const SpinnerContainer = styled(Box).attrs({
@@ -72,6 +75,7 @@ const BodyRightContainer = styled(Flex).attrs<{ flexShrink?: number }>(p => ({
   alignItems: "flex-end",
   flexShrink: p.flexShrink ?? 0,
   pl: 4,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ flexShrink?: number }>``;
 
 type Props = {

@@ -14,7 +14,10 @@ export const generateJWT = () => {
   const encode = (obj: Record<string, unknown>) =>
     Buffer.from(JSON.stringify(obj))
       .toString("base64")
-      .replace(/[+/=]/g, c => ({ "+": "-", "/": "_", "=": "" })[c] || "");
+      .replace(
+        /[+/=]/g,
+        (c: string) => ({ "+": "-", "/": "_", "=": "" })[c as "+" | "/" | "="] || "",
+      );
   const header = encode({ alg: "HS256", typ: "JWT" });
   const payload = encode({
     sub: "ledger-api-user",
@@ -28,7 +31,10 @@ export const generateJWT = () => {
     .createHmac("sha256", "unsafe")
     .update(data)
     .digest("base64")
-    .replace(/[+/=]/g, c => ({ "+": "-", "/": "_", "=": "" })[c] || "");
+    .replace(
+      /[+/=]/g,
+      (c: string) => ({ "+": "-", "/": "_", "=": "" })[c as "+" | "/" | "="] || "",
+    );
   return `${data}.${signature}`;
 };
 

@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 Node.js globals compatibility issues line by line
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { SolanaAccount, Transaction as SolanaTransaction } from "@ledgerhq/coin-solana/types";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";

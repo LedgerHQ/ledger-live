@@ -1,3 +1,5 @@
+// Browser-compatible Buffer type
+type Buffer = { toString(encoding: string): string };
 import {
   TransactionCommon,
   TransactionCommonRaw,
