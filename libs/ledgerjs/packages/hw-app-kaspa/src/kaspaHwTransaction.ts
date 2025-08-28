@@ -203,10 +203,10 @@ export class TransactionOutput {
         if (
             !outputData.value ||
             outputData.value < 0 ||
-            outputData.value > 0xffffffffffffffff
+            outputData.value > Number.MAX_SAFE_INTEGER
         ) {
             throw new Error(
-                "value must be set to a value greater than 0 and less than 0xFFFFFFFFFFFFFFFF",
+                `value must be set to a value greater than 0 and less than ${Number.MAX_SAFE_INTEGER.toString()}`,
             );
         }
         this.value = outputData.value;

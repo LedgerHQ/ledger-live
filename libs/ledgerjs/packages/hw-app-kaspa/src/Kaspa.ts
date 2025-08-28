@@ -84,7 +84,7 @@ export default class Kaspa {
 
         return {
             publicKey: publicKeyBuffer.toString("hex"),
-            address: publicKeyToAddress(publicKeyBuffer.subarray(2, 34), false),
+            address: publicKeyToAddress(publicKeyBuffer.subarray(2, 34)),
         };
     }
 
