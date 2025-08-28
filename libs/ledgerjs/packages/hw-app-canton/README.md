@@ -32,7 +32,6 @@ For a smooth and quick integration:
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
     *   [getAppConfiguration](#getappconfiguration)
-*   [MockCantonDevice](#mockcantondevice)
 
 ### Canton
 
@@ -61,7 +60,7 @@ Sign a Canton transaction.
 ##### Parameters
 
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
-*   `rawTx` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the raw transaction to sign
+*   `txHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash to sign
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CantonSignature>** the signature
 
@@ -70,10 +69,6 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 Get the app configuration.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<AppConfig>** the app configuration including version
-
-### MockCantonDevice
-
-Mock Canton "@ledgerhq/hw-app-canton" device implementation for development and testing
 
 ## Integration tests
 
