@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
@@ -12,7 +12,7 @@ import type { PtxNavigatorParamList } from "./types/PtxNavigator";
 import type { StackNavigatorProps } from "./types/helpers";
 import { PtxScreen } from "~/screens/PTX";
 
-const Stack = createStackNavigator<PtxNavigatorParamList>();
+const Stack = createNativeStackNavigator<PtxNavigatorParamList>();
 
 const createExchangeScreen =
   (screenName: ScreenName.ExchangeBuy | ScreenName.ExchangeSell) =>

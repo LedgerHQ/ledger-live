@@ -1,5 +1,9 @@
 import React, { ForwardedRef, forwardRef, useCallback, useMemo, useState } from "react";
-import { Storyly } from "storyly-react-native";
+import Storyly, {
+  type StorylyProps,
+  type StorylyMethods,
+  type StoryLoadEvent,
+} from "storyly-react-native-fabric";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSettings } from "~/hooks";
@@ -13,14 +17,14 @@ export type Props = {
    * Default is true.
    */
   shouldFallbackToEnglishIfEmpty?: boolean;
-} & Omit<Storyly.Props, "storylyId">;
+} & Omit<StorylyProps, "storylyId">;
 
 /**
  * Wrapper around the Storyly component that handles displaying only stories
  * that match the app language, if there are stories for that language.
  * This should always be used in favor of using directly the Storyly component.
  */
-const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Storyly>) => {
+const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<StorylyMethods>) => {
   const { instanceID, storylySegments, onLoad, shouldFallbackToEnglishIfEmpty = true } = props;
 
   const [fallbackToEnglish, setFallbackToEnglish] = useState(false);
@@ -42,7 +46,7 @@ const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Stor
   }, [language, storylySegments, fallbackToEnglish]);
 
   const handleLoad = useCallback(
-    (event: Storyly.StoryLoadEvent) => {
+    (event: StoryLoadEvent) => {
       if (shouldFallbackToEnglishIfEmpty && event.storyGroupList.length === 0)
         setFallbackToEnglish(true);
       onLoad && onLoad(event);

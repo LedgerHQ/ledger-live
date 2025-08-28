@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import { NavigatorName, ScreenName } from "~/const";
@@ -21,7 +21,7 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 type Props = BaseComposite<
-  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
+  NativeStackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
 const CompletionScreen = ({ route }: Props) => {

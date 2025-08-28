@@ -5,7 +5,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
@@ -53,7 +53,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
         name,
         options,
       );

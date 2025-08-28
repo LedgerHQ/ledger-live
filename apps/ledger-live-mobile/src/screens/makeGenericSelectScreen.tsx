@@ -1,7 +1,7 @@
 import React, { Component, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { track } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
 
@@ -59,7 +59,7 @@ type GenericScreenProps<Item> = {
   selectedKey?: string;
   items: Item[];
   onValueChange: (items: Item, props: GenericScreenProps<Item>) => void;
-  navigation: StackNavigationProp<{ [key: string]: object }>;
+  navigation: NativeStackNavigationProp<{ [key: string]: object }>;
   cancelNavigateBack?: boolean;
 };
 

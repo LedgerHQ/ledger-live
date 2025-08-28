@@ -1,5 +1,5 @@
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ScreenName, NavigatorName } from "~/const";
 
 export function navigateToOldUpdateFlow({
@@ -7,7 +7,7 @@ export function navigateToOldUpdateFlow({
   navigation,
 }: {
   route: RouteProp<ParamListBase>;
-  navigation: StackNavigationProp<Record<string, object | undefined>>;
+  navigation: NativeStackNavigationProp<Record<string, object | undefined>>;
 }) {
   if (route.name === ScreenName.MyLedgerDevice) {
     // if we're already in the manager page, only update the params
