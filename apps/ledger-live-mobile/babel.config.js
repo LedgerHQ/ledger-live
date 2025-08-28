@@ -17,4 +17,20 @@ module.exports = {
     "babel-plugin-transform-inline-environment-variables",
     "react-native-reanimated/plugin", // react-native-reanimated/plugin has to be listed last.
   ],
+  overrides: [
+    {
+      test: filename => {
+        if (!filename) return false;
+        return /[\\/]react-native-svg[\\/]/.test(filename);
+      },
+      plugins: ["@react-native/babel-plugin-codegen"],
+    },
+    {
+      test: filename => {
+        if (!filename) return false;
+        return /[\\/]react-native-safe-area-context[\\/]/.test(filename);
+      },
+      plugins: ["@react-native/babel-plugin-codegen"],
+    },
+  ],
 };

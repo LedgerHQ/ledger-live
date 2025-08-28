@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StakeFlow from "../Stake";
 import { ScreenName } from "~/const";
@@ -11,7 +11,7 @@ const StakeFlowNavigator = () => {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
-    <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>
+    <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.Stake}
         component={StakeFlow}
@@ -21,6 +21,6 @@ const StakeFlowNavigator = () => {
   );
 };
 
-const Stack = createStackNavigator<StakeNavigatorParamList>();
+const Stack = createNativeStackNavigator<StakeNavigatorParamList>();
 
 export default StakeFlowNavigator;

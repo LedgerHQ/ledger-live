@@ -25,7 +25,7 @@ const StorageBarItem = (props: FlexBoxProps & { installing: boolean }) => {
         true,
       ),
     };
-  }, [opacity.value, installing]);
+  }, [opacity, installing]);
 
   opacity.value = withTiming(1, { duration: 800 });
 

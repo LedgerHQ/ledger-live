@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import MarketList from "LLM/features/Market/screens/MarketList";
@@ -7,7 +7,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./Navigator";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 
-const Stack = createStackNavigator<MarketNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<MarketNavigatorStackParamList>();
 
 export default function MarketWalletTabNavigator() {
   const { colors } = useTheme();

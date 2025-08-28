@@ -1,4 +1,4 @@
-import { Image, NativeModules, Platform } from "react-native";
+import { Image } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import * as ImagePicker from "react-native-image-picker";
 import {
@@ -17,31 +17,23 @@ import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
  */
 export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null> {
   try {
-    /**
-     * We have our own implementation for Android because expo-image-picker
-     * sometimes returns {cancelled: true} even when the user picks an image.
-     * More specifically, this happens if the user navigates to another app
-     * from the opened file picker app.
-     * */
-    const pickImagePromise =
-      Platform.OS === "android"
-        ? NativeModules.ImagePickerModule.pickImage()
-        : ImagePicker.launchImageLibrary({
-            mediaType: "photo",
-            quality: 1,
-            includeBase64: false,
-          }).then(res => {
-            if (res.errorCode)
-              throw new Error(
-                `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
-              );
-            const assets = res?.assets || [];
-            if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
-            return {
-              cancelled: res.didCancel,
-              uri: assets[0]?.uri,
-            };
-          });
+    const pickImagePromise = ImagePicker.launchImageLibrary({
+      mediaType: "photo",
+      quality: 1,
+      includeBase64: false,
+      selectionLimit: 1,
+    }).then(res => {
+      if (res.errorCode)
+        throw new Error(
+          `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
+        );
+      const assets = res?.assets || [];
+      if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
+      return {
+        cancelled: res.didCancel,
+        uri: assets[0]?.uri,
+      };
+    });
     const { uri, cancelled } = await pickImagePromise;
     if (cancelled) return null;
     if (uri) {

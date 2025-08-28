@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "~/const";
@@ -72,4 +72,4 @@ export default function CustomImageNavigator() {
   );
 }
 
-const Stack = createStackNavigator<CustomImageNavigatorParamList>();
+const Stack = createNativeStackNavigator<CustomImageNavigatorParamList>();
