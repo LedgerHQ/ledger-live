@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import NftViewer from "../Nft/NftViewer";
 import NftImageViewer from "../Nft/NftImageViewer";
@@ -21,7 +21,7 @@ const NftNavigator = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   return (
-    <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>
+    <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.NftViewer}
         component={NftViewer}
@@ -64,6 +64,6 @@ const NftNavigator = () => {
   );
 };
 
-const Stack = createStackNavigator<NftNavigatorParamList>();
+const Stack = createNativeStackNavigator<NftNavigatorParamList>();
 
 export default NftNavigator;

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -81,7 +81,7 @@ import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/Storag
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 
-const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -196,9 +196,7 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
-          headerTitleStyle: {
-            width: "80%",
-          },
+          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
@@ -206,9 +204,7 @@ export default function SettingsNavigator() {
         component={ExchangeDeveloperMode}
         options={{
           title: t("settings.developer.exchangeDeveloperMode.title"),
-          headerTitleStyle: {
-            width: "80%",
-          },
+          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
@@ -469,7 +465,8 @@ export default function SettingsNavigator() {
         name={ScreenName.OnboardingLanguage}
         component={OnboardingStepLanguage}
         options={{
-          ...TransitionPresets.ModalTransition,
+          presentation: "modal",
+          animation: "slide_from_bottom",
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
