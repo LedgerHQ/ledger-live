@@ -694,6 +694,15 @@
       "title" : "การจับคู่ไม่สำเร็จ",
       "description" : "โปรดลองอีกครั้ง หรืออ่านบทความการแก้ไขปัญหาบลูทูธของเรา"
     },
+    "OneSuiMinForStake" : {
+      "title" : "จำนวนขั้นต่ำคือ 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "จำนวนขั้นต่ำคือ 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "ควรเหลืออย่างน้อย 1 SUI ไว้ในสเตค (Stake)"
+    },
     "PasswordIncorrect" : {
       "title" : "รหัสผ่านไม่ถูกต้อง",
       "description" : "โปรดลองอีกครั้ง"
@@ -1074,6 +1083,18 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "ต้องมีการเชื่อมโยงโทเคน",
+      "description" : "โทเคนที่คุณพยายามส่งไม่ได้เชื่อมโยงกับบัญชีปลายทาง ต้องมีการเชื่อมโยงจากบัญชีผู้รับเพื่อรับโทเคน"
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "ไม่สามารถตรวจสอบการเชื่อมโยงโทเคนได้",
+      "description" : "เราไม่สามารถยืนยันได้ว่าบัญชีปลายทางสามารถรับโทเคนนี้ได้หรือไม่ ที่อยู่อาจไม่ถูกต้อง หรืออาจมีปัญหาด้านเครือข่ายหรือบริการ"
+    },
     "NearNewAccountWarning" : {
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
@@ -1305,7 +1326,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 นาที",
       "medium" : "≈ 30 วินาที",
-      "fast" : "≈ 15 วินาที"
+      "fast" : "≈ 15 วินาที",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1544,25 @@
     "cta" : "ติดตั้ง Ledger ของฉัน",
     "bannerTitle" : "ได้รับ Ledger แล้วหรือยัง?",
     "bannerCta" : "เริ่มการติดตั้ง",
+    "continue" : "ดำเนินการต่อ"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ ไม่สามารถดำเนินการ Clear Sign สำหรับธุรกรรมนี้ได้",
+      "subtitle" : "ใช้อุปกรณ์ Ledger อื่น  เพื่อตรวจสอบรายละเอียดของธุรกรรมนี้ก่อนเซ็น หากไม่มีการ Clear Signing  ทรัพย์สินทั้งหมดของคุณอาจตกอยู่ในความเสี่ยง",
+      "continue" : "ดำเนินการต่อโดยรับความเสี่ยงด้วยตนเอง"
+    },
+    "info" : {
+      "title" : "ตั้งแต่วันที่ {{date}} เป็นต้นไป การรองรับ {{coinName}} บน {{device}}™ ผ่านแอป Ledger Live™ จะสิ้นสุดลง",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงผู้ให้บริการ ทั้งหมดบนแอป Ledger Live และการสนับสนุนลูกค้าที่ดีที่สุด",
+      "reminder" : "ไม่ต้องเตือนฉันอีก"
+    },
+    "error" : {
+      "title" : "{{device}}™ ไม่รองรับฟีเจอร์นี้",
+      "subtitle" : "อัปเกรดเป็นอุปกรณ์ Ledger รุ่นล่าสุดวันนี้ เพื่อให้สามารถเข้าถึงฟีเจอร์ล่าสุดทั้งหมดของแอป Ledger Live ได้"
+    },
+    "update" : "ดูโปรแกรมการอัปเกรดของคุณ",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
     "continue" : "ดำเนินการต่อ"
   },
   "purchaseDevice" : {
@@ -2727,7 +2768,8 @@
       "WITHDRAW" : "ถอนแล้ว",
       "STAKE" : "Stake แล้ว",
       "UNSTAKE" : "ยังไม่ได้ Stake",
-      "WITHDRAW_UNSTAKED" : "ถอนแล้ว"
+      "WITHDRAW_UNSTAKED" : "ถอนแล้ว",
+      "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน"
     }
   },
   "operationDetails" : {
@@ -2759,6 +2801,7 @@
     "extra" : {
       "transferId" : "ID การโอน (Memo)",
       "resource" : "ทรัพยากร",
+      "validator" : "ผู้ตรวจสอบ",
       "frozenAmount" : "จำนวนที่ถูก Freeze",
       "unfreezeAmount" : "จำนวนที่ Unfreeze",
       "address" : "Address",
@@ -3242,7 +3285,7 @@
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
-        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, Binance Smart Chain, Avalanche และ Ethereum Classic"
+        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
@@ -6455,6 +6498,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI ที่ใช้ได้",
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
+      },
+      "storageUsage" : {
+        "title" : "ยอดคงเหลือขั้นต่ำ",
+        "description" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและการทำธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังสามารถใช้งานได้อยู่"
+      },
+      "staked" : {
+        "title" : "สินทรัพย์ที่ Delegate",
+        "description" : "ยอดคงเหลือในบัญชีที่ทำการ Delegate ไปแล้ว"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "จำนวนที่จะ Undelegate"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "เมื่อ Undelegate แล้ว ยอดคงเหลือในบัญชีและ Reward ที่สะสมจะถูกโอนเข้าบัญชีทันที"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "จำนวนที่จะถอน"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ถอนสินทรัพย์ของคุณเรียบร้อยแล้ว"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "ตำแหน่งที่ Delegate",
+      "info" : "วิธีใช้งานการ Delegate?",
+      "add" : "เพิ่ม",
+      "stakingEarn" : "คุณสามารถรับ SUI Reward ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน",
+      "iStake" : "ฉันได้ Delegate",
+      "actions" : {
+        "unstake" : "Undelegate"
+      },
+      "drawer" : {
+        "status" : "สถานะ",
+        "active" : "ใช้งานอยู่",
+        "inactive" : "ไม่ได้เปิดใช้งาน",
+        "pending" : "รอดำเนินการ",
+        "available" : "สามารถถอนได้"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "จำนวนที่จะ Delegate",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegate SUI ของคุณเพื่อรับ Reward อย่างปลอดภัย โดยยังคงควบคุมสินทรัพย์ของคุณเองได้",
+            "steps" : {
+              "0" : "สินทรัพย์ที่ทำการ Delegate ยังเป็นของคุณ",
+              "1" : "เมื่อ Undelegate แล้ว ยอดคงเหลือในบัญชีและ Reward ที่สะสมไว้ของคุณจะส่งให้ในทันที",
+              "2" : "Delegate ด้วยอุปกรณ์ Ledger ของคุณอย่างปลอดภัย"
+            },
+            "warning" : {
+              "description" : "เลือกผู้ตรวจสอบของคุณอย่างรอบคอบ: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
+            },
+            "cta" : "ดำเนินการต่อ"
+          },
+          "amount" : {
+            "assetsRemaining" : "สินทรัพย์ที่เหลือ: <0>{{amount}}</0>",
+            "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป",
+            "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
+            "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
+            "cta" : "ดำเนินการต่อ"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตหลังจากที่เครือข่ายได้ยืนยันธุรกรรมของคุณแล้ว"
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6642,6 +6786,7 @@
       "undelegate" : "การ Delegate บัญชีของคุณจะยุติลงเมื่อได้รับการยืนยันการดำเนินการ โดยคุณสามารถ Delegate บัญชีอีกครั้งได้ทุกเมื่อ"
     },
     "summaryTitle" : "สรุป",
+    "delegate" : "Delegate",
     "goToAccount" : "ไปที่บัญชี",
     "howDelegationWorks" : "วิธีใช้งานการ Delegate",
     "actions" : {
@@ -7078,6 +7223,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Address {{name}} ของคุณไม่สามารถยืนยันได้บนอุปกรณ์ Ledger ของคุณ ใช้งานโดยต้องยอมรับความเสี่ยงเอง"
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "ต้องมีการเชื่อมโยงบัญชีของคุณเพื่อรับโทเคน HTS หากคุณยังไม่ได้ทำการเชื่อมโยงบัญชีกับโทเคน HTS ที่คุณต้องการรับ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการเชื่อมโยงโทเคน",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "เลือกโทเคนที่คุณต้องการรับ"
+      },
+      "summary" : {
+        "title" : "เชื่อมโยงโทเคน",
+        "from" : "โทเคน",
+        "to" : "ไปยัง",
+        "warning" : {
+          "text" : "เมื่อคลิก 'ดำเนินการต่อ' คุณจะเชื่อมโยงโทเคนที่เลือกกับบัญชี Hedera ของคุณ",
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      },
+      "selectDevice" : {
+        "title" : "เชื่อมโยงโทเคน"
+      },
+      "connectDevice" : {
+        "title" : "เชื่อมโยงโทเคน"
+      },
+      "validationSuccess" : {
+        "title" : "ส่งธุรกรรมแล้ว",
+        "text" : "คุณจะได้รับโทเคนนี้เมื่อธุรกรรมการเชื่อมโยงโทเคนได้รับการยืนยันแล้ว"
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "เรียนรู้เพิ่มเติม"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "โทเคนที่เชื่อมโยงแล้ว",
+      "postAlert" : {
+        "text" : "เมื่อมีการยืนยันธุรกรรมนี้แล้ว คุณจะสามารถรับโทเคนของคุณได้ <0>คลิกที่นี่</0> เพื่อเริ่มขั้นตอนการรับ",
+        "learnMore" : "เรียนรู้เพิ่มเติม"
+      }
     }
   },
   "asset" : {
