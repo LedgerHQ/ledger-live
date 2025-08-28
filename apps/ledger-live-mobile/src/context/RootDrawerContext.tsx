@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import React, { PropsWithChildren, createContext, useCallback, useContext, useState } from "react";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName } from "~/const";
 import type { DrawerProps, RootDrawerProps } from "~/components/RootDrawer/types";
 
@@ -32,7 +32,8 @@ export function useRootDrawerContext() {
 
 export function RootDrawerProvider({ drawer, children }: PropsWithChildren<RootDrawerProps>) {
   const [isOpen, setIsOpen] = useState(false);
-  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const onModalHide = () => {
     const parent = navigation.getParent(NavigatorName.RootNavigator);

@@ -14,7 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import Animated, {
   interpolate,
-  Extrapolate,
+  Extrapolation,
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -73,18 +73,18 @@ export default function AnimatedHeaderView({
     () => ({
       transform: [
         {
-          translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
+          translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolation.CLAMP),
         },
         {
           translateX: interpolate(
             scrollY.value,
             [0, 76],
             [space[6], space[6] + (hasBackButton ? -5 : -40)],
-            Extrapolate.CLAMP,
+            Extrapolation.CLAMP,
           ),
         },
         {
-          scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
+          scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolation.CLAMP),
         },
       ],
     }),

@@ -15,7 +15,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
-import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
@@ -27,7 +27,7 @@ interface Props {
 
 type SwapFormNavigation = CompositeNavigationProp<
   MaterialTopTabNavigationProp<SwapFormNavigatorParamList>,
-  StackNavigationProp<SwapNavigatorParamList>
+  NativeStackNavigationProp<SwapNavigatorParamList>
 >;
 
 export function To({ swapTx, provider, exchangeRate }: Props) {

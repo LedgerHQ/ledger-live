@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
@@ -13,7 +13,7 @@ import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDraw
 const stakeLabel = getStakeLabelLocaleBased();
 export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const { quickActionsList } = useQuickActions(quickActionsProps);
   const supportedCurrencies = listSupportedCurrencies();

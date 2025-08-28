@@ -178,7 +178,8 @@ function Carousel({
   }: {
     nativeEvent: NativeScrollEvent;
   }) => {
-    const newIndex = Math.abs(Math.round((contentOffset.x / contentSize.width) * slidesLength));
+    const computed = Math.abs(Math.round((contentOffset.x / contentSize.width) * slidesLength));
+    const newIndex = Math.min(slidesLength - 1, Math.max(0, computed));
     setActiveIndexState(newIndex);
     onChange && onChange(newIndex);
   };

@@ -22,7 +22,7 @@ import { capitalize } from "lodash/fp";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { rgba } from "../../../colors";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
@@ -80,10 +80,13 @@ function Delegations({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setSelectedStakeWithMeta(undefined);
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [account.id, navigation],
   );

@@ -1,4 +1,4 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { FeesScreen } from "~/screens/Fees";
 import { Text } from "@ledgerhq/native-ui";
 
-const Stack = createStackNavigator<FeesNavigatorParamsList>();
+const Stack = createNativeStackNavigator<FeesNavigatorParamsList>();
 
 export default function FeesNavigator() {
   const { colors } = useTheme();

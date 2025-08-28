@@ -1,10 +1,8 @@
 import React, { useMemo } from "react";
 import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
@@ -95,7 +93,7 @@ import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
 
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -108,6 +106,7 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -118,20 +117,12 @@ export default function BaseNavigator() {
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
-      <Stack.Navigator
-        screenOptions={{
-          ...stackNavigationConfig,
-          ...TransitionPresets.DefaultTransition,
-        }}
-      >
+      <Stack.Navigator screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.BuyDevice}
           component={BuyDeviceNavigator}
-          options={{
-            headerShown: false,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          }}
+          options={{ headerShown: false, presentation: "modal", animation: "slide_from_bottom" }}
         />
         <Stack.Screen
           name={ScreenName.NoDeviceWallScreen}
@@ -144,14 +135,12 @@ export default function BaseNavigator() {
           options={{
             headerShown: false,
             presentation: "transparentModal",
-            headerMode: undefined,
-            cardStyle: { opacity: 1 },
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
             headerBackButtonDisplayMode: "minimal",
             title: "",
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -209,16 +198,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.PlatformApp}
           component={LiveApp}
-          options={{
-            headerStyle: styles.headerNoShadow,
-          }}
+          options={{ headerStyle: styles.headerNoShadow }}
         />
         <Stack.Screen
           name={ScreenName.Recover}
           component={RecoverPlayer}
-          options={{
-            headerStyle: styles.headerNoShadow,
-          }}
+          options={{ headerStyle: styles.headerNoShadow }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
@@ -333,7 +318,8 @@ export default function BaseNavigator() {
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
                 headerRight: () => <NavigationHeaderCloseButton />,
-                cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+                presentation: "modal",
+                animation: "slide_from_bottom",
               };
             }
 
@@ -351,7 +337,8 @@ export default function BaseNavigator() {
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
               headerRight: () => null,
-              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+              presentation: "modal",
+              animation: "slide_from_bottom",
             };
           }}
         />
@@ -379,7 +366,7 @@ export default function BaseNavigator() {
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
-            ...TransitionPresets.ModalPresentationIOS,
+            presentation: "modal",
           }}
         />
         <Stack.Screen
@@ -398,7 +385,8 @@ export default function BaseNavigator() {
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            presentation: "modal",
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -483,7 +471,7 @@ export default function BaseNavigator() {
           const { component, options } = families[name as keyof typeof families];
           const screenName = name as keyof BaseNavigatorStackParamList;
           const screenComponent = component as React.ComponentType;
-          const screenOptions = options as StackNavigationOptions;
+          const screenOptions = options as NativeStackNavigationOptions;
           /* eslint-enable @typescript-eslint/consistent-type-assertions */
 
           return (

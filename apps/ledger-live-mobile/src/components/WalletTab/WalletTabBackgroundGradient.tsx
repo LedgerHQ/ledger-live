@@ -8,30 +8,24 @@ import LinearGradient from "react-native-linear-gradient";
 const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
 
 type Props = {
-  scrollX: MaterialTopTabBarProps["position"];
+  visible?: boolean;
   color?: string;
+  scrollX?: MaterialTopTabBarProps["position"];
 };
 
-function WalletTabBackgroundGradient({ color, scrollX }: Props) {
+function WalletTabBackgroundGradient({ color, visible = true }: Props) {
   const { theme, colors } = useTheme();
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const opacity = useMemo(
     () =>
-      Animated.multiply(
-        scrollY.interpolate({
-          inputRange: [0, headerHeight],
-          outputRange: [1, 0],
-          extrapolate: "clamp",
-        }),
-        scrollX.interpolate({
-          inputRange: [0, 1],
-          outputRange: [1, 0],
-          extrapolate: "clamp",
-        }),
-      ),
-    [scrollY, headerHeight, scrollX],
+      scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [1, 0],
+        extrapolate: "clamp",
+      }),
+    [scrollY, headerHeight],
   );
 
   const gradientOpacity = useMemo(
@@ -62,7 +56,7 @@ function WalletTabBackgroundGradient({ color, scrollX }: Props) {
 
   if (color) {
     return (
-      <Animated.View style={containerStyle}>
+      <Animated.View style={[...containerStyle, { opacity: visible ? opacity : 0 }]}>
         <LinearGradient
           colors={[color, colors.background.main]}
           locations={[0, 1]}

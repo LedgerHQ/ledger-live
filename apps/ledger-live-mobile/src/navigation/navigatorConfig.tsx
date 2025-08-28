@@ -6,12 +6,12 @@ import HeaderTitle, { Props as HeaderTitleProps } from "~/components/HeaderTitle
 import styles from "./styles";
 import { Theme } from "../colors";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
-export const defaultNavigationOptions = {
+export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerStyle: styles.header,
   headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
   headerLeft: () => <NavigationHeaderBackButton />,
-  headerTitleAllowFontScaling: false,
   headerBackButtonDisplayMode: "minimal" as const,
 };
 
@@ -24,6 +24,10 @@ export const getStackNavigatorConfig = (
   onClose?: () => void,
 ) => ({
   ...defaultNavigationOptions,
+  contentStyle: {
+    backgroundColor: (c as ColorV3).background?.main || (c as ColorV2).background,
+  },
+  // Keep backward compatibility while migrating from stack to native-stack
   cardStyle: {
     backgroundColor: (c as ColorV3).background?.main || (c as ColorV2).background,
   },

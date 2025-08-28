@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
-import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import type { NavigationType } from "../../../../../types";
 import type { DrawerPropsType } from "../types";
@@ -25,7 +25,7 @@ const useDrawerActions = (
   account: MultiversXAccount,
   onClose: DrawerPropsType["onClose"],
 ) => {
-  const navigation: StackNavigationProp<NavigationType> = useNavigation();
+  const navigation: NativeStackNavigationProp<NavigationType> = useNavigation();
 
   const { type, claimableRewards, seconds, validator, amount } = data;
   const { t } = useTranslation();

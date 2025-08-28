@@ -69,23 +69,25 @@ class MainApplication : Application(), ReactApplication {
 
       registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
 
-        setupStartupTracking()
+      setupStartupTracking()
 
 
-        reactNativeHost.reactInstanceManager.addReactInstanceEventListener(object : ReactInstanceEventListener {
-            override fun onReactContextInitialized(context: ReactContext) {
-                // This is called when the React Native bridge is fully initialized and JS bundle loaded.
-                handleReactContextInitialized()
-            }
-        })
+      reactNativeHost.reactInstanceManager.addReactInstanceEventListener(object : ReactInstanceEventListener {
+          override fun onReactContextInitialized(context: ReactContext) {
+              // This is called when the React Native bridge is fully initialized and JS bundle loaded.
+              handleReactContextInitialized()
+          }
+      })
 
       didInitialColdLaunchComplete = true
 
       if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      // If you opted-in for the New Architecture, we load the native entry point for this app.
-      load()
-    }
-    ApplicationLifecycleDispatcher.onApplicationCreate(this)
+        // If you opted-in for the New Architecture, 
+        // we load the native entry point for this app.
+        load()
+      }
+
+      ApplicationLifecycleDispatcher.onApplicationCreate(this)
 
   }
 

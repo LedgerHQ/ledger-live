@@ -3,7 +3,7 @@ import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/wallet-api/uti
 import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { Flex } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback } from "react";
 import { useAnalytics } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -23,7 +23,8 @@ export function EvmStakingDrawerBody({
   walletApiAccountId,
   onClose,
 }: Readonly<Props>) {
-  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const { track, page } = useAnalytics();
 

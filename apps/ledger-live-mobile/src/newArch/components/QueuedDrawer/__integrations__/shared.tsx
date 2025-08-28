@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import QueuedDrawersContextProvider from "../QueuedDrawersContextProvider";
 import { ScreenName } from "~/const";
 import {
@@ -12,7 +12,7 @@ import DebugAppLevelDrawer from "../DebugAppLevelDrawer";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { UnmountOnBlur } from "~/components/RootNavigator/utils/UnmountOnBlur";
 
-const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
 
 const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
   <UnmountOnBlur>{children}</UnmountOnBlur>
@@ -26,7 +26,6 @@ export function TestPages() {
       <Stack.Navigator
         initialRouteName={ScreenName.DebugQueuedDrawers}
         screenOptions={{ animation: "none" }}
-        detachInactiveScreens
         screenLayout={unmountOnBlur}
       >
         <Stack.Screen
