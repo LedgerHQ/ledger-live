@@ -694,6 +694,15 @@
       "title" : "لم يتم إجراء الإقران بنجاح",
       "description" : "يرجى إعادة المحاولة مرة أخرى أو مراجعة مقالتنا عن استكشاف أخطاء البلوتوث وإصلاحها."
     },
+    "OneSuiMinForStake" : {
+      "title" : "الحد الأدنى هو 1 سوي (SUI)"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "الحد الأدنى هو 1 سوي (SUI)"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "يجب ترك 1 سوي (SUI) على الأقل في التكديس"
+    },
     "PasswordIncorrect" : {
       "title" : "كلمة مرور غير صحيحة",
       "description" : "يرجى إعادة المحاولة."
@@ -1074,6 +1083,18 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "رصيد غير كافٍ",
+      "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "ربط رمز التوكن مطلوب",
+      "description" : "رمز التوكن الذي تحاول إرساله غير مرتبط بحساب الوجهة. يجب ربطه بالحساب المستلم حتى يتم تلقيه."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "تعذّر التحقق من ربط رمز التوكن",
+      "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
+    },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
     },
@@ -1305,7 +1326,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 دقائق",
       "medium" : "≈ 30 ثانية",
-      "fast" : "≈ 15 ثانية"
+      "fast" : "≈ 15 ثانية",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1544,25 @@
     "cta" : "إعداد جهازي Ledger",
     "bannerTitle" : "تلقيت جهازك Ledger؟",
     "bannerCta" : "ابدأ الإعداد",
+    "continue" : "متابعة"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
     "continue" : "متابعة"
   },
   "purchaseDevice" : {
@@ -2727,7 +2768,8 @@
       "WITHDRAW" : "مسحوب",
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
-      "WITHDRAW_UNSTAKED" : "مسحوب"
+      "WITHDRAW_UNSTAKED" : "مسحوب",
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
     }
   },
   "operationDetails" : {
@@ -2759,6 +2801,7 @@
     "extra" : {
       "transferId" : "مُعرّف التحويل (ملاحظة)",
       "resource" : "مورد",
+      "validator" : "المدقق",
       "frozenAmount" : "المبلغ المُجمد",
       "unfreezeAmount" : "إزالة تجميد المبلغ",
       "address" : "عنوان",
@@ -3242,7 +3285,7 @@
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
-        "desc" : "تلقى إشعارات بخصوص معاملاتك من إيثريوم و Polygon وسلسلة بينانس الذكية و Avalanche و Ethereum Classic"
+        "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
@@ -6455,6 +6498,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI متاحة",
+        "description" : "هذا المبلغ قابل للتصرف."
+      },
+      "storageUsage" : {
+        "title" : "الحد الأدنى للرصيد",
+        "description" : "هذا المبلغ محجوز للتخزين والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً."
+      },
+      "staked" : {
+        "title" : "الأصل المفوض",
+        "description" : "الرصيد الذي تم تفويضه"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب إلغاء تفويضه"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "بمجرد إلغاء تفويض رصيدك سيتم تحصيل رصيدك ومكافآتك المتراكمة على الفور"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بإلغاء تفويض أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب سحبه"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بسحب أصولك بنجاح"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "المركز (المراكز) المفوّض",
+      "info" : "كيف يعمل التفويض",
+      "add" : "إضافة",
+      "stakingEarn" : "يمكنك كسب مكافآت سوي (SUI) عن طريق تفويض أصولك.",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "iStake" : "أنا أفوّض",
+      "actions" : {
+        "unstake" : "إلغاء التفويض"
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "pending" : "مُعلقّ",
+        "available" : "قابل للسحب"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "المبلغ المطلوب تفويضه",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "قم بتفويض سوي (SUI) خاصتك لكسب المكافآت بشكل آمن، مع الاحتفاظ بالسيطرة على أصولك.",
+            "steps" : {
+              "0" : "الأصول المفوضة تظل ملكك.",
+              "1" : "بمجرد إلغاء التفويض سيتم تحصيل رصيدك ومكافآتك المتراكمة على الفور.",
+              "2" : "قم بالتفويض بشكل آمن مع جهازك Ledger."
+            },
+            "warning" : {
+              "description" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+            },
+            "cta" : "متابعة"
+          },
+          "amount" : {
+            "assetsRemaining" : "الأصول المتبقية : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
+            "minAmount" : "الحد الأدنى للمبلغ : <0>{{min}}</0>",
+            "incorrectAmount" : "الحد الأقصى للمبلغ : <0>{{max}}</0>",
+            "cta" : "متابعة"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6642,6 +6786,7 @@
       "undelegate" : "سينتهي تفويض حسابك عندما يتم تأكيد العملية. يمكنك تفويض حسابك مرة أخرى في أي وقت."
     },
     "summaryTitle" : "الملخص",
+    "delegate" : "تفويض",
     "goToAccount" : "الذهاب إلى الحسابات",
     "howDelegationWorks" : "كيف يعمل التفويض",
     "actions" : {
@@ -7078,6 +7223,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "لتلقي رموز HTS، يجب أن يتم ربط حسابك. إذا لم تقم بربط حسابك بالفعل برمز HTS الذي ترغب في تلقيه، <0>انقر هنا</0> لبدء تدفق ربط رمز التوكن.",
+          "learnMore" : "تعرّف على المزيد"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "اختر رمز التوكن الذي تريد تلقيه"
+      },
+      "summary" : {
+        "title" : "ربط رمز التوكن",
+        "from" : "رمز توكن",
+        "to" : "إلى",
+        "warning" : {
+          "text" : "بالنقر على Continue (متابعة) ستقوم بربط رمز التوكن المختار بحساب Hedera الخاص بك.",
+          "learnMore" : "تعرّف على المزيد"
+        }
+      },
+      "selectDevice" : {
+        "title" : "ربط رمز التوكن"
+      },
+      "connectDevice" : {
+        "title" : "ربط رمز التوكن"
+      },
+      "validationSuccess" : {
+        "title" : "تم إرسال المعاملة",
+        "text" : "ستتمكن من تلقي رمز التوكن هذا بمجرد تأكيد معاملة ربط رمز التوكن"
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "تعرّف على المزيد"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "تعرّف على المزيد"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "رمز التوكن المرتبط",
+      "postAlert" : {
+        "text" : "بمجرد أن يتم تأكيد هذه المعاملة ستتمكن من تلقي رمز التوكن. <0>انقر هنا</0> لبدء تدفق التلقي.",
+        "learnMore" : "تعرّف على المزيد"
+      }
     }
   },
   "asset" : {
