@@ -666,8 +666,8 @@ function extractSwapStartParam(
       fromParentAccount,
       fromCurrency: getCurrencyForAccount(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
-      toParentAccount: newTokenAccount ? toAccount : toParentAccount,
-      toCurrency: getCurrencyForAccount(toAccount),
+      toParentAccount: toParentAccount,
+      toCurrency: getCurrencyForAccount(newTokenAccount ? newTokenAccount : toAccount),
     },
   };
 }
