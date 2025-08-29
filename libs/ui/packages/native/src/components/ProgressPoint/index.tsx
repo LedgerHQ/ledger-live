@@ -32,8 +32,8 @@ export function ProgressPoint({ start = 0, end = 100, current = 0, ...props }: P
   }, [start, end, current]);
 
   const animatedPointStyle = useAnimatedStyle(() => ({
-    left: withTiming(`${percentage.value}%`, { duration: 300 }),
-    transform: [{ translateX: -6 }],
+    left: withTiming(`${Math.max(1, Math.min(99, percentage.value))}%`, { duration: 300 }),
+    transform: [{ translateX: -2 }],
   }));
 
   return (
