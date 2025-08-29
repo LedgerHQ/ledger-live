@@ -549,6 +549,9 @@ importers:
       qrcode:
         specifier: 1.5.3
         version: 1.5.3
+      qrloop:
+        specifier: 1.4.1
+        version: 1.4.1
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -30178,6 +30181,9 @@ packages:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+
+  qrloop@1.4.1:
+    resolution: {integrity: sha512-LXkwCl1Qd8imTHb+KqjMn+cHmuncyFT81AXoooWJvbG3+g9q61l9udSRPgY4cgl+5goQHuAK4teEdUF6UErYXw==}
 
   qs@6.11.0:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
@@ -67030,6 +67036,11 @@ snapshots:
       encode-utf8: 1.0.3
       pngjs: 5.0.0
       yargs: 15.4.1
+
+  qrloop@1.4.1:
+    dependencies:
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      md5: 2.3.0
 
   qs@6.11.0:
     dependencies:
