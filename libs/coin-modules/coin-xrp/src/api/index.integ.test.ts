@@ -67,6 +67,17 @@ describe("Xrp Api", () => {
       // so here we are checking that this limit is bypassed
       expect(ops.length).toBeGreaterThan(200);
     });
+
+    it("returns operations from latest, but in asc order", async () => {
+      // When
+      const [txDesc] = await api.listOperations(SENDER, { minHeight: 0, order: "desc" });
+
+      // Then
+      // Check if the result is sorted in ascending order
+      expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
+        txDesc[txDesc.length - 1].tx.block.height,
+      );
+    });
   });
 
   describe("lastBlock", () => {

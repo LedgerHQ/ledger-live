@@ -56,7 +56,23 @@ describe("API", () => {
     // THEN
     expect(txId).toEqual(expect.any(String));
   });
+
+  it("returns operations from latest, but in asc order", async () => {
+    // When
+    const [txDesc] = await module.listOperations(
+      "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
+      { minHeight: 0, order: "desc" },
+    );
+
+    // Then
+    // Check if the result is sorted in ascending order
+    expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
+      txDesc[txDesc.length - 1].tx.block.height,
+    );
+  });
 });
+
+it
 
 /**
  * Use this function to create a new account and seed `.env.integ.test.ts` file with its value.
