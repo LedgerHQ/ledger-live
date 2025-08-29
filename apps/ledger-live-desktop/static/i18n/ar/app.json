@@ -202,7 +202,8 @@
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
       "SENDING" : "إرسال",
-      "BURN" : "محروق"
+      "BURN" : "محروق",
+      "ASSOCIATE_TOKEN" : "ربط رمز التوكن"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -1939,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
-      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
+      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
+      "cicAcceptTerms" : "“Swap with CIC” you accept CIC’s <0>Terms of Use</0> and its <1>AML/KYC policy</1> CIC may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact CIC’s <2>customer support.</2>"
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -2273,6 +2275,16 @@
   "sell" : {
     "title" : "بيع",
     "titleCrypto" : "بيع {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "تم إرسال العملية الخاصة بك إلى الشبكة لتأكيدها. يُرجى الانتظار حتى يتم تأكيد معاملتك وحتى يقوم المزود بمعالجتها."
+      }
+    }
+  },
+  "fund" : {
+    "title" : "Fund",
+    "titleCrypto" : "Fund {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "تم بث المعاملة بنجاح",
@@ -4258,6 +4270,106 @@
       }
     }
   },
+  "sui" : {
+    "account" : {
+      "stakedBalance" : "الأصل المفوض",
+      "stakedBalanceTooltip" : "هذا المبلع مُكدَّس حالياً مع مدققين.",
+      "availableBalance" : "الرصيد القابل للسحب",
+      "availableBalanceTooltip" : "هذا المبلغ تم إلغاء تكديسه وحالياً قابل للسحب.",
+      "pendingBalance" : "الرصيد المُعلَّق",
+      "pendingBalanceTooltip" : "هذا المبلغ تمّ إلغاء تكديسه وحالياً بانتظار الإتاحة.",
+      "storageUsageBalance" : "الحد الأدنى للرصيد",
+      "storageUsageBalanceTooltip" : "هذا المبلغ محجوز للتخزين والمعاملات، وهو الحد الأدنى للرصيد الذي يجب أن يكون في حسابك لكي يظل نشطاً.",
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "تعمل بواسطة Figment",
+        "title" : "رمز سوي (SUI) متاح الآن في Ledger Live",
+        "description" : "يمكنك الآن بدء إدارة وتأمين رموز سوي (SUI) خاصتك من خلال Ledger Live.",
+        "description2" : "رمز سوي (SUI) هو الرمز الأصلي لسلسلة سوي (SUI) ويُستخدم لكل شيء مثل المعاملات، والتكديس والعديد من الميزات القادمة.",
+        "website" : "تعمل بواسطة Figment"
+      }
+    },
+    "operationDetails" : {
+      "extra" : {
+        "stakedAmount" : "المبلغ المفوض"
+      }
+    },
+    "stake" : {
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت سوي (SUI) عن طريق تكديس أصولك.",
+        "info" : "كيف يعمل التكديس",
+        "earnRewards" : "اكسب مكافآت"
+      },
+      "table" : {
+        "header" : "مركز (أو مراكز) التكديس",
+        "stake" : "إضافة",
+        "staked" : "تم التفويض",
+        "pending" : "بانتظار الإتاحة",
+        "available" : "قابل للسحب"
+      },
+      "unstake" : "إلغاء التفويض",
+      "activeTooltip" : "المبالغ المفوضة تولد المكافآت",
+      "inactiveTooltip" : "المبالغ المفوضة لا تولد مكافآت",
+      "commission" : "العمولة",
+      "totalStake" : "إجمالي التفويض",
+      "minSafeWarning" : "لا توجد أموال كافية",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ"
+          },
+          "validator" : {
+            "title" : "المدققون",
+            "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
+            "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل (بلوكتشين) بتأكيد المعاملة.",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "unstake" : {
+      "disabledTooltip" : "لا توجد أصول مُكدَّسة كافية لإلغاء تكديسها",
+      "flow" : {
+        "title" : "إلغاء تفويض الأصول",
+        "steps" : {
+          "amount" : {
+            "title" : "المبلغ",
+            "subtitle" : "عملية إلغاء التكديس تستغرق من <0>52 إلى 65 ساعة</0> لتتم.",
+            "warning" : "بمجرد إلغاء تفويض رصيدك سيتم تحصيل رصيدك ومكافآتك المتراكمة على الفور",
+            "fields" : {
+              "validator" : "المدقق",
+              "amount" : "المبلغ المطلوب إلغاء تفويضه"
+            }
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء تفويض أصولك بنجاح.",
+              "description" : "<0>{{amount}}</0> تم إلغاء تفويضها من <0>{{validator}}</0>",
+              "cta" : "عرض التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    }
+  },
   "delegation" : {
     "title" : "اكسب المكافآت",
     "header" : "التفويض",
@@ -4775,6 +4887,10 @@
         "testEuropaPostonboarding" : {
           "title" : "اختبر Europa ما بعد التهيئة",
           "description" : "اختبر جميع ميزات europa ما بعد التهيئة"
+        },
+        "testApexPostonboarding" : {
+          "title" : "اختبر Apex ما بعد التهيئة",
+          "description" : "اختبر جميع ميزات apex ما بعد التهيئة"
         },
         "1559DeactivateGate" : {
           "title" : "إلغاء تنشيط بوابة EIP1559 للحد الأدنى لرسوم الأولوية",
@@ -6688,6 +6804,18 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "رصيد غير كافٍ",
+      "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "ربط رمز التوكن مطلوب",
+      "description" : "رمز التوكن الذي تحاول إرساله غير مرتبط بحساب الوجهة. يجب ربطه بالحساب المستلم حتى يتم تلقيه."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "تعذّر التحقق من ربط رمز التوكن",
+      "description" : "لم نتمكن من تأكيد ما إذا كان بإمكان حساب الوجهة تلقي رمز التوكن هذا. ربما يكون العنوان غير صالح، أو قد يكون هناك مشكلةً في الشبكة أو الخدمة."
+    },
     "ImageIncorrectFileTypeError" : {
       "title" : "فشل تحميل الصورة من الملف.",
       "description" : "يُرجى المحاولة مجدداً بصورة."
@@ -6821,6 +6949,18 @@
       "getHelp" : "احصل على مساعدة",
       "technicalErrorTitle" : "خطأ تقني : ",
       "saveLogs" : "حفظ السجلات"
+    },
+    "OneSuiMinForStake" : {
+      "title" : "الحد الأدنى هو 1 سوي (SUI)"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "الحد الأدنى هو 1 سوي (SUI)"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "يجب ترك 1 سوي (SUI) على الأقل في التكديس"
+    },
+    "SomeSuiForUnstake" : {
+      "title" : "يُرجى التأكد من أن لديك 0.1 سوي (SUI) على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية وإلغاء تفويض حصتك"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "رصيدك المتاح (غير المُكدّس) هو حالياً {{currentBalance}} وهو غير كافٍ لدفع رسوم الشبكة لإلغاء تكديس {{assetName}} خاصتك.",
@@ -6973,10 +7113,54 @@
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
     },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "لتلقي رموز HTS، يجب أن يتم ربط حسابك. إذا لم تقم بربط حسابك بالفعل برمز HTS الذي ترغب في تلقيه، <0>انقر هنا</0> لبدء تدفق ربط رمز التوكن.",
+          "learnMore" : "تعرّف على المزيد"
+        },
+        "associationRequired" : {
+          "text" : "بالنقر على Continue (متابعة) ستقوم بربط رمز التوكن المختار بحساب Hedera الخاص بك.",
+          "learnMore" : "تعرّف على المزيد"
+        }
+      }
+    },
+    "receiveWithAssociation" : {
+      "steps" : {
+        "associationConfirmation" : {
+          "breadcrumbTitle" : "ربط",
+          "title" : "ربط رمز التوكن",
+          "pending" : {
+            "title" : "جاري بث المعاملة..."
+          },
+          "success" : {
+            "title" : "تم إرسال المعاملة",
+            "description" : "ستتمكن من تلقي رمز التوكن هذا بمجرد تأكيد معاملة ربط رمز التوكن",
+            "cta" : "عرض التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
     "send" : {
       "memo" : {
         "label" : "ملاحظة (اختيارية)",
         "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "تعرّف على المزيد"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "تعرّف على المزيد"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "رمز التوكن المرتبط",
+      "postAlert" : {
+        "text" : "بمجرد أن يتم تأكيد هذه المعاملة ستتمكن من تلقي رمز التوكن. <0>انقر هنا</0> لبدء تدفق التلقي.",
+        "learnMore" : "تعرّف على المزيد"
       }
     }
   },
