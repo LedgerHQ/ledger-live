@@ -1839,7 +1839,7 @@ describe("filterOperations", () => {
       const result = sdk.filterOperations(
         { operations: [], cursor: null },
         { operations: [], cursor: null },
-        "ascending"
+        "ascending",
       );
       expect(result.operations).toHaveLength(0);
     });
