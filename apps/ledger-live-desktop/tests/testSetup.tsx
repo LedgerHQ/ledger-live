@@ -19,6 +19,8 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { useDesktopWalletSyncBridge } from "~/renderer/components/WalletSyncProvider";
+import { WalletSyncProvider as BaseWalletSyncProvider } from "@ledgerhq/live-wallet-sync-react";
 import type { ReduxStore } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -77,6 +79,11 @@ function CountervaluesProviders({
   );
 }
 
+function WalletSyncTestProvider({ children }: { children: React.ReactNode }) {
+  const bridge = useDesktopWalletSyncBridge();
+  return <BaseWalletSyncProvider bridge={bridge}>{children}</BaseWalletSyncProvider>;
+}
+
 /**
  * A component that wraps the application with necessary context providers.
  * It includes providers such as QueryClientProvider, Redux Provider, FirebaseFeatureFlagsProvider,
@@ -128,7 +135,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
       <DrawerProvider>
         <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
           <StyleProvider selectedPalette="dark">
-            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+            <WalletSyncTestProvider>
+              <ContextMenuWrapper>{children}</ContextMenuWrapper>
+            </WalletSyncTestProvider>
           </StyleProvider>
         </NftMetadataProvider>
       </DrawerProvider>
@@ -220,6 +229,7 @@ function renderHook<Result, Props>(
     initialProps?: Props;
     initialState?: DeepPartial<State>;
     store?: ReduxStore;
+    minimal?: boolean;
   } = {},
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
@@ -227,13 +237,14 @@ function renderHook<Result, Props>(
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
+    minimal = true,
   } = options;
 
   return {
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal>
+        <Providers store={store} minimal={minimal}>
           {children}
         </Providers>
       ),

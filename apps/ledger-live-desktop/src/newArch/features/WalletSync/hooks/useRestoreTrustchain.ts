@@ -16,6 +16,7 @@ export const useRestoreTrustchain = () => {
 
   const trustchain = useSelector(trustchainSelector);
 
+  // TODO: cache queryFn
   async function restoreTrustchain() {
     const newTrustchain = await sdk.restoreTrustchain(
       trustchain as Trustchain,

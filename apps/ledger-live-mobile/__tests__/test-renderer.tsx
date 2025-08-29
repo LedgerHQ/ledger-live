@@ -3,6 +3,7 @@ import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { WalletSyncProvider } from "~/components/WalletSyncProvider";
 import { NavigationContainer } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -189,7 +190,9 @@ function Providers({
   let providers = (
     <Provider store={store}>
       <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-        <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
+        <WalletSyncProvider>
+          <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
+        </WalletSyncProvider>
       </FirebaseFeatureFlagsProvider>
     </Provider>
   );
