@@ -59,10 +59,10 @@ describe("API", () => {
 
   it("returns operations from latest, but in asc order", async () => {
     // When
-    const [txDesc] = await module.listOperations(
-      "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
-      { minHeight: 0, order: "desc" },
-    );
+    const [txDesc] = await module.listOperations("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1", {
+      minHeight: 0,
+      order: "desc",
+    });
 
     // Then
     // Check if the result is sorted in ascending order
@@ -71,8 +71,6 @@ describe("API", () => {
     );
   });
 });
-
-it
 
 /**
  * Use this function to create a new account and seed `.env.integ.test.ts` file with its value.
