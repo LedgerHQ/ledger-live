@@ -6,6 +6,7 @@ export enum DeviceLabels {
   SIGN = "Sign",
   APPROVE = "Approve",
   ACCEPT = "Accept",
+  ACCEPT_RISK = "Accept risk",
   TRANSFER = "Transfer",
   RECIPIENT = "Recipient",
   DEST = "Dest",
