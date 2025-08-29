@@ -46,124 +46,58 @@ jobs:
       - name: Build
         run: pnpm build:coin-modules:deps
 
+      # Capture stdout to a file (and turn colors off in the log for clean parsing)
       - name: Test
         id: run-tests
         shell: bash
+        env:
+          FORCE_COLOR: 0
+          NO_COLOR: "1"
         run: |
           set -o pipefail
           pnpm coin-modules:test-integ 2>&1 | tee test-output.log
 
-      - name: Summarize failures (all per-coin)
+      # Parse the log and output ONLY failing coin names as bullets.
+      - name: Summarize failed coins (names only)
         id: summarize
         if: always()
         shell: bash
         run: |
-          node - <<'NODE' > failure_summary.json
+          node - <<'NODE' > failed_coins.json
           const fs = require('fs');
-          const text = fs.readFileSync('test-output.log', 'utf8');
+
+          // (defense-in-depth) strip ANSI if any slipped through
+          const stripAnsi = s =>
+            s.replace(/[\u001B\u009B][[()\]#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nq-uy=><]/g,'');
+
+          const text  = stripAnsi(fs.readFileSync('test-output.log','utf8'));
           const lines = text.split('\n');
 
-          // Detect a coin context anywhere we see its prefix
-          const coinPrefix = /libs\/coin-modules\/(coin-[^\s:]+)\s+test-integ(?::|\$)/;
+          const coins = new Set();
 
-          // Anchor events
-          const failLine  = /test-integ:\s+FAIL\b/;
-          const passLine  = /test-integ:\s+(PASS|Done|SKIP)\b/;
+          // Typical per-coin FAIL lines
+          const failRe = /libs\/coin-modules\/(coin-[^\s:]+)\s+test-integ:\s+FAIL\b/g;
+          let m; while ((m = failRe.exec(text))) coins.add(m[1]);
 
-          // Heuristics for concise error content
-          const isConciseErr = (L) =>
-            /Invalid|Error|expect\(received\)|AssertionError|Timeout|CryptoAssetsStore is not set|A worker process has failed|Failed\b/i.test(L) &&
-            !/^●\s/.test(L) &&              // suite header handled separately
-            !/^at\s/.test(L) &&             // stack frames
-            !/^>?\s*\d+\s*\|/.test(L) &&    // code frame
-            !/^\s*\d+\s\|\s/.test(L) &&
-            L.trim().length > 0;
-
-          const reasons = {}; // coin -> Set
-          let currentCoin = null;
-          let inFailBlock = false;
-
-          // Helper to ensure set exists
-          const ensure = (coin) => (reasons[coin] ||= new Set());
-
-          for (let i = 0; i < lines.length; i++) {
-            const raw = lines[i];
-            const coinHit = raw.match(coinPrefix);
-            if (coinHit) {
-              currentCoin = coinHit[1];
-              inFailBlock = false;
-              ensure(currentCoin);
-            }
-
-            // Track FAIL start/end within a coin
-            if (currentCoin) {
-              if (failLine.test(raw)) inFailBlock = true;
-              if (passLine.test(raw)) { inFailBlock = false; currentCoin = null; }
-            }
-
-            if (!currentCoin) continue;
-
-            // Normalize line (strip pnpm prefix)
-            const L = raw.replace(/^.*?test-integ:\s*/, '').trim();
-
-            // 1) Inline concise errors
-            if (isConciseErr(L)) ensure(currentCoin).add(L);
-
-            // 2) Jest "● title" + first meaningful line after it
-            if (/^● /.test(L)) {
-              // Combine the suite/test title with the next meaningful line as context
-              let k = i + 1, detail = '';
-              for (; k < Math.min(i + 20, lines.length); k++) {
-                const nextSanitized = lines[k].replace(/^.*?test-integ:\s*/, '').trim();
-                if (isConciseErr(nextSanitized)) { detail = nextSanitized; break; }
-              }
-              const title = L.replace(/^●\s+/, '');
-              ensure(currentCoin).add(`${title} — ${detail || 'failed'}`);
-            }
+          // pnpm tail error blocks (package footer)
+          for (let i=0;i<lines.length;i++){
+            const tail = lines[i].match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
+            if (tail) coins.add(tail[1]);
           }
 
-          // 3) Fallback on pnpm tail error blocks (your cosmos case)
-          // Looks like:
-          // /home/.../libs/coin-modules/coin-cosmos:
-          // ERROR @ledgerhq/coin-cosmos@... test-integ: `jest ...`
-          // Exit status 1
-          lines.forEach((line, idx) => {
-            const m = line.match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
-            if (m) {
-              const coin = m[1];
-              ensure(coin);
-              let msg = '';
-              for (let j = idx + 1; j < idx + 5 && j < lines.length; j++) {
-                const s = lines[j].trim();
-                if (/^ERROR\b/.test(s)) continue;
-                if (s && !/^\s*$/.test(s)) { msg = s; break; }
-              }
-              ensure(coin).add(msg || 'Exit status 1 (see full log)');
-            }
-          });
-
-          // Format Slack text
-          const clamp = (s, n=240) => (s.length > n ? s.slice(0, n-1) + '…' : s);
-          const sections = Object.entries(reasons)
-            .filter(([_, set]) => set.size)
-            .sort(([a],[b]) => a.localeCompare(b))
-            .map(([coin, set]) => `• ${coin}:\n${[...set].map(e => '    - ' + clamp(e)).join('\n')}`);
-
-          const full = sections.join('\n');
-          const MAX = 3000;
-          const summaryText = full.length > MAX ? full.slice(0, MAX-20) + '\n…(truncated)' : full;
-
-          process.stdout.write(JSON.stringify({ summaryText }, null, 2));
+          const list = [...coins].sort();
+          const bullets = list.length ? list.map(c => `• ${c}`).join('\n') : '(none)';
+          process.stdout.write(JSON.stringify({ bullets }, null, 2));
           NODE
 
-          echo "summary_text<<EOF" >> "$GITHUB_OUTPUT"
-          jq -r '.summaryText' failure_summary.json >> "$GITHUB_OUTPUT"
+          echo "bullets<<EOF" >> "$GITHUB_OUTPUT"
+          jq -r '.bullets' failed_coins.json >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
   integ-tests-fail:
     name: failure report
     needs: integ-tests
-    if: failure() && github.event_name
+    if: failure() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Post parent message
@@ -185,31 +119,25 @@ jobs:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
 
-      - name: Post per-coin errors in thread (file payload)
+      # Reply in a thread with just the failing coin names (real newline, no \n literal).
+      - name: Build thread payload
+        id: build_thread
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           THREAD_TS: ${{ fromJSON(steps.post_parent.outputs.response).ts }}
-          SUMMARY_TEXT: ${{ needs.integ-tests.outputs.summary_text || 'no details found' }}
+          SUMMARY_BULLETS: ${{ needs.integ-tests.outputs.failed_coins_bullets }}
+        shell: bash
         run: |
           set -euo pipefail
-
-          header="*Failed coins (one-liners):*\n"
-
-          # Optional: replace backticks with a harmless prime to avoid accidental formatting
-          safe_summary=$(printf '%s' "$SUMMARY_TEXT" | sed 's/`/′/g')
-
-          # Combine header + summary into one string for jq to JSON-escape
-          combined="${header}${safe_summary}"
-
-          # Build JSON payload safely
+          header=$'*Failed coins:*\n'
+          combined="${header}${SUMMARY_BULLETS:-'(none)'}"
           jq -n \
             --arg ch "C05FKJ7DFAP" \
             --arg ts "$THREAD_TS" \
             --arg text "$combined" \
-            '{channel:$ch, thread_ts:$ts, text:$text}' \
-            > slack-thread-payload.json
+            '{channel:$ch, thread_ts:$ts, text:$text}' > slack-thread-payload.json
 
-      - uses: slackapi/slack-github-action@v2.0.0
+      - name: Post failed coins in thread
+        uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
