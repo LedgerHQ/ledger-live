@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { LayoutChangeEvent, Pressable } from "react-native";
+import { LayoutChangeEvent, Pressable, ScrollView } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
 import styled, { useTheme } from "styled-components/native";
@@ -18,6 +18,7 @@ export type Props = {
   setActiveIndex?: (_: number) => void;
   index: number;
   withExtraMarginOnActiveStep?: boolean;
+  parentScrollRef?: null | React.RefObject<ScrollView>;
 };
 
 const getContainerBackground = (theme: Theme, status: ItemStatus) => {
@@ -57,6 +58,7 @@ export default function TimelineItem({
   setActiveIndex,
   index,
   withExtraMarginOnActiveStep,
+  parentScrollRef = null,
 }: Props) {
   const theme = useTheme();
   /**
@@ -71,8 +73,9 @@ export default function TimelineItem({
   const handleLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 300 });
+      parentScrollRef?.current?.scrollToEnd({ animated: true });
     },
-    [sharedHeight],
+    [sharedHeight, parentScrollRef],
   );
 
   const animatedStyle = useAnimatedStyle(

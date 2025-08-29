@@ -22,6 +22,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { backgroundColor } from "styled-system";
 
 /*
  * Constants
@@ -97,6 +98,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
    */
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preventNavigation = useRef(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   /*
    * Redux State
@@ -196,13 +198,11 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
    * useEffects
    */
 
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", e => {
-        if (preventNavigation.current) e.preventDefault();
-      }),
-    [navigation],
-  );
+  useEffect(() => {
+    navigation.addListener("beforeRemove", e => {
+      if (preventNavigation.current) e.preventDefault();
+    });
+  }, [navigation]);
 
   // Handle exit status
   useEffect(() => {
@@ -232,7 +232,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
           delay={twoStepDesync.desyncOverlayDisplayDelayMs}
           productName={productName}
         />
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} ref={scrollViewRef}>
           <Flex paddingBottom={10}>
             <Text variant="h4" fontWeight="semiBold">
               {t("syncOnboarding.twoStepTitle")}
@@ -249,6 +249,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
               isCollapsed={companionStep !== "setup"}
               isPollingOn={isPollingOn}
               setIsPollingOn={setIsPollingOn}
+              parentRef={scrollViewRef}
             />
             <SecondStepSyncOnboarding
               companionStep={companionStep}

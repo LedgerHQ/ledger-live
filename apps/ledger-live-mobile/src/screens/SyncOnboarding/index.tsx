@@ -78,7 +78,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
+            <Flex
+              my={isSyncIncr1Enabled ? 0 : 5}
+              flexDirection="row"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
               <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
@@ -86,7 +91,14 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         </>
       ),
     });
-  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
+  }, [
+    device,
+    navigation,
+    isHeaderOverlayOpen,
+    headerOverlayDelayMs,
+    onCloseButtonPress,
+    isSyncIncr1Enabled,
+  ]);
 
   const {
     onboardingState,

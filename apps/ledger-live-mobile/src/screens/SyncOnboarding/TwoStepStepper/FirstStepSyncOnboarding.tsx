@@ -26,6 +26,14 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
 import { ExitState } from "./TwoStepSyncOnboardingCompanion";
 import BackgroundGreen from "../assets/BackgroundGreen";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { LayoutChangeEvent, ScrollView } from "react-native";
 
 /*
  * Constants
@@ -70,12 +78,12 @@ interface FirstStepSyncOnboardingProps {
    * set or clean timeout of desync based on device connection errors
    */
   handlePollingError: (error: Error | null) => void;
-  //   handleFinishStep: () => void;
   isCollapsed: boolean;
   // Polling state
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
   handleFinishStep: (nextStep: ExitState) => void;
+  parentRef: null | React.RefObject<ScrollView>;
 }
 
 const FirstStepSyncOnboarding = ({
@@ -86,11 +94,11 @@ const FirstStepSyncOnboarding = ({
   handleSeedGenerationDelay,
   notifyEarlySecurityCheckShouldReset,
   handlePollingError,
-  //   handleFinishStep,
   isCollapsed,
   isPollingOn,
   setIsPollingOn,
   handleFinishStep,
+  parentRef,
 }: FirstStepSyncOnboardingProps) => {
   const { t } = useTranslation();
   const safeAreaInsets = useSafeAreaInsets();
@@ -101,6 +109,8 @@ const FirstStepSyncOnboarding = ({
 
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
   const [hasFinishedAnimation, setHasFinishedAnimation] = useState<boolean>(false);
+  const [isFinishedStep, setIsFinishedStep] = useState<boolean>(false);
+
   /*
    * Feature Flags
    */
@@ -137,6 +147,22 @@ const FirstStepSyncOnboarding = ({
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   /*
+   * Animation State
+   */
+  const sharedHeight = useSharedValue<number | null>(null);
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      /**
+       * If it's null the component still renders normally at its full height
+       * without its height being derived from an animated value.
+       */
+      height: sharedHeight.value ?? undefined,
+      opacity: interpolate(sharedHeight.value || 0, [0, 100], [0, 1], Extrapolation.CLAMP),
+    }),
+    [],
+  );
+
+  /*
    * Custom hooks
    */
   const {
@@ -164,6 +190,7 @@ const FirstStepSyncOnboarding = ({
     notifyEarlySecurityCheckShouldReset,
     setSeedPathStatus,
     analyticsSeedConfiguration,
+    activeStep: companionSteps.activeStep,
   });
 
   useTrackOnboardingFlow({
@@ -175,6 +202,13 @@ const FirstStepSyncOnboarding = ({
   /*
    * Callbacks
    */
+  const handleLayout = useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 300 });
+    },
+    [sharedHeight],
+  );
+
   const formatEstimatedTime = useCallback(
     (estimatedTime: number) =>
       t("syncOnboarding.estimatedTimeFormat", {
@@ -198,9 +232,14 @@ const FirstStepSyncOnboarding = ({
   }, [device, dispatchRedux]);
 
   const handleNextStep = useCallback(() => {
-    companionSteps.setStep(FirstStepCompanionStepKey.Exit);
-    handleFinishStep(analyticsSeedConfiguration.current === "new_seed" ? "new_seed" : "restore");
-  }, [handleFinishStep, companionSteps]);
+    sharedHeight.value = withTiming(20, { duration: 400 });
+    setIsFinishedStep(true);
+    setTimeout(() => {
+      companionSteps.setStep(FirstStepCompanionStepKey.Exit);
+      setIsFinishedStep(false);
+      handleFinishStep(analyticsSeedConfiguration.current === "new_seed" ? "new_seed" : "restore");
+    }, 400);
+  }, [handleFinishStep, companionSteps, sharedHeight]);
 
   /*
    * useEffects
@@ -361,6 +400,15 @@ const FirstStepSyncOnboarding = ({
       }
     };
   }, [companionSteps.activeStep, setHasFinishedAnimation]);
+
+  useEffect(() => {
+    if (parentRef?.current && companionSteps.activeStep === FirstStepCompanionStepKey.Seed) {
+      // Without timeout the component has not expanded yet on scroll
+      const timer = setTimeout(() => parentRef.current?.scrollToEnd({ animated: true }), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [companionSteps.activeStep, parentRef]);
+
   /*
    * Exit effects
    */
@@ -382,15 +430,23 @@ const FirstStepSyncOnboarding = ({
       isFirst
       isCollapsed={isCollapsed}
       title={
-        companionSteps.activeStep < FirstStepCompanionStepKey.Seed
+        companionSteps.activeStep <= FirstStepCompanionStepKey.Seed
           ? t("syncOnboarding.title", { productName })
           : t("syncOnboarding.firstStepReadyTitle", { productName })
       }
       status={
         companionSteps.activeStep >= FirstStepCompanionStepKey.Ready ? "complete" : "unfinished"
       }
-      hideTitle={companionSteps.activeStep === FirstStepCompanionStepKey.Ready}
-      background={showSuccess ? <BackgroundGreen /> : null}
+      hideTitle={!isFinishedStep && companionSteps.activeStep === FirstStepCompanionStepKey.Ready}
+      background={
+        showSuccess && !isFinishedStep ? (
+          <Animated.View
+            style={[{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }, animatedStyle]}
+          >
+            <BackgroundGreen />
+          </Animated.View>
+        ) : null
+      }
     >
       {!showSuccess && (
         <Flex mt={3}>
@@ -398,12 +454,17 @@ const FirstStepSyncOnboarding = ({
             steps={companionSteps.steps}
             formatEstimatedTime={formatEstimatedTime}
             contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
+            parentScrollRef={parentRef}
           />
         </Flex>
       )}
-      {showSuccess && (
-        <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
-      )}
+      <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
+        <Animated.View onLayout={handleLayout}>
+          {showSuccess ? (
+            <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
+          ) : null}
+        </Animated.View>
+      </Animated.ScrollView>
     </CollapsibleStep>
   );
 };

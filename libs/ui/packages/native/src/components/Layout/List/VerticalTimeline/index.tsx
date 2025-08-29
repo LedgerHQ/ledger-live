@@ -25,6 +25,10 @@ export type Props = BaseStyledProps & {
    * */
   autoScroll?: boolean;
   contentContainerStyle?: StyleProp<ViewStyle>;
+  /*
+   * Scroll a parent scrollview component if present
+   */
+  parentScrollRef?: null | React.RefObject<ScrollView>;
 };
 
 export default function VerticalTimeline({
@@ -34,6 +38,7 @@ export default function VerticalTimeline({
   header,
   autoScroll = true,
   contentContainerStyle,
+  parentScrollRef = null,
   ...props
 }: Props) {
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -67,6 +72,7 @@ export default function VerticalTimeline({
               isLastItem={index === steps.length - 1}
               setActiveIndex={setActiveIndex}
               index={index}
+              parentScrollRef={parentScrollRef}
             />
           </View>
         ))}

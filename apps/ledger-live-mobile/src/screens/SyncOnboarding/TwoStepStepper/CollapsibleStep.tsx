@@ -85,7 +85,7 @@ const CollapsibleStep = ({
         <StatusIcon status={status} isAbsolute={hideTitle} />
       ) : (
         <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-          <Text variant="h5" fontWeight="semiBold">
+          <Text fontSize="16px" fontWeight="bold">
             {title}
           </Text>
           <StatusIcon status={status} />
