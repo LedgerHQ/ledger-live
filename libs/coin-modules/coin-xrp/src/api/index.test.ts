@@ -178,8 +178,6 @@ describe("listOperations", () => {
       expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
       expect(mockGetTransactions).toHaveBeenCalledTimes(2);
 
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
@@ -196,7 +194,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -224,7 +222,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -247,7 +245,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
