@@ -69,7 +69,7 @@ export class ModularAssetDrawer extends Drawer {
   }
 
   @step("Validate top assets market cap order")
-  async validateTopAssetsByMarketCapOrder() {
+  async validateTopAssetsByMarketCapOrder(assetCountToValidate: number) {
     const expectedOrder = await this.fetchAssetsBasedOnMarketCapOrder();
     const names = await this.getAssetNamesList();
 
@@ -77,7 +77,7 @@ export class ModularAssetDrawer extends Drawer {
       throw new Error("No assets found in asset list");
     }
 
-    const compareLength = Math.min(expectedOrder.length, names.length);
+    const compareLength = Math.min(assetCountToValidate, expectedOrder.length, names.length);
     const actualTopAssets = names.slice(0, compareLength);
 
     for (let i = 0; i < compareLength; i++) {
@@ -93,10 +93,10 @@ export class ModularAssetDrawer extends Drawer {
   }
 
   @step("Select asset by name")
-  async selectAssetByName(currency: Currency) {
+  async selectAssetByName(currency: Currency, assetCountToValidate: number = 10) {
     await this.searchInput.waitFor();
 
-    await this.validateTopAssetsByMarketCapOrder();
+    await this.validateTopAssetsByMarketCapOrder(assetCountToValidate);
 
     const nameElement = await this.ensureNameVisible(currency);
     await nameElement.click();

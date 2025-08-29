@@ -105,13 +105,13 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   @step("Choose crypto asset if not selected")
-  async chooseAssetIfNotSelected(account: AccountType) {
+  async chooseAssetIfNotSelected(account: AccountType, operation: OperationType) {
     if (await this.isCorrectAssetAlreadySelected(account)) {
       return;
     }
 
     await this.clickElement(this.cryptoCurrencySelector);
-    await this.selectAssetInDrawer(account);
+    await this.selectAssetInDrawer(account, operation);
   }
 
   private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
@@ -124,18 +124,21 @@ export class BuyAndSellPage extends WebViewAppPage {
     );
   }
 
-  private async selectAssetInDrawer(account: AccountType) {
+  private async selectAssetInDrawer(account: AccountType, operation: OperationType) {
     const isModularDrawer = await this.modularDrawer.isModularAssetsDrawerVisible();
     if (isModularDrawer) {
-      await this.selectAssetInModularDrawer(account);
+      await this.selectAssetInModularDrawer(account, operation);
     } else {
       await this.selectAssetInLegacyDrawer(account);
     }
   }
 
-  private async selectAssetInModularDrawer(account: AccountType) {
+  private async selectAssetInModularDrawer(account: AccountType, operation: OperationType) {
     await this.modularDrawer.validateAssetsDrawerItems();
-    await this.modularDrawer.selectAssetByTickerAndName(account.currency);
+    await this.modularDrawer.selectAssetByTickerAndName(
+      account.currency,
+      operation === OperationType.Sell ? 3 : 10,
+    );
     await this.modularDrawer.selectNetwork(account.currency);
     await this.modularDrawer.selectAccountByName(account);
   }

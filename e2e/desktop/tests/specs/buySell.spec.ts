@@ -156,7 +156,7 @@ for (const asset of assets) {
         await app.portfolio.clickBuySellButton();
 
         await app.layout.verifyBuySellSideBarIsSelected();
-        await app.buyAndSell.chooseAssetIfNotSelected(crypto);
+        await app.buyAndSell.chooseAssetIfNotSelected(crypto, operation);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
         await app.buyAndSell.verifyInfoBox();
@@ -229,7 +229,7 @@ test.describe("Sell flow - ", () => {
       await app.buyAndSell.selectTab(operation);
       await app.buyAndSell.changeRegionAndCurrency(fiat);
       await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-      await app.buyAndSell.chooseAssetIfNotSelected(crypto);
+      await app.buyAndSell.chooseAssetIfNotSelected(crypto, operation);
 
       await app.buyAndSell.setAmountToPay(amount, operation);
       await app.buyAndSell.selectProviderQuote(operation, sellAsset.provider.uiName);
@@ -274,7 +274,7 @@ test.describe("Sell flow - ", () => {
       await app.buyAndSell.selectTab(operation);
       await app.buyAndSell.changeRegionAndCurrency(fiat);
       await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-      await app.buyAndSell.chooseAssetIfNotSelected(crypto);
+      await app.buyAndSell.chooseAssetIfNotSelected(crypto, operation);
       await app.addAccount.addAccounts();
       await app.addAccount.done();
       await app.modularDrawer.selectAccountByName(crypto);
