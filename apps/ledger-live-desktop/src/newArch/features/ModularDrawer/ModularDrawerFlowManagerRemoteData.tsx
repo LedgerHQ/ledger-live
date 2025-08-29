@@ -40,6 +40,7 @@ const ModularDrawerFlowManagerRemoteData = ({
     handleNetworkSelected,
     handleAccountSelected,
     handleBack,
+    loadNext,
   } = useModularDrawerRemoteData({
     currentStep,
     currencies,
@@ -68,6 +69,7 @@ const ModularDrawerFlowManagerRemoteData = ({
             flow={flow}
             source={source}
             hasOneCurrency={hasOneCurrency}
+            loadNext={loadNext}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:

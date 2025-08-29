@@ -72,7 +72,8 @@
     "DATADOG_PROD_CLIENT_TOKEN",
     "DATADOG_PROD_APPLICATION_ID",
     "MOCK",
-    "MOCK_COUNTERVALUES"
+    "MOCK_COUNTERVALUES",
+    "ENABLE_MSW"
   ],
   "ui": "tui",
   "tasks": {

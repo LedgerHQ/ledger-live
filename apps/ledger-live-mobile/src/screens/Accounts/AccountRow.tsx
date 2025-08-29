@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, DerivationMode } from "@ledgerhq/types-live";
+import { TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
-import { useStartProfiler } from "@shopify/react-native-performance";
+
 import { NavigatorName, ScreenName } from "~/const";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
@@ -36,10 +36,8 @@ const AccountRow = ({
   topLink,
   bottomLink,
   isLast,
-  sourceScreenName,
 }: Props) => {
   const navigation = useNavigation();
-  const startNavigationTTITimer = useStartProfiler();
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
@@ -54,9 +52,8 @@ const AccountRow = ({
     account?.derivationMode !== undefined &&
     account?.derivationMode !== null &&
     currency.type === "CryptoCurrency" &&
-    getTagDerivationMode(currency, account.derivationMode as DerivationMode);
-
-  const parentId = (account as TokenAccount)?.parentId;
+    getTagDerivationMode(currency, account.derivationMode);
+  const parentId = account.type === "TokenAccount" ? account.parentId : undefined;
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -64,21 +61,18 @@ const AccountRow = ({
   });
 
   const onAccountPress = useCallback(
-    (uiEvent: GestureResponderEvent) => {
+    (_uiEvent: GestureResponderEvent) => {
       track("account_clicked", {
         currency: currency.name,
       });
       if (navigationParams) {
-        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         // @ts-expect-error navigagtion spread
         navigation.navigate(...navigationParams);
       } else if (account.type === "Account") {
-        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         navigation.navigate(ScreenName.Account, {
           accountId,
         });
       } else if (account.type === "TokenAccount") {
-        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.Account,
           params: {
@@ -98,8 +92,6 @@ const AccountRow = ({
       navigation,
       navigationParams,
       parentId,
-      sourceScreenName,
-      startNavigationTTITimer,
     ],
   );
 

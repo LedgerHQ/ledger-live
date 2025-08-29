@@ -88,6 +88,8 @@ setSupportedCurrencies([
   "berachain",
   "hyperevm",
   "canton_network",
+  "canton_network_devnet",
+  "canton_network_localnet",
   "coreum",
   "injective",
   "casper",

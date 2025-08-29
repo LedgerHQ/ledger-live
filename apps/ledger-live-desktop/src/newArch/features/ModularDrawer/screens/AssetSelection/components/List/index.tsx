@@ -19,6 +19,7 @@ export type SelectAssetProps = {
   providersLoadingStatus: LoadingStatus;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
+  loadNext?: () => void;
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -38,6 +39,7 @@ export const SelectAssetList = ({
   providersLoadingStatus,
   onAssetSelected,
   onScrolledToTop,
+  loadNext,
 }: SelectAssetProps) => {
   const transformAssets = createAssetConfigurationHook({
     assetsConfiguration,
@@ -74,10 +76,6 @@ export const SelectAssetList = ({
     [assetsToDisplay, trackModularDrawerEvent, flow, source, assetsConfiguration, onAssetSelected],
   );
 
-  const onVisibleItemsScrollEnd = () => {
-    //TODO: Add logic to handle scroll end event once we have dedicated API for it
-  };
-
   useEffect(() => {
     if (scrollToTop && onScrolledToTop) {
       onScrolledToTop();
@@ -98,7 +96,8 @@ export const SelectAssetList = ({
         scrollToTop={scrollToTop}
         assets={formattedAssets}
         onClick={onClick}
-        onVisibleItemsScrollEnd={onVisibleItemsScrollEnd}
+        onVisibleItemsScrollEnd={loadNext}
+        hasNextPage={!!loadNext}
       />
     </ListWrapper>
   );

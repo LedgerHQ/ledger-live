@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { GestureResponderEvent, useStartProfiler } from "@shopify/react-native-performance";
+import { GestureResponderEvent } from "react-native";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -37,14 +37,12 @@ export type NavigationProp = BaseNavigationComposite<
 >;
 
 const useAccountsListViewModel = ({
-  sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAccounts,
   ListFooterComponent,
   specificAccounts,
   onContentChange,
 }: Props) => {
-  const startNavigationTTITimer = useStartProfiler();
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
@@ -63,9 +61,7 @@ const useAccountsListViewModel = ({
   useFocusEffect(refreshAccountsOrdering);
 
   const onAccountPress = useCallback(
-    (account: Account | TokenAccount, uiEvent: GestureResponderEvent) => {
-      startNavigationTTITimer({ source: sourceScreenName, uiEvent });
-
+    (account: Account | TokenAccount, _uiEvent: GestureResponderEvent) => {
       const defaultAccountName = accountNameWithDefaultSelector(walletState, account);
 
       if (account.type === "Account") {
@@ -93,7 +89,7 @@ const useAccountsListViewModel = ({
         });
       }
     },
-    [navigation, sourceScreenName, startNavigationTTITimer, walletState, pageTrackingEvent],
+    [navigation, walletState, pageTrackingEvent],
   );
 
   return {

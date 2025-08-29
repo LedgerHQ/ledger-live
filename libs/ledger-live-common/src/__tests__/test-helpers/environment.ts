@@ -117,6 +117,8 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "canton_network",
+  "canton_network_devnet",
+  "canton_network_localnet",
 ]);
 LiveConfig.setConfig(liveConfig);
 

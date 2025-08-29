@@ -6,10 +6,11 @@ import { Alert as Confirm, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
-import accountModel from "~/logic/accountModel";
-import { saveAccounts } from "../../../../db";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
+import { replaceAccounts } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -18,10 +19,6 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import TextInput from "~/components/TextInput";
-import {
-  initialState as liveWalletInitialState,
-  accountUserDataExportSelector,
-} from "@ledgerhq/live-wallet/store";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -42,34 +39,30 @@ const NUMBER_OF_ACCOUNTS_FOR_NFTS = 3;
 
 const CURRENCIES_FOR_NFT = getEnv("NFT_CURRENCIES");
 
-async function injectMockAccountsInDB(
+const generateMockAccounts = (
   currencies: CryptoCurrency[],
   tokens: string,
   withNft = false,
-) {
+): Account[] => {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
 
   const localCurrencies: CryptoCurrency[] = withNft
     ? currencies.flatMap(currency => Array(NUMBER_OF_ACCOUNTS_FOR_NFTS + 1).fill(currency))
     : currencies;
 
-  await saveAccounts({
-    active: localCurrencies.map(currency => {
-      const account = genAccount(String(Math.random()), {
-        currency,
-        tokenIds,
-        withNft,
-      });
-      const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
-      return accountModel.encode([account, userData]);
+  return localCurrencies.map(currency =>
+    genAccount(String(Math.random()), {
+      currency,
+      tokenIds,
+      withNft,
     }),
-  });
-}
+  );
+};
 
 const currencies = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));
 
 export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
-  const reboot = useReboot();
+  const dispatch = useDispatch();
   const [tokens, setTokens] = useState<string>("");
 
   const { withNft } = route.params ?? {};
@@ -84,7 +77,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
     featureFlagsProvider.overrideFeature("nftsFromSimplehash", { enabled: false });
   }, [featureFlagsProvider]);
 
-  const [checkedCurrencies, setCheckedCurrencies] = useState({} as Record<string, boolean>);
+  const [checkedCurrencies, setCheckedCurrencies] = useState<Record<string, boolean>>({});
 
   const handleItemPressed = useCallback(
     ({ id }: { id: ID }) => {
@@ -100,10 +93,11 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
     const selectedCurrencies = currenciesFiltered.filter(({ id }) => checkedCurrencies[id]);
 
     const onPress = () => {
-      injectMockAccountsInDB(selectedCurrencies, tokens, withNft).then(() => {
-        if (withNft) disableSimpleHash();
-        reboot();
-      });
+      const mockAccounts = generateMockAccounts(selectedCurrencies, tokens, withNft);
+
+      dispatch(replaceAccounts(mockAccounts));
+      if (withNft) disableSimpleHash();
+      dispatch(reboot());
     };
 
     Confirm.alert(
@@ -119,7 +113,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
       ],
       { cancelable: true },
     );
-  }, [checkedCurrencies, currenciesFiltered, disableSimpleHash, reboot, tokens, withNft]);
+  }, [checkedCurrencies, currenciesFiltered, dispatch, disableSimpleHash, tokens, withNft]);
 
   const insets = useSafeAreaInsets();
   return (

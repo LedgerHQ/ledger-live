@@ -52,13 +52,12 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const handlePress = () => {
     if ("getNavigationParams" in props) {
-      navigation.navigate(
-        ...props.getNavigationParams({
-          deviceModelId,
-          protectId,
-          referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
-        }),
-      );
+      const navigationArgs = props.getNavigationParams({
+        deviceModelId,
+        protectId,
+        referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+      });
+      navigation.navigate(navigationArgs[0], navigationArgs[1]);
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", {
           button: buttonLabelForAnalyticsEvent,

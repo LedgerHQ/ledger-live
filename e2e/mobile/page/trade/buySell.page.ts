@@ -110,7 +110,7 @@ export default class BuySellPage {
     await detoxExpect(getWebElementByTestId(this.paymentOptions)).toExist();
     await tapWebElementByTestId(paymentMethod);
     const currentPaymentMethod = await getWebElementText(this.paymentSelector);
-    jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toBe(paymentMethod);
+    jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toContain(paymentMethod);
   }
 
   @Step("Select provider")

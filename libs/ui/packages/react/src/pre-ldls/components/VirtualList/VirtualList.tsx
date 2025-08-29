@@ -144,29 +144,34 @@ export const VirtualList = <T,>({
     scrollToFn,
   });
 
-  const virtualItems = rowVirtualizer.getVirtualItems();
-
   useEffect(() => {
     if (scrollToTop && parentRef.current) {
       scrollToFn(0, { behavior: "smooth" }, { scrollElement: parentRef.current });
     }
   }, [scrollToTop, scrollToFn]);
 
+  const virtualItems = rowVirtualizer.getVirtualItems();
+
   useEffect(() => {
     if (!virtualItems.length) return;
     const lastItem = virtualItems[virtualItems.length - 1];
 
     if (
-      lastItem.index >= virtualItems.length - 1 - threshold &&
+      lastItem.index >= items.length - 1 - threshold &&
       hasNextPage &&
       !isLoading &&
       onVisibleItemsScrollEnd
     ) {
       onVisibleItemsScrollEnd();
     }
-  }, [hasNextPage, onVisibleItemsScrollEnd, isLoading, threshold, virtualItems]);
+  }, [hasNextPage, onVisibleItemsScrollEnd, items.length, isLoading, threshold, virtualItems]);
 
   const showCustomLoadingComponent = !!LoadingComponent;
+
+  const Loading = useCallback(
+    () => (showCustomLoadingComponent ? LoadingComponent : <DefaultLoadingComponent />),
+    [showCustomLoadingComponent, LoadingComponent],
+  );
 
   return (
     <div
@@ -182,23 +187,27 @@ export const VirtualList = <T,>({
           position: "relative",
         }}
       >
-        {rowVirtualizer.getVirtualItems().map((virtualRow: VirtualItem) => (
-          <div
-            key={virtualRow.index}
-            data-index={virtualRow.index}
-            ref={rowVirtualizer.measureElement}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              transform: `translateY(${virtualRow.start}px)`,
-              height: `${itemHeight}px`,
-              width: "100%",
-            }}
-          >
-            {renderItem(items[virtualRow.index])}
-          </div>
-        ))}
+        {rowVirtualizer.getVirtualItems().map((virtualRow: VirtualItem) => {
+          const item = items[virtualRow.index];
+
+          return (
+            <div
+              key={virtualRow.index}
+              data-index={virtualRow.index}
+              ref={rowVirtualizer.measureElement}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transform: `translateY(${virtualRow.start}px)`,
+                height: `${itemHeight}px`,
+                width: "100%",
+              }}
+            >
+              {item ? renderItem(item) : <Loading />}
+            </div>
+          );
+        })}
         {bottomComponent && (
           <div
             style={{
@@ -212,7 +221,7 @@ export const VirtualList = <T,>({
           </div>
         )}
       </div>
-      {isLoading && (showCustomLoadingComponent ? LoadingComponent : <DefaultLoadingComponent />)}
+      {isLoading && <Loading />}
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
-import { getLastBlock } from "../../network/node";
+import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
+import { getLedgerEnd } from "../../network/gateway";
+import coinConfig from "../../config";
+
+const useGateway = () => coinConfig.getCoinConfig().useGateway === true;
 
 export async function lastBlock(): Promise<BlockInfo> {
-  const result = await getLastBlock();
   return {
-    height: result.blockHeight,
-    hash: result.blockHash,
-    time: new Date(result.timestamp),
+    height: useGateway() ? await getLedgerEnd() : await nodeGetLedgerEnd(),
   };
 }

@@ -21,6 +21,7 @@ export type AssetSelectionStepProps = {
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
   hasOneCurrency?: boolean;
+  loadNext?: () => void;
 };
 
 const AssetSelection = ({
@@ -37,6 +38,7 @@ const AssetSelection = ({
   onAssetSelected,
   setSearchedValue,
   hasOneCurrency,
+  loadNext,
 }: Readonly<AssetSelectionStepProps>) => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
@@ -83,6 +85,7 @@ const AssetSelection = ({
         scrollToTop={shouldScrollToTop}
         onAssetSelected={onAssetSelected}
         onScrolledToTop={() => setShouldScrollToTop(false)}
+        loadNext={loadNext}
       />
     </>
   );

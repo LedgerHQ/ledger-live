@@ -353,6 +353,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
+  [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 
 declare global {

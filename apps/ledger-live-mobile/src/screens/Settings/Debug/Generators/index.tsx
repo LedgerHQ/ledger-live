@@ -11,7 +11,7 @@ import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
 import { dangerouslyOverrideState, resetNftStatus } from "~/actions/settings";
-import { useReboot } from "~/context/Reboot";
+import { reboot } from "~/actions/appstate";
 
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
@@ -20,7 +20,6 @@ import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 
 export default function Generators() {
   const dispatch = useDispatch();
-  const reboot = useReboot();
 
   const onCallbackWithConfirmation = (callback: () => void) => {
     Confirmation.alert(
@@ -74,8 +73,8 @@ export default function Generators() {
   }, [dispatch]);
 
   const onForceRefresh = useCallback(() => {
-    reboot();
-  }, [reboot]);
+    dispatch(reboot());
+  }, [dispatch]);
 
   const onWipeAntiSpam = useCallback(() => {
     dispatch(resetNftStatus());

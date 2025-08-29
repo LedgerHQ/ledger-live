@@ -20,7 +20,6 @@ import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
-import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
 import {
@@ -215,7 +214,7 @@ const linkingOptions = () => ({
           },
 
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.SettingsScreen],
+            initialRouteName: ScreenName.SettingsScreen,
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
@@ -353,13 +352,15 @@ export const DeeplinksProvider = ({
   const modularDrawer = useFeature("llmModularDrawer");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
   const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
-
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const theme = themes[resolvedTheme] as ReactNavigation.Theme;
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({
         ...(hasCompletedOnboarding
           ? {
@@ -627,13 +628,13 @@ export const DeeplinksProvider = ({
               case "menu-modal": {
                 const title = searchParams.get("title") ?? "";
                 const options = searchParams.get("options") ?? "";
+                const parsedOptions: { label: string; metadata: OptionMetadata }[] =
+                  JSON.parse(options);
+
                 dispatch(
                   makeSetEarnMenuModalAction({
                     title,
-                    options: JSON.parse(options) as {
-                      label: string;
-                      metadata: OptionMetadata;
-                    }[],
+                    options: parsedOptions,
                   }),
                 );
                 return;
@@ -693,9 +694,11 @@ export const DeeplinksProvider = ({
     setIsReady(true);
   }, [userAcceptedTerms]);
 
-  React.useEffect(
+  useEffect(
     () => () => {
-      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
+      if (isReadyRef.current) {
+        isReadyRef.current = false;
+      }
     },
     [],
   );
@@ -706,11 +709,11 @@ export const DeeplinksProvider = ({
 
   return (
     <NavigationContainer
-      theme={themes[resolvedTheme]}
+      theme={theme}
       linking={linking}
       ref={navigationRef}
       onReady={() => {
-        (isReadyRef as Writeable<typeof isReadyRef>).current = true;
+        isReadyRef.current = true;
         setTimeout(() => SplashScreen.hide(), 300);
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
