@@ -1,7 +1,6 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState } from "react";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useModularDrawerController } from "../hooks/useModularDrawerController";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import FeatureFlagDetails from "~/screens/FeatureFlagsSettings/FeatureFlagDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import { Alert } from "react-native";
@@ -26,7 +25,6 @@ function ModularDrawerScreenDebug() {
   const { openDrawer } = useModularDrawerController();
   const { colors } = useTheme();
 
-  const [includeTokens, setIncludeTokens] = useState(true);
   const [enableAccountSelection, setEnableAccountSelection] = useState(true);
   const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -39,15 +37,12 @@ function ModularDrawerScreenDebug() {
   const [selectedNetworkRightElement, setSelectedNetworkRightElement] =
     useState<NetworkConfiguration["rightElement"]>("undefined");
 
-  const currencies = useMemo(() => listAndFilterCurrencies({ includeTokens }), [includeTokens]);
-
   const handleAccountSelected = useCallback(() => {
     Alert.alert("Account Selected", "An account has been selected via MAD flow");
   }, []);
 
   const handleToggleDrawer = useCallback(() => {
     openDrawer({
-      currencies,
       enableAccountSelection,
       onAccountSelected: enableOnAccountSelected ? handleAccountSelected : undefined,
       flow: "debug_flow",
@@ -64,7 +59,6 @@ function ModularDrawerScreenDebug() {
   }, [
     openDrawer,
     handleAccountSelected,
-    currencies,
     enableAccountSelection,
     enableOnAccountSelected,
     selectedAssetLeftElement,
@@ -88,7 +82,7 @@ function ModularDrawerScreenDebug() {
         </SectionCard>
 
         <SectionCard title="Feature Flag">
-          {(["llmModularDrawer", "llmModularDrawerBackendData"] as const).map(flag => (
+          {(["llmModularDrawer"] as const).map(flag => (
             <FeatureFlagDetails
               key={flag}
               focused={isFocused}
@@ -99,15 +93,6 @@ function ModularDrawerScreenDebug() {
         </SectionCard>
 
         <SectionCard title="Basic Configuration">
-          <ToggleRow
-            label="Include Tokens"
-            description="Show tokens alongside main currencies"
-            value={includeTokens}
-            onChange={setIncludeTokens}
-          />
-
-          <Divider />
-
           <ToggleRow
             label="Add Account / Account Selection"
             description="Allow users to add an account or select specific accounts"
@@ -173,10 +158,6 @@ function ModularDrawerScreenDebug() {
         <SectionCard title="Current Configuration">
           <Flex rowGap={2}>
             <Text variant="body" color="neutral.c80">
-              <Text fontWeight="semiBold">{"Currencies:"}</Text> {currencies.length}
-              {includeTokens ? " (including tokens)" : " (excluding tokens)"}
-            </Text>
-            <Text variant="body" color="neutral.c80">
               <Text fontWeight="semiBold">{"Account Selection:"}</Text>
               {enableAccountSelection ? " Enabled" : " Disabled"}
             </Text>
@@ -202,7 +183,7 @@ function ModularDrawerScreenDebug() {
         }}
       >
         <Button size="large" type="main" onPress={handleToggleDrawer}>
-          {"Open Modular Drawer "}({currencies.length} {"currencies"})
+          {"Open Modular Drawer"}
         </Button>
       </Flex>
     </Flex>

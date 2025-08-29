@@ -411,7 +411,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
           openModularDrawer?.({
             source: source,
             flow: flow,
-            currencies,
+            currencies: currencies.map(c => c.id),
             enableAccountSelection: true,
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),

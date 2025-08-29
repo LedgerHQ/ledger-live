@@ -13,9 +13,6 @@ import {
   useModularDrawerVisibility,
   ModularDrawerLocation,
 } from "LLM/features/ModularDrawer";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-
-const currencies = listAndFilterCurrencies({ includeTokens: true });
 
 type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -81,7 +78,7 @@ const useSelectAddAccountMethodViewModel = ({
   const { openDrawer } = useModularDrawerController();
 
   const handleOpenModularDrawer = useCallback(() => {
-    const currenciesToUse = currency ? [currency] : currencies;
+    const currenciesToUse = currency ? [currency.id] : undefined;
     return openDrawer({
       currencies: currenciesToUse,
       enableAccountSelection: false,

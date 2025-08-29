@@ -11,7 +11,6 @@ type UseDeviceNavigationParams = {
   enableAccountSelection?: boolean;
   onClose?: () => void;
   resetSelection: () => void;
-  selectNetwork?: (a: CryptoOrTokenCurrency, n: CryptoOrTokenCurrency) => void;
 };
 
 export function useDeviceNavigation({
