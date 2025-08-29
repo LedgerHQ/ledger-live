@@ -27,7 +27,6 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/coin-canton": "workspace:^",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

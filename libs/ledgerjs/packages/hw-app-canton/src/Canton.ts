@@ -1,16 +1,18 @@
 import type Transport from "@ledgerhq/hw-transport";
 import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { CantonAddress, CantonSignature } from "@ledgerhq/coin-canton";
 import BIPPath from "bip32-path";
-
-import { MockCantonDevice, AppConfig } from "./MockDevice";
 
 const CLA = 0xe0;
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
 
-const P2 = 0x00;
+// P2 indicating no information.
+const P2_NONE = 0x00;
+// P2 indicating first APDU in a large request.
+const P2_FIRST = 0x01;
+// P2 indicating that this is not the last APDU in a large request.
+const P2_MORE = 0x02;
 
 const INS = {
   GET_VERSION: 0x03,
@@ -24,16 +26,25 @@ const STATUS = {
   USER_CANCEL: 0x6985,
 };
 
+export type AppConfig = {
+  version: string;
+};
+
+export type CantonAddress = {
+  publicKey: string;
+  address: string;
+};
+
+export type CantonSignature = string;
+
 /**
  * Canton BOLOS API
  */
 export default class Canton {
   transport: Transport;
-  transportMock: MockCantonDevice;
 
   constructor(transport: Transport, scrambleKey = "canton_default_scramble_key") {
     this.transport = transport;
-    this.transportMock = new MockCantonDevice();
 
     transport.decorateAppAPIMethods(
       this,
@@ -54,19 +65,17 @@ export default class Canton {
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
-    const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2, serializedPath);
+    const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
 
     const responseData = this.handleTransportResponse(response, "address");
     const { pubKey } = this.extractPubkeyAndChainCode(responseData);
 
-    // Handle 65-byte uncompressed SECP256R1 public key
     const publicKey = "0x" + pubKey;
-
     const addressHash = this.hashString(publicKey);
     const address = "canton_" + addressHash.substring(0, 36);
 
     return {
-      publicKey,
+      publicKey: pubKey,
       address,
     };
   }
@@ -75,19 +84,35 @@ export default class Canton {
    * Sign a Canton transaction.
    *
    * @param path a path in BIP-32 format
-   * @param rawTx the raw transaction to sign
+   * @param txHash the transaction hash to sign
    * @return the signature
    */
-  async signTransaction(path: string, rawTx: string): Promise<CantonSignature> {
+  async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
+    // 1. Send the derivation path
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
-    const payload = Buffer.concat([serializedPath, Buffer.from(rawTx, "hex")]);
 
-    const response = await this.transportMock.send(CLA, INS.SIGN, P1_CONFIRM, P2, payload);
+    const pathResponse = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_NON_CONFIRM,
+      P2_FIRST | P2_MORE,
+      serializedPath,
+    );
+
+    this.handleTransportResponse(pathResponse, "transaction");
+
+    // 2. Send the transaction hash
+    const response = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_NON_CONFIRM,
+      P2_NONE,
+      Buffer.from(txHash, "hex"),
+    );
 
     const responseData = this.handleTransportResponse(response, "transaction");
-
-    const signature = "0x" + responseData.toString("hex");
+    const signature = responseData.toString("hex");
     return signature;
   }
 
@@ -100,7 +125,7 @@ export default class Canton {
       CLA,
       INS.GET_VERSION,
       P1_NON_CONFIRM,
-      P2,
+      P2_NONE,
       Buffer.alloc(0),
     );
 
