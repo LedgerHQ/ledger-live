@@ -88,7 +88,9 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
+        assetsDataApi.middleware,
+      ),
     preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,
   });

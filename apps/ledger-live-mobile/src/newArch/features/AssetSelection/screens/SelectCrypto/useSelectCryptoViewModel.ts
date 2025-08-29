@@ -11,7 +11,7 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/in
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
-import { useAssets } from "LLM/features/ModularDrawer/hooks/useAssets";
+import { useAssets } from "./useAssets";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];

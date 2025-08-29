@@ -31,7 +31,7 @@ const MockComponent = () => {
 
   const handleOpenDrawer = useCallback(() => {
     openDrawer({
-      currencies: currencies,
+      currencies: currencies.map(c => c.id),
       flow: "integration_test",
       source: "accounts_shared",
     });
@@ -58,7 +58,7 @@ const MockComponent = () => {
       <AddAccountDrawer isOpened={isOpen} onClose={handleCloseDrawer} />
       <ModularDrawer
         isOpen={isOpen}
-        currencies={currencies}
+        currencies={currencies.map(c => c.id)}
         flow="integration_test"
         source="accounts_shared"
       />

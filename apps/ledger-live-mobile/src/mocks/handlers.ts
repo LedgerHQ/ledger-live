@@ -1,12 +1,5 @@
-import { http, HttpResponse } from "msw";
-import { mockAssets } from "./dada/mockAssets";
+import dadaHandlers from "./dada/handler";
 
-const handlers = [
-  http.get("https://dada.api.ledger-test.com/v1/assets", req => {
-    // eslint-disable-next-line no-console
-    console.log("\x1b[36m MSW: Dada request intercepted \x1b[0m", req);
-    return HttpResponse.json(mockAssets);
-  }),
-];
+const handlers = [...dadaHandlers];
 
 export default handlers;

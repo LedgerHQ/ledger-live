@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
-import { useAssets } from "./hooks/useAssets";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -25,8 +23,8 @@ type ModularDrawerProps = {
   readonly onClose?: () => void;
 
   // Data and configuration
-  /** List of currencies to display in the drawer */
-  readonly currencies: CryptoOrTokenCurrency[];
+  /** List of preselected currencies to display in the drawer */
+  readonly currencies?: string[];
   /** The flow identifier for analytics */
   readonly flow: string;
   /** The source identifier for analytics */
@@ -63,33 +61,33 @@ export function ModularDrawer({
   onAccountSelected,
   accounts$,
 }: ModularDrawerProps) {
-  const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
+  const [searchValue, setSearchValue] = useState("");
 
-  const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
-    useInitModularDrawer();
+  useEffect(() => {
+    if (isOpen) {
+      setSearchValue("");
+    }
+  }, [isOpen]);
 
-  const { availableAssets, currencyIdsArray } = useAssets(
-    currencies,
-    currenciesByProvider,
-    sortedCryptoCurrencies,
-  );
+  const { sortedCryptoCurrencies, isSuccess, assetsSorted } = useAssetsFromDada({
+    currencyIds: currencies,
+    searchedValue: searchValue,
+  });
 
   const {
-    setDefaultSearchValue,
-    asset,
+    assetForAccount,
     handleAsset,
     handleNetwork,
     handleBackButton,
     handleCloseButton,
-    hasOneCurrency,
     availableNetworks,
-    defaultSearchValue,
     shouldShowBackButton,
     navigationStepManager,
+    hasOneCurrency,
     onAddNewAccount,
   } = useModularDrawerState({
-    currenciesByProvider,
-    currencyIds: currencyIdsArray,
+    assetsSorted,
+    currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
     flow,
     enableAccountSelection,
@@ -110,12 +108,10 @@ export function ModularDrawer({
       <ModularDrawerFlowManager
         navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
-          availableAssets,
+          availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          defaultSearchValue,
-          setDefaultSearchValue,
-          itemsToDisplay,
-          setItemsToDisplay,
+          defaultSearchValue: searchValue,
+          setDefaultSearchValue: setSearchValue,
           flow,
           source,
           assetsConfiguration,
@@ -131,12 +127,12 @@ export function ModularDrawer({
         accountsViewModel={{
           accounts$,
           onAddNewAccount,
-          asset,
+          asset: assetForAccount,
           onAccountSelected,
           flow,
           source,
         }}
-        isReadyToBeDisplayed={isReadyToBeDisplayed}
+        isReadyToBeDisplayed={isSuccess}
       />
     </QueuedDrawerGorhom>
   );
