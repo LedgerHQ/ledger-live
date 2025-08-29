@@ -14,11 +14,12 @@ import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "~/analytics";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/core";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { NavigatorName, ScreenName } from "~/const";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -66,7 +67,15 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
+      // The navigation must be popped to to avoid returning to this screen when pressing back on device selection
       navigation.popToTop();
+      // The navigation goes to an intermediary blank screen if not directly navigated to correct screen after pop
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingDeviceSelection,
+        },
+      });
     }
   }, [currentStep, navigation]);
 
@@ -77,8 +86,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
-              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
+            <Flex my={5} flexDirection="row" justifyContent="flex-start" alignItems="center">
+              <NavigationHeaderBackButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />

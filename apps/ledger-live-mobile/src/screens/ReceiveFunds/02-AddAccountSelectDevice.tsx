@@ -25,7 +25,10 @@ export const addAccountsSelectDeviceHeaderOptions = (
   isOnboardingFlow: boolean = false,
 ): ReactNavigationHeaderOptions => ({
   headerRight: () => (
-    <NavigationHeaderCloseButtonAdvanced onClose={onClose} isOnboardingFlow={isOnboardingFlow} />
+    <NavigationHeaderCloseButtonAdvanced
+      onClose={onClose}
+      disablePostOnboardingRedirect={isOnboardingFlow}
+    />
   ),
   headerLeft: () => <NavigationHeaderBackButton />,
 });
