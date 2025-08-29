@@ -1,5 +1,5 @@
-import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { combineReducers, Store } from "redux";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
