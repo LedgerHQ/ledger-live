@@ -465,7 +465,7 @@ export const getOperations = async (
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const receivedOps = await loadOperations({
@@ -473,7 +473,7 @@ export const getOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
@@ -514,10 +514,8 @@ export const filterOperations = (
     }
   }
   const result = [...sendOps.operations, ...receiveOps.operations]
-    .sort((a, b) => {
-      if (order === "ascending") return Number(b.timestampMs) - Number(a.timestampMs);
-      else return Number(a.timestampMs) - Number(b.timestampMs);
-    }).filter(op => Number(op.timestampMs) >= filterTimestamp);
+    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+    .filter(op => Number(op.timestampMs) >= filterTimestamp);
 
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };

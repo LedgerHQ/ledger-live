@@ -1,5 +1,5 @@
 import { listOperations } from "./listOperations";
-import { getListOperations } from "../network/sdk";
+import { getListOperations, withApi } from "../network/sdk";
 import { type Operation as Op, type Page, Pagination } from "@ledgerhq/coin-framework/api/types";
 
 jest.mock("../network/sdk");
@@ -65,7 +65,7 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(lastHash).toBe(mockOperations.items[0].tx.hash);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, undefined);
+    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, undefined, withApi, "asc");
   });
 
   it("should return empty array and empty string when no operations", async () => {
