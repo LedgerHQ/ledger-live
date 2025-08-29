@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.3.3-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/coin-polkadot@6.8.1-nightly.0
+  - @ledgerhq/coin-tester@0.9.1
+  - @ledgerhq/types-live@6.82.0
+
 ## 1.3.2
 
 ### Patch Changes

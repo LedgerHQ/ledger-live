@@ -1,5 +1,58 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.1
+
+### Minor Changes
+
+- [#11542](https://github.com/LedgerHQ/ledger-live/pull/11542) [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton getbalance
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
+### Patch Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
+- [#11531](https://github.com/LedgerHQ/ledger-live/pull/11531) [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Move lastblock canton to gateway
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca), [`a9a0c18`](https://github.com/LedgerHQ/ledger-live/commit/a9a0c18d91cac8d4bb805d558d3d0bd50337d98a), [`b456a40`](https://github.com/LedgerHQ/ledger-live/commit/b456a40ca1198bec7c68f18f21d48bc8ab379e67), [`f8719c0`](https://github.com/LedgerHQ/ledger-live/commit/f8719c01f5dd61ebcddb7132817bbbce274ad93e)]:
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/coin-canton@0.4.0-nightly.0
+  - @ledgerhq/ledger-cal-service@1.4.0-nightly.2
+  - @ledgerhq/coin-evm@2.29.0-nightly.0
+  - @ledgerhq/coin-stellar@6.3.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/coin-algorand@0.9.19-nightly.0
+  - @ledgerhq/coin-aptos@3.1.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.20.3-nightly.0
+  - @ledgerhq/coin-cardano@0.11.3-nightly.0
+  - @ledgerhq/coin-casper@2.0.10-nightly.0
+  - @ledgerhq/coin-celo@1.2.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.0
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.0
+  - @ledgerhq/coin-hedera@1.10.2-nightly.0
+  - @ledgerhq/coin-icon@0.11.6-nightly.0
+  - @ledgerhq/coin-mina@1.1.18-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.0
+  - @ledgerhq/coin-near@0.12.2-nightly.0
+  - @ledgerhq/coin-polkadot@6.8.1-nightly.0
+  - @ledgerhq/coin-solana@0.31.2-nightly.0
+  - @ledgerhq/coin-stacks@0.8.19-nightly.0
+  - @ledgerhq/coin-sui@0.12.0-nightly.1
+  - @ledgerhq/coin-tezos@6.2.1-nightly.0
+  - @ledgerhq/coin-ton@0.13.8-nightly.1
+  - @ledgerhq/coin-tron@5.3.0-nightly.1
+  - @ledgerhq/coin-vechain@2.8.3-nightly.0
+  - @ledgerhq/coin-xrp@7.2.1-nightly.0
+  - @ledgerhq/live-countervalues@0.6.3-nightly.0
+  - @ledgerhq/live-nft@0.8.19-nightly.0
+  - @ledgerhq/live-wallet@0.12.3-nightly.0
+  - @ledgerhq/coin-internet_computer@1.7.19-nightly.0
+  - @ledgerhq/hw-app-vet@0.5.15-nightly.0
+  - @ledgerhq/live-signer-canton@0.2.3-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.4-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.2-nightly.0
+
 ## 34.47.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-stellar
 
+## 6.3.0-nightly.0
+
+### Minor Changes
+
+- [#11519](https://github.com/LedgerHQ/ledger-live/pull/11519) [`b456a40`](https://github.com/LedgerHQ/ledger-live/commit/b456a40ca1198bec7c68f18f21d48bc8ab379e67) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - lint: remove cyclic imports
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/types-live@6.82.0
+
 ## 6.2.0
 
 ### Minor Changes

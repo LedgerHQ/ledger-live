@@ -1,5 +1,20 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.6.0-nightly.0
+
+### Minor Changes
+
+- [#11384](https://github.com/LedgerHQ/ledger-live/pull/11384) [`f8719c0`](https://github.com/LedgerHQ/ledger-live/commit/f8719c01f5dd61ebcddb7132817bbbce274ad93e) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - refactors LLM reboot and removes deadcode
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/live-countervalues@0.6.3-nightly.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.1
+
+### Minor Changes
+
+- [#11541](https://github.com/LedgerHQ/ledger-live/pull/11541) [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add cic accept terms
+
+- [#11550](https://github.com/LedgerHQ/ledger-live/pull/11550) [`7b97d3f`](https://github.com/LedgerHQ/ledger-live/commit/7b97d3ffff39fb2f69ed019e466de6cb8257d44f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Force date to lang instead of locale in the notification panel
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
+### Patch Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca), [`a9a0c18`](https://github.com/LedgerHQ/ledger-live/commit/a9a0c18d91cac8d4bb805d558d3d0bd50337d98a), [`f8719c0`](https://github.com/LedgerHQ/ledger-live/commit/f8719c01f5dd61ebcddb7132817bbbce274ad93e), [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/live-common@34.47.0-nightly.1
+  - @ledgerhq/coin-evm@2.29.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.0
+  - @ledgerhq/react-ui@0.36.0-nightly.2
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.20.3-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.0
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.0
+  - @ledgerhq/domain-service@1.2.41
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/live-countervalues@0.6.3-nightly.0
+  - @ledgerhq/live-nft@0.8.19-nightly.0
+  - @ledgerhq/live-nft-react@0.9.19-nightly.0
+  - @ledgerhq/live-wallet@0.12.3-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.1
+
 ## 2.127.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/coin-mina
 
+## 1.1.18-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/types-live@6.82.0
+
 ## 1.1.17
 
 ### Patch Changes

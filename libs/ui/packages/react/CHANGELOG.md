@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.36.0-nightly.2
+
+### Minor Changes
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
 ## 0.36.0-nightly.1
 
 ### Minor Changes

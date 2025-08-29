@@ -1,5 +1,35 @@
 # live-mobile
 
+## 3.92.0-nightly.1
+
+### Minor Changes
+
+- [#11524](https://github.com/LedgerHQ/ledger-live/pull/11524) [`0e09c0b`](https://github.com/LedgerHQ/ledger-live/commit/0e09c0b1925a6ab4206f60b12efbae03c523a37c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add MSW dev server to mock DADA
+
+- [#11384](https://github.com/LedgerHQ/ledger-live/pull/11384) [`f8719c0`](https://github.com/LedgerHQ/ledger-live/commit/f8719c01f5dd61ebcddb7132817bbbce274ad93e) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - refactors LLM reboot and removes deadcode
+
+- [#11205](https://github.com/LedgerHQ/ledger-live/pull/11205) [`d193723`](https://github.com/LedgerHQ/ledger-live/commit/d193723f51a29898cfdfd0f6b55c44f3cfd64779) Thanks [@ysitbon](https://github.com/ysitbon)! - Upgrade react-navigation library from v6 to v7
+
+### Patch Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`a9a0c18`](https://github.com/LedgerHQ/ledger-live/commit/a9a0c18d91cac8d4bb805d558d3d0bd50337d98a), [`f8719c0`](https://github.com/LedgerHQ/ledger-live/commit/f8719c01f5dd61ebcddb7132817bbbce274ad93e)]:
+  - @ledgerhq/types-cryptoassets@7.26.0-nightly.1
+  - @ledgerhq/coin-evm@2.29.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@6.2.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.0
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.0
+  - @ledgerhq/coin-stacks@0.8.19-nightly.0
+  - @ledgerhq/domain-service@1.2.41
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/live-countervalues@0.6.3-nightly.0
+  - @ledgerhq/live-nft@0.8.19-nightly.0
+  - @ledgerhq/live-nft-react@0.9.19-nightly.0
+  - @ledgerhq/live-wallet@0.12.3-nightly.0
+
 ## 3.92.0-nightly.0
 
 ### Minor Changes

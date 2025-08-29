@@ -1,5 +1,11 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.4.0-nightly.2
+
+### Minor Changes
+
+- [#11541](https://github.com/LedgerHQ/ledger-live/pull/11541) [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add cic accept terms
+
 ## 1.3.1-nightly.1
 
 ### Patch Changes

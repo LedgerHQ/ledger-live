@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.26.0-nightly.1
+
+### Minor Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
 ## 7.26.0-nightly.0
 
 ### Minor Changes

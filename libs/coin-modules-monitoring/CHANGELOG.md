@@ -1,5 +1,17 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.2.0-nightly.1
+
+### Minor Changes
+
+- [#11548](https://github.com/LedgerHQ/ledger-live/pull/11548) [`85ebedd`](https://github.com/LedgerHQ/ledger-live/commit/85ebedd01ebc001493f44be82c22d3415d39a32c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-monitoring): re-enable monitoring for icon and sui
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca), [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9)]:
+  - @ledgerhq/cryptoassets@13.27.0-nightly.0
+  - @ledgerhq/live-common@34.47.0-nightly.1
+
 ## 2.1.2-nightly.0
 
 ### Patch Changes
