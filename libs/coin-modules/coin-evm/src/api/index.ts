@@ -13,9 +13,10 @@ import {
   Stake,
   Reward,
   TransactionValidation,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -28,6 +29,7 @@ import {
   getBalance,
   getSequence,
   validateIntent,
+  getTokenFromAsset,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
@@ -67,5 +69,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
     validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
       validateIntent(currency, intent),
+    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+      getTokenFromAsset(currency, asset),
   };
 }
