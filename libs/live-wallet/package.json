@@ -22,9 +22,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:*",
-    "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:*",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",

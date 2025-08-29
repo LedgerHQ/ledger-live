@@ -19,14 +19,12 @@ const currencies = listAndFilterCurrencies({ includeTokens: true });
 
 type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
-  onClose?: () => void;
   onShowWalletSyncDrawer?: () => void;
   onCloseAddAccountDrawer?: () => void;
 };
 
 const useSelectAddAccountMethodViewModel = ({
   currency,
-  onClose,
   onShowWalletSyncDrawer,
   onCloseAddAccountDrawer,
 }: AddAccountMethodViewModelProps) => {
@@ -66,12 +64,6 @@ const useSelectAddAccountMethodViewModel = ({
       drawer: "AddAccountsModal",
     });
   }, []);
-
-  const handleImportAccounts = useCallback(() => {
-    trackButtonClick("Import via another Ledger Live app");
-    onClose?.();
-    navigation.navigate(NavigatorName.ImportAccounts);
-  }, [navigation, trackButtonClick, onClose]);
 
   const handleWalletSync = useCallback(() => {
     trackButtonClick("Account Use Ledger Sync");
@@ -116,7 +108,6 @@ const useSelectAddAccountMethodViewModel = ({
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
     handleAddAccount,
-    handleImportAccounts,
     handleWalletSync,
   };
 };
