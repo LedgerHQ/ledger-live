@@ -184,7 +184,7 @@ const convertToCoreOperation =
       recipients: [Destination],
     };
 
-    if (Object.keys(details).length != 0) {
+    if (Object.keys(details).length !== 0) {
       op = {
         ...op,
         details,

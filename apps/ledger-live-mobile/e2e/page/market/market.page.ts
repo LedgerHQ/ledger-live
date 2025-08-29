@@ -1,10 +1,12 @@
 import { expect } from "detox";
 
 export default class MarketPage {
+  marketRowTitleBaseId = "market-row-title-";
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
   assetCardBackBtn = () => getElementById("market-back-btn");
-  marketRowTitle = (index = 0) => getElementById("market-row-title", index);
+  marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
+
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   buyAssetButton = () => getElementById("market-buy-btn");
 
@@ -12,8 +14,8 @@ export default class MarketPage {
     await typeTextByElement(this.searchBar(), asset);
   }
 
-  async openAssetPage(selectAsset: string) {
-    await tapByText(selectAsset);
+  async openAssetPage(ticker: string) {
+    await tapByElement(this.marketRowTitle(ticker));
   }
 
   async starFavoriteCoin() {
@@ -32,7 +34,7 @@ export default class MarketPage {
     await tapByElement(this.buyAssetButton());
   }
 
-  async expectMarketRowTitle(title: string) {
-    await expect(this.marketRowTitle()).toHaveText(title);
+  async expectMarketRowTitle(ticker: string) {
+    await expect(this.marketRowTitle(ticker)).toBeVisible();
   }
 }

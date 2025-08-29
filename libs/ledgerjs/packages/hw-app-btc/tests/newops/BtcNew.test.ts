@@ -1,7 +1,40 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
-import ecc from "tiny-secp256k1";
+// Using @noble/curves instead of tiny-secp256k1
+import { secp256k1 } from "@noble/curves/secp256k1";
+
+// ECC wrapper for compatibility
+const ecc = {
+  isPoint: (point: Uint8Array): boolean => {
+    try {
+      secp256k1.ProjectivePoint.fromHex(point);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  isPrivate: (privateKey: Uint8Array): boolean => {
+    try {
+      secp256k1.ProjectivePoint.fromPrivateKey(privateKey);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  pointFromScalar: (privateKey: Uint8Array, compressed = true): Uint8Array | null => {
+    try {
+      return secp256k1.ProjectivePoint.fromPrivateKey(privateKey).toRawBytes(compressed);
+    } catch {
+      return null;
+    }
+  },
+  pointCompress: (point: Uint8Array, compressed = true): Uint8Array => {
+    const p = secp256k1.ProjectivePoint.fromHex(point);
+    return p.toRawBytes(compressed);
+  },
+  isPointCompressed: (point: Uint8Array): boolean => point.length === 33,
+};
 import { getXpubComponents, pathArrayToString } from "../../src/bip32";
 import BtcNew from "../../src/BtcNew";
 import { DefaultDescriptorTemplate, WalletPolicy } from "../../src/newops/policy";

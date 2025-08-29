@@ -1,9 +1,9 @@
-import { findTokenById, findTokenByTicker } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { Transaction } from "./types";
 import { assertUnreachable } from "./utils";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 const modes = [
   "send",
@@ -94,7 +94,9 @@ function inferTransactions(
           throw new Error("expected main account");
         }
 
-        const tokenCurrency = findTokenByTicker(token) ?? findTokenById(token);
+        const tokenCurrency =
+          getCryptoAssetsStore().findTokenByTicker(token) ??
+          getCryptoAssetsStore().findTokenById(token);
 
         if (!tokenCurrency) {
           throw new Error(`token <${token}> not found`);

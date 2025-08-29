@@ -14,6 +14,13 @@ import {
   networkRightOptions,
 } from "./const/configurationOptions";
 import { AssetConfiguration, NetworkConfiguration } from "./types";
+import {
+  assetsLeftElementOptions,
+  assetsRightElementOptions,
+  networksLeftElementOptions,
+  networksRightElementOptions,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { getElement, makeOnValueChange } from "./utils";
 
 function ModularDrawerScreenDebug() {
   const { openDrawer } = useModularDrawerController();
@@ -46,16 +53,12 @@ function ModularDrawerScreenDebug() {
       flow: "debug_flow",
       source: "debug_source",
       assetsConfiguration: {
-        leftElement:
-          selectedAssetLeftElement === "undefined" ? undefined : selectedAssetLeftElement,
-        rightElement:
-          selectedAssetRightElement === "undefined" ? undefined : selectedAssetRightElement,
+        leftElement: getElement(selectedAssetLeftElement),
+        rightElement: getElement(selectedAssetRightElement),
       },
       networksConfiguration: {
-        leftElement:
-          selectedNetworkLeftElement === "undefined" ? undefined : selectedNetworkLeftElement,
-        rightElement:
-          selectedNetworkRightElement === "undefined" ? undefined : selectedNetworkRightElement,
+        leftElement: getElement(selectedNetworkLeftElement),
+        rightElement: getElement(selectedNetworkRightElement),
       },
     });
   }, [
@@ -85,12 +88,14 @@ function ModularDrawerScreenDebug() {
         </SectionCard>
 
         <SectionCard title="Feature Flag">
-          <FeatureFlagDetails
-            key={"llmModularDrawer"}
-            focused={isFocused}
-            flagName={"llmModularDrawer"}
-            setFocusedName={v => setIsFocused(v === "llmModularDrawer")}
-          />
+          {(["llmModularDrawer", "llmModularDrawerBackendData"] as const).map(flag => (
+            <FeatureFlagDetails
+              key={flag}
+              focused={isFocused}
+              flagName={flag}
+              setFocusedName={v => setIsFocused(v === flag)}
+            />
+          ))}
         </SectionCard>
 
         <SectionCard title="Basic Configuration">
@@ -125,11 +130,7 @@ function ModularDrawerScreenDebug() {
             label="Left Element"
             description="Choose what to display on the left side of asset rows"
             value={selectedAssetLeftElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "apy" || value === "priceVariation") {
-                setSelectedAssetLeftElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(assetsLeftElementOptions, setSelectedAssetLeftElement)}
             options={assetLeftOptions}
           />
 
@@ -137,11 +138,10 @@ function ModularDrawerScreenDebug() {
             label="Right Element"
             description="Choose what to display on the right side of asset rows"
             value={selectedAssetRightElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "balance" || value === "marketTrend") {
-                setSelectedAssetRightElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              assetsRightElementOptions,
+              setSelectedAssetRightElement,
+            )}
             options={assetRightOptions}
           />
         </SectionCard>
@@ -151,15 +151,10 @@ function ModularDrawerScreenDebug() {
             label="Left Element"
             description="Choose what to display on the left side of network rows"
             value={selectedNetworkLeftElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (
-                value === "undefined" ||
-                value === "numberOfAccounts" ||
-                value === "numberOfAccountsAndApy"
-              ) {
-                setSelectedNetworkLeftElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              networksLeftElementOptions,
+              setSelectedNetworkLeftElement,
+            )}
             options={networkLeftOptions}
           />
 
@@ -167,11 +162,10 @@ function ModularDrawerScreenDebug() {
             label="Right Element"
             description="Choose what to display on the right side of network rows"
             value={selectedNetworkRightElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "balance") {
-                setSelectedNetworkRightElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              networksRightElementOptions,
+              setSelectedNetworkRightElement,
+            )}
             options={networkRightOptions}
           />
         </SectionCard>

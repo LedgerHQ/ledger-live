@@ -246,7 +246,7 @@ export function renderConfirmSwap({
 }: RawProps & {
   device: Device;
   transaction: Transaction;
-  provider: string;
+  provider: TermsProviders;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -348,7 +348,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={provider as TermsProviders} />
+        <TermsFooter provider={provider} />
       </Wrapper>
     </ScrollView>
   );
@@ -679,11 +679,7 @@ export function renderError({
         hasExportLogButton={hasExportLogButton}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
-          <Flex
-            alignSelf="stretch"
-            mb={0}
-            mt={(error as unknown as Error) instanceof BluetoothRequired ? 0 : 8}
-          >
+          <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
             <StyledButton
               event="DeviceActionErrorRetry"
               type="main"
@@ -906,7 +902,7 @@ export function renderExchange({
   theme,
 }: RawProps & {
   swapRequest: {
-    provider: string;
+    provider: TermsProviders;
     selectedDevice: Device;
     transaction: Transaction;
     exchangeRate: ExchangeRate;
@@ -1013,7 +1009,9 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.MyLedger);
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
+    });
   }
 
   return (

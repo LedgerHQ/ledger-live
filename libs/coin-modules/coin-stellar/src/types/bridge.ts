@@ -9,6 +9,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 
 export type NetworkInfo = {
   family: "stellar";
@@ -52,6 +53,7 @@ export type StellarTransactionMode = "send" | "changeTrust";
 export type Transaction = TransactionCommon & {
   family: "stellar";
   networkInfo?: NetworkInfo | null | undefined;
+  customFees?: FeeEstimation;
   fees?: BigNumber | null;
   baseReserve?: BigNumber | null;
   memoType?: string | null;

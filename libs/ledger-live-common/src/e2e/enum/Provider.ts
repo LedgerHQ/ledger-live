@@ -16,8 +16,8 @@ export class Provider {
   static readonly LIFI = new Provider("lifi", "LI.FI", false, true, false);
   static readonly CIC = new Provider("cic", "CIC", false, true, true);
   static readonly COINBASE = new Provider("coinbase", "Coinbase", false, true, true);
-  static readonly KILN = new Provider("kiln", "Kiln staking Pool", false, true, true);
-  static readonly STADER_LABS = new Provider("stader", "Stader Labs", false, true, true);
+  static readonly KILN = new Provider("kiln_pooling", "Kiln staking Pool", false, true, true);
+  static readonly STADER_LABS = new Provider("stader-eth", "Stader Labs", false, true, true);
   static readonly LIDO = new Provider("lido", "Lido", false, true, true);
   static readonly TRANSAK = new Provider("transak", "Transak", false, true, true);
 

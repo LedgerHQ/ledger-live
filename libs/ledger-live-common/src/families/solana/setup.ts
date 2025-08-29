@@ -21,6 +21,7 @@ import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
 import { setShouldSkipTokenLoading } from "@ledgerhq/coin-solana/preload";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
 
 const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) =>
   new LegacySignerSolana(transport);
@@ -39,6 +40,7 @@ try {
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,
+  getCryptoAssetsStore,
 );
 
 const messageSigner = {

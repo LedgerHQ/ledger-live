@@ -4,10 +4,11 @@ import {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakes,
+  getStakesRaw,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 } from "./sdk";
 
 export {
@@ -16,10 +17,11 @@ export {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakes,
+  getStakesRaw,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 };
 
 export default {
@@ -28,8 +30,9 @@ export default {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakes,
+  getStakesRaw,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
+  getStakes,
 };

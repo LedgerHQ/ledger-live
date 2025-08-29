@@ -26,15 +26,19 @@ export default class PortfolioPage {
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
   tabSelectorBase = "tab-selector-";
+  walletTabSelectorBase = "wallet-tab-";
   selectAssetsPageTitle = "select-crypto-header-step1-title";
   baseBigCurrency = "big-currency";
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
+  tabBarEarnButton = "tab-bar-earn";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
+  walletTabSelector = (id: "Wallet" | "Market") =>
+    getElementById(`${this.walletTabSelectorBase}${id}`);
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -176,9 +180,11 @@ export default class PortfolioPage {
 
   @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
-    await scrollToId(this.showAllAssetsButton);
-    await tapById(this.showAllAssetsButton);
-    await scrollToId(this.assetItemId(currencyName));
+    await scrollToId(this.allocationSectionTitleId);
+    if (await IsIdVisible(this.showAllAssetsButton)) {
+      await tapById(this.showAllAssetsButton);
+      await scrollToId(this.assetItemId(currencyName));
+    }
     await tapById(this.assetItemId(currencyName));
   }
 
@@ -203,6 +209,11 @@ export default class PortfolioPage {
     await tapByElement(this.tabSelector(id));
   }
 
+  @Step("Tap on $0 tab selector")
+  async tapWalletTabSelector(id: "Wallet" | "Market") {
+    await tapByElement(this.walletTabSelector(id));
+  }
+
   @Step("Tap on (Show All Accounts) button")
   async tapShowAllAccountsButton() {
     await scrollToId(this.showAllAccountsButton);
@@ -215,5 +226,10 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
     await app.common.expectSearchBarVisible();
     jestExpect(await countElementsById(this.bigCurrencyRowRegex)).toBeGreaterThan(6);
+  }
+
+  @Step("Open Earn tab from navigation bar")
+  async openEarnTab() {
+    await tapById(this.tabBarEarnButton);
   }
 }

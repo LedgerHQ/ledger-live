@@ -76,59 +76,6 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
   return { handleAppStateChange };
 }
 
-interface UseAuthStateProps {
-  privacy: Privacy | null | undefined;
-  closeAllDrawers: () => void;
-}
-
-// as we needs to be resilient to reboots (not showing unlock again after a reboot)
-// we need to store this global variable to know if we need to isLocked initially
-let wasUnlocked = false;
-
-export function useAuthState({ privacy, closeAllDrawers }: UseAuthStateProps) {
-  const mounted = useRef<boolean>(false);
-
-  const [isLocked, setIsLocked] = useState<boolean>(!!privacy?.hasPassword && !wasUnlocked);
-  const [biometricsError, setBiometricsError] = useState<Error | null | undefined>(null);
-  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
-  const [skipLockCount, setSkipLockCount] = useState<number>(0);
-
-  // lock the app
-  const lock = useCallback(() => {
-    if (!privacy?.hasPassword || skipLockCount) return;
-    wasUnlocked = false;
-    closeAllDrawers();
-
-    if (mounted.current) {
-      setIsLocked(true);
-      setBiometricsError(null);
-    }
-  }, [privacy, skipLockCount, closeAllDrawers]);
-
-  // unlock the app
-  const unlock = useCallback(() => {
-    wasUnlocked = true;
-
-    if (mounted.current) {
-      setIsLocked(false);
-      setBiometricsError(null);
-    }
-  }, []);
-
-  return {
-    isLocked,
-    biometricsError,
-    authModalOpen,
-    mounted,
-    setIsLocked,
-    setBiometricsError,
-    setAuthModalOpen,
-    setSkipLockCount,
-    lock,
-    unlock,
-  };
-}
-
 interface UseAuthSubmitProps {
   password: string;
   unlock: () => void;

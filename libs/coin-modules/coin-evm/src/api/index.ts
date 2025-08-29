@@ -13,9 +13,10 @@ import {
   Stake,
   Reward,
   TransactionValidation,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -27,6 +28,8 @@ import {
   listOperations,
   getBalance,
   getSequence,
+  validateIntent,
+  getTokenFromAsset,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
@@ -43,8 +46,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
-      customFees?: FeeEstimation,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFees),
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
@@ -65,8 +67,9 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
       throw new Error("getRewards is not supported");
     },
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
-    validateIntent(_intent: TransactionIntent): Promise<TransactionValidation> {
-      throw new Error("validateIntent is not supported");
-    },
+    validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
+      validateIntent(currency, intent),
+    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+      getTokenFromAsset(currency, asset),
   };
 }

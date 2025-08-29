@@ -3,7 +3,7 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
-describe("User opens application - LLM", () => {
+describe("User opens application", () => {
   testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   testConfig.tags.forEach(tag => $Tag(tag));
   test("Verify that user can open application", async () => {

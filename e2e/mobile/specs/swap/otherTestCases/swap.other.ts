@@ -89,7 +89,7 @@ export function runSwapWithoutAccountTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${testTitle} - LLM`, async () => {
+    it(`${testTitle}`, async () => {
       const debitAsset = event === "noAccountFrom" ? asset2 : asset1;
       const creditAsset = event === "noAccountFrom" ? asset1 : asset2;
 
@@ -120,7 +120,7 @@ export function runSwapWithDifferentSeedTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+    it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -166,7 +166,7 @@ export function runSwapLandingPageTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test("Swap landing page - LLM", async () => {
+    test("Swap landing page", async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -217,7 +217,7 @@ export function runTooLowAmountForQuoteSwapsTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage} - LLM`, async () => {
+    it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -270,7 +270,7 @@ export function runUserRefusesTransactionTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`User refuses transaction - ${fromAccount.currency.name} to ${toAccount.currency.name} - LLM`, async () => {
+    it(`User refuses transaction - ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -309,7 +309,7 @@ export function runSwapHistoryOperationsTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+    it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
@@ -336,7 +336,7 @@ export function runExportSwapHistoryOperationsTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - LLM`, async () => {
+    it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
       await app.swap.checkExportedFileContents(swap, provider, swapId);
@@ -371,7 +371,7 @@ export function runSwapWithSendMaxTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name} - LLM`, async () => {
+    it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       await app.swapLiveApp.waitForSwapLiveApp();
 
       await app.swapLiveApp.tapFromCurrency();
@@ -460,7 +460,7 @@ export function runSwapCheckProvider(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap test provider redirection (${provider.uiName}) - LLM`, async () => {
+    it(`Swap test provider redirection (${provider.uiName})`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -484,7 +484,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     await app.swapLiveApp.checkAssetFrom(account.currency.ticker, "");
   };
 
-  describe("Swap - Entry Points - LLM", () => {
+  describe("Swap - Entry Points", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "speculos-tests-app",
@@ -507,7 +507,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
-      await app.assetAccountsPage.tapSwap();
+      await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
       await handleSwapPageFlow(account);
     });
   });
@@ -546,7 +546,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap - Network fees above account balance - LLM`, async () => {
+    it(`Swap - Network fees above account balance`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,

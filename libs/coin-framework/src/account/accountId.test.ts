@@ -7,7 +7,7 @@ import {
 import tokenData from "./__fixtures__/binance-peg_dai_token.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssets from "../crypto-assets";
-import { CryptoAssetsStore } from "../crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;

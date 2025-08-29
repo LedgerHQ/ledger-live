@@ -18,7 +18,6 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
-  findCurrencyByTicker,
   listFiatCurrencies,
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
@@ -29,6 +28,7 @@ import {
   resolveTrackingPairs,
 } from "@ledgerhq/live-countervalues/logic";
 import CountervaluesAPI from "@ledgerhq/live-countervalues/api/index";
+import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 type HistoFormatters = (
   histo: any,

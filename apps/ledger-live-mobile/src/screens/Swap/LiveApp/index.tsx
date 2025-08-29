@@ -14,7 +14,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
-import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
+import { DefaultAccountSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
@@ -33,9 +33,11 @@ const DEFAULT_MANIFEST_ID =
 const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
 ): params is DefaultAccountSwapParamList =>
-  (params as DefaultAccountSwapParamList).defaultAccount !== undefined ||
-  (params as DefaultAccountSwapParamList).defaultCurrency !== undefined ||
-  (params as DetailsSwapParamList).currency !== undefined;
+  params != null &&
+  typeof params === "object" &&
+  (("defaultAccount" in params && params.defaultAccount !== undefined) ||
+    ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
+    ("currency" in params && params.currency !== undefined));
 
 export function SwapLiveApp({
   route,
@@ -50,8 +52,7 @@ export function SwapLiveApp({
   const webviewRef = useRef<WebviewAPI>(null);
   const navigation = useNavigation();
 
-  const swapLiveAppManifestID =
-    (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
+  const swapLiveAppManifestID = ptxSwapLiveAppMobile?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
 
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(
     swapLiveAppManifestID || undefined,
@@ -103,7 +104,7 @@ export function SwapLiveApp({
     if (isWebviewError) return APP_FAILED_TO_LOAD;
     if (!manifest) return APP_MANIFEST_NOT_FOUND_ERROR;
 
-    return error as Error;
+    return error;
   }, [manifest, isWebviewError, isConnected, t]);
 
   if (error) {

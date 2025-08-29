@@ -132,6 +132,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   sei_network_evm: EVM_DEAD_ADDRESS,
   berachain: EVM_DEAD_ADDRESS,
   canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  canton_network_localnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 };
 
 /**

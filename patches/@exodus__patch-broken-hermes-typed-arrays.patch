@@ -1,0 +1,33 @@
+diff --git a/index.js b/index.js
+index 0799b5051ec049b3baca2593b6a9e27eeb078b7b..75fb521913c1fff07c38ea55bf228cfe23aa0406 100644
+--- a/index.js
++++ b/index.js
+@@ -10,7 +10,7 @@
+ // This also is not designed to work with Symbol.species support, but at the moment Hermes doesn't support that, too,
+ // and Symbol.species might even end up being dropped from spec
+ 
+-;(function fixHermesTypedArrayBug() {
++function fixHermesTypedArrayBug() {
+   'use strict'
+ 
+   var areWeBroken = function () {
+@@ -138,4 +138,6 @@
+   // We recheck that just in case though
+ 
+   if (areWeBroken().broken) throw new Error(`${prefix}and patch failed to fix it!${reportNotice}`)
+-})()
++}
++
++module.exports = fixHermesTypedArrayBug
+diff --git a/package.json b/package.json
+index f247b740c6ad068c301d648e9d7b66fbe6272264..ce90677ed79747a979a5f76459b4d3e82e10b451 100644
+--- a/package.json
++++ b/package.json
+@@ -18,7 +18,6 @@
+     "fix"
+   ],
+   "license": "MIT",
+-  "type": "module",
+   "main": "index.js",
+   "files": [
+     "index.js",

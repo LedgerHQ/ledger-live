@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-canton
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
+  - @ledgerhq/coin-canton@0.3.0
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
+  - @ledgerhq/coin-canton@0.3.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

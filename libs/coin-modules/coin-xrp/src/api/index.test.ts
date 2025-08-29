@@ -291,7 +291,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: customFees,
+        fees: customFees,
       }),
       undefined,
     );
@@ -303,7 +303,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       }),
       undefined,
     );

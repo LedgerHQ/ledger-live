@@ -33,7 +33,7 @@ export function makeTransferPayload(from: string, to: string, feeNano: number, v
     isPositive: boolean,
   ) {
     const relatedOps =
-      relatedIdxs.length == 0
+      relatedIdxs.length === 0
         ? {}
         : {
             related_operations: relatedIdxs.map(i => {
