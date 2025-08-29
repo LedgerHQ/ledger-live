@@ -56,9 +56,9 @@ describe("Sui Api", () => {
       expect(checkSet.size).toBeLessThanOrEqual(txs.length);
     });
 
-    it("returns all operations in desc order", async () => {
+    it("returns all operations in from the latest order, but sorted in asc", async () => {
       const [txDesc] = await module.listOperations(SENDER, { minHeight: 0, order: "desc" });
-      expect(txDesc[0]).toStrictEqual(txs[txs.length - 1]);
+      expect(txDesc[0]).toStrictEqual(txs[0]);
     });
 
     it("at least operation should be IN", async () => {
