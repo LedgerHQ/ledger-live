@@ -451,6 +451,9 @@ importers:
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
+      '@ledgerhq/live-wallet-sync-react':
+        specifier: workspace:^
+        version: link:../../libs/live-wallet-sync-react
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -1013,6 +1016,9 @@ importers:
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
+      '@ledgerhq/live-wallet-sync-react':
+        specifier: workspace:^
+        version: link:../../libs/live-wallet-sync-react
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -8536,6 +8542,61 @@ importers:
       ws:
         specifier: ^8.16.0
         version: 8.17.1
+
+  libs/live-wallet-sync-react:
+    dependencies:
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:*
+        version: link:../ledger-key-ring-protocol
+      '@ledgerhq/live-common':
+        specifier: workspace:*
+        version: link:../ledger-live-common
+      '@ledgerhq/live-wallet':
+        specifier: workspace:*
+        version: link:../live-wallet
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      react:
+        specifier: '>=16'
+        version: 18.3.1
+      react-redux:
+        specifier: ^8.1.3
+        version: 8.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    devDependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@testing-library/jest-dom':
+        specifier: ^6.0.0
+        version: 6.6.3
+      '@testing-library/react':
+        specifier: '14'
+        version: 14.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      '@types/lodash':
+        specifier: ^4.14.200
+        version: 4.17.18
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.3.2(jest@29.7.0)(typescript@5.4.3)
 
   libs/promise:
     dependencies:
@@ -20445,6 +20506,9 @@ packages:
   '@types/unzipper@0.10.9':
     resolution: {integrity: sha512-vHbmFZAw8emNAOVkHVbS3qBnbr0x/qHQZ+ei1HE7Oy6Tyrptl+jpqnOX+BF5owcu/HZLOV0nJK+K9sjs1Ox2JA==}
 
+  '@types/use-sync-external-store@0.0.3':
+    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
+
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
@@ -32236,6 +32300,24 @@ packages:
       react-dom:
         optional: true
 
+  react-redux@8.1.3:
+    resolution: {integrity: sha512-n0ZrutD7DaX/j9VscF+uTALI3oUPa/pO4Z3soOBIjuRn/FzVu6aehhysxZCLi6y7duMf52WNZGMl7CtuK5EnRw==}
+    peerDependencies:
+      '@types/react': ^16.8 || ^17.0 || ^18.0
+      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+      redux: ^4 || ^5.0.0-beta.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      react-dom:
+        optional: true
+      redux:
+        optional: true
+
   react-redux@9.2.0:
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
     peerDependencies:
@@ -32268,12 +32350,12 @@ packages:
     resolution: {integrity: sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==}
     engines: {node: '>=0.10.0'}
 
-  react-remove-scroll-bar@2.3.6:
-    resolution: {integrity: sha512-DtSYaao4mBmX+HDo5YWYdBWQwYIQQshUV/dVxFxK+KM26Wjwp1gZ6rv6OC3oujI6Bfu6Xyg3TwK533AQutsn/g==}
+  react-remove-scroll-bar@2.3.8:
+    resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -32344,6 +32426,16 @@ packages:
     peerDependencies:
       '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  react-style-singleton@2.2.3:
+    resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -45298,11 +45390,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@18.3.1)':
+  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@19.2.0)':
     dependencies:
       '@types/mdx': 2.0.12
       '@types/react': 18.2.73
-      react: 18.3.1
+      react: 19.2.0
 
   '@mswjs/interceptors@0.29.1':
     dependencies:
@@ -50953,12 +51045,12 @@ snapshots:
 
   '@storybook/addon-docs@8.6.12(@types/react@18.2.73)(storybook@8.6.12(prettier@3.2.5))':
     dependencies:
-      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@18.3.1)
-      '@storybook/blocks': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))
+      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@19.2.0)
+      '@storybook/blocks': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))
       '@storybook/csf-plugin': 8.6.12(storybook@8.6.12(prettier@3.2.5))
-      '@storybook/react-dom-shim': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      '@storybook/react-dom-shim': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))
+      react: 19.2.0
+      react-dom: 18.3.1(react@19.2.0)
       storybook: 8.6.12(prettier@3.2.5)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -51203,13 +51295,13 @@ snapshots:
       - encoding
       - supports-color
 
-  '@storybook/blocks@8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))':
+  '@storybook/blocks@8.6.12(react-dom@18.3.1(react@18.3.1))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))':
     dependencies:
-      '@storybook/icons': 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@storybook/icons': 1.4.0(react-dom@18.3.1(react@18.3.1))(react@19.2.0)
       storybook: 8.6.12(prettier@3.2.5)
       ts-dedent: 2.2.0
     optionalDependencies:
-      react: 18.3.1
+      react: 19.2.0
       react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/builder-manager@7.6.20':
@@ -51645,9 +51737,9 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@storybook/icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@19.2.0)':
     dependencies:
-      react: 18.3.1
+      react: 19.2.0
       react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/instrumenter@7.6.20':
@@ -51892,6 +51984,12 @@ snapshots:
   '@storybook/react-dom-shim@8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))':
     dependencies:
       react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      storybook: 8.6.12(prettier@3.2.5)
+
+  '@storybook/react-dom-shim@8.6.12(react-dom@18.3.1(react@18.3.1))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))':
+    dependencies:
+      react: 19.2.0
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.6.12(prettier@3.2.5)
 
@@ -53098,6 +53196,10 @@ snapshots:
 
   '@types/history@4.7.11': {}
 
+  '@types/hoist-non-react-statics@3.3.5':
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+
   '@types/hoist-non-react-statics@3.3.5(@types/react@18.2.73)':
     dependencies:
       hoist-non-react-statics: 3.3.2
@@ -53619,6 +53721,8 @@ snapshots:
   '@types/unzipper@0.10.9':
     dependencies:
       '@types/node': 20.12.12
+
+  '@types/use-sync-external-store@0.0.3': {}
 
   '@types/use-sync-external-store@0.0.6': {}
 
@@ -70999,6 +71103,12 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-dom@18.3.1(react@19.2.0):
+    dependencies:
+      loose-envify: 1.4.0
+      react: 19.2.0
+      scheduler: 0.23.2
+
   react-dom@19.2.0(react@19.2.0):
     dependencies:
       react: 19.2.0
@@ -71746,6 +71856,18 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
+  react-redux@8.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.27.1
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.3.1
+      react-is: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
+
   react-redux@9.2.0(@types/react@18.2.73)(react@19.2.0)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
@@ -71765,10 +71887,10 @@ snapshots:
 
   react-refresh@0.4.3: {}
 
-  react-remove-scroll-bar@2.3.6(@types/react@18.2.73)(react@18.3.1):
+  react-remove-scroll-bar@2.3.8(@types/react@18.2.73)(react@18.3.1):
     dependencies:
       react: 18.3.1
-      react-style-singleton: 2.2.1(@types/react@18.2.73)(react@18.3.1)
+      react-style-singleton: 2.2.3(@types/react@18.2.73)(react@18.3.1)
       tslib: 2.6.2
     optionalDependencies:
       '@types/react': 18.2.73
@@ -71776,7 +71898,7 @@ snapshots:
   react-remove-scroll@2.5.5(@types/react@18.2.73)(react@18.3.1):
     dependencies:
       react: 18.3.1
-      react-remove-scroll-bar: 2.3.6(@types/react@18.2.73)(react@18.3.1)
+      react-remove-scroll-bar: 2.3.8(@types/react@18.2.73)(react@18.3.1)
       react-style-singleton: 2.2.1(@types/react@18.2.73)(react@18.3.1)
       tslib: 2.6.2
       use-callback-ref: 1.3.2(@types/react@18.2.73)(react@18.3.1)
@@ -71978,6 +72100,14 @@ snapshots:
     dependencies:
       get-nonce: 1.0.1
       invariant: 2.2.4
+      react: 18.3.1
+      tslib: 2.6.2
+    optionalDependencies:
+      '@types/react': 18.2.73
+
+  react-style-singleton@2.2.3(@types/react@18.2.73)(react@18.3.1):
+    dependencies:
+      get-nonce: 1.0.1
       react: 18.3.1
       tslib: 2.6.2
     optionalDependencies:

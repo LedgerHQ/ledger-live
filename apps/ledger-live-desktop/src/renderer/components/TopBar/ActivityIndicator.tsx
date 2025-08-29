@@ -18,10 +18,10 @@ import Tooltip from "../Tooltip";
 import TranslatedError from "../TranslatedError";
 import Box from "../Box";
 import { ItemContainer } from "./shared";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Text } from "@ledgerhq/react-ui";
+import { useWalletSyncUserState } from "@ledgerhq/live-wallet-sync-react";
 
 const ActivityIndicatorInner = () => {
   const wsUserState = useWalletSyncUserState();

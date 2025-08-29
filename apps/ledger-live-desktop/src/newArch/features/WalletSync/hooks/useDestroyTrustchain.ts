@@ -9,14 +9,14 @@ import { useMutation } from "@tanstack/react-query";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { QueryKey } from "./type.hooks";
-import { useCloudSyncSDK } from "./useWatchWalletSync";
+import { useCloudSyncSDKDesktop } from "./useWalletSyncDesktop";
 import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
 import { track } from "~/renderer/analytics/segment";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
-  const cloudSyncSDK = useCloudSyncSDK();
+  const cloudSyncSDK = useCloudSyncSDKDesktop();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
 

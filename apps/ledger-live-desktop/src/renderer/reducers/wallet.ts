@@ -1,19 +1,19 @@
 import {
   HandlersPayloads,
   WalletHandlers,
-  initialState,
   WalletState,
-  handlers,
-  isStarredAccountSelector,
   accountNameWithDefaultSelector,
+  handlers,
+  initialState,
+  isStarredAccountSelector,
   walletSyncStateSelector,
 } from "@ledgerhq/live-wallet/store";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
-import { handleActions } from "redux-actions";
-import { State } from ".";
-import { createSelector } from "reselect";
-import { useSelector } from "react-redux";
 import { AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "react-redux";
+import { handleActions } from "redux-actions";
+import { createSelector } from "reselect";
+import { State } from ".";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
@@ -37,6 +37,8 @@ const getAccountName = (
 ): string | undefined => {
   return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
 };
+
+/// Hooks
 
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,

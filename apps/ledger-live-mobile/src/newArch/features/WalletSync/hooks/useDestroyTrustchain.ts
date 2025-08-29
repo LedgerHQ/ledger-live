@@ -9,14 +9,14 @@ import { useMutation } from "@tanstack/react-query";
 import { AnalyticsEvents } from "LLM/features/Analytics/enums";
 import { track } from "~/analytics";
 import { QueryKey } from "./type.hooks";
-import { useCloudSyncSDK } from "./useWatchWalletSync";
+import { useCloudSyncSDKMobile } from "./useWalletSyncMobile";
 import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
 import { useCurrentStep } from "./useCurrentStep";
 import { Steps } from "../types/Activation";
 
 export function useDestroyTrustchain() {
   const dispatch = useDispatch();
-  const cloudSyncSDK = useCloudSyncSDK();
+  const cloudSyncSDK = useCloudSyncSDKMobile();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);

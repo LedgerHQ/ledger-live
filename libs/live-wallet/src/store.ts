@@ -15,6 +15,14 @@ export type WSState = {
   version: number;
 };
 
+export type WalletSyncUserState = {
+  visualPending: boolean;
+  walletSyncError: Error | null;
+  onUserRefresh: () => void;
+};
+
+export type StoredWalletSyncUserState = Omit<WalletSyncUserState, "onUserRefresh">;
+
 export type WalletState = {
   // user's customized name for each account id
   accountNames: Map<string, string>;
@@ -26,6 +34,9 @@ export type WalletState = {
 
   // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
   walletSyncState: WSState;
+
+  // wallet sync user state (UI state for sync operations, stored without onUserRefresh)
+  walletSyncUserState: StoredWalletSyncUserState;
 };
 
 export type ExportedWalletState = {
@@ -42,6 +53,10 @@ export const initialState: WalletState = {
   starredAccountIds: new Set(),
   nonImportedAccountInfos: [],
   walletSyncState: { data: null, version: 0 },
+  walletSyncUserState: {
+    visualPending: false,
+    walletSyncError: null,
+  },
 };
 
 export enum WalletHandlerType {
@@ -53,6 +68,9 @@ export enum WalletHandlerType {
   WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
   IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
   SET_NON_IMPORTED_ACCOUNTS = "SET_NON_IMPORTED_ACCOUNTS",
+  SET_WALLET_SYNC_USER_STATE = "SET_WALLET_SYNC_USER_STATE",
+  SET_WALLET_SYNC_PENDING = "SET_WALLET_SYNC_PENDING",
+  SET_WALLET_SYNC_ERROR = "SET_WALLET_SYNC_ERROR",
 }
 
 export type HandlersPayloads = {
@@ -67,6 +85,9 @@ export type HandlersPayloads = {
   };
   IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
+  SET_WALLET_SYNC_USER_STATE: StoredWalletSyncUserState;
+  SET_WALLET_SYNC_PENDING: { pending: boolean };
+  SET_WALLET_SYNC_ERROR: { error: Error | null };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -144,6 +165,27 @@ export const handlers: WalletHandlers = {
   SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
     return { ...state, nonImportedAccountInfos: payload };
   },
+  SET_WALLET_SYNC_USER_STATE: (state, { payload }) => {
+    return { ...state, walletSyncUserState: payload };
+  },
+  SET_WALLET_SYNC_PENDING: (state, { payload: { pending } }) => {
+    return {
+      ...state,
+      walletSyncUserState: {
+        ...state.walletSyncUserState,
+        visualPending: pending,
+      },
+    };
+  },
+  SET_WALLET_SYNC_ERROR: (state, { payload: { error } }) => {
+    return {
+      ...state,
+      walletSyncUserState: {
+        ...state.walletSyncUserState,
+        walletSyncError: error,
+      },
+    };
+  },
 };
 
 // actions
@@ -192,6 +234,21 @@ export const walletSyncUpdate = (data: DistantState | null, version: number) => 
 export const setNonImportedAccounts = (payload: NonImportedAccountInfo[]) => ({
   type: "SET_NON_IMPORTED_ACCOUNTS",
   payload,
+});
+
+export const setWalletSyncUserState = (payload: StoredWalletSyncUserState) => ({
+  type: "SET_WALLET_SYNC_USER_STATE",
+  payload,
+});
+
+export const setWalletSyncPending = (pending: boolean) => ({
+  type: "SET_WALLET_SYNC_PENDING",
+  payload: { pending },
+});
+
+export const setWalletSyncError = (error: Error | null) => ({
+  type: "SET_WALLET_SYNC_ERROR",
+  payload: { error },
 });
 
 // Local Selectors
@@ -274,3 +331,6 @@ export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): b
 };
 
 export const walletSyncStateSelector = (state: WalletState): WSState => state.walletSyncState;
+
+export const walletSyncUserStateSelector = (state: WalletState): StoredWalletSyncUserState =>
+  state.walletSyncUserState;
