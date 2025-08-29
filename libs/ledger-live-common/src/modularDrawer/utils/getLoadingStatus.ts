@@ -1,4 +1,4 @@
-import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "../../deposit/type";
 import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 

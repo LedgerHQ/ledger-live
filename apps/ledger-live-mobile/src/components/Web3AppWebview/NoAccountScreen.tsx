@@ -27,7 +27,7 @@ export function NoAccountScreen({
   const handleAddAccountPress = () => {
     if (openModularDrawer) {
       openModularDrawer({
-        currencies,
+        currencies: currencies.map(c => c.id),
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
         flow: manifest.name,

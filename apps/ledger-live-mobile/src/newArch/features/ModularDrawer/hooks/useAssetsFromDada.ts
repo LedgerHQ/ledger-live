@@ -1,24 +1,37 @@
 import { useMemo } from "react";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
+import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
 
-interface UseModularDrawerDataProps {
-  currencies?: CryptoOrTokenCurrency[];
+interface UseAssetsProps {
+  currencyIds?: string[];
   searchedValue?: string;
 }
 
-export function useModularDrawerData({ currencies, searchedValue }: UseModularDrawerDataProps) {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+export type UseAssetsData =
+  | {
+      asset: {
+        id: string;
+        ticker: string;
+        name: string;
+        assetsIds: Record<string, string>;
+      };
+      networks: CryptoOrTokenCurrency[];
+      interestRates?: InterestRate;
+      market?: Partial<MarketItemResponse>;
+    }[]
+  | undefined;
 
-  const { data, isLoading, isSuccess, error, loadNext } = useAssetsData({
+export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps) {
+  const { data, isLoading, isSuccess, error } = useAssetsData({
     search: searchedValue,
     currencyIds,
   });
 
-  const assetsSorted = useMemo(() => {
+  const assetsSorted: UseAssetsData = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
@@ -33,24 +46,13 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
           networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
             .map(assetId => data.cryptoOrTokenCurrencies[assetId])
             .filter(network => network !== undefined),
-          interestRates: data.interestRates[firstNetworkId],
-          market: data.markets[firstNetworkId],
+          interestRates: data.interestRates?.[firstNetworkId],
+          market: data.markets?.[firstNetworkId],
         };
       });
   }, [data]);
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
-
-  const currenciesByProvider: CurrenciesByProviderId[] = useMemo(() => {
-    if (!assetsSorted || !data) return [];
-
-    return assetsSorted.map(assetData => ({
-      currenciesByNetwork: assetData.networks
-        .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
-        .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
-      providerId: assetData.asset.id,
-    }));
-  }, [assetsSorted, data]);
 
   const sortedCryptoCurrencies = useMemo(() => {
     if (!assetsSorted || !data) return [];
@@ -67,8 +69,6 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
     error,
     loadingStatus,
     assetsSorted,
-    currenciesByProvider,
     sortedCryptoCurrencies,
-    loadNext,
   };
 }

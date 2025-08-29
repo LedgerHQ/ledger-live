@@ -175,7 +175,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           if (modularDrawerVisible) {
             openModularDrawer({
-              currencies: allCurrencies,
+              currencies: allCurrencies.map(c => c.id),
               enableAccountSelection: true,
               onAccountSelected: onSuccess,
               flow: manifest.name,

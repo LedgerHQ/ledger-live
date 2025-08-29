@@ -7,6 +7,8 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 
+// TODO: Remove if we use DADA for this feature
+
 export function useAssets(
   currencies: CryptoOrTokenCurrency[],
   currenciesByProvider: CurrenciesByProviderId[],
