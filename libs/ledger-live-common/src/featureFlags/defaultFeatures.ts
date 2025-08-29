@@ -626,7 +626,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   lldModularDrawerBackendData: DEFAULT_FEATURE,
-  llmModularDrawerBackendData: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
