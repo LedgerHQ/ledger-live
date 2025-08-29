@@ -76,9 +76,16 @@ export const getLastCoinOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  let url = `${explorer.uri}?module=account&action=txlist&address=${address}`;
+
+  // Corescan has different path
+  if (explorer.type === "corescan") {
+    url = `${explorer.uri}/accounts/list_of_txs_by_address/${address}`;
+  }
+
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=txlist&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -107,9 +114,15 @@ export const getLastTokenOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  let url = `${explorer.uri}?module=account&action=tokentx&address=${address}`;
+
+  if (explorer.type === "corescan") {
+    url = `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${address}`;
+  }
+
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=tokentx&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -159,9 +172,15 @@ export const getLastERC721Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  let url = `${explorer.uri}?module=account&action=tokennfttx&address=${address}`;
+
+  if (explorer.type === "corescan") {
+    url = `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${address}`;
+  }
+
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
-    url: `${explorer.uri}?module=account&action=tokennfttx&address=${address}`,
+    url,
     params: {
       tag: "latest",
       page: 1,
@@ -211,8 +230,8 @@ export const getLastERC1155Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  // Blockscout has no ERC1155 support yet
-  if (explorer.type === "blockscout") {
+  // Blockscout and Corescan have no ERC1155 support yet
+  if (["blockscout", "corescan"].includes(explorer.type)) {
     return [];
   }
 
@@ -297,6 +316,11 @@ export const getLastInternalOperations = async (
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
+  }
+
+  // Corescan has no support to get internal operations by address
+  if (explorer.type === "corescan") {
+    return [];
   }
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
