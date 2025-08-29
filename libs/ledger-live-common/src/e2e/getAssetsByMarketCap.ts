@@ -154,7 +154,7 @@ function filterOutUnwantedTokens<T extends { id: string; type: string }>(
 function applyNameOverrides(displayName: string): string {
   if (displayName === "Ripple") return "XRP";
   if (displayName === "Binance Smart Chain") return "BNB Chain";
-  // if (displayName === "USD Coin") return "USDC";
+  if (displayName === "USD Coin") return "USDC";
   return displayName;
 }
 
