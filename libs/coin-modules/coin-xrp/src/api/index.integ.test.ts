@@ -33,7 +33,7 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200 });
+      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200, order: "asc" });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
@@ -51,7 +51,10 @@ describe("Xrp Api", () => {
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
 
       // When
-      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, { minHeight: 0 });
+      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+        minHeight: 0,
+        order: "asc",
+      });
       // Then
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
@@ -63,6 +66,17 @@ describe("Xrp Api", () => {
       // 200 is the default XRP explorer hard limit,
       // so here we are checking that this limit is bypassed
       expect(ops.length).toBeGreaterThan(200);
+    });
+
+    it("returns operations from latest, but in asc order", async () => {
+      // When
+      const [txDesc] = await api.listOperations(SENDER, { minHeight: 0, order: "desc" });
+
+      // Then
+      // Check if the result is sorted in ascending order
+      expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
+        txDesc[txDesc.length - 1].tx.block.height,
+      );
     });
   });
 

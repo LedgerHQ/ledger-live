@@ -24,6 +24,7 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  Page,
   Stake,
   StakeState,
   AssetInfo,
@@ -449,14 +450,22 @@ export const getOperations = async (
   accountId: string,
   addr: string,
   cursor?: QueryTransactionBlocksParams["cursor"],
+  order?: "asc" | "desc",
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperations({
+    let rpcOrder: "ascending" | "descending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
+
+    const sendOps = await loadOperations({
       api,
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const receivedOps = await loadOperations({
@@ -464,38 +473,51 @@ export const getOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
-    const rawTransactions = filterOperations(sentOps, receivedOps, cursor);
+    // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
+    const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
+    return rawTransactions.operations.map(transaction =>
+      transactionToOperation(accountId, addr, transaction),
+    );
   });
 
 export const filterOperations = (
-  operationList1: SuiTransactionBlockResponse[],
-  operationList2: SuiTransactionBlockResponse[],
-  cursor: string | null | undefined,
-) => {
-  let filterTimestamp = 0;
-
-  // When restoring state (no cursor provided) and we've reached the limit for either sent or received operations,
+  sendOps: LoadOperationResponse,
+  receiveOps: LoadOperationResponse,
+  order: "ascending" | "descending",
+  shouldFilter: boolean = true,
+): LoadOperationResponse => {
+  let filterTimestamp: number = 0;
+  let nextCursor: string | null | undefined = undefined;
+  // When we've reached the limit for either sent or received operations,
   // we filter out extra operations to maintain correct chronological order
   if (
-    !cursor &&
-    operationList1.length &&
-    operationList2.length &&
-    (operationList1.length === TRANSACTIONS_LIMIT || operationList2.length === TRANSACTIONS_LIMIT)
+    shouldFilter &&
+    sendOps.operations.length &&
+    receiveOps.operations.length &&
+    (sendOps.operations.length === TRANSACTIONS_LIMIT ||
+      receiveOps.operations.length === TRANSACTIONS_LIMIT)
   ) {
-    const aTime = operationList1[operationList1.length - 1].timestampMs ?? 0;
-    const bTime = operationList2[operationList2.length - 1].timestampMs ?? 0;
-    filterTimestamp = Math.max(Number(aTime), Number(bTime));
+    const sendTime = Number(sendOps.operations[sendOps.operations.length - 1].timestampMs ?? 0);
+    const receiveTime = Number(
+      receiveOps.operations[receiveOps.operations.length - 1].timestampMs ?? 0,
+    );
+    if (sendTime >= receiveTime) {
+      nextCursor = sendOps.cursor;
+      filterTimestamp = sendTime;
+    } else {
+      nextCursor = receiveOps.cursor;
+      filterTimestamp = receiveTime;
+    }
   }
-  const result = [...operationList1, ...operationList2]
+  const result = [...sendOps.operations, ...receiveOps.operations]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
     .filter(op => Number(op.timestampMs) >= filterTimestamp);
 
-  return uniqBy(result, tx => tx.digest);
+  return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
 /**
@@ -505,14 +527,22 @@ export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
   withApiImpl: typeof withApi = withApi,
-): Promise<Op[]> =>
+  order?: "asc" | "desc",
+): Promise<Page<Op>> =>
   withApiImpl(async api => {
+    let rpcOrder: "ascending" | "descending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
+
     const opsOut = await loadOperations({
       api,
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const opsIn = await loadOperations({
@@ -520,12 +550,15 @@ export const getListOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
-    const list = filterOperations(opsIn, opsOut, cursor);
+    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
 
-    return list.map(t => transactionToOp(addr, t));
+    return {
+      items: list.operations.map(t => transactionToOp(addr, t)),
+      next: list.cursor ?? undefined,
+    };
   });
 
 /**
@@ -715,6 +748,11 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
     return api.executeTransactionBlock(params);
   });
 
+type LoadOperationResponse = {
+  operations: SuiTransactionBlockResponse[];
+  cursor?: QueryTransactionBlocksParams["cursor"];
+};
+
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
@@ -730,10 +768,10 @@ export const loadOperations = async ({
   operations: PaginatedTransactionResponse["data"];
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
-}): Promise<PaginatedTransactionResponse["data"]> => {
+}): Promise<LoadOperationResponse> => {
   try {
     if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
-      return operations;
+      return { operations, cursor };
     }
 
     const { data, nextCursor, hasNextPage } = await queryTransactions({
@@ -744,7 +782,7 @@ export const loadOperations = async ({
 
     operations.push(...data);
     if (!hasNextPage) {
-      return operations;
+      return { operations: operations, cursor: nextCursor };
     }
 
     await loadOperations({ ...params, cursor: nextCursor, operations, order });
@@ -759,7 +797,7 @@ export const loadOperations = async ({
     }
   }
 
-  return operations;
+  return { operations: operations, cursor: cursor };
 };
 
 /**
