@@ -154,6 +154,7 @@ describe.each([
       expect(
         await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
+          order: "asc",
         }),
       ).toEqual([[], ""]);
     });
@@ -161,6 +162,7 @@ describe.each([
     it("lists operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
         minHeight: 200,
+        order: "asc",
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {

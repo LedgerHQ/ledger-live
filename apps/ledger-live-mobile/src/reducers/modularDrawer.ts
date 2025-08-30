@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { MODULAR_DRAWER_KEY } from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;
-  preselectedCurrencies: CryptoOrTokenCurrency[];
+  preselectedCurrencies: string[];
   callbackId?: string;
   enableAccountSelection?: boolean;
   accountsObservableId?: string;
@@ -44,7 +43,7 @@ const modularDrawerSlice = createSlice({
     openModularDrawer: (
       state,
       action: PayloadAction<{
-        currencies?: CryptoOrTokenCurrency[];
+        currencies?: string[];
         callbackId?: string;
         enableAccountSelection?: boolean;
         accountsObservableId?: string;
@@ -103,7 +102,7 @@ const modularDrawerSlice = createSlice({
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
     },
-    setPreselectedCurrencies: (state, action: PayloadAction<CryptoOrTokenCurrency[]>) => {
+    setPreselectedCurrencies: (state, action: PayloadAction<string[]>) => {
       state.preselectedCurrencies = action.payload;
     },
     setCallbackId: (state, action: PayloadAction<string | undefined>) => {

@@ -8,13 +8,8 @@ import {
   mockedAccounts,
   ARB_ACCOUNT,
 } from "./shared";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";
-
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
 
 describe("ModularDrawer integration", () => {
   const advanceTimers = () => {
@@ -28,8 +23,8 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    // Asset selection
-    expect(getByText(/select asset/i)).toBeVisible();
+    // Wait for the assets to be loaded (MSW mock))
+    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
@@ -65,9 +60,8 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    advanceTimers();
-
-    expect(getByText(/select asset/i)).toBeVisible();
+    // Wait for the assets to be loaded (MSW mock))
+    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
 
     // Select Bitcoin (should go directly to Device Selection)
     await user.press(getByText(/bitcoin/i));
@@ -84,7 +78,8 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    expect(getByText(/select asset/i)).toBeVisible();
+    // Wait for the assets to be loaded (MSW mock))
+    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
     expect(getByText(/bitcoin/i)).toBeVisible();
 
     const searchInput = getByPlaceholderText(/search/i);
@@ -96,7 +91,9 @@ describe("ModularDrawer integration", () => {
       expect(queryByText(/ethereum/i)).not.toBeVisible();
     });
 
-    expect(getByText(/bitcoin/i)).toBeVisible();
+    await waitFor(() => {
+      expect(getByText(/bitcoin/i)).toBeVisible();
+    });
   });
 
   it("should show the empty state when no assets are found", async () => {
@@ -105,7 +102,7 @@ describe("ModularDrawer integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-
+    advanceTimers();
     const searchInput = getByPlaceholderText(/search/i);
     expect(searchInput).toBeVisible();
 
@@ -137,8 +134,8 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
 
-    // Asset selection
-    expect(getByText(/select asset/i)).toBeVisible();
+    // Wait for the assets to be loaded (MSW mock))
+    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));

@@ -5,18 +5,12 @@ import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 export interface OperationCommon extends Operation {
   extra: Record<string, any>;
 }
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
-
-export const getAssetIdFromAsset = (asset: AssetInfo) =>
-  asset.type !== "native" && "assetReference" in asset && "assetOwner" in asset
-    ? `${asset.assetReference}:${asset.assetOwner}`
-    : "";
 
 function buildTokenAccount({
   parentAccountId,
@@ -68,12 +62,14 @@ export function buildSubAccounts({
   assetsBalance,
   syncConfig,
   operations,
+  getTokenFromAsset,
 }: {
   currency: CryptoCurrency;
   accountId: string;
   assetsBalance: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
+  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
 }): TokenAccount[] | undefined {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
@@ -85,7 +81,7 @@ export function buildSubAccounts({
   assetsBalance
     .filter(b => b.asset.type !== "native") // NOTE: this could be removed, keeping here while fixing things up
     .map(balance => {
-      const token = findToken(currency, balance);
+      const token = getTokenFromAsset && getTokenFromAsset(balance.asset);
       // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
       if (token && !blacklistedTokenIds.includes(token.id)) {
         tokenAccounts.push(
@@ -103,8 +99,4 @@ export function buildSubAccounts({
       }
     });
   return tokenAccounts;
-}
-
-export function findToken(currency: CryptoCurrency, balance: Balance): TokenCurrency | undefined {
-  return findTokenById(`${currency.family}/asset/${getAssetIdFromAsset(balance.asset)}`);
 }

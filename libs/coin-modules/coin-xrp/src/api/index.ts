@@ -27,6 +27,7 @@ import {
   MemoInput,
 } from "../logic";
 import { ListOperationsOptions, XrpMapMemo } from "../types";
+import { Order } from "../types/model";
 
 export function createApi(config: XrpConfig): Api<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -115,12 +116,13 @@ type PaginationState = {
 async function operationsFromHeight(
   address: string,
   minHeight: number,
+  order: Order = "asc",
 ): Promise<[Operation[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
       minHeight: state.minHeight,
-      order: "asc",
+      order: order,
     };
     if (state.apiNextCursor) {
       options.token = state.apiNextCursor;
@@ -162,9 +164,9 @@ async function operationsFromHeight(
 
 // NOTE: double check
 async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  const { minHeight, lastPagingToken } = pagination;
+  const { minHeight, lastPagingToken, order } = pagination;
   if (minHeight) {
-    return await operationsFromHeight(address, minHeight);
+    return await operationsFromHeight(address, minHeight, order);
   }
   const isInitSync = lastPagingToken === "";
 
@@ -172,5 +174,5 @@ async function operations(address: string, pagination: Pagination): Promise<[Ope
     minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
   };
   // TODO token must be implemented properly (waiting ack from the design document)
-  return await operationsFromHeight(address, newPagination.minHeight);
+  return await operationsFromHeight(address, newPagination.minHeight, order);
 }

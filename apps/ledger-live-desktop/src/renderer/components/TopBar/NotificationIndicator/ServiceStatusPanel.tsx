@@ -7,12 +7,13 @@ import { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvi
 import Text from "~/renderer/components/Text";
 import SuccessAnimatedIcon from "~/renderer/components/SuccessAnimatedIcon";
 import { Trans } from "react-i18next";
-import { FakeLink } from "~/renderer/components/Link";
+import { Link } from "@ledgerhq/react-ui/index";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { renderWithLinks } from "~/renderer/components/TranslatedError/ErrorWithAnchor";
 
 const IncidentContainer = styled(Box)`
   width: 100%;
@@ -65,7 +66,7 @@ function IncidentArticle({ incidentData }: IncidentProps) {
                 lineHeight="18px"
                 color="palette.text.shade50"
               >
-                {body}
+                {renderWithLinks(body)}
               </Text>
             ))
           : null}
@@ -104,7 +105,7 @@ function StatusOkHeader() {
         textAlign="center"
       >
         <Trans i18nKey="informationCenter.serviceStatus.statusOk.description">
-          <FakeLink onClick={() => openURL(urls.ledgerStatus)} />
+          <Link onClick={() => openURL(urls.ledgerStatus)} />
         </Trans>
       </Text>
     </>
@@ -144,9 +145,6 @@ const PanelContainer = styled.div`
 `;
 export function ServiceStatusPanel() {
   const { incidents } = useFilteredServiceStatus();
-  console.log({
-    incidents,
-  });
   return (
     <PanelContainer>
       <TrackPage category="Notification Center" name="notification_center_status" />

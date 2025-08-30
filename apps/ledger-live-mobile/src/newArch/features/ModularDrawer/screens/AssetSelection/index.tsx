@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
@@ -23,8 +23,6 @@ export type AssetSelectionStepProps = {
   availableAssets: CryptoOrTokenCurrency[];
   defaultSearchValue: string;
   setDefaultSearchValue: (value: string) => void;
-  itemsToDisplay: CryptoOrTokenCurrency[];
-  setItemsToDisplay: (items: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   flow: string;
   source: string;
@@ -37,8 +35,6 @@ const AssetSelection = ({
   availableAssets,
   defaultSearchValue,
   setDefaultSearchValue,
-  itemsToDisplay,
-  setItemsToDisplay,
   onAssetSelected,
   flow,
   source,
@@ -53,7 +49,7 @@ const AssetSelection = ({
   const transformAssets = createAssetConfigurationHook({
     assetsConfiguration,
   });
-  const formattedAssets = transformAssets(itemsToDisplay);
+  const formattedAssets = transformAssets(availableAssets);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -87,19 +83,6 @@ const AssetSelection = ({
     ],
   );
 
-  useEffect(() => {
-    if (defaultSearchValue === undefined) {
-      return;
-    }
-
-    if (availableAssets.length > 0) {
-      const filteredAssets = availableAssets.filter(asset =>
-        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-      );
-      setItemsToDisplay(filteredAssets);
-    }
-  }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
-
   const handleSearchPressIn = () => {
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
@@ -131,10 +114,6 @@ const AssetSelection = ({
       <SearchInputContainer
         source={source}
         flow={flow}
-        items={availableAssets}
-        setItemsToDisplay={setItemsToDisplay}
-        assetsToDisplay={itemsToDisplay}
-        originalAssets={availableAssets}
         setSearchedValue={setDefaultSearchValue}
         defaultValue={defaultSearchValue}
         onFocus={handleSearchFocus}

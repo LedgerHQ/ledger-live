@@ -27,12 +27,7 @@ export default function Features() {
         iconLeft={<IconsLegacy.TradeMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugSwap)}
       />
-      <SettingsRow
-        title="Export accounts"
-        desc="Generate a LiveQR stream to be imported on another LLM"
-        iconLeft={<IconsLegacy.QrCodeMedium size={32} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugExport)}
-      />
+
       <BLEPairingFlow />
       {/* Split all the custom lockscreen screens into a separate menu maybe? */}
       <CustomImage />

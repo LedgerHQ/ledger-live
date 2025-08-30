@@ -44,43 +44,43 @@ type Timestamp = {
 
 type BaseEvent = {
   type: string;
-  contractId: string;
+  contract_id: string;
   details: string;
 };
 
-type CreatedEvent = BaseEvent & {
-  templateId: {
-    packageId: string;
-    moduleName: string;
-    entityName: string;
+export type CreatedEvent = BaseEvent & {
+  template_id: {
+    package_id: string;
+    module_name: string;
+    entity_name: string;
   };
   signatories: string[];
   observers: string[];
 };
 
 type ExercisedEvent = BaseEvent & {
-  templateId: {
+  template_id: {
     packageId: string;
     moduleName: string;
     entityName: string;
   };
   choice: string;
   consuming: boolean;
-  actingParties: string[];
+  acting_parties: string[];
 };
 
 type Event = BaseEvent | CreatedEvent | ExercisedEvent;
 
-type TxInfo = {
-  updateId: string;
-  commandId: string;
-  workflowId: string;
-  effectiveAt: Timestamp;
+export type TxInfo = {
+  update_id: string;
+  command_id: string;
+  workflow_id: string;
+  effective_at: Timestamp;
   offset: number;
-  synchronizerId: string;
-  recordTime: Timestamp;
-  events: Event[];
-  traceContext: string;
+  synchronizer_id: string;
+  record_time: Timestamp;
+  events: Record<string, Event>[];
+  trace_context: string;
 };
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
@@ -145,7 +145,15 @@ async function getParty(identifier: string, by: "ID" | "PK"): Promise<PartyInfo>
   return data;
 }
 
-export async function getTransactions(partyId: string): Promise<{
+export async function getTransactions(
+  partyId: string,
+  options?: {
+    cursor?: number | undefined;
+    minOffset?: number | undefined;
+    maxOffset?: number | undefined;
+    limit?: number | undefined;
+  },
+): Promise<{
   next: number;
   transactions: TxInfo[];
 }> {
@@ -155,6 +163,7 @@ export async function getTransactions(partyId: string): Promise<{
   }>({
     method: "GET",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transactions`,
+    data: options,
   });
   return data;
 }

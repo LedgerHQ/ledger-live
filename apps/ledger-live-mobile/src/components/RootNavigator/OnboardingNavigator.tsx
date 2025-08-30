@@ -25,7 +25,6 @@ import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
 import OnboardingPairNew from "~/screens/Onboarding/steps/pairNew";
-import OnboardingImportAccounts from "~/screens/Onboarding/steps/importAccounts";
 import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
@@ -224,11 +223,6 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
 
       <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
-
-      <Stack.Screen
-        name={ScreenName.OnboardingImportAccounts}
-        component={OnboardingImportAccounts}
-      />
 
       <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
 

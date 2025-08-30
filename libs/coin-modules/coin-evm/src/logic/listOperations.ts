@@ -1,9 +1,4 @@
-import {
-  AssetInfo,
-  MemoNotSupported,
-  Operation,
-  Pagination,
-} from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
@@ -52,14 +47,14 @@ const toOperation = (
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
-  pagination: Pagination,
+  minHeight: number,
 ): Promise<[Operation<MemoNotSupported>[], string]> {
   const explorerApi = getExplorerApi(currency);
   const { lastCoinOperations, lastTokenOperations } = await explorerApi.getLastOperations(
     currency,
     address,
     `js:2:${currency.id}:${address}:`,
-    pagination.minHeight,
+    minHeight,
   );
   const nativeOperations = lastCoinOperations.map<Operation<MemoNotSupported>>(op =>
     toOperation({ type: "native" }, op),

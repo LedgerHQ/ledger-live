@@ -4,7 +4,6 @@ import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import { findToken } from "./buildSubAccounts";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -33,8 +32,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const assetsBalance = balanceRes
       .filter(b => b.asset.type !== "native")
-      .filter(b => findToken(currency, b));
-
+      .filter(b => alpacaApi.getTokenFromAsset && alpacaApi.getTokenFromAsset(b.asset));
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
 
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
@@ -43,7 +41,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
     const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
-    const paginationParams: any = { minHeight: blockHeight };
+    const paginationParams: any = { minHeight: blockHeight, order: "asc" };
     if (lastPagingToken) {
       paginationParams.lastPagingToken = lastPagingToken;
     }
@@ -72,6 +70,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         assetsBalance,
         syncConfig,
         operations: assetOperations,
+        getTokenFromAsset: alpacaApi.getTokenFromAsset,
       }) || [];
 
     const operationsWithSubs = mergedOps.map(op => {

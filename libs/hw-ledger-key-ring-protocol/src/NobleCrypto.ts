@@ -1,12 +1,162 @@
-import * as secp256k1 from "secp256k1";
-import * as ecc from "tiny-secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
 import { BIP32Factory } from "bip32";
 import hmac from "create-hmac";
 import * as crypto from "crypto";
 
 import { Crypto, KeyPair, KeyPairWithChainCode } from "./Crypto";
 
-const bip32 = BIP32Factory(ecc);
+// ECC wrapper for @noble/curves/secp256k1 to be compatible with BIP32Factory
+const eccWrapper = {
+  isPoint(point: Uint8Array | Buffer): boolean {
+    try {
+      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
+      if (pointBytes.length !== 33 && pointBytes.length !== 65) return false;
+      secp256k1.ProjectivePoint.fromHex(pointBytes);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  isPrivate(privateKey: Uint8Array | Buffer): boolean {
+    try {
+      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
+      if (keyBytes.length !== 32) return false;
+      return secp256k1.utils.isValidPrivateKey(keyBytes);
+    } catch {
+      return false;
+    }
+  },
+
+  pointFromScalar(privateKey: Uint8Array | Buffer, compressed = true): Uint8Array | null {
+    try {
+      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
+      if (!this.isPrivate(keyBytes)) return null;
+      return secp256k1.getPublicKey(keyBytes, compressed);
+    } catch {
+      return null;
+    }
+  },
+
+  pointAddScalar(
+    point: Uint8Array | Buffer,
+    scalar: Uint8Array | Buffer,
+    compressed?: boolean,
+  ): Uint8Array | null {
+    try {
+      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
+      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
+
+      if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
+
+      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const scalarBigInt = bytesToBigInt(scalarBytes);
+      const scalarPoint = secp256k1.ProjectivePoint.BASE.multiply(scalarBigInt);
+      const result = p.add(scalarPoint);
+
+      const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
+      return result.toRawBytes(isCompressed);
+    } catch {
+      return null;
+    }
+  },
+
+  privateAdd(privateKey: Uint8Array | Buffer, scalar: Uint8Array | Buffer): Uint8Array | null {
+    try {
+      const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
+      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
+
+      if (!this.isPrivate(keyBytes) || !this.isPrivate(scalarBytes)) return null;
+
+      const keyBigInt = bytesToBigInt(keyBytes);
+      const scalarBigInt = bytesToBigInt(scalarBytes);
+      const CURVE_ORDER = BigInt(
+        "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141",
+      );
+      const result = (keyBigInt + scalarBigInt) % CURVE_ORDER;
+
+      if (result === 0n) return null;
+
+      return bigIntToBytes(result);
+    } catch {
+      return null;
+    }
+  },
+
+  pointMultiply(
+    point: Uint8Array | Buffer,
+    scalar: Uint8Array | Buffer,
+    compressed?: boolean,
+  ): Uint8Array | null {
+    try {
+      const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
+      const scalarBytes = scalar instanceof Buffer ? new Uint8Array(scalar) : scalar;
+
+      if (!this.isPoint(pointBytes) || !this.isPrivate(scalarBytes)) return null;
+
+      const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+      const scalarBigInt = bytesToBigInt(scalarBytes);
+      const result = p.multiply(scalarBigInt);
+
+      const isCompressed = compressed !== undefined ? compressed : pointBytes.length === 33;
+      return result.toRawBytes(isCompressed);
+    } catch {
+      return null;
+    }
+  },
+
+  pointCompress(point: Uint8Array | Buffer, compressed = true): Uint8Array {
+    const pointBytes = point instanceof Buffer ? new Uint8Array(point) : point;
+    const p = secp256k1.ProjectivePoint.fromHex(pointBytes);
+    return p.toRawBytes(compressed);
+  },
+
+  isPointCompressed(point: Uint8Array | Buffer): boolean {
+    return point.length === 33;
+  },
+
+  // Additional utilities for compatibility with TinySecp256k1Interface
+  sign(hash: Uint8Array | Buffer, privateKey: Uint8Array | Buffer): Uint8Array {
+    const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
+    const keyBytes = privateKey instanceof Buffer ? new Uint8Array(privateKey) : privateKey;
+    const signature = secp256k1.sign(hashBytes, keyBytes, { prehash: false });
+    return signature.toCompactRawBytes();
+  },
+
+  verify(
+    hash: Uint8Array | Buffer,
+    publicKey: Uint8Array | Buffer,
+    signature: Uint8Array | Buffer,
+  ): boolean {
+    try {
+      const hashBytes = hash instanceof Buffer ? new Uint8Array(hash) : hash;
+      const pubKeyBytes = publicKey instanceof Buffer ? new Uint8Array(publicKey) : publicKey;
+      const sigBytes = signature instanceof Buffer ? new Uint8Array(signature) : signature;
+      return secp256k1.verify(sigBytes, hashBytes, pubKeyBytes, { prehash: false });
+    } catch {
+      return false;
+    }
+  },
+};
+
+// Helper functions for bigint conversion
+function bytesToBigInt(bytes: Uint8Array): bigint {
+  const hex = Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+  return BigInt("0x" + hex);
+}
+
+function bigIntToBytes(value: bigint): Uint8Array {
+  const hex = value.toString(16).padStart(64, "0");
+  const bytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) {
+    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+
+const bip32 = BIP32Factory(eccWrapper);
 const AES_BLOCK_SIZE = 16;
 const PRIVATE_KEY_SIZE = 32;
 
@@ -15,7 +165,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     let pk: Uint8Array;
     do {
       pk = crypto.randomBytes(PRIVATE_KEY_SIZE);
-    } while (!secp256k1.privateKeyVerify(pk));
+    } while (!secp256k1.utils.isValidPrivateKey(pk));
     return this.keypairFromSecretKey(pk);
   }
 
@@ -35,7 +185,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
 
   keypairFromSecretKey(secretKey: Uint8Array): KeyPair {
     return {
-      publicKey: secp256k1.publicKeyCreate(secretKey),
+      publicKey: secp256k1.getPublicKey(secretKey, true), // compressed by default
       privateKey: secretKey,
     };
   }
@@ -66,15 +216,22 @@ export class NobleCryptoSecp256k1 implements Crypto {
   }
 
   sign(message: Uint8Array, keyPair: KeyPair): Uint8Array {
-    const signature = secp256k1.ecdsaSign(message, keyPair.privateKey).signature;
+    // Note: Using prehash: false since we're passing already hashed message
+    const signature = secp256k1.sign(message, keyPair.privateKey, { prehash: false });
+    const compactSig = signature.toCompactRawBytes();
     // DER encoding
-    return this.derEncode(signature.slice(0, 32), signature.slice(32, 64));
+    return this.derEncode(compactSig.slice(0, 32), compactSig.slice(32, 64));
   }
 
   verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean {
-    // DER decoding
-    const { R, S } = this.derDecode(signature);
-    return secp256k1.ecdsaVerify(this.concat(R, S), message, publicKey);
+    try {
+      // DER decoding
+      const { R, S } = this.derDecode(signature);
+      const compactSig = this.concat(R, S);
+      return secp256k1.verify(compactSig, message, publicKey, { prehash: false });
+    } catch {
+      return false;
+    }
   }
 
   private to_array(buffer: Buffer): Uint8Array {
@@ -219,10 +376,12 @@ variable : Encrypted data
   }
 
   ecdh(keyPair: KeyPair, publicKey: Uint8Array): Uint8Array {
-    const pubkey = Buffer.from(publicKey);
-    const privkey = Buffer.from(keyPair.privateKey);
-    const point = ecc.pointMultiply(pubkey, privkey, ecc.isPointCompressed(pubkey))!;
-    return point.slice(1);
+    const point = secp256k1.ProjectivePoint.fromHex(publicKey);
+    const scalar = bytesToBigInt(keyPair.privateKey);
+    const result = point.multiply(scalar);
+    // Return x coordinate only (32 bytes) - remove first byte which is 0x04 for uncompressed, then take only x
+    const fullPoint = result.toRawBytes(false).slice(1); // Remove 0x04 prefix -> 64 bytes
+    return fullPoint.slice(0, 32); // Take only x coordinate -> 32 bytes
   }
 
   computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array) {

@@ -9,7 +9,7 @@ type UseStepNavigationParams = {
   hasOneCurrency: boolean;
   resetSelection: () => void;
   clearNetwork: () => void;
-  selectNetwork?: (a: CryptoOrTokenCurrency, n: CryptoOrTokenCurrency) => void;
+  selectNetwork?: (n: CryptoOrTokenCurrency) => void;
   navigateToDeviceWithCurrency: (selectedCurrency: CryptoOrTokenCurrency) => void;
   enableAccountSelection?: boolean;
 };
@@ -51,7 +51,7 @@ export function useStepNavigation({
 
   const proceedToNextStep = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
-      if (selectNetwork) selectNetwork(selectedAsset, selectedNetwork);
+      if (selectNetwork) selectNetwork(selectedNetwork);
       if (enableAccountSelection) {
         navigationStepManager.goToStep(ModularDrawerStep.Account);
       } else {

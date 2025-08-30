@@ -108,6 +108,7 @@ export const DEFAULT_FEATURES: Features = {
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
+  calLedgerService: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
@@ -625,7 +626,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   lldModularDrawerBackendData: DEFAULT_FEATURE,
-  llmModularDrawerBackendData: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
