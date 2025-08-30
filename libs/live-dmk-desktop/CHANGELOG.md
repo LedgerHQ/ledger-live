@@ -1,5 +1,23 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.9.2
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1
+
+## 0.9.2-hotfix.0
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1-hotfix.0
+
 ## 0.9.1
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.46.0",
+  "version": "34.46.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -158,7 +158,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
+    "@ledgerhq/device-management-kit": "0.0.0-lns-fix-20250829181539",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
