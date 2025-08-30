@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.2
+
+### Minor Changes
+
+- [#11552](https://github.com/LedgerHQ/ledger-live/pull/11552) [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refactor data usage in MAD by integrating DADA
+
+- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
+
+- [#11536](https://github.com/LedgerHQ/ledger-live/pull/11536) [`779a80a`](https://github.com/LedgerHQ/ledger-live/commit/779a80af89525e697e453ebd7adcdd3070cf2f63) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix anchor renderer with translated errors
+
+### Patch Changes
+
+- [#11379](https://github.com/LedgerHQ/ledger-live/pull/11379) [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311) Thanks [@gre-ledger](https://github.com/gre-ledger)! - The old export accounts to mobile via Live QR Code feature that was long disabled is now fully removed from the codebase.
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-nightly.1
+  - @ledgerhq/coin-evm@2.29.0-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/types-live@6.83.0-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.1
+  - @ledgerhq/live-wallet@0.12.3-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.1
+  - @ledgerhq/live-nft@0.8.19-nightly.1
+  - @ledgerhq/live-nft-react@0.9.19-nightly.1
+  - @ledgerhq/domain-service@1.2.42-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.0
+
 ## 2.127.0-nightly.1
 
 ### Minor Changes

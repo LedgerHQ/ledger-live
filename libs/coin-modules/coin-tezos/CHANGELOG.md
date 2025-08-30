@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 6.3.0-nightly.1
+
+### Minor Changes
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+### Patch Changes
+
+- Updated dependencies [[`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70)]:
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/types-live@6.83.0-nightly.0
+
 ## 6.2.1-nightly.0
 
 ### Patch Changes

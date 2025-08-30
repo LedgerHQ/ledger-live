@@ -1,5 +1,13 @@
 # @ledgerhq/live-wallet
 
+## 0.6.4-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/speculos-transport@0.2.9-nightly.2
+
 ## 0.6.3
 
 ### Patch Changes

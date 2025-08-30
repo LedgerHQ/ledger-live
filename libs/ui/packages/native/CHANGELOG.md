@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.44.0-nightly.2
+
+### Minor Changes
+
+- [#11556](https://github.com/LedgerHQ/ledger-live/pull/11556) [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LargeMover fix PriceVariation indicator and ProgressPoint
+
 ## 0.44.0-nightly.1
 
 ### Minor Changes

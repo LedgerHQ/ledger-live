@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 2.29.0-nightly.1
+
+### Minor Changes
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11494](https://github.com/LedgerHQ/ledger-live/pull/11494) [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): add `getTokenFromAsset` in `BridgeApi`
+
+### Patch Changes
+
+- Updated dependencies [[`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7)]:
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/domain-service@1.2.42-nightly.0
+  - @ledgerhq/evm-tools@1.7.4
+
 ## 2.29.0-nightly.0
 
 ### Minor Changes

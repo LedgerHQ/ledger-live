@@ -1,5 +1,17 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.2-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.2
+  - @ledgerhq/types-live@6.83.0-nightly.0
+  - @ledgerhq/live-wallet@0.12.3-nightly.1
+  - @ledgerhq/live-cli@24.21.3-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.0
+
 ## 0.6.2-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,65 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.2
+
+### Minor Changes
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11552](https://github.com/LedgerHQ/ledger-live/pull/11552) [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refactor data usage in MAD by integrating DADA
+
+- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
+
+- [#11494](https://github.com/LedgerHQ/ledger-live/pull/11494) [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): add `getTokenFromAsset` in `BridgeApi`
+
+- [#11395](https://github.com/LedgerHQ/ledger-live/pull/11395) [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add call to CAL in bridge
+
+### Patch Changes
+
+- [#11379](https://github.com/LedgerHQ/ledger-live/pull/11379) [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311) Thanks [@gre-ledger](https://github.com/gre-ledger)! - The old export accounts to mobile via Live QR Code feature that was long disabled is now fully removed from the codebase.
+
+- Updated dependencies [[`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311), [`e8a0185`](https://github.com/LedgerHQ/ledger-live/commit/e8a01854e07d313659f9740843731e97601cf41d)]:
+  - @ledgerhq/coin-polkadot@6.9.0-nightly.1
+  - @ledgerhq/coin-stellar@6.3.0-nightly.1
+  - @ledgerhq/coin-canton@0.4.0-nightly.1
+  - @ledgerhq/coin-aptos@3.2.0-nightly.1
+  - @ledgerhq/coin-tezos@6.3.0-nightly.1
+  - @ledgerhq/coin-tron@5.3.0-nightly.2
+  - @ledgerhq/coin-evm@2.29.0-nightly.1
+  - @ledgerhq/coin-sui@0.12.0-nightly.2
+  - @ledgerhq/coin-xrp@7.3.0-nightly.1
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/hw-app-btc@10.11.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.1
+  - @ledgerhq/live-wallet@0.12.3-nightly.1
+  - @ledgerhq/hw-app-exchange@0.13.0
+  - @ledgerhq/speculos-transport@0.2.9-nightly.2
+  - @ledgerhq/live-signer-canton@0.2.3-nightly.2
+  - @ledgerhq/coin-celo@1.2.2-nightly.1
+  - @ledgerhq/live-signer-evm@0.7.2-nightly.1
+  - @ledgerhq/coin-algorand@0.9.19-nightly.1
+  - @ledgerhq/coin-cardano@0.11.3-nightly.1
+  - @ledgerhq/coin-casper@2.0.10-nightly.1
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.1
+  - @ledgerhq/coin-hedera@1.10.2-nightly.1
+  - @ledgerhq/coin-icon@0.11.6-nightly.1
+  - @ledgerhq/coin-internet_computer@1.7.19-nightly.1
+  - @ledgerhq/coin-mina@1.1.18-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.1
+  - @ledgerhq/coin-near@0.12.2-nightly.1
+  - @ledgerhq/coin-solana@0.31.2-nightly.1
+  - @ledgerhq/coin-stacks@0.8.19-nightly.1
+  - @ledgerhq/coin-ton@0.13.8-nightly.2
+  - @ledgerhq/coin-vechain@2.8.3-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.1
+  - @ledgerhq/live-nft@0.8.19-nightly.1
+  - @ledgerhq/device-core@0.6.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.17-nightly.0
+  - @ledgerhq/live-signer-solana@0.5.4-nightly.1
+  - @ledgerhq/hw-app-celo@6.34.2-nightly.0
+
 ## 34.47.0-nightly.1
 
 ### Minor Changes

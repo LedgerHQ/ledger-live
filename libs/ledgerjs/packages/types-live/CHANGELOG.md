@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.83.0-nightly.0
+
+### Minor Changes
+
+- [#11552](https://github.com/LedgerHQ/ledger-live/pull/11552) [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refactor data usage in MAD by integrating DADA
+
+- [#11395](https://github.com/LedgerHQ/ledger-live/pull/11395) [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add call to CAL in bridge
+
 ## 6.82.0
 
 ### Minor Changes

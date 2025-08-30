@@ -1,5 +1,23 @@
 # @ledgerhq/live-cli
 
+## 24.21.3-nightly.2
+
+### Patch Changes
+
+- [#11379](https://github.com/LedgerHQ/ledger-live/pull/11379) [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311) Thanks [@gre-ledger](https://github.com/gre-ledger)! - The old export accounts to mobile via Live QR Code feature that was long disabled is now fully removed from the codebase.
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/hw-app-btc@10.11.0-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.1
+  - @ledgerhq/live-wallet@0.12.3-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.1
+  - @ledgerhq/device-core@0.6.2-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.0
+
 ## 24.21.3-nightly.1
 
 ### Patch Changes

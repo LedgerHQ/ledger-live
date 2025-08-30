@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.3.0-nightly.2
+
+### Minor Changes
+
+- [#11535](https://github.com/LedgerHQ/ledger-live/pull/11535) [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Canton add sign hash function
+
 ## 0.3.0-nightly.1
 
 ### Patch Changes

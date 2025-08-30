@@ -1,5 +1,41 @@
 # live-mobile
 
+## 3.92.0-nightly.2
+
+### Minor Changes
+
+- [#11552](https://github.com/LedgerHQ/ledger-live/pull/11552) [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Refactor data usage in MAD by integrating DADA
+
+- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
+
+- [#11556](https://github.com/LedgerHQ/ledger-live/pull/11556) [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LargeMover fix PriceVariation indicator and ProgressPoint
+
+- [#11540](https://github.com/LedgerHQ/ledger-live/pull/11540) [`4bab2a1`](https://github.com/LedgerHQ/ledger-live/commit/4bab2a1e38d0f351854df5269eb5f72a4b666a39) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLM hides tokens on account screen
+
+- [#11555](https://github.com/LedgerHQ/ledger-live/pull/11555) [`7afecae`](https://github.com/LedgerHQ/ledger-live/commit/7afecae08094e43bb24c94bdd6f3cb3564cf2de2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - avoid duplicate for analytic
+
+### Patch Changes
+
+- [#11379](https://github.com/LedgerHQ/ledger-live/pull/11379) [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311) Thanks [@gre-ledger](https://github.com/gre-ledger)! - The old export accounts to mobile via Live QR Code feature that was long disabled is now fully removed from the codebase.
+
+- Updated dependencies [[`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`6ebe1f9`](https://github.com/LedgerHQ/ledger-live/commit/6ebe1f9e8e565e91afbb7c9db943c98425aaa311), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70), [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc)]:
+  - @ledgerhq/coin-evm@2.29.0-nightly.1
+  - @ledgerhq/coin-framework@6.3.0-nightly.1
+  - @ledgerhq/types-live@6.83.0-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/live-wallet@0.12.3-nightly.1
+  - @ledgerhq/native-ui@0.44.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.1
+  - @ledgerhq/coin-filecoin@1.10.2-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.1
+  - @ledgerhq/coin-stacks@0.8.19-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.1
+  - @ledgerhq/live-nft@0.8.19-nightly.1
+  - @ledgerhq/live-nft-react@0.9.19-nightly.1
+  - @ledgerhq/domain-service@1.2.42-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.0
+
 ## 3.92.0-nightly.1
 
 ### Minor Changes
