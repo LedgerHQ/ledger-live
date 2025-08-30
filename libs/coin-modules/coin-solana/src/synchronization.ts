@@ -10,7 +10,6 @@ import {
   toTokenAccountWithInfo,
   TransactionDescriptor,
 } from "./network/chain/web3";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
@@ -51,6 +50,7 @@ import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
 import { tryParseAsMintAccount } from "./network/chain/account";
 import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 export async function getAccount(
   address: string,
@@ -438,7 +438,7 @@ async function newSubAcc({
   const creationDate = new Date((lastTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
   const mint = assocTokenAcc.info.mint.toBase58();
-  const tokenCurrency = findTokenByAddressInCurrency(mint, currencyId);
+  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
 
   if (!tokenCurrency) {
     throw new Error(`token for mint "${mint}" not found`);

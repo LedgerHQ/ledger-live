@@ -1,4 +1,4 @@
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
+import { rangeDataTable } from "../../market/utils/rangeDataTable";
 import { TFunction } from "i18next";
 
 export const RANGES = Object.keys(rangeDataTable).filter(key => key !== "1h");

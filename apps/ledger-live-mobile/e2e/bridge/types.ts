@@ -16,7 +16,7 @@ import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/pla
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { Server, WebSocket } from "ws";
+import WebSocket from "ws";
 
 export type ServerData =
   | {
@@ -92,6 +92,7 @@ export type MockDeviceEvent =
 
 export const mockDeviceEventSubject = new Subject<MockDeviceEvent>();
 
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 // these adaptor will filter the event type to satisfy typescript (workaround), it works because underlying exec usage will ignore unknown event type
 export const connectAppExecMock = (): Observable<ConnectAppEvent> =>
   mockDeviceEventSubject as Observable<ConnectAppEvent>;
@@ -113,11 +114,12 @@ export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEv
   mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
 export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
   mockDeviceEventSubject as Observable<RenameDeviceEvent>;
+/* eslint-enable @typescript-eslint/consistent-type-assertions */
 
 declare global {
   // eslint-disable-next-line no-var
   var webSocket: {
-    wss: Server | undefined;
+    wss: WebSocket.Server | undefined;
     ws: WebSocket | undefined;
     messages: { [id: string]: MessageData };
     e2eBridgeServer: Subject<ServerData>;

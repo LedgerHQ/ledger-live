@@ -57,7 +57,7 @@ describe("Tezos Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
@@ -71,12 +71,23 @@ describe("Tezos Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
       const checkSet = new Set(tx.map(elt => `${elt.tx.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
+    });
+
+    it("returns operations from latest, but in asc order", async () => {
+      // When
+      const [txDesc] = await module.listOperations(address, { minHeight: 0, order: "desc" });
+
+      // Then
+      // Check if the result is sorted in ascending order
+      expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
+        txDesc[txDesc.length - 1].tx.block.height,
+      );
     });
   });
 

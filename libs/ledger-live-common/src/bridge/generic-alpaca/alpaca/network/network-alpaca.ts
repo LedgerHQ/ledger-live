@@ -134,7 +134,7 @@ const buildGetSequence = (networkFamily: string) =>
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination = { minHeight: 0 },
+    pagination: Pagination = { minHeight: 0, order: "asc" },
   ): Promise<[Operation<any>[], string]> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",

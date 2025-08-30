@@ -91,7 +91,7 @@ function OperationComponent({
         t={t}
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}
-      {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
+      {withAddress ? <AddressCell operation={operation} currency={currency} /> : <Box flex="1" />}
       <AmountCell operation={operation} currency={currency} unit={unit} isConfirmed={isConfirmed} />
     </OperationRow>
   );

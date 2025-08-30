@@ -36,6 +36,22 @@ const calculateMaxSend = (account: SuiAccount, transaction: Transaction): BigNum
 };
 
 /**
+ * Calculate the maximum amount that can be delegated after deducting fees and reserving gas.
+ *
+ * @param {SuiAccount} account - The account from which the amount is being delegated.
+ * @param {Transaction} transaction - The transaction details including fees.
+ * @returns {BigNumber} - The maximum amount that can be delegated, or 0 if insufficient balance.
+ */
+const calculateMaxDelegate = (account: SuiAccount, transaction: Transaction): BigNumber => {
+  // Reserve 0.1 SUI for future gas fees as recommended for delegation
+  const ONE_SUI = new BigNumber("1000000000"); // 1 SUI in MIST
+  const gasReserve = ONE_SUI.div(10); // 0.1 SUI
+
+  const amount = account.spendableBalance.minus(transaction.fees || 0).minus(gasReserve);
+  return amount.lt(0) ? new BigNumber(0) : amount;
+};
+
+/**
  * Calculates the amount to be sent in a transaction based on the account's balance and transaction details.
  *
  * @param {Object} params - The parameters for the calculation.
@@ -61,6 +77,14 @@ export const calculateAmount = ({
         amount =
           findSubAccountById(account, transaction.subAccountId!)?.spendableBalance ??
           new BigNumber(0);
+        break;
+      case "delegate":
+        amount = calculateMaxDelegate(account, transaction);
+        break;
+      case "undelegate":
+        // For undelegate, use the full staked amount (handled elsewhere)
+        amount = transaction.amount;
+        break;
     }
   } else if (transaction.amount.gt(MAX_AMOUNT_INPUT)) {
     return new BigNumber(MAX_AMOUNT_INPUT);
@@ -69,6 +93,6 @@ export const calculateAmount = ({
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
-export const assertUnreachable = (_: never): never => {
+export const assertUnreachable = (_: unknown): never => {
   throw new Error("unreachable assertion failed");
 };

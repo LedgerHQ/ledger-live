@@ -21,7 +21,6 @@ yarn upgrade-interactive -i --latest
 | @keplr-wallet/cosmos                        | Osmosis coin integration                                          | TBD, planning to remove                                              |
 | @ethereumjs/common                          | Ethereum coin integration                                         | monthly                                                              |
 | @ethereumjs/tx                              | Ethereum coin integration                                         | monthly                                                              |
-| @ledgerhq/compressjs                        | used for LiveQR feature                                           | stable                                                               |
 | @ledgerhq/cryptoassets                      | crypto currencies and tokens                                      | weekly                                                               |
 | @ledgerhq/devices                           | devices data                                                      | weekly                                                               |
 | @ledgerhq/errors                            | errors defintion                                                  | weekly                                                               |

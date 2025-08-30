@@ -10,7 +10,6 @@ type ViewProps = {
   isReadOnlyModeEnabled: boolean;
   doesNotHaveAccount?: boolean;
   handleAddAccount: () => void;
-  handleImportAccounts: () => void;
   handleWalletSync?: () => void;
 };
 
@@ -26,7 +25,6 @@ function View({
   isWalletSyncEnabled,
   isReadOnlyModeEnabled,
   handleAddAccount,
-  handleImportAccounts,
   handleWalletSync,
   doesNotHaveAccount,
 }: ViewProps) {
@@ -48,14 +46,6 @@ function View({
       onPress: handleWalletSync,
       icon: <Icons.Refresh color={"primary.c80"} />,
       testID: "add-accounts-modal-wallet-sync-button",
-    });
-  } else {
-    rows.push({
-      titleKey: "addAccountsModal.drawer.import.title",
-      descriptionKey: "addAccountsModal.drawer.import.description",
-      onPress: handleImportAccounts,
-      icon: <Icons.QrCode color={"primary.c80"} />,
-      testID: "add-accounts-modal-import-button",
     });
   }
 

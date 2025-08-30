@@ -36,9 +36,11 @@ const NetworkSelection = ({
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
+  const networks = availableNetworks.map(n => (n.type === "CryptoCurrency" ? n : n.parentCurrency));
+
   const handleNetworkClick = useCallback(
     (networkId: string) => {
-      const originalNetwork = availableNetworks.find(n => n.id === networkId);
+      const originalNetwork = networks.find(n => n.id === networkId);
       if (originalNetwork) {
         trackModularDrawerEvent(
           EVENTS_NAME.NETWORK_CLICKED,
@@ -57,14 +59,7 @@ const NetworkSelection = ({
         onNetworkSelected(originalNetwork);
       }
     },
-    [
-      availableNetworks,
-      flow,
-      source,
-      networksConfiguration,
-      trackModularDrawerEvent,
-      onNetworkSelected,
-    ],
+    [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
   );
 
   const transformNetworks = createNetworkConfigurationHook({
@@ -72,7 +67,7 @@ const NetworkSelection = ({
     accounts$: undefined,
   });
 
-  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+  const orderedNetworks = orderBy(networks, ["name"]);
 
   const formattedNetworks = transformNetworks(orderedNetworks);
 

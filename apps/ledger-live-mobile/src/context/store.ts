@@ -1,16 +1,21 @@
 import Config from "react-native-config";
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, Tuple } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import Rectotron from "~/ReactotronConfig";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 
+// === STORE CONFIGURATION ===
 export const store = configureStore({
   reducer: reducers,
   devTools: !!Config.DEBUG_RNDEBUGGER,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
-  ...(__DEV__ && {
-    enhancers: getDefaultEnhancers => getDefaultEnhancers().concat(Rectotron.createEnhancer()),
-  }),
+    getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
+      .concat(assetsDataApi.middleware)
+      .concat(rebootMiddleware),
+
+  enhancers: getDefaultEnhancers =>
+    new Tuple(...(__DEV__ ? [Rectotron.createEnhancer()] : []), ...getDefaultEnhancers()),
 });
 
 export type StoreType = typeof store;

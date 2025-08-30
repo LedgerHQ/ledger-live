@@ -1305,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 dk.",
       "medium" : "≈ 30 s.",
-      "fast" : "≈ 15 s."
+      "fast" : "≈ 15 s.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2143,7 +2144,6 @@
           "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
         },
         "1" : {
-          "label" : "LiveQR kodunu telefonunuzla tarayın."
         },
         "2" : {
           "label" : "İçe aktarılacak kripto hesaplarını seçin."
@@ -3242,7 +3242,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, Binance Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",

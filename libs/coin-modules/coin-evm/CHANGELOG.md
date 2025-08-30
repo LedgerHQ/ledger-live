@@ -1,5 +1,41 @@
 # @ledgerhq/coin-evm
 
+## 2.28.0
+
+### Minor Changes
+
+- [#11366](https://github.com/LedgerHQ/ledger-live/pull/11366) [`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): implement `getSequence`
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11374](https://github.com/LedgerHQ/ledger-live/pull/11374) [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): adapt `estimateFees` parameters
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.26.0
+  - @ledgerhq/coin-framework@6.2.0
+  - @ledgerhq/evm-tools@1.7.4
+  - @ledgerhq/domain-service@1.2.41
+
+## 2.28.0-next.0
+
+### Minor Changes
+
+- [#11366](https://github.com/LedgerHQ/ledger-live/pull/11366) [`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-evm): implement `getSequence`
+
+- [#10420](https://github.com/LedgerHQ/ledger-live/pull/10420) [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Stellar Generic Adaptor
+
+- [#11374](https://github.com/LedgerHQ/ledger-live/pull/11374) [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): adapt `estimateFees` parameters
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.26.0-next.0
+  - @ledgerhq/coin-framework@6.2.0-next.0
+  - @ledgerhq/evm-tools@1.7.4-next.0
+  - @ledgerhq/domain-service@1.2.41-next.0
+
 ## 2.27.0
 
 ### Minor Changes

@@ -18,7 +18,6 @@ import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/Tab
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
 import { Asset } from "~/types/asset";
-import { ScreenName } from "~/const";
 
 const maxReadOnlyCryptoCurrencies = 10;
 
@@ -48,9 +47,7 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
   const { t } = useTranslation();
 
   const renderItem = useCallback(
-    ({ item }: { item: Asset }) => (
-      <AssetRow asset={item} navigation={navigation} sourceScreenName={ScreenName.Portfolio} />
-    ),
+    ({ item }: { item: Asset }) => <AssetRow asset={item} navigation={navigation} />,
     [navigation],
   );
 

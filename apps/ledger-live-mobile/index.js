@@ -14,6 +14,9 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
+// Initialize MSW for mocking API calls
+import "./src/mocks/init";
+
 // import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
 import "@ledgerhq/live-common/reactNative";
 

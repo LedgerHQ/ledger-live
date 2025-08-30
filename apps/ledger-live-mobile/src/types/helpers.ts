@@ -23,3 +23,5 @@ export type EntryOf<
   T extends Record<string, unknown>,
   K extends keyof T = keyof T,
 > = K extends unknown ? [K, T[K]] : never;
+
+export type Primitive = number | string | boolean | bigint | symbol | null | undefined;

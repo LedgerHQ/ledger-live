@@ -76,6 +76,8 @@ describe("buildTransaction", () => {
         type: mockTransaction.mode,
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "native" },
+        useAllAmount: false,
+        stakedSuiId: "",
       });
     });
 
@@ -108,6 +110,8 @@ describe("buildTransaction", () => {
         sender: account.freshAddress,
         recipient: mockTransaction.recipient,
         type: mockTransaction.mode,
+        useAllAmount: false,
+        stakedSuiId: "",
         amount: BigInt(mockTransaction.amount!.toString()),
         asset: { type: "token", assetReference: "0x3::usdt::USDT" },
       });

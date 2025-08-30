@@ -21,6 +21,14 @@ function uniqueId(): string {
   return timestamp + randomString;
 }
 
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 /**
  * Helper function to make API requests with error handling
  */
@@ -58,10 +66,14 @@ async function githubApiRequest<T = unknown>({
   }
 }
 
-function waitForSpeculosReady(url: string, { interval = 2000, timeout = 300_000 } = {}) {
+export function waitForSpeculosReady(
+  deviceId: string,
+  { interval = 2_000, timeout = 150_000 } = {},
+) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     let currentRequest: ReturnType<typeof https.get> | null = null;
+    const url = getSpeculosAddress(deviceId);
 
     function cleanup() {
       if (currentRequest) {
@@ -151,22 +163,22 @@ function createStartPayload(deviceParams: DeviceParams, runId: string) {
 export async function createSpeculosDeviceCI(
   deviceParams: DeviceParams,
 ): Promise<SpeculosDevice | undefined> {
+  const runId = `${slugify(deviceParams.appName)}-${uniqueId()}`;
   try {
-    const runId = uniqueId();
-    console.warn("Creating remote speculos:", runId);
     const data = createStartPayload(deviceParams, runId);
     await githubApiRequest({ urlSuffix: START_WORKFLOW_ID, data });
-    await waitForSpeculosReady(getSpeculosAddress(runId));
-
     return {
       id: runId,
       port: speculosPort,
     };
   } catch (e: unknown) {
-    console.error(e);
     console.warn(
       `Creating remote speculos ${deviceParams.appName}:${deviceParams.appVersion} failed with ${String(e)}`,
     );
+    return {
+      id: runId,
+      port: 0,
+    };
   }
 }
 

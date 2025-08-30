@@ -67,7 +67,7 @@ describe("createApi", () => {
     await api.getBalance("address");
     await api.lastBlock();
     const minHeight = 14;
-    await api.listOperations("address", { minHeight: minHeight } as Pagination);
+    await api.listOperations("address", { minHeight: minHeight, order: "asc" } as Pagination);
 
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");

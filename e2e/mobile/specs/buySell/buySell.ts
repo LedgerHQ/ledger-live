@@ -3,6 +3,7 @@ import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getParentAccountName } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { isIos } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -41,6 +42,10 @@ async function handleBuySellFlow(buySell: BuySell, paymentMethod: string, provid
   );
 }
 
+// NOTE: We skip these tests on iOS because the simulator is currently freezing and having issues with the BuySell Live App on iOS.
+// This causes CI runs to hang or take much longer. Until we investigate and fix the root cause, we skip these tests on iOS to avoid slowing down CI execution.
+// [JIRA: https://ledgerhq.atlassian.net/browse/QAA-769]
+
 export async function runNavigateToBuyFromPortfolioPageTest(
   buySell: BuySell,
   provider: Provider,
@@ -48,23 +53,26 @@ export async function runNavigateToBuyFromPortfolioPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Navigate to Buy / Sell flow from portfolio page - LLM", () => {
-    beforeAll(async () => {
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+  (isIos() ? describe.skip : describe)(
+    "Navigate to Buy / Sell flow from portfolio page - LLM",
+    () => {
+      beforeAll(async () => {
+        await beforeAllFunction({
+          userdata: "skip-onboarding",
+          speculosApp: buySell.crypto.currency.speculosApp,
+          cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        });
       });
-    });
 
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
-      await app.transferMenuDrawer.open();
-      await app.transferMenuDrawer.navigateToBuy();
-      await handleBuySellFlow(buySell, paymentMethod, provider);
-    });
-  });
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+      tags.forEach(tag => $Tag(tag));
+      test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
+        await app.transferMenuDrawer.open();
+        await app.transferMenuDrawer.navigateToBuy();
+        await handleBuySellFlow(buySell, paymentMethod, provider);
+      });
+    },
+  );
 }
 
 export async function runNavigateToBuyFromAccountPageTest(
@@ -74,27 +82,30 @@ export async function runNavigateToBuyFromAccountPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Navigate to Buy / Sell flow from account page - LLM", () => {
-    beforeAll(async () => {
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: buySell.crypto.currency.speculosApp,
-        cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+  (isIos() ? describe.skip : describe)(
+    "Navigate to Buy / Sell flow from account page - LLM",
+    () => {
+      beforeAll(async () => {
+        await beforeAllFunction({
+          userdata: "skip-onboarding",
+          speculosApp: buySell.crypto.currency.speculosApp,
+          cliCommands: [liveDataCommand(buySell.crypto.currency.speculosApp, buySell.crypto.index)],
+        });
       });
-    });
 
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
-      await app.accounts.openViaDeeplink();
-      await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
-      if (buySell.crypto.tokenType) {
-        await app.account.navigateToTokenInAccount(buySell.crypto);
-      }
-      await app.account.tapBuy();
-      await handleBuySellFlow(buySell, paymentMethod, provider);
-    });
-  });
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+      tags.forEach(tag => $Tag(tag));
+      test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from account page`, async () => {
+        await app.accounts.openViaDeeplink();
+        await app.accounts.goToAccountByName(getParentAccountName(buySell.crypto));
+        if (buySell.crypto.tokenType) {
+          await app.account.navigateToTokenInAccount(buySell.crypto);
+        }
+        await app.account.tapBuy();
+        await handleBuySellFlow(buySell, paymentMethod, provider);
+      });
+    },
+  );
 }
 
 export async function runNavigateToBuyFromMarketPageTest(
@@ -104,7 +115,7 @@ export async function runNavigateToBuyFromMarketPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Navigate to Buy / Sell flow from market page - LLM", () => {
+  (isIos() ? describe.skip : describe)("Navigate to Buy / Sell flow from market page - LLM", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -137,7 +148,7 @@ export async function runNavigateToBuyFromAssetPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Navigate to Buy / Sell flow from asset page - LLM", () => {
+  (isIos() ? describe.skip : describe)("Navigate to Buy / Sell flow from asset page - LLM", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -164,7 +175,7 @@ export async function runQueryParametersTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Buy / Sell flow - query parameters - LLM", () => {
+  (isIos() ? describe.skip : describe)("Buy / Sell flow - query parameters - LLM", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",

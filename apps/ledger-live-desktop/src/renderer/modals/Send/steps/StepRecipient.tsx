@@ -37,6 +37,7 @@ import {
 import Alert from "~/renderer/components/Alert";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
@@ -176,7 +177,14 @@ export const StepRecipientFooter = ({
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
   );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-  const canNext = !bridgePending && !hasFieldError && !isTerminated && !status.errors.sender;
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const customValidationSuccess = specific?.sendRecipientCanNext?.(status) ?? true;
+  const canNext =
+    !bridgePending &&
+    !hasFieldError &&
+    !isTerminated &&
+    customValidationSuccess &&
+    !status.errors.sender;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 

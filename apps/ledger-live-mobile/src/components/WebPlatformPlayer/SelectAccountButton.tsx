@@ -43,7 +43,7 @@ export default function SelectAccountButton({
   const handleAddAccountPress = () => {
     if (canOpenModularDrawer) {
       openDrawer({
-        currencies,
+        currencies: currencies.map(c => c.id),
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
       });

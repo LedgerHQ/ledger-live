@@ -46,6 +46,7 @@ const iconsComponent = {
   STAKE: IconsLegacy.HandshakeMedium,
   UNSTAKE: IconsLegacy.UndelegateMedium,
   WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,
+  ASSOCIATE_TOKEN: IconsLegacy.PlusMedium,
 };
 
 const OperationStatusIcon = ({

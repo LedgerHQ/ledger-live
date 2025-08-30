@@ -1,10 +1,8 @@
 import { useModularDrawerData } from "../useModularDrawerData";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { renderHook, waitFor } from "tests/testSetup";
-import {
-  expectedAssetsSorted,
-  expectedCurrenciesByProvider,
-} from "../../__mocks__/useModularDrawerData.mock";
+import { expectedCurrenciesByProvider } from "../../__mocks__/useModularDrawerData.mock";
+import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 
 describe("useModularDrawerData", () => {
   it("should return the correct data structure", async () => {

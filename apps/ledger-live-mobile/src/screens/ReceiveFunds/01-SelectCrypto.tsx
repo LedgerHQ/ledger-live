@@ -24,7 +24,7 @@ import { findAccountByCurrency } from "~/logic/deposit";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
-import { useAssets } from "LLM/features/ModularDrawer/hooks/useAssets";
+import { useAssets } from "LLM/features/AssetSelection/screens/SelectCrypto/useAssets";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 

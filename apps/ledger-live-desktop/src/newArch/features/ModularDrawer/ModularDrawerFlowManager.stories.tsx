@@ -22,7 +22,7 @@ import {
   bitcoinCurrency,
   ethereumCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { assetsDataApi } from "./data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerFlowManagerProps } from "./types";
 

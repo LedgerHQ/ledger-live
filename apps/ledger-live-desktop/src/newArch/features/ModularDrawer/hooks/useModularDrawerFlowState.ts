@@ -26,6 +26,7 @@ type Props = {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   hasOneCurrency: boolean;
   flow: string;
+  searchedValue?: string;
 };
 
 export function useModularDrawerFlowState({
@@ -39,12 +40,22 @@ export function useModularDrawerFlowState({
   onAccountSelected,
   hasOneCurrency,
   flow,
+  searchedValue,
 }: Props) {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
+  const [hasOneInitialCurrency, setHasOneInitialCurrency] = useState<boolean | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (hasOneInitialCurrency === undefined && hasOneCurrency && searchedValue === undefined) {
+      setHasOneInitialCurrency(true);
+    }
+  }, [hasOneInitialCurrency, hasOneCurrency, searchedValue]);
 
   const goBackToAssetSelection = useCallback(() => {
     setSelectedAsset(undefined);
@@ -179,7 +190,7 @@ export function useModularDrawerFlowState({
   };
 
   useEffect(() => {
-    if (hasOneCurrency && !selectedAsset) {
+    if (hasOneInitialCurrency && !selectedAsset) {
       const currencyIdToFind = currenciesIdsArray[0];
       const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
@@ -195,6 +206,8 @@ export function useModularDrawerFlowState({
     hasOneCurrency,
     selectedAsset,
     currenciesIdsArray,
+    searchedValue,
+    hasOneInitialCurrency,
   ]);
 
   return {

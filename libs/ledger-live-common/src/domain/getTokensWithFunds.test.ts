@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "../currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";

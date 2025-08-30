@@ -152,10 +152,28 @@ export default function Content({
       specificOperationDetails as { getURLFeesInfo: (o: Operation, c: string) => string }
     )?.getURLFeesInfo(operation, mainAccount.currency.id);
 
-  const Extra =
+  const PostAccountSection =
     specificOperationDetails &&
-    (specificOperationDetails as { OperationDetailsExtra: React.ComponentType })
-      .OperationDetailsExtra
+    "OperationDetailsPostAccountSection" in specificOperationDetails &&
+    specificOperationDetails.OperationDetailsPostAccountSection &&
+    (specificOperationDetails.OperationDetailsPostAccountSection as React.ComponentType<{
+      type: typeof type;
+      account: AccountLike;
+      operation: Operation;
+    }>);
+
+  const PostAlert =
+    specificOperationDetails &&
+    "OperationDetailsPostAlert" in specificOperationDetails &&
+    specificOperationDetails.OperationDetailsPostAlert &&
+    (specificOperationDetails.OperationDetailsPostAlert as React.ComponentType<{
+      type: typeof type;
+      account: AccountLike;
+      operation: Operation;
+    }>);
+
+  const Extra =
+    specificOperationDetails && "OperationDetailsExtra" in specificOperationDetails
       ? (
           specificOperationDetails as {
             OperationDetailsExtra: React.ComponentType<{
@@ -343,6 +361,10 @@ export default function Content({
         />
       ) : null}
 
+      {PostAccountSection && (
+        <PostAccountSection operation={operation} type={type} account={account} />
+      )}
+
       {isNftOperation ? (
         <>
           <Section title={t("operationDetails.tokenName")}>
@@ -448,6 +470,12 @@ export default function Content({
       ) : null}
 
       <Extra operation={operation} type={type} account={account} />
+
+      {PostAlert && (
+        <View style={sectionStyles.wrapper}>
+          <PostAlert operation={operation} type={type} account={account} />
+        </View>
+      )}
 
       <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
     </>

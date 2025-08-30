@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
 import expect from "expect";
@@ -32,7 +32,7 @@ const api = createApi({
   enableNetworkLogs: false,
 });
 
-const fromGenesis = { minHeight: 0 };
+const fromGenesis: Pagination = { minHeight: 0, order: "asc" };
 
 describe("operations", () => {
   beforeEach(() => {

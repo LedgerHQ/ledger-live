@@ -5,6 +5,9 @@ import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
+import { buildFeatureFlagTags } from "./utils/datadogUtils";
+import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
+import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -89,8 +92,46 @@ export const customErrorEventMapper: (disableErrorTracking: boolean) => ErrorEve
       return null; // Return null to drop the event
     }
 
-    return event;
+    return {
+      ...event,
+      context: {
+        ...event.context,
+        featureFlags: buildFeatureFlagTags(),
+      },
+    };
   };
+
+/**
+ * Custom event mapper for action events.
+ * @param event The ActionEvent object to map.
+ * @returns The mapped ActionEvent object.
+ */
+export const customActionEventMapper: ActionEventMapper = event => {
+  if (!event) return null;
+  return {
+    ...event,
+    context: {
+      ...event.context,
+      featureFlags: buildFeatureFlagTags(),
+    },
+  };
+};
+
+/**
+ * Custom event mapper for log events.
+ * @param event The LogEvent object to map.
+ * @returns The mapped LogEvent object.
+ */
+export const customLogEventMapper: LogEventMapper = event => {
+  if (!event) return null;
+  return {
+    ...event,
+    context: {
+      ...event.context,
+      featureFlags: buildFeatureFlagTags(),
+    },
+  };
+};
 
 /**
  * A predicate function to determine the view name for tracking purposes.

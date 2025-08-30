@@ -11,6 +11,7 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
+  coveragePathIgnorePatterns: ["/types/"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,

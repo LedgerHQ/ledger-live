@@ -117,6 +117,8 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "canton_network",
+  "canton_network_devnet",
+  "canton_network_localnet",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

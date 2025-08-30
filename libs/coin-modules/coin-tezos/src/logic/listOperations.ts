@@ -45,11 +45,10 @@ export async function listOperations(
   const filteredOperations = operations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
     .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]);
-  if (sort === "Ascending") {
-    //results are always sorted in descending order
-    filteredOperations.reverse();
-  }
-  return [filteredOperations, nextToken];
+  const sortedOperations = filteredOperations.sort(
+    (a, b) => b.tx.date.getTime() - a.tx.date.getTime(),
+  );
+  return [sortedOperations, nextToken];
 }
 
 // note that "initiator" of APITransactionType is never used in the conversion

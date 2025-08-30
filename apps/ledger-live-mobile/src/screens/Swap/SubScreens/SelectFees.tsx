@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SelectFeesParamList } from "../types";
 import SendRowsFee from "~/components/SendRowsFee";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { SWAP_VERSION } from "../utils";
+import { SelectFeesParamList } from "../types";
 
 export function SelectFees({ navigation, route }: SelectFeesParamList) {
   const { params } = route;
@@ -20,10 +20,13 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
 
   const onSetTransaction = useCallback(
     (updatedTransaction: NonNullable<typeof transaction>) => {
-      // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, {
-        transaction: updatedTransaction,
+      // Navigate to the nested SwapForm screen within SwapTab
+      navigation.popTo(ScreenName.SwapTab, {
+        screen: ScreenName.SwapForm,
         merge: true,
+        params: {
+          transaction: updatedTransaction,
+        },
       });
     },
     [navigation],
