@@ -27,6 +27,7 @@ import {
   lastBlock,
   listOperations,
   getBalance,
+  getStakes,
   getSequence,
   validateIntent,
   getTokenFromAsset,
@@ -60,8 +61,9 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
+    getStakes: async (address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
+      const stakes = await getStakes(currency, address);
+      return { items: stakes };
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
