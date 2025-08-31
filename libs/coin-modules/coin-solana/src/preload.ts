@@ -17,6 +17,12 @@ import { getCALHash, setCALHash } from "./logic";
 import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
 import { AxiosError } from "axios";
 
+let shouldSkipTokenLoading = false;
+
+export function setShouldSkipTokenLoading(skip: boolean): void {
+  shouldSkipTokenLoading = skip;
+}
+
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
 export const fetchSPLTokens: (
@@ -43,7 +49,11 @@ export const fetchSPLTokens: (
 
     setCALHash(currency, hash || "");
     log("solana/preload", "preload " + splTokens.length + " tokens");
-    addTokens(splTokens.map(convertSplTokens));
+
+    if (!shouldSkipTokenLoading) {
+      addTokens(splTokens.map(convertSplTokens));
+    }
+
     return splTokens;
   } catch (e) {
     if (e instanceof AxiosError && e.response?.status === 304) {
@@ -53,7 +63,10 @@ export const fetchSPLTokens: (
       );
       if (!latestCALHash) {
         setCALHash(currency, embeddedHash);
-        addTokens(spltokensList.map(convertSplTokens));
+        if (!shouldSkipTokenLoading) {
+          addTokens(spltokensList.map(convertSplTokens));
+        }
+
         return spltokensList;
       }
       return null;
@@ -124,13 +137,19 @@ export function hydrate(data: SolanaPreloadData | undefined, currency: CryptoCur
 
 function hydrateV1(data: SolanaPreloadDataV1, currency: CryptoCurrency) {
   if (Array.isArray(data.splTokens)) {
-    addTokens(data.splTokens.map(convertSplTokens));
+    if (!shouldSkipTokenLoading) {
+      addTokens(data.splTokens.map(convertSplTokens));
+    }
+
     log("solana/preload", `hydrate ${data.splTokens.length} tokens`);
     setPreloadData(data, currency);
     return;
   }
 
-  addTokens(spltokensList.map(convertSplTokens));
+  if (!shouldSkipTokenLoading) {
+    addTokens(spltokensList.map(convertSplTokens));
+  }
+
   log("solana/preload", `hydrate fallback ${spltokensList.length} embedded tokens`);
   setPreloadData(data, currency);
 }
