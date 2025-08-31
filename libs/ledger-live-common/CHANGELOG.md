@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.3
+
+### Minor Changes
+
+- [#11407](https://github.com/LedgerHQ/ledger-live/pull/11407) [`64b059c`](https://github.com/LedgerHQ/ledger-live/commit/64b059cc514e199320b0e668dfed647ac2b658a9) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Remove Solana token update in `preload` and `hydrate` function
+
+### Patch Changes
+
+- Updated dependencies [[`64b059c`](https://github.com/LedgerHQ/ledger-live/commit/64b059cc514e199320b0e668dfed647ac2b658a9)]:
+  - @ledgerhq/coin-solana@0.32.0-nightly.2
+  - @ledgerhq/live-signer-solana@0.5.4-nightly.2
+
 ## 34.47.0-nightly.2
 
 ### Minor Changes

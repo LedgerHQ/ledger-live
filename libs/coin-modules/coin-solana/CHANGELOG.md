@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.32.0-nightly.2
+
+### Minor Changes
+
+- [#11407](https://github.com/LedgerHQ/ledger-live/pull/11407) [`64b059c`](https://github.com/LedgerHQ/ledger-live/commit/64b059cc514e199320b0e668dfed647ac2b658a9) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Remove Solana token update in `preload` and `hydrate` function
+
 ## 0.31.2-nightly.1
 
 ### Patch Changes
