@@ -19,11 +19,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import {
-  WalletState,
-  accountNameSelector,
-  accountNameWithDefaultSelector,
-} from "@ledgerhq/live-wallet/store";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
   Flex,
