@@ -89,7 +89,7 @@ export default function GetDeviceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { theme, colors } = useTheme();
-  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const { setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -108,7 +108,6 @@ export default function GetDeviceScreen() {
   }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
-    setShowWelcome(false);
     setFirstTimeOnboarding(false);
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
     navigation.navigate(NavigatorName.BaseOnboarding, {
@@ -123,14 +122,7 @@ export default function GetDeviceScreen() {
         page: "Upsell Nano",
       });
     }
-  }, [
-    setShowWelcome,
-    setFirstTimeOnboarding,
-    isInOnboarding,
-    dispatch,
-    navigation,
-    readOnlyModeEnabled,
-  ]);
+  }, [setFirstTimeOnboarding, isInOnboarding, dispatch, navigation, readOnlyModeEnabled]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {

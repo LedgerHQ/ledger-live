@@ -22,10 +22,9 @@ type NavigationProp = RootNavigationComposite<
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const { setFirstTimeOnboarding } = useNavigationInterceptor();
 
   const setupDevice = useCallback(() => {
-    setShowWelcome(false);
     setFirstTimeOnboarding(false);
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -33,7 +32,7 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-  }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
+  }, [navigation, setFirstTimeOnboarding]);
 
   return (
     <SafeAreaView

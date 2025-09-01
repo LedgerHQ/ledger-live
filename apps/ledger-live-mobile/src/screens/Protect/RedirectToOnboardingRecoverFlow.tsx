@@ -34,15 +34,14 @@ type NavigationProps = RootComposite<
 >;
 
 export function RedirectToOnboardingRecoverFlowScreen({ navigation }: NavigationProps) {
-  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const { setFirstTimeOnboarding } = useNavigationInterceptor();
 
   // Not sure we need this,
   // probably needed if we can use a deeplink
   // to arrive here without having setup LL before
   useEffect(() => {
-    setShowWelcome(false);
     setFirstTimeOnboarding(false);
-  }, [setFirstTimeOnboarding, setShowWelcome]);
+  }, [setFirstTimeOnboarding]);
 
   const { colors } = useTheme();
   const headerHeight = useHeaderHeight();
