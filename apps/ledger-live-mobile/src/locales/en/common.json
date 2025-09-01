@@ -3760,6 +3760,10 @@
       "twoStepApproval": {
         "title": "Complete steps"
       },
+      "loader": {
+        "title": "Processing Swap",
+        "description": "Please wait while we process your request."
+      },
       "history": {
         "title": "Swap history"
       },
