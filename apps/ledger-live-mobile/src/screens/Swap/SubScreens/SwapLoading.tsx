@@ -1,6 +1,6 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { Loading } from "../Loading";
 
 export default function SwapLoading() {

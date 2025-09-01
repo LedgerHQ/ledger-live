@@ -56,7 +56,7 @@ export function useSwapCustomHandlers(
   );
 
   const handleShowLoadingDrawer = useCallback(() => {
-     navigation.navigate(ScreenName.SwapLoading);
+    navigation.navigate(ScreenName.SwapLoading);
   }, [navigation]);
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({
