@@ -24,7 +24,6 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import BleDevicePairingFlow from "~/components/BleDevicePairingFlow";
 import { NavigatorName, ScreenName } from "~/const";
-import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
 import GenericErrorView from "~/components/GenericErrorView";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { urls } from "~/utils/urls";
@@ -34,15 +33,6 @@ type NavigationProps = RootComposite<
 >;
 
 export function RedirectToOnboardingRecoverFlowScreen({ navigation }: NavigationProps) {
-  const { setFirstTimeOnboarding } = useNavigationInterceptor();
-
-  // Not sure we need this,
-  // probably needed if we can use a deeplink
-  // to arrive here without having setup LL before
-  useEffect(() => {
-    setFirstTimeOnboarding(false);
-  }, [setFirstTimeOnboarding]);
-
   const { colors } = useTheme();
   const headerHeight = useHeaderHeight();
   const [device, setDevice] = useState<Device>();

@@ -18,7 +18,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Button from "~/components/wrappedUi/Button";
 import { urls } from "~/utils/urls";
-import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "~/const";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { hasCompletedOnboardingSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -89,7 +88,6 @@ export default function GetDeviceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { theme, colors } = useTheme();
-  const { setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -108,7 +106,6 @@ export default function GetDeviceScreen() {
   }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
-    setFirstTimeOnboarding(false);
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -122,7 +119,7 @@ export default function GetDeviceScreen() {
         page: "Upsell Nano",
       });
     }
-  }, [setFirstTimeOnboarding, isInOnboarding, dispatch, navigation, readOnlyModeEnabled]);
+  }, [isInOnboarding, dispatch, navigation, readOnlyModeEnabled]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
