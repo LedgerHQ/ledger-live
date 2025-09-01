@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import ImageGrayscalePreview from "~/renderer/components/CustomImage/ImageGrayscalePreview";
+import ImageDithering from "~/renderer/components/CustomImage/ImageDithering";
+import { DitheringAlgorithm } from "~/renderer/components/CustomImage/dithering/types";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
@@ -10,7 +11,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsFlowName, analyticsPageNames } from "./shared";
 
 type Props = StepProps & {
-  onResult: React.ComponentProps<typeof ImageGrayscalePreview>["onResult"];
+  onResult: React.ComponentProps<typeof ImageDithering>["onResult"];
   src?: ImageBase64Data;
   deviceModelId: CLSSupportedDeviceModelId;
 };
@@ -23,15 +24,24 @@ const StepChooseContrast: React.FC<Props> = props => {
   const { onResult, onError, src, setStep, deviceModelId } = props;
   const { t } = useTranslation();
 
-  const [contrast, setContrast] = useState<{ index: number; value: number }>();
+  const [ditheringConfig, setDitheringConfig] = useState<{
+    index: number;
+    contrastValue: number;
+    ditheringAlgorithm: DitheringAlgorithm;
+  }>();
   const [loading, setLoading] = useState(true);
 
   const nextButtonEventProperties = useMemo(
     () => ({
       button: "Confirm contrast",
-      ...(contrast ? { contrast: contrast.value } : {}),
+      ...(ditheringConfig
+        ? {
+            contrast: ditheringConfig.contrastValue,
+            ditheringAlgorithm: ditheringConfig.ditheringAlgorithm,
+          }
+        : {}),
     }),
-    [contrast],
+    [ditheringConfig],
   );
 
   return (
@@ -59,13 +69,13 @@ const StepChooseContrast: React.FC<Props> = props => {
         refreshSource={false}
       />
       {src ? (
-        <ImageGrayscalePreview
+        <ImageDithering
           {...src}
           deviceModelId={deviceModelId}
           onResult={onResult}
           onError={onError}
           setLoading={setLoading}
-          onContrastChanged={setContrast}
+          onDitheringConfigChanged={setDitheringConfig}
         />
       ) : null}
     </StepContainer>
