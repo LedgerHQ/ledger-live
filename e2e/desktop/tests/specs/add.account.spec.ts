@@ -9,7 +9,10 @@ const currencies = [
     currency: Currency.BTC,
     xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073",
   },
-  { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
+  {
+    currency: Currency.ETH,
+    xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673",
+  },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
   { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675" },
   { currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676" },
@@ -46,16 +49,10 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.portfolio.openAddAccountModal();
-        const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
-        if (isModularDrawer) {
-          await app.modularDrawer.validateAssetsDrawerItems();
-          await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
-          await app.modularDrawer.selectNetwork(currency.currency);
-          await app.addAccount.expectAccountModalToBeVisible();
-        } else {
-          await app.addAccount.expectModalVisibility();
-          await app.addAccount.selectCurrency(currency.currency);
-        }
+        await app.modularDrawer.expectAssetsDrawerVisibility();
+        await app.modularDrawer.selectAssetByTickerAndName(currency.currency);
+        await app.modularDrawer.selectNetwork(currency.currency);
+        await app.addAccount.expectAccountModalToBeVisible();
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();

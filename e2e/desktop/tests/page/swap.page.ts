@@ -3,7 +3,6 @@ import { waitFor } from "../utils/waitFor";
 import { step } from "../misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
@@ -54,7 +53,6 @@ export class SwapPage extends AppPage {
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private drawerContent = this.page.locator('[data-testid="drawer-content"]');
-  private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private insufficientFundsWarningElem = this.drawerContent.getByTestId(
     "insufficient-funds-warning",
   );
@@ -116,7 +114,7 @@ export class SwapPage extends AppPage {
     await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
-  @step("Select specific provider $0")
+  @step("Select specific provider")
   async selectSpecificProvider(provider: Provider, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
 
@@ -311,14 +309,7 @@ export class SwapPage extends AppPage {
     return text ? text?.split(" ")[0] : "";
   }
 
-  @step("Select currency to swap from")
-  async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountCoinSelector).click();
-    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
-  }
-
-  @step("Check currency to swap from is $0")
+  @step("Switch You Send and You Receive")
   async switchYouSendAndYouReceive(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.switchButton).click();
@@ -360,18 +351,6 @@ export class SwapPage extends AppPage {
     await webview.getByTestId(this.fromAccountAmountInput).fill(amount);
     //wait for potential origin amount error to be loaded
     await this.page.waitForTimeout(500);
-  }
-
-  @step("Select currency to swap to: $1")
-  async selectAssetTo(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.toAccountCoinSelector).click();
-    await this.chooseAssetDrawer.chooseFromAsset(currency);
-  }
-
-  @step("Choose from asset $0")
-  async chooseFromAsset(currency: string) {
-    await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
   @step("Select to account coin selector")
