@@ -1,6 +1,9 @@
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
+// Coins with case-sensitive addresses (b58, ...)
+const CASE_SENSITIVE_COINS = ["solana"];
+
 export class CALStore implements CryptoAssetsStore {
   private tokenCache = new Map<string, TokenCurrency>();
   private addressCache = new Map<string, TokenCurrency>();
@@ -10,14 +13,22 @@ export class CALStore implements CryptoAssetsStore {
     tokens.forEach(token => {
       this.tokenCache.set(token.id, token);
       if (token.contractAddress) {
-        this.addressCache.set(token.contractAddress, token);
+        const isCaseSensitive = CASE_SENSITIVE_COINS.includes(token.parentCurrency.id);
+        const normalizedAddress = isCaseSensitive
+          ? token.contractAddress
+          : token.contractAddress.toLowerCase();
+        this.addressCache.set(normalizedAddress, token);
       }
       this.tickerCache.set(token.ticker, token);
     });
   }
 
   findTokenByAddress(address: string): TokenCurrency | undefined {
-    return this.addressCache.get(address);
+    const exactMatch = this.addressCache.get(address);
+    if (exactMatch) return exactMatch;
+
+    const lowercaseMatch = this.addressCache.get(address.toLowerCase());
+    return lowercaseMatch;
   }
 
   getTokenById(id: string): TokenCurrency {
@@ -33,10 +44,16 @@ export class CALStore implements CryptoAssetsStore {
   }
 
   findTokenByAddressInCurrency(address: string, currencyId: string): TokenCurrency | undefined {
-    const token = this.addressCache.get(address);
-    if (token && token.parentCurrency.id === currencyId) {
-      return token;
+    const isCaseSensitive = CASE_SENSITIVE_COINS.includes(currencyId);
+
+    if (isCaseSensitive) {
+      const token = this.addressCache.get(address);
+      if (token && token.parentCurrency.id === currencyId) return token;
+      return undefined;
     }
+
+    const token = this.addressCache.get(address.toLowerCase());
+    if (token && token.parentCurrency.id === currencyId) return token;
     return undefined;
   }
 
