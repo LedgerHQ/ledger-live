@@ -63,7 +63,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
-    runs-on: ubuntu-22.04
+    runs-on: [ ubuntu-22.04 ]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
@@ -497,7 +497,7 @@ jobs:
 
   allure-report-ios:
     name: "iOS Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ubuntu-22.04 ]
     if: ${{ !cancelled() && !inputs.speculos_tests && needs.detox-tests-ios.outputs.artifact }}
     needs: [detox-tests-ios]
     outputs:
@@ -505,6 +505,8 @@ jobs:
       result: ${{ steps.summary.outputs.test_result }}
       status: ${{ needs.detox-tests-ios.outputs.status }}
     steps:
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
       - name: Download Allure Report
         uses: actions/download-artifact@v4
         with:
@@ -529,7 +531,7 @@ jobs:
 
   allure-report-android:
     name: "Android Detox > Allure Report"
-    runs-on: [ledger-live-medium]
+    runs-on: [ ubuntu-22.04 ]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -537,6 +539,8 @@ jobs:
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
     needs: [detox-tests-android]
     steps:
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
       - name: Download Allure Report
         uses: actions/download-artifact@v4
         with:
@@ -561,7 +565,7 @@ jobs:
 
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
-    runs-on: ledger-live-medium
+    runs-on: [ ubuntu-22.04 ]
     if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != '' && !inputs.skip-bundle-size-reporting
     needs: [ build-ios, build-android ]
     steps:
