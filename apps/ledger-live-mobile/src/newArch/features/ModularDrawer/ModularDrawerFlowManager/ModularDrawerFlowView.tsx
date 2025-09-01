@@ -7,7 +7,6 @@ import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
-import SkeletonList from "../components/Skeleton/SkeletonList";
 import useScreenTransition from "./useScreenTransition";
 
 export function ModularDrawerFlowView({
@@ -15,7 +14,6 @@ export function ModularDrawerFlowView({
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
-  isReadyToBeDisplayed,
 }: ModularDrawerFlowProps) {
   const { currentStep } = navigationStepViewModel;
 
@@ -44,14 +42,8 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        {isReadyToBeDisplayed ? (
-          <>
-            <Title step={step} />
-            {renderStepContent(step)}
-          </>
-        ) : (
-          <SkeletonList />
-        )}
+        <Title step={step} />
+        {renderStepContent(step)}
       </Animated.View>
     );
   };
