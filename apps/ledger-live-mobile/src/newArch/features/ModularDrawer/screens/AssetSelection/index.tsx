@@ -3,6 +3,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import SkeletonList from "../../components/Skeleton/SkeletonList";
 import {
   useModularDrawerAnalytics,
   TrackDrawerScreen,
@@ -27,6 +28,7 @@ export type AssetSelectionStepProps = {
   flow: string;
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  isLoading?: boolean;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -40,6 +42,7 @@ const AssetSelection = ({
   source,
   assetsConfiguration,
   isOpen,
+  isLoading,
 }: Readonly<AssetSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
@@ -120,21 +123,25 @@ const AssetSelection = ({
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}
       />
-      <BottomSheetVirtualizedList
-        ref={listRef}
-        scrollToOverflowEnabled={true}
-        data={formattedAssets}
-        keyExtractor={item => item.id}
-        getItemCount={itemsToDisplay => itemsToDisplay.length}
-        getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<AssetsEmptyList />}
-        contentContainerStyle={{
-          paddingBottom: SAFE_MARGIN_BOTTOM,
-          marginTop: 16,
-        }}
-      />
+      {isLoading ? (
+        <SkeletonList />
+      ) : (
+        <BottomSheetVirtualizedList
+          ref={listRef}
+          scrollToOverflowEnabled={true}
+          data={formattedAssets}
+          keyExtractor={item => item.id}
+          getItemCount={itemsToDisplay => itemsToDisplay.length}
+          getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<AssetsEmptyList />}
+          contentContainerStyle={{
+            paddingBottom: SAFE_MARGIN_BOTTOM,
+            marginTop: 16,
+          }}
+        />
+      )}
     </>
   );
 };

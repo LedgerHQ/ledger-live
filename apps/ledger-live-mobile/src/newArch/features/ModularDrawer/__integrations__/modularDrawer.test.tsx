@@ -23,8 +23,7 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    // Wait for the assets to be loaded (MSW mock))
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
@@ -61,7 +60,7 @@ describe("ModularDrawer integration", () => {
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
     // Wait for the assets to be loaded (MSW mock))
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
 
     // Select Bitcoin (should go directly to Device Selection)
     await user.press(getByText(/bitcoin/i));
@@ -78,8 +77,7 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    // Wait for the assets to be loaded (MSW mock))
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     expect(getByText(/bitcoin/i)).toBeVisible();
 
     const searchInput = getByPlaceholderText(/search/i);
@@ -133,6 +131,7 @@ describe("ModularDrawer integration", () => {
     });
 
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
 
     // Wait for the assets to be loaded (MSW mock))
     await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());

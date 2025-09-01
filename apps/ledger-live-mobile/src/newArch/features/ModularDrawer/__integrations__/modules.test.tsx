@@ -1,5 +1,5 @@
 import React from "react";
-import { act, render, waitFor } from "@tests/test-renderer";
+import { act, render } from "@tests/test-renderer";
 import {
   mockedAccounts,
   mockedFF,
@@ -39,7 +39,7 @@ describe("ModularDrawer modules integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     await user.press(getByText(/ethereum/i));
     advanceTimers();
     expect(getByText(/2 accounts/i)).toBeVisible();
@@ -49,7 +49,7 @@ describe("ModularDrawer modules integration", () => {
   it("should not display the number of accounts if the configuration is not provided", async () => {
     const { getByText, queryByText, user } = render(<ModularDrawerSharedNavigator />);
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     await user.press(getByText(/ethereum/i));
     expect(queryByText(/2 accounts/i)).toBeNull();
   });
@@ -73,15 +73,15 @@ describe("ModularDrawer modules integration", () => {
       },
     );
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
     expect(queryAllByText(/5.11% APY/i).length).toBe(10);
   });
 
   it("should not display the apy indicator if the configuration is not provided", async () => {
-    const { queryByText, user, getByText } = render(<ModularDrawerSharedNavigator />);
+    const { queryByText, user } = render(<ModularDrawerSharedNavigator />);
     await user.press(queryByText(WITHOUT_ACCOUNT_SELECTION));
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     expect(queryByText(/5.11% APY/i)).toBeNull();
   });
 
@@ -108,7 +108,7 @@ describe("ModularDrawer modules integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
+    advanceTimers();
     await user.press(getByText(/ethereum/i));
     advanceTimers();
     expect(getByText(/2 accounts/i)).toBeVisible();
