@@ -179,7 +179,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ ledger-live-4xlarge ]
     outputs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
@@ -200,7 +200,6 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: "true"
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
@@ -248,6 +247,6 @@ jobs:
   skip-ios-js:
     name: "iOS Build JS - Skip"
     if: ${{ inputs.build-ios-js != true }}
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ ledger-live-4xlarge ]
     steps:
       - run: echo "Skipping"

@@ -165,7 +165,7 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ ledger-live-4xlarge ]
     if: ${{ inputs.build-android-js == true }}
     outputs:
         js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
@@ -190,7 +190,6 @@ jobs:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
-          install-proto: "true"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -236,6 +235,6 @@ jobs:
   skip-android-js:
     name: "Android Build JS - Skip"
     if: ${{ inputs.build-android-js != true }}
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ ledger-live-4xlarge ]
     steps:
       - run: echo "Skipping"
