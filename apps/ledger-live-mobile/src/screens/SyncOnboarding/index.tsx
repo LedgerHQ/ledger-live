@@ -14,7 +14,6 @@ import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "~/analytics";
-import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
