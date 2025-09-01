@@ -167,7 +167,7 @@ export function useCustomExchangeHandlers({
                       result.startExchangeResult.device || result.device,
                     );
                   }
-                  // navigation.pop()
+                  navigation.pop();
                   onShowLoadingDrawer?.();
                 },
                 onClose: () => onCancel(drawerClosedError),
