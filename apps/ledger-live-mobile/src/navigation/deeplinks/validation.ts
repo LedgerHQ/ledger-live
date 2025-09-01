@@ -9,7 +9,7 @@ import * as Sentry from "@sentry/react-native";
 import type { OptionMetadata } from "../../reducers/types";
 
 // Maximum allowed lengths for string parameters
-const MAX_MESSAGE_LENGTH = 500;
+const MAX_MESSAGE_LENGTH = 700;
 const MAX_TITLE_LENGTH = 100;
 const MAX_LABEL_LENGTH = 50;
 
