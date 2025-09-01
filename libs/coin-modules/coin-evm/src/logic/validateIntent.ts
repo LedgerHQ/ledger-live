@@ -22,10 +22,9 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TransactionTypes } from "ethers/lib/utils";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
-import { isNative } from "../types";
+import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT } from "../utils";
 import { getGasTracker } from "../network/gasTracker";
 import estimateFees from "./estimateFees";
@@ -99,7 +98,7 @@ function validateRecipient(
 
   // Check if address is respecting EIP-55
   try {
-    const recipientChecksumed = ethers.utils.getAddress(intent.recipient);
+    const recipientChecksumed = ethers.getAddress(intent.recipient);
     if (intent.recipient !== recipientChecksumed) {
       // this case can happen if the user is entering an ICAP address.
       throw new Error();
