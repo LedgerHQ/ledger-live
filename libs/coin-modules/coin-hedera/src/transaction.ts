@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
@@ -26,6 +27,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     ...common,
     family: tr.family,
     memo: tr.memo,
+    ...(tr.maxFee && { maxFee: new BigNumber(tr.maxFee) }),
   };
 }
 
@@ -36,6 +38,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     ...common,
     family: t.family,
     memo: t.memo,
+    ...(t.maxFee && { maxFee: t.maxFee.toString() }),
   };
 }
 
