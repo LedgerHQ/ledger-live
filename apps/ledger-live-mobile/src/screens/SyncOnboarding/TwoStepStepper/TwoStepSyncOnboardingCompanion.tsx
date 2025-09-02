@@ -13,7 +13,12 @@ import type { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import useTwoStepDesync from "./useTwoStepDesync";
-import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setHasOrderedNano,
+  setIsOnboardingFlow,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
 import { useTranslation } from "react-i18next";
@@ -147,6 +152,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       if (companionStep === SEED_STATE.NEW_SEED) {
         if (done) {
           handleOnboardingDoneState();
+          dispatchRedux(setIsOnboardingFlow(true));
           baseNavigation.reset({
             index: 1,
             routes: [
@@ -200,6 +206,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       device,
       handleOnboardingDone,
       handleOnboardingDoneState,
+      dispatchRedux,
     ],
   );
   /*

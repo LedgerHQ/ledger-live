@@ -214,6 +214,7 @@ export type SettingsState = {
   orderAccounts: string;
   hasCompletedCustomImageFlow: boolean;
   hasCompletedOnboarding: boolean;
+  isOnboardingFlow: boolean;
   hasInstalledAnyApp: boolean;
   readOnlyModeEnabled: boolean;
   hasOrderedNano: boolean;

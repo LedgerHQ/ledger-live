@@ -83,6 +83,7 @@ import type {
   SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
+  SettingsIsOnboardingFlowPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -316,6 +317,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       hasCompletedOnboarding: payload === false ? payload : true,
+    };
+  },
+
+  [SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW]: (state, action) => {
+    const payload = (action as Action<SettingsIsOnboardingFlowPayload>).payload;
+    return {
+      ...state,
+      isOnboardingFlow: !!payload,
     };
   },
 
@@ -829,6 +838,7 @@ export const hasCompletedCustomImageFlowSelector = (state: State) =>
   state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
+export const isOnboardingFlowSelector = (state: State) => state.settings.isOnboardingFlow;
 export const hasInstalledAnyAppSelector = (state: State) => state.settings.hasInstalledAnyApp;
 export const countervalueFirstSelector = (state: State) => state.settings.graphCountervalueFirst;
 export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;

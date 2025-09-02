@@ -45,6 +45,7 @@ import {
   mevProtectionSelector,
   seenDevicesSelector,
   isRebornSelector,
+  isOnboardingFlowSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -218,6 +219,7 @@ const extraProperties = async (store: AppStore) => {
       }
     : {};
 
+  const isOnboardingFlow = isOnboardingFlowSelector(state);
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const isReborn = isRebornSelector(state);
 
@@ -302,6 +304,7 @@ const extraProperties = async (store: AppStore) => {
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,
+    ...(isOnboardingFlow ? { flow: "onboarding" } : {}),
     ...(satisfaction
       ? {
           satisfaction,

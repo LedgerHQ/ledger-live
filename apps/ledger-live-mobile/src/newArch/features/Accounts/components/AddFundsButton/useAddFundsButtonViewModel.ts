@@ -40,7 +40,7 @@ export default function useAddFundsButtonViewModel({
 
     if (isSyncIncr1Enabled && parentNavigationState?.routeNames[0] === NavigatorName.Onboarding) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
-      track(clickMetadata.eventName, clickMetadata.payload);
+      track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
       navigation.navigate(NavigatorName.ReceiveFunds, {
         screen: ScreenName.ReceiveSelectAccount,
         params: {
