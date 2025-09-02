@@ -83,25 +83,41 @@ async function createSignature(
 
 export const buildIsAccountOnboarded =
   (signerContext: SignerContext<CantonSigner>) =>
-  (deviceId: string, derivationPath: string, publicKey: string): Observable<boolean> =>
+  (
+    deviceId: string,
+    derivationPath: string,
+    publicKey: string,
+  ): Observable<boolean | { party_id: string }> =>
     new Observable(observer => {
       async function main() {
-        const keypair = await getKeypair(signerContext, deviceId, derivationPath);
-        const pk = isDevSignerMode ? keypair.publicKey : publicKey;
+        try {
+          const keypair = await getKeypair(signerContext, deviceId, derivationPath);
+          const pk = isDevSignerMode ? keypair.publicKey : publicKey;
 
-        log(`[isAccountOnboarded] Checking if account is onboarded for public key: ${pk}`);
-        const { party_id } = await getPartyByPubKey(pk);
+          log(`[isAccountOnboarded] Checking if account is onboarded for public key: ${pk}`);
+          const { party_id } = await getPartyByPubKey(pk);
 
-        if (party_id) {
-          log("[isAccountOnboarded] Account is already onboarded", party_id);
-          return { party_id };
-        } else {
-          log("[isAccountOnboarded] Account is not onboarded");
-          return false;
+          if (party_id) {
+            log("[isAccountOnboarded] Account is already onboarded", party_id);
+            observer.next({ party_id } as any); // Cast to match return type
+            observer.complete();
+          } else {
+            log("[isAccountOnboarded] Account is not onboarded");
+            observer.next(false);
+            observer.complete();
+          }
+        } catch (error) {
+          // Handle API errors (like 400 for non-existent party) as "not onboarded"
+          log(
+            "[isAccountOnboarded] Error checking party status (likely not onboarded):",
+            (error as Error).message,
+          );
+          observer.next(false);
+          observer.complete();
         }
       }
 
-      main().catch(error => observer.error(error));
+      main();
     });
 
 export const isAccountOnboarded = async (
