@@ -612,16 +612,10 @@ export const DeeplinksProvider = ({
           if (hostname === "earn") {
             const action = validateEarnAction(searchParams.get("action"));
 
-            if (!action) {
-              logSecurityEvent("blocked_action", {
-                hostname,
-                action: searchParams.get("action"),
-                reason: "Invalid action type",
-              });
-              return;
-            }
-
             switch (action) {
+              case EarnDeeplinkAction.DASHBOARD: {
+                break;
+              }
               case EarnDeeplinkAction.INFO_MODAL: {
                 const validatedModal = validateEarnInfoModal(
                   searchParams.get("message"),
@@ -666,6 +660,14 @@ export const DeeplinksProvider = ({
               }
               case EarnDeeplinkAction.PROTOCOL_INFO_MODAL: {
                 dispatch(makeSetEarnProtocolInfoModalAction(true));
+                return;
+              }
+              default: {
+                logSecurityEvent("blocked_action", {
+                  hostname,
+                  action: searchParams.get("action"),
+                  reason: "Invalid action type",
+                });
                 return;
               }
             }

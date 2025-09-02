@@ -33,6 +33,7 @@ export enum EarnDeeplinkAction {
   GO_BACK = "go-back",
   STAKE = "stake",
   STAKE_ACCOUNT = "stake-account",
+  DASHBOARD = "dashboard",
 }
 
 export interface ValidatedEarnInfoModal {
@@ -326,7 +327,7 @@ function isValidEarnAction(action: string): action is EarnDeeplinkAction {
  */
 export function validateEarnAction(action: string | null): EarnDeeplinkAction | null {
   if (!action || typeof action !== "string") {
-    return null;
+    return EarnDeeplinkAction.DASHBOARD;
   }
 
   const normalizedAction = action.toLowerCase().trim();
