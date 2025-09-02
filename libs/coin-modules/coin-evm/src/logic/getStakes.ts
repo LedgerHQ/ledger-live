@@ -1,32 +1,29 @@
-import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Cursor, Page, Stake } from "@ledgerhq/coin-framework/api/types";
 import { withApi } from "../network/node/rpc.common";
 import { getAllStakingContracts } from "../staking/config";
-import type { StakingContractConfig } from "../types/staking";
+import { encodeStakingData, decodeStakingResult } from "../staking/encoder";
+import type { StakeCreate } from "../types/staking";
 
-const createStakeFromContract = async (
-  currency: CryptoCurrency,
-  address: string,
-  contractAddress: string,
-  validatorAddress: string,
-  config: StakingContractConfig,
-): Promise<Stake | null> => {
+const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
+  const { currency, config, address, currencyId, validatorAddress } = stakingContract;
+
   return withApi(currency, async api => {
     try {
-      // TODO: check if this is the right return type (uint256), idk really how this works actually 🤔
-      const iface = new ethers.utils.Interface([
-        `function ${config.getStakedBalance}(address) view returns (uint256)`,
-      ]);
-      const encodedData = iface.encodeFunctionData(config.getStakedBalance, [address]);
+      const encodedData = encodeStakingData({
+        currencyId,
+        operation: "getStakedBalance",
+        config,
+        params: [address],
+      });
 
       const result = await api.call({
-        to: contractAddress,
+        to: config.contractAddress,
         data: encodedData,
       });
 
-      // Decode the result (if this is REALLY uint256?)
-      const decoded = iface.decodeFunctionResult(config.getStakedBalance, result);
+      const decoded = decodeStakingResult(currencyId, "getStakedBalance", config, result);
+
       const amount = BigInt(decoded[0].toString());
 
       if (amount === 0n) {
@@ -34,7 +31,7 @@ const createStakeFromContract = async (
       }
 
       return {
-        uid: `${contractAddress}-${validatorAddress}-${address}`,
+        uid: `${config.contractAddress}-${validatorAddress}-${address}`,
         address,
         delegate: validatorAddress,
         state: "active",
@@ -45,12 +42,12 @@ const createStakeFromContract = async (
         },
         amount,
         details: {
-          contractAddress,
+          contractAddress: config.contractAddress,
           validator: validatorAddress,
         },
       };
     } catch (error) {
-      console.warn(`Failed to fetch stake from contract ${contractAddress}:`, error);
+      console.warn(`Failed to fetch stake from currency ${currencyId}:`, error);
       return null;
     }
   });
@@ -64,14 +61,14 @@ export const getStakes = async (
   const allStakingContracts = getAllStakingContracts();
   const stakes: Stake[] = [];
 
-  for (const [contractAddress, config] of Object.entries(allStakingContracts)) {
-    const stake = await createStakeFromContract(
-      currency,
+  for (const [currencyId, config] of Object.entries(allStakingContracts)) {
+    const stake = await createStakeFromContract({
       address,
-      contractAddress,
-      contractAddress, // Using contract as validator atm (?)
       config,
-    );
+      currencyId,
+      currency,
+      validatorAddress: config.contractAddress,
+    });
 
     if (stake) {
       stakes.push(stake);
