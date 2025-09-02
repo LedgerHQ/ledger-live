@@ -29,11 +29,6 @@ export default class SwapLiveAppPage {
 
   feeContainerId = (strategy: "slow" | "medium" | "fast") => `fee-container-${strategy}`;
 
-  @Step("Wait for swap live app")
-  async waitForSwapLiveApp() {
-    await waitWebElementByTestId(this.quotesButtonDisabled);
-  }
-
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
