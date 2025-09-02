@@ -148,53 +148,21 @@ export type DeviceParams = {
   automationRules?: AutomationRules; // inline rules to POST to /automation
 };
 
-/** Reusable actions */
-const SLEEP_SHORT = ["sleep", 200]; // small UI settle
-const PRESS_RIGHT = [["button", 2, true], ["button", 2, false], SLEEP_SHORT];
-const PRESS_BOTH = [
-  ["button", 1, true],
-  ["button", 2, true],
-  ["button", 1, false],
-  ["button", 2, false],
-  SLEEP_SHORT,
-];
+// --- (optional) default automation, kept but OFF by default via env ---
 
-/**
- * Default automations:
- * - Cosmos-family: enable Expert mode and drive delegation approval
- * - EVM/SOL: enable Blind signing/Contract data and drive approval
- */
 const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
   const a = appName.toLowerCase();
-
-  // Cosmos family
+  // Keep this minimal & conservative; we can extend safely later.
   if (["cosmos", "osmosis", "injective", "sei", "akash", "terra"].some(n => a.includes(n))) {
     return {
       version: 1,
       rules: [
-        // From dashboard, nudge into the list until Settings shows up
-        { regexp: "^(?s).*(Cosmos|Osmosis|Injective|Sei|Akash|Terra).*$", actions: PRESS_RIGHT },
-
-        // Enter Settings, then toggle Expert mode
-        { regexp: "^(?s).*Settings.*$", actions: PRESS_BOTH },
-
-        // Different apps/firmwares: "Expert mode" or "Expert"
-        { regexp: "^(?s).*(Expert\\s*mode|Expert).*$", actions: PRESS_BOTH },
-
-        // Confirm enable (Enable/Enabled/Allow/Turn on)
-        { regexp: "^(?s).*(Enable|Enabled|Allow|Turn on).*$", actions: PRESS_BOTH },
-
-        // Now drive through transaction review screens
-        {
-          regexp: "^(?s).*(Review|Delegate|Validator|Amount|Fees|Gas|Address).*$",
-          actions: PRESS_RIGHT,
-        },
-        { regexp: "^(?s).*(Sign|Approve|Accept|Send).*$", actions: PRESS_BOTH },
+        { regex: ".*Settings.*", actions: [{ button: "both" }] },
+        { regex: ".*Expert(\\s*mode)?|.*Expert.*", actions: [{ button: "both" }] },
+        { regex: ".*Enable|.*Enabled|.*Allow|.*Turn on.*", actions: [{ button: "both" }] },
       ],
     };
   }
-
-  // EVM + Solana
   if (
     ["solana", "ethereum", "polygon", "bsc", "avalanche", "arbitrum", "optimism"].some(n =>
       a.includes(n),
@@ -203,23 +171,15 @@ const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
     return {
       version: 1,
       rules: [
-        { regexp: "^(?s).*Settings|Preferences|Advanced.*$", actions: PRESS_BOTH },
+        { regex: ".*Settings|.*Preferences|.*Advanced.*", actions: [{ button: "both" }] },
         {
-          regexp: "^(?s).*(Blind\\s*signing|Contract\\s*data|Allow\\s*contract).*$",
-          actions: PRESS_BOTH,
+          regex: ".*Blind\\s*signing|.*Contract\\s*data|.*Allow\\s*contract.*",
+          actions: [{ button: "both" }],
         },
-        { regexp: "^(?s).*(Enable|Enabled|Allow|Turn on).*$", actions: PRESS_BOTH },
-
-        // sign flows
-        {
-          regexp: "^(?s).*(Review|Transaction|Instructions|Amount|Fee|To:).*$",
-          actions: PRESS_RIGHT,
-        },
-        { regexp: "^(?s).*(Approve|Accept|Sign|Send).*$", actions: PRESS_BOTH },
+        { regex: ".*Enable|.*Enabled|.*Allow|.*Turn on.*", actions: [{ button: "both" }] },
       ],
     };
   }
-
   return undefined;
 };
 
@@ -321,16 +281,23 @@ export async function createSpeculosDevice(
     ...dockerVolumes.flatMap(v => ["-v", v]),
     ...(isSpeculosWebsocket
       ? [
+          // websocket ports
           "-p",
-          `${(ports as any).apduPort}:40000`,
+          `${ports.apduPort}:40000`,
           "-p",
           `${ports.vncPort}:41000`,
           "-p",
-          `${(ports as any).buttonPort}:42000`,
+          `${ports.buttonPort}:42000`,
           "-p",
-          `${(ports as any).automationPort}:43000`,
+          `${ports.automationPort}:43000`,
         ]
-      : ["-p", `${(ports as any).apiPort}:40000`, "-p", `${ports.vncPort}:41000`]),
+      : [
+          // http ports
+          "-p",
+          `${(ports as any).apiPort}:40000`,
+          "-p",
+          `${ports.vncPort}:41000`,
+        ]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -362,8 +329,20 @@ export async function createSpeculosDevice(
     ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
-      ? ["--apdu-port", "40000", "--button-port", "42000", "--automation-port", "43000"]
-      : ["--api-port", "40000"]),
+      ? [
+          // websocket ports
+          "--apdu-port",
+          "40000",
+          "--button-port",
+          "42000",
+          "--automation-port",
+          "43000",
+        ]
+      : [
+          // http ports
+          "--api-port",
+          "40000",
+        ]),
     // pass automation file to Speculos if provided
     ...(automationPath ? ["--automation", "file:/tmp/automation.json"] : []),
   ];
@@ -467,13 +446,19 @@ export async function createSpeculosDevice(
       destroy,
     };
 
-    // post automation rules: caller-provided OR safe defaults by app (enabled by default)
-    const wantDefault = (process.env.SPECULOS_DEFAULT_AUTOMATION ?? "1") !== "0";
+    // post automation rules: caller-provided OR safe defaults by app (OFF by default)
+    const wantDefault = (process.env.SPECULOS_DEFAULT_AUTOMATION ?? "0") === "1";
     const effRules = automationRules ?? (wantDefault ? defaultAutomationFor(appName) : undefined);
+
     if (effRules && (ports as any).apiPort) {
-      await waitForApi((ports as any).apiPort.toString()); // ensure REST is up in CI
-      await postAutomation((ports as any).apiPort.toString(), effRules);
-      log("speculos", `${speculosID}: automation rules posted for ${appName}`);
+      try {
+        await waitForApi((ports as any).apiPort.toString()); // ensure REST is up in CI
+        await postAutomation((ports as any).apiPort.toString(), effRules);
+        log("speculos", `${speculosID}: automation rules posted for ${appName}`);
+      } catch (e: any) {
+        // Do NOT fail device creation on automation errors (prevents regressions)
+        log("speculos-warn", `${speculosID}: automation setup failed (${e?.message || e})`);
+      }
     }
   }
 
