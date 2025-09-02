@@ -47,7 +47,7 @@ describe("gateway (devnet)", () => {
       );
       expect(balance.length).toBeGreaterThanOrEqual(1);
       expect(balance[0].amount).toBeGreaterThanOrEqual(0);
-      expect(balance[0].instrumentId.includes("Splice")).toBe(true);
+      expect(balance[0].instrument_id.includes("Splice")).toBe(true);
     });
   });
 

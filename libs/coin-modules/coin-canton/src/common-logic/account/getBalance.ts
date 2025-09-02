@@ -10,9 +10,9 @@ function adaptInstrument(instrument: InstrumentBalance): Balance {
     value: BigInt(instrument.amount),
     locked: instrument.locked === true ? BigInt(instrument.amount) : BigInt(0),
     asset:
-      getNativeId() === instrument.instrumentId
+      getNativeId() === instrument.instrument_id
         ? { type: "native" }
-        : { type: "token", assetReference: instrument.instrumentId },
+        : { type: "token", assetReference: instrument.instrument_id },
   };
 }
 
