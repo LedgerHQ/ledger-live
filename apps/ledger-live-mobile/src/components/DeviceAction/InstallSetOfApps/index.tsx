@@ -21,6 +21,7 @@ import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import NewSeedConfirmation from "./NewSeedConfirmation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 type Props = {
   isNewSeed?: boolean;
@@ -30,6 +31,7 @@ type Props = {
   onResult: (done: boolean) => void;
   onError?: (error: Error) => void;
   debugLastSeenDeviceModelId?: DeviceModelId;
+  seedConfiguration?: SeedOriginType;
 };
 
 /**
@@ -48,6 +50,7 @@ const InstallSetOfApps = ({
   onError,
   remountMe,
   debugLastSeenDeviceModelId,
+  seedConfiguration,
 }: Props & { remountMe: () => void }) => {
   const action = useAppDeviceAction();
   const { t } = useTranslation();
@@ -116,7 +119,13 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return error ? null : <TrackScreen category="Step 5: Install apps - successful" />;
+    return error ? null : (
+      <TrackScreen
+        category="Step 5: Install apps - successful"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
+    );
   }
 
   return userConfirmed ? (
@@ -157,7 +166,11 @@ const InstallSetOfApps = ({
           return (
             <>
               {!shouldRestoreApps && currentAppOp?.name === appName && (
-                <TrackScreen category={`Installing ${appName}`} />
+                <TrackScreen
+                  category={`Installing ${appName}`}
+                  flow="onboarding"
+                  seedConfiguration={seedConfiguration}
+                />
               )}
               <Item
                 key={appName}
@@ -177,7 +190,12 @@ const InstallSetOfApps = ({
         onModalHide={onWrappedError}
       >
         {error instanceof UserRefusedAllowManager ? (
-          <TrackScreen category="App restoration cancelled on device" refreshSource={false} />
+          <TrackScreen
+            category="App restoration cancelled on device"
+            refreshSource={false}
+            flow="onboarding"
+            seedConfiguration={seedConfiguration}
+          />
         ) : null}
         <Flex alignItems="center">
           <Flex flexDirection="row">
@@ -188,44 +206,76 @@ const InstallSetOfApps = ({
     </Flex>
   ) : shouldRestoreApps ? (
     <>
-      <TrackScreen category="Restore Applications Start" />
+      <TrackScreen
+        category="Restore Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Restore
         deviceName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Restore applications" });
+          track("button_clicked", {
+            button: "Restore applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           onResult(false);
         }}
       />
     </>
   ) : isNewSeed ? (
     <>
-      <TrackScreen category="Secure Funds Start" />
+      <TrackScreen
+        category="Secure Funds Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <NewSeedConfirmation
         onConfirm={() => {
-          track("button_clicked", { button: "Secure My Crypto" });
+          track("button_clicked", {
+            button: "Secure my crypto",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           isSyncIncr1Enabled ? onResult(true) : setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", { button: "Maybe later", flow: "onboarding", seedConfiguration });
           onResult(false);
         }}
       />
     </>
   ) : (
     <>
-      <TrackScreen category="Install Applications Start" />
+      <TrackScreen
+        category="Install Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Confirmation
         productName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Install applications" });
+          track("button_clicked", {
+            button: "Install applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           onResult(false);
         }}
       />

@@ -72,7 +72,7 @@ const useCompanionSteps = ({
           title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen category={"Set up device: Step 1 device paired"} />
+              <TrackScreen category={"Set up device: Step 1 device paired"} flow="onboarding" />
               <Text variant="body" color="neutral.c80" mb={6}>
                 {t("syncOnboarding.earlySecurityCheckCompletedStep.subtitle", {
                   productName,
@@ -94,7 +94,7 @@ const useCompanionSteps = ({
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category={"Set up device: Step 2 PIN"} />
+              <TrackScreen category={"Set up device: Step 2 PIN"} flow="onboarding" />
               <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}

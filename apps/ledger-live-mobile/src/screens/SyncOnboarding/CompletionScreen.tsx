@@ -27,6 +27,7 @@ import {
   Trans,
   /*useTranslation */
 } from "react-i18next";
+import { TrackScreen, track } from "~/analytics";
 // import Svg, { LinearGradient, Text, Defs, Stop, TSpan } from "react-native-svg";
 
 const CTAWrapper = styled(Box)`
@@ -55,7 +56,7 @@ const CompletionScreen = ({ route }: Props) => {
 
   const preventNavigation = useRef(true);
 
-  const { device } = route.params;
+  const { device, seedConfiguration } = route.params;
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
@@ -100,6 +101,11 @@ const CompletionScreen = ({ route }: Props) => {
   if (isSyncIncr1Enabled) {
     return (
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
+        <TrackScreen
+          category="End of onboarding"
+          flow="onboarding"
+          seedConfiguration={seedConfiguration}
+        />
         {device.modelId === DeviceModelId.europa ? (
           <EuropaCompletionView device={device} loop />
         ) : (
@@ -134,7 +140,14 @@ const CompletionScreen = ({ route }: Props) => {
             type={"secondary"}
             title={<Trans i18nKey="common.continue" />}
             testID="completion-screen-continue-button"
-            onPress={redirectToMainScreen}
+            onPress={() => {
+              track("button_clicked", {
+                button: "Finish onboarding",
+                flow: "onboarding",
+                seedConfiguration,
+              });
+              redirectToMainScreen();
+            }}
           />
         </CTAWrapper>
       </Flex>
@@ -143,6 +156,11 @@ const CompletionScreen = ({ route }: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={redirectToMainScreen}>
+      <TrackScreen
+        category="End of onboarding"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Flex
         width="100%"
         height="100%"

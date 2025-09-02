@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "../HelpDrawer";
 import DesyncOverlay from "../DesyncOverlay";
-// import { TrackScreen } from "~/analytics";
 
 import type { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -22,7 +21,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
-import { backgroundColor } from "styled-system";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 /*
  * Constants
@@ -33,8 +32,15 @@ const READY_REDIRECT_DELAY_MS = 2500;
 /*
  * Types
  */
-export type ExitState = "new_seed" | "restore" | "exit";
-export type CompanionStep = "setup" | ExitState;
+export enum SEED_STATE {
+  NEW_SEED = "new_seed",
+  RESTORE = "restore",
+}
+export enum COMPANION_STATE {
+  SETUP = "setup",
+  EXIT = "exit",
+}
+export type CompanionStep = SEED_STATE | COMPANION_STATE;
 
 export type TwoStepSyncOnboardingCompanionProps = {
   /**
@@ -89,7 +95,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   /*
    * Local State
    */
-  const [companionStep, setCompanionStep] = useState<CompanionStep>("setup");
+  const [companionStep, setCompanionStep] = useState<CompanionStep>(COMPANION_STATE.SETUP);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
@@ -99,6 +105,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preventNavigation = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   /*
    * Redux State
@@ -137,7 +144,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
 
   const handleSecondStepFinish = useCallback(
     (done: boolean) => {
-      if (companionStep === "new_seed") {
+      if (companionStep === SEED_STATE.NEW_SEED) {
         if (done) {
           handleOnboardingDoneState();
           baseNavigation.reset({
@@ -155,6 +162,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
                             name: ScreenName.SyncOnboardingCompletion,
                             params: {
                               device,
+                              seedConfiguration: analyticsSeedConfiguration.current,
                             },
                           },
                         ],
@@ -182,7 +190,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
           handleOnboardingDone();
         }
       } else {
-        setCompanionStep("exit");
+        setCompanionStep(COMPANION_STATE.EXIT);
       }
     },
     [
@@ -206,7 +214,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
 
   // Handle exit status
   useEffect(() => {
-    if (companionStep === "exit") {
+    if (companionStep === COMPANION_STATE.EXIT) {
       preventNavigation.current = true;
       readyRedirectTimerRef.current = setTimeout(() => {
         preventNavigation.current = false;
@@ -245,20 +253,28 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
               handleSeedGenerationDelay={twoStepDesync.handleSeedGenerationDelay}
               notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
               handlePollingError={twoStepDesync.handlePollingError}
-              handleFinishStep={(nextStep: ExitState) => setCompanionStep(nextStep)}
-              isCollapsed={companionStep !== "setup"}
+              handleFinishStep={(nextStep: SEED_STATE) => setCompanionStep(nextStep)}
+              isCollapsed={companionStep !== COMPANION_STATE.SETUP}
               isPollingOn={isPollingOn}
               setIsPollingOn={setIsPollingOn}
               parentRef={scrollViewRef}
+              analyticsSeedConfiguration={analyticsSeedConfiguration}
             />
             <SecondStepSyncOnboarding
               companionStep={companionStep}
-              isCollapsed={companionStep === "setup" || companionStep === "exit"}
+              isCollapsed={
+                companionStep === COMPANION_STATE.SETUP || companionStep === COMPANION_STATE.EXIT
+              }
               device={device}
               handleDone={handleSecondStepFinish}
+              analyticsSeedConfiguration={analyticsSeedConfiguration}
             />
-            {companionStep === "exit" ? (
-              <TrackScreen category="Set up device: Final Step Your device is ready" />
+            {companionStep === SEED_STATE.NEW_SEED || companionStep === SEED_STATE.RESTORE ? (
+              <TrackScreen
+                category="Set up device: Secure your crypto"
+                flow="onboarding"
+                seedConfiguration={analyticsSeedConfiguration.current}
+              />
             ) : null}
           </Flex>
         </ScrollView>

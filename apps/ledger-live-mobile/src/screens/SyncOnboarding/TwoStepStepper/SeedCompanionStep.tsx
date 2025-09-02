@@ -47,6 +47,7 @@ const SeedStep = ({
     track("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
+      flow: "onboarding",
     });
     Linking.openURL(CHARON_LEARN_MORE_URL);
   }, [track]);
@@ -155,13 +156,13 @@ const SeedStep = ({
     return (
       <Flex>
         {charonStatus === CharonStatus.Choice && (
-          <TrackScreen category="Set up device: Step 3 Charon Start" />
+          <TrackScreen category="Set up device: Step 3 Charon Start" flow="onboarding" />
         )}
         {charonStatus === CharonStatus.Rejected && (
-          <TrackScreen category="Set up device: Step 3 Charon Backup Rejected" />
+          <TrackScreen category="Set up device: Step 3 Charon Backup Rejected" flow="onboarding" />
         )}
         {charonStatus === CharonStatus.Ready && (
-          <TrackScreen category="Set up device: Step 3 Charon Backup Success" />
+          <TrackScreen category="Set up device: Step 3 Charon Backup Success" flow="onboarding" />
         )}
         <Flex alignItems="center" justifyContent="center">
           <Flex style={{ overflow: "visible", height: 100 }} mt={16} mb={24}>
@@ -311,7 +312,7 @@ const SeedStep = ({
 const SeedCompanionStep = (props: SeedCompanionStepProps) => {
   return (
     <Flex>
-      <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
+      <TrackScreen category={"Set up device: Step 3 Seed Intro"} flow="onboarding" />
       <SeedStep {...props} />
     </Flex>
   );

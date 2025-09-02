@@ -3,7 +3,7 @@ import CollapsibleStep from "./CollapsibleStep";
 import { useTranslation } from "react-i18next";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CompanionStep } from "./TwoStepSyncOnboardingCompanion";
+import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import BackgroundBlue from "../assets/BackgroundBlue";
 import { Box } from "@ledgerhq/native-ui";
@@ -16,6 +16,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutChangeEvent } from "react-native";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
@@ -24,6 +25,7 @@ interface SecondStepSyncOnboardingProps {
   companionStep: CompanionStep;
   isCollapsed: boolean;
   handleDone: (done: boolean) => void;
+  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
 }
 
 const SecondStepSyncOnboarding = ({
@@ -31,6 +33,7 @@ const SecondStepSyncOnboarding = ({
   companionStep,
   isCollapsed,
   handleDone,
+  analyticsSeedConfiguration,
 }: SecondStepSyncOnboardingProps) => {
   const [isFinished, setIsFinished] = useState<boolean>(false);
 
@@ -76,18 +79,19 @@ const SecondStepSyncOnboarding = ({
       isCollapsed={isCollapsed}
       title={t("syncOnboarding.secureCryptoStep.title")}
       doneSubTitle={t("syncOnboarding.secureCryptoStep.doneSubTitle")}
-      status={companionStep === "exit" || isFinished ? "complete" : "unfinished"}
+      status={companionStep === COMPANION_STATE.EXIT || isFinished ? "complete" : "unfinished"}
       background={!isFinished ? <BackgroundBlue /> : null}
     >
       <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
         <Animated.View onLayout={handleLayout}>
           <Box mt={3}>
             <InstallSetOfApps
-              isNewSeed={companionStep === "new_seed"}
-              restore={companionStep === "restore"}
+              isNewSeed={companionStep === SEED_STATE.NEW_SEED}
+              restore={companionStep === SEED_STATE.RESTORE}
               device={device}
               onResult={handleExit}
               dependencies={initialAppsToInstall}
+              seedConfiguration={analyticsSeedConfiguration.current}
             />
           </Box>
         </Animated.View>

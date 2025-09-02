@@ -24,7 +24,6 @@ import useFirstStepCompanionState from "./useFirstStepCompanionState";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
-import { ExitState } from "./TwoStepSyncOnboardingCompanion";
 import BackgroundGreen from "../assets/BackgroundGreen";
 import Animated, {
   Extrapolation,
@@ -34,6 +33,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutChangeEvent, ScrollView } from "react-native";
+import { TrackScreen } from "~/analytics";
+import { SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
 
 /*
  * Constants
@@ -82,8 +83,9 @@ interface FirstStepSyncOnboardingProps {
   // Polling state
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
-  handleFinishStep: (nextStep: ExitState) => void;
+  handleFinishStep: (nextStep: SEED_STATE) => void;
   parentRef: null | React.RefObject<ScrollView>;
+  analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
 }
 
 const FirstStepSyncOnboarding = ({
@@ -99,6 +101,7 @@ const FirstStepSyncOnboarding = ({
   setIsPollingOn,
   handleFinishStep,
   parentRef,
+  analyticsSeedConfiguration,
 }: FirstStepSyncOnboardingProps) => {
   const { t } = useTranslation();
   const safeAreaInsets = useSafeAreaInsets();
@@ -121,7 +124,6 @@ const FirstStepSyncOnboarding = ({
    */
   const lastCompanionStepKey = useRef<FirstStepCompanionStepKey>();
   const analyticsSeedingTracked = useRef(false);
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
   const addedToKnownDevices = useRef(false);
   const readyShowSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -237,9 +239,13 @@ const FirstStepSyncOnboarding = ({
     setTimeout(() => {
       companionSteps.setStep(FirstStepCompanionStepKey.Exit);
       setIsFinishedStep(false);
-      handleFinishStep(analyticsSeedConfiguration.current === "new_seed" ? "new_seed" : "restore");
+      handleFinishStep(
+        analyticsSeedConfiguration.current === SEED_STATE.NEW_SEED
+          ? SEED_STATE.NEW_SEED
+          : SEED_STATE.RESTORE,
+      );
     }, 400);
-  }, [handleFinishStep, companionSteps, sharedHeight]);
+  }, [handleFinishStep, companionSteps, sharedHeight, analyticsSeedConfiguration]);
 
   /*
    * useEffects
@@ -282,6 +288,7 @@ const FirstStepSyncOnboarding = ({
             ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
             : undefined,
           seedConfiguration: analyticsSeedConfiguration.current,
+          flow: "onboarding",
         },
         true,
         true,
@@ -290,7 +297,13 @@ const FirstStepSyncOnboarding = ({
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = companionSteps.activeStep;
-  }, [companionSteps.activeStep, deviceOnboardingState?.isOnboarded, productName, seedPathStatus]);
+  }, [
+    companionSteps.activeStep,
+    deviceOnboardingState?.isOnboarded,
+    productName,
+    seedPathStatus,
+    analyticsSeedConfiguration,
+  ]);
 
   /*
    * Main effects
@@ -461,7 +474,15 @@ const FirstStepSyncOnboarding = ({
       <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
         <Animated.View onLayout={handleLayout}>
           {showSuccess ? (
-            <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
+            <>
+              <TrackScreen
+                category="Set up device: Final Step Your device is ready"
+                flow="onboarding"
+                seedConfiguration={analyticsSeedConfiguration.current}
+              />
+
+              <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
+            </>
           ) : null}
         </Animated.View>
       </Animated.ScrollView>
