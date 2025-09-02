@@ -148,39 +148,42 @@ export type DeviceParams = {
   automationRules?: AutomationRules; // inline rules to POST to /automation
 };
 
+// common actions
+const BOTH_PRESS: any[] = [
+  ["button", 1, true],
+  ["button", 2, true],
+  ["button", 1, false],
+  ["button", 2, false],
+];
+const RIGHT_CLICK: any[] = [
+  ["button", 2, true],
+  ["button", 2, false],
+];
+
 // automation per app (used if caller didn't pass rules)
 const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
   const a = appName.toLowerCase();
-  // Cosmos-family: need Expert mode
+
+  // Cosmos-family: make Expert mode enabled
   if (["cosmos", "osmosis", "injective", "sei", "akash", "terra"].some(n => a.includes(n))) {
     return {
       version: 1,
       rules: [
-        {
-          regexp: "Settings",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
-        },
-        {
-          regexp: "Expert mode",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
-        },
-        {
-          regexp: "Enable|Enabled",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
-        },
+        // Enter Settings
+        { regexp: "(^|\\b)(Settings|Preferences)\\b", actions: BOTH_PRESS },
+        // Toggle Expert mode (broadened matcher)
+        { regexp: "(?i)expert(\\s*mode)?", actions: BOTH_PRESS },
+        // Confirm enable
+        { regexp: "(?i)(enable|enabled|allow|turn on)", actions: BOTH_PRESS },
+        // Some firmwares require a final continue/approve
+        { regexp: "(?i)(continue|approve|ok)", actions: BOTH_PRESS },
+        // If we're on the dashboard, nudge right once so tests see the list
+        { regexp: "(?i)(app|ready|dashboard)", actions: RIGHT_CLICK },
       ],
     };
   }
-  // EVM / Solana: need Blind signing / Contract data
+
+  // EVM / Solana: enable Blind signing / Contract data
   if (
     ["solana", "ethereum", "polygon", "bsc", "avalanche", "arbitrum", "optimism"].some(n =>
       a.includes(n),
@@ -189,30 +192,17 @@ const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
     return {
       version: 1,
       rules: [
+        { regexp: "(^|\\b)(Settings|Preferences|Advanced)\\b", actions: BOTH_PRESS },
         {
-          regexp: "Settings",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
+          regexp: "(?i)(blind\\s*signing|contract\\s*data|allow\\s*contract)",
+          actions: BOTH_PRESS,
         },
-        {
-          regexp: "Blind signing|Contract data",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
-        },
-        {
-          regexp: "Allow|Enable|Enabled",
-          actions: [
-            ["button", 2, true],
-            ["button", 2, false],
-          ],
-        },
+        { regexp: "(?i)(enable|enabled|allow|turn on)", actions: BOTH_PRESS },
+        { regexp: "(?i)(continue|approve|ok)", actions: BOTH_PRESS },
       ],
     };
   }
+
   return undefined;
 };
 
@@ -231,12 +221,12 @@ function getOnce(apiPort: string, path: string): Promise<void> {
   });
 }
 
-async function waitForApi(apiPort?: string, timeoutMs = 8000) {
+async function waitForApi(apiPort?: string, timeoutMs = 12000) {
   if (!apiPort) return;
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
-      // any simple endpoint works /screenshot is cheap and available
+      // /screenshot is cheap and available on the REST API
       await getOnce(apiPort, "/screenshot");
       return;
     } catch {
@@ -425,13 +415,13 @@ export async function createSpeculosDevice(
       log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
 
-    if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
+    if (/using\s(?:SDK|API_LEVEL)/.test(String(data))) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (data.includes("is already in use by")) {
+    } else if (String(data).includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
-    } else if (data.includes("address already in use")) {
+    } else if (String(data).includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
         await destroy();
