@@ -226,6 +226,61 @@ export async function getTransactions(
   return data;
 }
 
+type PrepareTapRequestRequest = {
+  partyId: string;
+  amount: number;
+  type: "tap-request";
+};
+
+type PrepareTapRequestResponse = {
+  serialized: "string";
+  json: null;
+  hash: "string";
+};
+
+export async function prepareTapRequest({
+  partyId,
+  amount,
+  type,
+}: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
+  const { data } = await network<PrepareTapRequestResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
+    data: {
+      amount,
+      type,
+    } satisfies Omit<PrepareTapRequestRequest, "partyId">,
+  });
+  return data;
+}
+
+type SubmitTapRequestRequest = {
+  partyId: string;
+  serialized: string;
+  signature: string;
+};
+
+type SubmitTapRequestResponse = {
+  submission_id: string;
+  update_id: string;
+};
+
+export async function submitTapRequest({
+  partyId,
+  serialized,
+  signature,
+}: SubmitTapRequestRequest): Promise<SubmitTapRequestResponse> {
+  const { data } = await network<SubmitTapRequestResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
+    data: {
+      serialized,
+      signature,
+    } satisfies Omit<SubmitTapRequestRequest, "partyId">,
+  });
+  return data;
+}
+
 export async function getLedgerEnd(): Promise<number> {
   const { data } = await network<number>({
     method: "GET",
