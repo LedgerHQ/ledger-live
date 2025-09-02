@@ -7,6 +7,8 @@ import {
   getPartyByPubKey,
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
+  prepareTapRequest,
+  submitTapRequest,
 } from "../network/gateway";
 import { generateMockKeyPair, createMockSigner, verifySignature } from "../test/cantonTestUtils";
 import {
@@ -362,6 +364,36 @@ export const buildAuthorizePreapproval =
           transactionId: result.transactionId || "",
           message: result.message || "Transaction pre-approvals signed and submitted successfully",
         });
+
+        const preparedTapRequest = await prepareTapRequest({
+          partyId,
+          amount: 100,
+          type: "tap-request",
+        }).catch((err: any) => {
+          log(`[authorizePreapproval] preparedTapReques`);
+        });
+        const preparedTapRequestSignature = await createSignature(
+          keypair,
+          preparedTapRequest?.hash || "",
+          derivationPath,
+          signerContext,
+          deviceId,
+        ).catch((err: any) => {
+          log(`[authorizePreapproval] Device signature failed: ${err}`);
+        });
+        const strippedPreparedTapRequestSignature = isDevSignerMode
+          ? preparedTapRequestSignature
+          : preparedTapRequestSignature?.slice(2, -2);
+
+        const submittedTapRequest = await submitTapRequest({
+          partyId,
+          serialized: preparedTapRequest?.serialized || "",
+          signature: strippedPreparedTapRequestSignature!,
+        }).catch((err: any) => {
+          log(`[authorizePreapproval] strippedPreparedTapRequestSignature`);
+        });
+
+        log("[authorizePreapproval] submittedTapRequest", submittedTapRequest);
 
         observer.complete();
       }
