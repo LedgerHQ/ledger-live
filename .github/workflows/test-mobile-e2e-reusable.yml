@@ -181,12 +181,12 @@ jobs:
 
   build-ios:
     name: "iOS Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
-      macos-specificity-runner-label: 'general-pool'
+      macos-specificity-runner-label: "focus"
       disable-turbo-cache: false
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' && !inputs.production_firebase }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' && !inputs.production_firebase }}
@@ -196,7 +196,7 @@ jobs:
 
   build-android:
     name: "Android Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
@@ -210,9 +210,9 @@ jobs:
 
   detox-tests-ios:
     name: iOS E2E Tests
-    needs: [ build-ios, determine-builds ]
+    needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: [ "${{ github.event_name == 'schedule' && 'performance-pool' || 'general-pool' }}", macOS, ARM64 ]
+    runs-on: [focus]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
@@ -406,13 +406,13 @@ jobs:
         id: set-output
         if: ${{ !cancelled() }}
         run: |
-          echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT   
+          echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
 
   detox-tests-android:
     name: Android E2E Tests
-    needs: [ build-android, determine-builds ]
+    needs: [build-android, determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -666,9 +666,9 @@ jobs:
 
   allure-report-ios:
     name: Allure Report iOS
-    runs-on: [ ledger-live-medium ]
+    runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
-    needs: [ detox-tests-ios ]
+    needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
@@ -723,13 +723,13 @@ jobs:
 
   allure-report-android:
     name: Allure Report Android
-    runs-on: [ ledger-live-medium ]
+    runs-on: [ledger-live-medium]
     if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
-    needs: [ detox-tests-android ]
+    needs: [detox-tests-android]
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4
@@ -780,7 +780,7 @@ jobs:
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
-    runs-on: [ ledger-live-medium ]
+    runs-on: [ledger-live-medium]
     strategy:
       matrix:
         platform:
@@ -796,7 +796,7 @@ jobs:
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
       TEST_EXECUTION: ${{ matrix.platform == 'android' && inputs.test_execution_android || inputs.test_execution_ios }}
-    needs: [ detox-tests-android, detox-tests-ios ]
+    needs: [detox-tests-android, detox-tests-ios]
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
       - uses: actions/checkout@v4
@@ -847,7 +847,7 @@ jobs:
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
-    needs: [ allure-report-android, allure-report-ios ]
+    needs: [allure-report-android, allure-report-ios]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
@@ -876,7 +876,7 @@ jobs:
                 "type": "divider"
               }
             ];
-            
+
             const iOSResult = [
               {
                 "type": "section",
@@ -886,7 +886,7 @@ jobs:
                 }
               }
             ];
-            
+
             const androidResult = [
               {
                 "type": "section",
@@ -896,21 +896,21 @@ jobs:
                 }
               }
             ];
-            
+
             const iOSInfo = [
               {
                 "type": "mrkdwn",
                 "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
               }
             ];
-            
+
             const androidInfo = [
               {
                 "type": "mrkdwn",
                 "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
               }
             ];
-            
+
             const infoFields = []
               .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSInfo)
               .concat(androidInfo)
@@ -920,7 +920,7 @@ jobs:
                 "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
               }
             ]);
-            
+
             const infoBlock = [
               {
                 "type": "divider"
@@ -930,13 +930,13 @@ jobs:
                 "fields": infoFields
               }
             ];
-            
+
             const blocks = []
               .concat(header)
               .concat(${{ env.ANDROID_ONLY == 'true' }} ? [] : iOSResult)
               .concat(androidResult)
               .concat(infoBlock);
-            
+
             const result = {
                 attachments: [
                   {
@@ -947,7 +947,7 @@ jobs:
                   },
                 ],
               };
-            
+
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
       - name: post to a Slack channel
         id: slack
