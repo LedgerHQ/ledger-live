@@ -13,6 +13,8 @@ const P2_NONE = 0x00;
 const P2_FIRST = 0x01;
 // P2 indicating that this is not the last APDU in a large request.
 const P2_MORE = 0x02;
+// P2 indicating that this is the last APDU of a message in a multi message request.
+const P2_MSG_END = 0x04;
 
 const INS = {
   GET_VERSION: 0x03,
@@ -107,7 +109,7 @@ export default class Canton {
       CLA,
       INS.SIGN,
       P1_NON_CONFIRM,
-      P2_NONE,
+      P2_MSG_END,
       Buffer.from(txHash, "hex"),
     );
 
