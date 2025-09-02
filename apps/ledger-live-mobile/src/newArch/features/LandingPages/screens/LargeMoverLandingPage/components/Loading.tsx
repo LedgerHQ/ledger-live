@@ -3,6 +3,6 @@ import React from "react";
 
 export const LoadingIndicator = ({ height }: { height: number }) => (
   <Flex height={height} width="100%" justifyContent="center" alignItems="center">
-    <InfiniteLoader color="primary.c50" size={38} />
+    <InfiniteLoader color="primary.c50" size={38} testID="infinite-loader" />
   </Flex>
 );
