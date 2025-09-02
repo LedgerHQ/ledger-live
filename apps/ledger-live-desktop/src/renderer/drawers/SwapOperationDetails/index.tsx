@@ -138,7 +138,6 @@ const SwapOperationDetails = ({
 
   let url: string | null | undefined;
   //Temporary feature before adding history to swap live app
-  let url;
   switch (provider) {
     case "lifi":
       url = "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash);
@@ -147,7 +146,9 @@ const SwapOperationDetails = ({
       url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash);
       break;
     default:
-      url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+      url = getTransactionExplorer
+        ? getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation)
+        : getDefaultTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
       break;
   }
 
