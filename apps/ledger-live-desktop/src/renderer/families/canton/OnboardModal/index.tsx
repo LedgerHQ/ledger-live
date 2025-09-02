@@ -15,6 +15,7 @@ import Modal from "~/renderer/components/Modal";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   OnboardStatus,
   PreApprovalStatus,
@@ -131,11 +132,23 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAccountCreated = (account: Account) => {
-    const { addAccountsAction, existingAccounts, closeModal, editedNames } = this.props;
+    const { addAccountsAction, existingAccounts, closeModal, editedNames, currency } = this.props;
     const { onboardingData, accountName } = this.state;
+    const address = onboardingData?.partyId;
+    // TODO: we need better solution ?
+    const xpubOrAddress = address?.replace(/:/g, "_") || "";
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress,
+      derivationMode: "",
+    });
     const completedAccount = {
       ...onboardingData?.completedAccount,
-      address: onboardingData?.partyId,
+      id: accountId,
+      address: xpubOrAddress,
+      freshAddress: xpubOrAddress,
     };
 
     addAccountsAction({

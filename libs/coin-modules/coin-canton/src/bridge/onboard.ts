@@ -365,35 +365,36 @@ export const buildAuthorizePreapproval =
           message: result.message || "Transaction pre-approvals signed and submitted successfully",
         });
 
-        const preparedTapRequest = await prepareTapRequest({
-          partyId,
-          amount: 100,
-          type: "tap-request",
-        }).catch((err: any) => {
-          log(`[authorizePreapproval] preparedTapReques`);
-        });
-        const preparedTapRequestSignature = await createSignature(
-          keypair,
-          preparedTapRequest?.hash || "",
-          derivationPath,
-          signerContext,
-          deviceId,
-        ).catch((err: any) => {
-          log(`[authorizePreapproval] Device signature failed: ${err}`);
-        });
-        const strippedPreparedTapRequestSignature = isDevSignerMode
-          ? preparedTapRequestSignature
-          : preparedTapRequestSignature?.slice(2, -2);
-
-        const submittedTapRequest = await submitTapRequest({
-          partyId,
-          serialized: preparedTapRequest?.serialized || "",
-          signature: strippedPreparedTapRequestSignature!,
-        }).catch((err: any) => {
-          log(`[authorizePreapproval] strippedPreparedTapRequestSignature`);
-        });
-
-        log("[authorizePreapproval] submittedTapRequest", submittedTapRequest);
+        const handleTapRequest = async () => {
+          const preparedTapRequest = await prepareTapRequest({
+            partyId,
+            amount: 100000,
+            type: "tap-request",
+          }).catch((err: any) => {
+            log(`[authorizePreapproval] preparedTapRequest failed: ${err}`);
+          });
+          const preparedTapRequestSignature = await createSignature(
+            keypair,
+            preparedTapRequest?.hash || "",
+            derivationPath,
+            signerContext,
+            deviceId,
+          ).catch((err: any) => {
+            log(`[authorizePreapproval] Device signature failed: ${err}`);
+          });
+          const strippedPreparedTapRequestSignature = isDevSignerMode
+            ? preparedTapRequestSignature
+            : preparedTapRequestSignature?.slice(2, -2);
+          const submittedTapRequest = await submitTapRequest({
+            partyId,
+            serialized: preparedTapRequest?.serialized || "",
+            signature: strippedPreparedTapRequestSignature!,
+          }).catch((err: any) => {
+            log(`[authorizePreapproval] submitTapRequest failed: ${err}`);
+          });
+          log("[authorizePreapproval] submittedTapRequest", submittedTapRequest);
+        };
+        handleTapRequest();
 
         observer.complete();
       }
