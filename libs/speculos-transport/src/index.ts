@@ -5,6 +5,7 @@ import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 
 export type SpeculosDevice = {
   transport: SpeculosTransport;
@@ -29,7 +30,7 @@ export type SpeculosDeviceInternal =
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
-      transport: DeviceManagementKitTransportSpeculos;
+      transport: DeviceManagementKitTransportSpeculos | SpeculosTransportHttp;
       destroy: () => Promise<unknown>;
     };
 
