@@ -11,6 +11,7 @@ import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
 import Text from "~/renderer/components/Text";
+import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
 import Spinner from "~/renderer/components/Spinner";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
@@ -33,6 +34,7 @@ export type StepAuthorizeProps = {
   transitionTo: (step: StepId) => void;
   onAccountCreated: (account: any) => void;
   setOnboardingData?: (data: any) => void;
+  authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
   showConfirmation: boolean;
   progress: number;
@@ -43,6 +45,7 @@ export type StepAuthorizeProps = {
 export type StepAuthorizeFooterProps = {
   currency: any;
   isProcessing: boolean;
+  authorizeStatus: PreApprovalStatus;
   error: Error | null;
   onRetry: () => void;
   onConfirm: () => void;
@@ -57,6 +60,7 @@ const StepAuthorize = ({
   selectedAccounts,
   editedNames,
   cantonBridge,
+  authorizeStatus,
   device,
   isAuthorized = true,
   onboardingData,
@@ -117,140 +121,136 @@ const StepAuthorize = ({
     handlePreapproval();
   };
 
-  if (error) {
-    return (
-      <Box>
-        <Alert type="error" mb={4}>
-          Pre-approval failed: {error.message}
-        </Alert>
-        <Box horizontal alignItems="center" justifyContent="space-between">
-          <Button
-            onClick={() => {
-              clearError();
-              handlePreapproval();
-            }}
-          >
-            <Trans i18nKey="common.retry">Retry</Trans>
-          </Button>
-        </Box>
-      </Box>
-    );
-  }
+  const renderContent = (status: PreApprovalStatus) => {
+    switch (status) {
+      case PreApprovalStatus.SIGN:
+        return (
+          <Box>
+            <TransactionConfirm
+              device={device}
+              account={placeholderAccount}
+              parentAccount={null}
+              transaction={
+                {
+                  family: "canton",
+                  mode: "preapproval",
+                  recipient: onboardingData?.partyId || "",
+                  amount: new BigNumber(0),
+                  onboardingData,
+                } as any
+              }
+              status={
+                {
+                  amount: new BigNumber(0),
+                  totalSpent: new BigNumber(0),
+                  estimatedFees: new BigNumber(0),
+                  errors: {},
+                  warnings: {},
+                } as any
+              }
+            />
+          </Box>
+        );
+      case PreApprovalStatus.ERROR:
+        return (
+          <Box>
+            <Alert type="error" mb={4}>
+              Pre-approval failed
+            </Alert>
+            <Box horizontal alignItems="center" justifyContent="space-between">
+              <Button
+                onClick={() => {
+                  clearError();
+                  handlePreapproval();
+                }}
+              >
+                <Trans i18nKey="common.retry">Retry</Trans>
+              </Button>
+            </Box>
+          </Box>
+        );
+      default:
+        return (
+          <Box>
+            <Box mb={4}>
+              <Box
+                horizontal
+                ff="Inter|Bold"
+                color="palette.text.shade100"
+                fontSize={2}
+                textTransform="uppercase"
+                mb={3}
+              >
+                <Trans i18nKey="operationDetails.account" />
+              </Box>
+              <AccountRow
+                account={placeholderAccount}
+                accountName={currentAccountName}
+                isDisabled={true}
+                hideAmount={true}
+                isReadonly={true}
+              />
+            </Box>
 
-  if (showConfirmation && device) {
-    return (
-      <Box>
-        <TransactionConfirm
-          device={device}
-          account={placeholderAccount}
-          parentAccount={null}
-          transaction={
-            {
-              family: "canton",
-              mode: "preapproval",
-              recipient: onboardingData?.partyId || "",
-              amount: new BigNumber(0),
-              onboardingData,
-            } as any
-          }
-          status={
-            {
-              amount: new BigNumber(0),
-              totalSpent: new BigNumber(0),
-              estimatedFees: new BigNumber(0),
-              errors: {},
-              warnings: {},
-            } as any
-          }
-        />
-      </Box>
-    );
-  }
+            <Box mb={4}>
+              <Box
+                horizontal
+                ff="Inter|Bold"
+                color="palette.text.shade100"
+                fontSize={2}
+                textTransform="uppercase"
+                mb={3}
+              >
+                <Trans i18nKey="canton.addAccount.authorization.validatorLabel">Authorize</Trans>
+              </Box>
 
-  return (
-    <Box>
-      <Box mb={4}>
-        <Box
-          horizontal
-          ff="Inter|Bold"
-          color="palette.text.shade100"
-          fontSize={2}
-          textTransform="uppercase"
-          mb={3}
-        >
-          <Trans i18nKey="operationDetails.account" />
-        </Box>
-        <AccountRow
-          account={placeholderAccount}
-          accountName={currentAccountName}
-          isDisabled={true}
-          hideAmount={true}
-          isReadonly={true}
-        />
-      </Box>
+              <ValidatorRow isSelected={isAuthorized} disabled={true} />
+            </Box>
 
-      <Box mb={4}>
-        <Box
-          horizontal
-          ff="Inter|Bold"
-          color="palette.text.shade100"
-          fontSize={2}
-          textTransform="uppercase"
-          mb={3}
-        >
-          <Trans i18nKey="canton.addAccount.authorization.validatorLabel">Authorize</Trans>
-        </Box>
+            <Alert>
+              <Trans i18nKey="canton.addAccount.combined.preapproval">
+                Automaticaly accept incoming funds to this account. <br />
+                <Link href="https://ledger.com" type="external">
+                  <Trans i18nKey="common.learnMore" />
+                </Link>
+              </Trans>
+            </Alert>
+          </Box>
+        );
+    }
+  };
 
-        <ValidatorRow isSelected={isAuthorized} disabled={true} />
-      </Box>
-
-      <Alert>
-        <Trans i18nKey="canton.addAccount.combined.preapproval">
-          Automaticaly accept incoming funds to this account. <br />
-          <Link href="https://ledger.com" type="external">
-            <Trans i18nKey="common.learnMore" />
-          </Link>
-        </Trans>
-      </Alert>
-    </Box>
-  );
+  return renderContent(authorizeStatus);
 };
 
 export const StepAuthorizeFooter = ({
   currency,
   isProcessing,
   error,
+  authorizeStatus,
   onRetry,
   onConfirm,
   handlePreapproval,
 }: StepAuthorizeFooterProps) => {
-  if (isProcessing) {
+  if (authorizeStatus === PreApprovalStatus.SIGN) {
     return null;
-  }
-
-  if (error) {
-    return (
-      <Box horizontal alignItems="center" justifyContent="space-between" grow>
-        {currency && <CurrencyBadge currency={currency} />}
-        <Button primary onClick={handlePreapproval || onRetry}>
-          <Trans i18nKey="common.retry">Retry</Trans>
-        </Button>
-      </Box>
-    );
   }
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       {currency && <CurrencyBadge currency={currency} />}
-      {isProcessing ? (
-        <Box>
-          <Spinner size={20} />
-        </Box>
-      ) : (
-        <Button primary onClick={handlePreapproval || onConfirm}>
-          <Trans i18nKey="canton.addAccount.authorization.startPreapproval">Confirm</Trans>
-        </Button>
-      )}
+      <Button
+        primary
+        onClick={handlePreapproval}
+        disabled={authorizeStatus === PreApprovalStatus.SUBMIT}
+      >
+        {authorizeStatus === PreApprovalStatus.SUBMIT && (
+          <Box mr={2}>
+            <Spinner size={20} />
+          </Box>
+        )}
+        <Trans i18nKey="canton.addAccount.authorization.startPreapproval">Confirm</Trans>
+      </Button>
     </Box>
   );
 };

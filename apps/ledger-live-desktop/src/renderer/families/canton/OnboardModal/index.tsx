@@ -15,7 +15,12 @@ import Modal from "~/renderer/components/Modal";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import {
+  OnboardStatus,
+  PreApprovalStatus,
+  CantonPreApprovalProgress,
+  CantonPreApprovalResult,
+} from "@ledgerhq/coin-canton/types";
 import {
   getDerivationScheme,
   runAccountDerivationScheme,
@@ -57,6 +62,7 @@ type State = {
   onboardingData: any | null;
   onboardingCompleted: boolean;
   onboardingStatus: OnboardStatus;
+  authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
   showConfirmation: boolean;
   progress: number;
@@ -72,6 +78,7 @@ const INITIAL_STATE: State = {
   onboardingData: null,
   onboardingCompleted: false,
   onboardingStatus: OnboardStatus.INIT,
+  authorizeStatus: PreApprovalStatus.INIT,
   isProcessing: false,
   showConfirmation: false,
   progress: 0,
@@ -125,14 +132,14 @@ class OnboardModal extends PureComponent<Props, State> {
 
   handleAccountCreated = (account: Account) => {
     const { addAccountsAction, existingAccounts, closeModal, editedNames } = this.props;
-
-    const accountName = editedNames[account.id] || getDefaultAccountName(account);
+    const { onboardingData, accountName } = this.state;
+    const completedAccount = onboardingData?.completedAccount;
 
     addAccountsAction({
-      scannedAccounts: [account],
+      scannedAccounts: [completedAccount],
       existingAccounts,
-      selectedIds: [account.id],
-      renamings: { [account.id]: accountName },
+      selectedIds: [completedAccount.id],
+      renamings: { [completedAccount.id]: accountName },
     });
 
     closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
@@ -152,6 +159,10 @@ class OnboardModal extends PureComponent<Props, State> {
 
   setOnboardingStatus = (status: OnboardStatus) => {
     this.setState({ onboardingStatus: status });
+  };
+
+  setAuthorizeStatus = (status: PreApprovalStatus) => {
+    this.setState({ authorizeStatus: status });
   };
 
   setError = (error: Error | null) => {
@@ -191,23 +202,25 @@ class OnboardModal extends PureComponent<Props, State> {
     });
 
     const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
-    let preapprovalResult: any = null;
+    let preapprovalResult: CantonPreApprovalResult | null = null;
 
     const subscription = cantonBridge
       .authorizePreapproval(deviceId, derivationPath, partyId)
       .subscribe({
-        next: (progressData: any) => {
+        next: (progressData: CantonPreApprovalProgress | CantonPreApprovalResult) => {
           logger.log("Canton preapproval progress", progressData);
 
-          if (progressData.approved !== undefined) {
+          // Handle final result (CantonPreApprovalResult has approved property)
+          if ("approved" in progressData) {
             preapprovalResult = progressData;
-            this.state.showConfirmation = true;
+            this.setState({ showConfirmation: true });
           }
 
-          if (progressData.progress) {
-            this.setState({ progress: progressData.progress });
+          // Handle progress updates (CantonPreApprovalProgress has status)
+          if ("status" in progressData) {
+            this.setState({ authorizeStatus: progressData.status });
           }
-          if (progressData.message) {
+          if ("message" in progressData) {
             this.setState({ message: `Pre-approval: ${progressData.message}` });
           }
         },
@@ -256,6 +269,7 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingData,
       onboardingCompleted,
       onboardingStatus,
+      authorizeStatus,
       isProcessing,
       showConfirmation,
       progress,
@@ -288,6 +302,8 @@ class OnboardModal extends PureComponent<Props, State> {
       setOnboardingData: this.setOnboardingData,
       setOnboardingCompleted: this.setOnboardingCompleted,
       setOnboardingStatus: this.setOnboardingStatus,
+      setAuthorizeStatus: this.setAuthorizeStatus,
+      authorizeStatus,
       error,
       setError: this.setError,
       clearError: this.clearError,

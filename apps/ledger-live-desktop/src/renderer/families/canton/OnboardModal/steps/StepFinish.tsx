@@ -54,7 +54,7 @@ export const StepFinishFooter = ({
         event="Page AddAccounts Step 4 AddMore"
         data-testid={"add-accounts-finish-close-button"}
         primary
-        onClick={closeModal}
+        onClick={onAccountCreated}
       >
         {t("common.done")}
       </Button>
