@@ -133,7 +133,10 @@ class OnboardModal extends PureComponent<Props, State> {
   handleAccountCreated = (account: Account) => {
     const { addAccountsAction, existingAccounts, closeModal, editedNames } = this.props;
     const { onboardingData, accountName } = this.state;
-    const completedAccount = onboardingData?.completedAccount;
+    const completedAccount = {
+      ...onboardingData?.completedAccount,
+      address: onboardingData?.partyId,
+    };
 
     addAccountsAction({
       scannedAccounts: [completedAccount],
