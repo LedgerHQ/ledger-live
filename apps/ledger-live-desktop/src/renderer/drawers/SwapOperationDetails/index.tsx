@@ -129,10 +129,18 @@ const SwapOperationDetails = ({
   const mainCurrency =
     fromCurrency.type === "CryptoCurrency" ? fromCurrency : fromCurrency.parentCurrency;
   //Temporary feature before adding history to swap live app
-  const url =
-    provider === "lifi"
-      ? "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash)
-      : getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+  let url;
+  switch (provider) {
+    case "lifi":
+      url = "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash);
+      break;
+    case 'thorswap':
+      url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash); 
+      break;
+    default:
+      url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+      break;
+  }
 
   useEffect(() => {
     const getProvideData = async () => {
