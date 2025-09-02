@@ -6,6 +6,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import http from "http";
 
 export type SpeculosDevice = {
   transport: SpeculosTransport;
@@ -123,6 +124,12 @@ interface Dependency {
   appVersion?: string;
 }
 
+// optional automation configuration
+type AutomationRules = {
+  version: 1;
+  rules: Array<any>;
+};
+
 export type DeviceParams = {
   model: DeviceModelId;
   firmware: string;
@@ -136,7 +143,39 @@ export type DeviceParams = {
   // if you want to force a specific app path
   overridesAppPath?: string;
   onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
+  // either mount a file or push rules at runtime
+  automationPath?: string; // host path to an automation.json you want to mount
+  automationRules?: AutomationRules; // inline rules to POST to /automation
 };
+
+// POST automation rules to Speculos
+async function postAutomation(apiPort: string, rules: AutomationRules): Promise<void> {
+  const body = JSON.stringify(rules);
+  return new Promise<void>((resolve, reject) => {
+    const req = http.request(
+      {
+        hostname: "127.0.0.1",
+        port: Number(apiPort),
+        path: "/automation",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(body),
+        },
+      },
+      res => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Automation POST failed with status ${res.statusCode}`));
+        }
+      },
+    );
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 /**
  * instanciate a speculos device that runs through docker
@@ -155,6 +194,8 @@ export async function createSpeculosDevice(
     coinapps,
     dependency,
     dependencies,
+    automationPath,
+    automationRules,
   } = arg;
   idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
@@ -165,10 +206,15 @@ export async function createSpeculosDevice(
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
   const appPath = `./apps/${subpath}`;
 
+  // build -v arguments once so we can optionally mount automation file
+  const dockerVolumes: string[] = [`${coinapps}:/speculos/apps`];
+  if (automationPath) {
+    dockerVolumes.push(`${automationPath}:/tmp/automation.json`);
+  }
+
   const params = [
     "run",
-    "-v",
-    `${coinapps}:/speculos/apps`,
+    ...dockerVolumes.flatMap(v => ["-v", v]),
     ...(isSpeculosWebsocket
       ? [
           // websocket ports
@@ -184,7 +230,7 @@ export async function createSpeculosDevice(
       : [
           // http ports
           "-p",
-          `${ports.apiPort}:40000`,
+          `${(ports as any).apiPort}:40000`,
           "-p",
           `${ports.vncPort}:41000`,
         ]),
@@ -205,7 +251,12 @@ export async function createSpeculosDevice(
     ...(dependencies !== undefined
       ? dependencies.flatMap(dependency => [
           "-l",
-          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
+          `${dependency.name}:./apps/${conventionalAppSubpath(
+            model,
+            firmware,
+            dependency.name,
+            dependency.appVersion ? dependency.appVersion : "1.0.0",
+          )}`,
         ])
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
@@ -228,6 +279,8 @@ export async function createSpeculosDevice(
           "--api-port",
           "40000",
         ]),
+    // pass automation file to Speculos if provided
+    ...(automationPath ? ["--automation", "file:/tmp/automation.json"] : []),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -237,8 +290,8 @@ export async function createSpeculosDevice(
   let resolveReady: (value: boolean) => void;
   let rejectReady: (e: Error) => void;
   const ready = new Promise((resolve, reject) => {
-    resolveReady = resolve;
-    rejectReady = reject;
+    resolveReady = resolve as any;
+    rejectReady = reject as any;
   });
   let destroyed = false;
 
@@ -330,6 +383,14 @@ export async function createSpeculosDevice(
       transport,
       destroy,
     };
+
+    // if inline automation rules provided, push them now
+    if (automationRules && (ports as any).apiPort) {
+      // brief settle delay to ensure API is fully ready
+      await delay(300);
+      await postAutomation((ports as any).apiPort.toString(), automationRules);
+      log("speculos", `${speculosID}: automation rules posted`);
+    }
   }
 
   const device = {
