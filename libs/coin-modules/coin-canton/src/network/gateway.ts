@@ -182,7 +182,8 @@ export async function submit(serializedTx: string, signature: string) {
 export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
   const { data } = await network<InstrumentBalance[]>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/balance`,
+    // TODO: we need better solution ?
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/balance`,
   });
   return data;
 }
@@ -220,7 +221,8 @@ export async function getTransactions(
     transactions: TxInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transactions`,
+    // TODO: we need better solution ?
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/transactions`,
     data: options,
   });
   return data;

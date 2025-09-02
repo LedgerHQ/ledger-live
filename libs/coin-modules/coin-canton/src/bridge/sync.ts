@@ -45,21 +45,25 @@ const filterOperations = (
   accountId: string,
   address: string,
 ): Operation[] => {
-  return transactions
-    .filter(({ command_id }: TxInfo) => command_id === "Payment")
-    .map(txInfoToOperationAdapter(accountId, address))
-    .filter((op): op is Operation => Boolean(op));
+  return (
+    transactions
+      // .filter(({ command_id }: TxInfo) => command_id === "Payment")
+      .map(txInfoToOperationAdapter(accountId, address))
+      .filter((op): op is Operation => Boolean(op))
+  );
 };
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
+  // TODO: we need better solution ?
+  const xpubOrAddress = address?.replace(/:/g, "_") || "";
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
-    derivationMode,
+    xpubOrAddress,
+    derivationMode: "",
   });
 
   // blockheight retrieval
@@ -76,7 +80,7 @@ export const getAccountShape: GetAccountShape = async info => {
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const transactionData = await getTransactions(address, {
-    cursor: startAt,
+    cursor: 0,
     limit: 100,
   });
   const newOperations = filterOperations(transactionData.transactions, accountId, address);
@@ -85,7 +89,7 @@ export const getAccountShape: GetAccountShape = async info => {
   // We return the new account shape
   const shape = {
     id: accountId,
-    xpub: address,
+    xpub: xpubOrAddress,
     blockHeight,
     balance,
     spendableBalance,
