@@ -134,8 +134,8 @@ const SwapOperationDetails = ({
     case "lifi":
       url = "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash);
       break;
-    case 'thorswap':
-      url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash); 
+    case "thorswap":
+      url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash);
       break;
     default:
       url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
