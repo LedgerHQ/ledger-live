@@ -1,11 +1,35 @@
 import network from "@ledgerhq/live-network";
 import coinConfig from "../config";
+import {
+  PrepareTransactionRequest,
+  PrepareTransactionResponse,
+  SubmitTransactionRequest,
+  SubmitTransactionResponse,
+  PreApprovalResult,
+} from "../types/onboard";
 
 type OnboardingPrepareResponse = {
   party_id: string;
   party_name: string;
   public_key_fingerprint: string;
-  topology_transactions_hash: string;
+  transactions: {
+    namespace_transaction: {
+      serialized: string;
+      json: object;
+      hash: string;
+    };
+    party_to_key_transaction: {
+      serialized: string;
+      json: object;
+      hash: string;
+    };
+    party_to_participant_transaction: {
+      serialized: string;
+      json: object;
+      hash: string;
+    };
+    combined_hash: string;
+  };
 };
 
 type OnboardingPrepareRequest = {
@@ -97,14 +121,32 @@ export async function prepareOnboarding(
   pubKey: string,
   pubKeyType: string,
 ): Promise<OnboardingPrepareResponse> {
+  const gatewayUrl = getGatewayUrl();
+  const nodeId = getNodeId();
+  const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
+
+  console.log("[Gateway prepareOnboarding] Making request:", {
+    gatewayUrl,
+    nodeId,
+    fullUrl,
+    pubKey: pubKey.substring(0, 10) + "...",
+    pubKeyType,
+  });
+
   const { data } = await network<OnboardingPrepareResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/prepare`,
+    url: fullUrl,
     data: {
       public_key: pubKey,
       public_key_type: pubKeyType,
     } satisfies OnboardingPrepareRequest,
   });
+
+  console.log("[Gateway prepareOnboarding] Got response:", {
+    partyId: data.party_id,
+    partyName: data.party_name,
+  });
+
   return data;
 }
 
@@ -146,20 +188,17 @@ export async function getBalance(partyId: string): Promise<InstrumentBalance[]> 
 }
 
 export async function getPartyById(partyId: string): Promise<PartyInfo> {
-  return await getParty(partyId, "ID");
+  return await getParty(partyId, "party-id");
 }
 
 export async function getPartyByPubKey(pubKey: string): Promise<PartyInfo> {
-  return await getParty(pubKey, "PK");
+  return await getParty(pubKey, "public-key");
 }
 
-async function getParty(identifier: string, by: "ID" | "PK"): Promise<PartyInfo> {
+async function getParty(identifier: string, by: "party-id" | "public-key"): Promise<PartyInfo> {
   const { data } = await network<PartyInfo>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}`,
-    data: {
-      by,
-    },
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}?by=${by}`,
   });
   return data;
 }
@@ -193,4 +232,52 @@ export async function getLedgerEnd(): Promise<number> {
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/ledger-end`,
   });
   return data;
+}
+
+export async function preparePreApprovalTransaction(
+  partyId: string,
+  nodeId: string,
+): Promise<PrepareTransactionResponse> {
+  const { data } = await network<PrepareTransactionResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${nodeId}/party/${partyId}/transaction/prepare`,
+    data: {
+      TransferPreApprovalProposal: {
+        receiver: partyId,
+      },
+    } satisfies PrepareTransactionRequest,
+  });
+  return data;
+}
+
+export async function submitPreApprovalTransaction(
+  partyId: string,
+  nodeId: string,
+  preparedTransaction: PrepareTransactionResponse,
+  signature: string,
+): Promise<PreApprovalResult> {
+  try {
+    const submitRequest: SubmitTransactionRequest = {
+      transaction: preparedTransaction,
+      signature,
+    };
+
+    const { data } = await network<SubmitTransactionResponse>({
+      method: "POST",
+      url: `${getGatewayUrl()}/v1/node/${nodeId}/party/${partyId}/transaction/submit`,
+      data: submitRequest,
+    });
+
+    return {
+      approved: true,
+      transactionId: data.submissionId || `preapproval-${Date.now()}`,
+      message: "Transaction pre-approval submitted successfully",
+    };
+  } catch (error) {
+    console.error("[Gateway submitPreApprovalTransaction] Error:", error);
+    return {
+      approved: false,
+      message: error instanceof Error ? error.message : "Failed to submit pre-approval transaction",
+    };
+  }
 }

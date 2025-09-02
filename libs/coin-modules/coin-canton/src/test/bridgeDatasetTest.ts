@@ -71,7 +71,7 @@ const canton: DatasetTest<Transaction> = {
             derivationMode: "",
             index: 0,
             freshAddress: mockCantonAddresses.sender,
-            freshAddressPath: "44'/6767'/0'/0'/0'",
+            freshAddressPath: "44'/6767'/0'",
             blockHeight: 12345,
             operations: [],
             pendingOperations: [],
