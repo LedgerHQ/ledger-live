@@ -1,5 +1,11 @@
 # @ledgerhq/coin-xrp
 
+## 7.3.0-nightly.2
+
+### Patch Changes
+
+- [#11560](https://github.com/LedgerHQ/ledger-live/pull/11560) [`0432d2a`](https://github.com/LedgerHQ/ledger-live/commit/0432d2aca30d74eb00abdc8427c4c34725f34b13) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integ tests xrp mainnet + value fix for xrp ops
+
 ## 7.3.0-nightly.1
 
 ### Minor Changes

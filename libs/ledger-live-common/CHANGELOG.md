@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.4
+
+### Patch Changes
+
+- [#11560](https://github.com/LedgerHQ/ledger-live/pull/11560) [`0432d2a`](https://github.com/LedgerHQ/ledger-live/commit/0432d2aca30d74eb00abdc8427c4c34725f34b13) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integ tests xrp mainnet + value fix for xrp ops
+
+- Updated dependencies [[`0432d2a`](https://github.com/LedgerHQ/ledger-live/commit/0432d2aca30d74eb00abdc8427c4c34725f34b13)]:
+  - @ledgerhq/coin-xrp@7.3.0-nightly.2
+
 ## 34.47.0-nightly.3
 
 ### Minor Changes

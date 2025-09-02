@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.92.0-nightly.3
+
+### Minor Changes
+
+- [#11579](https://github.com/LedgerHQ/ledger-live/pull/11579) [`bb109f3`](https://github.com/LedgerHQ/ledger-live/commit/bb109f3cc907c53cc878d02f40febfee69c5f33a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Empty State + loading + fetching data for search with DADA
+
+### Patch Changes
+
+- [#11538](https://github.com/LedgerHQ/ledger-live/pull/11538) [`f8f2d1a`](https://github.com/LedgerHQ/ledger-live/commit/f8f2d1aee38dfb9e985e57f1813dbc2061877e14) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Sanitise inputs for earn modal interactions
+
 ## 3.92.0-nightly.2
 
 ### Minor Changes
