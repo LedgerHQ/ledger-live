@@ -319,6 +319,7 @@ export function transactionToOperation(
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
+    // warning this is false:
     blockHash: hash,
     blockHeight: BLOCK_HEIGHT,
     date: getOperationDate(transaction),
@@ -348,7 +349,6 @@ export function transactionToOp(address: string, transaction: SuiTransactionBloc
       block: {
         // agreed to return bigint
         height: BigInt(transaction.checkpoint || "") as unknown as number,
-        hash,
         time: getOperationDate(transaction),
       },
     },
