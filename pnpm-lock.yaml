@@ -4092,17 +4092,17 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@taquito/ledger-signer':
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       '@taquito/rpc':
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       '@taquito/taquito':
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       '@taquito/utils':
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4129,8 +4129,8 @@ importers:
         specifier: workspace:^
         version: link:../../disable-network-setup
       '@taquito/local-forging':
-        specifier: 21.0.3
-        version: 21.0.3
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       '@types/blake2b':
         specifier: ^2.1.3
         version: 2.1.3
@@ -5349,8 +5349,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@taquito/ledger-signer':
-        specifier: ^22.0.0
-        version: 22.0.0
+        specifier: ^23.0.0-RC.0
+        version: 23.0.0-beta.1
       '@ton-community/ton-ledger':
         specifier: ^7.2.0
         version: 7.2.0(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))
@@ -18631,52 +18631,40 @@ packages:
   '@tanstack/virtual-core@3.13.6':
     resolution: {integrity: sha512-cnQUeWnhNP8tJ4WsGcYiX24Gjkc9ALstLbHcBj1t3E7EimN6n6kHH+DPV4PpDnuw00NApQp+ViojMj1GRdwYQg==}
 
-  '@taquito/core@21.0.3':
-    resolution: {integrity: sha512-cH1Go/5l+EmbQxDwPNtJUKJMx5BLENQR3fZPLc3NUr1y8XTs8cZDsWIqe41vQYbTekLHC1hE9IvXLB3XDMZgmg==}
+  '@taquito/core@23.0.0-beta.1':
+    resolution: {integrity: sha512-URKfkBVrAWyB8DmiGiI8DBkSuW5mM7R/Oi2K/ydW7Kro+UneGwI6vAEiqIfwKN203CaA3FCWcn6hM9nUPigZPQ==}
     engines: {node: '>=18'}
 
-  '@taquito/core@22.0.0':
-    resolution: {integrity: sha512-+WLNuWzVsbkWT8jHrUuNwMnbstzWLYc4P4s5uYIAGkb33xu7gKNsHkkyXITouyWNWPGUDs44eOrBsMYH7nH+pA==}
+  '@taquito/http-utils@23.0.0-beta.1':
+    resolution: {integrity: sha512-sF8FEguCTm+NuILpLvtS0yHQixH+sQL9RktOyTvBwUxgBo+d0+V2V/LUjNYLtAVzO1kdHWTM2h44zLP39hvgvw==}
     engines: {node: '>=18'}
 
-  '@taquito/http-utils@22.0.0':
-    resolution: {integrity: sha512-JIjOjZ3901CU1TC7xnH7pQbfPNdLsE+Tr3ZrDLiQtLU0J5h8dsF2T3xWgMg9zu2RG2/1JTy/gyR7HmHegpVA7A==}
+  '@taquito/ledger-signer@23.0.0-beta.1':
+    resolution: {integrity: sha512-cvZTECjcLyn2w1fqzxVwvgt8UE0amJ7giZSuNJArCT/GL/paPj6Wv2euAz9ZtlQBtlNAIgXdOrjBPQCOseWBsg==}
     engines: {node: '>=18'}
 
-  '@taquito/ledger-signer@22.0.0':
-    resolution: {integrity: sha512-yA5OegcC1UcjzI0ncM2jTv6X7/J8m7glmt3dYxkSri+0tsWgwbbxtoSmcH8pCfqwxTQS1NqZOpf2/nQNssQ2Nw==}
+  '@taquito/local-forging@23.0.0-beta.1':
+    resolution: {integrity: sha512-iNAGDLGrp8FRAiSh33J+r57XNok2U+xcJEbiEh80zKlXx+OcsR6BfWPgA+yM4Gw8HJkO01b12GnUXuuERmpQrA==}
     engines: {node: '>=18'}
 
-  '@taquito/local-forging@21.0.3':
-    resolution: {integrity: sha512-VxDVVwocICyyrDb/5mRJC4k7/mkStW7YEiKbnpQSngwbzhnlCDrVVnWNPyavM4ZeH4m2egJBlUhSQBkA7jJbHg==}
+  '@taquito/michel-codec@23.0.0-beta.1':
+    resolution: {integrity: sha512-ZOn8/ueL4f6LBAxskm55jK3fj5bCGGEZ76utdFbahO5g9sJ1MVUlIdlIrmTEEC85Cgq75O1v0ocBKx9HTQSxOQ==}
     engines: {node: '>=18'}
 
-  '@taquito/local-forging@22.0.0':
-    resolution: {integrity: sha512-DtVlLiVfiYPd4jcFQxnq4R3DPQe9SvMwW+HIAfIZhLc+0yrt/WxVSi9Ne65t8xHXxhYyH5/ttOhJwCJ4WSnhgQ==}
+  '@taquito/michelson-encoder@23.0.0-beta.1':
+    resolution: {integrity: sha512-15G9P2qmF3AZ/1wSklvULp3qTvlsz6VqZi9MEjz26bnl09aNBCOX0wRTr4fAz8MQcYN3s7c2gQuiAojtPz84zg==}
     engines: {node: '>=18'}
 
-  '@taquito/michel-codec@22.0.0':
-    resolution: {integrity: sha512-jLQukyk100HudKS7ot2Hmr2zhN7aG0EcjpTNZvhnl8JcHOrTixXXFshVSSVDqmeW3w/oaCZoVwEJfbultCGh4w==}
+  '@taquito/rpc@23.0.0-beta.1':
+    resolution: {integrity: sha512-RggdLEEtAV69ULiwuHK2nAyB8KP9YonmG0eGeev9PoHGLZoO2Ic5Zpe/s5CVn++fw/yBCQUW01sKSCwwKjWIZA==}
     engines: {node: '>=18'}
 
-  '@taquito/michelson-encoder@22.0.0':
-    resolution: {integrity: sha512-10WiOAey5Z7tBvsIP1AN6GEk0tfdYv5seNRn3b9KIq3KMvgSQnl3rZ78UBb5t7Ox9FXpU8BP7MnECSAKrFX+Xg==}
+  '@taquito/taquito@23.0.0-beta.1':
+    resolution: {integrity: sha512-eBs0y+SZrLYD45r6o+BmQzxtYaVdROLfZvIHys8cU9zqiLYglVko+hm49cio6cFkMi9yZiO+yxgen069mF4rOA==}
     engines: {node: '>=18'}
 
-  '@taquito/rpc@22.0.0':
-    resolution: {integrity: sha512-O0D5pK8uZuvV6kIAGxuTaSVN6fN9AUkf9tAbJtDg6NNXxcyc4/ngH/JJab7l4TK4obYVOgdIs1bRBHxwHDwvYw==}
-    engines: {node: '>=18'}
-
-  '@taquito/taquito@22.0.0':
-    resolution: {integrity: sha512-pd6g17D4skITEoXLHCVZFu4VO0RyqzHbIn/ykcR5NvEpQvrK4Sf3KhcOSiqX16UZOgB5nGwel47kPyru/kPKfQ==}
-    engines: {node: '>=18'}
-
-  '@taquito/utils@21.0.3':
-    resolution: {integrity: sha512-E32vE3CA8Cw0XXWgIXVi9D4siXfdYCuQdLRRPczyGIXLF8UOmLLP21GfAZdBnMV1nnVLkSIVTEtMwRt1yZwudg==}
-    engines: {node: '>=18'}
-
-  '@taquito/utils@22.0.0':
-    resolution: {integrity: sha512-XhZeSUQemVmgjIqcAMKac6NfjMKH3IahAg23yFkqgxI91fnvW0CxdbveD5ZBZX13TDVaB68+VMr2tVPmlT0Cdg==}
+  '@taquito/utils@23.0.0-beta.1':
+    resolution: {integrity: sha512-2L9TllKobYvH4xMoJxPYYXrThLevbTBF2E+MhfzvFhPXnkdOhqRG0+3hgGspXlCJSM2t65X0R7V6IQPRaVZyfw==}
     engines: {node: '>=18'}
 
   '@testing-library/dom@10.4.0':
@@ -49665,99 +49653,78 @@ snapshots:
 
   '@tanstack/virtual-core@3.13.6': {}
 
-  '@taquito/core@21.0.3':
+  '@taquito/core@23.0.0-beta.1':
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/core@22.0.0':
+  '@taquito/http-utils@23.0.0-beta.1':
     dependencies:
-      json-stringify-safe: 5.0.1
-
-  '@taquito/http-utils@22.0.0':
-    dependencies:
-      '@taquito/core': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/ledger-signer@22.0.0':
+  '@taquito/ledger-signer@23.0.0-beta.1':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@stablelib/blake2b': 1.0.1
-      '@taquito/core': 22.0.0
-      '@taquito/taquito': 22.0.0
-      '@taquito/utils': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
+      '@taquito/taquito': 23.0.0-beta.1
+      '@taquito/utils': 23.0.0-beta.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/local-forging@21.0.3':
+  '@taquito/local-forging@23.0.0-beta.1':
     dependencies:
-      '@taquito/core': 21.0.3
-      '@taquito/utils': 21.0.3
+      '@taquito/core': 23.0.0-beta.1
+      '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
 
-  '@taquito/local-forging@22.0.0':
+  '@taquito/michel-codec@23.0.0-beta.1':
     dependencies:
-      '@taquito/core': 22.0.0
-      '@taquito/utils': 22.0.0
-      bignumber.js: 9.1.2
+      '@taquito/core': 23.0.0-beta.1
 
-  '@taquito/michel-codec@22.0.0':
+  '@taquito/michelson-encoder@23.0.0-beta.1':
     dependencies:
-      '@taquito/core': 22.0.0
-
-  '@taquito/michelson-encoder@22.0.0':
-    dependencies:
-      '@taquito/core': 22.0.0
-      '@taquito/rpc': 22.0.0
-      '@taquito/utils': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
+      '@taquito/rpc': 23.0.0-beta.1
+      '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
+      elliptic: 6.6.1
       fast-json-stable-stringify: 2.1.0
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/rpc@22.0.0':
+  '@taquito/rpc@23.0.0-beta.1':
     dependencies:
-      '@taquito/core': 22.0.0
-      '@taquito/http-utils': 22.0.0
-      '@taquito/utils': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
+      '@taquito/http-utils': 23.0.0-beta.1
+      '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/taquito@22.0.0':
+  '@taquito/taquito@23.0.0-beta.1':
     dependencies:
-      '@taquito/core': 22.0.0
-      '@taquito/http-utils': 22.0.0
-      '@taquito/local-forging': 22.0.0
-      '@taquito/michel-codec': 22.0.0
-      '@taquito/michelson-encoder': 22.0.0
-      '@taquito/rpc': 22.0.0
-      '@taquito/utils': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
+      '@taquito/http-utils': 23.0.0-beta.1
+      '@taquito/local-forging': 23.0.0-beta.1
+      '@taquito/michel-codec': 23.0.0-beta.1
+      '@taquito/michelson-encoder': 23.0.0-beta.1
+      '@taquito/rpc': 23.0.0-beta.1
+      '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
       rxjs: 7.8.2
     transitivePeerDependencies:
       - encoding
 
-  '@taquito/utils@21.0.3':
+  '@taquito/utils@23.0.0-beta.1':
     dependencies:
+      '@noble/curves': 1.9.7
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
-      '@taquito/core': 21.0.3
-      '@types/bs58check': 2.1.2
-      bignumber.js: 9.1.2
-      blakejs: 1.2.1
-      bs58check: 3.0.1
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      elliptic: 6.6.1
-      typedarray-to-buffer: 4.0.0
-
-  '@taquito/utils@22.0.0':
-    dependencies:
-      '@stablelib/blake2b': 1.0.1
-      '@stablelib/ed25519': 1.0.3
-      '@taquito/core': 22.0.0
+      '@taquito/core': 23.0.0-beta.1
       '@types/bs58check': 2.1.2
       bignumber.js: 9.1.2
       blakejs: 1.2.1
