@@ -148,6 +148,104 @@ export type DeviceParams = {
   automationRules?: AutomationRules; // inline rules to POST to /automation
 };
 
+// automation per app (used if caller didn't pass rules)
+const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
+  const a = appName.toLowerCase();
+  // Cosmos-family: need Expert mode
+  if (["cosmos", "osmosis", "injective", "sei", "akash", "terra"].some(n => a.includes(n))) {
+    return {
+      version: 1,
+      rules: [
+        {
+          regexp: "Settings",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+        {
+          regexp: "Expert mode",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+        {
+          regexp: "Enable|Enabled",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+      ],
+    };
+  }
+  // EVM / Solana: need Blind signing / Contract data
+  if (
+    ["solana", "ethereum", "polygon", "bsc", "avalanche", "arbitrum", "optimism"].some(n =>
+      a.includes(n),
+    )
+  ) {
+    return {
+      version: 1,
+      rules: [
+        {
+          regexp: "Settings",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+        {
+          regexp: "Blind signing|Contract data",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+        {
+          regexp: "Allow|Enable|Enabled",
+          actions: [
+            ["button", 2, true],
+            ["button", 2, false],
+          ],
+        },
+      ],
+    };
+  }
+  return undefined;
+};
+
+// lightweight GET (used to wait for REST API to be ready)
+function getOnce(apiPort: string, path: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      { hostname: "127.0.0.1", port: Number(apiPort), path, method: "GET" },
+      res =>
+        res.statusCode && res.statusCode < 500
+          ? resolve()
+          : reject(new Error(String(res.statusCode))),
+    );
+    req.on("error", reject);
+    req.end();
+  });
+}
+
+async function waitForApi(apiPort?: string, timeoutMs = 8000) {
+  if (!apiPort) return;
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      // any simple endpoint works /screenshot is cheap and available
+      await getOnce(apiPort, "/screenshot");
+      return;
+    } catch {
+      await delay(200);
+    }
+  }
+  throw new Error(`Speculos REST API not ready on port ${apiPort}`);
+}
+
 // POST automation rules to Speculos
 async function postAutomation(apiPort: string, rules: AutomationRules): Promise<void> {
   const body = JSON.stringify(rules);
@@ -384,12 +482,13 @@ export async function createSpeculosDevice(
       destroy,
     };
 
-    // if inline automation rules provided, push them now
-    if (automationRules && (ports as any).apiPort) {
-      // brief settle delay to ensure API is fully ready
-      await delay(300);
-      await postAutomation((ports as any).apiPort.toString(), automationRules);
-      log("speculos", `${speculosID}: automation rules posted`);
+    // post automation rules: caller-provided OR safe defaults by app (enabled by default)
+    const wantDefault = (process.env.SPECULOS_DEFAULT_AUTOMATION ?? "1") !== "0";
+    const effRules = automationRules ?? (wantDefault ? defaultAutomationFor(appName) : undefined);
+    if (effRules && (ports as any).apiPort) {
+      await waitForApi((ports as any).apiPort.toString()); // ensure REST is up in CI
+      await postAutomation((ports as any).apiPort.toString(), effRules);
+      log("speculos", `${speculosID}: automation rules posted (${appName})`);
     }
   }
 
