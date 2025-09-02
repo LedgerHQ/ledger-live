@@ -201,6 +201,7 @@ class OnboardModal extends PureComponent<Props, State> {
 
           if (progressData.approved !== undefined) {
             preapprovalResult = progressData;
+            this.state.showConfirmation = true;
           }
 
           if (progressData.progress) {
