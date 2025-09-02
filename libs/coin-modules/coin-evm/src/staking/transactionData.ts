@@ -1,6 +1,6 @@
+import type { StakingOperation } from "../types/staking";
 import { getStakingContractConfig } from "./config";
 import { encodeStakingData } from "./encoder";
-import type { StakingOperation } from "../types/staking";
 
 export type StakingTransactionType = StakingOperation;
 
