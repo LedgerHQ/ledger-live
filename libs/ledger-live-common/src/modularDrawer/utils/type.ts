@@ -7,6 +7,8 @@ import { WalletAPIAccount } from "../../wallet-api/types";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 
+export type ApyType = "NRR" | "APY" | "APR";
+
 export type AssetType = {
   name: string;
   ticker: string;
@@ -44,7 +46,7 @@ export type CreateBalanceItem = (x: BalanceUI) => React.ReactNode;
 export type CreateAccountsCountAndApy = (args: {
   label: string;
   value: number;
-  type: "NRR" | "APY" | "APR";
+  type: ApyType;
 }) => ReactNode;
 
 export type NetworkWithCount = CryptoOrTokenCurrency & {
@@ -96,7 +98,7 @@ export type Network = {
 
 export type CreateNetworkConfigurationHookProps = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  currenciesByProvider: CurrenciesByProviderId[];
+  currenciesByProvider?: CurrenciesByProviderId[];
   selectedAssetId: string;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
@@ -107,7 +109,7 @@ type Props = {
 };
 
 export type AssetConfigurationDeps = {
-  ApyIndicator: (args: { value: number; type: "NRR" | "APY" | "APR" }) => ReactNode;
+  ApyIndicator: (args: { value: number; type: ApyType }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
 };

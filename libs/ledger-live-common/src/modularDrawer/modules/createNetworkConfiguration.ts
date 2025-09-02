@@ -66,7 +66,12 @@ export const createNetworkConfigurationHook =
       const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
         ...hooks.map(
           hook => (assets: CryptoOrTokenCurrency[]) =>
-            hook({ assets, selectedAssetId, currenciesByProvider, accounts$ }),
+            hook({
+              assets,
+              selectedAssetId,
+              currenciesByProvider: currenciesByProvider || [],
+              accounts$,
+            }),
         ),
       );
       return composedHook(assets);

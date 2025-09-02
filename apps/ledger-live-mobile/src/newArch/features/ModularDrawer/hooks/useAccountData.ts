@@ -2,7 +2,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import {
   AssetCountItem,
   useAssetAccountCounts,
-} from "@ledgerhq/live-common/modularDrawer/hooks/modules/useAssetAccountCounts";
+} from "@ledgerhq/live-common/modularDrawer/hooks/useAssetAccountCounts";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";

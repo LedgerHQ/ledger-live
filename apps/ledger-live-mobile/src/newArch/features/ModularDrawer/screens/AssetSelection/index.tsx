@@ -62,13 +62,13 @@ const AssetSelection = ({
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
-  const deps = {
+  const assetConfigurationDeps = {
     ApyIndicator,
     useBalanceDeps,
     balanceItem,
   };
 
-  const makeAssetConfigurationHook = createAssetConfigurationHook(deps);
+  const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
 
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,

@@ -112,8 +112,8 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(/ethereum/i));
     advanceTimers();
     expect(getByText(/2 accounts/i)).toBeVisible();
-    expect(getAllByText(/1 account/i).length).toBe(2);
-    expect(queryAllByText(/5\.11% APY/i).length).toBe(3);
+    expect(getAllByText(/1 account/i).length).toBe(3);
+    expect(queryAllByText(/5.11% APY/i).length).toBe(4);
   });
 
   it("should display balance on the right at assetSelection step", async () => {
@@ -139,8 +139,9 @@ describe("ModularDrawer modules integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
-    expect(getByText(/23\.4663 eth/i)).toBeVisible();
+    expect(getByText(/23.4663 eth/i)).toBeVisible();
   });
 
   it("should display balance on the right at networkSelection step", async () => {
@@ -166,8 +167,10 @@ describe("ModularDrawer modules integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
     const ethereumElements = getAllByText(/ethereum/i);
     await user.press(ethereumElements[0]);
-    expect(getByText(/23\.4663 eth/i)).toBeVisible();
+    advanceTimers();
+    expect(getByText(/23.4663 eth/i)).toBeVisible();
   });
 });

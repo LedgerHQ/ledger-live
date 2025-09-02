@@ -45,7 +45,7 @@ export const SelectNetwork = ({
     return null;
   }
 
-  const deps = {
+  const networkConfigurationDeps = {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
@@ -53,7 +53,7 @@ export const SelectNetwork = ({
     balanceItem,
   };
 
-  const makeNetworkConfigurationHook = createNetworkConfigurationHook(deps);
+  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
 
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig,

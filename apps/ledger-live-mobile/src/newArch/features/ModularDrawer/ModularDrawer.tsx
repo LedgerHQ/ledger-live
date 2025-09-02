@@ -86,6 +86,7 @@ export function ModularDrawer({
     navigationStepManager,
     hasOneCurrency,
     onAddNewAccount,
+    asset,
   } = useModularDrawerState({
     assetsSorted,
     currencyIds: currencies ?? [],
@@ -129,7 +130,6 @@ export function ModularDrawer({
           source,
           networksConfiguration,
           asset,
-          currenciesByProvider,
         }}
         accountsViewModel={{
           accounts$,

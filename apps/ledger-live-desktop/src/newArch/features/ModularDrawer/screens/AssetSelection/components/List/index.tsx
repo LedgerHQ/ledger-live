@@ -43,13 +43,13 @@ export const SelectAssetList = ({
   onScrolledToTop,
   loadNext,
 }: SelectAssetProps) => {
-  const deps = {
+  const assetConfigurationDeps = {
     ApyIndicator,
     useBalanceDeps,
     balanceItem,
   };
 
-  const makeAssetConfigurationHook = createAssetConfigurationHook(deps);
+  const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
 
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,

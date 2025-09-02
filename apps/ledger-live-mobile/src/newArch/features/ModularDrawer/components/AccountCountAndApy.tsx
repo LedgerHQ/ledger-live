@@ -1,6 +1,7 @@
 import React from "react";
 import { ApyIndicator } from "@ledgerhq/native-ui/pre-ldls/index";
 import { accountsCount } from "./AccountCount";
+import { ApyType } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export const accountsCountAndApy = ({
   label,
@@ -9,7 +10,7 @@ export const accountsCountAndApy = ({
 }: {
   label: string;
   value: number;
-  type: "NRR" | "APY" | "APR";
+  type: ApyType;
 }) => (
   <>
     {accountsCount({ label })}

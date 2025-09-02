@@ -16,7 +16,6 @@ import {
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import orderBy from "lodash/orderBy";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
 import { balanceItem } from "../../components/Balance";
@@ -25,12 +24,11 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
+  asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   flow: string;
   source: string;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
-  asset?: CryptoOrTokenCurrency;
-  currenciesByProvider: CurrenciesByProviderId[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -42,7 +40,6 @@ const NetworkSelection = ({
   source,
   networksConfiguration,
   asset,
-  currenciesByProvider,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
@@ -72,7 +69,7 @@ const NetworkSelection = ({
     [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
   );
 
-  const deps = {
+  const networkConfigurationDeps = {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
@@ -80,13 +77,12 @@ const NetworkSelection = ({
     balanceItem,
   };
 
-  const makeNetworkConfigurationHook = createNetworkConfigurationHook(deps);
+  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
 
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
     selectedAssetId: asset ? asset.id : "",
-    currenciesByProvider: currenciesByProvider,
   });
 
   const orderedNetworks = orderBy(networks, ["name"]);
