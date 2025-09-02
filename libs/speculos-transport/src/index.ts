@@ -148,42 +148,53 @@ export type DeviceParams = {
   automationRules?: AutomationRules; // inline rules to POST to /automation
 };
 
-// common actions
-const BOTH_PRESS: any[] = [
+/** Reusable actions */
+const SLEEP_SHORT = ["sleep", 200]; // small UI settle
+const PRESS_RIGHT = [["button", 2, true], ["button", 2, false], SLEEP_SHORT];
+const PRESS_BOTH = [
   ["button", 1, true],
   ["button", 2, true],
   ["button", 1, false],
   ["button", 2, false],
-];
-const RIGHT_CLICK: any[] = [
-  ["button", 2, true],
-  ["button", 2, false],
+  SLEEP_SHORT,
 ];
 
-// automation per app (used if caller didn't pass rules)
+/**
+ * Default automations:
+ * - Cosmos-family: enable Expert mode and drive delegation approval
+ * - EVM/SOL: enable Blind signing/Contract data and drive approval
+ */
 const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
   const a = appName.toLowerCase();
 
-  // Cosmos-family: make Expert mode enabled
+  // Cosmos family
   if (["cosmos", "osmosis", "injective", "sei", "akash", "terra"].some(n => a.includes(n))) {
     return {
       version: 1,
       rules: [
-        // Enter Settings
-        { regexp: "(^|\\b)(Settings|Preferences)\\b", actions: BOTH_PRESS },
-        // Toggle Expert mode (broadened matcher)
-        { regexp: "(?i)expert(\\s*mode)?", actions: BOTH_PRESS },
-        // Confirm enable
-        { regexp: "(?i)(enable|enabled|allow|turn on)", actions: BOTH_PRESS },
-        // Some firmwares require a final continue/approve
-        { regexp: "(?i)(continue|approve|ok)", actions: BOTH_PRESS },
-        // If we're on the dashboard, nudge right once so tests see the list
-        { regexp: "(?i)(app|ready|dashboard)", actions: RIGHT_CLICK },
+        // From dashboard, nudge into the list until Settings shows up
+        { regexp: "^(?s).*(Cosmos|Osmosis|Injective|Sei|Akash|Terra).*$", actions: PRESS_RIGHT },
+
+        // Enter Settings, then toggle Expert mode
+        { regexp: "^(?s).*Settings.*$", actions: PRESS_BOTH },
+
+        // Different apps/firmwares: "Expert mode" or "Expert"
+        { regexp: "^(?s).*(Expert\\s*mode|Expert).*$", actions: PRESS_BOTH },
+
+        // Confirm enable (Enable/Enabled/Allow/Turn on)
+        { regexp: "^(?s).*(Enable|Enabled|Allow|Turn on).*$", actions: PRESS_BOTH },
+
+        // Now drive through transaction review screens
+        {
+          regexp: "^(?s).*(Review|Delegate|Validator|Amount|Fees|Gas|Address).*$",
+          actions: PRESS_RIGHT,
+        },
+        { regexp: "^(?s).*(Sign|Approve|Accept|Send).*$", actions: PRESS_BOTH },
       ],
     };
   }
 
-  // EVM / Solana: enable Blind signing / Contract data
+  // EVM + Solana
   if (
     ["solana", "ethereum", "polygon", "bsc", "avalanche", "arbitrum", "optimism"].some(n =>
       a.includes(n),
@@ -192,13 +203,19 @@ const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
     return {
       version: 1,
       rules: [
-        { regexp: "(^|\\b)(Settings|Preferences|Advanced)\\b", actions: BOTH_PRESS },
+        { regexp: "^(?s).*Settings|Preferences|Advanced.*$", actions: PRESS_BOTH },
         {
-          regexp: "(?i)(blind\\s*signing|contract\\s*data|allow\\s*contract)",
-          actions: BOTH_PRESS,
+          regexp: "^(?s).*(Blind\\s*signing|Contract\\s*data|Allow\\s*contract).*$",
+          actions: PRESS_BOTH,
         },
-        { regexp: "(?i)(enable|enabled|allow|turn on)", actions: BOTH_PRESS },
-        { regexp: "(?i)(continue|approve|ok)", actions: BOTH_PRESS },
+        { regexp: "^(?s).*(Enable|Enabled|Allow|Turn on).*$", actions: PRESS_BOTH },
+
+        // sign flows
+        {
+          regexp: "^(?s).*(Review|Transaction|Instructions|Amount|Fee|To:).*$",
+          actions: PRESS_RIGHT,
+        },
+        { regexp: "^(?s).*(Approve|Accept|Sign|Send).*$", actions: PRESS_BOTH },
       ],
     };
   }
@@ -221,16 +238,15 @@ function getOnce(apiPort: string, path: string): Promise<void> {
   });
 }
 
-async function waitForApi(apiPort?: string, timeoutMs = 12000) {
+async function waitForApi(apiPort?: string, timeoutMs = 15000) {
   if (!apiPort) return;
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
-      // /screenshot is cheap and available on the REST API
-      await getOnce(apiPort, "/screenshot");
+      await getOnce(apiPort, "/screenshot"); // cheap and present on REST
       return;
     } catch {
-      await delay(200);
+      await delay(250);
     }
   }
   throw new Error(`Speculos REST API not ready on port ${apiPort}`);
@@ -305,23 +321,16 @@ export async function createSpeculosDevice(
     ...dockerVolumes.flatMap(v => ["-v", v]),
     ...(isSpeculosWebsocket
       ? [
-          // websocket ports
           "-p",
-          `${ports.apduPort}:40000`,
+          `${(ports as any).apduPort}:40000`,
           "-p",
           `${ports.vncPort}:41000`,
           "-p",
-          `${ports.buttonPort}:42000`,
+          `${(ports as any).buttonPort}:42000`,
           "-p",
-          `${ports.automationPort}:43000`,
+          `${(ports as any).automationPort}:43000`,
         ]
-      : [
-          // http ports
-          "-p",
-          `${(ports as any).apiPort}:40000`,
-          "-p",
-          `${ports.vncPort}:41000`,
-        ]),
+      : ["-p", `${(ports as any).apiPort}:40000`, "-p", `${ports.vncPort}:41000`]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -353,20 +362,8 @@ export async function createSpeculosDevice(
     ...(getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX") ? ["-p"] : []), // to use the production PKI
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
-      ? [
-          // websocket ports
-          "--apdu-port",
-          "40000",
-          "--button-port",
-          "42000",
-          "--automation-port",
-          "43000",
-        ]
-      : [
-          // http ports
-          "--api-port",
-          "40000",
-        ]),
+      ? ["--apdu-port", "40000", "--button-port", "42000", "--automation-port", "43000"]
+      : ["--api-port", "40000"]),
     // pass automation file to Speculos if provided
     ...(automationPath ? ["--automation", "file:/tmp/automation.json"] : []),
   ];
@@ -401,27 +398,25 @@ export async function createSpeculosDevice(
     });
   };
 
-  p.stdout.on("data", data => {
-    if (data) {
-      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
-    }
+  p.stdout.on("data", d => {
+    if (d) log("speculos-stdout", `${speculosID}: ${String(d).trim()}`);
   });
   let latestStderr: string | undefined;
-  p.stderr.on("data", async data => {
-    if (!data) return;
-    latestStderr = data;
+  p.stderr.on("data", async d => {
+    if (!d) return;
+    latestStderr = String(d);
 
-    if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+    if (!latestStderr.includes("apdu: ")) {
+      log("speculos-stderr", `${speculosID}: ${latestStderr.trim()}`);
     }
 
-    if (/using\s(?:SDK|API_LEVEL)/.test(String(data))) {
+    if (/using\s(?:SDK|API_LEVEL)/.test(latestStderr)) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (String(data).includes("is already in use by")) {
+    } else if (latestStderr.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
-    } else if (String(data).includes("address already in use")) {
+    } else if (latestStderr.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
         await destroy();
@@ -447,27 +442,27 @@ export async function createSpeculosDevice(
   let transport: SpeculosTransport;
   if (isSpeculosWebsocket) {
     transport = await SpeculosTransportWebsocket.open({
-      apduPort: ports?.apduPort as number,
-      buttonPort: ports?.buttonPort as number,
-      automationPort: ports?.automationPort as number,
+      apduPort: (ports as any)?.apduPort as number,
+      buttonPort: (ports as any)?.buttonPort as number,
+      automationPort: (ports as any)?.automationPort as number,
     });
 
     data[speculosID] = {
       process: p,
-      apduPort: ports.apduPort as number,
-      buttonPort: ports.buttonPort as number,
-      automationPort: ports.automationPort as number,
+      apduPort: (ports as any).apduPort as number,
+      buttonPort: (ports as any).buttonPort as number,
+      automationPort: (ports as any).automationPort as number,
       transport,
       destroy,
     };
   } else {
     transport = await DeviceManagementKitTransportSpeculos.open({
-      apiPort: ports.apiPort?.toString(),
+      apiPort: (ports as any).apiPort?.toString(),
     });
 
     data[speculosID] = {
       process: p,
-      apiPort: ports.apiPort?.toString(),
+      apiPort: (ports as any).apiPort?.toString(),
       transport,
       destroy,
     };
@@ -478,7 +473,7 @@ export async function createSpeculosDevice(
     if (effRules && (ports as any).apiPort) {
       await waitForApi((ports as any).apiPort.toString()); // ensure REST is up in CI
       await postAutomation((ports as any).apiPort.toString(), effRules);
-      log("speculos", `${speculosID}: automation rules posted (${appName})`);
+      log("speculos", `${speculosID}: automation rules posted for ${appName}`);
     }
   }
 
