@@ -372,8 +372,6 @@ export function runSwapWithSendMaxTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
-      await app.swapLiveApp.waitForSwapLiveApp();
-
       await app.swapLiveApp.tapFromCurrency();
       await app.common.performSearch(fromAccount.currency.name);
       await app.stake.selectCurrency(fromAccount.currency.id);
