@@ -43,6 +43,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     getAccountTokens(address),
   ]);
 
+  const accountBalance = new BigNumber(mirrorAccount.balance.balance);
+
   // we should sync again when new tokens are added or blacklist changes
   const syncHash = getSyncHash(currency, blacklistedTokenIds);
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
@@ -82,8 +84,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     freshAddress: address,
     syncHash,
     lastSyncDate: new Date(),
-    balance: new BigNumber(mirrorAccount.balance.balance),
-    spendableBalance: new BigNumber(mirrorAccount.balance.balance),
+    balance: accountBalance,
+    spendableBalance: accountBalance,
     operations,
     operationsCount: operations.length,
     // NOTE: there are no "blocks" in hedera

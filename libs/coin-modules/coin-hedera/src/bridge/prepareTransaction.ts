@@ -1,6 +1,9 @@
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { calculateAmount, getEstimatedFees } from "./utils";
+import { HEDERA_OPERATION_TYPES } from "../constants";
+import { isTokenAssociateTransaction } from "../logic";
 
 /**
  * Gather any more neccessary information for a transaction,
@@ -14,11 +17,23 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   account,
   transaction,
 ): Promise<Transaction> => {
+  const subAccount = findSubAccountById(account, transaction?.subAccountId || "");
+  const isTokenTransaction = isTokenAccount(subAccount);
+  let operationType: HEDERA_OPERATION_TYPES;
+
+  if (isTokenAssociateTransaction(transaction)) {
+    operationType = HEDERA_OPERATION_TYPES.TokenAssociate;
+  } else if (isTokenTransaction) {
+    operationType = HEDERA_OPERATION_TYPES.TokenTransfer;
+  } else {
+    operationType = HEDERA_OPERATION_TYPES.CryptoTransfer;
+  }
+
   // explicitly calculate transaction amount to account for `useAllAmount` flag (send max flow)
   // i.e. if `useAllAmount` has been toggled to true, this is where it will update the transaction to reflect that action
   const [{ amount }, estimatedFees] = await Promise.all([
     calculateAmount({ account, transaction }),
-    getEstimatedFees(account),
+    getEstimatedFees(account, operationType),
   ]);
 
   // `maxFee` must be explicitly set to avoid the @hashgraph/sdk default fallback

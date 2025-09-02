@@ -3,6 +3,7 @@ import { TransferTransaction } from "@hashgraph/sdk";
 import type { Account } from "@ledgerhq/types-live";
 import { buildUnsignedTransaction } from "./network";
 import { Transaction } from "../types";
+import invariant from "invariant";
 
 describe("buildUnsignedTransaction", () => {
   const mockAccount = {
@@ -20,6 +21,7 @@ describe("buildUnsignedTransaction", () => {
     };
 
     const result = await buildUnsignedTransaction({ account: mockAccount, transaction });
+    invariant(result instanceof TransferTransaction, "hedera: expected a TransferTransaction");
 
     expect(result).toBeInstanceOf(TransferTransaction);
     expect(result.transactionMemo).toBe("test memo");
