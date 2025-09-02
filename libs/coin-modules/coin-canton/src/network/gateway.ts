@@ -26,6 +26,13 @@ type OnboardingSubmitResponse = {
   };
 };
 
+type TransactionSubmitRequest = {
+  serialized: string;
+  signature: string;
+};
+
+type TransactionSubmitResponse = { updateId: string };
+
 export type InstrumentBalance = {
   instrumentId: string;
   amount: number;
@@ -114,6 +121,18 @@ export async function submitOnboarding(
       prepare_response: prepareResponse,
       signature,
     } satisfies OnboardingSubmitRequest,
+  });
+  return data;
+}
+
+export async function submit(serializedTx: string, signature: string) {
+  const { data } = await network<TransactionSubmitResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/transaction/submit`,
+    data: {
+      serialized: serializedTx,
+      signature,
+    } satisfies TransactionSubmitRequest,
   });
   return data;
 }
