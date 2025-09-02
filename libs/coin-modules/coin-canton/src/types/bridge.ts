@@ -1,10 +1,30 @@
 import type { BigNumber } from "bignumber.js";
+import type { Observable } from "rxjs";
 import type {
+  CurrencyBridge,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type {
+  CantonOnboardProgress,
+  CantonOnboardResult,
+  CantonPreApprovalProgress,
+  CantonPreApprovalResult,
+} from "./onboard";
+
+export interface CantonCurrencyBridge extends CurrencyBridge {
+  onboardAccount: (
+    deviceId: string,
+    derivationPath: string,
+  ) => Observable<CantonOnboardProgress | CantonOnboardResult>;
+  authorizePreapproval: (
+    deviceId: string,
+    derivationPath: string,
+    partyId: string,
+  ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
+}
 
 export type NetworkInfo = {
   family: "canton";

@@ -363,6 +363,7 @@
     "src/families/aptos/staking.ts",
     "src/families/aptos/types.ts",
     "src/families/aptos/utils.ts",
+    "src/families/canton/bridge/mock-data.ts",
     "src/families/canton/config.ts",
     "src/families/canton/logic.ts",
     "src/families/canton/types.ts",
