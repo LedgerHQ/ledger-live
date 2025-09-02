@@ -30,9 +30,16 @@ import {
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
-import { OptionMetadata } from "~/reducers/types";
+
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
+import {
+  validateEarnAction,
+  validateEarnInfoModal,
+  validateEarnMenuModal,
+  logSecurityEvent,
+  EarnDeeplinkAction,
+} from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
 
 const themes: {
@@ -603,35 +610,61 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            switch (searchParams.get("action")) {
-              case "info-modal": {
-                const message = searchParams.get("message") ?? "";
-                const messageTitle = searchParams.get("messageTitle") ?? "";
-                const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
-                dispatch(
-                  makeSetEarnInfoModalAction({
-                    message,
-                    messageTitle,
-                    learnMoreLink,
-                  }),
+            const action = validateEarnAction(searchParams.get("action"));
+
+            if (!action) {
+              logSecurityEvent("blocked_action", {
+                hostname,
+                action: searchParams.get("action"),
+                reason: "Invalid action type",
+              });
+              return;
+            }
+
+            switch (action) {
+              case EarnDeeplinkAction.INFO_MODAL: {
+                const validatedModal = validateEarnInfoModal(
+                  searchParams.get("message"),
+                  searchParams.get("messageTitle"),
+                  searchParams.get("learnMoreLink"),
                 );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action,
+                    reason: "Invalid info modal parameters",
+                  });
+                  return;
+                }
+
+                dispatch(makeSetEarnInfoModalAction(validatedModal));
                 return;
               }
-              case "menu-modal": {
-                const title = searchParams.get("title") ?? "";
-                const options = searchParams.get("options") ?? "";
-                const parsedOptions: { label: string; metadata: OptionMetadata }[] =
-                  JSON.parse(options);
+              case EarnDeeplinkAction.MENU_MODAL: {
+                const validatedModal = validateEarnMenuModal(
+                  searchParams.get("title"),
+                  searchParams.get("options"),
+                );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action,
+                    reason: "Invalid menu modal parameters",
+                  });
+                  return;
+                }
 
                 dispatch(
                   makeSetEarnMenuModalAction({
-                    title,
-                    options: parsedOptions,
+                    title: validatedModal.title,
+                    options: validatedModal.options,
                   }),
                 );
                 return;
               }
-              case "protocol-info-modal": {
+              case EarnDeeplinkAction.PROTOCOL_INFO_MODAL: {
                 dispatch(makeSetEarnProtocolInfoModalAction(true));
                 return;
               }

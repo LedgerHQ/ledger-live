@@ -10,7 +10,6 @@ export interface ModularDrawerFlowProps {
   assetsViewModel: AssetSelectionStepProps;
   networksViewModel: NetworkSelectionStepProps;
   accountsViewModel: AccountSelectionStepProps;
-  isReadyToBeDisplayed?: boolean;
 }
 
 /**
@@ -29,7 +28,6 @@ export default function ModularDrawerFlow(props: ModularDrawerFlowProps) {
       assetsViewModel={props.assetsViewModel}
       networksViewModel={props.networksViewModel}
       accountsViewModel={props.accountsViewModel}
-      isReadyToBeDisplayed={props.isReadyToBeDisplayed}
     />
   );
 }

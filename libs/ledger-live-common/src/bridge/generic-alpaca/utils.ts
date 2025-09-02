@@ -44,6 +44,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
+  const bnFees = new BigNumber(op.tx.fees.toString());
   const res = {
     id: extra.ledgerOpType
       ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
@@ -51,8 +52,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value: new BigNumber(op.value.toString()),
-    fee: new BigNumber(op.tx.fees.toString()),
+    value: ["OUT", "FEES"].includes(opType)
+      ? new BigNumber(op.value.toString()).plus(bnFees)
+      : new BigNumber(op.value.toString()),
+    fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
     senders: op.senders,

@@ -215,9 +215,7 @@ describe("listOperations", () => {
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
       expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue =
-        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fees);
+      const expectedValue = BigInt(deliveredAmount);
       expect(results).toEqual([
         {
           id: "HASH_VALUE",

@@ -12,6 +12,7 @@
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/live-hub
 tools                                                   @ledgerhq/wallet-ci
+apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
