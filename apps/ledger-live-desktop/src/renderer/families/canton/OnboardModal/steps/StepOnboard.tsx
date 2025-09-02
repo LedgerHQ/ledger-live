@@ -18,6 +18,7 @@ import logger from "~/renderer/logger";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
+import { CantonOnboardProgress, CantonOnboardResult } from "@ledgerhq/coin-canton/types";
 import { StepProps, StepId } from "../types";
 
 interface SigningData {
@@ -165,25 +166,30 @@ export default function StepOnboard({
     let onboardingResult: OnboardingResult | null = null;
 
     subscription = cantonBridge.onboardAccount(device.deviceId, derivationPath).subscribe({
-      next: (progressData: any) => {
+      next: (progressData: CantonOnboardProgress | CantonOnboardResult) => {
         logger.log("Canton onboarding progress", progressData);
 
-        handleStateUpdate(progressData.status, progressData.message);
-        setOnboardingStatus?.(progressData.status);
+        // Handle progress updates (CantonOnboardProgress has status)
+        if ("status" in progressData) {
+          handleStateUpdate(progressData.status, progressData.message);
+          setOnboardingStatus?.(progressData.status);
 
-        if (progressData.status === OnboardStatus.SIGN) {
-          logger.log("Entering signing phase, storing transaction data");
-          const signingData: SigningData = {
-            partyId: progressData.partyId || "pending-party-id",
-            publicKey: progressData.publicKey || "pending-public-key",
-            transactionData: progressData.transactionData || progressData,
-            combinedHash: progressData.combinedHash || progressData.combined_hash || "",
-            derivationPath: progressData.derivationPath,
-          };
-          handleStateUpdate(progressData.status, progressData.message, signingData);
+          if (progressData.status === OnboardStatus.SIGN) {
+            logger.log("Entering signing phase, storing transaction data");
+            const signingData: SigningData = {
+              partyId: (progressData as any).partyId || "pending-party-id",
+              publicKey: (progressData as any).publicKey || "pending-public-key",
+              transactionData: (progressData as any).transactionData || progressData,
+              combinedHash:
+                (progressData as any).combinedHash || (progressData as any).combined_hash || "",
+              derivationPath: (progressData as any).derivationPath,
+            };
+            handleStateUpdate(progressData.status, progressData.message, signingData);
+          }
         }
 
-        if (progressData.partyId && progressData.publicKey) {
+        // Handle final result (CantonOnboardResult has partyId and publicKey)
+        if ("partyId" in progressData && "publicKey" in progressData) {
           onboardingResult = progressData;
         }
       },
@@ -200,6 +206,7 @@ export default function StepOnboard({
             currency: currency.id,
             accountName: accountName,
             transactionHash: onboardingResult.transactionHash,
+            completedAccount: placeholderAccount,
           };
 
           logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);

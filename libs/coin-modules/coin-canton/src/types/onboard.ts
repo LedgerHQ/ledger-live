@@ -13,6 +13,7 @@ export enum PreApprovalStatus {
   SIGN,
   SUBMIT,
   SUCCESS,
+  ERROR,
 }
 
 export type CantonOnboardProgress = {
