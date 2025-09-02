@@ -2,62 +2,52 @@ import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getTransactions } from "../network/indexer";
-import { getAccountInfo, getLedgerEnd } from "../network/node";
+import { getBalance, getLedgerEnd, getTransactions, type TxInfo } from "../network/gateway";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { BoilerplateOperation } from "../network/types";
 import coinConfig from "../config";
 
-const operationAdapter =
+const txInfoToOperationAdapter =
   (accountId: string, address: string) =>
-  ({
-    meta: { delivered_amount },
-    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
-  }: BoilerplateOperation) => {
-    const type = Account === address ? "OUT" : "IN";
-    let value =
-      delivered_amount && typeof delivered_amount === "string"
-        ? new BigNumber(delivered_amount)
-        : new BigNumber(0);
-    const feeValue = new BigNumber(Fee);
+  (txInfo: TxInfo): Operation => {
+    const { update_id, command_id, offset, effective_at, events } = txInfo;
 
-    if (type === "OUT") {
-      if (!Number.isNaN(feeValue)) {
-        value = value.plus(feeValue);
-      }
-    }
+    // For now, assume all operations are "IN" type since we don't have sender/recipient info
+    const type = "IN";
+    const value = new BigNumber(0); // TODO: Extract value from events
+    const feeValue = new BigNumber(0); // TODO: Extract fee from events
 
     const op: Operation = {
-      id: encodeOperationId(accountId, hash, type),
-      hash: hash,
+      id: encodeOperationId(accountId, update_id, type),
+      hash: update_id,
       accountId,
       type,
       value,
       fee: feeValue,
       blockHash: null,
-      blockHeight: inLedger,
-      senders: [Account],
-      recipients: [Destination],
-      date: new Date(),
-      transactionSequenceNumber: Sequence,
-      extra: {},
+      blockHeight: offset,
+      senders: [address], // TODO: Extract from events
+      recipients: [address], // TODO: Extract from events
+      date: new Date(effective_at.seconds * 1000),
+      transactionSequenceNumber: offset,
+      extra: {
+        command_id,
+        workflow_id: txInfo.workflow_id,
+        events,
+      },
     };
 
     return op;
   };
 
 const filterOperations = (
-  transactions: BoilerplateOperation[],
+  transactions: TxInfo[],
   accountId: string,
   address: string,
-) => {
+): Operation[] => {
   return transactions
-    .filter(
-      ({ tx, meta }: BoilerplateOperation) =>
-        tx.TransactionType === "Payment" && typeof meta.delivered_amount === "string",
-    )
-    .map(operationAdapter(accountId, address))
+    .filter(({ command_id }: TxInfo) => command_id === "Payment")
+    .map(txInfoToOperationAdapter(accountId, address))
     .filter((op): op is Operation => Boolean(op));
 };
 
@@ -76,22 +66,21 @@ export const getAccountShape: GetAccountShape = async info => {
   const blockHeight = await getLedgerEnd();
 
   // Account info retrieval + spendable balance calculation
-  const accountInfo = await getAccountInfo(address);
-  const balance = new BigNumber(accountInfo.account_data.Balance);
+  // const accountInfo = await getAccountInfo(address);
+  const balanceData = await getBalance(address);
+  const balance = new BigNumber(balanceData[0]?.amount || "0");
   const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(
-    BigNumber(reserveMin),
-  );
+  const spendableBalance = balance.minus(BigNumber(reserveMin));
 
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newTransactions = await getTransactions(address, {
-    from: startAt,
-    size: 100,
+  const transactionData = await getTransactions(address, {
+    cursor: startAt,
+    limit: 100,
   });
-  const newOperations = filterOperations(newTransactions, accountId, address);
-  const operations = mergeOps(oldOperations, newOperations as Operation[]);
+  const newOperations = filterOperations(transactionData.transactions, accountId, address);
+  const operations = mergeOps(oldOperations, newOperations);
 
   // We return the new account shape
   const shape = {
