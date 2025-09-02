@@ -13,6 +13,31 @@ type OnboardingPrepareRequest = {
   public_key_type: string;
 };
 
+export type PrepareTransferResponse = {
+  transaction_hash: string;
+  transaction_serialized: string;
+};
+
+export type PrepareTransferRequest = {
+  type: "token-transfer-request";
+  amount: number;
+  recipient: string;
+  execute_before_secs: number;
+  instrument_id: string;
+  reason?: string;
+};
+
+export type PrepareTapRequest = {
+  type: "tap-request";
+  amount: number;
+};
+
+export type PreparePreapporvalRequest = {
+  type: "transfer-pre-approval-proposal";
+  receiver: string;
+};
+export type PrepareRequest = PrepareTransferRequest | PreparePreapporvalRequest | PrepareTapRequest;
+
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -183,6 +208,18 @@ export async function getTransactions(
     method: "GET",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transactions`,
     data: options,
+  });
+  return data;
+}
+
+export async function prepare(
+  partyId: string,
+  params: PrepareRequest,
+): Promise<PrepareTransferResponse> {
+  const { data } = await network<PrepareTransferResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
+    data: params,
   });
   return data;
 }

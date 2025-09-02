@@ -4,7 +4,7 @@ import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
-import { Transaction, CantonSigner, BoilerplateNativeTransaction } from "../types";
+import { Transaction, CantonSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -34,7 +34,8 @@ export const buildSignOperation =
               {
                 recipient: transaction.recipient,
                 amount: transaction.amount,
-                fee: fee,
+                expireInSeconds: 60 * 60 * 24,
+                tokenId: "Amulet",
               },
             );
 
