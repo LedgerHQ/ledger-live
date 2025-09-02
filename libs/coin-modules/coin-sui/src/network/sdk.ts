@@ -770,7 +770,7 @@ export const loadOperations = async ({
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<LoadOperationResponse> => {
   try {
-    if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
+    if (operations.length >= TRANSACTIONS_LIMIT) {
       return { operations, cursor };
     }
 
