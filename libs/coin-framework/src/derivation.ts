@@ -192,7 +192,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/784'/<account>'/0'/0'",
   },
   canton: {
-    overridesDerivation: "44'/6767'/<account>'",
+    overridesDerivation: "44'/6767'/<account>'/0'/0'",
     tag: "canton",
   },
 });

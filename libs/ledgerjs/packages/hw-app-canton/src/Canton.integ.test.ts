@@ -30,7 +30,7 @@ describe("AppCanton", () => {
     it("retrieves address from app", async () => {
       // GIVEN
       const app = new Canton(transport);
-      const derivationPath = "44'/6767'/0'";
+      const derivationPath = "44'/6767'/0'/0'/0'";
 
       // WHEN
       const result = await app.getAddress(derivationPath);
@@ -47,7 +47,7 @@ describe("AppCanton", () => {
     it("returns sign transaction", async () => {
       // GIVEN
       const app = new Canton(transport);
-      const derivationPath = "44'/6767'/0'";
+      const derivationPath = "44'/6767'/0'/0'/0'";
       const txHash = "d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd";
 
       // WHEN

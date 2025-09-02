@@ -115,7 +115,7 @@ export type TxInfo = {
 };
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
-const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-live-devnet-prd";
+const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-devnet-stg";
 
 export async function prepareOnboarding(
   pubKey: string,
@@ -236,15 +236,13 @@ export async function getLedgerEnd(): Promise<number> {
 
 export async function preparePreApprovalTransaction(
   partyId: string,
-  nodeId: string,
 ): Promise<PrepareTransactionResponse> {
   const { data } = await network<PrepareTransactionResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${nodeId}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
-      TransferPreApprovalProposal: {
-        receiver: partyId,
-      },
+      type: "transfer-pre-approval-proposal",
+      receiver: partyId,
     } satisfies PrepareTransactionRequest,
   });
   return data;
@@ -252,21 +250,28 @@ export async function preparePreApprovalTransaction(
 
 export async function submitPreApprovalTransaction(
   partyId: string,
-  nodeId: string,
   preparedTransaction: PrepareTransactionResponse,
   signature: string,
 ): Promise<PreApprovalResult> {
   try {
     const submitRequest: SubmitTransactionRequest = {
-      transaction: preparedTransaction,
+      serialized: preparedTransaction.serialized,
       signature,
     };
 
+    console.log("[Gateway submitPreApprovalTransaction] Submit request:", submitRequest);
+    console.log(
+      "[Gateway submitPreApprovalTransaction] Submit request JSON:",
+      JSON.stringify(submitRequest, null, 2),
+    );
+
     const { data } = await network<SubmitTransactionResponse>({
       method: "POST",
-      url: `${getGatewayUrl()}/v1/node/${nodeId}/party/${partyId}/transaction/submit`,
+      url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
       data: submitRequest,
     });
+
+    console.log("[Gateway submitPreApprovalTransaction] Submit response:", data);
 
     return {
       approved: true,

@@ -86,10 +86,7 @@ describe("onboard integration tests", () => {
 
       // Collect all emitted values
       const allValues = await firstValueFrom(
-        onboardObservable(mockDeviceId, mockDerivationPath).pipe(
-          take(10), // Limit to prevent infinite waiting
-          toArray(),
-        ),
+        onboardObservable(mockDeviceId, mockDerivationPath).pipe(toArray()),
       );
 
       // Verify the flow progression
@@ -231,12 +228,10 @@ describe("onboard integration tests", () => {
         const preapprovalObservable = buildAuthorizePreapproval(mockSignerContext);
 
         const allValues = await firstValueFrom(
-          preapprovalObservable(
-            mockDeviceId,
-            mockDerivationPath,
-            testPartyId,
-            testValidatorId,
-          ).pipe(take(10), toArray()),
+          preapprovalObservable(mockDeviceId, mockDerivationPath, testPartyId).pipe(
+            take(10),
+            toArray(),
+          ),
         );
 
         // Verify the flow progression
@@ -316,7 +311,7 @@ describe("onboard integration tests", () => {
         // The observable might complete with status instead of throwing
         try {
           const result = await firstValueFrom(
-            preapprovalObservable(mockDeviceId, mockDerivationPath, testPartyId, testValidatorId),
+            preapprovalObservable(mockDeviceId, mockDerivationPath, testPartyId),
           );
           // Check if we got a rejection status
           if (typeof result === "object" && "status" in result) {

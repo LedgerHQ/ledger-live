@@ -23,7 +23,6 @@ export interface CantonCurrencyBridge extends CurrencyBridge {
     deviceId: string,
     derivationPath: string,
     partyId: string,
-    validatorId: string,
   ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
 }
 

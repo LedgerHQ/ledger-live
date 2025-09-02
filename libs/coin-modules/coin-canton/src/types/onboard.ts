@@ -45,9 +45,8 @@ export type CantonPreApprovalResult = {
  */
 
 export interface PrepareTransactionRequest {
-  TransferPreApprovalProposal: {
-    receiver: string;
-  };
+  type: "transfer-pre-approval-proposal";
+  receiver: string;
 }
 
 export interface PrepareTransactionResponse {
@@ -57,7 +56,7 @@ export interface PrepareTransactionResponse {
 }
 
 export interface SubmitTransactionRequest {
-  transaction: PrepareTransactionResponse;
+  serialized: string; // Hex-encoded serialized protobuf
   signature: string; // Hex-encoded signature
 }
 

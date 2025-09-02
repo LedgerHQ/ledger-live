@@ -91,7 +91,8 @@ export default class Canton {
    */
   async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    console.log("signTransaction", "m/" + path + "/0'/0'", txHash);
+    const bipPath = BIPPath.fromString("m/" + path + "/0'/0'").toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const pathResponse = await this.transport.send(
@@ -198,14 +199,29 @@ export default class Canton {
    * @private
    */
   private extractPubkeyAndChainCode(data: Buffer): { pubKey: string; chainCode: string } {
+    console.log(
+      `[extractPubkeyAndChainCode] Raw response data: ${data.toString("hex")} (length: ${data.length})`,
+    );
+
     const pubkeySize = parseInt(data.subarray(0, 1).toString("hex"), 16);
+    console.log(`[extractPubkeyAndChainCode] Public key size: ${pubkeySize}`);
+
     const pubKey = data.subarray(1, pubkeySize + 1);
+    console.log(
+      `[extractPubkeyAndChainCode] Extracted public key: ${pubKey.toString("hex")} (length: ${pubKey.length})`,
+    );
 
     const chainCodeSize = parseInt(
       data.subarray(pubkeySize + 1, pubkeySize + 2).toString("hex"),
       16,
     );
+    console.log(`[extractPubkeyAndChainCode] Chain code size: ${chainCodeSize}`);
+
     const chainCode = data.subarray(pubkeySize + 2, pubkeySize + chainCodeSize + 2);
+    console.log(
+      `[extractPubkeyAndChainCode] Extracted chain code: ${chainCode.toString("hex")} (length: ${chainCode.length})`,
+    );
+
     return { pubKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
   }
 

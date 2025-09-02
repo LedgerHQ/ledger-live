@@ -5,7 +5,6 @@ import {
   getDerivationScheme,
   runAccountDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
-import logger from "~/renderer/logger";
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
@@ -34,6 +33,11 @@ export type StepAuthorizeProps = {
   transitionTo: (step: StepId) => void;
   onAccountCreated: (account: any) => void;
   setOnboardingData?: (data: any) => void;
+  isProcessing: boolean;
+  showConfirmation: boolean;
+  progress: number;
+  message: string;
+  handlePreapproval: () => void;
 };
 
 export type StepAuthorizeFooterProps = {
@@ -42,6 +46,7 @@ export type StepAuthorizeFooterProps = {
   error: Error | null;
   onRetry: () => void;
   onConfirm: () => void;
+  handlePreapproval?: () => void;
 };
 
 const StepAuthorize = ({
@@ -59,127 +64,57 @@ const StepAuthorize = ({
   transitionTo,
   onAccountCreated,
   setOnboardingData,
+  isProcessing,
+  showConfirmation,
+  progress,
+  message,
+  handlePreapproval,
 }: StepAuthorizeProps) => {
   const selectedAccount = selectedAccounts[0];
+
+  // Create placeholder account like in StepOnboard
+  const placeholderAccount =
+    selectedAccount ||
+    (() => {
+      if (!currency || !currency.id) {
+        return null;
+      }
+
+      const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+      const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
+        account: 0,
+      });
+
+      return {
+        type: "Account" as const,
+        id: `canton-placeholder-${currency.id}`,
+        currency,
+        freshAddress: "canton-placeholder-address",
+        freshAddressPath,
+        balance: new BigNumber(0),
+        spendableBalance: new BigNumber(0),
+        derivationMode: "",
+        index: 0,
+        seedIdentifier: "canton-placeholder",
+        used: false,
+        blockHeight: 0,
+        operationsCount: 0,
+        operations: [],
+        pendingOperations: [],
+        lastSyncDate: new Date(),
+        creationDate: new Date(),
+      };
+    })();
   const [currentAccountName, setCurrentAccountName] = useState(accountName);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState("");
-  const [preapprovalSubscription, setPreapprovalSubscription] = useState<any>(null);
 
   useEffect(() => {
     const name = onboardingData?.accountName || accountName;
     setCurrentAccountName(name);
   }, [accountName, onboardingData]);
 
-  useEffect(() => {
-    return () => {
-      if (preapprovalSubscription) {
-        logger.log("Cleaning up preapproval subscription");
-        preapprovalSubscription.unsubscribe();
-      }
-    };
-  }, [preapprovalSubscription]);
-
   const handleStartPreapproval = () => {
-    setShowConfirmation(true);
     clearError();
-  };
-
-  const handleRetry = () => {
-    if (preapprovalSubscription) {
-      preapprovalSubscription.unsubscribe();
-      setPreapprovalSubscription(null);
-    }
-
-    clearError();
-    setIsProcessing(false);
-    setShowConfirmation(false);
-    setProgress(0);
-    setMessage("");
-  };
-
-  const handlePreapproval = () => {
-    console.log("[StepAuthorize] Starting preapproval process");
-
-    setIsProcessing(true);
-    setProgress(0);
-    setMessage("Starting transaction pre-approval...");
-    clearError();
-
-    if (!onboardingData) {
-      setError(new Error("No onboarding data found in modal state"));
-      setIsProcessing(false);
-      return;
-    }
-
-    const { partyId, address, device: deviceId, accountIndex } = onboardingData;
-
-    const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
-    const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
-      account: accountIndex,
-    });
-
-    let preapprovalResult: any = null;
-
-    const subscription = cantonBridge
-      .authorizePreapproval(
-        deviceId,
-        derivationPath,
-        partyId,
-        currency.validatorAddress || "default-validator",
-      )
-      .subscribe({
-        next: (progressData: any) => {
-          logger.log("Canton preapproval progress", progressData);
-
-          if (progressData.approved !== undefined) {
-            preapprovalResult = progressData;
-          }
-
-          if (progressData.progress) {
-            setProgress(progressData.progress);
-          }
-          if (progressData.message) {
-            setMessage(`Pre-approval: ${progressData.message}`);
-          }
-        },
-        complete: () => {
-          logger.log("Canton preapproval completed", preapprovalResult);
-
-          if (!preapprovalResult?.approved) {
-            const errorMessage = `Transaction pre-approval failed: ${preapprovalResult?.message || "Unknown error"}`;
-            logger.error(errorMessage);
-            setError(new Error(errorMessage));
-            setIsProcessing(false);
-            setPreapprovalSubscription(null);
-            return;
-          }
-
-          setProgress(100);
-          setMessage("Pre-approval completed successfully!");
-
-          const accountShape = selectedAccount;
-
-          setOnboardingData?.({
-            ...onboardingData,
-            completedAccount: accountShape,
-          });
-
-          setPreapprovalSubscription(null);
-
-          transitionTo(StepId.FINISH);
-        },
-        error: (error: Error) => {
-          logger.error("Canton preapproval failed", error);
-          setError(error);
-          setIsProcessing(false);
-          setPreapprovalSubscription(null);
-        },
-      });
-
-    setPreapprovalSubscription(subscription);
+    handlePreapproval();
   };
 
   if (isProcessing) {
@@ -188,14 +123,6 @@ const StepAuthorize = ({
         <Box mb={4} horizontal alignItems="center" justifyContent="center">
           <Box mr={3}>
             <Spinner size={20} />
-          </Box>
-          <Box>
-            <Text ff="Inter|SemiBold" fontSize={14} color="palette.text.shade100">
-              {message}
-            </Text>
-            <Text fontSize={12} color="palette.text.shade60">
-              {progress}% complete
-            </Text>
           </Box>
         </Box>
       </Box>
@@ -209,7 +136,12 @@ const StepAuthorize = ({
           Pre-approval failed: {error.message}
         </Alert>
         <Box horizontal alignItems="center" justifyContent="space-between">
-          <Button onClick={handleRetry}>
+          <Button
+            onClick={() => {
+              clearError();
+              handlePreapproval();
+            }}
+          >
             <Trans i18nKey="common.retry">Retry</Trans>
           </Button>
         </Box>
@@ -222,7 +154,7 @@ const StepAuthorize = ({
       <Box>
         <TransactionConfirm
           device={device}
-          account={selectedAccount}
+          account={placeholderAccount}
           parentAccount={null}
           transaction={
             {
@@ -243,14 +175,6 @@ const StepAuthorize = ({
             } as any
           }
         />
-        <Box mt={4} horizontal alignItems="center" justifyContent="space-between">
-          <Button onClick={() => setShowConfirmation(false)}>
-            <Trans i18nKey="common.back">Back</Trans>
-          </Button>
-          <Button primary onClick={handlePreapproval}>
-            <Trans i18nKey="common.confirm">Confirm</Trans>
-          </Button>
-        </Box>
       </Box>
     );
   }
@@ -268,9 +192,8 @@ const StepAuthorize = ({
         >
           <Trans i18nKey="operationDetails.account" />
         </Box>
-
         <AccountRow
-          account={selectedAccount}
+          account={placeholderAccount}
           accountName={currentAccountName}
           isDisabled={true}
           hideAmount={true}
@@ -293,25 +216,14 @@ const StepAuthorize = ({
         <ValidatorRow isSelected={isAuthorized} disabled={true} />
       </Box>
 
-      <Box mb={4}>
-        <Alert>
-          <Trans i18nKey="canton.addAccount.combined.preapproval">
-            Automaticaly accept incoming funds to this account. <br />
-            <Link href="https://ledger.com" type="external">
-              <Trans i18nKey="common.learnMore" />
-            </Link>
-          </Trans>
-        </Alert>
-      </Box>
-
-      <Box horizontal alignItems="center" justifyContent="space-between">
-        {currency && <CurrencyBadge currency={currency} />}
-        <Button primary onClick={handleStartPreapproval}>
-          <Trans i18nKey="canton.addAccount.authorization.startPreapproval">
-            Start Pre-approval
-          </Trans>
-        </Button>
-      </Box>
+      <Alert>
+        <Trans i18nKey="canton.addAccount.combined.preapproval">
+          Automaticaly accept incoming funds to this account. <br />
+          <Link href="https://ledger.com" type="external">
+            <Trans i18nKey="common.learnMore" />
+          </Link>
+        </Trans>
+      </Alert>
     </Box>
   );
 };
@@ -322,6 +234,7 @@ export const StepAuthorizeFooter = ({
   error,
   onRetry,
   onConfirm,
+  handlePreapproval,
 }: StepAuthorizeFooterProps) => {
   if (isProcessing) {
     return null;
@@ -331,14 +244,21 @@ export const StepAuthorizeFooter = ({
     return (
       <Box horizontal alignItems="center" justifyContent="space-between" grow>
         {currency && <CurrencyBadge currency={currency} />}
-        <Button primary onClick={onRetry}>
+        <Button primary onClick={handlePreapproval || onRetry}>
           <Trans i18nKey="common.retry">Retry</Trans>
         </Button>
       </Box>
     );
   }
 
-  return null;
+  return (
+    <Box horizontal alignItems="center" justifyContent="space-between" grow>
+      {currency && <CurrencyBadge currency={currency} />}
+      <Button primary onClick={handlePreapproval || onConfirm}>
+        <Trans i18nKey="canton.addAccount.authorization.startPreapproval">Confirm</Trans>
+      </Button>
+    </Box>
+  );
 };
 
 export default StepAuthorize;

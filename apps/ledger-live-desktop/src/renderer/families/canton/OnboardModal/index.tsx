@@ -16,6 +16,11 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import {
+  getDerivationScheme,
+  runAccountDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
+import logger from "~/renderer/logger";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
@@ -52,6 +57,11 @@ type State = {
   onboardingData: any | null;
   onboardingCompleted: boolean;
   onboardingStatus: OnboardStatus;
+  isProcessing: boolean;
+  showConfirmation: boolean;
+  progress: number;
+  message: string;
+  preapprovalSubscription: any | null;
 };
 
 const INITIAL_STATE: State = {
@@ -62,10 +72,22 @@ const INITIAL_STATE: State = {
   onboardingData: null,
   onboardingCompleted: false,
   onboardingStatus: OnboardStatus.INIT,
+  isProcessing: false,
+  showConfirmation: false,
+  progress: 0,
+  message: "",
+  preapprovalSubscription: null,
 };
 
 class OnboardModal extends PureComponent<Props, State> {
   state: State = INITIAL_STATE;
+
+  componentWillUnmount() {
+    if (this.state.preapprovalSubscription) {
+      logger.log("Cleaning up preapproval subscription");
+      this.state.preapprovalSubscription.unsubscribe();
+    }
+  }
 
   STEPS = [
     {
@@ -140,6 +162,89 @@ class OnboardModal extends PureComponent<Props, State> {
     this.setState({ error: null });
   };
 
+  handlePreapproval = () => {
+    console.log("[OnboardModal] Starting preapproval process");
+
+    this.setState({
+      isProcessing: true,
+      progress: 0,
+      message: "Starting transaction pre-approval...",
+      error: null,
+    });
+
+    const { onboardingData } = this.state;
+    const { currency } = this.props;
+
+    if (!onboardingData) {
+      this.setState({
+        error: new Error("No onboarding data found in modal state"),
+        isProcessing: false,
+      });
+      return;
+    }
+
+    const { partyId, address, device: deviceId, accountIndex } = onboardingData;
+
+    const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+    const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
+      account: accountIndex,
+    });
+
+    const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
+    let preapprovalResult: any = null;
+
+    const subscription = cantonBridge
+      .authorizePreapproval(deviceId, derivationPath, partyId)
+      .subscribe({
+        next: (progressData: any) => {
+          logger.log("Canton preapproval progress", progressData);
+
+          if (progressData.approved !== undefined) {
+            preapprovalResult = progressData;
+          }
+
+          if (progressData.progress) {
+            this.setState({ progress: progressData.progress });
+          }
+          if (progressData.message) {
+            this.setState({ message: `Pre-approval: ${progressData.message}` });
+          }
+        },
+        complete: () => {
+          logger.log("Canton preapproval completed", preapprovalResult);
+
+          if (!preapprovalResult?.approved) {
+            const errorMessage = `Transaction pre-approval failed: ${preapprovalResult?.message || "Unknown error"}`;
+            logger.error(errorMessage);
+            this.setState({
+              error: new Error(errorMessage),
+              isProcessing: false,
+              preapprovalSubscription: null,
+            });
+            return;
+          }
+
+          this.setState({
+            progress: 100,
+            message: "Pre-approval completed successfully!",
+            preapprovalSubscription: null,
+          });
+
+          this.transitionTo(StepId.FINISH);
+        },
+        error: (error: Error) => {
+          logger.error("Canton preapproval failed", error);
+          this.setState({
+            error,
+            isProcessing: false,
+            preapprovalSubscription: null,
+          });
+        },
+      });
+
+    this.setState({ preapprovalSubscription: subscription });
+  };
+
   render() {
     const { device, currency, t, selectedAccounts, editedNames } = this.props;
     const {
@@ -150,6 +255,10 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingData,
       onboardingCompleted,
       onboardingStatus,
+      isProcessing,
+      showConfirmation,
+      progress,
+      message,
     } = this.state;
 
     const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
@@ -182,6 +291,11 @@ class OnboardModal extends PureComponent<Props, State> {
       setError: this.setError,
       clearError: this.clearError,
       status: onboardingStatus,
+      isProcessing,
+      showConfirmation,
+      progress,
+      message,
+      handlePreapproval: this.handlePreapproval,
     };
 
     return (

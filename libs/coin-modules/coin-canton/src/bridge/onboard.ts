@@ -8,7 +8,7 @@ import {
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
 } from "../network/gateway";
-import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
+import { generateMockKeyPair, createMockSigner, verifySignature } from "../test/cantonTestUtils";
 import {
   OnboardStatus,
   PreApprovalStatus,
@@ -20,6 +20,9 @@ import {
 } from "../types/onboard";
 
 const isDevSignerMode = false;
+
+const keyPair = generateMockKeyPair();
+const signer = createMockSigner(keyPair);
 
 async function getKeypair(
   signerContext: SignerContext<CantonSigner>,
@@ -33,8 +36,6 @@ async function getKeypair(
     });
   }
 
-  const keyPair = generateMockKeyPair();
-  const signer = createMockSigner(keyPair);
   const { publicKey, address } = await signer.getAddress(derivationPath);
   return { signer, publicKey, address };
 }
@@ -78,7 +79,7 @@ async function createSignature(
     ? await signerContext(deviceId, signer => signer.signTransaction(derivationPath, processedHash))
     : await keypair.signer.signTransaction(derivationPath, processedHash);
 
-  return signature.replace("0x", "");
+  return signature;
 }
 
 export const buildIsAccountOnboarded =
@@ -173,7 +174,9 @@ export const buildOnboardAccount =
           });
         }
 
-        log(`[onboardAccount] Calling prepareOnboarding with public key: ${keypair.publicKey}`);
+        log(
+          `[onboardAccount] Calling prepareOnboarding with public key: ${keypair.publicKey} (length: ${keypair.publicKey.length})`,
+        );
         const prepared = await prepareOnboarding(keypair.publicKey, "ed25519").catch(err => {
           log(`[onboardAccount] prepareOnboarding failed: ${err}`);
           throw err;
@@ -206,11 +209,33 @@ export const buildOnboardAccount =
           message: "Submitting to network...",
         });
 
+        console.log("======== 1 =======");
+        console.log(
+          verifySignature(keypair.publicKey, signature, prepared.transactions.combined_hash),
+        );
+
         log("[onboardAccount] Calling submitOnboarding");
+        // Strip 2 characters from start and 2 from end of signature before submitting
+        const strippedSignature = isDevSignerMode
+          ? signature
+          : signature.length > 4
+            ? signature.slice(2, -2)
+            : signature;
+        log(
+          `[onboardAccount] Original signature: ${signature.length} ${signature}, stripped length: ${strippedSignature.length} ${strippedSignature}`,
+        );
+        console.log("======== 2 =======");
+        console.log(
+          verifySignature(
+            keypair.publicKey,
+            strippedSignature,
+            prepared.transactions.combined_hash,
+          ),
+        );
         const result = await submitOnboarding(
           { public_key: keypair.publicKey, public_key_type: "ed25519" },
           prepared,
-          signature,
+          strippedSignature,
         ).catch(err => {
           log(`[onboardAccount] submitOnboarding error: ${err.message}`);
           if (err.message.includes("exists")) {
@@ -226,10 +251,6 @@ export const buildOnboardAccount =
           log(`[onboardAccount] submitOnboarding failed with non-party-exists error: ${err}`);
           throw err;
         });
-
-        log(
-          `[onboardAccount] submitOnboarding completed successfully: partyId=${result?.party?.party_id || "unknown"}`,
-        );
 
         observer.next({
           status: OnboardStatus.SUCCESS,
@@ -258,7 +279,6 @@ export const buildAuthorizePreapproval =
     deviceId: string,
     derivationPath: string,
     partyId: string,
-    validatorId: string,
   ): Observable<CantonPreApprovalProgress | CantonPreApprovalResult> =>
     new Observable(observer => {
       async function main() {
@@ -270,14 +290,13 @@ export const buildAuthorizePreapproval =
         log("[authorizePreapproval] Preparing pre-approval transaction via gateway API");
         const preparedTransaction: PrepareTransactionResponse = await preparePreApprovalTransaction(
           partyId,
-          validatorId,
         ).catch((err: any) => {
           log(`[authorizePreapproval] Failed to prepare transaction: ${err}`);
           throw err;
         });
 
         log(
-          `[authorizePreapproval] Transaction prepared successfully: hash=${preparedTransaction.hash}, partyId=${partyId}, validatorId=${validatorId}`,
+          `[authorizePreapproval] Transaction prepared successfully: hash=${preparedTransaction.hash}, partyId=${partyId}`,
         );
 
         observer.next({
@@ -310,7 +329,6 @@ export const buildAuthorizePreapproval =
         log("[authorizePreapproval] Calling gateway API to submit transaction");
         const result = await submitPreApprovalTransaction(
           partyId,
-          validatorId,
           preparedTransaction,
           signature,
         ).catch((err: any) => {

@@ -16,7 +16,7 @@ describe("LegacySignerCanton", () => {
 
   describe("getAddress", () => {
     it("should return an address for a given path", async () => {
-      const path = "44'/6767'/0'";
+      const path = "44'/6767'/0'/0'/0'";
       const result = await signer.getAddress(path);
 
       expect(result).toBeDefined();
@@ -27,7 +27,7 @@ describe("LegacySignerCanton", () => {
 
   describe("signTransaction", () => {
     it("should return a signature for a transaction", async () => {
-      const path = "44'/6767'/0'";
+      const path = "44'/6767'/0'/0'/0'";
       const rawTx = "0x1234567890abcdef";
 
       const result = await signer.signTransaction(path, rawTx);
