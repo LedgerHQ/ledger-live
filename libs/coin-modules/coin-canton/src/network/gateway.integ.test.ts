@@ -33,10 +33,6 @@ describe("gateway (devnet)", () => {
     }, 30000);
   });
 
-  describe("submit", () => {
-    it("should submit", async () => {}, 30000);
-  });
-
   describe("getLedgerEnd", () => {
     it("should return ledger end", async () => {
       const end = await getLedgerEnd();
