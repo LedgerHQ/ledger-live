@@ -172,6 +172,8 @@ export const buildOnboardAccount =
             address: keypair.address,
             transactionHash: "",
           });
+          observer.complete();
+          return;
         }
 
         log(
@@ -327,10 +329,15 @@ export const buildAuthorizePreapproval =
         });
 
         log("[authorizePreapproval] Calling gateway API to submit transaction");
+        const strippedSignature = isDevSignerMode
+          ? signature
+          : signature.length > 4
+            ? signature.slice(2, -2)
+            : signature;
         const result = await submitPreApprovalTransaction(
           partyId,
           preparedTransaction,
-          signature,
+          strippedSignature,
         ).catch((err: any) => {
           log(`[authorizePreapproval] Gateway API failed: ${err}`);
           throw err;

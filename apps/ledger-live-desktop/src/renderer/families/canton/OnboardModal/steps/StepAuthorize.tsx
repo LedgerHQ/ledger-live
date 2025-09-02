@@ -117,18 +117,6 @@ const StepAuthorize = ({
     handlePreapproval();
   };
 
-  if (isProcessing) {
-    return (
-      <Box>
-        <Box mb={4} horizontal alignItems="center" justifyContent="center">
-          <Box mr={3}>
-            <Spinner size={20} />
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
-
   if (error) {
     return (
       <Box>
@@ -254,9 +242,15 @@ export const StepAuthorizeFooter = ({
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       {currency && <CurrencyBadge currency={currency} />}
-      <Button primary onClick={handlePreapproval || onConfirm}>
-        <Trans i18nKey="canton.addAccount.authorization.startPreapproval">Confirm</Trans>
-      </Button>
+      {isProcessing ? (
+        <Box>
+          <Spinner size={20} />
+        </Box>
+      ) : (
+        <Button primary onClick={handlePreapproval || onConfirm}>
+          <Trans i18nKey="canton.addAccount.authorization.startPreapproval">Confirm</Trans>
+        </Button>
+      )}
     </Box>
   );
 };
