@@ -24,7 +24,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com",
-      nodeId: "ledger-live-devnet-prd",
+      nodeId: "ledger-devnet-stg",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,

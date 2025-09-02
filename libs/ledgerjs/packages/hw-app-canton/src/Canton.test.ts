@@ -24,7 +24,7 @@ describe("Canton", () => {
       );
 
       const canton = new Canton(transport);
-      const result = await canton.getAddress("44'/6767'/0'");
+      const result = await canton.getAddress("44'/6767'/0'/0'/0'");
 
       expect(result).toBeDefined();
       expect(result.address).toBeDefined();
@@ -40,7 +40,7 @@ describe("Canton", () => {
       );
 
       const canton = new Canton(transport);
-      const result = await canton.getAddress("44'/6767'/0'", true);
+      const result = await canton.getAddress("44'/6767'/0'/0'/0'", true);
 
       expect(result).toBeDefined();
       expect(result.address).toBeDefined();
@@ -95,7 +95,7 @@ describe("Canton", () => {
       const canton = new Canton(transport);
       const txHash = "d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd";
 
-      const result = await canton.signTransaction("44'/6767'/0'", txHash);
+      const result = await canton.signTransaction("44'/6767'/0'/0'/0'", txHash);
 
       expect(result).toEqual(
         "40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a0000",
@@ -112,7 +112,7 @@ describe("Canton", () => {
 
       const canton = new Canton(transport);
 
-      return expect(canton.signTransaction("44'/6767'/0'", "test")).rejects.toThrow();
+      return expect(canton.signTransaction("44'/6767'/0'/0'/0'", "test")).rejects.toThrow();
     });
   });
 

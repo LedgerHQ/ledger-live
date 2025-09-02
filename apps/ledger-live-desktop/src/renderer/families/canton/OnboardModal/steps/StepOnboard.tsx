@@ -18,7 +18,7 @@ import logger from "~/renderer/logger";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
-import { StepProps } from "../types";
+import { StepProps, StepId } from "../types";
 
 interface SigningData {
   partyId: string;
@@ -37,7 +37,7 @@ interface OnboardingResult {
 
 interface FooterProps {
   currency: any;
-  transitionTo: (step: string) => void;
+  transitionTo: (stepId: StepId) => void;
   onboardingCompleted: boolean;
   isLoading?: boolean;
   status?: OnboardStatus;
@@ -413,7 +413,7 @@ export const StepOnboardFooter = ({
   const handleNext = useCallback(() => {
     if (onboardingCompleted && !isLoading) {
       logger.log("StepOnboard: Transitioning to authorization");
-      transitionTo("authorization");
+      transitionTo(StepId.AUTHORIZE);
     }
   }, [onboardingCompleted, isLoading, transitionTo]);
 
