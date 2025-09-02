@@ -1,1 +1,0 @@
-/home/jprudent/projects/shells.nix/ledger-live.nix
