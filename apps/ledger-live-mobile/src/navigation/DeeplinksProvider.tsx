@@ -616,7 +616,7 @@ export const DeeplinksProvider = ({
             if (!validatedAction && earnParamAction) {
               logSecurityEvent("blocked_action", {
                 hostname,
-                action: searchParams.get("action"),
+                action: earnParamAction,
                 reason: "Invalid action type",
               });
               return;
