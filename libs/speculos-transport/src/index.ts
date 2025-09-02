@@ -14,7 +14,10 @@ export type SpeculosDevice = {
   ports: ReturnType<typeof getPorts>;
 };
 
-export type SpeculosTransport = DeviceManagementKitTransportSpeculos | SpeculosTransportWebsocket;
+export type SpeculosTransport =
+  | DeviceManagementKitTransportSpeculos
+  | SpeculosTransportWebsocket
+  | SpeculosTransportHttp;
 
 export { DeviceModelId };
 
