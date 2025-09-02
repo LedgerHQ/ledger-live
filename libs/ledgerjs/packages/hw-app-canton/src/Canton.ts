@@ -63,7 +63,7 @@ export default class Canton {
    * @return the address and public key
    */
   async getAddress(path: string, display: boolean = false): Promise<CantonAddress> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
@@ -91,8 +91,7 @@ export default class Canton {
    */
   async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
-    console.log("signTransaction", "m/" + path + "/0'/0'", txHash);
-    const bipPath = BIPPath.fromString("m/" + path + "/0'/0'").toPathArray();
+    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const pathResponse = await this.transport.send(
@@ -199,28 +198,25 @@ export default class Canton {
    * @private
    */
   private extractPubkeyAndChainCode(data: Buffer): { pubKey: string; chainCode: string } {
-    console.log(
-      `[extractPubkeyAndChainCode] Raw response data: ${data.toString("hex")} (length: ${data.length})`,
-    );
+    // Parse the response according to the Python unpack_get_addr_response format:
+    // response = pubkey_len (1) + pubkey (var) + chaincode_len (1) + chaincode (var)
 
-    const pubkeySize = parseInt(data.subarray(0, 1).toString("hex"), 16);
-    console.log(`[extractPubkeyAndChainCode] Public key size: ${pubkeySize}`);
+    let offset = 0;
 
-    const pubKey = data.subarray(1, pubkeySize + 1);
-    console.log(
-      `[extractPubkeyAndChainCode] Extracted public key: ${pubKey.toString("hex")} (length: ${pubKey.length})`,
-    );
+    // Extract public key length (1 byte)
+    const pubkeySize = data.readUInt8(offset);
+    offset += 1;
 
-    const chainCodeSize = parseInt(
-      data.subarray(pubkeySize + 1, pubkeySize + 2).toString("hex"),
-      16,
-    );
-    console.log(`[extractPubkeyAndChainCode] Chain code size: ${chainCodeSize}`);
+    // Extract public key
+    const pubKey = data.subarray(offset, offset + pubkeySize);
+    offset += pubkeySize;
 
-    const chainCode = data.subarray(pubkeySize + 2, pubkeySize + chainCodeSize + 2);
-    console.log(
-      `[extractPubkeyAndChainCode] Extracted chain code: ${chainCode.toString("hex")} (length: ${chainCode.length})`,
-    );
+    // Extract chain code length (1 byte)
+    const chainCodeSize = data.readUInt8(offset);
+    offset += 1;
+
+    // Extract chain code
+    const chainCode = data.subarray(offset, offset + chainCodeSize);
 
     return { pubKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
   }
