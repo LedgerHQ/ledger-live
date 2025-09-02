@@ -22,12 +22,12 @@ describe("getBalance", () => {
 
     const mockInstruments = [
       {
-        instrumentId: "native-id",
+        instrument_id: "native-id",
         amount: "1000",
         locked: false,
       },
       {
-        instrumentId: "token-123",
+        instrument_id: "token-123",
         amount: "5000",
         locked: true,
       },
