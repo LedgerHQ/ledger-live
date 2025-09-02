@@ -12,7 +12,12 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   const craftedTransaction = await craftTransaction(
     { address: account.freshAddress, nextSequenceNumber: seq },
-    { amount: transaction.amount, recipient: transaction.recipient },
+    {
+      amount: transaction.amount,
+      recipient: transaction.recipient,
+      expireInSeconds: 60 * 60 * 24,
+      tokenId: "Amulet",
+    },
   );
 
   const fee = await estimateFees(craftedTransaction.serializedTransaction);

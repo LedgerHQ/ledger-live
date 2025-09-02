@@ -6,6 +6,7 @@ import {
   getTransactions,
   getPartyById,
   getPartyByPubKey,
+  prepare,
 } from "./gateway";
 
 describe("gateway (devnet)", () => {
@@ -71,6 +72,23 @@ describe("gateway (devnet)", () => {
         "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
       );
       expect(transactions.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe("prepare", () => {
+    it("should return prepared transfer transaction", async () => {
+      const response = await prepare(
+        "party-4f2e1485107adf5f::122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
+        {
+          amount: 1,
+          type: "token-transfer-request",
+          execute_before_secs: 60 * 60 * 24,
+          instrument_id: "Amulet",
+          recipient:
+            "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
+        },
+      );
+      expect(response).toBeDefined();
     });
   });
 });
