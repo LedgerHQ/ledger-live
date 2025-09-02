@@ -8654,9 +8654,6 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport-node-speculos
-      '@ledgerhq/live-dmk-speculos':
-        specifier: workspace:^
-        version: link:../live-dmk-speculos
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
@@ -8667,6 +8664,9 @@ importers:
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
     devDependencies:
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../live-dmk-speculos
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
