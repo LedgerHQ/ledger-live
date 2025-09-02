@@ -19,18 +19,23 @@ const emptyData = () => ({
 export function useAssetsData({
   search,
   currencyIds,
+  useCase,
+  areCurrenciesFiltered,
   product,
   version,
 }: {
   search?: string;
   currencyIds?: string[];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
   product: "llm" | "lld";
   version: string;
 }) {
   const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
     useGetAssetsDataInfiniteQuery({
       search,
-      currencyIds,
+      useCase,
+      currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
       product,
       version,
     });

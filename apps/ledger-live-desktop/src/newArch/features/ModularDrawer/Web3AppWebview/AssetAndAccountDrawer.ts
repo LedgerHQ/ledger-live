@@ -27,6 +27,8 @@ type DrawerParams = {
   accounts$?: Observable<WalletAPIAccount[]>;
   includeTokens?: boolean;
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
 };
@@ -38,6 +40,8 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     accounts$,
     includeTokens,
     drawerConfiguration,
+    useCase,
+    areCurrenciesFiltered,
     onSuccess,
     onCancel,
   } = params;
@@ -71,6 +75,8 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
         handleSuccess({ account, parentAccount });
       },
       drawerConfiguration: modularDrawerConfiguration,
+      useCase,
+      areCurrenciesFiltered,
       source: params.source,
       flow: params.flow,
     },

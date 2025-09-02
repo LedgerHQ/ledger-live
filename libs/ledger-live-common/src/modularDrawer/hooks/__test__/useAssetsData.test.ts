@@ -192,7 +192,7 @@ describe("useAssetsData", () => {
       ...defaultMockValues,
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.data).toBeUndefined();
     expect(result.current.loadNext).toBeUndefined();

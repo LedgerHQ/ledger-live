@@ -13,6 +13,8 @@ import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 const ModularDrawerFlowManagerRemoteData = ({
   currencies,
   drawerConfiguration,
+  useCase,
+  areCurrenciesFiltered,
   accounts$,
   flow,
   source,
@@ -50,6 +52,8 @@ const ModularDrawerFlowManagerRemoteData = ({
     onAssetSelected,
     onAccountSelected,
     flow,
+    useCase,
+    areCurrenciesFiltered,
   });
 
   const renderStepContent = (step: ModularDrawerStep) => {
