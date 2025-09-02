@@ -633,7 +633,7 @@ export const DeeplinksProvider = ({
                 if (!validatedModal) {
                   logSecurityEvent("validation_failed", {
                     hostname,
-                    validatedAction,
+                    action: validatedAction,
                     reason: "Invalid info modal parameters",
                   });
                   return;
@@ -651,7 +651,7 @@ export const DeeplinksProvider = ({
                 if (!validatedModal) {
                   logSecurityEvent("validation_failed", {
                     hostname,
-                    validatedAction,
+                    action: validatedAction,
                     reason: "Invalid menu modal parameters",
                   });
                   return;
