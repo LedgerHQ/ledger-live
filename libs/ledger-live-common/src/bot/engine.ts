@@ -129,7 +129,7 @@ export async function runWithAppSpec<T extends Transaction>(
   const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] = [];
 
   try {
-    device = await createSpeculosDevice(deviceParams);
+    device = await createSpeculosDevice(deviceParams as any);
     appReport.appPath = device.appPath;
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
@@ -290,7 +290,7 @@ export async function runWithAppSpec<T extends Transaction>(
             `spec ${spec.name} is recreating the device because deviceAction didn't finished`,
           );
           await releaseSpeculosDevice(device.id);
-          device = await createSpeculosDevice(deviceParams);
+          device = await createSpeculosDevice(deviceParams as any);
           if (spec.onSpeculosDeviceCreated) {
             await spec.onSpeculosDeviceCreated(device);
           }

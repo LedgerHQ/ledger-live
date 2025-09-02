@@ -71,7 +71,7 @@ async function main(): Promise<Report> {
     onSpeculosDeviceCreated,
   };
 
-  const device = await createSpeculosDevice(deviceParams);
+  const device = await createSpeculosDevice(deviceParams as any);
 
   try {
     const audit = new Audit();
