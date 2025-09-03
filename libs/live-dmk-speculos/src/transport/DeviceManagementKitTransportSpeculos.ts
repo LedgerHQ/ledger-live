@@ -95,7 +95,6 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
       baseURL: base,
       timeout: connectTimeout,
       proxy: false,
-      headers: { Connection: "close" },
       transitional: { clarifyTimeoutError: true },
     });
 
@@ -120,62 +119,78 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
     );
 
     const transport = new DeviceManagementKitTransportSpeculos(http, dmk, sessionId);
-    transport.openSsePersistent("/events?stream=true", Math.min(5000, connectTimeout));
+    // wait for SSE to be connected before returning
+    await transport.openSsePersistent("/events?stream=true", connectTimeout);
     this._instances.set(base, transport);
     return transport;
   }
 
-  private openSsePersistent(path: string, connectTimeoutMs?: number) {
-    const ac = new AbortController();
-    let connectTimer: NodeJS.Timeout | null = null;
+  private openSsePersistent(path: string, connectTimeoutMs?: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const ac = new AbortController();
+      let connectTimer: NodeJS.Timeout | null = null;
+      let resolved = false;
 
-    // Abort only if we fail to CONNECT within connectTimeoutMs.
-    if (connectTimeoutMs && connectTimeoutMs > 0) {
-      connectTimer = setTimeout(() => ac.abort(), connectTimeoutMs);
-    }
+      if (connectTimeoutMs && connectTimeoutMs > 0) {
+        connectTimer = setTimeout(() => {
+          ac.abort();
+          if (!resolved) reject(new Error("Speculos SSE connect timeout"));
+        }, connectTimeoutMs);
+      }
 
-    this.http
-      .get(path, {
-        responseType: "stream",
-        timeout: 0, // never time out the live SSE stream
-        signal: ac.signal,
-        // IMPORTANT: override any instance default "Connection: close"
-        headers: { Accept: "text/event-stream", Connection: "keep-alive" },
-        transitional: { clarifyTimeoutError: true },
-      })
-      .then((res: AxiosResponse) => {
-        if (connectTimer) clearTimeout(connectTimer);
+      this.http
+        .get(path, {
+          responseType: "stream",
+          timeout: 0, // never time out the live SSE stream
+          signal: ac.signal,
+          headers: { Accept: "text/event-stream", Connection: "keep-alive" },
+          transitional: { clarifyTimeoutError: true },
+        })
+        .then(res => {
+          if (connectTimer) clearTimeout(connectTimer);
 
-        const stream = res.data as NodeJS.ReadableStream;
-        this.eventStream = stream;
+          const stream = res.data as NodeJS.ReadableStream;
+          this.eventStream = stream;
+          resolved = true;
+          resolve(); // headers received: stream is established
 
-        stream.on("data", (chunk: Buffer) => {
-          const text = chunk.toString();
-          for (const line of text.split("\n")) {
-            if (line.startsWith("data: ")) {
-              try {
-                this.automationEvents.next(JSON.parse(line.slice(6)));
-              } catch (e) {
-                log("speculos-event", "malformed JSON", { line, error: e });
+          let buffer = "";
+          stream.on("data", (chunk: Buffer) => {
+            buffer += chunk.toString();
+            // Process complete lines only; keep partial in buffer
+            let idx: number;
+            while ((idx = buffer.indexOf("\n")) >= 0) {
+              const line = buffer.slice(0, idx);
+              buffer = buffer.slice(idx + 1);
+              if (line.startsWith("data: ")) {
+                const payload = line.slice(6); // after "data: "
+                try {
+                  this.automationEvents.next(JSON.parse(payload));
+                } catch (e) {
+                  log("speculos-event", "malformed JSON", { line, error: String(e) });
+                }
               }
             }
-          }
-        });
+          });
 
-        stream.on("close", () => {
-          log("speculos-event", "close");
-          this.emit("disconnect", new DisconnectedDevice("Speculos events stream closed"));
-        });
+          stream.on("close", () => {
+            log("speculos-event", "close");
+            this.emit("disconnect", new DisconnectedDevice("Speculos events stream closed"));
+          });
 
-        stream.on("error", (err: unknown) => {
-          log("speculos-event", "error", { err: String(err) });
-          this.emit("disconnect", new DisconnectedDevice("Speculos SSE error"));
+          stream.on("error", err => {
+            log("speculos-event", "error", { err: String(err) });
+            // If the stream errors before resolve, surface it
+            if (!resolved) reject(err);
+            this.emit("disconnect", new DisconnectedDevice("Speculos SSE error"));
+          });
+        })
+        .catch(err => {
+          if (connectTimer) clearTimeout(connectTimer);
+          if (!resolved) reject(err);
+          this.tracer.trace("SSE open error", { error: String(err) });
         });
-      })
-      .catch(err => {
-        if (connectTimer) clearTimeout(connectTimer);
-        this.tracer.trace("SSE open error", { error: String(err) });
-      });
+    });
   }
 
   public async button(but: string): Promise<void> {
