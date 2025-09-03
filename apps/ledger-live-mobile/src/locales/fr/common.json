@@ -694,6 +694,15 @@
       "title" : "Échec de l’appairage",
       "description" : "Réessayez ou consultez notre article de dépannage Bluetooth."
     },
+    "OneSuiMinForStake" : {
+      "title" : "Le montant minimal est de 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "Le montant minimal est de 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Vous devez conserver au moins 1 SUI en staking"
+    },
     "PasswordIncorrect" : {
       "title" : "Mot de passe incorrect",
       "description" : "Veuillez réessayer."
@@ -1073,6 +1082,18 @@
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
+    },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Solde insuffisant",
+      "description" : "Solde de HBAR insuffisant pour payer l’association du token. Vous devez disposez d’au moins {{requiredWorthInUSD}} USD en HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Association du token requise",
+      "description" : "Le token que vous essayez d’envoyer n’a pas d’association avec le compte bénéficiaire. Pour le recevoir, le bénéficiaire doit l’associer à son compte."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "Impossible de vérifier l’association du token",
+      "description" : "Nous n’avons pas pu confirmer que le compte bénéficiaire peut recevoir ce token. L’adresse pourrait être invalide, ou il pourrait y avoir un problème avec le réseau ou le service."
     },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
@@ -2135,27 +2156,6 @@
         "learnHowToUpdate" : "Comment mettre à jour"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Synchroniser vos cryptos depuis un ordinateur",
-      "desc" : "Si vous gérez déjà vos cryptos dans l’app Ledger Live pour l’ordinateur, vous pouvez synchroniser pour les gérer depuis votre téléphone.",
-      "cta" : "Je suis prêt(e) à scanner",
-      "bullets" : {
-        "0" : {
-          "label" : "Sur Ledger Live pour l’ordinateur, allez dans\n<1>Paramètres > Comptes > Exporter les comptes</1>."
-        },
-        "1" : {
-          "label" : "Scannez le code QR avec votre téléphone."
-        },
-        "2" : {
-          "label" : "Sélectionnez les comptes de cryptos à importer."
-        }
-      },
-      "warning" : {
-        "title" : "Vos apps pour l’ordinateur et pour le mobile doivent être synchronisées manuellement.",
-        "desc" : "Ledger Live respecte votre vie privée et stocke vos données localement. Si vous modifiez vos comptes ou paramètres sur votre téléphone, vous devez le faire aussi sur votre ordinateur, et inversement. Vos transactions restent synchronisées avec la blockchain.",
-        "cta" : "Compris"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Allumez votre {{fullDeviceName}} et suivez les instructions.",
       "step1-nanoS" : "Connectez votre {{fullDeviceName}} à votre téléphone à l’aide d’un câble OTG.",
@@ -2728,7 +2728,8 @@
       "WITHDRAW" : "Retiré",
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
-      "WITHDRAW_UNSTAKED" : "Retiré"
+      "WITHDRAW_UNSTAKED" : "Retiré",
+      "ASSOCIATE_TOKEN" : "Association de token"
     }
   },
   "operationDetails" : {
@@ -2760,6 +2761,7 @@
     "extra" : {
       "transferId" : "Identifiant de transfert (mémo)",
       "resource" : "Ressource",
+      "validator" : "Validateur",
       "frozenAmount" : "Montant gelé",
       "unfreezeAmount" : "Dégeler le montant",
       "address" : "Adresse",
@@ -3179,7 +3181,7 @@
       "hideTokenCTA" : "Masquer le token",
       "showContractCTA" : "Afficher le contrat",
       "blacklistedTokens" : "Liste de tokens masqués",
-      "blacklistedTokensDesc" : "Vous pouvez cacher des tokens en vous rendant sur l'onglet Comptes, en faisant un appui long sur le token et choisissant Masquer le token.",
+      "blacklistedTokensDesc" : "Vous pouvez cacher des tokens en vous rendant sur l’onglet Comptes, en faisant un appui long sur le token et choisissant Masquer le token.",
       "blacklistedTokensModal" : {
         "title" : "Masquer le token",
         "desc" : "Vous vous apprêtez à cacher tous vos comptes <1><0>{tokenName}</0></1>. Vous pouvez restaurer leur visibilité à tout moment dans <3>Paramètres > Comptes</3>.",
@@ -3746,6 +3748,10 @@
       },
       "twoStepApproval" : {
         "title" : "Suivez les étapes"
+      },
+      "loader" : {
+        "title" : "Échange en cours de traitement",
+        "description" : "Veuillez patienter, nous traitons votre demande."
       },
       "history" : {
         "title" : "Historique des échanges"
@@ -6456,6 +6462,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI disponibles",
+        "description" : "Ce montant est disponible."
+      },
+      "storageUsage" : {
+        "title" : "Solde minimum",
+        "description" : "Montant réservé pour le stockage et les transactions. Il s’agit du solde minimum requis pour que votre compte reste actif."
+      },
+      "staked" : {
+        "title" : "Actif délégué",
+        "description" : "Solde actifs délégués"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à arrêter"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "Une fois la délégation interrompue, votre solde et les récompenses cumulées seront encaissés"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Délégation des actifs arrêtée"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à retirer"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Retrait des actifs effectué"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Délégation(s)",
+      "info" : "Fonctionnement de la délégation",
+      "add" : "Ajouter",
+      "stakingEarn" : "Vous pouvez gagner des récompenses en SUI en déléguant vos actifs.",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "iStake" : "Je délègue",
+      "actions" : {
+        "unstake" : "Arrêter la délégation"
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "pending" : "En attente",
+        "available" : "Disponible au retrait"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Montant à déléguer",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Déléguez vos SUI pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "0" : "Vous conservez la propriété de vos actifs délégués.",
+              "1" : "Une fois la délégation interrompue, votre solde et les récompenses cumulées seront encaissés.",
+              "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "assetsRemaining" : "Actifs restants : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "minAmount" : "Montant minimal : <0>{{min}}</0>",
+            "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "cta" : "Continuer"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6643,6 +6750,7 @@
       "undelegate" : "La délégation de votre compte se terminera une fois l’opération confirmée. Vous pouvez à nouveau déléguer votre compte à tout moment."
     },
     "summaryTitle" : "Récapitulatif",
+    "delegate" : "Déléguer",
     "goToAccount" : "Accéder aux Comptes",
     "howDelegationWorks" : "Fonctionnement de la délégation",
     "actions" : {
@@ -7079,6 +7187,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Afin de recevoir des tokens HTS, votre compte doit être associé. Si vous n’avez pas encore associé votre compte avec le token HTS que vous souhaitez recevoir, appuyez <0>ici</0> pour commencer l’association.",
+          "learnMore" : "En savoir plus"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "Choisir le token à recevoir"
+      },
+      "summary" : {
+        "title" : "Associer le token",
+        "from" : "Token",
+        "to" : "À",
+        "warning" : {
+          "text" : "En appuyant sur Continuer, vous associez le token sélectionné à votre compte Hedera.",
+          "learnMore" : "En savoir plus"
+        }
+      },
+      "selectDevice" : {
+        "title" : "Associer le token"
+      },
+      "connectDevice" : {
+        "title" : "Associer le token"
+      },
+      "validationSuccess" : {
+        "title" : "Transaction effectuée",
+        "text" : "Vous pourrez recevoir ce token une fois la transaction d’association confirmée."
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "En savoir plus"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "En savoir plus"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Token associé",
+      "postAlert" : {
+        "text" : "Une fois la transaction confirmée, vous pourrez recevoir votre token. Appuyez <0>ici</0> pour commencer à recevoir.",
+        "learnMore" : "En savoir plus"
+      }
     }
   },
   "asset" : {
@@ -7787,7 +7944,13 @@
     "searchPlaceholder" : "Rechercher",
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount" : "{{count}} compte",
-    "accountCount_plural" : "{{count}} comptes"
+    "accountCount_plural" : "{{count}} comptes",
+    "errors" : {
+      "title" : "Connection failed",
+      "backend" : "Something went wrong on our end. Please try again later",
+      "internet" : "No internet connection. Please try again",
+      "cta" : "Réessayer"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
