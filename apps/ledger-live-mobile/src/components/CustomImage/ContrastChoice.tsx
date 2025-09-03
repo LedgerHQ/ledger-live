@@ -1,24 +1,27 @@
 import { Box, InfiniteLoader } from "@ledgerhq/native-ui";
 import React from "react";
 import styled from "styled-components/native";
+import { Appearance } from "./dithering/types";
+import { Image } from "react-native";
 
 type Props = {
-  color: { topLeft: string; bottomRight: string };
+  appearance: Appearance;
   selected: boolean;
   loading?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
 };
 
-const Container = styled(Box).attrs((p: { selected: boolean }) => ({
-  height: 50,
-  width: 50,
-  borderRadius: "4px",
+const Container = styled(Box).attrs(p => ({
+  height: p.appearance.type === "two-colors" ? 50 : 56,
+  width: p.appearance.type === "two-colors" ? 50 : 56,
+  borderRadius: p.appearance.type === "two-colors" ? "5px" : "8px",
   justifyContent: "center",
   alignItems: "center",
   borderWidth: p.selected ? 2 : 0,
-  borderColor: p.selected ? "constant.white" : "neutral.c40",
-}))<{ selected: boolean }>``;
+  padding: p.appearance.type === "two-colors" ? 0 : 2,
+  borderColor: p.selected ? "neutral.c100" : "neutral.c40",
+}))<{ selected: boolean; appearance: Appearance }>``;
 
 const ContrastOption = styled(Box).attrs({
   borderRadius: "4px",
@@ -36,13 +39,17 @@ const Triangle = styled(Box).attrs({
   borderRightColor: "transparent",
 })``;
 
-const ContrastChoice: React.FC<Props> = ({ loading, selected, color, isFirst, isLast }) => (
-  <Container ml={isFirst ? 0 : 1} mr={isLast ? 0 : 1} selected={selected}>
+const ContrastChoice: React.FC<Props> = ({ loading, selected, appearance, isFirst, isLast }) => (
+  <Container ml={isFirst ? 0 : 1} mr={isLast ? 0 : 1} selected={selected} appearance={appearance}>
     {selected && loading ? (
       <InfiniteLoader size={28} />
+    ) : appearance.type === "two-colors" ? (
+      <ContrastOption backgroundColor={appearance.bottomRightColor}>
+        <Triangle borderTopColor={appearance.topLeftColor} />
+      </ContrastOption>
     ) : (
-      <ContrastOption backgroundColor={color.bottomRight}>
-        <Triangle borderTopColor={color.topLeft} />
+      <ContrastOption>
+        <Image style={{ width: 48, height: 48 }} source={appearance.backgroundPicSrc} />
       </ContrastOption>
     )}
   </Container>

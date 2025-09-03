@@ -2,10 +2,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { ScreenName } from "~/const";
 import { CropResult } from "../../CustomImage/ImageCropper";
-import {
-  ProcessorPreviewResult,
-  ProcessorRawResult,
-} from "../../CustomImage/ImageToDeviceProcessor";
+import { ProcessorPreviewResult, ProcessorRawResult } from "../../CustomImage/dithering/types";
 import { GalleryNFT, ImageFileUri, ImageUrl, ImageType } from "../../CustomImage/types";
 
 type BaseParams = {
