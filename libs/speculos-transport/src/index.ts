@@ -1,12 +1,11 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
+import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import http from "http";
 
 export type SpeculosDevice = {
   transport: SpeculosTransport;
@@ -16,9 +15,9 @@ export type SpeculosDevice = {
 };
 
 export type SpeculosTransport =
-  | DeviceManagementKitTransportSpeculos
+  | SpeculosTransportHttp
   | SpeculosTransportWebsocket
-  | SpeculosTransportHttp;
+  | DeviceManagementKitTransportSpeculos;
 
 export { DeviceModelId };
 
@@ -34,7 +33,7 @@ export type SpeculosDeviceInternal =
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
-      transport: DeviceManagementKitTransportSpeculos | SpeculosTransportHttp;
+      transport: SpeculosTransportHttp | DeviceManagementKitTransportSpeculos;
       destroy: () => Promise<unknown>;
     };
 
@@ -124,12 +123,6 @@ interface Dependency {
   appVersion?: string;
 }
 
-// optional automation configuration
-type AutomationRules = {
-  version: 1;
-  rules: Array<any>;
-};
-
 export type DeviceParams = {
   model: DeviceModelId;
   firmware: string;
@@ -143,103 +136,7 @@ export type DeviceParams = {
   // if you want to force a specific app path
   overridesAppPath?: string;
   onSpeculosDeviceCreated?: (device: SpeculosDevice) => Promise<void>;
-  // either mount a file or push rules at runtime
-  automationPath?: string; // host path to an automation.json you want to mount
-  automationRules?: AutomationRules; // inline rules to POST to /automation
 };
-
-// --- (optional) default automation, kept but OFF by default via env ---
-
-const defaultAutomationFor = (appName: string): AutomationRules | undefined => {
-  const a = appName.toLowerCase();
-  // Keep this minimal & conservative; we can extend safely later.
-  if (["cosmos", "osmosis", "injective", "sei", "akash", "terra"].some(n => a.includes(n))) {
-    return {
-      version: 1,
-      rules: [
-        { regex: ".*Settings.*", actions: [{ button: "both" }] },
-        { regex: ".*Expert(\\s*mode)?|.*Expert.*", actions: [{ button: "both" }] },
-        { regex: ".*Enable|.*Enabled|.*Allow|.*Turn on.*", actions: [{ button: "both" }] },
-      ],
-    };
-  }
-  if (
-    ["solana", "ethereum", "polygon", "bsc", "avalanche", "arbitrum", "optimism"].some(n =>
-      a.includes(n),
-    )
-  ) {
-    return {
-      version: 1,
-      rules: [
-        { regex: ".*Settings|.*Preferences|.*Advanced.*", actions: [{ button: "both" }] },
-        {
-          regex: ".*Blind\\s*signing|.*Contract\\s*data|.*Allow\\s*contract.*",
-          actions: [{ button: "both" }],
-        },
-        { regex: ".*Enable|.*Enabled|.*Allow|.*Turn on.*", actions: [{ button: "both" }] },
-      ],
-    };
-  }
-  return undefined;
-};
-
-// lightweight GET (used to wait for REST API to be ready)
-function getOnce(apiPort: string, path: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const req = http.request(
-      { hostname: "127.0.0.1", port: Number(apiPort), path, method: "GET" },
-      res =>
-        res.statusCode && res.statusCode < 500
-          ? resolve()
-          : reject(new Error(String(res.statusCode))),
-    );
-    req.on("error", reject);
-    req.end();
-  });
-}
-
-async function waitForApi(apiPort?: string, timeoutMs = 15000) {
-  if (!apiPort) return;
-  const start = Date.now();
-  while (Date.now() - start < timeoutMs) {
-    try {
-      await getOnce(apiPort, "/screenshot"); // cheap and present on REST
-      return;
-    } catch {
-      await delay(250);
-    }
-  }
-  throw new Error(`Speculos REST API not ready on port ${apiPort}`);
-}
-
-// POST automation rules to Speculos
-async function postAutomation(apiPort: string, rules: AutomationRules): Promise<void> {
-  const body = JSON.stringify(rules);
-  return new Promise<void>((resolve, reject) => {
-    const req = http.request(
-      {
-        hostname: "127.0.0.1",
-        port: Number(apiPort),
-        path: "/automation",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(body),
-        },
-      },
-      res => {
-        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          resolve();
-        } else {
-          reject(new Error(`Automation POST failed with status ${res.statusCode}`));
-        }
-      },
-    );
-    req.on("error", reject);
-    req.write(body);
-    req.end();
-  });
-}
 
 /**
  * instanciate a speculos device that runs through docker
@@ -258,8 +155,6 @@ export async function createSpeculosDevice(
     coinapps,
     dependency,
     dependencies,
-    automationPath,
-    automationRules,
   } = arg;
   idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
@@ -270,15 +165,10 @@ export async function createSpeculosDevice(
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
   const appPath = `./apps/${subpath}`;
 
-  // build -v arguments once so we can optionally mount automation file
-  const dockerVolumes: string[] = [`${coinapps}:/speculos/apps`];
-  if (automationPath) {
-    dockerVolumes.push(`${automationPath}:/tmp/automation.json`);
-  }
-
   const params = [
     "run",
-    ...dockerVolumes.flatMap(v => ["-v", v]),
+    "-v",
+    `${coinapps}:/speculos/apps`,
     ...(isSpeculosWebsocket
       ? [
           // websocket ports
@@ -294,7 +184,7 @@ export async function createSpeculosDevice(
       : [
           // http ports
           "-p",
-          `${(ports as any).apiPort}:40000`,
+          `${ports.apiPort}:40000`,
           "-p",
           `${ports.vncPort}:41000`,
         ]),
@@ -315,12 +205,7 @@ export async function createSpeculosDevice(
     ...(dependencies !== undefined
       ? dependencies.flatMap(dependency => [
           "-l",
-          `${dependency.name}:./apps/${conventionalAppSubpath(
-            model,
-            firmware,
-            dependency.name,
-            dependency.appVersion ? dependency.appVersion : "1.0.0",
-          )}`,
+          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
         ])
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
@@ -343,8 +228,6 @@ export async function createSpeculosDevice(
           "--api-port",
           "40000",
         ]),
-    // pass automation file to Speculos if provided
-    ...(automationPath ? ["--automation", "file:/tmp/automation.json"] : []),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -354,8 +237,8 @@ export async function createSpeculosDevice(
   let resolveReady: (value: boolean) => void;
   let rejectReady: (e: Error) => void;
   const ready = new Promise((resolve, reject) => {
-    resolveReady = resolve as any;
-    rejectReady = reject as any;
+    resolveReady = resolve;
+    rejectReady = reject;
   });
   let destroyed = false;
 
@@ -377,25 +260,27 @@ export async function createSpeculosDevice(
     });
   };
 
-  p.stdout.on("data", d => {
-    if (d) log("speculos-stdout", `${speculosID}: ${String(d).trim()}`);
+  p.stdout.on("data", data => {
+    if (data) {
+      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+    }
   });
   let latestStderr: string | undefined;
-  p.stderr.on("data", async d => {
-    if (!d) return;
-    latestStderr = String(d);
+  p.stderr.on("data", async data => {
+    if (!data) return;
+    latestStderr = data;
 
-    if (!latestStderr.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${latestStderr.trim()}`);
+    if (!data.includes("apdu: ")) {
+      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
 
-    if (/using\s(?:SDK|API_LEVEL)/.test(latestStderr)) {
+    if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (latestStderr.includes("is already in use by")) {
+    } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
-    } else if (latestStderr.includes("address already in use")) {
+    } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
         await destroy();
@@ -421,45 +306,30 @@ export async function createSpeculosDevice(
   let transport: SpeculosTransport;
   if (isSpeculosWebsocket) {
     transport = await SpeculosTransportWebsocket.open({
-      apduPort: (ports as any)?.apduPort as number,
-      buttonPort: (ports as any)?.buttonPort as number,
-      automationPort: (ports as any)?.automationPort as number,
+      apduPort: ports?.apduPort as number,
+      buttonPort: ports?.buttonPort as number,
+      automationPort: ports?.automationPort as number,
     });
 
     data[speculosID] = {
       process: p,
-      apduPort: (ports as any).apduPort as number,
-      buttonPort: (ports as any).buttonPort as number,
-      automationPort: (ports as any).automationPort as number,
+      apduPort: ports.apduPort as number,
+      buttonPort: ports.buttonPort as number,
+      automationPort: ports.automationPort as number,
       transport,
       destroy,
     };
   } else {
     transport = await DeviceManagementKitTransportSpeculos.open({
-      apiPort: (ports as any).apiPort?.toString(),
+      apiPort: ports.apiPort?.toString(),
     });
 
     data[speculosID] = {
       process: p,
-      apiPort: (ports as any).apiPort?.toString(),
+      apiPort: ports.apiPort?.toString(),
       transport,
       destroy,
     };
-
-    // post automation rules: caller-provided OR safe defaults by app (OFF by default)
-    const wantDefault = (process.env.SPECULOS_DEFAULT_AUTOMATION ?? "0") === "1";
-    const effRules = automationRules ?? (wantDefault ? defaultAutomationFor(appName) : undefined);
-
-    if (effRules && (ports as any).apiPort) {
-      try {
-        await waitForApi((ports as any).apiPort.toString()); // ensure REST is up in CI
-        await postAutomation((ports as any).apiPort.toString(), effRules);
-        log("speculos", `${speculosID}: automation rules posted for ${appName}`);
-      } catch (e: any) {
-        // Do NOT fail device creation on automation errors (prevents regressions)
-        log("speculos-warn", `${speculosID}: automation setup failed (${e?.message || e})`);
-      }
-    }
   }
 
   const device = {
