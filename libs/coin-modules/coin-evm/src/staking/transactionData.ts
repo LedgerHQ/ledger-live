@@ -9,35 +9,41 @@ export interface GenerateStakingDataParams {
   amount: bigint;
   transactionType: StakingTransactionType;
   currencyId: string;
-  sourceValidator?: string; // rquired for redelegate
+  sourceValidator?: string;
+  delegator?: string;
 }
 
-const buildTransactionParams = (
+export const buildTransactionParams = (
   currencyId: string,
   transactionType: StakingTransactionType,
   recipient: string,
   amount: bigint,
   sourceValidator?: string,
+  delegator?: string,
 ): unknown[] => {
-  // Sei EVM contract
   if (currencyId === "sei_network_evm") {
     switch (transactionType) {
-      case "getStakedBalance":
       case "delegate":
         return [recipient];
       case "undelegate":
         return [recipient, amount];
       case "redelegate":
         if (!sourceValidator) {
-          throw new Error("Source validator is required for redelegate operation");
+          throw new Error("SEI redelegate requires sourceValidator (src validator)");
         }
         return [sourceValidator, recipient, amount];
+      case "getStakedBalance":
+        if (!delegator || !sourceValidator) {
+          throw new Error(
+            "SEI getStakedBalance requires delegator (0x...) and validator (seivaloper...)",
+          );
+        }
+        return [delegator, sourceValidator];
       default:
-        throw new Error(`Unsupported transaction type: ${transactionType}`);
+        throw new Error(`Unsupported transaction type for SEI: ${transactionType}`);
     }
   }
 
-  // Celo contract
   if (currencyId === "celo") {
     switch (transactionType) {
       case "delegate":
@@ -47,7 +53,7 @@ const buildTransactionParams = (
       case "getUnstakedBalance":
         return [recipient];
       default:
-        throw new Error(`Unsupported transaction type: ${transactionType}`);
+        throw new Error(`Unsupported transaction type for CELO: ${transactionType}`);
     }
   }
 
@@ -55,7 +61,7 @@ const buildTransactionParams = (
 };
 
 export const generateStakingTransactionData = (params: GenerateStakingDataParams): Buffer => {
-  const { currencyId, transactionType, recipient, amount, sourceValidator } = params;
+  const { currencyId, transactionType, recipient, amount, sourceValidator, delegator } = params;
 
   const config = getStakingContractConfig(currencyId);
   if (!config) {
@@ -68,6 +74,7 @@ export const generateStakingTransactionData = (params: GenerateStakingDataParams
     recipient,
     amount,
     sourceValidator,
+    delegator,
   );
 
   const encodedData = encodeStakingData({
