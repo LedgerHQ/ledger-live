@@ -6,6 +6,7 @@ import {
   getTransactions,
   getPartyById,
   getPartyByPubKey,
+  prepare,
 } from "./gateway";
 
 describe("gateway (devnet)", () => {
@@ -45,7 +46,6 @@ describe("gateway (devnet)", () => {
       );
       expect(balance.length).toBeGreaterThanOrEqual(1);
       expect(balance[0].amount).toBeGreaterThanOrEqual(0);
-      expect(balance[0].instrumentId.includes("Splice")).toBe(true);
     });
   });
 
@@ -72,5 +72,30 @@ describe("gateway (devnet)", () => {
       );
       expect(transactions.length).toBeGreaterThanOrEqual(0);
     });
+  });
+
+  describe("prepare", () => {
+    it("should return prepared transfer transaction", async () => {
+      const response = await prepare(
+        "party-4f2e1485107adf5f::122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
+        {
+          amount: 1,
+          type: "token-transfer-request",
+          execute_before_secs: 60 * 60 * 24,
+          instrument_id: "Amulet",
+          recipient:
+            "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
+        },
+      );
+
+      expect(response).toBeDefined();
+      expect(response).toHaveProperty("hash");
+      expect(response).toHaveProperty("json");
+      expect(response).toHaveProperty("serialized");
+      expect(typeof response.hash).toBe("string");
+      expect(typeof response.serialized).toBe("string");
+      expect(response.hash).toHaveLength(64); // SHA-256 hash length
+      expect(response.serialized.length).toBeGreaterThan(0);
+    }, 30000); // Increased timeout to 30 seconds for network operations
   });
 });

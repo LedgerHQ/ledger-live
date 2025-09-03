@@ -16,3 +16,4 @@ const ValidatorImageWrapper = ({ size, stakingPosition }: Props) => (
 );
 
 export default ValidatorImageWrapper;
+
