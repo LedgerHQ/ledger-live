@@ -11,7 +11,6 @@ import {
   Stake,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
-import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
@@ -27,7 +26,6 @@ import {
   MemoInput,
 } from "../logic";
 import { ListOperationsOptions, XrpMapMemo } from "../types";
-import { Order } from "../types/model";
 
 export function createApi(config: XrpConfig): Api<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
