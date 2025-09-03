@@ -2,9 +2,9 @@ import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageToDeviceProcessor";
-import { injectedCode, htmlPage } from "./injectedCode/imageFromDeviceProcessing";
-import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
+import { ProcessorPreviewResult, ProcessorRawResult } from "./types";
+import { injectedCode, htmlPage } from "./imageFromDeviceProcessing";
+import { InjectedCodeDebugger } from "../InjectedCodeDebugger";
 
 export type Props = ProcessorRawResult & {
   onError: (_: Error) => void;
