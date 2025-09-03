@@ -7,11 +7,11 @@ import { useModularDrawerFlowStepManager } from "./useModularDrawerFlowStepManag
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { UseAssetsData } from "./useAssetsFromDada";
+import { AssetsData } from "./useAssetsFromDada";
+import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 
 type ModularDrawerStateProps = {
-  assetsSorted: UseAssetsData;
+  assetsSorted: AssetsData;
   selectedStep?: ModularDrawerStep;
   currencyIds: string[];
   isDrawerOpen?: boolean;
@@ -19,16 +19,9 @@ type ModularDrawerStateProps = {
   onClose?: () => void;
   onAccountSelected?: (account: Account) => void;
   readonly flow: string;
+  hasSearchedValue?: boolean;
 };
 
-function getNetworksForAsset(assetsSorted: UseAssetsData, assetId: string) {
-  return assetsSorted?.find(elem => elem.asset.id === assetId)?.networks ?? [];
-}
-
-/**
- * Custom hook to manage the state of the Modular Drawer.
- * It handles asset and network selection, navigation between steps, and resetting state.
- */
 export function useModularDrawerState({
   assetsSorted,
   currencyIds,
@@ -36,39 +29,30 @@ export function useModularDrawerState({
   enableAccountSelection,
   onClose,
   flow,
+  hasSearchedValue,
 }: ModularDrawerStateProps) {
   const navigationStepManager = useModularDrawerFlowStepManager();
 
-  // State management
   const [asset, setAsset] = useState<CryptoOrTokenCurrency>();
   const [network, setNetwork] = useState<CryptoOrTokenCurrency>();
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
   const autoSelectRef = useRef(false);
 
-  // Computed values
-  const singleCurrency = useMemo(() => {
-    return currencyIds.length === 1 ? findCryptoCurrencyById(currencyIds[0]) : undefined;
-  }, [currencyIds]);
+  const singleCurrency = useMemo(
+    () => (assetsSorted?.length === 1 ? assetsSorted[0].networks[0] : undefined),
+    [assetsSorted],
+  );
 
-  // To adapt
-  const hasOneCurrency = useMemo(() => assetsSorted?.length === 1, [assetsSorted?.length]);
+  const hasOneCurrency = useMemo(() => currencyIds.length === 1, [currencyIds.length]);
 
-  const clearNetwork = useCallback(() => {
-    setNetwork(undefined);
-  }, []);
+  const clearNetwork = () => setNetwork(undefined);
 
   const reset = useCallback(() => {
     setAsset(undefined);
-    clearNetwork();
+    setNetwork(undefined);
     setAvailableNetworks([]);
-  }, [clearNetwork]);
-
-  // Network selection state
-  const selectNetwork = useCallback((selectedNetwork: CryptoOrTokenCurrency) => {
-    setNetwork(selectedNetwork);
   }, []);
 
-  // Navigation handlers
   const { navigateToDeviceWithCurrency } = useDeviceNavigation({
     navigationStepManager,
     enableAccountSelection,
@@ -89,70 +73,49 @@ export function useModularDrawerState({
     hasOneCurrency,
     resetSelection: reset,
     clearNetwork,
-    selectNetwork,
+    selectNetwork: setNetwork,
     enableAccountSelection,
     navigateToDeviceWithCurrency,
   });
 
-  // Asset selection logic
-  const selectAsset = useCallback(
+  // Handle asset selection and determine next step
+  const handleAsset = useCallback(
     (selected: CryptoOrTokenCurrency, networks?: CryptoOrTokenCurrency[]) => {
       setAsset(selected);
-
       const availableNetworksList = networks ?? getNetworksForAsset(assetsSorted, selected.id);
 
       if (availableNetworksList.length > 1) {
         setAvailableNetworks(availableNetworksList);
         navigationStepManager.goToStep(ModularDrawerStep.Network);
+      } else if (availableNetworksList.length === 1) {
+        const singleNetwork = availableNetworksList[0];
+        const resolvedCurrency = resolveCurrency(assetsSorted, selected, singleNetwork);
+        proceedToNextStep(resolvedCurrency ?? selected, singleNetwork);
       } else if (enableAccountSelection) {
         navigationStepManager.goToStep(ModularDrawerStep.Account);
       } else {
         navigateToDeviceWithCurrency(selected);
       }
     },
-    [assetsSorted, enableAccountSelection, navigationStepManager, navigateToDeviceWithCurrency],
+    [
+      assetsSorted,
+      enableAccountSelection,
+      navigationStepManager,
+      navigateToDeviceWithCurrency,
+      proceedToNextStep,
+    ],
   );
 
-  // Network navigation logic
-  const goToNetwork = useCallback(
-    (currency: CryptoOrTokenCurrency, networks: CryptoOrTokenCurrency[]) =>
-      selectAsset(currency, networks),
-    [selectAsset],
-  );
-
-  // Asset and network handlers with provider logic
-  const handleAsset = useCallback(
-    (currency: CryptoOrTokenCurrency) => {
-      const assetNetworks = getNetworksForAsset(assetsSorted, currency.id);
-
-      if (assetNetworks.length === 0) {
-        selectAsset(currency);
-        return;
-      }
-      goToNetwork(currency, assetNetworks);
-    },
-    [assetsSorted, goToNetwork, selectAsset],
-  );
-
+  // Handle network selection and proceed
   const handleNetwork = useCallback(
     (selectedNetwork: CryptoOrTokenCurrency) => {
       if (!asset) return;
-      const networksForAsset = getNetworksForAsset(assetsSorted, asset.id);
-
-      const correspondingCurrency = networksForAsset.find(n =>
-        n.type === "CryptoCurrency"
-          ? n.id === selectedNetwork.id
-          : n.parentCurrency.id === selectedNetwork.id,
-      );
-
-      if (correspondingCurrency) {
-        proceedToNextStep(correspondingCurrency, selectedNetwork);
-      }
+      const correspondingCurrency = resolveCurrency(assetsSorted, asset, selectedNetwork);
+      if (correspondingCurrency) proceedToNextStep(correspondingCurrency, selectedNetwork);
     },
     [asset, assetsSorted, proceedToNextStep],
   );
 
-  // Drawer navigation handlers via lifecycle hook
   const { handleBackButton, handleCloseButton } = useDrawerLifecycle({
     flow,
     navigationStepManager,
@@ -164,18 +127,14 @@ export function useModularDrawerState({
     resetSelection: reset,
   });
 
-  // Auto-handle single currency when drawer opens (guarded per open)
+  // Auto-select single currency if drawer is open and only one is available
   useEffect(() => {
-    if (!isDrawerOpen) return;
-    if (!singleCurrency) return;
-    if (autoSelectRef.current) return;
-
+    if (hasSearchedValue || !isDrawerOpen || !singleCurrency || autoSelectRef.current) return;
     autoSelectRef.current = true;
     handleAsset(singleCurrency);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDrawerOpen]);
+  }, [isDrawerOpen, singleCurrency, handleAsset, hasSearchedValue]);
 
-  // Reset guard and local selection when closing
+  // Reset state when drawer closes
   useEffect(() => {
     if (isDrawerOpen === false) {
       autoSelectRef.current = false;
@@ -183,24 +142,19 @@ export function useModularDrawerState({
     }
   }, [isDrawerOpen, reset]);
 
-  const assetForAccount = useMemo(() => {
-    if (!asset) return undefined;
-    if (!network) return asset;
-    const networksForAsset = getNetworksForAsset(assetsSorted, asset.id);
-    const correspondingCurrency = networksForAsset.find(n =>
-      n.type === "CryptoCurrency" ? n.id === network.id : n.parentCurrency.id === network.id,
-    );
-    return correspondingCurrency ?? asset;
-  }, [asset, network, assetsSorted]);
+  const accountCurrency = useMemo(
+    () => resolveCurrency(assetsSorted, asset, network),
+    [asset, network, assetsSorted],
+  );
 
-  const onAddNewAccount = useCallback(() => {
-    if (!assetForAccount) return;
-    navigateToDeviceWithCurrency(assetForAccount);
-  }, [assetForAccount, navigateToDeviceWithCurrency]);
+  const onAddNewAccount = () => {
+    if (!accountCurrency) return;
+    navigateToDeviceWithCurrency(accountCurrency);
+  };
 
   return {
     asset,
-    assetForAccount,
+    accountCurrency,
     network,
     availableNetworks,
     navigationStepManager,
