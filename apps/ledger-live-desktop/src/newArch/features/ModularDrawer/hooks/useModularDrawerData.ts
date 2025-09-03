@@ -8,14 +8,25 @@ import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAsse
 interface UseModularDrawerDataProps {
   currencies?: CryptoOrTokenCurrency[];
   searchedValue?: string;
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
 }
 
-export function useModularDrawerData({ currencies, searchedValue }: UseModularDrawerDataProps) {
+export function useModularDrawerData({
+  currencies,
+  searchedValue,
+  useCase,
+  areCurrenciesFiltered,
+}: UseModularDrawerDataProps) {
   const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
 
-  const { data, isLoading, isSuccess, error, loadNext } = useAssetsData({
+  const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    useCase,
+    areCurrenciesFiltered,
   });
 
   const assetsSorted = useMemo(() => {
@@ -33,8 +44,8 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
           networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
             .map(assetId => data.cryptoOrTokenCurrencies[assetId])
             .filter(network => network !== undefined),
-          interestRates: data.interestRates[firstNetworkId],
-          market: data.markets[firstNetworkId],
+          interestRates: data.interestRates?.[firstNetworkId],
+          market: data.markets?.[firstNetworkId],
         };
       });
   }, [data]);
@@ -65,6 +76,7 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
     isLoading,
     isSuccess,
     error,
+    refetch,
     loadingStatus,
     assetsSorted,
     currenciesByProvider,

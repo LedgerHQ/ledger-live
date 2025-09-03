@@ -7697,6 +7697,11 @@
         "selectAccount": "Continue",
         "close": "Close"
       }
+    },
+    "genericError": {
+      "title": "A network error occurred",
+      "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
+      "cta": "Retry"
     }
   },
   "nftEntryPoint": {

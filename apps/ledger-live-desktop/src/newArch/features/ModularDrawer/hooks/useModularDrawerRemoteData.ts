@@ -10,6 +10,8 @@ interface UseModularDrawerRemoteDataProps {
   currentStep: ModularDrawerStep;
   currencies: ModularDrawerFlowManagerProps["currencies"];
   drawerConfiguration: ModularDrawerFlowManagerProps["drawerConfiguration"];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
   goToStep: (step: ModularDrawerStep) => void;
   onAssetSelected: ModularDrawerFlowManagerProps["onAssetSelected"];
   onAccountSelected: ModularDrawerFlowManagerProps["onAccountSelected"];
@@ -20,6 +22,8 @@ export function useModularDrawerRemoteData({
   currentStep,
   currencies,
   drawerConfiguration,
+  useCase,
+  areCurrenciesFiltered,
   goToStep,
   onAssetSelected,
   onAccountSelected,
@@ -33,10 +37,11 @@ export function useModularDrawerRemoteData({
     currenciesByProvider,
     sortedCryptoCurrencies,
     error,
+    refetch,
     isSuccess,
     loadingStatus,
     loadNext,
-  } = useModularDrawerData({ currencies, searchedValue });
+  } = useModularDrawerData({ currencies, searchedValue, useCase, areCurrenciesFiltered });
 
   const {
     assetsToDisplay,
@@ -92,6 +97,7 @@ export function useModularDrawerRemoteData({
 
   return {
     error,
+    refetch,
     loadingStatus,
     assetsConfiguration,
     networkConfiguration,

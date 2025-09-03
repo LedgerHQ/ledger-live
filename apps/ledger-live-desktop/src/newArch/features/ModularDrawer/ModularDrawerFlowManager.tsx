@@ -7,6 +7,8 @@ import { ModularDrawerFlowManagerProps } from "./types";
 const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
+  useCase,
+  areCurrenciesFiltered,
   accounts$,
   flow,
   source,
@@ -23,6 +25,8 @@ const ModularDrawerFlowManager = ({
         accounts$={accounts$}
         flow={flow}
         source={source}
+        useCase={useCase}
+        areCurrenciesFiltered={areCurrenciesFiltered}
         onAssetSelected={onAssetSelected}
         onAccountSelected={onAccountSelected}
       />

@@ -22,6 +22,8 @@ export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULA
 export type ModularDrawerFlowManagerProps = {
   currencies: CryptoOrTokenCurrency[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
   accounts$?: Observable<WalletAPIAccount[]>;
   source: string;
   flow: string;
