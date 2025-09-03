@@ -570,6 +570,10 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
+      - name: Install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
