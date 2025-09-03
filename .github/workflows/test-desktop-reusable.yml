@@ -128,8 +128,8 @@ jobs:
       # DEBUG_LOGS: 1
     strategy:
       matrix:
-        shard: [1, 2, 3]
-        totalShards: [3]
+        shard: [1, 2, 3, 4]
+        totalShards: [4]
     runs-on: [ ubuntu-22.04 ]
     steps:
       - uses: actions/checkout@v4
