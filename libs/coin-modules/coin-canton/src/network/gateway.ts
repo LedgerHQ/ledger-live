@@ -87,6 +87,9 @@ export type CreatedEvent = BaseEvent & {
   };
   signatories: string[];
   observers: string[];
+  details: {
+    createArguments: { fields: unknown[] };
+  };
 };
 
 type ExercisedEvent = BaseEvent & {
@@ -113,6 +116,134 @@ export type TxInfo = {
   events: Record<string, Event>[];
   trace_context: string;
 };
+
+export type OperationInfo =
+  | {
+      uid: string;
+      transaction_hash: string;
+      transaction_timestamp: string;
+      status: "Success";
+      type: "Initialize";
+      senders: string[];
+      recipients: string[];
+      transfers: [
+        {
+          address: string;
+          type: "Initialize";
+          value: string;
+          asset: string;
+          details: {
+            type: "pre-approval";
+          };
+        },
+      ];
+      block: {
+        height: number;
+        time: string;
+        hash: string;
+      };
+      fee: {
+        value: string;
+        asset: {
+          type: "native";
+          issuer: null;
+        };
+        details: {
+          type: string;
+        };
+      };
+      asset: {
+        type: "token";
+        issuer: string;
+      };
+      details: {
+        type: "pre-approval";
+      };
+    }
+  | {
+      uid: string;
+      transaction_hash: string;
+      transaction_timestamp: string;
+      status: "Success";
+      type: "Receive";
+      senders: string[];
+      recipients: string[];
+      transfers: [
+        {
+          address: string;
+          type: "Receive";
+          value: string;
+          asset: string;
+          details: {
+            type: "tap";
+          };
+        },
+      ];
+      block: {
+        height: number;
+        time: string;
+        hash: string;
+      };
+      fee: {
+        value: string;
+        asset: {
+          type: "native";
+          issuer: null;
+        };
+        details: {
+          type: string;
+        };
+      };
+      asset: {
+        type: "native";
+        issuer: null;
+      };
+      details: {
+        type: "tap";
+      };
+    }
+  | {
+      uid: string;
+      transaction_hash: string;
+      transaction_timestamp: string;
+      status: "Success";
+      type: "Send";
+      senders: string[];
+      recipients: string[];
+      transfers: [
+        {
+          address: string;
+          type: "Send";
+          value: string;
+          asset: string;
+          details: {
+            type: "transfer";
+          };
+        },
+      ];
+      block: {
+        height: number;
+        time: string;
+        hash: string;
+      };
+      fee: {
+        value: string;
+        asset: {
+          type: "native";
+          issuer: null;
+        };
+        details: {
+          type: string;
+        };
+      };
+      asset: {
+        type: "native";
+        issuer: null;
+      };
+      details: {
+        type: "transfer";
+      };
+    };
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
 const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-devnet-stg";
@@ -204,7 +335,7 @@ async function getParty(identifier: string, by: "party-id" | "public-key"): Prom
   return data;
 }
 
-export async function getTransactions(
+export async function getOperations(
   partyId: string,
   options?: {
     cursor?: number | undefined;
@@ -214,15 +345,14 @@ export async function getTransactions(
   },
 ): Promise<{
   next: number;
-  transactions: TxInfo[];
+  operations: OperationInfo[];
 }> {
   const { data } = await network<{
     next: number;
-    transactions: TxInfo[];
+    operations: OperationInfo[];
   }>({
     method: "GET",
-    // TODO: we need better solution ?
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/transactions`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations`,
     data: options,
   });
   return data;

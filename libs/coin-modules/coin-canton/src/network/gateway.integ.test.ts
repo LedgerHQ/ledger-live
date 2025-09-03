@@ -3,7 +3,7 @@ import {
   getLedgerEnd,
   prepareOnboarding,
   getBalance,
-  getTransactions,
+  getOperations,
   getPartyById,
   getPartyByPubKey,
 } from "./gateway";
@@ -67,12 +67,12 @@ describe("gateway (devnet)", () => {
     });
   });
 
-  describe("getTransactions", () => {
+  describe("getOperations", () => {
     it("should return user transactions", async () => {
-      const { transactions } = await getTransactions(
+      const { operations } = await getOperations(
         "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
       );
-      expect(transactions.length).toBeGreaterThanOrEqual(0);
+      expect(operations.length).toBeGreaterThanOrEqual(0);
     });
   });
 });
