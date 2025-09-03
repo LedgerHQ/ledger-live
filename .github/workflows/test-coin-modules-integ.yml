@@ -18,6 +18,8 @@ jobs:
   integ-tests:
     name: "Coin modules integration tests"
     runs-on: ubuntu-22.04
+    outputs:
+      summary_text: ${{ steps.summarize.outputs.summary_text }}
 
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -44,9 +46,53 @@ jobs:
       - name: Build
         run: pnpm build:coin-modules:deps
 
+      # Capture stdout to a file (and turn colors off in the log for clean parsing)
       - name: Test
+        id: run-tests
         shell: bash
-        run: pnpm coin-modules:test-integ
+        env:
+          FORCE_COLOR: 0
+          NO_COLOR: "1"
+        run: |
+          set -o pipefail
+          pnpm coin-modules:test-integ 2>&1 | tee test-output.log
+
+      # Parse the log and output ONLY failing coin names as bullets.
+      - name: Summarize failed coins (names only)
+        id: summarize
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE' > failed_coins.json
+          const fs = require('fs');
+
+          // (defense-in-depth) strip ANSI if any slipped through
+          const stripAnsi = s =>
+            s.replace(/[\u001B\u009B][[()\]#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nq-uy=><]/g,'');
+
+          const text  = stripAnsi(fs.readFileSync('test-output.log','utf8'));
+          const lines = text.split('\n');
+
+          const coins = new Set();
+
+          // Typical per-coin FAIL lines
+          const failRe = /libs\/coin-modules\/(coin-[^\s:]+)\s+test-integ:\s+FAIL\b/g;
+          let m; while ((m = failRe.exec(text))) coins.add(m[1]);
+
+          // pnpm tail error blocks (package footer)
+          for (let i=0;i<lines.length;i++){
+            const tail = lines[i].match(/\/libs\/coin-modules\/(coin-[^:]+):\s*$/);
+            if (tail) coins.add(tail[1]);
+          }
+
+          const list = [...coins].sort();
+          const bullets = list.length ? list.map(c => `• ${c}`).join('\n') : '(none)';
+          process.stdout.write(JSON.stringify({ bullets }, null, 2));
+          NODE
+
+          echo "bullets<<EOF" >> "$GITHUB_OUTPUT"
+          jq -r '.bullets' failed_coins.json >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
   integ-tests-fail:
     name: failure report
@@ -54,7 +100,8 @@ jobs:
     if: failure() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: post to live-repo-health slack channel
+      - name: Post parent message
+        id: post_parent
         uses: slackapi/slack-github-action@v2.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
@@ -62,7 +109,7 @@ jobs:
           payload: |
             channel: "C05FKJ7DFAP"
             text: "[Test] Coin modules"
-            blocks: 
+            blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
@@ -71,6 +118,31 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+
+      # Reply in a thread with just the failing coin names (real newline, no \n literal).
+      - name: Build thread payload
+        id: build_thread
+        env:
+          THREAD_TS: ${{ fromJSON(steps.post_parent.outputs.response).ts }}
+          SUMMARY_BULLETS: ${{ needs.integ-tests.outputs.failed_coins_bullets }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          header=$'*Failed coins:*\n'
+          combined="${header}${SUMMARY_BULLETS:-'(none)'}"
+          jq -n \
+            --arg ch "C05FKJ7DFAP" \
+            --arg ts "$THREAD_TS" \
+            --arg text "$combined" \
+            '{channel:$ch, thread_ts:$ts, text:$text}' > slack-thread-payload.json
+
+      - name: Post failed coins in thread
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload-file-path: slack-thread-payload.json
+
   integ-tests-success:
     name: success report
     needs: integ-tests
