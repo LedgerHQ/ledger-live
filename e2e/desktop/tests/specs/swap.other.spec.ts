@@ -344,14 +344,13 @@ const swapWithDifferentSeed = [
     xrayTicket: "B2CQA-3089",
     userData: "speculos-x-other-account",
     errorMessage:
-      "This receiving account does not belong to the device you have connected. Please change and retry",
+      "This sending account does not belong to the device you have connected. Please change and retry",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
     xrayTicket: "B2CQA-3090",
     userData: "speculos-x-other-account",
-    errorMessage:
-      "This receiving account does not belong to the device you have connected. Please change and retry",
+    errorMessage: null,
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
@@ -395,9 +394,22 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        await app.swap.clickExchangeButton(electronApp, selectedProvider);
-
-        await app.swapDrawer.checkErrorMessage(errorMessage);
+        if (errorMessage) {
+          await app.swap.clickExchangeButton(electronApp, selectedProvider);
+          await app.swapDrawer.checkErrorMessage(errorMessage);
+        } else {
+          await performSwapUntilDeviceVerificationStep(
+            app,
+            electronApp,
+            swap,
+            selectedProvider,
+            minAmount,
+          );
+          await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
+          await app.swapDrawer.verifyExchangeCompletedTextContent(
+            swap.accountToCredit.currency.name,
+          );
+        }
       },
     );
   });

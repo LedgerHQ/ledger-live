@@ -55,4 +55,5 @@ export enum DeviceLabels {
   VERIFY_POLYGON = "Verify Polygon",
   VERIFY_SOLANA_ADDRESS = "Verify Solana address",
   REVIEW_TRANSACTION = "Review transaction",
+  I_UNDERSTAND = "I understand",
 }

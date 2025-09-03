@@ -4,8 +4,7 @@ const swapTestConfig = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
   tmsLinks: ["B2CQA-3090"],
   userData: "speculos-x-other-account",
-  errorMessage:
-    "This receiving account does not belong to the connected device. Please change and retry.",
+  errorMessage: null,
   tags: ["@NanoSP", "@LNS", "@NanoX"],
 };
 
