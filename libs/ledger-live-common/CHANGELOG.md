@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.5
+
+### Minor Changes
+
+- [#11591](https://github.com/LedgerHQ/ledger-live/pull/11591) [`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton broadcast
+
+- [#11587](https://github.com/LedgerHQ/ledger-live/pull/11587) [`66f17a3`](https://github.com/LedgerHQ/ledger-live/commit/66f17a31349c518c232934b68269d84fa5b6ab0f) Thanks [@dilaouid](https://github.com/dilaouid)! - fix: issue with token loading on SOL and Ethereum
+
+### Patch Changes
+
+- [#11613](https://github.com/LedgerHQ/ledger-live/pull/11613) [`9d3eef6`](https://github.com/LedgerHQ/ledger-live/commit/9d3eef600242c6be51c4dd844dffe06150e9f0c4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - XRP alpaca api switch fix
+
+- Updated dependencies [[`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d), [`66f17a3`](https://github.com/LedgerHQ/ledger-live/commit/66f17a31349c518c232934b68269d84fa5b6ab0f), [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8), [`244206f`](https://github.com/LedgerHQ/ledger-live/commit/244206f3ad721bd1b3c4908f5b02f6bd132dfcf7), [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419)]:
+  - @ledgerhq/coin-canton@0.4.0-nightly.2
+  - @ledgerhq/coin-solana@0.32.0-nightly.3
+  - @ledgerhq/coin-evm@2.29.0-nightly.2
+  - @ledgerhq/coin-sui@0.12.0-nightly.3
+  - @ledgerhq/live-signer-canton@0.2.3-nightly.3
+  - @ledgerhq/live-signer-solana@0.5.4-nightly.3
+  - @ledgerhq/coin-celo@1.2.2-nightly.2
+  - @ledgerhq/live-signer-evm@0.7.2-nightly.2
+
 ## 34.47.0-nightly.4
 
 ### Patch Changes

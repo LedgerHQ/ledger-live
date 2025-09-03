@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.92.0-nightly.4
+
+### Minor Changes
+
+- [#11583](https://github.com/LedgerHQ/ledger-live/pull/11583) [`1be6540`](https://github.com/LedgerHQ/ledger-live/commit/1be654082cf15ff11cdfc220691eef442356513c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap custom error messages
+
+- [#11607](https://github.com/LedgerHQ/ledger-live/pull/11607) [`d65e740`](https://github.com/LedgerHQ/ledger-live/commit/d65e740bc080dc0c9da7c215576fcced89fab735) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - fix earn default deeplink on mobile
+
+- [#11331](https://github.com/LedgerHQ/ledger-live/pull/11331) [`e205259`](https://github.com/LedgerHQ/ledger-live/commit/e2052595bee6d9aa3329f1da9578536a66a3a33c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: LLM loading screen when doing a swap to prevent back drop to quote page
+
+### Patch Changes
+
+- [#11598](https://github.com/LedgerHQ/ledger-live/pull/11598) [`9a9d649`](https://github.com/LedgerHQ/ledger-live/commit/9a9d649c1175ecf1a884a0ae615dba96b208c374) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update react-native-keychain to support 16KB and to drop unmaintained Facebook Conceal lib
+
+- Updated dependencies [[`66f17a3`](https://github.com/LedgerHQ/ledger-live/commit/66f17a31349c518c232934b68269d84fa5b6ab0f)]:
+  - @ledgerhq/coin-evm@2.29.0-nightly.2
+
 ## 3.92.0-nightly.3
 
 ### Minor Changes

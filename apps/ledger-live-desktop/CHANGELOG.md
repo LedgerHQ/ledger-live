@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.5
+
+### Minor Changes
+
+- [#11590](https://github.com/LedgerHQ/ledger-live/pull/11590) [`63925fc`](https://github.com/LedgerHQ/ledger-live/commit/63925fc0a028360033d2086ac7979524685de656) Thanks [@CremaFR](https://github.com/CremaFR)! - feat thorswap explorer link
+
+### Patch Changes
+
+- Updated dependencies [[`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d), [`9d3eef6`](https://github.com/LedgerHQ/ledger-live/commit/9d3eef600242c6be51c4dd844dffe06150e9f0c4), [`66f17a3`](https://github.com/LedgerHQ/ledger-live/commit/66f17a31349c518c232934b68269d84fa5b6ab0f)]:
+  - @ledgerhq/live-common@34.47.0-nightly.5
+  - @ledgerhq/coin-evm@2.29.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.5
+
 ## 2.127.0-nightly.4
 
 ### Patch Changes

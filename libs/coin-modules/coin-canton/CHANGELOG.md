@@ -1,5 +1,17 @@
 # @ledgerhq/coin-canton
 
+## 0.4.0-nightly.2
+
+### Minor Changes
+
+- [#11591](https://github.com/LedgerHQ/ledger-live/pull/11591) [`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton broadcast
+
+- [#11574](https://github.com/LedgerHQ/ledger-live/pull/11574) [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Canton combine function
+
+### Patch Changes
+
+- [#11610](https://github.com/LedgerHQ/ledger-live/pull/11610) [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton adapt getbalance
+
 ## 0.4.0-nightly.1
 
 ### Minor Changes

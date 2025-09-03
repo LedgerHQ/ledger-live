@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.29.0-nightly.2
+
+### Minor Changes
+
+- [#11587](https://github.com/LedgerHQ/ledger-live/pull/11587) [`66f17a3`](https://github.com/LedgerHQ/ledger-live/commit/66f17a31349c518c232934b68269d84fa5b6ab0f) Thanks [@dilaouid](https://github.com/dilaouid)! - fix: issue with token loading on SOL and Ethereum
+
 ## 2.29.0-nightly.1
 
 ### Minor Changes

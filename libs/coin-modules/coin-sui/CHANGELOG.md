@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.12.0-nightly.3
+
+### Patch Changes
+
+- [#11600](https://github.com/LedgerHQ/ledger-live/pull/11600) [`244206f`](https://github.com/LedgerHQ/ledger-live/commit/244206f3ad721bd1b3c4908f5b02f6bd132dfcf7) Thanks [@jprudent](https://github.com/jprudent)! - fix(sui): do not set tx hash in block hash
+
 ## 0.12.0-nightly.2
 
 ### Minor Changes
