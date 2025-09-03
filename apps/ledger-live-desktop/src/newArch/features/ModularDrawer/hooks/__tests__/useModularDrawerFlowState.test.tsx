@@ -32,7 +32,6 @@ describe("useModularDrawerFlowState", () => {
     const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
     expect(result.current.selectedAsset).toBeUndefined();
     expect(result.current.selectedNetwork).toBeUndefined();
-    expect(result.current.searchedValue).toBeUndefined();
     expect(result.current.providers).toBeUndefined();
   });
 
@@ -62,13 +61,5 @@ describe("useModularDrawerFlowState", () => {
     });
     expect(mockSetNetworksToDisplay).toHaveBeenCalledWith(filtered);
     expect(mockGoToStep).toHaveBeenCalledWith("NETWORK_SELECTION");
-  });
-
-  it("should set searched value", () => {
-    const { result } = renderHook(() => useModularDrawerFlowState(defaultProps));
-    act(() => {
-      result.current.setSearchedValue("btc");
-    });
-    expect(result.current.searchedValue).toBe("btc");
   });
 });

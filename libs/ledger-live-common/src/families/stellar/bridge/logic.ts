@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-stellar/bridge/logic";
+export * from "@ledgerhq/coin-stellar/logic";

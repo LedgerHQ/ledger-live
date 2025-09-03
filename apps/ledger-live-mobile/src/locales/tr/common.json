@@ -306,6 +306,10 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
+    "ReconnectionFailedError" : {
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 dk.",
       "medium" : "≈ 30 s.",
-      "fast" : "≈ 15 s."
+      "fast" : "≈ 15 s.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2139,7 +2144,6 @@
           "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
         },
         "1" : {
-          "label" : "LiveQR kodunu telefonunuzla tarayın."
         },
         "2" : {
           "label" : "İçe aktarılacak kripto hesaplarını seçin."
@@ -3238,7 +3242,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, Binance Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
@@ -3656,7 +3660,8 @@
           "refunded" : "Daha fazla bilgi için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
           "pending" : "Takas işlemi sağlayıcısı işleminizi yaparken lütfen bekleyin.",
           "onhold" : "Sorunu çözmek için lütfen takas işlemi sağlayıcısına Swap ID'niz ile başvurun.",
-          "finished" : "Takas işleminiz başarıyla tamamlandı."
+          "finished" : "Takas işleminiz başarıyla tamamlandı.",
+          "unknown" : "Sağlayıcıdan bilgi bekliyoruz."
         }
       },
       "missingApp" : {
@@ -3717,7 +3722,7 @@
             "provider" : "Sağlayıcı",
             "rate" : "Kur",
             "fees" : "Ağ ücretleri",
-            "feesDescription" : "This fee is charged by the blockchain network to process the swap. Only the sending fee is charged in the addition to the estimated quote. The receiving fee is included",
+            "feesDescription" : "Bu ücret, blok zinciri ağı tarafından takasın işlenmesi için alınır. Tahminî fiyat teklifine ek olarak sadece gönderim ücreti alınır. Teslim alma ücreti dâhildir.",
             "target" : "Hedef hesap"
           },
           "noAccount" : "{{name}} almak için bir hesap oluşturun",
@@ -4042,6 +4047,10 @@
       "quantityAvailable" : "Mevcut miktar"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "Kör imzalama gerekir",
+        "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+      },
       "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
       "tag" : "Etiket (İsteğe Bağlı)",
       "validateTag" : "Etiketi onayla",
@@ -6240,6 +6249,7 @@
       "iWithdraw" : "Çekilecek:",
       "totalStake" : "Toplam stake",
       "commission" : "Komisyon",
+      "netApy" : "Net APY",
       "stakeActivationState" : "Durum",
       "stakeActivePercent" : "Aktif",
       "stakeAvailableBalance" : "Mevcut bakiye",
@@ -7761,7 +7771,7 @@
   },
   "geoBlocking" : {
     "title" : "Konum kullanılamıyor",
-    "description" : "Ledger cüzdan bu konumda kullanılamıyor.",
+    "description" : "Ledger Live bu konumda kullanılamıyor.",
     "learnMore" : "Daha fazla bilgi"
   },
   "versionBlocking" : {
@@ -7773,7 +7783,10 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
-    "searchPlaceholder" : "Ara"
+    "searchPlaceholder" : "Ara",
+    "emptyAssetList" : "Hiçbir varlık bulunamadı",
+    "accountCount" : "{{count}} hesap",
+    "accountCount_plural" : "{{count}} hesap"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

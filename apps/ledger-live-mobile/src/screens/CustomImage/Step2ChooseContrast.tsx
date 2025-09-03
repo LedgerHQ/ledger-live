@@ -6,7 +6,10 @@ import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "rea
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
-import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getScreenSpecs,
+  getScreenVisibleAreaDimensions,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -15,7 +18,7 @@ import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageToDeviceProcessor";
 import Button from "~/components/wrappedUi/Button";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "~/components/CustomImage/ContrastChoice";
@@ -167,13 +170,19 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
     [animSelectedIndex],
   );
 
-  const leftBoxAnimatedStyle = useAnimatedStyle(() => ({
-    width: (3 - animSelectedIndex.value) * 54,
-  }));
+  const leftBoxAnimatedStyle = useAnimatedStyle(
+    () => ({
+      width: (3 - animSelectedIndex.value) * 54,
+    }),
+    [animSelectedIndex],
+  );
 
-  const rightBoxAnimatedStyle = useAnimatedStyle(() => ({
-    width: animSelectedIndex.value * 54,
-  }));
+  const rightBoxAnimatedStyle = useAnimatedStyle(
+    () => ({
+      width: animSelectedIndex.value * 54,
+    }),
+    [animSelectedIndex],
+  );
 
   const confirmEventProperties = useMemo(
     () => ({
@@ -194,6 +203,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
           onError={handleError}
           onRawResult={handleRawResult}
           contrast={contrasts[selectedIndex].val}
+          bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
         />
       )}
       <Flex

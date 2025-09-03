@@ -18,7 +18,6 @@ export default function RootNavigator() {
     <StartupTimeMarker>
       <AnalyticsContextProvider>
         <Stack.Navigator
-          id={NavigatorName.RootNavigator}
           screenOptions={{
             headerShown: false,
           }}

@@ -10,6 +10,7 @@ import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalu
 import Star from "~/renderer/components/Stars/Star";
 import { TableRow } from "./TableContainer";
 import { useAccountUnit } from "../hooks/useAccountUnit";
+
 type Props = {
   account: AccountLike;
   nested?: boolean;
@@ -44,7 +45,7 @@ function TokenRow(props: Props) {
   const Row = nested ? NestedRow : TableRow;
   return (
     <Row
-      data-testid={`token-row-${currency.ticker}`}
+      data-testid={`token-row-${currency.ticker.toUpperCase()}`}
       className="token-row"
       onClick={onClickRow}
       tabIndex={-1}

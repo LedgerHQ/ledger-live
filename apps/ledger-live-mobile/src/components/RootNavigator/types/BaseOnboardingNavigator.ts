@@ -4,7 +4,6 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingNavigatorParamList } from "./OnboardingNavigator";
 import { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
-import { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
 import { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
 import { PasswordModifyFlowParamList } from "./PasswordModifyFlowNavigator";
 import { SyncOnboardingStackParamList } from "./SyncOnboardingNavigator";
@@ -17,7 +16,6 @@ import { CommonAddAccountNavigatorParamsList } from "./BaseNavigator";
 
 export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.Onboarding]: NavigatorScreenParams<OnboardingNavigatorParamList>;
-  [NavigatorName.ImportAccounts]: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
   [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
   [NavigatorName.ReceiveFunds]: NavigatorScreenParams<ReceiveFundsStackParamList> | undefined;
   [ScreenName.PairDevices]: {

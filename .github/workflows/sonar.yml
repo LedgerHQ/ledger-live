@@ -3,6 +3,7 @@ name: "[All Platforms] - SonarQube Scan - Scheduled"
 on:
   schedule:
     - cron: "0 2 * * 1-5" # every working day at 2am we will do a daily scan on develop
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

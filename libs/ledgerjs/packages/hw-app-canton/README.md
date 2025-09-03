@@ -32,7 +32,6 @@ For a smooth and quick integration:
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
     *   [getAppConfiguration](#getappconfiguration)
-*   [MockCantonDevice](#mockcantondevice)
 
 ### Canton
 
@@ -61,7 +60,7 @@ Sign a Canton transaction.
 ##### Parameters
 
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
-*   `rawTx` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the raw transaction to sign
+*   `txHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash to sign
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CantonSignature>** the signature
 
@@ -71,6 +70,36 @@ Get the app configuration.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<AppConfig>** the app configuration including version
 
-### MockCantonDevice
+## Integration tests
 
-Mock Canton "@ledgerhq/hw-app-canton" device implementation for development and testing
+### 1. Prerequisite
+
+Download latest version of Ledger SDK.
+
+```sh
+docker pull ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
+```
+
+The rest of the documentation is about testing on NanoSP.
+
+### 2. Compile app-canton
+
+You have to [compile](https://github.com/ledgerhq/app-canton) or retrieve the app binaries. In the following line, the binaries directory is set as `<ABSOLUTE_PATH_TO_ELFS>`
+
+### 3. Launch CantonApp within Speculos
+
+```sh
+docker run --rm -t -d -v "<ABSOLUTE_PATH_TO_ELFS>:/app" -p 5000:5000 ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest
+
+docker exec -it speculos bash -c 'speculos --model "nanosp" /app/exchange_nanosp.elf -l /app/ethereum_nanosp.elf --display headless'
+```
+
+### 4. Launch integration tests
+
+From Ledger Live root directory:
+
+```sh
+pnpm ljs:hw-app-canton test-integ
+```
+
+You can take a look at [Speculos UI](http://127.0.0.1:5000/)

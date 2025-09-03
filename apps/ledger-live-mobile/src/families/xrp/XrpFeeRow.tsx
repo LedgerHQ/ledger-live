@@ -19,7 +19,7 @@ type Props = {
 export default function XrpFeeRow({ account, transaction }: Props) {
   const unit = useMaybeAccountUnit(account);
   if (account.type !== "Account" || !unit) return null;
-  const fee = (transaction as RippleTransaction).fee;
+  const fee = (transaction as RippleTransaction).fees;
   const feeCustomUnit = (transaction as RippleTransaction).feeCustomUnit;
   return (
     <SummaryRow title={<Trans i18nKey="send.fees.title" />}>

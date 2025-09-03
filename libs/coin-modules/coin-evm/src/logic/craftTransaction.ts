@@ -6,6 +6,7 @@ import { TransactionTypes } from "ethers/lib/utils";
 import { isNative } from "../types";
 import { getNodeApi } from "../network/node";
 import { getErc20Data, getTransactionType } from "./common";
+import { getSequence } from "./getSequence";
 
 export async function craftTransaction(
   currency: CryptoCurrency,
@@ -22,7 +23,7 @@ export async function craftTransaction(
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
   const to = isNative(asset) ? recipient : (asset?.assetReference as string);
-  const nonce = await node.getTransactionCount(currency, sender);
+  const nonce = await getSequence(currency, sender);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   const value = isNative(asset) ? amount : 0n;
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;

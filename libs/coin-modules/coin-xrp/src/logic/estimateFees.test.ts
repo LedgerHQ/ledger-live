@@ -32,7 +32,7 @@ describe("estimateFees", () => {
       family: "xrp",
       serverFee: BigNumber(23_000_000),
     });
-    expect(result.fee).toEqual(BigInt(23_000_000));
+    expect(result.fees).toEqual(BigInt(23_000_000));
   });
 
   it("returns the fees from the NetworkInfo provided", async () => {
@@ -49,6 +49,6 @@ describe("estimateFees", () => {
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(0);
     expect(result.networkInfo).toEqual(networkInfo);
-    expect(result.fee).toEqual(BigInt(78_000_000));
+    expect(result.fees).toEqual(BigInt(78_000_000));
   });
 });

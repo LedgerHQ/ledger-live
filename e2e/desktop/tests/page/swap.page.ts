@@ -70,9 +70,10 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
-    return await webview
+    const providers = await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
+    return providers;
   }
 
   @step("Check quotes container infos")
@@ -161,7 +162,7 @@ export class SwapPage extends AppPage {
       }
     }
 
-    throw new Error("No providers without KYC found");
+    throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
   }
 
   @step("Select available provider")
@@ -336,6 +337,23 @@ export class SwapPage extends AppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
+  @step("Check if asset is already selected")
+  async checkIfAssetIsAlreadySelected(
+    asset: string,
+    electronApp: ElectronApplication,
+  ): Promise<boolean> {
+    const [, webview] = electronApp.windows();
+    const selector = webview.getByTestId(this.fromAccountCoinSelector);
+
+    await webview.waitForFunction(selectorTestId => {
+      const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+      return el && el.textContent && el.textContent !== "Choose asset";
+    }, this.fromAccountCoinSelector);
+
+    const text = await selector.textContent();
+    return text?.includes(asset) ?? false;
+  }
+
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
@@ -349,6 +367,23 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.toAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Choose from asset $0")
+  async chooseFromAsset(currency: string) {
+    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Select to account coin selector")
+  async selectToAccountCoinSelector(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.toAccountCoinSelector).click();
+  }
+
+  @step("Select from account coin selector")
+  async selectFromAccountCoinSelector(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId(this.fromAccountCoinSelector).click();
   }
 
   @step("Check currency to swap to is $1")

@@ -1,4 +1,4 @@
-import { Server } from "ws";
+import WebSocket from "ws";
 import path from "path";
 import fs from "fs";
 import net from "net";
@@ -47,11 +47,11 @@ function uniqueId(): string {
 }
 
 export function init(port = 8099, onConnection?: () => void) {
-  webSocket.wss = new Server({ port });
+  webSocket.wss = new WebSocket.Server({ port });
   webSocket.messages = {};
   log(`Start listening on localhost:${port}`);
 
-  webSocket.wss.on("connection", ws => {
+  webSocket.wss.on("connection", (ws: WebSocket) => {
     log(`Client connected`);
     onConnection && onConnection();
     webSocket.ws?.close();
@@ -78,7 +78,7 @@ export function close() {
   }
 
   if (webSocket.wss) {
-    webSocket.wss.clients.forEach(client => {
+    webSocket.wss.clients.forEach((client: WebSocket) => {
       client.removeAllListeners();
       client.terminate();
     });

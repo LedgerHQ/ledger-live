@@ -1,19 +1,22 @@
-import { getAccount, getStakes } from "../network";
+import { getStakes, getAllBalancesCached } from "../network";
 import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { toSuiAsset } from "../network/sdk";
 
 export async function getBalance(address: string): Promise<Balance[]> {
   const [native, staking] = await Promise.all([
     getNativeBalance(address),
     getStakingBalances(address),
   ]);
-  return [native].concat(staking);
+  return [...native, ...staking];
 }
 
-const getNativeBalance = (address: string): Promise<Balance> =>
-  getAccount(address).then(account => ({
-    value: BigInt(account.balance.toString()),
-    asset: { type: "native" },
+const getNativeBalance = async (address: string): Promise<Balance[]> => {
+  const balances = await getAllBalancesCached(address);
+  return balances.map(({ coinType, totalBalance }) => ({
+    value: BigInt(totalBalance),
+    asset: toSuiAsset(coinType),
   }));
+};
 
 const getStakingBalances = (address: string): Promise<Balance[]> =>
   getStakes(address).then(stakes =>

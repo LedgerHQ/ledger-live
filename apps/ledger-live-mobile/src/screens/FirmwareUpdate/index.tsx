@@ -54,9 +54,12 @@ import {
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "~/analytics";
-import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
-import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
+import ImageHexProcessor from "~/components/CustomImage/ImageFromDeviceProcessor";
+import {
+  getScreenDataDimensions,
+  getScreenSpecs,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { ProcessorPreviewResult } from "~/components/CustomImage/ImageToDeviceProcessor";
 import { ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
@@ -880,6 +883,7 @@ export const FirmwareUpdate = ({
       {isCustomLockScreenSupported(device.modelId) && staxFetchImageState.hexImage ? (
         <ImageHexProcessor
           hexData={staxFetchImageState.hexImage as string}
+          bitsPerPixel={getScreenSpecs(device.modelId).bitsPerPixel}
           {...getScreenDataDimensions(device.modelId)}
           onPreviewResult={handleStaxImageSourceLoaded}
           onError={error => console.error(error)}

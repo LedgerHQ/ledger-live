@@ -18,7 +18,7 @@ export function runPortfolioTransactionsHistoryTest(currency: CurrencyType, tmsL
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
-    it("Transaction history displayed when user added his accounts - LLM", async () => {
+    it("Transaction history displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.checkTransactionAllocationSection();
       await app.portfolio.selectAndClickOnLastOperation();
@@ -36,7 +36,7 @@ export function runPortfolioChartsAndAssetsTest(tmsLinks: string[]) {
     });
 
     tmsLinks.forEach(link => $TmsLink(link));
-    it("Charts and assets section are displayed when user added his accounts - LLM", async () => {
+    it("Charts and assets section are displayed when user added his accounts", async () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.checkQuickActionButtonsVisibility();
       await app.portfolio.checkChartVisibility();

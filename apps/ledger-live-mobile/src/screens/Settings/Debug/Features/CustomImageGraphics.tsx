@@ -34,6 +34,13 @@ const aEuropaDevice: Device = {
   wired: false,
 };
 
+const aApexDevice: Device = {
+  deviceId: "",
+  deviceName: "",
+  modelId: DeviceModelId.apex,
+  wired: false,
+};
+
 const steps = ["confirmLoad", "loading", "confirmCommit", "preview"] as const;
 type DeviceActionStep = (typeof steps)[number];
 
@@ -48,6 +55,7 @@ export default function DebugCustomImageGraphics() {
   const device = {
     stax: aStaxDevice,
     europa: aEuropaDevice,
+    apex: aApexDevice,
   }[deviceModelId];
 
   const insets = useSafeAreaInsets();

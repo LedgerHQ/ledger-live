@@ -6,7 +6,7 @@ export const MODULAR_DRAWER_FEATURE_FLAGS: FeatureId[] = [
   "lldModularDrawerBackendData",
 ];
 
-export const ENTRY_POINTS: { value: ModularDrawerLocation; label: string }[] = [
+export const LOCATIONS: { value: ModularDrawerLocation; label: string }[] = [
   {
     value: ModularDrawerLocation.ADD_ACCOUNT,
     label: "Add Account",
@@ -14,6 +14,21 @@ export const ENTRY_POINTS: { value: ModularDrawerLocation; label: string }[] = [
   {
     value: ModularDrawerLocation.LIVE_APP,
     label: "Live App",
+  },
+];
+
+export const LIVE_APPS: { value: string; label: string }[] = [
+  {
+    value: "earn",
+    label: "Earn",
+  },
+  {
+    value: "buy-sell",
+    label: "Buy Sell",
+  },
+  {
+    value: "swap-live-app",
+    label: "Swap",
   },
 ];
 

@@ -27,23 +27,16 @@ import StaxPinDark from "../animations/device/stax/dark/pin.json";
 import StaxPinLight from "../animations/device/stax/light/pin.json";
 import StaxContinueDark from "../animations/device/stax/dark/continue.json";
 import StaxContinueLight from "../animations/device/stax/light/continue.json";
-import StaxPairingDark from "../animations/device/stax/dark/pairing.json";
-import StaxPairingLight from "../animations/device/stax/light/pairing.json";
-import StaxPairedLight from "../animations/device/stax/light/paired.json";
-import StaxPairedDark from "../animations/device/stax/dark/paired.json";
-import StaxSignDark from "../animations/device/stax/dark/sign.json";
-import StaxSignLight from "../animations/device/stax/light/sign.json";
 
 import FlexPinDark from "../animations/device/flex/dark/pin.json";
 import FlexPinLight from "../animations/device/flex/light/pin.json";
 import FlexContinueDark from "../animations/device/flex/dark/continue.json";
 import FlexContinueLight from "../animations/device/flex/light/continue.json";
-import FlexPairingDark from "../animations/device/flex/dark/pairing.json";
-import FlexPairingLight from "../animations/device/flex/light/pairing.json";
-import FlexPairedLight from "../animations/device/flex/light/paired.json";
-import FlexPairedDark from "../animations/device/flex/dark/paired.json";
-import FlexSignDark from "../animations/device/flex/dark/sign.json";
-import FlexSignLight from "../animations/device/flex/light/sign.json";
+
+import ApexPinDark from "../animations/device/apex/dark/pin.json";
+import ApexPinLight from "../animations/device/apex/light/pin.json";
+import ApexContinueDark from "../animations/device/apex/dark/continue.json";
+import ApexContinueLight from "../animations/device/apex/light/continue.json";
 
 import NanoSPlugAndPinCodeDark from "../animations/device/nanoS/1PlugAndPinCode/dark.json";
 import NanoSPlugAndPinCodeLight from "../animations/device/nanoS/1PlugAndPinCode/light.json";
@@ -65,6 +58,7 @@ type BlueKeys = CommonKeys;
 type NanoXKeys = CommonKeys | BleKeys;
 type StaxKeys = CommonKeys | BleKeys;
 type FlexKeys = CommonKeys | BleKeys;
+type ApexKeys = CommonKeys | BleKeys;
 
 const commonKeysArray = [
   "plugAndPinCode",
@@ -88,6 +82,7 @@ const deviceModelIdToKeys = {
   [DeviceModelId.nanoX]: [...commonKeysArray, ...bleKeysArray],
   [DeviceModelId.stax]: [...commonKeysArray, ...bleKeysArray],
   [DeviceModelId.europa]: [...commonKeysArray, ...bleKeysArray],
+  [DeviceModelId.apex]: [...commonKeysArray, ...bleKeysArray],
 } as const;
 
 // Function implementation
@@ -104,6 +99,7 @@ type DeviceModelIdToKeys = {
   [DeviceModelId.nanoX]: NanoXKeys;
   [DeviceModelId.stax]: StaxKeys;
   [DeviceModelId.europa]: FlexKeys;
+  [DeviceModelId.apex]: ApexKeys;
 };
 
 type AnimationsCollection = {
@@ -281,20 +277,20 @@ const animations: AnimationsCollection = {
       dark: StaxContinueDark,
     },
     sign: {
-      light: StaxSignLight,
-      dark: StaxSignDark,
+      light: StaxContinueLight,
+      dark: StaxContinueDark,
     },
     allowUpdate: {
       light: StaxContinueLight,
       dark: StaxContinueDark,
     },
     blePairing: {
-      light: StaxPairingLight,
-      dark: StaxPairingDark,
+      light: StaxContinueLight,
+      dark: StaxContinueDark,
     },
     blePaired: {
-      light: StaxPairedLight,
-      dark: StaxPairedDark,
+      light: StaxContinueLight,
+      dark: StaxContinueDark,
     },
   },
   europa: {
@@ -323,20 +319,62 @@ const animations: AnimationsCollection = {
       dark: FlexContinueDark,
     },
     sign: {
-      light: FlexSignLight,
-      dark: FlexSignDark,
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
     },
     allowUpdate: {
       light: FlexContinueLight,
       dark: FlexContinueDark,
     },
     blePairing: {
-      light: FlexPairingLight,
-      dark: FlexPairingDark,
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
     },
     blePaired: {
-      light: FlexPairedLight,
-      dark: FlexPairedDark,
+      light: FlexContinueLight,
+      dark: FlexContinueDark,
+    },
+  },
+  apex: {
+    plugAndPinCode: {
+      light: ApexPinLight,
+      dark: ApexPinDark,
+    },
+    enterPinCode: {
+      light: ApexPinLight,
+      dark: ApexPinDark,
+    },
+    quitApp: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    allowManager: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    openApp: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    verify: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    sign: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    allowUpdate: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    blePairing: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
+    },
+    blePaired: {
+      light: ApexContinueLight,
+      dark: ApexContinueDark,
     },
   },
 };
@@ -347,7 +385,11 @@ export type GetDeviceAnimationArgs<M extends DeviceModelId = DeviceModelId> = {
   key: DeviceModelIdToKeys[M];
 };
 
-// Return an animation associated to a device
+/**
+ * Get the animation for a specific device and key
+ * @param args - The arguments containing the theme, modelId, and key
+ * @returns The animation source for the specified device and key
+ */
 export function getDeviceAnimation<M extends DeviceModelId>({
   theme = "light",
   key,

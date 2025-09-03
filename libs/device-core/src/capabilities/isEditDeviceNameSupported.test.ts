@@ -6,6 +6,7 @@ const supportedDevices = [
   DeviceModelId.nanoX,
   DeviceModelId.europa,
   DeviceModelId.nanoSP,
+  DeviceModelId.apex,
 ];
 const unsupportedDevices = [DeviceModelId.blue];
 

@@ -2,7 +2,7 @@ import buildSignOperation from "./signOperation";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { SuiSigner } from "../types";
 import coinConfig from "../config";
-import { getFullnodeUrl } from "@mysten/sui/client";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("signOperation", () => {
   beforeAll(() => {
@@ -11,7 +11,7 @@ describe("signOperation", () => {
         type: "active",
       },
       node: {
-        url: getFullnodeUrl("mainnet"),
+        url: getEnv("API_SUI_NODE_PROXY"),
       },
     }));
   });

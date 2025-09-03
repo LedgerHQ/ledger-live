@@ -2,14 +2,19 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
-import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
+import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageToDeviceProcessor";
 import { fitImageContain } from "./imageUtils";
-import ImageHexProcessor from "./ImageHexProcessor";
+import ImageHexProcessor from "./ImageFromDeviceProcessor";
+import {
+  CLSSupportedDeviceModelId,
+  getScreenSpecs,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 type Props = {
   rawData: ProcessorRawResult;
   previewData: ProcessorPreviewResult;
   onError: (e: Error) => void;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const boxToFitDimensions = {
@@ -37,7 +42,7 @@ displayed on the preview screen.
 This should NOT happen, it means that some data has been lost.`;
 
 const TestImage: React.FC<Props> = props => {
-  const { rawData, previewData, onError } = props;
+  const { rawData, previewData, onError, deviceModelId } = props;
   const [reconstructedPreviewResult, setReconstructedPreviewResult] =
     useState<ProcessorPreviewResult | null>(null);
 
@@ -92,6 +97,7 @@ const TestImage: React.FC<Props> = props => {
       {rawData && (
         <ImageHexProcessor
           {...rawData}
+          bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
           onPreviewResult={handlePreviewResult}
           onError={handleError}
         />

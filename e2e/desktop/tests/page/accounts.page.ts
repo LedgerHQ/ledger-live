@@ -22,7 +22,7 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountComponent(accountName).click();
+    await this.accountComponent(accountName).first().click();
   }
 
   @step("Click sync account button for: $0")

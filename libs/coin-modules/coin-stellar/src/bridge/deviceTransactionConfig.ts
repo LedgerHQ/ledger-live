@@ -29,7 +29,7 @@ function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField | ExtraDeviceTransactionField> {
-  const { assetCode, assetIssuer } = transaction;
+  const { assetReference, assetOwner } = transaction;
 
   const fields: Array<DeviceTransactionField | ExtraDeviceTransactionField> = [
     {
@@ -45,7 +45,7 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (assetCode && assetIssuer) {
+  if (assetReference && assetOwner) {
     fields.push({
       type: "stellar.assetCode",
       label: "Asset",

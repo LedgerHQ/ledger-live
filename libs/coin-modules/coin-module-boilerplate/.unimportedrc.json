@@ -21,7 +21,8 @@
   ],
   "ignoreUnimported": [
     "src/network/mock-network.ts",
-    "src/test/bot-specs.ts"
+    "src/test/bot-specs.ts",
+    "src/types/assets.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices"

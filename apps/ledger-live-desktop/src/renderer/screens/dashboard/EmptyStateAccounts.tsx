@@ -23,7 +23,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
     push("/manager");
   }, [push]);
   const { openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     "emptyStateAccounts",
   );
   return (

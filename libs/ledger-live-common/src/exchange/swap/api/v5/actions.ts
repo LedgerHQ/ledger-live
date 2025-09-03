@@ -19,7 +19,7 @@ export async function retrieveSwapPayload(
     address: data.toAccountAddress,
     refundAddress: data.fromAccountAddress,
     amountFrom: data.amount,
-    amountFromInSmallestDenomination: Number(data.amountInAtomicUnit),
+    amountFromInSmallestDenomination: data.amountInAtomicUnit.toString(),
     rateId: data.quoteId,
   };
 

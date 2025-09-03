@@ -21,6 +21,8 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import { log } from "@ledgerhq/logs";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { rateSelector, updateRateAction, updateTransactionAction } from "~/actions/swap";
+import { swapAcceptedProvidersSelector } from "~/reducers/settings";
+
 import { TrackScreen, useAnalytics } from "~/analytics";
 import { Loading } from "../Loading";
 import { TxForm } from "./TxForm";
@@ -61,9 +63,10 @@ export function SwapForm({
   const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
+  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   // mobile specific
   const [confirmed, setConfirmed] = useState(false);
-  const [swapAcceptedProviders, setSwapAcceptedProviders] = useState<string[]>([]);
+  const [availableProviders, setAvailableProviders] = useState<string[]>([]);
 
   const setExchangeRate = useCallback(
     (rate?: ExchangeRate) => {
@@ -88,6 +91,7 @@ export function SwapForm({
     [track],
   );
 
+  const accountId = (params as DetailsSwapParamList)?.accountId;
   const swapTransaction = useSwapTransaction({
     ...params,
     accounts,
@@ -104,11 +108,6 @@ export function SwapForm({
     availableRates: swapTransaction.swap.rates.value,
   });
 
-  // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
-  // Used to set the right state (recipient address, data, etc...) when comming from a token account
-  // As of today, we need to call setFromAccount to trigger an updateTransaction in order to set the correct
-  // recipient address (token contract address) and related data to compute the fees
-  // cf. https://github.com/LedgerHQ/ledger-live/blob/c135c887b313ecc9f4a3b3a421ced0e3a081dc37/libs/ledger-live-common/src/exchange/swap/hooks/useFromState.ts#L50-L57
   useEffect(() => {
     if (swapTransaction.account) {
       swapTransaction.setFromAccount(swapTransaction.account);
@@ -293,7 +292,7 @@ export function SwapForm({
   }, []);
 
   useEffect(() => {
-    const { currency, accountId, target, transaction } = params as DetailsSwapParamList;
+    const { currency, target, transaction } = params as DetailsSwapParamList;
 
     if (currency) {
       swapTransaction.setToCurrency(currency);
@@ -334,7 +333,12 @@ export function SwapForm({
 
   useEffect(() => {
     const fetchProviders = async () => {
-      setSwapAcceptedProviders(await getAvailableProviders());
+      try {
+        const providers = await getAvailableProviders();
+        setAvailableProviders(providers);
+      } catch (error) {
+        console.error("Error fetching providers:", error);
+      }
     };
     fetchProviders();
   }, []);
@@ -347,7 +351,7 @@ export function SwapForm({
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
-  if (swapAcceptedProviders.length) {
+  if (availableProviders.length) {
     return (
       <KeyboardAwareScrollView testID="exchange-scrollView">
         <Flex flex={1} justifyContent="space-between" padding={6}>

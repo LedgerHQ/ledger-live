@@ -94,25 +94,25 @@ export class Account {
 
   static readonly BSC_1 = new Account(
     Currency.BSC,
-    "Binance Smart Chain 1",
+    "BNB Chain 1",
     "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
     0,
   );
   static readonly BSC_BUSD_1 = new Account(
     Currency.BSC_BUSD,
-    "Binance Smart Chain 1",
+    "BNB Chain 1",
     "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
     0,
   );
   static readonly BSC_BUSD_2 = new Account(
     Currency.BSC_BUSD,
-    "Binance Smart Chain 2",
+    "BNB Chain 2",
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
   );
   static readonly BSC_SHIBA = new Account(
     Currency.BSC_SHIBA,
-    "Binance Smart Chain 1",
+    "BNB Chain 1",
     "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
     0,
   );

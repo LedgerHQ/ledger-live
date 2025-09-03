@@ -380,12 +380,12 @@ const polkadot: CurrenciesData<Transaction> = {
             mode: "send",
             recipient: ACCOUNT_SAME_STASHCONTROLLER,
           }),
-          expectedStatus: account => ({
+          expectedStatus: (_account, _transaction, status) => ({
             errors: {},
             warnings: {
               amount: new PolkadotAllFundsWarning(),
             },
-            totalSpent: account.spendableBalance,
+            totalSpent: status.estimatedFees,
           }),
         },
         {

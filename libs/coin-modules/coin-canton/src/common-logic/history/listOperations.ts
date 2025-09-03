@@ -1,64 +1,55 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
-import { getTransactions } from "../../network/indexer";
-import { BoilerplateOperation } from "../../network/types";
+import { CreatedEvent, getTransactions, TxInfo } from "../../network/gateway";
+import coinConfig from "../../config";
+
+const getNativeContractId = () =>
+  coinConfig.getCoinConfig().nativeInstrumentId !== undefined
+    ? coinConfig.getCoinConfig().nativeInstrumentId?.split(".")[0]
+    : "";
 
 /**
  * Returns list of operations associated to an account.
- * @param address Account address
+ * @param partyId Account partyId
  * @param pagination Pagination options
  * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
- * If `0` is returns, no pagination needed.
- * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
+ * Impl to finalize when backend is ready
  */
 export async function listOperations(
-  address: string,
+  partyId: string,
   page: Pagination,
 ): Promise<[Operation[], string]> {
-  const transactions = await getTransactions(address, { from: page.minHeight });
-  return [transactions.map(convertToCoreOperation(address)), ""];
-}
-
-const convertToCoreOperation =
-  (address: string) =>
-  (operation: BoilerplateOperation): Operation => {
-    const {
-      meta: { delivered_amount },
-      tx: { Fee, hash, inLedger, date, Account, Destination },
-    } = operation;
-
-    const type = Account === address ? "OUT" : "IN";
-    let value =
-      delivered_amount && typeof delivered_amount === "string"
-        ? BigInt(delivered_amount)
-        : BigInt(0);
-
-    const feeValue = BigInt(Fee);
-    if (type === "OUT") {
-      if (!Number.isNaN(feeValue)) {
-        value = value + feeValue;
+  const { transactions, next } = await getTransactions(partyId, {
+    cursor: page.pagingToken !== undefined ? parseInt(page.pagingToken) : undefined,
+    minOffset: page.minHeight,
+    limit: page.limit,
+  });
+  const ops: Operation[] = [];
+  for (const tx of transactions) {
+    for (let i = 0; i < tx.events.length; i++) {
+      const event: CreatedEvent = tx.events[i]["CantonCreatedEvent"] as CreatedEvent;
+      if (event && event.template_id.module_name === "Splice.Amulet") {
+        ops.push({
+          id: tx.update_id + "-" + i,
+          type: event.signatories.includes(partyId) ? "OUT" : "IN",
+          value: BigInt(0), // to be finalized when details are available on backend
+          senders: event.signatories.includes(partyId) ? [partyId] : [],
+          recipients: event.signatories.includes(partyId) ? [] : [partyId],
+          asset:
+            event.contract_id === getNativeContractId()
+              ? { type: "native" }
+              : { type: "token", assetReference: event.contract_id },
+          tx: {
+            hash: tx.update_id,
+            fees: BigInt(0), // to be finalized when details are available on backend
+            date: new Date(tx.record_time.seconds),
+            block: {
+              height: tx.offset,
+              time: new Date(tx.effective_at.seconds),
+            },
+          },
+        });
       }
     }
-
-    return {
-      /**
-       * Note: The operation ID must be concatenated with another
-       * value if the transaction hash is not enough to identify it
-       */
-      id: hash,
-      asset: { type: "native" },
-      tx: {
-        hash,
-        fees: feeValue,
-        date: new Date(date),
-        block: {
-          height: inLedger,
-          hash,
-          time: new Date(date),
-        },
-      },
-      type,
-      value,
-      senders: [Account],
-      recipients: [Destination],
-    };
-  };
+  }
+  return [ops, next + ""];
+}

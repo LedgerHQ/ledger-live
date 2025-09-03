@@ -14,8 +14,16 @@ import { ModularDrawerDevToolContentProps } from "./types";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
-  const { includeTokens, setIncludeTokens, openModal, setOpenModal, entryPoint, setEntryPoint } =
-    useDevToolState();
+  const {
+    includeTokens,
+    setIncludeTokens,
+    openModal,
+    setOpenModal,
+    location,
+    setLocation,
+    liveApp,
+    setLiveApp,
+  } = useDevToolState();
 
   const {
     assetsLeftElement,
@@ -30,7 +38,9 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
   } = useDrawerConfiguration();
 
   const { openAssetFlow } = useOpenAssetFlow(
-    entryPoint.value,
+    location.value === ModularDrawerLocation.LIVE_APP
+      ? { location: location.value, liveAppId: liveApp.value }
+      : { location: location.value },
     "receive",
     openModal ? "MODAL_RECEIVE" : undefined,
   );
@@ -46,7 +56,6 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
       }),
     [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
     [ModularDrawerLocation.SEND_FLOW]: () => {},
-    [ModularDrawerLocation.EARN_FLOW]: () => {},
   };
 
   return (
@@ -56,8 +65,10 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
         <Flex flexDirection="column" rowGap={4} mt={2}>
           <FeatureFlags />
           <DevToolControls
-            entryPoint={entryPoint}
-            setEntryPoint={setEntryPoint}
+            location={location}
+            setLocation={setLocation}
+            liveApp={liveApp}
+            setLiveApp={setLiveApp}
             includeTokens={includeTokens}
             setIncludeTokens={setIncludeTokens}
             openModal={openModal}
@@ -74,7 +85,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             setNetworksRightElement={setNetworksRightElement}
           />
           <Flex>
-            <Button variant="color" onClick={() => openDrawerFunctions[entryPoint.value]()}>
+            <Button variant="color" onClick={() => openDrawerFunctions[location.value]()}>
               Open Drawer
             </Button>
           </Flex>

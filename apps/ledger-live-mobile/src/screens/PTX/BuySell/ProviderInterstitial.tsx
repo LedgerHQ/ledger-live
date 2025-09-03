@@ -75,7 +75,7 @@ const AnimatedCircle = ({ delay }: { delay: number }) => {
     return {
       opacity,
     };
-  });
+  }, [progress]);
 
   return (
     <AnimatedSvg width={8} height={8} viewBox="0 0 8 8" style={animatedStyle}>

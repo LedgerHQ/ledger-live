@@ -120,17 +120,12 @@ const convertToCoreOperation =
     } = operation;
 
     const type = Account === address ? "OUT" : "IN";
-    let value =
+    const value =
       delivered_amount && typeof delivered_amount === "string"
         ? BigInt(delivered_amount)
         : BigInt(0);
 
-    const fee = BigInt(Fee);
-    if (type === "OUT") {
-      if (!Number.isNaN(fee)) {
-        value = value + fee;
-      }
-    }
+    const fees = BigInt(Fee);
 
     const toEpochDate = (RIPPLE_EPOCH + date) * 1000;
 
@@ -170,7 +165,7 @@ const convertToCoreOperation =
       asset: { type: "native" },
       tx: {
         hash: hash,
-        fees: fee,
+        fees: fees,
         date: new Date(toEpochDate),
         block: {
           time: new Date(close_time_iso),
@@ -184,7 +179,7 @@ const convertToCoreOperation =
       recipients: [Destination],
     };
 
-    if (Object.keys(details).length != 0) {
+    if (Object.keys(details).length !== 0) {
       op = {
         ...op,
         details,

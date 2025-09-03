@@ -165,8 +165,8 @@ export function runAddSubAccountTest(
       tags.forEach(tag => $Tag(tag));
       it(
         withParentAccount
-          ? `[${asset.currency.speculosApp.name}] Add subAccount when parent exists (${asset.currency.ticker}) - LLM`
-          : `Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker} - LLM`,
+          ? `[${asset.currency.speculosApp.name}] Add subAccount when parent exists (${asset.currency.ticker})`
+          : `Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`,
         async () => {
           if (withParentAccount) {
             await app.portfolio.tapTabSelector("Accounts");

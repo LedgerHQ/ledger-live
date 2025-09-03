@@ -4,7 +4,7 @@ const transaction = new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1",
 runSendInvalidTokenAmountTest(
   transaction,
   new RegExp(
-    /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
+    /You need \d+\.\d+ BNB in your account to pay for transaction fees on the BNB Chain network\. .*/,
   ),
   ["B2CQA-2700"],
 );

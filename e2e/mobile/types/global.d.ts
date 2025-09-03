@@ -20,11 +20,11 @@ import { Transaction as TransactionType } from "@ledgerhq/live-common/e2e/models
 import { Fee as FeeType } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos as AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Swap as SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { CLI as CLIType } from "./utils/cliUtils";
+import { CLI as CLIType } from "../utils/cliUtils";
 
 declare global {
   var IS_FAILED: boolean;
-  var speculosDevices: Map<number, string>;
+  var speculosDevices: Map<string, number>;
   var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
   var webSocket: {
     wss: Server | undefined;
@@ -82,4 +82,7 @@ declare global {
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
   var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;
   var tapWebElementByElement: typeof WebElementHelpers.tapWebElementByElement;
+  var scrollToWebElement: typeof WebElementHelpers.scrollToWebElement;
+  var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
+  var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
 }

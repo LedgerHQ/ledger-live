@@ -1,4 +1,3 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
@@ -13,7 +12,7 @@ export enum ModularDrawerStep {
 export const MODULAR_DRAWER_KEY = "modularDrawer";
 
 export type OpenModularDrawerParams = {
-  currencies?: CryptoOrTokenCurrency[];
+  currencies?: string[];
   enableAccountSelection?: boolean;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -24,7 +23,7 @@ export type OpenModularDrawerParams = {
 };
 
 export type OpenModularDrawerParamsWithCallbackId = {
-  currencies?: CryptoOrTokenCurrency[];
+  currencies?: string[];
   enableAccountSelection?: boolean;
   callbackId?: string;
   accountsObservableId?: string;

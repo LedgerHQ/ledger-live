@@ -108,6 +108,7 @@ export const DEFAULT_FEATURES: Features = {
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
+  calLedgerService: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
@@ -616,8 +617,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -628,8 +630,9 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
@@ -678,6 +681,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
   syncOnboardingIncr1: DEFAULT_FEATURE,
+  supportDeviceApex: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

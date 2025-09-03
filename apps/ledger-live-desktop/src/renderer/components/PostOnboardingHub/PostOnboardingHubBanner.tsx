@@ -25,6 +25,7 @@ const illustrations = {
   nanoSP: undefined,
   nanoX: undefined,
   blue: undefined,
+  apex: undefined,
 };
 
 const PostOnboardingHubBanner = () => {

@@ -55,7 +55,7 @@ const ReceiveSecurityModal = ({
     () => ({
       height: sharedHeight.value,
     }),
-    [],
+    [sharedHeight.value],
   );
 
   const closeModal = useCallback(() => {

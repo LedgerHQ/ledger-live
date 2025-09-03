@@ -22,7 +22,7 @@ const Wrapper = styled(Box).attrs(() => ({
 const Placeholder = () => {
   const { t } = useTranslation();
   const { openAssetFlow } = useOpenAssetFlow(
-    ModularDrawerLocation.ADD_ACCOUNT,
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     MAD_SOURCE_PAGES.ACCOUNTS_PAGE,
   );
   return (

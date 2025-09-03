@@ -1,5 +1,29 @@
 # @ledgerhq/live-env
 
+## 2.14.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.14.0-next.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.13.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
+## 2.13.0-next.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
 ## 2.12.0
 
 ### Minor Changes

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import React from "react";
 import { DefaultTheme } from "styled-components/native";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
@@ -9,9 +10,9 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 export const defaultNavigationOptions = {
   headerStyle: styles.header,
   headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
-  headerBackTitleVisible: false,
   headerLeft: () => <NavigationHeaderBackButton />,
   headerTitleAllowFontScaling: false,
+  headerBackButtonDisplayMode: "minimal" as const,
 };
 
 type ColorV2 = Theme["colors"];

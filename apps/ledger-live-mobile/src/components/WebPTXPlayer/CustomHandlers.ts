@@ -8,7 +8,7 @@ import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking"
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -21,6 +21,9 @@ import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountB
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+const drawerClosedError = new DrawerClosedError("User closed the drawer");
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -28,6 +31,7 @@ type CustomExchangeHandlersHookType = {
   sendAppReady: () => void;
   onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
   onCompleteError?: (error: Error) => void;
+  onShowLoadingDrawer?: () => void;
 };
 
 export function useCustomExchangeHandlers({
@@ -36,11 +40,22 @@ export function useCustomExchangeHandlers({
   onCompleteResult,
   sendAppReady,
   onCompleteError,
+  onShowLoadingDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
   const deviceRef = useRef<Device>();
   const syncAccountById = useSyncAccountById();
+
+  // Add refs to track active promises
+  const activePromises = useRef<
+    Map<
+      string,
+      {
+        reject: (error: Error) => void;
+      }
+    >
+  >(new Map());
 
   const tracking = useMemo(
     () =>
@@ -56,10 +71,33 @@ export function useCustomExchangeHandlers({
     [],
   );
 
+  // Add cleanup function for navigation events
+  useEffect(() => {
+    // Listen for focus events to detect when coming back to this screen
+    const unsubscribeFocus = navigation.addListener("focus", () => {
+      // When we come back to this screen, check if any promises are still pending
+      // This happens when user navigates back without completing the action
+      const pendingPromises = Array.from(activePromises.current.keys());
+
+      if (pendingPromises.length > 0) {
+        activePromises.current.forEach(({ reject }, key) => {
+          reject(drawerClosedError);
+          activePromises.current.delete(key);
+        });
+      }
+    });
+
+    return () => {
+      unsubscribeFocus();
+    };
+  }, [navigation]);
+
   return useMemo<WalletAPICustomHandlers>(() => {
     const ptxCustomHandlers = {
       "custom.close": () => {
-        navigation.popToTop();
+        navigation.getParent()?.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
       },
       "custom.getFunds": (request: { params?: { accountId?: string; currencyId?: string } }) => {
         const accountId = request.params?.accountId;
@@ -101,6 +139,8 @@ export function useCustomExchangeHandlers({
         manifest,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+            const promiseId = `start-${Date.now()}`;
+
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformStartExchange,
               params: {
@@ -109,6 +149,9 @@ export function useCustomExchangeHandlers({
                   exchangeType: ExchangeType[exchangeParams.exchangeType],
                 },
                 onResult: result => {
+                  // Clean up promise tracking
+                  activePromises.current.delete(promiseId);
+
                   if (result.startExchangeError) {
                     onCancel(
                       result.startExchangeError.error,
@@ -118,16 +161,22 @@ export function useCustomExchangeHandlers({
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
-                    deviceRef.current = result.device; // Store in ref for immediate access
+                    deviceRef.current = result.device;
                     onSuccess(
                       result.startExchangeResult.nonce,
                       result.startExchangeResult.device || result.device,
                     );
                   }
-
                   navigation.pop();
+                  onShowLoadingDrawer?.();
                 },
+                onClose: () => onCancel(drawerClosedError),
               },
+            });
+
+            // Track the promise
+            activePromises.current.set(promiseId, {
+              reject: onCancel,
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
@@ -147,6 +196,7 @@ export function useCustomExchangeHandlers({
                 device,
                 onResult: result => {
                   navigation.pop();
+
                   if (result.error) {
                     onCancel(result.error);
 
@@ -163,6 +213,7 @@ export function useCustomExchangeHandlers({
                   setDevice(undefined);
                   deviceRef.current = undefined;
                 },
+                onClose: () => onCancel(drawerClosedError),
               },
             });
           },
@@ -181,7 +232,16 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            const currentDevice = deviceRef.current || device; // Use ref value first
+            let cancelCalled = false;
+
+            const safeOnCancel = (error: Error) => {
+              if (!cancelCalled) {
+                cancelCalled = true;
+                onCancel(error);
+              }
+            };
+
+            const currentDevice = deviceRef.current || device;
 
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
@@ -199,7 +259,7 @@ export function useCustomExchangeHandlers({
                 device: currentDevice,
                 onResult: result => {
                   if (result.error) {
-                    onCancel(result.error);
+                    safeOnCancel(result.error);
                     navigation.pop();
                     onCompleteError?.(result.error);
                   }
@@ -215,6 +275,7 @@ export function useCustomExchangeHandlers({
                   setDevice(undefined);
                   deviceRef.current = undefined;
                 },
+                onClose: () => safeOnCancel(drawerClosedError),
               },
             });
           },
@@ -229,6 +290,7 @@ export function useCustomExchangeHandlers({
     navigation,
     onCompleteError,
     onCompleteResult,
+    onShowLoadingDrawer,
     sendAppReady,
     syncAccountById,
     tracking,

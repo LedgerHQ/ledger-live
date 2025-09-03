@@ -1,5 +1,4 @@
-import {
-  Account,
+import type {
   Balance,
   Block,
   BlockInfo,
@@ -7,10 +6,9 @@ import {
   FeeEstimation,
   Pagination,
   TransactionIntent,
-  Transaction,
   TransactionValidation,
-  AccountInfo,
   Api,
+  AssetInfo,
   Cursor,
   Page,
   Stake,
@@ -18,7 +16,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
-function adaptOp(backendOp: any): Operation<any> {
+function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
   const newDate = new Date(date);
 
@@ -31,7 +29,7 @@ function adaptOp(backendOp: any): Operation<any> {
 
 const ALPACA_URL = "http://0.0.0.0:3000";
 
-const buildBroadcast = (networkFamily: string) =>
+const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
     const { data } = await network<
       {
@@ -50,7 +48,7 @@ const buildBroadcast = (networkFamily: string) =>
     return data.transactionIdentifier;
   };
 
-const buildCombine = (networkFamily: string) =>
+const buildCombine = networkFamily =>
   async function combine(tx: string, signature: string, pubKey?: string): Promise<string> {
     const { data } = await network<
       {
@@ -69,7 +67,7 @@ const buildCombine = (networkFamily: string) =>
     return data.signedTransaction;
   };
 
-const buildEstimateFees = (networkFamily: string) =>
+const buildEstimateFees = networkFamily =>
   async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
@@ -86,11 +84,8 @@ const buildEstimateFees = (networkFamily: string) =>
     };
   };
 
-const buildValidateIntent = (networkFamily: string) =>
-  async function validateIntent(
-    account: Account,
-    transaction: Transaction,
-  ): Promise<TransactionValidation> {
+const buildValidateIntent = networkFamily =>
+  async function validateIntent(transaction: TransactionIntent): Promise<TransactionValidation> {
     const { data } = await network<
       {
         errors: Record<string, Error>;
@@ -105,7 +100,6 @@ const buildValidateIntent = (networkFamily: string) =>
       url: `${ALPACA_URL}/${networkFamily}/transaction/validate`,
       data: {
         transaction,
-        account,
       },
     });
     return data;
@@ -122,13 +116,14 @@ const buildGetBalance = (networkFamily: string) =>
       {
         value: BigInt(data.value),
         asset: data.asset,
+        locked: BigInt(data?.locked ?? "0"),
       },
     ];
   };
 
-const buildGetAccountInfo = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<AccountInfo> {
-    const { data } = await network<AccountInfo, unknown>({
+const buildGetSequence = (networkFamily: string) =>
+  async function getSequence(address: string): Promise<number> {
+    const { data } = await network<number, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
     });
@@ -136,10 +131,10 @@ const buildGetAccountInfo = (networkFamily: string) =>
     return data;
   };
 
-const buildListOperations = (networkFamily: string) =>
+const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination,
+    pagination: Pagination = { minHeight: 0, order: "asc" },
   ): Promise<[Operation<any>[], string]> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
@@ -151,7 +146,7 @@ const buildListOperations = (networkFamily: string) =>
     return [data.operations.map(op => adaptOp(op)), ""];
   };
 
-const buildLastBlock = (networkFamily: string) =>
+const buildLastBlock = networkFamily =>
   async function lastBlock(): Promise<BlockInfo> {
     const { data } = await network<any, unknown>({
       method: "GET",
@@ -164,7 +159,7 @@ const buildLastBlock = (networkFamily: string) =>
     };
   };
 
-const buildCraftTransaction = (networkFamily: string) =>
+const buildCraftTransaction = networkFamily =>
   async function craftTransaction(intent: TransactionIntent<any>): Promise<string> {
     const { data } = await network<any, unknown>({
       method: "POST",
@@ -186,7 +181,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    getAccountInfo: buildGetAccountInfo(networkFamily),
+    getSequence: buildGetSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),

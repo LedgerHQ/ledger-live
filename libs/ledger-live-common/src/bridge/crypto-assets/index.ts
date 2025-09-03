@@ -1,6 +1,7 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { isCALIntegrationEnabled, getCALStore } from "./cal-integration";
 
 const legacyStore: CryptoAssetsStore = {
   findTokenByAddress: legacy.findTokenByAddress,
@@ -17,7 +18,12 @@ export function setCryptoAssetsStore(store: CryptoAssetsStore) {
 }
 
 export function getCryptoAssetsStore(): CryptoAssetsStore {
-  const featureEnabled = LiveConfig.getValueByKey("feature_cal_lazy_loading");
+  if (isCALIntegrationEnabled()) {
+    return getCALStore();
+  }
+
+  const featureEnabled =
+    LiveConfig.isConfigSet() && LiveConfig.getValueByKey("feature_cal_lazy_loading");
   if (!featureEnabled) {
     return legacyStore;
   }

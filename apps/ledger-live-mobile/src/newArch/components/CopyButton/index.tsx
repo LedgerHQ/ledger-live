@@ -21,13 +21,19 @@ function CopyButton({ text, ...props }: Props) {
     setTimeout(() => (transition.value = withTiming(0, { duration: 200 })), 1200);
   }, [text, transition]);
 
-  const copyIconAnimation = useAnimatedStyle(() => ({
-    opacity: 1 - transition.value,
-  }));
+  const copyIconAnimation = useAnimatedStyle(
+    () => ({
+      opacity: 1 - transition.value,
+    }),
+    [transition],
+  );
 
-  const checkIconAnimation = useAnimatedStyle(() => ({
-    opacity: transition.value,
-  }));
+  const checkIconAnimation = useAnimatedStyle(
+    () => ({
+      opacity: transition.value,
+    }),
+    [transition],
+  );
 
   const icon = useMemo(
     () => (

@@ -34,6 +34,8 @@ export enum DeviceModelId {
   stax = "stax",
   /** Ledger Flex ("europa" is the internal name) */
   europa = "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
+  /** Apex */
+  apex = "apex",
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -85,6 +87,27 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     memorySize: 1533 * 1024,
     masks: [0x33100000],
     getBlockSize: (_firmwareVersion: string): number => 32,
+  },
+  [DeviceModelId.apex]: {
+    id: DeviceModelId.apex,
+    productName: "Ledger Apex",
+    productIdMM: 0x80,
+    legacyUsbProductId: 0x0008,
+    usbOnly: false,
+    memorySize: 1533 * 1024,
+    masks: [0x33400000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
+    bluetoothSpec: [
+      /**
+       * 13D63400-2C97-6004-0001-4C6564676572, 13D63400-2C97-6004-0002-4C6564676572, and 13D63400-2C97-6004-0003-4C6564676572 Characteristics for Service 13D63400-2C97-6004-0000-4C6564676572
+       */
+      {
+        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572", // WILL CHANGE, for now same as Stax
+        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572", // WILL CHANGE, for now same as Stax
+        writeUuid: "13d63400-2c97-6004-0002-4c6564676572", // WILL CHANGE, for now same as Stax
+        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572", // WILL CHANGE, for now same as Stax
+      },
+    ],
   },
   [DeviceModelId.stax]: {
     id: DeviceModelId.stax,

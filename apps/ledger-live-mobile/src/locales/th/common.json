@@ -306,6 +306,10 @@
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
       "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
     },
+    "ReconnectionFailedError" : {
+      "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
+      "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
     "DeviceDisconnectedBeforeSendingApdu" : {
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
       "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
@@ -1301,7 +1305,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 นาที",
       "medium" : "≈ 30 วินาที",
-      "fast" : "≈ 15 วินาที"
+      "fast" : "≈ 15 วินาที",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2139,7 +2144,6 @@
           "label" : "บนแอปเดสก์ท็อป เลือก\n<1>การตั้งค่า > บัญชี > ส่งออกบัญชี</1>"
         },
         "1" : {
-          "label" : "สแกน LiveQR Code ด้วยโทรศัพท์ของคุณ"
         },
         "2" : {
           "label" : "เลือกบัญชีคริปโตเพื่อนำเข้า"
@@ -3238,7 +3242,7 @@
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
-        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, Binance Smart Chain, Avalanche และ Ethereum Classic"
+        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
@@ -3656,7 +3660,8 @@
           "refunded" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อขอข้อมูลเพิ่มเติม",
           "pending" : "โปรดรอสักครู่ ผู้ให้บริการ Swap กำลังประมวลผลธุรกรรม",
           "onhold" : "โปรดติดต่อผู้ให้บริการ Swap พร้อม Swap ID ของคุณเพื่อแก้ไขสถานการณ์",
-          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว"
+          "finished" : "การทำ Swap ของคุณเสร็จสมบูรณ์แล้ว",
+          "unknown" : "เรากำลังรอข้อมูลจากผู้ให้บริการ"
         }
       },
       "missingApp" : {
@@ -4042,6 +4047,10 @@
       "quantityAvailable" : "ปริมาณที่ใช้ได้"
     },
     "summary" : {
+      "solanaRawTransaction" : {
+        "title" : "จำเป็นต้องมีการ Blind Signing",
+        "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+      },
       "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
       "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
@@ -6240,6 +6249,7 @@
       "iWithdraw" : "ฉันถอน",
       "totalStake" : "Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
+      "netApy" : "อัตราผลตอบแทนต่อปี (APY) สุทธิ",
       "stakeActivationState" : "State",
       "stakeActivePercent" : "ใช้งานอยู่",
       "stakeAvailableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
@@ -7761,7 +7771,7 @@
   },
   "geoBlocking" : {
     "title" : "ไม่พร้อมให้บริการตำแหน่งที่ตั้งนี้",
-    "description" : "Ledger Live ไม่สามารถใช้ได้ในพื้นที่นี้",
+    "description" : "แอป Ledger Live ไม่สามารถใช้ได้ในพื้นที่ของคุณ",
     "learnMore" : "เรียนรู้เพิ่มเติม"
   },
   "versionBlocking" : {
@@ -7773,7 +7783,10 @@
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
     "selectAccount" : "เลือกบัญชี",
-    "searchPlaceholder" : "ค้นหา"
+    "searchPlaceholder" : "ค้นหา",
+    "emptyAssetList" : "ไม่พบสินทรัพย์",
+    "accountCount" : "{{count}} บัญชี",
+    "accountCount_plural" : "{{count}} บัญชี"
   },
   "swapErrors" : {
     "incorrectCommandData" : {

@@ -6,7 +6,7 @@ import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/inde
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 setSupportedCurrencies(["ethereum"]);
 

@@ -6,6 +6,7 @@ const deviceVersionRangesForLocalization: { [key in DeviceModelId]?: string } = 
   nanoSP: ">=1.1.0",
   stax: ">=1.0.0",
   europa: ">=0.0.0",
+  apex: ">=0.0.0",
 };
 
 export const isDeviceLocalizationSupported = (

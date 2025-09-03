@@ -49,12 +49,15 @@ export default function useItemAnimation(index: number = 0) {
 
   const baseDelay = index * ANIMATION_CONFIG.itemDelay;
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    height: `${height.value}%`,
-    opacity: opacity.value,
-    transform: [{ translateY: y.value }, { translateY: centerY.value }, { scale: scale.value }],
-    flex: 1,
-  }));
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: `${height.value}%`,
+      opacity: opacity.value,
+      transform: [{ translateY: y.value }, { translateY: centerY.value }, { scale: scale.value }],
+      flex: 1,
+    }),
+    [height, opacity, y, centerY, scale],
+  );
 
   const startAnimation = useCallback(() => {
     animate(height, ANIMATION_CONFIG.size.to, ANIMATION_CONFIG.size.duration, baseDelay);

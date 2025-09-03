@@ -8,7 +8,8 @@ import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/S
 import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
-import StaxCompletionView from "./StaxCompletionView";
+import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
+import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setHasBeenRedirectedToPostOnboarding,
@@ -105,6 +106,19 @@ const CompletionScreen = ({ route }: Props) => {
     [navigation, isSyncIncr1Enabled],
   );
 
+  const onboardingSuccessView = (loop: boolean, redirectToMainScreen?: () => void) => {
+    switch (device.modelId) {
+      case DeviceModelId.europa:
+        return <EuropaCompletionView onAnimationFinish={redirectToMainScreen} loop={loop} />;
+      case DeviceModelId.stax:
+        return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} loop={loop} />;
+      case DeviceModelId.apex:
+        return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+      default:
+        return null;
+    }
+  };
+
   if (isSyncIncr1Enabled) {
     return (
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
@@ -113,11 +127,7 @@ const CompletionScreen = ({ route }: Props) => {
           flow="onboarding"
           seedConfiguration={seedConfiguration}
         />
-        {device.modelId === DeviceModelId.europa ? (
-          <EuropaCompletionView device={device} loop />
-        ) : (
-          <StaxCompletionView />
-        )}
+        {onboardingSuccessView(true)}
         <CTAWrapper>
           {/*  <Flex flex={1} alignItems="center" mb={57}>
             <Svg height="30" width="225">
@@ -168,22 +178,8 @@ const CompletionScreen = ({ route }: Props) => {
         flow="onboarding"
         seedConfiguration={seedConfiguration}
       />
-      <Flex
-        width="100%"
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-        backgroundColor="blue"
-      >
-        {device.modelId === DeviceModelId.europa ? (
-          <EuropaCompletionView
-            device={device}
-            onAnimationFinish={redirectToMainScreen}
-            loop={false}
-          />
-        ) : (
-          <StaxCompletionView onAnimationFinish={redirectToMainScreen} />
-        )}
+      <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
+        {onboardingSuccessView(false, redirectToMainScreen)}
       </Flex>
     </TouchableWithoutFeedback>
   );

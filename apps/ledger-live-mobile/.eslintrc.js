@@ -80,7 +80,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": [
       "error", // Checks effect dependencies
       {
-        additionalHooks: "useInViewContext",
+        additionalHooks: "(useInViewContext|useAnimatedStyle|useDerivedValue|useAnimatedProps)",
       },
     ],
     "jsx-a11y/no-autofocus": "off",

@@ -55,6 +55,11 @@ export function DrawerFooter({ provider }: { provider: string }) {
           acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
           urls: providerData?.usefulUrls,
         };
+      case "CIC":
+        return {
+          acceptTerms: "DeviceAction.swap.cicAcceptTerms",
+          urls: providerData?.usefulUrls,
+        };
       default:
         return {
           acceptTerms: "DeviceAction.swap.acceptTerms",

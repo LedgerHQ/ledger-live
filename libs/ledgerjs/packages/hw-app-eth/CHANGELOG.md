@@ -1,5 +1,71 @@
 # @ledgerhq/hw-app-eth
 
+## 6.45.16
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.0
+  - @ledgerhq/types-live@6.82.0
+  - @ledgerhq/evm-tools@1.7.4
+  - @ledgerhq/domain-service@1.2.41
+
+## 6.45.16-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`31dceca`](https://github.com/LedgerHQ/ledger-live/commit/31dcecad24abdaa8a77208e82532c47728c11180)]:
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.0-next.0
+  - @ledgerhq/types-live@6.82.0-next.0
+  - @ledgerhq/evm-tools@1.7.4-next.0
+  - @ledgerhq/domain-service@1.2.41-next.0
+
+## 6.45.15
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/errors@6.24.0
+  - @ledgerhq/types-live@6.81.0
+  - @ledgerhq/evm-tools@1.7.3
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.12
+  - @ledgerhq/domain-service@1.2.40
+  - @ledgerhq/hw-transport@6.31.9
+  - @ledgerhq/hw-transport-mocker@6.29.9
+
+## 6.45.15-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`354fa83`](https://github.com/LedgerHQ/ledger-live/commit/354fa83c8107cf8e6b56a8b306569ee65980e10c), [`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/errors@6.24.0-next.0
+  - @ledgerhq/types-live@6.81.0-next.0
+  - @ledgerhq/evm-tools@1.7.3-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.12-next.0
+  - @ledgerhq/domain-service@1.2.40-next.0
+  - @ledgerhq/hw-transport@6.31.9-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.9-next.0
+
+## 6.45.14
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0
+  - @ledgerhq/domain-service@1.2.39
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.11
+  - @ledgerhq/evm-tools@1.7.2
+
+## 6.45.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2da9b4a`](https://github.com/LedgerHQ/ledger-live/commit/2da9b4a5dd9fec3fea188fc9fa107b2c3479d1be)]:
+  - @ledgerhq/types-live@6.80.0-next.0
+  - @ledgerhq/domain-service@1.2.39-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.11-next.0
+  - @ledgerhq/evm-tools@1.7.2-next.0
+
 ## 6.45.13
 
 ### Patch Changes

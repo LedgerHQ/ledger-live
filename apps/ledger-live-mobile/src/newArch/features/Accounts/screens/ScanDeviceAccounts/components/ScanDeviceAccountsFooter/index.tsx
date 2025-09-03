@@ -6,7 +6,7 @@ import IconPause from "~/icons/Pause";
 import Button from "~/components/Button";
 
 import { ScanDeviceAccountsFooterProps } from "../../types";
-import useAnimatedStyle from "./useAnimatedStyle";
+import useSelectableAccountAnimation from "./useAnimatedStyle";
 
 const ScanDeviceAccountsFooter = ({
   isDisabled,
@@ -18,7 +18,7 @@ const ScanDeviceAccountsFooter = ({
   onRetry,
   onDone,
 }: ScanDeviceAccountsFooterProps) => {
-  const { animatedSelectableAccount } = useAnimatedStyle();
+  const { animatedSelectableAccount } = useSelectableAccountAnimation();
 
   return (
     <Animated.View style={[styles.footer, animatedSelectableAccount]}>

@@ -1,6 +1,8 @@
-import { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-framework/lib/api/types";
+import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { ethers, BigNumber } from "ethers";
+import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { EvmConfig } from "../config";
+import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
 
 describe.each([
@@ -25,10 +27,23 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: AlpacaApi;
+  let module: Api;
 
   beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacy);
     module = createApi(config as EvmConfig, "ethereum");
+  });
+
+  describe("getSequence", () => {
+    it("returns 0 as next sequence for a pristine account", async () => {
+      expect(await module.getSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(0);
+    });
+
+    it("returns next sequence for an address", async () => {
+      expect(
+        await module.getSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
+      ).toBeGreaterThanOrEqual(17);
+    });
   });
 
   describe("lastBlock", () => {
@@ -139,13 +154,15 @@ describe.each([
       expect(
         await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
+          order: "asc",
         }),
       ).toEqual([[], ""]);
     });
 
-    it("list operations for an address", async () => {
+    it("lists operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
         minHeight: 200,
+        order: "asc",
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
@@ -171,6 +188,7 @@ describe.each([
           value: expect.any(BigInt),
           parameters: {
             gasPrice: expect.any(BigInt),
+            gasLimit: expect.any(BigInt),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
@@ -187,6 +205,7 @@ describe.each([
           value: expect.any(BigInt),
           parameters: {
             gasPrice: null,
+            gasLimit: expect.any(BigInt),
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),

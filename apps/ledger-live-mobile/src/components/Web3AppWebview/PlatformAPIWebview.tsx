@@ -104,7 +104,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { isModularDrawerVisible } = useModularDrawerVisibility({
       modularDrawerFeatureFlagKey: "llmModularDrawer",
     });
-    const modularDrawerVisible = isModularDrawerVisible(ModularDrawerLocation.LIVE_APP);
+    const modularDrawerVisible = isModularDrawerVisible({
+      location: ModularDrawerLocation.LIVE_APP,
+      liveAppId: manifest.id,
+    });
 
     const { openDrawer: openModularDrawer } = useModularDrawerController();
 
@@ -172,9 +175,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           if (modularDrawerVisible) {
             openModularDrawer({
-              currencies: allCurrencies,
+              currencies: allCurrencies.map(c => c.id),
               enableAccountSelection: true,
               onAccountSelected: onSuccess,
+              flow: manifest.name,
+              source:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current ?? "Unknown",
             });
           } else {
             if (currenciesDiff.length === 1) {

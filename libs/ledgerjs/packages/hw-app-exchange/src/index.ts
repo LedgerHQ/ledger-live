@@ -9,6 +9,7 @@ import Exchange, {
 } from "./Exchange";
 import { decodeSwapPayload, decodePayloadProtobuf } from "./SwapUtils";
 import { decodeSellPayload } from "./SellUtils";
+import { decodeFundPayload } from "./FundUtils";
 
 export {
   createExchange,
@@ -21,6 +22,7 @@ export {
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
   decodeSellPayload,
+  decodeFundPayload,
 };
 
 export default Exchange;

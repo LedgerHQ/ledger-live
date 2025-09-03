@@ -9,6 +9,7 @@ const deviceVersionRangesForBootloaderVersion: {
   nanoSP: ">=1.0.0",
   stax: ">=1.0.0",
   europa: ">=0.0.0",
+  apex: ">=0.0.0",
 };
 /**
  * @returns whether the Bootloader Version bytes are included in the result of the

@@ -10,7 +10,6 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
-
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
@@ -33,7 +32,6 @@ import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
@@ -57,7 +55,6 @@ import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
-
 import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
@@ -89,6 +86,7 @@ import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCu
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
+import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -151,7 +149,7 @@ export default function BaseNavigator() {
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
-            headerBackTitleVisible: false,
+            headerBackButtonDisplayMode: "minimal",
             title: "",
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
@@ -223,7 +221,7 @@ export default function BaseNavigator() {
           component={ExploreTabNavigator}
           options={{
             headerShown: true,
-            animationEnabled: false,
+            animation: "none",
             headerTitle: t("discover.sections.news.title"),
             headerLeft: () => <NavigationHeaderBackButton />,
             headerRight: () => null,
@@ -284,12 +282,7 @@ export default function BaseNavigator() {
             headerShown: false,
           }}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose = route.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -300,13 +293,7 @@ export default function BaseNavigator() {
             title: t("transfer.receive.headerTitle"),
           }}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose =
-                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -380,16 +367,14 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={NavigatorName.ImportAccounts}
-          component={ImportAccountsNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name={ScreenName.PairDevices}
           component={PairDevices}
           options={({ navigation, route }) => ({
             title: "",
-            headerRight: () => <ErrorHeaderInfo route={route} navigation={navigation} />,
+            headerRight: () => {
+              const nav = navigation;
+              return <ErrorHeaderInfo route={route} navigation={nav} />;
+            },
             headerShown: true,
             headerStyle: styles.headerNoShadow,
           })}
@@ -433,6 +418,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={ScreenName.LedgerSyncDeepLinkHandler}
+          component={LedgerSyncDeepLinkHandler}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -500,13 +490,19 @@ export default function BaseNavigator() {
         />
         {/* This is a freaking hack… */}
         {Object.keys(families).map(name => {
+          /* eslint-disable @typescript-eslint/consistent-type-assertions */
           const { component, options } = families[name as keyof typeof families];
+          const screenName = name as keyof BaseNavigatorStackParamList;
+          const screenComponent = component as React.ComponentType;
+          const screenOptions = options as StackNavigationOptions;
+          /* eslint-enable @typescript-eslint/consistent-type-assertions */
+
           return (
             <Stack.Screen
               key={name}
-              name={name as keyof BaseNavigatorStackParamList}
-              component={component as React.ComponentType}
-              options={options as StackNavigationOptions}
+              name={screenName}
+              component={screenComponent}
+              options={screenOptions}
             />
           );
         })}
@@ -525,13 +521,7 @@ export default function BaseNavigator() {
           component={DeviceConnect}
           options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose =
-                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -628,3 +618,50 @@ export default function BaseNavigator() {
     </>
   );
 }
+
+/**
+ * Handle the onClose callback for the route
+ *
+ * If the route has a onClose callback, call it
+ * If the route has a nested route with a onClose callback, call it
+ *
+ * @param route
+ * The route object
+ */
+function handleOnClose(route: object) {
+  if (route == null || !("params" in route)) return;
+  const params = route.params;
+  if (params == null) return;
+
+  if (isRouteWithCloseCallback(params)) {
+    params.onClose();
+  }
+  if (isNestedRouteWithCloseCallback(params)) {
+    params.params.onClose();
+  }
+}
+
+/**
+ * Check if the route has a onClose callback
+ *
+ * @param params
+ * The route params
+ */
+function isRouteWithCloseCallback(params: object): params is Readonly<WithCloseCallback> {
+  return "onClose" in params && typeof params.onClose === "function";
+}
+
+/**
+ * Check if the route has a nested route with a onClose callback
+ *
+ * @param params
+ * The route params
+ */
+function isNestedRouteWithCloseCallback(params: object): params is { params: WithCloseCallback } {
+  if (!("params" in params)) return false;
+  const nestedParams = params.params;
+  if (nestedParams == null) return false;
+  return isRouteWithCloseCallback(nestedParams);
+}
+
+type WithCloseCallback = { onClose: () => void };

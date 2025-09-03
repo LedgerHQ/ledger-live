@@ -38,12 +38,18 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
     });
   }, [collapseAnimation]);
 
-  const animatedChevron = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${collapseAnimation.value * 90}deg` }],
-  }));
-  const animateContent = useAnimatedStyle(() => ({
-    maxHeight: `${collapseAnimation.value * 100}%`,
-  }));
+  const animatedChevron = useAnimatedStyle(
+    () => ({
+      transform: [{ rotate: `${collapseAnimation.value * 90}deg` }],
+    }),
+    [collapseAnimation],
+  );
+  const animateContent = useAnimatedStyle(
+    () => ({
+      maxHeight: `${collapseAnimation.value * 100}%`,
+    }),
+    [collapseAnimation],
+  );
 
   const header = typeof title === "string" ? <Text>{title}</Text> : title;
 

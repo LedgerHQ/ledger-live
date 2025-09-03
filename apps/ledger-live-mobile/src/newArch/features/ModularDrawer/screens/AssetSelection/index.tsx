@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import SkeletonList from "../../components/Skeleton/SkeletonList";
 import {
   useModularDrawerAnalytics,
   TrackDrawerScreen,
@@ -16,18 +17,18 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
+import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
   availableAssets: CryptoOrTokenCurrency[];
   defaultSearchValue: string;
   setDefaultSearchValue: (value: string) => void;
-  itemsToDisplay: CryptoOrTokenCurrency[];
-  setItemsToDisplay: (items: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   flow: string;
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  isLoading?: boolean;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -36,17 +37,22 @@ const AssetSelection = ({
   availableAssets,
   defaultSearchValue,
   setDefaultSearchValue,
-  itemsToDisplay,
-  setItemsToDisplay,
   onAssetSelected,
   flow,
   source,
   assetsConfiguration,
+  isOpen,
+  isLoading,
 }: Readonly<AssetSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const transformAssets = createAssetConfigurationHook({
+    assetsConfiguration,
+  });
+  const formattedAssets = transformAssets(availableAssets);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -80,20 +86,6 @@ const AssetSelection = ({
     ],
   );
 
-  useEffect(() => {
-    if (defaultSearchValue === undefined) {
-      return;
-    }
-
-    if (availableAssets.length > 0) {
-      setItemsToDisplay(
-        availableAssets.filter(asset =>
-          asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-        ),
-      );
-    }
-  }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
-
   const handleSearchPressIn = () => {
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
@@ -113,41 +105,43 @@ const AssetSelection = ({
 
   return (
     <>
-      <TrackDrawerScreen
-        page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
-        flow={flow}
-        source={source}
-        assetsConfig={assetsConfiguration}
-        formatAssetConfig
-      />
+      {isOpen && (
+        <TrackDrawerScreen
+          page={EVENTS_NAME.MODULAR_ASSET_SELECTION}
+          flow={flow}
+          source={source}
+          assetsConfig={assetsConfiguration}
+          formatAssetConfig
+        />
+      )}
       <SearchInputContainer
-        source="modular-drawer"
-        flow="asset-selection"
-        items={availableAssets}
-        setItemsToDisplay={setItemsToDisplay}
-        assetsToDisplay={itemsToDisplay}
-        originalAssets={availableAssets}
+        source={source}
+        flow={flow}
         setSearchedValue={setDefaultSearchValue}
         defaultValue={defaultSearchValue}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}
       />
-      <BottomSheetVirtualizedList
-        ref={listRef}
-        scrollToOverflowEnabled={true}
-        data={itemsToDisplay}
-        keyExtractor={item => item.id}
-        getItemCount={itemsToDisplay => itemsToDisplay.length}
-        getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<AssetsEmptyList />}
-        contentContainerStyle={{
-          paddingBottom: SAFE_MARGIN_BOTTOM,
-          marginTop: 16,
-        }}
-      />
+      {isLoading ? (
+        <SkeletonList />
+      ) : (
+        <BottomSheetVirtualizedList
+          ref={listRef}
+          scrollToOverflowEnabled={true}
+          data={formattedAssets}
+          keyExtractor={item => item.id}
+          getItemCount={itemsToDisplay => itemsToDisplay.length}
+          getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<AssetsEmptyList />}
+          contentContainerStyle={{
+            paddingBottom: SAFE_MARGIN_BOTTOM,
+            marginTop: 16,
+          }}
+        />
+      )}
     </>
   );
 };

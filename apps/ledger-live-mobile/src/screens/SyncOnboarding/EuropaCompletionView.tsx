@@ -1,13 +1,11 @@
 import Animation from "~/components/Animation";
 import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
 import { useIsFocused } from "@react-navigation/core";
 
 type Props = {
-  device: Device;
   onAnimationFinish?: () => void;
   loop: boolean;
 };

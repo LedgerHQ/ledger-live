@@ -72,7 +72,8 @@
     "DATADOG_PROD_CLIENT_TOKEN",
     "DATADOG_PROD_APPLICATION_ID",
     "MOCK",
-    "MOCK_COUNTERVALUES"
+    "MOCK_COUNTERVALUES",
+    "ENABLE_MSW"
   ],
   "ui": "tui",
   "tasks": {
@@ -97,6 +98,11 @@
       "outputs": []
     },
     "start": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "start:msw": {
       "cache": false,
       "dependsOn": ["^build"],
       "persistent": true
@@ -142,7 +148,8 @@
       "persistent": true
     },
     "coverage": {
-      "cache": false
+      "dependsOn": ["^build", "build"],
+      "outputs": ["coverage/lcov.info", "coverage/sonar-executionTests-report.xml"]
     },
     "clean": {
       "cache": false

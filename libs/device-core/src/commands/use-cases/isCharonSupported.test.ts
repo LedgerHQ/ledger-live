@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isCharonSupported } from "./isCharonSupported";
 
-const { nanoS, nanoX, stax, europa, nanoSP } = DeviceModelId;
+const { nanoS, nanoX, stax, europa, nanoSP, apex } = DeviceModelId;
 
 test("isHardwareVersionSupported", () => {
   /**
@@ -45,4 +45,10 @@ test("isHardwareVersionSupported", () => {
 
   expect(isCharonSupported("1.2.0", europa)).toBe(false);
   expect(isCharonSupported("1.2.0-whatever0", europa)).toBe(false);
+
+  /**
+   * Apex
+   * */
+  expect(isCharonSupported("0.0.0", apex)).toBe(true);
+  expect(isCharonSupported("0.0.0-whatever0", apex)).toBe(true);
 });

@@ -41,7 +41,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       account && account.type === "Account" ? listTokensForCryptoCurrency(account.currency) : [];
     return options.find(
       ({ tokenType, contractAddress }) =>
-        tokenType === transaction.assetCode && contractAddress === transaction.assetIssuer,
+        tokenType === transaction.assetReference && contractAddress === transaction.assetOwner,
     );
   }, [account, transaction]);
   return (

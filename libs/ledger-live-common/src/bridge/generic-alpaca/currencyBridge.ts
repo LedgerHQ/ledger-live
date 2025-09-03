@@ -3,7 +3,7 @@ import { CurrencyBridge } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
 
-export function getAlpacaCurrencyBridge(network: string, kind: "local" | "remote"): CurrencyBridge {
+export function getAlpacaCurrencyBridge(network: string, kind: string): CurrencyBridge {
   return {
     preload: () => Promise.resolve({}),
     hydrate: () => {

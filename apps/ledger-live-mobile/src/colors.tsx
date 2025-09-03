@@ -28,12 +28,35 @@ export function withTheme<P>(Component: React.ComponentType<P>) {
     },
   ) => {
     const { colors } = useTheme();
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return <Component colors={colors} {...(props as P)} />;
   };
 }
 
+// @react-navigation <HeaderTitle> uses useTheme() internally to reads the font
+// the app will crash if the fonts are not defined.
+const fonts = {
+  regular: {
+    fontFamily: "Inter",
+    fontWeight: "regular",
+  },
+  medium: {
+    fontFamily: "Inter",
+    fontWeight: "medium",
+  },
+  bold: {
+    fontFamily: "Inter",
+    fontWeight: "bold",
+  },
+  heavy: {
+    fontFamily: "Inter",
+    fontWeight: "black",
+  },
+};
+
 export const lightTheme = {
   dark: false,
+  fonts,
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
     background: "#FFFFFF",
@@ -90,6 +113,7 @@ export const lightTheme = {
 
 export const darkTheme = {
   dark: true,
+  fonts,
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
     card: "#1C1D1F",

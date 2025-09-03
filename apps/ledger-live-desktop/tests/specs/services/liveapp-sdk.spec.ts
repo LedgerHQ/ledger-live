@@ -7,7 +7,22 @@ import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({
+  userdata: "1AccountBTC1AccountETH",
+  featureFlags: {
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        earn_flow: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
+  },
+});
 
 let testServerIsRunning = false;
 

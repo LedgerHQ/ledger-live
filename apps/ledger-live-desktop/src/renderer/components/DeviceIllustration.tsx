@@ -2,6 +2,7 @@ import React from "react";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import stax from "~/renderer/images/stax.svg";
 import europa from "~/renderer/images/europa.svg";
+import apex from "~/renderer/images/apex.svg";
 import nanoX from "~/renderer/images/nanoX.svg";
 import nanoS from "~/renderer/images/nanoS.svg";
 import nanoSP from "~/renderer/images/nanoSP.svg";
@@ -35,6 +36,11 @@ const Europa = styled.div`
   background: url('${europa}') no-repeat center;
 `;
 
+const Apex = styled.div`
+  // prettier-ignore
+  background: url('${apex}') no-repeat center;
+`;
+
 type Illustration = {
   Illustration: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never>;
   width: number;
@@ -64,6 +70,11 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
   },
   europa: {
     Illustration: Europa,
+    width: 200,
+    height: 200,
+  },
+  apex: {
+    Illustration: Apex,
     width: 200,
     height: 200,
   },

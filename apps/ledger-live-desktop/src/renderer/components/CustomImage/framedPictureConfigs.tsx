@@ -71,6 +71,16 @@ const configs = {
         backgroundSource: europaTransferBackgroundDark,
       },
     },
+    apex: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
+      },
+    },
   },
   preview: {
     stax: {
@@ -91,6 +101,16 @@ const configs = {
       dark: {
         ...europaPreviewConfig,
         backgroundSource: europaTransferBackgroundDark,
+      },
+    },
+    apex: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
       },
     },
   },

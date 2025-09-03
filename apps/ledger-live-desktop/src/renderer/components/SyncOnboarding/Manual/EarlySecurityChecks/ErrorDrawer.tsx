@@ -12,9 +12,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { DmkError } from "@ledgerhq/live-dmk-desktop";
 
 export type Props = {
-  error: Error;
+  error: DmkError | Error;
   onClickRetry: () => void;
   closeable?: boolean;
 };
@@ -31,7 +32,11 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
   const providerNumber = useEnv("FORCE_PROVIDER");
 
   const drawerAnalyticsName = `Error: ${
-    isNotFoundEntityError ? "couldn't check if the device was genuine" : (error as Error).name
+    isNotFoundEntityError
+      ? "couldn't check if the device was genuine"
+      : "name" in error
+        ? error.name
+        : error._tag
   }`;
 
   const goToExperimentalSettings = () => {

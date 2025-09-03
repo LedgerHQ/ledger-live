@@ -1,5 +1,4 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -23,7 +22,6 @@ type Props = StackNavigatorProps<
 export default function PlatformStartExchange({ navigation, route }: Props) {
   const action = useStartExchangeDeviceAction();
   const [device, setDevice] = useState<Device>();
-  const isFocused = useIsFocused();
   const hasPopped = useRef(false);
 
   const onClose = useCallback(() => {
@@ -49,7 +47,7 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
       <Flex px={16} flex={1} mt={8}>
         <SelectDevice2
           onSelect={setDevice}
-          stopBleScanning={!!device || !isFocused}
+          stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>

@@ -26,6 +26,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
+  PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
   RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
@@ -390,7 +391,7 @@ export const setDismissedContentCards = (payload: { id: string; timestamp: numbe
   payload,
 });
 
-export const clearDismissedContentCards = (payload: string[]) => ({
+export const clearDismissedContentCards = (payload: { now: Date }) => ({
   type: "CLEAR_DISMISSED_CONTENT_CARDS",
   payload,
 });
@@ -461,9 +462,15 @@ export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
   };
 };
 
+export const purgeExpiredAnonymousUserNotifications = (payload: { now: Date }) => {
+  return {
+    type: PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+    payload,
+  };
+};
+
 export const updateAnonymousUserNotifications = (payload: {
   notifications: SettingsState["anonymousUserNotifications"];
-  purgeState?: boolean;
 }) => {
   return {
     type: UPDATE_ANONYMOUS_USER_NOTIFICATIONS,

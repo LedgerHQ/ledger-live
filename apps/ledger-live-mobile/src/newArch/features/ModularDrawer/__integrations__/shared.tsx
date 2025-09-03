@@ -6,12 +6,6 @@ import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 
 import { Button } from "@ledgerhq/native-ui";
 import {
-  mockArbitrumCryptoCurrency,
-  mockBaseCryptoCurrency,
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import {
   BTC_ACCOUNT,
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
@@ -26,12 +20,7 @@ import { ModularDrawer, useModularDrawerController } from "..";
 export const WITH_ACCOUNT_SELECTION = "Open Drawer (with account selection)";
 export const WITHOUT_ACCOUNT_SELECTION = "Open Drawer (without account selection)";
 
-const currencies = [
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-  mockArbitrumCryptoCurrency,
-  mockBaseCryptoCurrency,
-];
+export { ETH_ACCOUNT, ETH_ACCOUNT_2, BTC_ACCOUNT, ARB_ACCOUNT, BASE_ACCOUNT };
 
 export const mockedAccounts = [
   ETH_ACCOUNT,
@@ -67,7 +56,6 @@ const MockModularDrawerComponent = ({
   const handleOpenDrawer = useCallback(
     (withAccountSelection: boolean) => {
       openDrawer({
-        currencies,
         enableAccountSelection: withAccountSelection,
         flow: "integration_test",
         source: "modular_drawer_shared",
@@ -103,7 +91,6 @@ const MockModularDrawerComponent = ({
       <ModularDrawer
         isOpen={isOpen}
         onClose={closeDrawer}
-        currencies={currencies}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
         enableAccountSelection={enableAccountSelection}
@@ -116,10 +103,9 @@ const MockModularDrawerComponent = ({
 
 export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => (
   <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
-    <Stack.Screen
-      name={ScreenName.MockedModularDrawer}
-      component={() => <MockModularDrawerComponent {...props} />}
-    />
+    <Stack.Screen name={ScreenName.MockedModularDrawer}>
+      {() => <MockModularDrawerComponent {...props} />}
+    </Stack.Screen>
     <Stack.Screen
       name={NavigatorName.DeviceSelection}
       component={DeviceSelectionNavigator}

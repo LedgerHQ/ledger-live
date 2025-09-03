@@ -202,7 +202,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "SENDING": "Sending",
-      "BURN": "Burned"
+      "BURN": "Burned",
+      "ASSOCIATE_TOKEN": "Associate token"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -1939,7 +1940,8 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
-      "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
+      "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
+      "cicAcceptTerms": "“Swap with CIC” you accept CIC’s <0>Terms of Use</0> and its <1>AML/KYC policy</1> CIC may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact CIC’s <2>customer support.</2>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -2273,6 +2275,16 @@
   "sell": {
     "title": "Sell",
     "titleCrypto": "Sell {{currency}}",
+    "exchangeDrawer": {
+      "completed": {
+        "title": "Transaction broadcast successfully",
+        "description": "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+      }
+    }
+  },
+  "fund": {
+    "title": "Fund",
+    "titleCrypto": "Fund {{currency}}",
     "exchangeDrawer": {
       "completed": {
         "title": "Transaction broadcast successfully",
@@ -3700,6 +3712,7 @@
     "delegation": {
       "totalStake": "Total stake",
       "commission": "Commission",
+      "netApy": "Net APY",
       "delegate": "Add",
       "listHeader": "Delegations",
       "availableBalance": "Withdrawable",
@@ -4281,6 +4294,106 @@
       }
     }
   },
+  "sui": {
+    "account": {
+      "stakedBalance": "Delegated asset",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "availableBalance": "Withdawable balance",
+      "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
+      "storageUsageBalance": "Minimum balance",
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The SUI token is now available on Ledger Live",
+        "description": "You can now start to manage your SUI tokens and secure them through Ledger Live.",
+        "description2": "The SUI token is native to the SUI chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Delegated amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn Sui rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "staked": "Delegated",
+        "pending": "Pending Release",
+        "available": "Withdrawable"
+      },
+      "unstake": "Undelegate",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Delegated amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Delegation",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
+            "warning": "Once undelegated your balance and accrued rewards will be immediately cashed in",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to undelegate"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets.",
+              "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -4658,6 +4771,8 @@
       "customCALRefDesc": "Specify a custom branch, commit or tag to use for all CAL requests",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "customLockScreenTester": "Custom lock-screen tester",
+      "customLockScreenTesterDesc": "Test custom lock-screen for supported devices",
       "customLockScreen": "Custom lock-screen assets",
       "customLockScreenDesc": "Debug custom lock-screen graphical assets",
       "customLockScreenCTA": "Launch",
@@ -4796,6 +4911,10 @@
         "testEuropaPostonboarding": {
           "title": "Test Europa Post Onboarding",
           "description": "Test all europa post onboarding features"
+        },
+        "testApexPostonboarding": {
+          "title": "Test Apex Post Onboarding",
+          "description": "Test all apex post onboarding features"
         },
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
@@ -5973,10 +6092,6 @@
       "title": "Device disconnected",
       "description": "Ledger Live could not connect to your device. Please try again."
     },
-    "DisconnectedDeviceDuringOperation": {
-      "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try again."
-    },
     "EConnReset": {
       "title": "The Ledger application store can't be reached",
       "description": "Your internet connection may be down or using unusual configuration. Start by verifying if anything is blocking your connection (proxy or firewall). If the problem persists click below for solutions or reach out to our customer support."
@@ -6716,6 +6831,18 @@
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
     },
+    "HederaInsufficientFundsForAssociation": {
+      "title": "Insufficient balance",
+      "description": "Not enough HBAR to pay for the token association. At least ${{requiredWorthInUSD}} worth of HBAR is required."
+    },
+    "HederaRecipientTokenAssociationRequired": {
+      "title": "Token association required",
+      "description": "The token you’re trying to send is not associated with the destination account. It needs to be associated by the recipient account to be received."
+    },
+    "HederaRecipientTokenAssociationUnverified": {
+      "title": "Unable to verify token association",
+      "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."
@@ -6793,7 +6920,7 @@
       "description": "Unlock your device and try again.",
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     },
-    "DeviceNotOnboardedError": {
+    "DeviceNotOnboardedDAError": {
       "title": "Your Ledger is not set up",
       "description": "Set it up to start using it. We will guide you through the setup process.",
       "goToOnboardingButton": "Set up my Ledger",
@@ -6850,6 +6977,18 @@
       "technicalErrorTitle": "Technical error : ",
       "saveLogs": "Save logs"
     },
+    "OneSuiMinForStake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstake": {
+      "title": "Minimum amount is 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft": {
+      "title": "At least 1 SUI should be left in stake"
+    },
+    "SomeSuiForUnstake": {
+      "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
+    },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
       "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",
@@ -6873,6 +7012,118 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "DisconnectedDeviceDuringOperation": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedWhileSendingError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DisconnectError": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceSessionNotFound": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "DeviceDisconnectedBeforeSendingApdu": {
+      "title": "Device connection lost",
+      "description": "Ledger Live couldn't connect to your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "TransportNotSupportedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "TransportAlreadyExistsError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoTransportProvidedError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "NoAccessibleDeviceError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "ConnectionOpeningError": {
+      "title": "Connection method error",
+      "description": "There was an issue with the device connection method used. Please try with a different connection method or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotInitializedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceNotOnboardedError": {
+      "title": "Device not onboarded",
+      "description": "Your device isn't ready for use. Please follow the setup instructions and try again once onboarded."
+    },
+    "DeviceLockedError": {
+      "title": "Device locked",
+      "description": "Your device is locked. Please unlock it and try again."
+    },
+    "OutOfMemoryDAError": {
+      "title": "Not enough memory",
+      "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+    },
+    "UnsupportedFirmwareDAError": {
+      "title": "OS is unsupported",
+      "description": "Your device's operating system is unsupported. Please update it through Ledger Live, or contact Ledger Support for assistance if you encounter difficulties."
+    },
+    "InvalidBatteryStatusTypeError": {
+      "title": "Battery error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidBatteryDataError": {
+      "title": "Battery error",
+      "description": "Battery status error. Please contact Ledger Support."
+    },
+    "InvalidStatusWordError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "InvalidResponseFormatError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "UnknownDAError": {
+      "title": "Device connection error",
+      "description": "Something went wrong. Please retry or contact Ledger Support if the issue persists."
+    },
+    "DeviceNotRecognizedError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "DeviceAlreadyDiscoveredError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceError": {
+      "title": "Device not recognised",
+      "description": "Ledger Live couldn't recognise your device. Please try with a again or contact Ledger Support if the issue persists."
+    },
+    "ReceiverApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "FramerApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "SendApduTimeoutError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "AlreadySendingApduError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    },
+    "UnknownDeviceExchangeError": {
+      "title": "Communication error",
+      "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
     }
   },
   "cryptoOrg": {
@@ -6889,10 +7140,54 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     },
+    "receive": {
+      "warnings": {
+        "associationPrerequisite": {
+          "text": "In order to receive HTS tokens, your account needs to be associated. If you did not already associate your account with the HTS token that you want to receive, <0>click here</0> to start the token association flow.",
+          "learnMore": "Learn more"
+        },
+        "associationRequired": {
+          "text": "By clicking Continue you will associate the selected token to your Hedera account.",
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "receiveWithAssociation": {
+      "steps": {
+        "associationConfirmation": {
+          "breadcrumbTitle": "Associate",
+          "title": "Associate Token",
+          "pending": {
+            "title": "Broadcasting transaction..."
+          },
+          "success": {
+            "title": "Transaction sent",
+            "description": "You will be able to receive this token once the Associate Token transaction has been confirmed",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    },
     "send": {
       "memo": {
         "label": "Memo (optional)",
         "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      },
+      "warnings": {
+        "missingAssociation": {
+          "learnMore": "Learn more"
+        },
+        "unverifiedAssociation": {
+          "learnMore": "Learn more"
+        }
+      }
+    },
+    "operationDetails": {
+      "postAccountSection": "Associated token",
+      "postAlert": {
+        "text": "Once this transaction has been confirmed you will be able to receive your token. <0>Click here</0> to start the receive flow.",
+        "learnMore": "Learn more"
       }
     }
   },

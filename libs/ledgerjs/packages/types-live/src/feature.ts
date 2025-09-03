@@ -266,6 +266,8 @@ export type Features = CurrencyFeatures & {
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   syncOnboardingIncr1: DefaultFeature;
+  supportDeviceApex: DefaultFeature;
+  calLedgerService: DefaultFeature;
 };
 
 /**
@@ -657,8 +659,9 @@ export type Feature_LlmMmkvMigration = Feature<{
 
 type Feature_ModularDrawer = Feature<{
   add_account: boolean;
-  earn_flow: boolean;
   live_app: boolean;
+  live_apps_allowlist: string[];
+  live_apps_blocklist: string[];
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;
@@ -702,6 +705,8 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_in: LlmNanoSUpsellBannersConfig;
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
+
+export type Feature_SupportDeviceApex = DefaultFeature;
 
 /**
  * Array of firmware versions that are ignored for the given device model

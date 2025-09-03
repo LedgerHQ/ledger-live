@@ -83,11 +83,10 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
         swapAmount,
       );
 
-      const { providerName } = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.checkExchangeButtonHasProviderName(providerName);
+      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();
-
       await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
