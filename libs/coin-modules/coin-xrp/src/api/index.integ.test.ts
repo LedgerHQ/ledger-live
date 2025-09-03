@@ -71,8 +71,9 @@ describe("Xrp Api (testnet)", () => {
 
     it("returns operations from latest, but in asc order", async () => {
       // When
-      const [txDesc] = await api.listOperations(SENDER, { minHeight: 0, order: "desc" });
-
+      const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
+      const [txDesc] = await api.listOperations(SENDER_WITH_TRANSACTIONS, { minHeight: 200, order: "desc" });
+      expect(txDesc.length).toBeGreaterThanOrEqual(200);
       // Then
       // Check if the result is sorted in ascending order
       expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
@@ -214,8 +215,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("returns operations", async () => {
       // https://xrpscan.com/account/rn5BQvhksnPfbo277LtFks4iyYStPKGrnJ
-      // as of 2025-08-29, the address has 398 transactions, 1 op per tx
-      expect(ops.length).toBeGreaterThanOrEqual(398);
+      expect(ops.length).toBeGreaterThanOrEqual(200);
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
       ops.forEach(operation => {
@@ -226,15 +226,16 @@ describe("Xrp Api (mainnet)", () => {
     });
 
     it("returns IN operation", async () => {
-      // https://xrpscan.com/tx/8116AC2E4C6FE35C7C2AADA1FE88C32E1FFD0DA8D348855BAC3903B7153F1EFF
+      // https://xrpscan.com/tx/805E371FDA0223E8910F831802EE93DBA1A4CA40AC8C1337F26F566CD67788F5
       const inTx = {
-        hash: "8116AC2E4C6FE35C7C2AADA1FE88C32E1FFD0DA8D348855BAC3903B7153F1EFF",
-        amount: 6.713757,
+        hash: "9E5141DCAE8158E51ED612333FF3EC2D60A3D2DCD2F6DD5E4F92E4A6704C3CE9",
+        amount: 7.5,
         recipient: SENDER,
-        sender: "r9m6MwViR4GnUNqoGXGa8eroBrZ9FAPHFS",
+        sender: "rnXQmrXk9HSKdNwkut1k9dpAMVYuBsJV49",
         type: "IN",
-        fees: 0.000012,
+        fees: 0.00001,
       };
+      // expect(ops.map(o => o.tx.hash)).toBe("toto");
       const op = ops.find(o => o.tx.hash === inTx.hash) as Operation;
       expect(op.tx.hash).toEqual(inTx.hash);
       expect(op.value).toEqual(BigInt(inTx.amount * 1e6));
@@ -247,9 +248,9 @@ describe("Xrp Api (mainnet)", () => {
     it("returns OUT operation", async () => {
       // https://xrpscan.com/tx/F9B0E5CC0A303C6099AFCE3C1DD9D8D80034F8C33041BF1E792C8236D2DF3F79
       const outTx = {
-        hash: "F9B0E5CC0A303C6099AFCE3C1DD9D8D80034F8C33041BF1E792C8236D2DF3F79",
-        amount: 7.8,
-        recipient: "r9m6MwViR4GnUNqoGXGa8eroBrZ9FAPHFS",
+        hash: "8D13FD7EE0D28B615905903D033A3DC3839FBAA2F545417E3DE51A1A745C1688",
+        amount: 0.1,
+        recipient: "r3XzsqzQCC6r4ZzifWnwa32sFR2H9exkew",
         sender: SENDER,
         type: "OUT",
         fees: 0.00001,

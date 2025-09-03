@@ -103,76 +103,19 @@ async function estimate(): Promise<FeeEstimation> {
   return { value: estimation.fees };
 }
 
-type PaginationState = {
-  readonly pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
-  readonly maxIterations: number; // a security to avoid infinite loop
-  currentIteration: number;
-  readonly minHeight: number;
-  continueIterations: boolean;
-  apiNextCursor?: string;
-  accumulator: Operation[];
-};
-
-async function operationsFromHeight(
-  address: string,
-  minHeight: number,
-  order: Order = "asc",
-): Promise<[Operation[], string]> {
-  async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
-    const options: ListOperationsOptions = {
-      limit: state.pageSize,
-      minHeight: state.minHeight,
-      order: order,
-    };
-    if (state.apiNextCursor) {
-      options.token = state.apiNextCursor;
-    }
-    const [operations, apiNextCursor] = await listOperations(address, options);
-    const newCurrentIteration = state.currentIteration + 1;
-    let continueIteration = true;
-    if (apiNextCursor === "") {
-      continueIteration = false;
-    } else if (newCurrentIteration >= state.maxIterations) {
-      log("coin:xrp", "(api/operations): max iterations reached", state.maxIterations);
-      continueIteration = false;
-    }
-    const accumulated = state.accumulator.concat(operations);
-    return {
-      ...state,
-      currentIteration: newCurrentIteration,
-      continueIterations: continueIteration,
-      apiNextCursor: apiNextCursor,
-      accumulator: accumulated,
-    };
-  }
-
-  const firstState: PaginationState = {
-    pageSize: 200,
-    maxIterations: 10,
-    currentIteration: 0,
-    minHeight: minHeight,
-    continueIterations: true,
-    accumulator: [],
-  };
-
-  let state = await fetchNextPage(firstState);
-  while (state.continueIterations) {
-    state = await fetchNextPage(state);
-  }
-  return [state.accumulator, state.apiNextCursor ?? ""];
-}
-
 // NOTE: double check
 async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
   const { minHeight, lastPagingToken, order } = pagination;
-  if (minHeight) {
-    return await operationsFromHeight(address, minHeight, order);
-  }
-  const isInitSync = lastPagingToken === "";
-
-  const newPagination = {
-    minHeight: isInitSync ? 0 : parseInt(lastPagingToken || "0", 10),
+  const options: ListOperationsOptions = {
+    limit: 200,
+    minHeight: minHeight,
+    order: order ?? "asc",
   };
-  // TODO token must be implemented properly (waiting ack from the design document)
-  return await operationsFromHeight(address, newPagination.minHeight, order);
+  if (lastPagingToken) {
+    const token = lastPagingToken.split("-");
+    options.token = JSON.stringify({ ledger: Number(token[0]), seq: Number(token[1]) });
+  }
+  const [operations, apiNextCursor] = await listOperations(address, options);
+  const next = apiNextCursor ? JSON.parse(apiNextCursor) : null;
+  return [operations, next ? next.ledger + "-" + next.seq : ""];
 }
