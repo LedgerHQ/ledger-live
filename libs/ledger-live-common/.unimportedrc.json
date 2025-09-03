@@ -422,6 +422,7 @@
     "src/modularDrawer/hooks/modules/useAssetAccountCounts.tsx",
     "src/modularDrawer/types.ts",
     "src/modularDrawer/data/entities/interestRateSelectors.ts",
+    "src/modularDrawer/data/state-manager/types.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",

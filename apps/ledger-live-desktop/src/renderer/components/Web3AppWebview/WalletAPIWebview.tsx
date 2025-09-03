@@ -97,6 +97,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
               onCancel,
               flow,
               source,
+              includeTokens: true,
             })
           : setDrawer(
               SelectAccountAndCurrencyDrawer,

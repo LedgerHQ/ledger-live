@@ -25,18 +25,15 @@ export const selectInterestRateByCurrency: (
   ],
   (queries, currencyId): InterestRate | undefined => {
     for (const query of Object.values(queries)) {
-      try {
-        if (query?.data?.pages && Array.isArray(query.data.pages)) {
-          for (const page of query.data.pages) {
-            if (page?.interestRates?.[currencyId]) {
-              return page.interestRates[currencyId];
-            }
-          }
-        }
-      } catch {
-        continue;
+      const pages = query.data?.pages;
+      if (!pages) continue;
+
+      for (const page of pages) {
+        const rate = page.interestRates?.[currencyId];
+        if (rate) return rate;
       }
     }
+
     return undefined;
   },
 );
