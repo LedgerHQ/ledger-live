@@ -152,7 +152,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@ci/test-ios-simulator
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -179,7 +179,7 @@ jobs:
   detox-tests-ios:
     name: "iOS Build / iOS Detox"
     needs: [ build-ios, determine-builds ]
-    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    runs-on: [focus, macOS, ARM64]
     strategy:
       fail-fast: false
       matrix:
