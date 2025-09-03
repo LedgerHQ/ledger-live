@@ -60,6 +60,21 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
     return { unsubscribe: () => {} };
   }
 
+  public static readonly buttonAliases: Record<string, "left" | "right" | "both"> = {
+    // legacy SpeculosButton values
+    Ll: "left",
+    Rr: "right",
+    LRlr: "both",
+    // human-readable strings
+    left: "left",
+    right: "right",
+    both: "both",
+    // enum keys (if ever passed)
+    LEFT: "left",
+    RIGHT: "right",
+    BOTH: "both",
+  };
+
   public static async open(
     opts: SpeculosHttpTransportOpts = {},
   ): Promise<DeviceManagementKitTransportSpeculos> {
@@ -164,9 +179,12 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
   }
 
   public async button(
-    but: keyof typeof DeviceManagementKitTransportSpeculos.buttonMap | string,
+    but: keyof typeof DeviceManagementKitTransportSpeculos.buttonAliases | string,
   ): Promise<void> {
-    const key = typeof but === "string" ? but : DeviceManagementKitTransportSpeculos.buttonMap[but];
+    const key = DeviceManagementKitTransportSpeculos.buttonAliases[String(but)] ?? String(but);
+    if (key !== "left" && key !== "right" && key !== "both") {
+      throw new Error(`Unsupported button "${but}"`);
+    }
     log("speculos-button", "press-and-release", key);
     await this.http.post(`/button/${key}`, { action: "press-and-release" });
   }
