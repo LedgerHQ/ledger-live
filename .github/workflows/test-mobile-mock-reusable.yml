@@ -561,7 +561,7 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [general-pool, macOS, ARM64]
+    runs-on: [ general-pool, macOS, ARM64 ]
     needs: [ determine-builds ]
     if: needs.determine-builds.outputs.ios_native_exists == 'true'
     steps:
@@ -584,14 +584,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.0
-
-      - name: Install CocoaPods
-        run: |
-          gem install cocoapods
 
       - name: Test Pod Lockfile
         working-directory: apps/ledger-live-mobile/ios
