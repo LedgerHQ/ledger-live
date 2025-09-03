@@ -143,44 +143,83 @@ export default class DeviceManagementKitTransportSpeculos extends Transport {
           responseType: "stream",
           timeout: 0, // never time out the live SSE stream
           signal: ac.signal,
-          headers: { Accept: "text/event-stream", Connection: "keep-alive" },
+          // These help some proxies/servers keep SSE truly streaming:
+          headers: {
+            Accept: "text/event-stream",
+            "Cache-Control": "no-cache",
+            Connection: "keep-alive",
+            // Avoid gzip on SSE; some stacks buffer compressed responses:
+            "Accept-Encoding": "identity",
+          },
           transitional: { clarifyTimeoutError: true },
         })
         .then(res => {
           if (connectTimer) clearTimeout(connectTimer);
-
           const stream = res.data as NodeJS.ReadableStream;
           this.eventStream = stream;
           resolved = true;
           resolve(); // headers received: stream is established
 
           let buffer = "";
+          // SSE event being built
+          let eventType: string | null = null;
+          let dataBuf: string[] = [];
+
+          const flushEvent = () => {
+            if (dataBuf.length === 0) return;
+            const raw = dataBuf.join("\n").trim(); // join multi-line data:
+            dataBuf = [];
+            try {
+              // Speculos usually sends JSON in data:
+              const obj = JSON.parse(raw);
+              this.automationEvents.next(obj);
+            } catch (e) {
+              // As a fallback, still emit the raw string payload:
+              this.automationEvents.next({ event: eventType ?? "message", data: raw });
+            }
+            eventType = null;
+          };
+
           stream.on("data", (chunk: Buffer) => {
-            buffer += chunk.toString();
-            // Process complete lines only; keep partial in buffer
-            let idx: number;
-            while ((idx = buffer.indexOf("\n")) >= 0) {
-              const line = buffer.slice(0, idx);
-              buffer = buffer.slice(idx + 1);
-              if (line.startsWith("data: ")) {
-                const payload = line.slice(6); // after "data: "
-                try {
-                  this.automationEvents.next(JSON.parse(payload));
-                } catch (e) {
-                  log("speculos-event", "malformed JSON", { line, error: String(e) });
-                }
+            buffer += chunk.toString("utf8");
+            let nl: number;
+            while ((nl = buffer.indexOf("\n")) !== -1) {
+              let line = buffer.slice(0, nl);
+              buffer = buffer.slice(nl + 1);
+
+              // Trim trailing \r (CRLF)
+              if (line.endsWith("\r")) line = line.slice(0, -1);
+
+              if (line.length === 0) {
+                // Blank line = end of event
+                flushEvent();
+                continue;
               }
+
+              if (line.startsWith(":")) {
+                // comment / heartbeat → ignore
+                continue;
+              }
+
+              if (line.startsWith("event:")) {
+                eventType = line.slice(6).trim();
+                continue;
+              }
+
+              if (line.startsWith("data:")) {
+                dataBuf.push(line.slice(5).trimStart());
+                continue;
+              }
+
+              // Any other line type → ignore safely
             }
           });
 
           stream.on("close", () => {
-            log("speculos-event", "close");
             this.emit("disconnect", new DisconnectedDevice("Speculos events stream closed"));
           });
 
           stream.on("error", err => {
-            log("speculos-event", "error", { err: String(err) });
-            // If the stream errors before resolve, surface it
             if (!resolved) reject(err);
             this.emit("disconnect", new DisconnectedDevice("Speculos SSE error"));
           });
