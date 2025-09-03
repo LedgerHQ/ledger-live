@@ -422,6 +422,7 @@ export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
 };
 
 export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
