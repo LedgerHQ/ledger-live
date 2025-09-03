@@ -694,6 +694,15 @@
       "title" : "Emparejamiento fallido",
       "description" : "Inténtalo de nuevo o consulta nuestro artículo sobre la solución de problemas de Bluetooth."
     },
+    "OneSuiMinForStake" : {
+      "title" : "La cantidad mínima es 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "La cantidad mínima es 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "Debes mantener en participación 1 SUI como mínimo"
+    },
     "PasswordIncorrect" : {
       "title" : "Contraseña incorrecta",
       "description" : "Inténtalo de nuevo."
@@ -1074,6 +1083,18 @@
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "Saldo insuficiente",
+      "description" : "No tienes HBAR suficiente para pagar la asociación del token. Se necesita un mínimo de ${{requiredWorthInUSD}} USD en HBAR."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "Asociación de token necesaria",
+      "description" : "El token que estás intentando enviar no está asociado a la cuenta de destino. Para poder recibirlo, la cuenta del destinatario debe asociarlo."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "No se puede verificar la asociación del token",
+      "description" : "No hemos podido confirmar si la cuenta de destino puede recibir este token. Puede que la dirección no sea válida, o podría haber un problema de red o de servicio."
+    },
     "NearNewAccountWarning" : {
       "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
     },
@@ -1305,7 +1326,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1522,6 +1544,25 @@
     "cta" : "Configurar mi Ledger",
     "bannerTitle" : "¿Has recibido tu Ledger?",
     "bannerCta" : "Empezar la configuración",
+    "continue" : "Continuar"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
     "continue" : "Continuar"
   },
   "purchaseDevice" : {
@@ -2727,7 +2768,8 @@
       "WITHDRAW" : "Retirado",
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
-      "WITHDRAW_UNSTAKED" : "Retirado"
+      "WITHDRAW_UNSTAKED" : "Retirado",
+      "ASSOCIATE_TOKEN" : "Asociar token"
     }
   },
   "operationDetails" : {
@@ -2759,6 +2801,7 @@
     "extra" : {
       "transferId" : "ID de transferencia (Memo)",
       "resource" : "Recurso",
+      "validator" : "Validador",
       "frozenAmount" : "Importe inmovilizado",
       "unfreezeAmount" : "Desinmovilizar importe",
       "address" : "Dirección",
@@ -3242,7 +3285,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
@@ -6455,6 +6498,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI disponibles",
+        "description" : "Este importe está disponible."
+      },
+      "storageUsage" : {
+        "title" : "Saldo mínimo",
+        "description" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
+      },
+      "staked" : {
+        "title" : "Activo delegado",
+        "description" : "El saldo que está delegado"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a desdelegar"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "Tras cancelar la delegación, obtendrás de inmediato tu saldo y tus recompensas acumuladas"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has desdelegado tus activos correctamente"
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a retirar"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Has retirado con éxito tus activos"
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "Posiciones delegadas",
+      "info" : "Cómo funciona la delegación",
+      "add" : "Agregar",
+      "stakingEarn" : "Puedes recibir recompensas en SUI delegando tus activos.",
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "iStake" : "Delego",
+      "actions" : {
+        "unstake" : "Desdelegar"
+      },
+      "drawer" : {
+        "status" : "Estado",
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "pending" : "Pendiente",
+        "available" : "Puede retirarse"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "Importe a delegar",
+        "selectDevice" : "Seleccionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delega tus SUI para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
+            "steps" : {
+              "0" : "Los activos delegados siguen siendo tuyos.",
+              "1" : "Tras cancelar la delegación, obtendrás de inmediato tu saldo y tus recompensas acumuladas.",
+              "2" : "Delega y vota de forma segura con tu dispositivo Ledger."
+            },
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente."
+            },
+            "cta" : "Continuar"
+          },
+          "amount" : {
+            "assetsRemaining" : "Activos restantes: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos los activos utilizados",
+            "minAmount" : "Cantidad mínima: <0>{{min}}</0>",
+            "incorrectAmount" : "Cantidad máxima: <0>{{max}}</0>",
+            "cta" : "Continuar"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de la cuenta se actualizará cuando la red confirme la transacción."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6642,6 +6786,7 @@
       "undelegate" : "La delegación de tu cuenta finalizará cuando se confirme la operación. Puedes volver a delegar tu cuenta en cualquier momento."
     },
     "summaryTitle" : "Resumen",
+    "delegate" : "Delegar",
     "goToAccount" : "Ir a Cuentas",
     "howDelegationWorks" : "Cómo funciona la delegación",
     "actions" : {
@@ -7078,6 +7223,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "Para poder recibir tokens HTS, tu cuenta debe estar asociada. Si todavía no has asociado tu cuenta al token HTS que quieres recibir, <0>haz clic aquí</0> para iniciar el proceso de asociación.",
+          "learnMore" : "Más información"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "Elige el token que quieres recibir"
+      },
+      "summary" : {
+        "title" : "Asociar token",
+        "from" : "Token",
+        "to" : "A",
+        "warning" : {
+          "text" : "Al hacer clic en Continuar, asociarás el token seleccionado a tu cuenta de Hedera.",
+          "learnMore" : "Más información"
+        }
+      },
+      "selectDevice" : {
+        "title" : "Asociar token"
+      },
+      "connectDevice" : {
+        "title" : "Asociar token"
+      },
+      "validationSuccess" : {
+        "title" : "Transacción enviada",
+        "text" : "Podrás recibir este token en cuanto se haya confirmado la transacción de asociación de token."
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "Más información"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "Más información"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "Token asociado",
+      "postAlert" : {
+        "text" : "En cuanto esta transacción se haya confirmado, podrás recibir tu token. <0>Haz clic aquí</0> para iniciar el flujo de recepción.",
+        "learnMore" : "Más información"
+      }
     }
   },
   "asset" : {
