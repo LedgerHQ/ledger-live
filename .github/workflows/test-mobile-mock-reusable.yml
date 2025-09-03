@@ -561,7 +561,9 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [general-pool, macOS, ARM64]
+    needs: [ determine-builds ]
+    if: needs.determine-builds.outputs.ios_native_exists == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
