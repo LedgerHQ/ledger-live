@@ -610,18 +610,19 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            const action = validateEarnAction(searchParams.get("action"));
+            const earnParamAction = searchParams.get("action");
+            const validatedAction = validateEarnAction(earnParamAction);
 
-            if (!action) {
+            if (!validatedAction && earnParamAction) {
               logSecurityEvent("blocked_action", {
                 hostname,
-                action: searchParams.get("action"),
+                action: earnParamAction,
                 reason: "Invalid action type",
               });
               return;
             }
 
-            switch (action) {
+            switch (validatedAction) {
               case EarnDeeplinkAction.INFO_MODAL: {
                 const validatedModal = validateEarnInfoModal(
                   searchParams.get("message"),
@@ -632,7 +633,7 @@ export const DeeplinksProvider = ({
                 if (!validatedModal) {
                   logSecurityEvent("validation_failed", {
                     hostname,
-                    action,
+                    action: validatedAction,
                     reason: "Invalid info modal parameters",
                   });
                   return;
@@ -650,7 +651,7 @@ export const DeeplinksProvider = ({
                 if (!validatedModal) {
                   logSecurityEvent("validation_failed", {
                     hostname,
-                    action,
+                    action: validatedAction,
                     reason: "Invalid menu modal parameters",
                   });
                   return;

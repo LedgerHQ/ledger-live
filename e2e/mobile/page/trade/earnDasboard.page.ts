@@ -48,6 +48,7 @@ export default class EarnDashboardPage {
   @Step("Go to provider live app")
   async goToProviderLiveApp(provider: Provider) {
     const uiName = await getTextOfElement(this.stakingProviderTitle(provider.name));
+    await scrollToText(uiName);
     jestExpect(normalizeText(uiName)).toBe(provider.uiName);
     await tapById(this.stakingProviderTitle(provider.name));
   }

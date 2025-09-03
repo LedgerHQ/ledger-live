@@ -24,8 +24,6 @@ export async function performSwapUntilQuoteSelectionStep(
   amount: string,
   continueToQuotes: boolean = true,
 ) {
-  await app.swapLiveApp.waitForSwapLiveApp();
-
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);

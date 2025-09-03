@@ -29,13 +29,14 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
+    video: "off",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
-  workers: "50%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
+  workers: "40%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
   retries: 0, // We explicitly want to disable retries to be strict about avoiding flaky tests. (see https://github.com/LedgerHQ/ledger-live/pull/4918)
   reporter: process.env.CI
     ? [

@@ -101,7 +101,6 @@ export const useAuthSubmit = ({
           ? {}
           : {
               accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
-              rules: Keychain.SECURITY_RULES.NONE,
             };
 
       const credentials = await Keychain.getGenericPassword(options);

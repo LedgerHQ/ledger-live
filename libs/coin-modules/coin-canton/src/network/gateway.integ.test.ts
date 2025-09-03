@@ -19,6 +19,7 @@ describe("gateway (devnet)", () => {
       },
     }));
   });
+
   describe("prepareOnboarding", () => {
     it("should prepare onboarding", async () => {
       const response = await prepareOnboarding(
@@ -31,6 +32,7 @@ describe("gateway (devnet)", () => {
       expect(response).toHaveProperty("topology_transactions_hash");
     }, 30000);
   });
+
   describe("getLedgerEnd", () => {
     it("should return ledger end", async () => {
       const end = await getLedgerEnd();
@@ -45,7 +47,7 @@ describe("gateway (devnet)", () => {
       );
       expect(balance.length).toBeGreaterThanOrEqual(1);
       expect(balance[0].amount).toBeGreaterThanOrEqual(0);
-      expect(balance[0].instrumentId.includes("Splice")).toBe(true);
+      expect(balance[0].instrument_id.includes("Splice")).toBe(true);
     });
   });
 
