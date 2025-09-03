@@ -20,6 +20,7 @@ export type AssetSelectionStepProps = {
   setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
+  hasOneCurrency?: boolean;
 };
 
 const AssetSelection = ({
@@ -35,6 +36,7 @@ const AssetSelection = ({
   setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
+  hasOneCurrency,
 }: Readonly<AssetSelectionStepProps>) => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
@@ -52,13 +54,15 @@ const AssetSelection = ({
 
   return (
     <>
-      <TrackDrawerScreen
-        page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION}
-        source={source}
-        flow={flow}
-        assetsConfig={assetsConfiguration}
-        formatAssetConfig
-      />
+      {!hasOneCurrency && (
+        <TrackDrawerScreen
+          page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION}
+          source={source}
+          flow={flow}
+          assetsConfig={assetsConfiguration}
+          formatAssetConfig
+        />
+      )}
       <SearchInputContainer
         setItemsToDisplay={setAssetsToDisplay}
         setSearchedValue={setSearchedValue}

@@ -17,7 +17,7 @@ import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
-import { assetsDataApi } from "~/newArch/features/ModularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 export type State = {
   accounts: AccountsState;

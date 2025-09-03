@@ -64,44 +64,68 @@ const DeviceCard = ({
         opacity={compatible ? 1 : 0.25}
       >
         <Flex pl={7}>
-          <CardHeader content={t("syncOnboarding.deviceSelection.brand")} />
-          <CardTitle content={title} />
-          {!compatible && <CardText content={t("syncOnboarding.deviceSelection.notCompatible")} />}
+          <CardHeader
+            content={t("syncOnboarding.deviceSelection.brand")}
+            testID={`${testID}-header`}
+          />
+          <CardTitle content={title} testID={`${testID}-title`} />
+          {!compatible && (
+            <CardText
+              content={t("syncOnboarding.deviceSelection.notCompatible")}
+              testID={`${testID}-text`}
+            />
+          )}
         </Flex>
 
         <Box mr={7}>
-          <Image source={img} style={{ height: "100%", aspectRatio: 1 }} />
+          <Image
+            source={img}
+            style={{ height: "100%", aspectRatio: 1 }}
+            testID={`${testID}-image`}
+          />
         </Box>
       </Flex>
     </Touchable>
   );
 };
 
-const CardHeader = ({ content }: { content: string }) => {
+const CardHeader = ({ content, testID }: { content: string; testID: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text mt={2} variant="paragraphLineHeight" fontWeight="medium" color={colors.neutral.c60}>
+    <Text
+      mt={2}
+      variant="paragraphLineHeight"
+      fontWeight="medium"
+      color={colors.neutral.c60}
+      testID={testID}
+    >
       {content}
     </Text>
   );
 };
 
-const CardTitle = ({ content }: { content: string }) => {
+const CardTitle = ({ content, testID }: { content: string; testID: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="h5" fontWeight="semiBold" color={colors.neutral.c100}>
+    <Text variant="h5" fontWeight="semiBold" color={colors.neutral.c100} testID={testID}>
       {content}
     </Text>
   );
 };
 
-const CardText = ({ content }: { content: string }) => {
+const CardText = ({ content, testID }: { content: string; testID: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text mt={2} variant="paragraph" fontWeight="medium" color={colors.neutral.c100}>
+    <Text
+      mt={2}
+      variant="paragraph"
+      fontWeight="medium"
+      color={colors.neutral.c100}
+      testID={testID}
+    >
       {content}
     </Text>
   );

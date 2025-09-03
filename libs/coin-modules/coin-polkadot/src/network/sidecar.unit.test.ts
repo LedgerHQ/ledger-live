@@ -13,6 +13,10 @@ jest.mock("./node", () => ({
   fetchNominations: jest.fn(),
 }));
 
+beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+afterEach(() => mockServer.resetHandlers());
+afterAll(() => mockServer.close());
+
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
 
@@ -39,16 +43,11 @@ describe("getAccount", () => {
   });
 
   beforeEach(() => {
-    mockServer.resetHandlers();
     mockServer.use(
       http.get(`${SIDECAR_BASE_URL_TEST}/accounts/:addr/balance-info`, () => {
         return HttpResponse.json(balanceResponseStub);
       }),
     );
-  });
-
-  afterAll(() => {
-    mockServer.close();
   });
 
   it("should return no staking info when no controller found", async () => {
@@ -260,10 +259,6 @@ describe("getBalances", () => {
     mockServer.listen({ onUnhandledRequest: "error" });
   });
 
-  beforeEach(() => {
-    mockServer.resetHandlers();
-  });
-
   it("should have no spendable balance nor locked balance when API does not return them", async () => {
     const balanceResponseStub = {
       at: {
@@ -312,14 +307,6 @@ describe("getRegistry", () => {
     }));
 
     mockServer.listen({ onUnhandledRequest: "error" });
-  });
-
-  beforeEach(() => {
-    mockServer.resetHandlers();
-  });
-
-  afterAll(() => {
-    mockServer.close();
   });
 
   it("works", async () => {

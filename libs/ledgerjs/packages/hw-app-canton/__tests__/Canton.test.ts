@@ -20,7 +20,7 @@ describe("Canton", () => {
         RecordStore.fromString(`
           => e005000015058000002c80001a6f800000008000000080000000
           <= 4d65a10662b9759d62bb59048366705454654cf4f9b4b3525cf314429e46c6919000
-        `)
+        `),
       );
 
       const canton = new Canton(transport);
@@ -36,7 +36,7 @@ describe("Canton", () => {
         RecordStore.fromString(`
           => e005010015058000002c80001a6f800000008000000080000000
           <= 4d65a10662b9759d62bb59048366705454654cf4f9b4b3525cf314429e46c6919000
-        `)
+        `),
       );
 
       const canton = new Canton(transport);
@@ -51,9 +51,7 @@ describe("Canton", () => {
       const transport = await openTransportReplayer(new RecordStore());
       const canton = new Canton(transport);
 
-      return expect(
-        canton.getAddress("invalid path")
-      ).rejects.toThrow();
+      return expect(canton.getAddress("invalid path")).rejects.toThrow();
     });
 
     it("should handle various derivation paths", async () => {
@@ -61,7 +59,7 @@ describe("Canton", () => {
         RecordStore.fromString(`
           => e005000015058000002c80001a6f800000008000000080000001
           <= 5e66a10773c0860e73bb6015947806555765df5f9b5b4636df4255a57c57d7029000
-        `)
+        `),
       );
 
       const canton = new Canton(transport);
@@ -89,14 +87,12 @@ describe("Canton", () => {
         RecordStore.fromString(`
           => e006010015058000002c80001a6f800000008000000080000000
           <= 6985
-        `)
+        `),
       );
 
       const canton = new Canton(transport);
 
-      return expect(
-        canton.signTransaction("44'/6767'/0'/0'/0'", "test")
-      ).rejects.toThrow();
+      return expect(canton.signTransaction("44'/6767'/0'/0'/0'", "test")).rejects.toThrow();
     });
   });
 
@@ -104,9 +100,9 @@ describe("Canton", () => {
     it("should get app configuration", async () => {
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
-          => e004000000
-          <= 00000100069000
-        `)
+          => e003000000
+          <= 0202029000
+        `),
       );
 
       const canton = new Canton(transport);
@@ -119,4 +115,4 @@ describe("Canton", () => {
 
     // should handle configuration error
   });
-}); 
+});

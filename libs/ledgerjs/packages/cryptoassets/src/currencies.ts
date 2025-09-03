@@ -633,7 +633,71 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer-to-define.io/address/$address",
       },
     ],
-    keywords: ["cc", "canton", "canton_network"],
+    keywords: ["canton_network"],
+  },
+  canton_network_localnet: {
+    type: "CryptoCurrency",
+    id: "canton_network_localnet",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network (Localnet)",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton_network_localnet",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 20,
+    isTestnetFor: "canton_network",
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 11,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-to-define.io/transaction/$hash",
+        address: "https://explorer-to-define.io/address/$address",
+      },
+    ],
+    keywords: ["canton_network_localnet"],
+  },
+  canton_network_devnet: {
+    type: "CryptoCurrency",
+    id: "canton_network_devnet",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network (Devnet)",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton_network_devnet",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 20,
+    isTestnetFor: "canton_network",
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 11,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-to-define.io/transaction/$hash",
+        address: "https://explorer-to-define.io/address/$address",
+      },
+    ],
+    keywords: ["canton_network_devnet"],
   },
   cardano: {
     type: "CryptoCurrency",

@@ -28,7 +28,6 @@ export {
   sanitizeValueString,
   formatCurrencyUnit,
   type formatCurrencyUnitOptions,
-  findCurrencyByTicker,
   parseCurrencyUnit,
   toLocaleString,
   isCurrencySupported,

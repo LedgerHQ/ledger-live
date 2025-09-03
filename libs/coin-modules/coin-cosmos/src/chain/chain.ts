@@ -25,8 +25,7 @@ import Babylon from "./Babylon";
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
   currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
-  const initialized = cosmosChainParams[currencyId] != null;
-  if (!initialized) {
+  if (!cosmosChainParams[currencyId]) {
     switch (currencyId) {
       case "osmo":
         cosmosChainParams[currencyId] = new Osmosis();

@@ -107,7 +107,7 @@ async function loadDevnetValidators(api: ChainAPI) {
 
 export function hydrate(data: SolanaPreloadData | undefined, currency: CryptoCurrency): void {
   // https://ledgerhq.atlassian.net/browse/LIVE-11568 covers unknown case where version is undefined
-  if (data == null || data.version == null) {
+  if (!data || !data.version) {
     return;
   }
 

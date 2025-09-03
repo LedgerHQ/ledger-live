@@ -354,7 +354,7 @@ export type SwapPayloadRequestData = {
   fromAccountCurrency: string;
   toAccountCurrency: string;
   amount: string;
-  amountInAtomicUnit: number;
+  amountInAtomicUnit: BigNumber;
   quoteId?: string;
   toNewTokenId?: string;
 };

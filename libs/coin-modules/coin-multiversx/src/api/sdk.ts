@@ -86,7 +86,7 @@ function isSelfSend(transaction: MultiversXApiTransaction): boolean {
  * Map transaction to an Operation Type
  */
 function getEGLDOperationType(transaction: MultiversXApiTransaction, addr: string): OperationType {
-  if (transaction.action && transaction.action.category == "stake") {
+  if (transaction.action && transaction.action.category === "stake") {
     const stakeAction = transaction.action.name;
     switch (stakeAction) {
       case "delegate":
@@ -138,10 +138,10 @@ function getESDTOperationValue(
 function getStakingAmount(transaction: MultiversXApiTransaction, address: string): BigNumber {
   const operation: MultiversXTransactionOperation | undefined = transaction.operations?.find(
     ({ sender, receiver, action, type }) =>
-      action == "transfer" &&
-      type == "egld" &&
-      sender == transaction.receiver &&
-      (receiver == address || receiver == MULTIVERSX_STAKING_POOL),
+      action === "transfer" &&
+      type === "egld" &&
+      sender === transaction.receiver &&
+      (receiver === address || receiver === MULTIVERSX_STAKING_POOL),
   );
 
   let dataDecoded;
@@ -222,9 +222,9 @@ function transactionToEGLDOperation(
     extra: {
       amount: delegationAmount,
     },
-    senders: (type == "OUT" || type == "IN") && transaction.sender ? [transaction.sender] : [],
+    senders: (type === "OUT" || type === "IN") && transaction.sender ? [transaction.sender] : [],
     recipients:
-      (type == "OUT" || type == "IN") && transaction.receiver ? [transaction.receiver] : [],
+      (type === "OUT" || type === "IN") && transaction.receiver ? [transaction.receiver] : [],
     transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
     hasFailed,
   };

@@ -62,7 +62,7 @@ export const getVote = (
 ): CeloVote | undefined => {
   const { votes } = account.celoResources || {};
   return votes?.find(
-    revoke => revoke.validatorGroup === validatorGroupAddress && revoke.index == index,
+    revoke => revoke.validatorGroup === validatorGroupAddress && revoke.index === index,
   );
 };
 

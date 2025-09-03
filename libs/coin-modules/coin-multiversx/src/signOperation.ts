@@ -37,7 +37,7 @@ export const buildSignOperation =
 
         if (tokenAccount) {
           const { token } = decodeTokenAccountId(tokenAccount.id);
-          if (token == null) {
+          if (!token) {
             throw new Error("Invalid token");
           }
 

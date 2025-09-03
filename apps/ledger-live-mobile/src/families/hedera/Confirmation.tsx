@@ -35,6 +35,7 @@ import type {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import ReceiveConfirmationTokenAlert from "./ReceiveConfirmationTokenAlert";
 
 type ScreenProps = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
@@ -109,6 +110,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const address = mainAccount.freshAddress;
   const currency = getAccountCurrency(account);
   const name = mainAccountName;
+
   return (
     <SafeAreaView
       style={[
@@ -131,12 +133,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <SkipLock />
         </>
       )}
-      <NavigationScrollView
-        style={{
-          flex: 1,
-        }}
-        contentContainerStyle={styles.root}
-      >
+      <NavigationScrollView style={styles.root}>
         <View style={styles.container}>
           <Touchable event="QRZoom" onPress={onZoom}>
             {width < 350 ? (
@@ -200,16 +197,16 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </View>
         <View style={styles.bottomContainer}>
           {/* warning message for unverified address */}
-          {
-            <Alert type="security">
-              <Trans
-                i18nKey="hedera.currentAddress.messageIfVirtual"
-                values={{
-                  name,
-                }}
-              />
-            </Alert>
-          }
+          <Alert type="security">
+            <Trans
+              i18nKey="hedera.currentAddress.messageIfVirtual"
+              values={{
+                name,
+              }}
+            />
+          </Alert>
+          {/* message about token association */}
+          <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
         </View>
       </NavigationScrollView>
       <ReactNativeModal
@@ -259,6 +256,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    paddingBottom: 16,
   },
   container: {
     paddingHorizontal: 16,
@@ -267,9 +265,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomContainer: {
+    gap: 16,
     paddingHorizontal: 16,
-    paddingBottom: 8,
-    paddingTop: 32,
+    paddingVertical: 32,
   },
   qrWrapper: {
     borderWidth: 1,
@@ -367,6 +365,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     top: 10,
+  },
+  textUnderline: {
+    textDecorationLine: "underline",
   },
   learnmore: {
     paddingLeft: 8,

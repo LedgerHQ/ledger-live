@@ -1,9 +1,13 @@
 export default class MarketPage {
+  marketRowTitleBaseId = "market-row-title-";
+
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
   assetCardBackBtn = () => getElementById("market-back-btn");
-  marketRowTitle = (index = 0) => getElementById("market-row-title", index);
+  marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
+  marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
+    getElementById(`market-quick-action-button-${action}`);
 
   @Step("Search for asset")
   async searchAsset(asset: string) {
@@ -11,8 +15,8 @@ export default class MarketPage {
   }
 
   @Step("Open asset page")
-  async openAssetPage(selectAsset: string) {
-    await tapByText(selectAsset);
+  async openAssetPage(ticker: string) {
+    await tapByElement(this.marketRowTitle(ticker));
   }
 
   @Step("Star favorite coin")
@@ -31,7 +35,12 @@ export default class MarketPage {
   }
 
   @Step("Expect market row title")
-  async expectMarketRowTitle(title: string) {
-    await detoxExpect(this.marketRowTitle()).toHaveText(title);
+  async expectMarketRowTitle(ticker: string) {
+    await detoxExpect(this.marketRowTitle(ticker)).toBeVisible();
+  }
+
+  @Step("Tap on market quick action button ")
+  async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
+    await tapByElement(this.marketQuickActionButton(action));
   }
 }
