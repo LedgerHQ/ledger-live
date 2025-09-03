@@ -2,38 +2,44 @@ import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getBalance, getLedgerEnd, getTransactions, type TxInfo } from "../network/gateway";
+import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import coinConfig from "../config";
 
 const txInfoToOperationAdapter =
   (accountId: string, address: string) =>
-  (txInfo: TxInfo): Operation => {
-    const { update_id, command_id, offset, effective_at, events } = txInfo;
+  (txInfo: OperationInfo): Operation => {
+    const {
+      transaction_hash,
+      uid,
+      block: { height, hash },
+      senders,
+      recipients,
+      transaction_timestamp,
+      fee: { value: fee },
+      transfers: [{ value: transferValue }],
+    } = txInfo;
 
-    // For now, assume all operations are "IN" type since we don't have sender/recipient info
-    const type = "IN";
-    const value = new BigNumber(0); // TODO: Extract value from events
-    const feeValue = new BigNumber(0); // TODO: Extract fee from events
+    const type = senders.includes(address) ? "OUT" : "IN";
+    const value = new BigNumber(transferValue);
+    const feeValue = new BigNumber(fee);
 
     const op: Operation = {
-      id: encodeOperationId(accountId, update_id, type),
-      hash: update_id,
+      id: encodeOperationId(accountId, transaction_hash, type),
+      hash: transaction_hash,
       accountId,
       type,
       value,
       fee: feeValue,
-      blockHash: null,
-      blockHeight: offset,
-      senders: [address], // TODO: Extract from events
-      recipients: [address], // TODO: Extract from events
-      date: new Date(effective_at.seconds * 1000),
-      transactionSequenceNumber: offset,
+      blockHash: hash,
+      blockHeight: height,
+      senders,
+      recipients,
+      date: new Date(transaction_timestamp),
+      transactionSequenceNumber: height,
       extra: {
-        command_id,
-        workflow_id: txInfo.workflow_id,
-        events,
+        uid,
       },
     };
 
@@ -41,16 +47,13 @@ const txInfoToOperationAdapter =
   };
 
 const filterOperations = (
-  transactions: TxInfo[],
+  transactions: OperationInfo[],
   accountId: string,
   address: string,
 ): Operation[] => {
-  return (
-    transactions
-      // .filter(({ command_id }: TxInfo) => command_id === "Payment")
-      .map(txInfoToOperationAdapter(accountId, address))
-      .filter((op): op is Operation => Boolean(op))
-  );
+  return transactions
+    .filter(tx => tx.type === "Receive" || tx.type === "Send")
+    .map(txInfoToOperationAdapter(accountId, address));
 };
 
 export const getAccountShape: GetAccountShape = async info => {
@@ -79,11 +82,12 @@ export const getAccountShape: GetAccountShape = async info => {
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const transactionData = await getTransactions(address, {
+  const transactionData = await getOperations(address, {
     cursor: 0,
     limit: 100,
   });
-  const newOperations = filterOperations(transactionData.transactions, accountId, address);
+
+  const newOperations = filterOperations(transactionData.operations, accountId, address);
   const operations = mergeOps(oldOperations, newOperations);
 
   // We return the new account shape
