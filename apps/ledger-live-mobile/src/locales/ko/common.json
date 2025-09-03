@@ -694,6 +694,15 @@
       "title" : "페어링 실패",
       "description" : "다시 시도하거나 블루투스 문제 해결 관련 글을 참조해주세요."
     },
+    "OneSuiMinForStake" : {
+      "title" : "최소 스테이킹 수량: 1 SUI"
+    },
+    "OneSuiMinForUnstake" : {
+      "title" : "최소 스테이킹 수량: 1 SUI"
+    },
+    "OneSuiMinForUnstakeToBeLeft" : {
+      "title" : "최소 1 SUI는 스테이킹 상태로 유지해야 합니다."
+    },
     "PasswordIncorrect" : {
       "title" : "잘못된 패스워드",
       "description" : "다시 시도해 주세요."
@@ -1073,6 +1082,18 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "HederaInsufficientFundsForAssociation" : {
+      "title" : "보유 수량 부족",
+      "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
+    },
+    "HederaRecipientTokenAssociationRequired" : {
+      "title" : "토큰 연동 필요",
+      "description" : "보내려는 토큰이 수령할 계정과 연동되어 있지 않습니다. 수령할 계정과 연동 되어야 토큰 수령이 가능합니다."
+    },
+    "HederaRecipientTokenAssociationUnverified" : {
+      "title" : "토큰 연동 확인 불가능",
+      "description" : "수령 계정에서 이 토큰을 수령할 수 있는지 확인할 수 없습니다. 주소가 잘못되었거나 네트워크 또는 서비스에 문제가 있을 수 있습니다."
     },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
@@ -2135,26 +2156,6 @@
         "learnHowToUpdate" : "업데이트 방법 알아보기"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "데스크탑에서 암호화폐를 동기화하세요",
-      "desc" : "Ledger 데스크탑 앱에서 암호화 설정을 마친 경우 이를 동기화하여 휴대폰에서 관리할 수 있습니다.",
-      "cta" : "스캔할 준비가 되었습니다",
-      "bullets" : {
-        "0" : {
-          "label" : "데스크탑 앱에서\n<1> 설정 > 계정 > 계정 내보내기</1>를 선택하세요."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "가져올 암호화폐 계정을 선택하세요."
-        }
-      },
-      "warning" : {
-        "title" : "데스크탑 및 모바일 앱은 수동으로 동기화해야 합니다.",
-        "desc" : "Ledger Live는 사용자의 개인 정보를 소중히 다루며 귀하의 정보를 로컬에 저장합니다. 휴대폰의 계정과 설정을 변경하면 컴퓨터에서도 동일하게 변경해야 하며, 그 반대의 경우도 마찬가지입니다. 귀하의 트랜잭션은 계속 블록체인에 동기화됩니다.",
-        "cta" : "알겠습니다!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}}를 켜고 지침을 따르세요.",
       "step1-nanoS" : "OTG 케이블을 이용하여 휴대폰에 {{fullDeviceName}}(을)를 연결하세요.",
@@ -2727,7 +2728,8 @@
       "WITHDRAW" : "출금됨",
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED" : "출금됨"
+      "WITHDRAW_UNSTAKED" : "출금됨",
+      "ASSOCIATE_TOKEN" : "토큰 연동"
     }
   },
   "operationDetails" : {
@@ -2759,6 +2761,7 @@
     "extra" : {
       "transferId" : "전송 ID(메모)",
       "resource" : "리소스",
+      "validator" : "검증인",
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
       "address" : "주소",
@@ -3745,6 +3748,10 @@
       },
       "twoStepApproval" : {
         "title" : "단계 완료하기"
+      },
+      "loader" : {
+        "title" : "Processing Swap",
+        "description" : "Please wait while we process your request."
       },
       "history" : {
         "title" : "스왑 내역"
@@ -6455,6 +6462,107 @@
       }
     }
   },
+  "sui" : {
+    "info" : {
+      "available" : {
+        "title" : "SUI 이용 가능",
+        "description" : "자유롭게 사용할 수 있는 수량입니다."
+      },
+      "storageUsage" : {
+        "title" : "최소 수량",
+        "description" : "저장 및 트랜잭션용으로 예약된 수량이며, 계정이 활성 상태를 유지하기 위해 필요한 최소 수량입니다."
+      },
+      "staked" : {
+        "title" : "위임한 자산",
+        "description" : "위임한 수량"
+      }
+    },
+    "unstaking" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "위임 해제 수량"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "warning" : "위임을 해제하면, 스테이킹한 수량과 보상이 즉시 지급됩니다."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임 해제했습니다."
+            }
+          }
+        }
+      }
+    },
+    "withdrawing" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "출금 수량"
+      },
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금했습니다."
+            }
+          }
+        }
+      }
+    },
+    "staking" : {
+      "sectionLabel" : "위임한 포지션",
+      "info" : "위임은 어떤 원리인가요?",
+      "add" : "추가",
+      "stakingEarn" : "보유 자산을 위임하고 SUI 보상을 받아보세요.",
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "iStake" : "위임",
+      "actions" : {
+        "unstake" : "위임 해제"
+      },
+      "drawer" : {
+        "status" : "상태",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "pending" : "대기 중",
+        "available" : "출금 가능"
+      },
+      "stepperHeader" : {
+        "amountSubTitle" : "위임할 수량",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "SUI를 위임하여 보상 수익도 늘리고, 자산 관리도 원하는 대로 수행하세요.",
+            "steps" : {
+              "0" : "위임된 자산도 여전히 사용자 소유입니다.",
+              "1" : "위임을 해제하면, 스테이킹한 수량과 관련 보상이 즉시 지급됩니다.",
+              "2" : "Ledger 장치로 안전하게 위임하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 수량: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 수량: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          }
+        }
+      }
+    }
+  },
   "aptos" : {
     "info" : {
       "available" : {
@@ -6642,6 +6750,7 @@
       "undelegate" : "거래가 확인되면 계정 위임이 종료됩니다. 계정을 언제든 다시 위임할 수 있습니다."
     },
     "summaryTitle" : "요약",
+    "delegate" : "위임하기",
     "goToAccount" : "계정으로 이동",
     "howDelegationWorks" : "위임은 어떤 원리인가요?",
     "actions" : {
@@ -7078,6 +7187,55 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
+    },
+    "receive" : {
+      "warnings" : {
+        "associationPrerequisite" : {
+          "text" : "HTS 토큰을 수령하려면 사용자 계정을 연동해야 합니다. 수령하고자 하는 HTS 토큰과 사용자 계정이 연동되어 있지 않은 경우 <0>여기를 클릭</0>하여 토큰 연동 절차를 시작하세요.",
+          "learnMore" : "자세히 알아보기"
+        }
+      }
+    },
+    "associate" : {
+      "selectToken" : {
+        "title" : "수령할 토큰 선택"
+      },
+      "summary" : {
+        "title" : "토큰 연동",
+        "from" : "토큰",
+        "to" : "발신",
+        "warning" : {
+          "text" : "'계속'을 클릭하면 선택한 토큰이 헤데라 계정에 연동됩니다.",
+          "learnMore" : "자세히 알아보기"
+        }
+      },
+      "selectDevice" : {
+        "title" : "토큰 연동"
+      },
+      "connectDevice" : {
+        "title" : "토큰 연동"
+      },
+      "validationSuccess" : {
+        "title" : "트랜잭션 전송 완료",
+        "text" : "'토큰 연동' 트랜잭션이 확인되면 해당 토큰을 수령할 수 있습니다."
+      }
+    },
+    "send" : {
+      "warnings" : {
+        "missingAssociation" : {
+          "learnMore" : "자세히 알아보기"
+        },
+        "unverifiedAssociation" : {
+          "learnMore" : "자세히 알아보기"
+        }
+      }
+    },
+    "operationDetails" : {
+      "postAccountSection" : "연동된 토큰",
+      "postAlert" : {
+        "text" : "해당 트랜잭션의 확인이 완료되면 토큰 수령이 가능해집니다. <0>여기를 클릭</0>하여 수령 절차를 시작하세요.",
+        "learnMore" : "자세히 알아보기"
+      }
     }
   },
   "asset" : {
@@ -7786,7 +7944,13 @@
     "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount" : "{{count}}개 계정",
-    "accountCount_plural" : "{{count}}개 계정"
+    "accountCount_plural" : "{{count}}개 계정",
+    "errors" : {
+      "title" : "Connection failed",
+      "backend" : "Something went wrong on our end. Please try again later",
+      "internet" : "No internet connection. Please try again",
+      "cta" : "Try again"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
