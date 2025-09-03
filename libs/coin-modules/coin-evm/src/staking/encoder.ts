@@ -22,7 +22,7 @@ export const encodeStakingData = (encodeParams: EncodeStakingDataParams): string
     throw new Error(`Operation '${operation}' not supported for currency: ${currencyId}`);
   }
 
-  const iface = new ethers.utils.Interface(abi);
+  const iface = new ethers.Interface(abi);
   return iface.encodeFunctionData(functionName, params);
 };
 
@@ -31,7 +31,7 @@ export const decodeStakingResult = (
   operation: StakingOperation,
   config: StakingContractConfig,
   result: string,
-): ethers.utils.Result => {
+): ethers.Result => {
   const abi = getStakingABI(currencyId);
   if (!abi) {
     throw new Error(`No ABI found for staking currency: ${currencyId}`);
@@ -42,6 +42,6 @@ export const decodeStakingResult = (
     throw new Error(`Operation '${operation}' not supported for currency: ${currencyId}`);
   }
 
-  const iface = new ethers.utils.Interface(abi);
+  const iface = new ethers.Interface(abi);
   return iface.decodeFunctionResult(functionName, result);
 };
