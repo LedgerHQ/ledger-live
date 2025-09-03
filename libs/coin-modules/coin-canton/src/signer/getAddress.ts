@@ -9,6 +9,12 @@ const getAddress = (signerContext: SignerContext<CantonSigner>): GetAddressFn =>
       signer.getAddress(path),
     )) as CantonAddress;
 
+    console.log("[getAddress] Address:", {
+      path,
+      address,
+      publicKey,
+    });
+
     return {
       path,
       address,
