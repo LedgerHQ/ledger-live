@@ -570,6 +570,16 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "true"
+          install-proto: "true"
+          skip-turbo-cache: "true"
+
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
