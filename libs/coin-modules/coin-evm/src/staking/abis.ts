@@ -1,9 +1,9 @@
 import seiAbi from "../abis/sei.abi.json";
 import celoAbi from "../abis/celo.abi.json";
 
-export type StakingABI = typeof seiAbi | typeof celoAbi;
+type StakingABI = typeof seiAbi | typeof celoAbi;
 
-export const STAKING_ABIS: Record<string, StakingABI> = {
+const STAKING_ABIS: Record<string, StakingABI> = {
   // Sei EVM staking contract
   sei_network_evm: seiAbi,
 
