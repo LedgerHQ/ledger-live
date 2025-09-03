@@ -14,6 +14,8 @@ import {
   isNative,
   TransactionTypes,
 } from "../types";
+import { encodeStakingData, getStakingContractConfig } from "../staking";
+import type { StakingOperation } from "../types/staking";
 import { getGasTracker } from "../network/gasTracker";
 import { getErc20Data, getTransactionType } from "./common";
 
@@ -35,17 +37,46 @@ function toApiGasOptions(options: GasOptions): ApiGasOptions {
   };
 }
 
+const stakingOperations = [
+  "delegate",
+  "undelegate",
+  "redelegate",
+  "getStakedBalance",
+  "getUnstakedBalance",
+] as const;
+
+function isStakingOperation(value: string): value is StakingOperation {
+  return (stakingOperations as readonly string[]).includes(value);
+}
+
 export async function estimateFees(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported>,
 ): Promise<FeeEstimation> {
-  const { amount, asset, recipient, sender, type } = transactionIntent;
+  const { amount, asset, recipient, sender, type, mode, validator } = transactionIntent;
 
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
   const gasTracker = getGasTracker(currency);
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
-  const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
+  let data: Buffer;
+  const config = getStakingContractConfig(currency.id);
+  console.log("config", config, mode, isStakingOperation(mode));
+  if (config && mode && isStakingOperation(mode)) {
+    data = Buffer.from(
+      encodeStakingData({
+        currencyId: currency.id,
+        operation: mode,
+        config,
+        params: [validator],
+      }).slice(2),
+      "hex",
+    );
+  console.log("data", data);
+  } else {
+    data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
+    console.log("data2", data);
+  }
   const value = isNative(asset) ? amount : 0n;
   const gasLimit = await node.getGasEstimation(
     { currency, freshAddress: sender },
